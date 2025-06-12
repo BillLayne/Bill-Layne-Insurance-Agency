@@ -1596,6 +1596,14 @@ select.form-control {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  /* Remove sticky positioning on mobile for better UX */
+  .header {
+    position: relative !important;
+    top: auto !important;
+    width: 100%;
+    z-index: 1000;
+  }
+
   .header__content {
     flex-direction: column;
     text-align: center;
@@ -1617,8 +1625,10 @@ select.form-control {
     gap: var(--space-12);
   }
 
+  /* Reset hero padding since header is no longer sticky */
   .hero {
-    padding: 200px 0 var(--space-32);
+    padding: 80px 0 var(--space-32);
+    margin-top: 0;
   }
 
   .hero__content {
@@ -1663,8 +1673,15 @@ select.form-control {
 }
 
 @media (max-width: 480px) {
+  /* Ensure header is non-sticky on small mobile devices too */
+  .header {
+    position: relative !important;
+    top: auto !important;
+  }
+
   .hero {
-    padding: 160px 0 var(--space-32);
+    padding: 60px 0 var(--space-32);
+    margin-top: 0;
   }
 
   .hero__headline {
@@ -1694,13 +1711,13 @@ html {
 
 @media (max-width: 768px) {
   html {
-    scroll-padding-top: 120px;
+    scroll-padding-top: 20px; /* Minimal padding since header is not sticky */
   }
 }
 
 @media (max-width: 480px) {
   html {
-    scroll-padding-top: 140px;
+    scroll-padding-top: 20px; /* Minimal padding since header is not sticky */
   }
 }
 
