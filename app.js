@@ -1627,5 +1627,1582 @@ window.handleQuoteSubmission = function(e) {
             
             // Show error message with fallback option
             showErrorMessage(mailtoLink);
+// Interactive Learning Center Enhancement for Bill Layne Insurance
+// This adds Insurance IQ Quiz and Risk Assessment Questionnaire to your existing system
+
+// Extend the existing AnalyzerSystem with Learning Center functionality
+Object.assign(AnalyzerSystem, {
+    
+    // Insurance IQ Quiz Questions
+    iqQuizQuestions: [
+        {
+            question: "What does liability insurance cover?",
+            options: [
+                "Damage to your own vehicle",
+                "Medical expenses for you and your passengers", 
+                "Damage and injuries you cause to others",
+                "Theft of personal belongings"
+            ],
+            correct: 2,
+            explanation: "Liability insurance covers damage and injuries you cause to other people and their property. It's legally required in most states and protects you from lawsuits."
+        },
+        {
+            question: "What's the recommended amount of emergency fund before you consider lowering your insurance deductibles?",
+            options: [
+                "1 month of expenses",
+                "3-6 months of expenses", 
+                "1 year of expenses",
+                "No emergency fund needed"
+            ],
+            correct: 1,
+            explanation: "Financial experts recommend having 3-6 months of expenses saved before considering higher deductibles. This ensures you can afford the out-of-pocket costs if you need to file a claim."
+        },
+        {
+            question: "Which factor typically has the BIGGEST impact on your auto insurance rates?",
+            options: [
+                "The color of your car",
+                "Your driving record",
+                "Your car's age", 
+                "Where you park overnight"
+            ],
+            correct: 1,
+            explanation: "Your driving record, including accidents and violations, typically has the biggest impact on rates. Insurance companies use this to predict future risk."
+        },
+        {
+            question: "What does 'replacement cost' coverage mean for homeowners insurance?",
+            options: [
+                "Pays what you originally paid for items",
+                "Pays current market value of items",
+                "Pays the cost to buy new items of similar quality",
+                "Only covers items under 5 years old"
+            ],
+            correct: 2,
+            explanation: "Replacement cost coverage pays to replace your belongings with new items of similar quality, regardless of depreciation. This is typically better than 'actual cash value' coverage."
+        },
+        {
+            question: "What's the '80% rule' in homeowners insurance?",
+            options: [
+                "You must be home 80% of the time",
+                "Coverage should equal 80% of your home's replacement cost",
+                "Deductible can't exceed 80% of claim",
+                "You pay 80% of all claims"
+            ],
+            correct: 1,
+            explanation: "The 80% rule means you should insure your home for at least 80% of its replacement cost to avoid penalties and ensure full coverage for partial losses."
+        },
+        {
+            question: "Which is NOT typically covered by standard homeowners insurance?",
+            options: [
+                "Fire damage",
+                "Theft",
+                "Flood damage", 
+                "Windstorm damage"
+            ],
+            correct: 2,
+            explanation: "Flood damage requires separate flood insurance. Standard homeowners policies exclude floods, earthquakes, and certain other natural disasters."
+        },
+        {
+            question: "What does 'uninsured motorist' coverage protect against?",
+            options: [
+                "When you drive without insurance",
+                "When someone without insurance hits you",
+                "When your car is stolen by an uninsured person",
+                "When you lend your car to an uninsured friend"
+            ],
+            correct: 1,
+            explanation: "Uninsured motorist coverage protects you when you're hit by a driver who doesn't have insurance or doesn't have enough insurance to cover your damages."
+        },
+        {
+            question: "How often should you review your insurance coverage?",
+            options: [
+                "Only when you have a claim",
+                "Every 5 years",
+                "Annually",
+                "Only when rates increase"
+            ],
+            correct: 2,
+            explanation: "You should review your coverage annually or after major life changes (marriage, new home, etc.) to ensure adequate protection and competitive rates."
+        },
+        {
+            question: "What's the primary purpose of an umbrella insurance policy?",
+            options: [
+                "Cover weather-related damage",
+                "Provide additional liability protection",
+                "Replace all other insurance policies",
+                "Cover only business activities"
+            ],
+            correct: 1,
+            explanation: "Umbrella insurance provides additional liability coverage above your auto and home policy limits, protecting your assets from large liability claims."
+        },
+        {
+            question: "Which factor does NOT typically affect life insurance premiums?",
+            options: [
+                "Your age",
+                "Your health",
+                "Your job title",
+                "Your hobbies"
+            ],
+            correct: 2,
+            explanation: "While occupation can matter for certain high-risk jobs, your job title alone typically doesn't affect premiums as much as age, health, and risky hobbies like skydiving."
+        },
+        {
+            question: "What does GAP insurance cover?",
+            options: [
+                "The gap between insurance payments",
+                "The difference between what you owe and your car's value",
+                "Gaps in your coverage history", 
+                "The gap between deductibles"
+            ],
+            correct: 1,
+            explanation: "GAP (Guaranteed Asset Protection) insurance covers the difference between what you owe on a car loan and the car's actual cash value if it's totaled."
+        },
+        {
+            question: "Which home feature typically provides the biggest insurance discount?",
+            options: [
+                "Swimming pool",
+                "Home security system",
+                "Granite countertops",
+                "Large garage"
+            ],
+            correct: 1,
+            explanation: "Security systems typically provide significant discounts because they reduce the risk of theft and may include fire monitoring, reducing multiple types of claims."
+        },
+        {
+            question: "What's the difference between a premium and a deductible?",
+            options: [
+                "They're the same thing",
+                "Premium is what you pay regularly; deductible is what you pay per claim",
+                "Premium is yearly; deductible is monthly",
+                "Premium is optional; deductible is required"
+            ],
+            correct: 1,
+            explanation: "Premium is the amount you pay for insurance coverage (monthly, quarterly, or annually). Deductible is the amount you pay out-of-pocket before insurance covers a claim."
+        },
+        {
+            question: "Which is typically the most cost-effective way to lower your insurance premiums?",
+            options: [
+                "Reduce coverage amounts",
+                "Increase your deductibles",
+                "Cancel optional coverages",
+                "Switch companies every year"
+            ],
+            correct: 1,
+            explanation: "Increasing deductibles is often the most cost-effective way to lower premiums while maintaining adequate coverage. Just ensure you can afford the higher out-of-pocket cost."
+        },
+        {
+            question: "What should you do immediately after a car accident?",
+            options: [
+                "Call your insurance company first",
+                "Ensure safety, call police if needed, document the scene",
+                "Admit fault to be honest",
+                "Leave if there's no damage"
+            ],
+            correct: 1,
+            explanation: "First ensure safety, call police if there are injuries or significant damage, document everything with photos, exchange information, but never admit fault at the scene."
+        }
+    ],
+
+    // Risk Assessment Questions
+    riskAssessmentQuestions: [
+        {
+            id: 'personal_info',
+            title: 'Personal Information',
+            questions: [
+                {
+                    type: 'select',
+                    key: 'age_group',
+                    label: 'What\'s your age group?',
+                    required: true,
+                    options: [
+                        { value: '', label: 'Select your age group' },
+                        { value: '18-25', label: '18-25 years old' },
+                        { value: '26-35', label: '26-35 years old' },
+                        { value: '36-45', label: '36-45 years old' },
+                        { value: '46-55', label: '46-55 years old' },
+                        { value: '56-65', label: '56-65 years old' },
+                        { value: '65+', label: '65+ years old' }
+                    ]
+                },
+                {
+                    type: 'select',
+                    key: 'marital_status',
+                    label: 'What\'s your marital status?',
+                    required: true,
+                    options: [
+                        { value: '', label: 'Select marital status' },
+                        { value: 'single', label: 'Single' },
+                        { value: 'married', label: 'Married' },
+                        { value: 'divorced', label: 'Divorced' },
+                        { value: 'widowed', label: 'Widowed' }
+                    ]
+                },
+                {
+                    type: 'select',
+                    key: 'dependents',
+                    label: 'How many dependents do you have?',
+                    required: true,
+                    options: [
+                        { value: '', label: 'Select number of dependents' },
+                        { value: '0', label: 'No dependents' },
+                        { value: '1', label: '1 dependent' },
+                        { value: '2', label: '2 dependents' },
+                        { value: '3', label: '3 dependents' },
+                        { value: '4+', label: '4 or more dependents' }
+                    ]
+                }
+            ]
+        },
+        {
+            id: 'lifestyle',
+            title: 'Lifestyle & Activities',
+            questions: [
+                {
+                    type: 'checkbox',
+                    key: 'activities',
+                    label: 'Which activities do you regularly participate in?',
+                    options: [
+                        { value: 'commute_driving', label: 'Daily commuting by car (>30 minutes)' },
+                        { value: 'frequent_travel', label: 'Frequent business or leisure travel' },
+                        { value: 'outdoor_sports', label: 'Outdoor sports (hiking, skiing, etc.)' },
+                        { value: 'water_sports', label: 'Water sports (boating, jet skiing, etc.)' },
+                        { value: 'high_risk_hobbies', label: 'High-risk hobbies (motorcycling, rock climbing)' },
+                        { value: 'home_business', label: 'Run business from home' },
+                        { value: 'volunteer_work', label: 'Regular volunteer work' },
+                        { value: 'youth_sports_coach', label: 'Coach youth sports' }
+                    ]
+                },
+                {
+                    type: 'select',
+                    key: 'driving_frequency',
+                    label: 'How often do you drive?',
+                    required: true,
+                    options: [
+                        { value: '', label: 'Select driving frequency' },
+                        { value: 'daily', label: 'Daily - work commute' },
+                        { value: 'frequent', label: 'Several times per week' },
+                        { value: 'occasional', label: 'Occasionally - weekends/errands' },
+                        { value: 'rare', label: 'Rarely - special occasions only' }
+                    ]
+                },
+                {
+                    type: 'select',
+                    key: 'social_media_usage',
+                    label: 'How active are you on social media?',
+                    required: true,
+                    options: [
+                        { value: '', label: 'Select social media usage' },
+                        { value: 'very_active', label: 'Very active - post daily' },
+                        { value: 'moderate', label: 'Moderately active - few times per week' },
+                        { value: 'light', label: 'Light usage - occasionally' },
+                        { value: 'minimal', label: 'Minimal or no social media use' }
+                    ]
+                }
+            ]
+        },
+        {
+            id: 'property_assets',
+            title: 'Property & Assets',
+            questions: [
+                {
+                    type: 'select',
+                    key: 'housing_situation',
+                    label: 'What\'s your current housing situation?',
+                    required: true,
+                    options: [
+                        { value: '', label: 'Select housing situation' },
+                        { value: 'own_home', label: 'Own my home' },
+                        { value: 'rent_apartment', label: 'Rent apartment/condo' },
+                        { value: 'rent_house', label: 'Rent house' },
+                        { value: 'live_with_family', label: 'Live with family/relatives' },
+                        { value: 'other', label: 'Other living situation' }
+                    ]
+                },
+                {
+                    type: 'checkbox',
+                    key: 'property_features',
+                    label: 'Which features apply to your living situation?',
+                    options: [
+                        { value: 'pool_spa', label: 'Swimming pool or spa' },
+                        { value: 'trampoline', label: 'Trampoline' },
+                        { value: 'playground_equipment', label: 'Playground equipment' },
+                        { value: 'fireplace', label: 'Fireplace or wood stove' },
+                        { value: 'basement', label: 'Basement' },
+                        { value: 'attached_garage', label: 'Attached garage' },
+                        { value: 'detached_structures', label: 'Detached structures (shed, garage, etc.)' },
+                        { value: 'valuable_collections', label: 'Valuable collections or art' }
+                    ]
+                },
+                {
+                    type: 'checkbox',
+                    key: 'vehicles_owned',
+                    label: 'What types of vehicles do you own or use?',
+                    options: [
+                        { value: 'personal_car', label: 'Personal car/truck' },
+                        { value: 'motorcycle', label: 'Motorcycle or scooter' },
+                        { value: 'recreational_vehicle', label: 'RV or motorhome' },
+                        { value: 'boat', label: 'Boat or watercraft' },
+                        { value: 'atv', label: 'ATV or off-road vehicle' },
+                        { value: 'classic_car', label: 'Classic or collector car' },
+                        { value: 'commercial_vehicle', label: 'Commercial vehicle for work' }
+                    ]
+                }
+            ]
+        },
+        {
+            id: 'financial_health',
+            title: 'Financial Considerations',
+            questions: [
+                {
+                    type: 'select',
+                    key: 'emergency_fund',
+                    label: 'How much do you have in emergency savings?',
+                    required: true,
+                    options: [
+                        { value: '', label: 'Select emergency fund level' },
+                        { value: 'none', label: 'No emergency fund' },
+                        { value: 'under_1000', label: 'Less than $1,000' },
+                        { value: '1000_5000', label: '$1,000 - $5,000' },
+                        { value: '5000_10000', label: '$5,000 - $10,000' },
+                        { value: 'over_10000', label: 'More than $10,000' }
+                    ]
+                },
+                {
+                    type: 'select',
+                    key: 'debt_level',
+                    label: 'How would you describe your current debt level?',
+                    required: true,
+                    options: [
+                        { value: '', label: 'Select debt level' },
+                        { value: 'no_debt', label: 'No significant debt' },
+                        { value: 'manageable', label: 'Manageable debt levels' },
+                        { value: 'moderate', label: 'Moderate debt - manageable but noticeable' },
+                        { value: 'high', label: 'High debt - struggling to keep up' }
+                    ]
+                },
+                {
+                    type: 'select',
+                    key: 'insurance_priority',
+                    label: 'What\'s your main priority with insurance?',
+                    required: true,
+                    options: [
+                        { value: '', label: 'Select insurance priority' },
+                        { value: 'lowest_cost', label: 'Lowest possible cost' },
+                        { value: 'basic_protection', label: 'Basic protection at reasonable cost' },
+                        { value: 'comprehensive', label: 'Comprehensive coverage for peace of mind' },
+                        { value: 'asset_protection', label: 'Maximum asset protection' }
+                    ]
+                }
+            ]
+        }
+    ],
+
+    // Start IQ Quiz
+    startIQQuiz() {
+        this.currentAnalyzer = 'iq_quiz';
+        this.currentStep = 0;
+        this.userData = {
+            answers: [],
+            score: 0,
+            startTime: Date.now()
+        };
+
+        const modal = document.getElementById('analyzer-modal');
+        const title = document.getElementById('analyzer-title');
+        title.textContent = 'Insurance IQ Quiz';
+
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+
+        this.loadIQQuizQuestion();
+    },
+
+    // Start Risk Assessment
+    startRiskAssessment() {
+        this.currentAnalyzer = 'risk_assessment';
+        this.currentStep = 0;
+        this.userData = {};
+
+        const modal = document.getElementById('analyzer-modal');
+        const title = document.getElementById('analyzer-title');
+        title.textContent = 'Personal Risk Assessment';
+
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+
+        this.loadStep();
+    },
+
+    // Load IQ Quiz Question
+    loadIQQuizQuestion() {
+        if (this.currentStep >= this.iqQuizQuestions.length) {
+            this.showIQQuizResults();
+            return;
+        }
+
+        const question = this.iqQuizQuestions[this.currentStep];
+        const content = document.getElementById('analyzer-content');
+        
+        content.innerHTML = `
+            <div class="iq-quiz-question">
+                <div class="question-header">
+                    <span class="question-number">Question ${this.currentStep + 1} of ${this.iqQuizQuestions.length}</span>
+                    <div class="question-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${((this.currentStep + 1) / this.iqQuizQuestions.length) * 100}%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3 class="question-text">${question.question}</h3>
+                
+                <div class="quiz-options">
+                    ${question.options.map((option, index) => `
+                        <div class="quiz-option" data-index="${index}">
+                            <div class="option-letter">${String.fromCharCode(65 + index)}</div>
+                            <div class="option-text">${option}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="quiz-explanation" id="quiz-explanation" style="display: none;">
+                    <div class="explanation-content">
+                        <h4>Explanation:</h4>
+                        <p>${question.explanation}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Update progress
+        document.getElementById('progress-fill').style.width = `${((this.currentStep + 1) / this.iqQuizQuestions.length) * 100}%`;
+        document.getElementById('progress-text').textContent = `Question ${this.currentStep + 1} of ${this.iqQuizQuestions.length}`;
+
+        // Update navigation
+        document.getElementById('analyzer-prev').style.display = this.currentStep > 0 ? 'block' : 'none';
+        document.getElementById('analyzer-next').style.display = 'none';
+
+        this.attachIQQuizListeners();
+    },
+
+    // Attach IQ Quiz listeners
+    attachIQQuizListeners() {
+        const options = document.querySelectorAll('.quiz-option');
+        const question = this.iqQuizQuestions[this.currentStep];
+        
+        options.forEach((option, index) => {
+            option.addEventListener('click', () => {
+                // Remove previous selections
+                options.forEach(opt => opt.classList.remove('selected', 'correct', 'incorrect'));
+                
+                // Mark selection
+                option.classList.add('selected');
+                
+                // Check if correct
+                const isCorrect = index === question.correct;
+                if (isCorrect) {
+                    option.classList.add('correct');
+                    this.userData.score++;
+                } else {
+                    option.classList.add('incorrect');
+                    options[question.correct].classList.add('correct');
+                }
+
+                // Store answer
+                this.userData.answers[this.currentStep] = {
+                    selected: index,
+                    correct: question.correct,
+                    isCorrect: isCorrect
+                };
+
+                // Show explanation
+                const explanation = document.getElementById('quiz-explanation');
+                explanation.style.display = 'block';
+                explanation.scrollIntoView({ behavior: 'smooth' });
+
+                // Show next button after delay
+                setTimeout(() => {
+                    const nextBtn = document.getElementById('analyzer-next');
+                    if (this.currentStep >= this.iqQuizQuestions.length - 1) {
+                        nextBtn.textContent = 'See My Results';
+                    } else {
+                        nextBtn.textContent = 'Next Question';
+                    }
+                    nextBtn.style.display = 'block';
+                }, 1500);
+            });
+        });
+    },
+
+    // Show IQ Quiz Results
+    showIQQuizResults() {
+        const score = this.userData.score;
+        const total = this.iqQuizQuestions.length;
+        const percentage = Math.round((score / total) * 100);
+        const timeTaken = Math.round((Date.now() - this.userData.startTime) / 1000);
+
+        let grade, message, recommendations;
+
+        if (percentage >= 90) {
+            grade = 'A+';
+            message = 'Insurance Expert!';
+            recommendations = [
+                'You have excellent insurance knowledge! You understand the complexities of coverage and risk management.',
+                'Consider sharing your knowledge - you could help friends and family make better insurance decisions.',
+                'Stay updated on insurance trends and new products to maintain your expertise.'
+            ];
+        } else if (percentage >= 80) {
+            grade = 'A';
+            message = 'Very Knowledgeable';
+            recommendations = [
+                'You have a strong understanding of insurance fundamentals.',
+                'Review areas where you missed questions to round out your knowledge.',
+                'You\'re well-equipped to make informed insurance decisions.'
+            ];
+        } else if (percentage >= 70) {
+            grade = 'B';
+            message = 'Good Foundation';
+            recommendations = [
+                'You have a solid basic understanding of insurance concepts.',
+                'Consider learning more about specific coverage types and their benefits.',
+                'Don\'t hesitate to ask questions when reviewing your policies.'
+            ];
+        } else if (percentage >= 60) {
+            grade = 'C';
+            message = 'Room for Improvement';
+            recommendations = [
+                'You understand some insurance basics but could benefit from additional learning.',
+                'Take time to review your current policies and understand what you have.',
+                'Consider meeting with an agent to discuss your coverage and ask questions.'
+            ];
+        } else {
+            grade = 'D';
+            message = 'Learning Opportunity';
+            recommendations = [
+                'Insurance can be complex - don\'t worry, you\'re not alone in finding it confusing!',
+                'This is a great opportunity to learn more about protecting yourself and your assets.',
+                'Schedule a consultation to review your needs and understand your options.'
+            ];
+        }
+
+        const content = document.getElementById('analyzer-content');
+        content.innerHTML = `
+            <div class="quiz-results">
+                <div class="results-header">
+                    <div class="score-circle ${grade.toLowerCase().replace('+', '-plus')}">
+                        <div class="grade">${grade}</div>
+                        <div class="percentage">${percentage}%</div>
+                    </div>
+                    <h3>${message}</h3>
+                    <p>You scored ${score} out of ${total} questions correctly in ${timeTaken} seconds.</p>
+                </div>
+
+                <div class="quiz-breakdown">
+                    <h4>Question Breakdown:</h4>
+                    <div class="question-results">
+                        ${this.userData.answers.map((answer, index) => `
+                            <div class="question-result ${answer.isCorrect ? 'correct' : 'incorrect'}">
+                                <span class="question-num">Q${index + 1}</span>
+                                <span class="result-icon">${answer.isCorrect ? '✓' : '✗'}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="recommendations-section">
+                    <h4>Recommendations for You:</h4>
+                    ${recommendations.map(rec => `
+                        <div class="recommendation-item">
+                            <div class="recommendation-icon">💡</div>
+                            <p>${rec}</p>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="quiz-cta">
+                    <h4>Want to Put Your Knowledge to Work?</h4>
+                    <p>Whether you're an insurance expert or just getting started, we're here to help you find the perfect coverage for your needs.</p>
+                    <div class="cta-buttons">
+                        <button class="btn btn--primary" onclick="AnalyzerSystem.requestPersonalizedQuote()">
+                            Get My Personalized Quote
+                        </button>
+                        <button class="btn btn--outline" onclick="AnalyzerSystem.shareQuizResults(${percentage}, '${grade}')">
+                            Share My Results
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Update navigation
+        document.getElementById('analyzer-next').style.display = 'none';
+        document.getElementById('analyzer-prev').textContent = 'Retake Quiz';
+        document.getElementById('analyzer-prev').style.display = 'block';
+    },
+
+    // Share quiz results
+    shareQuizResults(percentage, grade) {
+        const text = `I just scored ${percentage}% (${grade}) on the Insurance IQ Quiz at Bill Layne Insurance! Test your insurance knowledge too:`;
+        const url = window.location.href;
+        
+        if (navigator.share) {
+            navigator.share({
+                title: 'Insurance IQ Quiz Results',
+                text: text,
+                url: url
+            });
+        } else {
+            // Fallback to copying to clipboard
+            navigator.clipboard.writeText(`${text} ${url}`).then(() => {
+                alert('Results copied to clipboard! Share with your friends.');
+            });
+        }
+    },
+
+    // Show Risk Assessment Results
+    showRiskAssessmentResults() {
+        const analysis = this.analyzeRiskData();
+        const content = document.getElementById('analyzer-content');
+        
+        content.innerHTML = `
+            <div class="risk-assessment-results">
+                <div class="results-header">
+                    <h3>Your Personal Risk Profile</h3>
+                    <p>Based on your lifestyle and situation, here's your personalized risk assessment:</p>
+                </div>
+                
+                <div class="risk-profile-summary">
+                    <div class="risk-categories">
+                        ${analysis.categories.map(category => `
+                            <div class="risk-category">
+                                <div class="category-header">
+                                    <h4>${category.name}</h4>
+                                    <div class="risk-level ${category.level}">
+                                        <span class="risk-dot"></span>
+                                        ${category.level.charAt(0).toUpperCase() + category.level.slice(1)} Risk
+                                    </div>
+                                </div>
+                                <p>${category.description}</p>
+                                ${category.recommendations.length > 0 ? `
+                                    <ul class="category-recommendations">
+                                        ${category.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                                    </ul>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="overall-recommendations">
+                    <h4>Priority Recommendations:</h4>
+                    ${analysis.overallRecommendations.map((rec, index) => `
+                        <div class="recommendation-item priority-${rec.priority}">
+                            <div class="recommendation-icon">${index + 1}</div>
+                            <div class="recommendation-content">
+                                <h5>${rec.title}</h5>
+                                <p>${rec.description}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="risk-summary-cta">
+                    <h4>Ready to Optimize Your Protection?</h4>
+                    <p>Based on your risk profile, we can help you find coverage that fits your specific needs and budget.</p>
+                    <button class="btn btn--primary" onclick="AnalyzerSystem.requestPersonalizedQuote()">
+                        Get My Personalized Quote
+                    </button>
+                </div>
+            </div>
+        `;
+
+        // Update navigation
+        document.getElementById('analyzer-next').style.display = 'none';
+        document.getElementById('analyzer-prev').textContent = 'Start Over';
+        document.getElementById('analyzer-prev').style.display = 'block';
+    },
+
+    // Analyze risk assessment data
+    analyzeRiskData() {
+        const data = this.userData;
+        const categories = [];
+        const overallRecommendations = [];
+
+        // Auto Risk Analysis
+        let autoRisk = 'low';
+        let autoRecommendations = [];
+        
+        if (data.driving_frequency === 'daily') {
+            autoRisk = 'medium';
+            autoRecommendations.push('Consider higher liability limits due to daily driving exposure');
+        }
+        
+        if (data.activities && data.activities.includes('commute_driving')) {
+            autoRisk = 'medium';
+            autoRecommendations.push('Long commutes increase accident risk - ensure adequate coverage');
+        }
+
+        if (data.vehicles_owned && data.vehicles_owned.includes('motorcycle')) {
+            autoRisk = 'high';
+            autoRecommendations.push('Motorcycle riding requires specialized coverage and safety gear');
+        }
+
+        categories.push({
+            name: 'Auto Insurance Needs',
+            level: autoRisk,
+            description: this.getRiskDescription('auto', autoRisk, data),
+            recommendations: autoRecommendations
+        });
+
+        // Home Risk Analysis
+        let homeRisk = 'low';
+        let homeRecommendations = [];
+
+        if (data.housing_situation === 'own_home') {
+            homeRisk = 'medium';
+            if (data.property_features && data.property_features.includes('pool_spa')) {
+                homeRisk = 'high';
+                homeRecommendations.push('Pool/spa increases liability risk - consider umbrella coverage');
+            }
+            if (data.property_features && data.property_features.includes('trampoline')) {
+                homeRecommendations.push('Trampolines create significant liability exposure');
+            }
+        } else if (data.housing_situation === 'rent_apartment' || data.housing_situation === 'rent_house') {
+            homeRecommendations.push('Renters insurance is essential to protect personal belongings');
+        }
+
+        categories.push({
+            name: 'Property Protection',
+            level: homeRisk,
+            description: this.getRiskDescription('home', homeRisk, data),
+            recommendations: homeRecommendations
+        });
+
+        // Life Stage Risk Analysis
+        let lifeRisk = 'low';
+        let lifeRecommendations = [];
+
+        if (data.dependents && parseInt(data.dependents) > 0) {
+            lifeRisk = 'medium';
+            lifeRecommendations.push('Dependents increase the need for life insurance protection');
+            
+            if (data.emergency_fund === 'none' || data.emergency_fund === 'under_1000') {
+                lifeRisk = 'high';
+                lifeRecommendations.push('Low emergency savings increases insurance needs');
+            }
+        }
+
+        if (data.debt_level === 'high') {
+            lifeRisk = 'high';
+            lifeRecommendations.push('High debt levels require careful insurance planning');
+        }
+
+        categories.push({
+            name: 'Financial Security',
+            level: lifeRisk,
+            description: this.getRiskDescription('life', lifeRisk, data),
+            recommendations: lifeRecommendations
+        });
+
+        // Generate overall recommendations
+        if (data.emergency_fund === 'none' || data.emergency_fund === 'under_1000') {
+            overallRecommendations.push({
+                title: 'Build Emergency Fund',
+                description: 'Having 3-6 months of expenses saved allows you to choose higher deductibles and save on premiums.',
+                priority: 'high'
+            });
+        }
+
+        if (data.insurance_priority === 'lowest_cost') {
+            overallRecommendations.push({
+                title: 'Balance Cost with Protection',
+                description: 'While cost is important, ensure you have adequate coverage. Consider increasing deductibles rather than reducing coverage limits.',
+                priority: 'medium'
+            });
+        }
+
+        // Add risk-specific recommendations
+        const highRiskCategories = categories.filter(cat => cat.level === 'high');
+        if (highRiskCategories.length > 0) {
+            overallRecommendations.unshift({
+                title: 'Address High-Risk Areas',
+                description: `Your ${highRiskCategories.map(cat => cat.name.toLowerCase()).join(' and ')} ${highRiskCategories.length > 1 ? 'require' : 'requires'} immediate attention to ensure adequate protection.`,
+                priority: 'high'
+            });
+        }
+
+        overallRecommendations.push({
+            title: 'Annual Coverage Review',
+            description: 'Review your insurance annually or after major life changes to ensure your coverage keeps pace with your evolving needs.',
+            priority: 'low'
+        });
+
+        return {
+            categories,
+            overallRecommendations: overallRecommendations.slice(0, 4) // Limit to 4 recommendations
+        };
+    },
+
+    // Get risk description based on category and level
+    getRiskDescription(category, level, data) {
+        const descriptions = {
+            auto: {
+                low: 'Your driving habits and vehicle use suggest lower auto insurance risk.',
+                medium: 'Your driving patterns indicate moderate risk that requires adequate coverage.',
+                high: 'Your driving activities and vehicle types create elevated risk requiring comprehensive protection.'
+            },
+            home: {
+                low: 'Your living situation presents minimal property-related risks.',
+                medium: 'Your property and living situation require standard homeowner protections.',
+                high: 'Your property features and assets create significant liability exposure requiring enhanced coverage.'
+            },
+            life: {
+                low: 'Your current life stage suggests minimal additional insurance needs.',
+                medium: 'Your family situation and financial obligations indicate moderate insurance needs.',
+                high: 'Your dependents and financial situation require comprehensive protection planning.'
+            }
+        };
+
+        return descriptions[category][level];
+    },
+
+    // Enhanced getQuestions method to handle new quiz types
+    getQuestions() {
+        switch (this.currentAnalyzer) {
+            case 'auto': return this.autoQuestions;
+            case 'home': return this.homeQuestions;
+            case 'umbrella': return this.umbrellaQuestions;
+            case 'risk_assessment': return this.riskAssessmentQuestions;
+            case 'iq_quiz': return this.iqQuizQuestions;
+            default: return [];
+        }
+    },
+
+    // Enhanced handleNext for quiz types
+    handleNext() {
+        if (this.currentAnalyzer === 'iq_quiz') {
+            this.currentStep++;
+            this.loadIQQuizQuestion();
+            return;
+        }
+
+        if (this.currentAnalyzer === 'risk_assessment') {
+            if (!this.validateCurrentStep()) {
+                this.showValidationErrors();
+                return;
+            }
+
+            this.saveCurrentStepData();
+            
+            const questions = this.getQuestions();
+            if (this.currentStep >= questions.length - 1) {
+                this.showRiskAssessmentResults();
+            } else {
+                this.currentStep++;
+                this.loadStep();
+            }
+            return;
+        }
+
+        // Default behavior for other analyzers
+        if (!this.validateCurrentStep()) {
+            this.showValidationErrors();
+            return;
+        }
+
+        this.saveCurrentStepData();
+        
+        const questions = this.getQuestions();
+        if (this.currentStep >= questions.length - 1) {
+            this.showResults();
+        } else {
+            this.currentStep++;
+            this.loadStep();
+        }
+    },
+
+    // Enhanced handlePrevious for quiz types
+    handlePrevious() {
+        if (this.currentAnalyzer === 'iq_quiz') {
+            if (this.currentStep > 0) {
+                this.currentStep--;
+                this.loadIQQuizQuestion();
+            } else {
+                this.startIQQuiz(); // Restart quiz
+            }
+            return;
+        }
+
+        if (this.currentAnalyzer === 'risk_assessment') {
+            if (this.currentStep > 0) {
+                this.currentStep--;
+                this.loadStep();
+                this.populateStoredData();
+            } else {
+                this.startRiskAssessment(); // Restart assessment
+            }
+            return;
+        }
+
+        // Default behavior
+        if (this.currentStep > 0) {
+            this.currentStep--;
+            this.loadStep();
+            this.populateStoredData();
+        }
+    }
+});
+
+// Add additional CSS styles for the Learning Center
+const learningCenterStyles = `
+    <style id="learning-center-styles">
+        .iq-quiz-question {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .question-header {
+            margin-bottom: 30px;
+        }
+
+        .question-number {
+            display: block;
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .question-progress .progress-bar {
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 0 auto;
+            max-width: 300px;
+        }
+
+        .question-text {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 40px;
+            line-height: 1.4;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .quiz-option {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .quiz-option:hover {
+            background: #e9ecef;
+            border-color: #0A61C9;
+        }
+
+        .quiz-option.selected {
+            border-color: #0A61C9;
+            background: rgba(10, 97, 201, 0.1);
+        }
+
+        .quiz-option.correct {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .quiz-option.incorrect {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .option-letter {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            background: #0A61C9;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .quiz-option.correct .option-letter {
+            background: #10b981;
+        }
+
+        .quiz-option.incorrect .option-letter {
+            background: #ef4444;
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 16px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .quiz-explanation {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e6f3ff 100%);
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid #0A61C9;
+            margin-top: 30px;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .explanation-content h4 {
+            color: #0A61C9;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .explanation-content p {
+            color: #2c3e50;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .quiz-results {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            font-weight: 700;
+            color: white;
+        }
+
+        .score-circle.a-plus,
+        .score-circle.a {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .score-circle.b {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .score-circle.c,
+        .score-circle.d {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .score-circle .grade {
+            font-size: 32px;
+            line-height: 1;
+        }
+
+        .score-circle .percentage {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .quiz-breakdown {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+        }
+
+        .quiz-breakdown h4 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .question-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 10px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .question-result {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .question-result.correct {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .question-result.incorrect {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .result-icon {
+            font-size: 16px;
+        }
+
+        .recommendations-section {
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .recommendations-section h4 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .quiz-cta {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 16px;
+            margin-top: 30px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .risk-assessment-results {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .risk-categories {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .risk-category {
+            background: #ffffff;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .category-header h4 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .risk-level {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .risk-level.low {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .risk-level.medium {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .risk-level.high {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .risk-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .category-recommendations {
+            margin: 15px 0 0 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .category-recommendations li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 8px;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .category-recommendations li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #0A61C9;
+            font-weight: bold;
+        }
+
+        .overall-recommendations {
+            margin-bottom: 40px;
+        }
+
+        .overall-recommendations h4 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .recommendation-item.priority-high {
+            border-left-color: #ef4444;
+        }
+
+        .recommendation-item.priority-medium {
+            border-left-color: #f59e0b;
+        }
+
+        .recommendation-item.priority-low {
+            border-left-color: #10b981;
+        }
+
+        .recommendation-content h5 {
+            color: #2c3e50;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .risk-summary-cta {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e6f3ff 100%);
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid rgba(10, 97, 201, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .question-text {
+                font-size: 20px;
+            }
+
+            .quiz-option {
+                padding: 16px;
+            }
+
+            .option-letter {
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
+            }
+
+            .option-text {
+                font-size: 15px;
+            }
+
+            .score-circle {
+                width: 100px;
+                height: 100px;
+            }
+
+            .score-circle .grade {
+                font-size: 28px;
+            }
+
+            .question-results {
+                grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .cta-buttons .btn {
+                width: 100%;
+                max-width: 280px;
+            }
+
+            .category-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+`;
+
+// Add the styles to the head
+document.head.insertAdjacentHTML('beforeend', learningCenterStyles);
+
+// Create Learning Center section and insert it into the page
+function addLearningCenterSection() {
+    const learningCenterHTML = `
+        <section id="learning-center" class="learning-center-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Interactive Learning Center</h2>
+                    <p>Test your insurance knowledge and discover your personal risk profile with our educational tools</p>
+                </div>
+                <div class="learning-center-grid">
+                    <div class="learning-tool-card">
+                        <div class="tool-card__header">
+                            <span class="tool-card__icon">🧠</span>
+                            <h3>Insurance IQ Quiz</h3>
+                        </div>
+                        <p class="tool-card__description">Test your insurance knowledge with our fun, interactive quiz. Learn key concepts while discovering how much you really know about protecting your assets.</p>
+                        <ul class="tool-card__features">
+                            <li>15 expertly crafted questions</li>
+                            <li>Instant feedback and explanations</li>
+                            <li>Personalized score and recommendations</li>
+                            <li>Shareable results</li>
+                        </ul>
+                        <button class="btn btn--primary" onclick="AnalyzerSystem.startIQQuiz()">
+                            Take the Quiz
+                            <svg class="icon-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="learning-tool-card">
+                        <div class="tool-card__header">
+                            <span class="tool-card__icon">📊</span>
+                            <h3>Personal Risk Assessment</h3>
+                        </div>
+                        <p class="tool-card__description">Get a comprehensive analysis of your personal risk factors and receive customized recommendations for your insurance needs.</p>
+                        <ul class="tool-card__features">
+                            <li>Lifestyle and activity analysis</li>
+                            <li>Property and asset evaluation</li>
+                            <li>Financial situation assessment</li>
+                            <li>Personalized risk profile</li>
+                        </ul>
+                        <button class="btn btn--primary" onclick="AnalyzerSystem.startRiskAssessment()">
+                            Start Assessment
+                            <svg class="icon-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="learning-center-cta">
+                    <p>Knowledge is power when it comes to insurance. Use these tools to become a more informed consumer and make better coverage decisions.</p>
+                    <a href="tel:3368351993" class="btn btn--secondary">Questions? Call (336) 835-1993</a>
+                </div>
+            </div>
+        </section>
+    `;
+
+    // Insert after the existing Interactive Coverage Analyzer section
+    const analyzerSection = document.getElementById('coverage-analyzer');
+    if (analyzerSection) {
+        analyzerSection.insertAdjacentHTML('afterend', learningCenterHTML);
+    }
+}
+
+// Add CSS styles for the Learning Center section
+const learningCenterSectionStyles = `
+    <style id="learning-center-section-styles">
+        .learning-center-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafb 100%);
+            position: relative;
+        }
+
+        .learning-center-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(10, 97, 201, 0.2), transparent);
+        }
+
+        .learning-center-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .learning-tool-card {
+            background: #ffffff;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            padding: 40px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .learning-tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #0A61C9 0%, #10b981 100%);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .learning-tool-card:hover {
+            border-color: #0A61C9;
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(10, 97, 201, 0.15);
+        }
+
+        .learning-tool-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .tool-card__header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .tool-card__icon {
+            font-size: 36px;
+        }
+
+        .tool-card__header h3 {
+            font-size: 24px;
+            color: #13343b;
+            margin: 0;
+        }
+
+        .tool-card__description {
+            color: #626c71;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+
+        .tool-card__features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 30px 0;
+        }
+
+        .tool-card__features li {
+            position: relative;
+            padding-left: 28px;
+            margin-bottom: 12px;
+            color: #626c71;
+            line-height: 1.5;
+        }
+
+        .tool-card__features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #0A61C9;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .learning-center-cta {
+            text-align: center;
+            padding: 40px;
+            background: rgba(10, 97, 201, 0.05);
+            border-radius: 16px;
+            border: 1px solid rgba(10, 97, 201, 0.1);
+        }
+
+        .learning-center-cta p {
+            font-size: 18px;
+            color: #626c71;
+            margin-bottom: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @media (max-width: 768px) {
+            .learning-center-section {
+                padding: 60px 0;
+            }
+            
+            .learning-center-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                margin-bottom: 40px;
+            }
+            
+            .learning-tool-card {
+                padding: 30px;
+            }
+            
+            .tool-card__header h3 {
+                font-size: 20px;
+            }
+
+            .learning-center-cta {
+                padding: 30px 20px;
+            }
+
+            .learning-center-cta p {
+                font-size: 16px;
+            }
+        }
+    </style>
+`;
+
+// Add section styles to head
+document.head.insertAdjacentHTML('beforeend', learningCenterSectionStyles);
+
+// Initialize the Learning Center when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Add a small delay to ensure the existing analyzer system is fully loaded
+    setTimeout(addLearningCenterSection, 100);
+});
+
+console.log('Interactive Learning Center loaded successfully!');
+            
         });
 };
