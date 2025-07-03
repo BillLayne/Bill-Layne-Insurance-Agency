@@ -896,22 +896,15 @@
             
             // Prepare template parameters for EmailJS
             const templateParams = {
-                name: formData.get('name'),
-                email: formData.get('email'),
-                phone: formData.get('phone'),
-                insuranceType: formData.get('insuranceType'),
-                message: `New quote request from ${formData.get('name')}`,
-                submission_date: new Date().toLocaleString(),
-                // Additional fields that might be in your EmailJS template
                 from_name: formData.get('name'),
                 from_email: formData.get('email'),
-                to_name: 'Bill Layne Insurance',
-                reply_to: formData.get('email'),
-                user_name: formData.get('name'),
-                user_email: formData.get('email'),
-                user_phone: formData.get('phone'),
-                insurance_type: formData.get('insuranceType')
+                phone: formData.get('phone'),
+                insurance_type: formData.get('insuranceType'),
+                message: `New quote request for ${formData.get('insuranceType')} insurance from ${formData.get('name')}. Phone: ${formData.get('phone')}, Email: ${formData.get('email')}`
             };
+            
+            // Debug: Log the parameters being sent
+            console.log('Sending EmailJS parameters:', templateParams);
             
             // Send email using EmailJS
             emailjs.send('service_4flmw3k', 'template_6k9bgwi', templateParams)
@@ -929,14 +922,21 @@
                     submitBtn.disabled = false;
                 })
                 .catch(function(error) {
-                    console.error('FAILED...', error);
+                    console.error('EmailJS Error:', error);
+                    console.error('Error details:', JSON.stringify(error, null, 2));
                     
                     // Remove loading state
                     submitBtn.classList.remove('loading');
                     submitBtn.disabled = false;
                     
-                    // Show error message
-                    alert('There was an error submitting your request. Please call us at (336) 835-1993.');
+                    // Try mailto fallback
+                    const mailtoLink = `mailto:Save@BillLayneInsurance.com?subject=Quote Request - ${templateParams.insurance_type}&body=Name: ${templateParams.from_name}%0AEmail: ${templateParams.from_email}%0APhone: ${templateParams.phone}%0AInsurance Type: ${templateParams.insurance_type}`;
+                    
+                    if (confirm('There was an error with the online form. Would you like to open your email client instead?')) {
+                        window.location.href = mailtoLink;
+                    } else {
+                        alert('Please call us at (336) 835-1993 to request your quote.');
+                    }
                 });
         });
 
