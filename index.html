@@ -181,6 +181,10 @@
                                     <option value="specialty">Specialty Coverage</option>
                                 </select>
                             </div>
+                            <div class="form-group">
+                                <label for="effectiveDate" class="sr-only">Policy Effective Date</label>
+                                <input type="date" id="effectiveDate" name="effectiveDate" class="form-control" placeholder="Effective Date" required aria-required="true" title="Policy effective or renewal date">
+                            </div>
                             <button type="submit" class="btn btn--primary btn--full-width">See My Savings</button>
                         </form>
                         <p class="form-note">✓ No spam, ever. Your information is secure.</p>
@@ -826,6 +830,18 @@
         </svg>
     </div>
 
+    <!-- Renewals Modal -->
+    <div id="renewalsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeRenewalsModal()">&times;</span>
+            <h2>Upcoming Renewals</h2>
+            <div id="renewalsList"></div>
+        </div>
+    </div>
+
+    <!-- Renewals Button -->
+    <button class="renewals-button" onclick="showRenewals()">View Renewals</button>
+
     <!-- Load the enhanced JavaScript -->
     <script src="app.js"></script>
     
@@ -920,13 +936,31 @@
                 user_phone: formData.get('phone'),
                 insurance_type: formData.get('insuranceType'),
                 insuranceType: formData.get('insuranceType'),
+                effective_date: formData.get('effectiveDate'),
+                effectiveDate: formData.get('effectiveDate'),
                 
                 // Full message
-                message: `New quote request for ${formData.get('insuranceType')} insurance from ${formData.get('name')}. Phone: ${formData.get('phone')}, Email: ${formData.get('email')}`
+                message: `New quote request for ${formData.get('insuranceType')} insurance from ${formData.get('name')}. Phone: ${formData.get('phone')}, Email: ${formData.get('email')}, Effective Date: ${formData.get('effectiveDate')}`
             };
             
             // Debug: Log the parameters being sent
             console.log('Sending EmailJS parameters:', templateParams);
+            
+            // Store prospect data locally
+            const prospectData = {
+                id: Date.now(),
+                name: formData.get('name'),
+                phone: formData.get('phone'),
+                email: formData.get('email'),
+                insuranceType: formData.get('insuranceType'),
+                effectiveDate: formData.get('effectiveDate'),
+                submittedDate: new Date().toISOString()
+            };
+            
+            // Save to localStorage
+            let prospects = JSON.parse(localStorage.getItem('prospects') || '[]');
+            prospects.push(prospectData);
+            localStorage.setItem('prospects', JSON.stringify(prospects));
             
             // Send email using EmailJS
             emailjs.send('service_4flmw3k', 'template_6k9bgwi', templateParams)
@@ -975,6 +1009,140 @@
             }
         }
 
+        // Renewals System
+        function showRenewals() {
+            const prospects = JSON.parse(localStorage.getItem('prospects') || '[]');
+            const renewalsList = document.getElementById('renewalsList');
+            const modal = document.getElementById('renewalsModal');
+            
+            if (prospects.length === 0) {
+                renewalsList.innerHTML = '<p>No renewals tracked yet. Submit a quote request to start tracking.</p>';
+            } else {
+                const sortedProspects = prospects.sort((a, b) => new Date(a.effectiveDate) - new Date(b.effectiveDate));
+                
+                renewalsList.innerHTML = sortedProspects.map(prospect => {
+                    const effectiveDate = new Date(prospect.effectiveDate);
+                    const today = new Date();
+                    const daysUntilRenewal = Math.ceil((effectiveDate - today) / (1000 * 60 * 60 * 24));
+                    
+                    return `
+                        <div class="renewal-item">
+                            <h4>${prospect.name}</h4>
+                            <p><strong>Insurance Type:</strong> ${prospect.insuranceType}</p>
+                            <p><strong>Phone:</strong> ${prospect.phone}</p>
+                            <p><strong>Email:</strong> ${prospect.email}</p>
+                            <p class="due-date"><strong>Effective/Renewal Date:</strong> ${effectiveDate.toLocaleDateString()} (${daysUntilRenewal} days)</p>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            modal.style.display = 'flex';
+        }
+        
+        function closeRenewalsModal() {
+            document.getElementById('renewalsModal').style.display = 'none';
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('renewalsModal');
+            if (event.target == modal) {
+                closeRenewalsModal();
+            }
+        }
+
     </script>
+    
+    <style>
+        /* Renewals Modal Styles */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            padding: 30px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: -10px;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: #000;
+        }
+        
+        .renewal-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .renewal-item h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        
+        .renewal-item p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .renewal-item .due-date {
+            color: #d9534f;
+            font-weight: bold;
+        }
+        
+        .renewals-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            font-weight: 600;
+            z-index: 999;
+            transition: background-color 0.3s ease;
+        }
+        
+        .renewals-button:hover {
+            background: #0056b3;
+        }
+        
+        @media (max-width: 768px) {
+            .renewals-button {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+    </style>
 </body>
 </html>
