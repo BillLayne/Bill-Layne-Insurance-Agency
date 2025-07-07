@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Auto Coverage Checkup - Analyze your car insurance needs, identify gaps, and discover savings opportunities">
+    <title>Auto Coverage Checkup | Bill Layne Insurance</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="auto-coverage-checkup.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar__content">
+                <a href="index.html" class="navbar__brand">
+                    <span class="navbar__logo">🏠</span>
+                    Bill Layne Insurance
+                </a>
+                <div class="navbar__menu">
+                    <a href="index.html#services" class="navbar__link">Services</a>
+                    <a href="index.html#coverage-analyzer" class="navbar__link">Tools</a>
+                    <a href="index.html#contact" class="navbar__link">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="checkup-container">
+        <div class="progress-bar">
+            <div class="progress-bar__fill" id="progressBar"></div>
+        </div>
+
+        <div class="checkup-header">
+            <h1>Auto Coverage Checkup</h1>
+            <p>Let's analyze your current coverage and identify opportunities to optimize your protection and savings</p>
+        </div>
+
+        <form id="autoCheckupForm" class="checkup-form">
+            <!-- Step 1: Basic Information -->
+            <div class="form-step active" data-step="1">
+                <h2>Let's start with some basic information</h2>
+                
+                <div class="form-group">
+                    <label for="zipCode">ZIP Code</label>
+                    <input type="text" id="zipCode" name="zipCode" maxlength="5" pattern="[0-9]{5}" required>
+                    <span class="form-hint">Your location affects rates and coverage requirements</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="numDrivers">Number of Drivers</label>
+                    <select id="numDrivers" name="numDrivers" required>
+                        <option value="">Select...</option>
+                        <option value="1">1 Driver</option>
+                        <option value="2">2 Drivers</option>
+                        <option value="3">3 Drivers</option>
+                        <option value="4+">4+ Drivers</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="numVehicles">Number of Vehicles</label>
+                    <select id="numVehicles" name="numVehicles" required>
+                        <option value="">Select...</option>
+                        <option value="1">1 Vehicle</option>
+                        <option value="2">2 Vehicles</option>
+                        <option value="3">3 Vehicles</option>
+                        <option value="4+">4+ Vehicles</option>
+                    </select>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="btn btn--secondary" onclick="window.location.href='index.html#coverage-analyzer'">Back to Tools</button>
+                    <button type="button" class="btn btn--primary" onclick="nextStep()">Next</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Vehicle Information -->
+            <div class="form-step" data-step="2">
+                <h2>Tell us about your primary vehicle</h2>
+                
+                <div class="form-group">
+                    <label for="vehicleYear">Vehicle Year</label>
+                    <select id="vehicleYear" name="vehicleYear" required>
+                        <option value="">Select Year...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="vehicleMake">Vehicle Make</label>
+                    <input type="text" id="vehicleMake" name="vehicleMake" placeholder="e.g., Honda, Toyota, Ford" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="vehicleModel">Vehicle Model</label>
+                    <input type="text" id="vehicleModel" name="vehicleModel" placeholder="e.g., Accord, Camry, F-150" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="vehicleValue">Estimated Vehicle Value</label>
+                    <select id="vehicleValue" name="vehicleValue" required>
+                        <option value="">Select Range...</option>
+                        <option value="<5000">Less than $5,000</option>
+                        <option value="5000-10000">$5,000 - $10,000</option>
+                        <option value="10000-20000">$10,000 - $20,000</option>
+                        <option value="20000-35000">$20,000 - $35,000</option>
+                        <option value="35000-50000">$35,000 - $50,000</option>
+                        <option value="50000+">More than $50,000</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="annualMileage">Annual Mileage</label>
+                    <select id="annualMileage" name="annualMileage" required>
+                        <option value="">Select Range...</option>
+                        <option value="<5000">Less than 5,000 miles</option>
+                        <option value="5000-10000">5,000 - 10,000 miles</option>
+                        <option value="10000-15000">10,000 - 15,000 miles</option>
+                        <option value="15000-20000">15,000 - 20,000 miles</option>
+                        <option value="20000+">More than 20,000 miles</option>
+                    </select>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="btn btn--secondary" onclick="previousStep()">Previous</button>
+                    <button type="button" class="btn btn--primary" onclick="nextStep()">Next</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Current Coverage -->
+            <div class="form-step" data-step="3">
+                <h2>What are your current liability limits?</h2>
+                <p class="step-description">If you're not sure, check your insurance card or policy documents</p>
+                
+                <div class="form-group">
+                    <label for="liabilityLimits">Bodily Injury & Property Damage Limits</label>
+                    <select id="liabilityLimits" name="liabilityLimits" required>
+                        <option value="">Select your limits...</option>
+                        <option value="state-minimum">State Minimum (Not Recommended)</option>
+                        <option value="25/50/25">25/50/25</option>
+                        <option value="50/100/50">50/100/50</option>
+                        <option value="100/300/100">100/300/100</option>
+                        <option value="250/500/250">250/500/250</option>
+                        <option value="500/500/500">500/500/500</option>
+                        <option value="not-sure">Not Sure</option>
+                    </select>
+                    <span class="form-hint">Format: Per Person/Per Accident/Property Damage (in thousands)</span>
+                </div>
+
+                <div class="form-group">
+                    <label>Do you have these coverages?</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="hasCollision" id="hasCollision">
+                            <span>Collision Coverage</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="hasComprehensive" id="hasComprehensive">
+                            <span>Comprehensive Coverage</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="hasUninsured" id="hasUninsured">
+                            <span>Uninsured/Underinsured Motorist</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="hasRental" id="hasRental">
+                            <span>Rental Car Coverage</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="hasRoadside" id="hasRoadside">
+                            <span>Roadside Assistance</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="deductible">Collision/Comprehensive Deductible</label>
+                    <select id="deductible" name="deductible">
+                        <option value="">Select if applicable...</option>
+                        <option value="250">$250</option>
+                        <option value="500">$500</option>
+                        <option value="1000">$1,000</option>
+                        <option value="2500">$2,500</option>
+                        <option value="na">Not Applicable</option>
+                    </select>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="btn btn--secondary" onclick="previousStep()">Previous</button>
+                    <button type="button" class="btn btn--primary" onclick="nextStep()">Next</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Financial Situation -->
+            <div class="form-step" data-step="4">
+                <h2>Help us understand your financial situation</h2>
+                <p class="step-description">This helps us recommend appropriate coverage levels</p>
+                
+                <div class="form-group">
+                    <label for="homeOwnership">Do you own or rent your home?</label>
+                    <select id="homeOwnership" name="homeOwnership" required>
+                        <option value="">Select...</option>
+                        <option value="own">Own</option>
+                        <option value="rent">Rent</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="netWorth">Approximate Net Worth</label>
+                    <select id="netWorth" name="netWorth" required>
+                        <option value="">Select Range...</option>
+                        <option value="<50k">Less than $50,000</option>
+                        <option value="50k-100k">$50,000 - $100,000</option>
+                        <option value="100k-250k">$100,000 - $250,000</option>
+                        <option value="250k-500k">$250,000 - $500,000</option>
+                        <option value="500k-1m">$500,000 - $1 million</option>
+                        <option value="1m+">More than $1 million</option>
+                    </select>
+                    <span class="form-hint">Include home equity, savings, investments, etc.</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="monthlyBudget">Monthly Insurance Budget</label>
+                    <select id="monthlyBudget" name="monthlyBudget" required>
+                        <option value="">Select Range...</option>
+                        <option value="<100">Less than $100</option>
+                        <option value="100-150">$100 - $150</option>
+                        <option value="150-200">$150 - $200</option>
+                        <option value="200-300">$200 - $300</option>
+                        <option value="300+">More than $300</option>
+                    </select>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="btn btn--secondary" onclick="previousStep()">Previous</button>
+                    <button type="button" class="btn btn--primary" onclick="nextStep()">Next</button>
+                </div>
+            </div>
+
+            <!-- Step 5: Driving History -->
+            <div class="form-step" data-step="5">
+                <h2>Quick driving history check</h2>
+                
+                <div class="form-group">
+                    <label>In the last 5 years, have any drivers had:</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="hasAccidents" id="hasAccidents">
+                            <span>At-fault accidents</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="hasTickets" id="hasTickets">
+                            <span>Moving violations/tickets</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="hasClaims" id="hasClaims">
+                            <span>Insurance claims</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="hasDUI" id="hasDUI">
+                            <span>DUI/DWI</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="cleanRecord" id="cleanRecord">
+                            <span>Clean driving record (none of the above)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="primaryUse">Primary Vehicle Use</label>
+                    <select id="primaryUse" name="primaryUse" required>
+                        <option value="">Select...</option>
+                        <option value="commute">Commute to work/school</option>
+                        <option value="pleasure">Pleasure/personal use</option>
+                        <option value="business">Business use</option>
+                        <option value="rideshare">Rideshare (Uber/Lyft)</option>
+                    </select>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="btn btn--secondary" onclick="previousStep()">Previous</button>
+                    <button type="button" class="btn btn--primary" onclick="generateReport()">Get My Analysis</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="results-section" style="display: none;">
+            <div class="results-header">
+                <h2>Your Auto Coverage Analysis</h2>
+                <p>Based on your information, here's our personalized coverage assessment</p>
+            </div>
+
+            <div class="results-grid">
+                <!-- Coverage Score Card -->
+                <div class="result-card score-card">
+                    <h3>Coverage Score</h3>
+                    <div class="score-display">
+                        <div class="score-circle" id="scoreCircle">
+                            <span class="score-number" id="scoreNumber">0</span>
+                            <span class="score-label">out of 100</span>
+                        </div>
+                    </div>
+                    <p class="score-message" id="scoreMessage"></p>
+                </div>
+
+                <!-- Coverage Gaps -->
+                <div class="result-card gaps-card">
+                    <h3>⚠️ Coverage Gaps Identified</h3>
+                    <ul id="coverageGaps" class="gaps-list"></ul>
+                </div>
+
+                <!-- Recommendations -->
+                <div class="result-card recommendations-card">
+                    <h3>✅ Our Recommendations</h3>
+                    <ul id="recommendations" class="recommendations-list"></ul>
+                </div>
+
+                <!-- Savings Opportunities -->
+                <div class="result-card savings-card">
+                    <h3>💰 Potential Savings</h3>
+                    <ul id="savingsOpportunities" class="savings-list"></ul>
+                </div>
+            </div>
+
+            <div class="cta-section">
+                <h3>Ready to optimize your coverage?</h3>
+                <p>Get a personalized quote and expert guidance from Bill Layne Insurance</p>
+                <div class="cta-buttons">
+                    <a href="tel:3368351993" class="btn btn--primary">
+                        📞 Call (336) 835-1993
+                    </a>
+                    <button class="btn btn--secondary" onclick="downloadReport()">
+                        📄 Download Report
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-navigation">
+                <button type="button" class="btn btn--secondary" onclick="startOver()">Start New Analysis</button>
+                <a href="index.html#coverage-analyzer" class="btn btn--outline">Back to Tools</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Bill Layne Insurance. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="auto-coverage-checkup.js"></script>
+</body>
+</html>
