@@ -1555,78 +1555,81 @@ window.startAnalyzer = function(type) {
 };
 
 // Enhanced quote form submission to include analyzer data
-const originalHandleQuoteSubmission = window.handleQuoteSubmission;
-window.handleQuoteSubmission = function(e) {
-    e.preventDefault();
-    
-    const form = e.target;
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const formData = new FormData(form);
-    
-    // Validate form
-    if (!validateForm(form)) {
-        return;
-    }
-    
-    // Show loading state
-    submitBtn.classList.add('loading');
-    submitBtn.disabled = true;
-    
-    // Get analyzer data if available
-    const analyzerData = sessionStorage.getItem('analyzer_data');
-    let additionalInfo = '';
-    
-    if (analyzerData) {
-        const data = JSON.parse(analyzerData);
-        additionalInfo = `\n\nAnalyzer Data:\n- Type: ${data.analyzer_type}\n- Analysis Score: ${data.analysis_score}\n- Completed: ${new Date(data.timestamp).toLocaleString()}`;
-        
-        // Clear the stored data
-        sessionStorage.removeItem('analyzer_data');
-    }
-    
-    // Prepare template parameters for EmailJS
-    const templateParams = {
-        name: formData.get('name'),
-        email: formData.get('email'),
-        phone: formData.get('phone'),
-        insuranceType: formData.get('insuranceType'),
-        message: `New quote request from ${formData.get('name')}${additionalInfo}`,
-        submission_date: new Date().toLocaleString()
-    };
-    
-    // Send email using EmailJS
-    emailjs.send('service_4flmw3k', 'template_6k9bgwi', templateParams)
-        .then(function(response) {
-            console.log('SUCCESS!', response.status, response.text);
-            
-            // Show success message
-            showSuccessMessage();
-            
-            // Reset form
-            form.reset();
-            
-            // Remove loading state
-            submitBtn.classList.remove('loading');
-            submitBtn.disabled = false;
-            
-            // Clear validation classes
-            const formControls = form.querySelectorAll('.form-control');
-            formControls.forEach(control => {
-                control.classList.remove('error', 'success');
-            });
-        })
-        .catch(function(error) {
-            console.error('FAILED...', error);
-            
-            // Remove loading state
-            submitBtn.classList.remove('loading');
-            submitBtn.disabled = false;
-            
-            // Try mailto fallback
-            const mailtoLink = `mailto:Save@BillLayneInsurance.com?subject=Quote Request - ${templateParams.insuranceType}&body=Name: ${templateParams.name}%0AEmail: ${templateParams.email}%0APhone: ${templateParams.phone}%0AInsurance Type: ${templateParams.insuranceType}${encodeURIComponent(additionalInfo)}`;
-            
-            // Show error message with fallback option
-            showErrorMessage(mailtoLink);
+// DISABLED: This conflicts with the form handler in index.html
+// const originalHandleQuoteSubmission = window.handleQuoteSubmission;
+// window.handleQuoteSubmission = function(e) {
+//     e.preventDefault();
+//     
+//     const form = e.target;
+//     const submitBtn = form.querySelector('button[type="submit"]');
+//     const formData = new FormData(form);
+//     
+//     // Validate form
+//     if (!validateForm(form)) {
+//         return;
+//     }
+//     
+//     // Show loading state
+//     submitBtn.classList.add('loading');
+//     submitBtn.disabled = true;
+//     
+//     // Get analyzer data if available
+//     const analyzerData = sessionStorage.getItem('analyzer_data');
+//     let additionalInfo = '';
+//     
+//     if (analyzerData) {
+//         const data = JSON.parse(analyzerData);
+//         additionalInfo = `\n\nAnalyzer Data:\n- Type: ${data.analyzer_type}\n- Analysis Score: ${data.analysis_score}\n- Completed: ${new Date(data.timestamp).toLocaleString()}`;
+//         
+//         // Clear the stored data
+//         sessionStorage.removeItem('analyzer_data');
+//     }
+//     
+//     // Prepare template parameters for EmailJS
+//     const templateParams = {
+//         name: formData.get('name'),
+//         email: formData.get('email'),
+//         phone: formData.get('phone'),
+//         insuranceType: formData.get('insuranceType'),
+//         message: `New quote request from ${formData.get('name')}${additionalInfo}`,
+//         submission_date: new Date().toLocaleString()
+//     };
+//     
+//     // Send email using EmailJS
+//     emailjs.send('service_4flmw3k', 'template_6k9bgwi', templateParams)
+//         .then(function(response) {
+//             console.log('SUCCESS!', response.status, response.text);
+//             
+//             // Show success message
+//             showSuccessMessage();
+//             
+//             // Reset form
+//             form.reset();
+//             
+//             // Remove loading state
+//             submitBtn.classList.remove('loading');
+//             submitBtn.disabled = false;
+//             
+//             // Clear validation classes
+//             const formControls = form.querySelectorAll('.form-control');
+//             formControls.forEach(control => {
+//                 control.classList.remove('error', 'success');
+//             });
+//         })
+//         .catch(function(error) {
+//             console.error('FAILED...', error);
+//             
+//             // Remove loading state
+//             submitBtn.classList.remove('loading');
+//             submitBtn.disabled = false;
+//             
+//             // Try mailto fallback
+//             const mailtoLink = `mailto:Save@BillLayneInsurance.com?subject=Quote Request - ${templateParams.insuranceType}&body=Name: ${templateParams.name}%0AEmail: ${templateParams.email}%0APhone: ${templateParams.phone}%0AInsurance Type: ${templateParams.insuranceType}${encodeURIComponent(additionalInfo)}`;
+//             
+//             // Show error message with fallback option
+//             showErrorMessage(mailtoLink);
+//         });
+// };
 // Interactive Learning Center Enhancement for Bill Layne Insurance
 // This adds Insurance IQ Quiz and Risk Assessment Questionnaire to your existing system
 

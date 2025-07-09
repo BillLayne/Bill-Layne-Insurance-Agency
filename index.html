@@ -147,11 +147,17 @@
     </script>
 
     <!-- EmailJS SDK -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" defer></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
-        (function(){
-            emailjs.init("Av6wKxL6HR-FIMtgm");
-        })();
+        // Wait for EmailJS to load before initializing
+        window.addEventListener('load', function() {
+            if (typeof emailjs !== 'undefined') {
+                emailjs.init("Av6wKxL6HR-FIMtgm");
+                console.log('EmailJS initialized successfully');
+            } else {
+                console.error('EmailJS SDK failed to load');
+            }
+        });
     </script>
 </head>
 <body>
@@ -959,6 +965,20 @@
             // Get form data
             const formData = new FormData(this);
             
+            // Get analyzer data if available
+            const analyzerData = sessionStorage.getItem('analyzer_data');
+            let additionalInfo = '';
+            
+            if (analyzerData) {
+                try {
+                    const data = JSON.parse(analyzerData);
+                    additionalInfo = `\n\nAnalyzer Data:\n- Type: ${data.analyzer_type}\n- Analysis Score: ${data.analysis_score}\n- Completed: ${new Date(data.timestamp).toLocaleString()}`;
+                    sessionStorage.removeItem('analyzer_data');
+                } catch (e) {
+                    console.error('Error parsing analyzer data:', e);
+                }
+            }
+            
             // Prepare template parameters for EmailJS
             const templateParams = {
                 // Common name field variations
@@ -980,11 +1000,20 @@
                 insuranceType: formData.get('insuranceType'),
                 
                 // Full message
-                message: `New quote request for ${formData.get('insuranceType')} insurance from ${formData.get('name')}. Phone: ${formData.get('phone')}, Email: ${formData.get('email')}`
+                message: `New quote request for ${formData.get('insuranceType')} insurance from ${formData.get('name')}. Phone: ${formData.get('phone')}, Email: ${formData.get('email')}${additionalInfo}`
             };
             
             // Debug: Log the parameters being sent
             console.log('Sending EmailJS parameters:', templateParams);
+            
+            // Check if EmailJS is loaded
+            if (typeof emailjs === 'undefined') {
+                console.error('EmailJS is not loaded!');
+                alert('There was an error loading the email service. Please try again or call us at (336) 835-1993.');
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+                return;
+            }
             
             // Send email using EmailJS
             emailjs.send('service_4flmw3k', 'template_6k9bgwi', templateParams)
@@ -1004,6 +1033,14 @@
                 .catch(function(error) {
                     console.error('EmailJS Error:', error);
                     console.error('Error details:', JSON.stringify(error, null, 2));
+                    
+                    // More detailed error logging
+                    if (error.text) {
+                        console.error('Error text:', error.text);
+                    }
+                    if (error.status) {
+                        console.error('Error status:', error.status);
+                    }
                     
                     // Remove loading state
                     submitBtn.classList.remove('loading');
