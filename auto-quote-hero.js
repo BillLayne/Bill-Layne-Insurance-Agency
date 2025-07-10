@@ -66,6 +66,14 @@ function createAutoQuoteHeroHTML() {
             transform: rotate(90deg);
         }
         
+        /* Form in fullscreen mode */
+        .quote-fullscreen-container #auto-hero-form {
+            width: 100%;
+            max-width: none;
+            margin: 0;
+            padding: 0;
+        }
+        
         /* Adjust form elements for larger screen */
         .quote-fullscreen-container .form-group {
             margin-bottom: 1.5rem;
@@ -74,6 +82,7 @@ function createAutoQuoteHeroHTML() {
         .quote-fullscreen-container .form-control {
             padding: 1rem;
             font-size: 1.1rem;
+            width: 100%;
         }
         
         .quote-fullscreen-container .step-title {
@@ -84,6 +93,7 @@ function createAutoQuoteHeroHTML() {
         .quote-fullscreen-container .form-label {
             font-size: 1rem;
             margin-bottom: 0.5rem;
+            display: block;
         }
         
         .quote-fullscreen-container .info-method-card {
@@ -107,6 +117,25 @@ function createAutoQuoteHeroHTML() {
             background: white;
             padding: 2rem 0 0;
             margin-top: 3rem;
+        }
+        
+        /* Ensure form steps display properly in fullscreen */
+        .quote-fullscreen-container .form-step {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .quote-fullscreen-container .form-step.active {
+            display: block;
+        }
+        
+        /* Fullscreen-specific layouts */
+        .quote-fullscreen-container .driver-vehicle-entry,
+        .quote-fullscreen-container .coverage-option {
+            background: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
         }
         
         @media (max-width: 768px) {
