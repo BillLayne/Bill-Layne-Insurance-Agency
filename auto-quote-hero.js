@@ -12,6 +12,108 @@ function createAutoQuoteHeroHTML() {
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             width: 100%;
             max-width: 500px;
+            transition: all 0.5s ease;
+        }
+        
+        /* Full screen overlay for steps 2-6 */
+        .quote-fullscreen-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            overflow-y: auto;
+            padding: 2rem 0;
+        }
+        
+        .quote-fullscreen-overlay.active {
+            display: block;
+        }
+        
+        .quote-fullscreen-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+            min-height: 90vh;
+        }
+        
+        .close-fullscreen {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .close-fullscreen:hover {
+            background: #e0e0e0;
+            transform: rotate(90deg);
+        }
+        
+        /* Adjust form elements for larger screen */
+        .quote-fullscreen-container .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .quote-fullscreen-container .form-control {
+            padding: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .quote-fullscreen-container .step-title {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+        }
+        
+        .quote-fullscreen-container .form-label {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .quote-fullscreen-container .info-method-card {
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .quote-fullscreen-container .method-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .quote-fullscreen-container .method-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .quote-fullscreen-container .form-navigation {
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding: 2rem 0 0;
+            margin-top: 3rem;
+        }
+        
+        @media (max-width: 768px) {
+            .quote-fullscreen-container {
+                padding: 2rem 1.5rem;
+                margin: 0 1rem;
+            }
         }
 
         .quote-progress {
@@ -337,11 +439,11 @@ function createAutoQuoteHeroHTML() {
         }
     </style>
 
-    <div class="auto-quote-hero">
+    <div class="auto-quote-hero" id="auto-quote-hero">
         <h3 style="text-align: center; margin-bottom: 1.5rem;">Get Your Free Auto Insurance Quote</h3>
         
-        <!-- Progress Bar -->
-        <div class="quote-progress">
+        <!-- Progress Bar for Step 1 -->
+        <div class="quote-progress" id="progress-step1">
             <div class="progress-bar">
                 <div class="progress-fill" id="progress-fill" style="width: 16.66%"></div>
             </div>
@@ -612,6 +714,24 @@ function createAutoQuoteHeroHTML() {
 
         <p class="form-note" style="margin-top: 1rem;">✓ No spam, ever. Your information is secure.</p>
     </div>
+    
+    <!-- Fullscreen Overlay for Steps 2-6 -->
+    <div class="quote-fullscreen-overlay" id="quote-fullscreen-overlay">
+        <div class="quote-fullscreen-container">
+            <button class="close-fullscreen" onclick="closeFullscreen()">×</button>
+            
+            <!-- Progress Bar for fullscreen -->
+            <div class="quote-progress" id="progress-fullscreen">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill-fullscreen" style="width: 33.33%"></div>
+                </div>
+                <div class="progress-text" id="progress-text-fullscreen">Step 2 of 6</div>
+            </div>
+            
+            <!-- Form content will be moved here dynamically -->
+            <div id="fullscreen-form-content"></div>
+        </div>
+    </div>
     `;
 }
 
@@ -623,12 +743,21 @@ let vehicleCount = 1;
 
 // Update progress
 function updateProgress() {
-    const progressFill = document.getElementById('progress-fill');
-    const progressText = document.getElementById('progress-text');
-    
-    const percentage = (currentStep / totalSteps) * 100;
-    progressFill.style.width = `${percentage}%`;
-    progressText.textContent = `Step ${currentStep} of ${totalSteps}`;
+    if (currentStep === 1) {
+        const progressFill = document.getElementById('progress-fill');
+        const progressText = document.getElementById('progress-text');
+        
+        const percentage = (currentStep / totalSteps) * 100;
+        progressFill.style.width = `${percentage}%`;
+        progressText.textContent = `Step ${currentStep} of ${totalSteps}`;
+    } else {
+        const progressFillFullscreen = document.getElementById('progress-fill-fullscreen');
+        const progressTextFullscreen = document.getElementById('progress-text-fullscreen');
+        
+        const percentage = (currentStep / totalSteps) * 100;
+        progressFillFullscreen.style.width = `${percentage}%`;
+        progressTextFullscreen.textContent = `Step ${currentStep} of ${totalSteps}`;
+    }
 }
 
 // Navigate to next step
@@ -667,14 +796,21 @@ function nextStep() {
         currentStepElement.classList.remove('active');
         currentStep++;
         
+        // If moving from step 1 to step 2, show fullscreen
+        if (currentStep === 2) {
+            showFullscreen();
+        }
+        
         const nextStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
         nextStepElement.classList.add('active');
         
         updateProgress();
         updateButtons();
         
-        // Scroll to top of form
-        document.querySelector('.auto-quote-hero').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Scroll to top of appropriate container
+        if (currentStep > 1) {
+            document.querySelector('.quote-fullscreen-container').scrollTop = 0;
+        }
     }
 }
 
@@ -685,14 +821,24 @@ function previousStep() {
         currentStepElement.classList.remove('active');
         
         currentStep--;
+        
+        // If going back to step 1, close fullscreen
+        if (currentStep === 1) {
+            closeFullscreen();
+        }
+        
         const prevStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
         prevStepElement.classList.add('active');
         
         updateProgress();
         updateButtons();
         
-        // Scroll to top of form
-        document.querySelector('.auto-quote-hero').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Scroll to top of appropriate container
+        if (currentStep === 1) {
+            document.querySelector('.auto-quote-hero').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            document.querySelector('.quote-fullscreen-container').scrollTop = 0;
+        }
     }
 }
 
@@ -821,6 +967,51 @@ function removeEntry(button) {
     button.parentElement.remove();
 }
 
+// Show fullscreen overlay
+function showFullscreen() {
+    const overlay = document.getElementById('quote-fullscreen-overlay');
+    const form = document.getElementById('auto-hero-form');
+    const fullscreenContent = document.getElementById('fullscreen-form-content');
+    
+    // Move form to fullscreen container
+    fullscreenContent.appendChild(form);
+    
+    // Show overlay
+    overlay.classList.add('active');
+    
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+}
+
+// Close fullscreen overlay
+function closeFullscreen() {
+    const overlay = document.getElementById('quote-fullscreen-overlay');
+    const form = document.getElementById('auto-hero-form');
+    const heroContainer = document.getElementById('auto-quote-hero');
+    
+    // Move form back to hero container
+    heroContainer.appendChild(form);
+    
+    // Hide overlay
+    overlay.classList.remove('active');
+    
+    // Restore body scroll
+    document.body.style.overflow = '';
+    
+    // Reset to step 1 if closing
+    if (currentStep > 1) {
+        const currentStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+        currentStepElement.classList.remove('active');
+        
+        currentStep = 1;
+        const firstStepElement = document.querySelector(`.form-step[data-step="1"]`);
+        firstStepElement.classList.add('active');
+        
+        updateProgress();
+        updateButtons();
+    }
+}
+
 // Initialize form
 function initializeAutoQuoteHero() {
     const heroForm = document.querySelector('.hero__form');
@@ -856,9 +1047,14 @@ function handleFormSubmit(e) {
     })
     .then(response => {
         if (response.ok) {
+            // Close fullscreen if open
+            if (currentStep > 1) {
+                closeFullscreen();
+            }
+            
             // Show success message
             document.getElementById('auto-hero-form').style.display = 'none';
-            document.querySelector('.quote-progress').style.display = 'none';
+            document.querySelector('#progress-step1').style.display = 'none';
             document.getElementById('success-message').style.display = 'block';
             
             // Reset form
@@ -893,3 +1089,5 @@ window.handleFileUpload = handleFileUpload;
 window.addDriver = addDriver;
 window.addVehicle = addVehicle;
 window.removeEntry = removeEntry;
+window.showFullscreen = showFullscreen;
+window.closeFullscreen = closeFullscreen;
