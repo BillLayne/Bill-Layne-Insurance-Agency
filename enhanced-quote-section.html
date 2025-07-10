@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Quote Section - Bill Layne Insurance</title>
+    
+    <!-- Include your existing stylesheets -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Additional styles for the enhanced quote section -->
+    <style>
+        /* Enhanced Quote Section Styles */
+        .enhanced-quote-section {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .quote-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .quote-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quote-tab {
+            padding: 1rem 2rem;
+            background: white;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .quote-tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .quote-tab.active {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        .quote-forms {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        /* Progress Indicator */
+        .progress-container {
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+        }
+
+        /* Form Steps */
+        .form-step {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Form Groups */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group-full {
+            grid-column: 1 / -1;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        /* Upload Section */
+        .upload-option {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-option:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .upload-option.selected {
+            border-color: var(--color-primary);
+            background: rgba(30, 58, 138, 0.05);
+        }
+
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 12px;
+            padding: 3rem;
+            text-align: center;
+            background: #f9f9f9;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: var(--color-primary);
+            background: #f0f4ff;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Navigation Buttons */
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .btn-nav {
+            padding: 0.875rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn-prev {
+            background: #f0f0f0;
+            color: var(--color-text);
+        }
+
+        .btn-prev:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-next, .btn-submit {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .btn-next:hover, .btn-submit:hover {
+            background: var(--color-primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(30, 58, 138, 0.3);
+        }
+
+        .btn-nav:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Vehicle/Driver Entry */
+        .entry-container {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            background: #f9f9f9;
+        }
+
+        .remove-entry {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .remove-entry:hover {
+            background: #cc0000;
+            transform: scale(1.1);
+        }
+
+        .add-more-btn {
+            background: transparent;
+            border: 2px dashed var(--color-primary);
+            color: var(--color-primary);
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .add-more-btn:hover {
+            background: rgba(30, 58, 138, 0.05);
+            border-style: solid;
+        }
+
+        /* Coverage Options */
+        .coverage-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+        }
+
+        .coverage-card:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .coverage-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .coverage-icon {
+            font-size: 2rem;
+        }
+
+        .coverage-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .coverage-description {
+            color: var(--color-text-secondary);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* Success Message */
+        .success-message {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            color: var(--color-success);
+            margin-bottom: 1rem;
+        }
+
+        .success-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--color-text);
+        }
+
+        .success-description {
+            color: var(--color-text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .quote-forms {
+                padding: 2rem 1rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quote-tabs {
+                flex-direction: column;
+                width: 100%;
+                max-width: 300px;
+                margin: 0 auto 2rem;
+            }
+
+            .quote-tab {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Quote Section -->
+    <section class="enhanced-quote-section">
+        <div class="quote-container">
+            <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
+                <h1 style="font-size: 3rem; margin-bottom: 1rem; color: var(--color-text);">Get Your Personalized Insurance Quote</h1>
+                <p style="font-size: 1.2rem; color: var(--color-text-secondary);">Choose your insurance type and get a detailed quote in minutes</p>
+            </div>
+
+            <!-- Quote Type Tabs -->
+            <div class="quote-tabs">
+                <button class="quote-tab active" onclick="switchQuoteType('auto')">
+                    🚗 Auto Insurance
+                </button>
+                <button class="quote-tab" onclick="switchQuoteType('home')">
+                    🏠 Homeowners Insurance
+                </button>
+            </div>
+
+            <!-- Quote Forms Container -->
+            <div class="quote-forms">
+                <!-- Auto Insurance Form -->
+                <div id="auto-form" class="form-section active">
+                    <!-- Progress Bar -->
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="auto-progress" style="width: 16.66%"></div>
+                        </div>
+                        <div class="progress-text" id="auto-progress-text">Step 1 of 6</div>
+                    </div>
+
+                    <form id="auto-quote-form" action="https://formspree.io/f/xkgbdjgy" method="POST" enctype="multipart/form-data">
+                        <!-- Step 1: Personal Information -->
+                        <div class="form-step active" data-step="1">
+                            <h2 style="margin-bottom: 1.5rem;">Personal Information</h2>
+                            <div class="form-grid">
+                                <div>
+                                    <label class="form-label" for="auto-firstname">First Name *</label>
+                                    <input type="text" id="auto-firstname" name="firstname" class="form-control" required>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="auto-lastname">Last Name *</label>
+                                    <input type="text" id="auto-lastname" name="lastname" class="form-control" required>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="auto-email">Email Address *</label>
+                                    <input type="email" id="auto-email" name="email" class="form-control" required>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="auto-phone">Phone Number *</label>
+                                    <input type="tel" id="auto-phone" name="phone" class="form-control" required>
+                                </div>
+                                <div class="form-group-full">
+                                    <label class="form-label" for="auto-address">Street Address *</label>
+                                    <input type="text" id="auto-address" name="address" class="form-control" required>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="auto-city">City *</label>
+                                    <input type="text" id="auto-city" name="city" class="form-control" required>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="auto-state">State *</label>
+                                    <select id="auto-state" name="state" class="form-control" required>
+                                        <option value="">Select State</option>
+                                        <option value="NC" selected>North Carolina</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="auto-zip">ZIP Code *</label>
+                                    <input type="text" id="auto-zip" name="zip" class="form-control" required pattern="[0-9]{5}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Current Insurance -->
+                        <div class="form-step" data-step="2">
+                            <h2 style="margin-bottom: 1.5rem;">Current Insurance Information</h2>
+                            <p style="margin-bottom: 2rem; color: var(--color-text-secondary);">
+                                To provide you with the most accurate quote, we need information about your current coverage.
+                            </p>
+                            
+                            <div style="margin-bottom: 2rem;">
+                                <label class="upload-option" onclick="selectInfoMethod('upload')">
+                                    <input type="radio" name="info_method" value="upload" style="display: none;">
+                                    <div style="display: flex; align-items: center; gap: 1rem;">
+                                        <span style="font-size: 2rem;">📄</span>
+                                        <div>
+                                            <h3 style="margin: 0;">Upload Declaration Page</h3>
+                                            <p style="margin: 0; color: var(--color-text-secondary); font-size: 0.9rem;">
+                                                Quick and easy - we'll extract your information automatically
+                                            </p>
+                                        </div>
+                                    </div>
+                                </label>
+                                
+                                <label class="upload-option" onclick="selectInfoMethod('manual')">
+                                    <input type="radio" name="info_method" value="manual" style="display: none;" checked>
+                                    <div style="display: flex; align-items: center; gap: 1rem;">
+                                        <span style="font-size: 2rem;">✏️</span>
+                                        <div>
+                                            <h3 style="margin: 0;">Enter Information Manually</h3>
+                                            <p style="margin: 0; color: var(--color-text-secondary); font-size: 0.9rem;">
+                                                I'll provide my current coverage details step by step
+                                            </p>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div id="upload-section" style="display: none;">
+                                <div class="upload-area" onclick="document.getElementById('declaration-upload').click()">
+                                    <div class="upload-icon">📤</div>
+                                    <h3>Click to upload your declaration page</h3>
+                                    <p style="color: var(--color-text-secondary);">or drag and drop your file here</p>
+                                    <p style="font-size: 0.9rem; color: var(--color-text-secondary); margin-top: 1rem;">
+                                        Accepted formats: PDF, JPG, PNG (Max 10MB)
+                                    </p>
+                                    <input type="file" id="declaration-upload" name="declaration_page" accept=".pdf,.jpg,.jpeg,.png" style="display: none;" onchange="handleFileUpload(event)">
+                                    <div id="file-preview" style="margin-top: 1rem; display: none;">
+                                        <p style="color: var(--color-success);">✓ <span id="file-name"></span></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="manual-section">
+                                <div class="form-grid">
+                                    <div>
+                                        <label class="form-label" for="current-carrier">Current Insurance Carrier</label>
+                                        <input type="text" id="current-carrier" name="current_carrier" class="form-control" placeholder="e.g., State Farm">
+                                    </div>
+                                    <div>
+                                        <label class="form-label" for="policy-expiration">Policy Expiration Date</label>
+                                        <input type="date" id="policy-expiration" name="policy_expiration" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Drivers -->
+                        <div class="form-step" data-step="3">
+                            <h2 style="margin-bottom: 1.5rem;">Driver Information</h2>
+                            <div id="drivers-container">
+                                <div class="entry-container driver-entry">
+                                    <h3 style="margin-bottom: 1rem;">Primary Driver</h3>
+                                    <div class="form-grid">
+                                        <div class="form-group-full">
+                                            <label class="form-label">Full Name *</label>
+                                            <input type="text" name="driver_name[]" class="form-control" required>
+                                        </div>
+                                        <div>
+                                            <label class="form-label">Date of Birth *</label>
+                                            <input type="date" name="driver_dob[]" class="form-control" required>
+                                        </div>
+                                        <div>
+                                            <label class="form-label">Gender *</label>
+                                            <select name="driver_gender[]" class="form-control" required>
+                                                <option value="">Select Gender</option>
+                                                <option value="Male">Male</option>
+                                                <option value="Female">Female</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="form-label">Marital Status *</label>
+                                            <select name="driver_marital[]" class="form-control" required>
+                                                <option value="">Select Status</option>
+                                                <option value="Single">Single</option>
+                                                <option value="Married">Married</option>
+                                                <option value="Divorced">Divorced</option>
+                                                <option value="Widowed">Widowed</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="form-label">License Number</label>
+                                            <input type="text" name="driver_license[]" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="add-more-btn" onclick="addDriver()">+ Add Another Driver</button>
+                        </div>
+
+                        <!-- Step 4: Vehicles -->
+                        <div class="form-step" data-step="4">
+                            <h2 style="margin-bottom: 1.5rem;">Vehicle Information</h2>
+                            <div id="vehicles-container">
+                                <div class="entry-container vehicle-entry">
+                                    <h3 style="margin-bottom: 1rem;">Vehicle 1</h3>
+                                    <div class="form-grid">
+                                        <div>
+                                            <label class="form-label">Year *</label>
+                                            <input type="number" name="vehicle_year[]" class="form-control" min="1900" max="2025" required>
+                                        </div>
+                                        <div>
+                                            <label class="form-label">Make *</label>
+                                            <input type="text" name="vehicle_make[]" class="form-control" placeholder="e.g., Honda" required>
+                                        </div>
+                                        <div>
+                                            <label class="form-label">Model *</label>
+                                            <input type="text" name="vehicle_model[]" class="form-control" placeholder="e.g., Civic" required>
+                                        </div>
+                                        <div class="form-group-full">
+                                            <label class="form-label">VIN (Optional)</label>
+                                            <input type="text" name="vehicle_vin[]" class="form-control" placeholder="Vehicle Identification Number">
+                                        </div>
+                                        <div>
+                                            <label class="form-label">Primary Use *</label>
+                                            <select name="vehicle_use[]" class="form-control" required>
+                                                <option value="">Select Use</option>
+                                                <option value="Commute">Commute to Work/School</option>
+                                                <option value="Pleasure">Pleasure/Personal</option>
+                                                <option value="Business">Business</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="form-label">Annual Mileage *</label>
+                                            <input type="number" name="vehicle_mileage[]" class="form-control" placeholder="e.g., 12000" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="add-more-btn" onclick="addVehicle()">+ Add Another Vehicle</button>
+                        </div>
+
+                        <!-- Step 5: Coverage Options -->
+                        <div class="form-step" data-step="5">
+                            <h2 style="margin-bottom: 1.5rem;">Coverage Options</h2>
+                            
+                            <!-- Liability Coverage -->
+                            <div class="coverage-card">
+                                <div class="coverage-header">
+                                    <span class="coverage-icon">🛡️</span>
+                                    <h3 class="coverage-title">Liability Coverage (Required in NC)</h3>
+                                </div>
+                                <p class="coverage-description">
+                                    Covers damages and injuries you cause to others. Numbers represent: Bodily Injury per person / Bodily Injury per accident / Property Damage.
+                                </p>
+                                <select name="liability_limit" class="form-control" required>
+                                    <option value="">Select Coverage Limit</option>
+                                    <option value="50/100/50">State Minimum (50/100/50)</option>
+                                    <option value="100/300/50" selected>100/300/50 (Recommended)</option>
+                                    <option value="100/300/100">100/300/100</option>
+                                    <option value="250/500/100">250/500/100</option>
+                                    <option value="500/500/100">500/500/100</option>
+                                </select>
+                            </div>
+
+                            <!-- Collision Coverage -->
+                            <div class="coverage-card">
+                                <div class="coverage-header">
+                                    <span class="coverage-icon">💥</span>
+                                    <h3 class="coverage-title">Collision Coverage</h3>
+                                </div>
+                                <p class="coverage-description">
+                                    Covers damage to your car from accidents, regardless of fault. Required if you have a loan/lease.
+                                </p>
+                                <select name="collision_deductible" class="form-control">
+                                    <option value="">Not Included</option>
+                                    <option value="250">$250 Deductible</option>
+                                    <option value="500" selected>$500 Deductible (Most Popular)</option>
+                                    <option value="1000">$1,000 Deductible</option>
+                                </select>
+                            </div>
+
+                            <!-- Comprehensive Coverage -->
+                            <div class="coverage-card">
+                                <div class="coverage-header">
+                                    <span class="coverage-icon">🌪️</span>
+                                    <h3 class="coverage-title">Comprehensive Coverage</h3>
+                                </div>
+                                <p class="coverage-description">
+                                    Covers non-collision damage: theft, vandalism, weather, animal strikes, glass damage.
+                                </p>
+                                <select name="comprehensive_deductible" class="form-control">
+                                    <option value="">Not Included</option>
+                                    <option value="0">$0 Deductible (Glass)</option>
+                                    <option value="100">$100 Deductible</option>
+                                    <option value="250">$250 Deductible</option>
+                                    <option value="500" selected>$500 Deductible (Most Popular)</option>
+                                    <option value="1000">$1,000 Deductible</option>
+                                </select>
+                            </div>
+
+                            <!-- Additional Options -->
+                            <div class="coverage-card">
+                                <div class="coverage-header">
+                                    <span class="coverage-icon">➕</span>
+                                    <h3 class="coverage-title">Additional Coverage Options</h3>
+                                </div>
+                                <div style="margin-top: 1rem;">
+                                    <label style="display: flex; align-items: center; margin-bottom: 1rem; cursor: pointer;">
+                                        <input type="checkbox" name="uninsured_motorist" value="yes" checked style="margin-right: 0.5rem;">
+                                        <span><strong>Uninsured/Underinsured Motorist</strong> - Protects you from drivers without insurance</span>
+                                    </label>
+                                    <label style="display: flex; align-items: center; margin-bottom: 1rem; cursor: pointer;">
+                                        <input type="checkbox" name="medical_payments" value="yes" style="margin-right: 0.5rem;">
+                                        <span><strong>Medical Payments</strong> - Covers medical expenses regardless of fault</span>
+                                    </label>
+                                    <label style="display: flex; align-items: center; margin-bottom: 1rem; cursor: pointer;">
+                                        <input type="checkbox" name="rental_reimbursement" value="yes" style="margin-right: 0.5rem;">
+                                        <span><strong>Rental Reimbursement</strong> - Pays for rental car while yours is being repaired</span>
+                                    </label>
+                                    <label style="display: flex; align-items: center; cursor: pointer;">
+                                        <input type="checkbox" name="roadside_assistance" value="yes" style="margin-right: 0.5rem;">
+                                        <span><strong>Roadside Assistance</strong> - 24/7 help for breakdowns and emergencies</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 6: Review -->
+                        <div class="form-step" data-step="6">
+                            <h2 style="margin-bottom: 1.5rem;">Additional Information</h2>
+                            <div class="form-grid">
+                                <div class="form-group-full">
+                                    <label class="form-label" for="additional-info">Any additional information or questions?</label>
+                                    <textarea id="additional-info" name="additional_info" class="form-control" rows="4" placeholder="Tell us about any accidents, violations, or special circumstances..."></textarea>
+                                </div>
+                                <div class="form-group-full">
+                                    <label class="form-label">
+                                        <input type="checkbox" name="consent" value="yes" required>
+                                        I consent to be contacted regarding my insurance quote and understand that my information will be kept secure.
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Navigation -->
+                        <div class="form-navigation">
+                            <button type="button" class="btn-nav btn-prev" onclick="previousStep('auto')" disabled>Previous</button>
+                            <button type="button" class="btn-nav btn-next" onclick="nextStep('auto')">Next</button>
+                            <button type="submit" class="btn-nav btn-submit" style="display: none;">Get My Quote</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Homeowners Insurance Form -->
+                <div id="home-form" class="form-section">
+                    <!-- Progress Bar -->
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="home-progress" style="width: 20%"></div>
+                        </div>
+                        <div class="progress-text" id="home-progress-text">Step 1 of 5</div>
+                    </div>
+
+                    <form id="home-quote-form" action="https://formspree.io/f/xkgbdjgy" method="POST" enctype="multipart/form-data">
+                        <!-- Step 1: Personal Information -->
+                        <div class="form-step active" data-step="1">
+                            <h2 style="margin-bottom: 1.5rem;">Personal Information</h2>
+                            <div class="form-grid">
+                                <div>
+                                    <label class="form-label" for="home-firstname">First Name *</label>
+                                    <input type="text" id="home-firstname" name="firstname" class="form-control" required>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="home-lastname">Last Name *</label>
+                                    <input type="text" id="home-lastname" name="lastname" class="form-control" required>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="home-email">Email Address *</label>
+                                    <input type="email" id="home-email" name="email" class="form-control" required>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="home-phone">Phone Number *</label>
+                                    <input type="tel" id="home-phone" name="phone" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Property Information -->
+                        <div class="form-step" data-step="2">
+                            <h2 style="margin-bottom: 1.5rem;">Property Information</h2>
+                            <div class="form-grid">
+                                <div class="form-group-full">
+                                    <label class="form-label" for="property-address">Property Address *</label>
+                                    <input type="text" id="property-address" name="property_address" class="form-control" required>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="property-city">City *</label>
+                                    <input type="text" id="property-city" name="property_city" class="form-control" required>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="property-state">State *</label>
+                                    <select id="property-state" name="property_state" class="form-control" required>
+                                        <option value="">Select State</option>
+                                        <option value="NC" selected>North Carolina</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="property-zip">ZIP Code *</label>
+                                    <input type="text" id="property-zip" name="property_zip" class="form-control" required pattern="[0-9]{5}">
+                                </div>
+                                <div>
+                                    <label class="form-label" for="year-built">Year Built *</label>
+                                    <input type="number" id="year-built" name="year_built" class="form-control" min="1800" max="2025" required>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="purchase-date">Purchase Date *</label>
+                                    <input type="date" id="purchase-date" name="purchase_date" class="form-control" required>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="purchase-price">Purchase Price *</label>
+                                    <input type="number" id="purchase-price" name="purchase_price" class="form-control" min="0" required>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="property-type">Property Type *</label>
+                                    <select id="property-type" name="property_type" class="form-control" required>
+                                        <option value="">Select Type</option>
+                                        <option value="Single Family">Single Family Home</option>
+                                        <option value="Townhouse">Townhouse</option>
+                                        <option value="Condo">Condominium</option>
+                                        <option value="Mobile">Mobile/Manufactured Home</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Home Details -->
+                        <div class="form-step" data-step="3">
+                            <h2 style="margin-bottom: 1.5rem;">Home Details</h2>
+                            <div class="form-grid">
+                                <div>
+                                    <label class="form-label" for="square-feet">Square Footage *</label>
+                                    <input type="number" id="square-feet" name="square_feet" class="form-control" min="0" required>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="num-stories">Number of Stories *</label>
+                                    <select id="num-stories" name="num_stories" class="form-control" required>
+                                        <option value="">Select</option>
+                                        <option value="1">1 Story</option>
+                                        <option value="1.5">1.5 Stories</option>
+                                        <option value="2">2 Stories</option>
+                                        <option value="2.5">2.5 Stories</option>
+                                        <option value="3+">3+ Stories</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="bedrooms">Bedrooms *</label>
+                                    <input type="number" id="bedrooms" name="bedrooms" class="form-control" min="0" required>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="bathrooms">Bathrooms *</label>
+                                    <input type="number" id="bathrooms" name="bathrooms" class="form-control" min="0" step="0.5" required>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="garage-type">Garage Type *</label>
+                                    <select id="garage-type" name="garage_type" class="form-control" required>
+                                        <option value="">Select Type</option>
+                                        <option value="None">No Garage</option>
+                                        <option value="1 Car Attached">1 Car Attached</option>
+                                        <option value="2 Car Attached">2 Car Attached</option>
+                                        <option value="3+ Car Attached">3+ Car Attached</option>
+                                        <option value="Detached">Detached Garage</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="construction-type">Construction Type *</label>
+                                    <select id="construction-type" name="construction_type" class="form-control" required>
+                                        <option value="">Select Type</option>
+                                        <option value="Frame">Frame</option>
+                                        <option value="Brick Veneer">Brick Veneer</option>
+                                        <option value="Solid Brick">Solid Brick</option>
+                                        <option value="Stucco">Stucco</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="roof-type">Roof Type *</label>
+                                    <select id="roof-type" name="roof_type" class="form-control" required>
+                                        <option value="">Select Type</option>
+                                        <option value="Asphalt Shingle">Asphalt Shingle</option>
+                                        <option value="Metal">Metal</option>
+                                        <option value="Tile">Tile</option>
+                                        <option value="Slate">Slate</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="roof-age">Roof Age (years) *</label>
+                                    <input type="number" id="roof-age" name="roof_age" class="form-control" min="0" required>
+                                </div>
+                            </div>
+
+                            <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Safety Features</h3>
+                            <div style="display: grid; gap: 0.5rem;">
+                                <label style="cursor: pointer;">
+                                    <input type="checkbox" name="smoke_detectors" value="yes" checked> Smoke Detectors
+                                </label>
+                                <label style="cursor: pointer;">
+                                    <input type="checkbox" name="fire_extinguisher" value="yes"> Fire Extinguisher
+                                </label>
+                                <label style="cursor: pointer;">
+                                    <input type="checkbox" name="deadbolt_locks" value="yes"> Deadbolt Locks
+                                </label>
+                                <label style="cursor: pointer;">
+                                    <input type="checkbox" name="security_system" value="yes"> Security System
+                                </label>
+                                <label style="cursor: pointer;">
+                                    <input type="checkbox" name="fire_alarm" value="yes"> Fire Alarm System
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Step 4: Coverage Options -->
+                        <div class="form-step" data-step="4">
+                            <h2 style="margin-bottom: 1.5rem;">Coverage Options</h2>
+                            
+                            <div class="coverage-card">
+                                <div class="coverage-header">
+                                    <span class="coverage-icon">🏠</span>
+                                    <h3 class="coverage-title">Dwelling Coverage</h3>
+                                </div>
+                                <p class="coverage-description">
+                                    Covers the structure of your home. Should equal the cost to rebuild your home.
+                                </p>
+                                <input type="number" name="dwelling_coverage" class="form-control" placeholder="Estimated replacement cost" required>
+                            </div>
+
+                            <div class="coverage-card">
+                                <div class="coverage-header">
+                                    <span class="coverage-icon">📦</span>
+                                    <h3 class="coverage-title">Personal Property Coverage</h3>
+                                </div>
+                                <p class="coverage-description">
+                                    Covers your belongings. Typically 50-70% of dwelling coverage.
+                                </p>
+                                <select name="personal_property" class="form-control" required>
+                                    <option value="">Select Coverage</option>
+                                    <option value="50">50% of Dwelling Coverage</option>
+                                    <option value="70" selected>70% of Dwelling Coverage (Recommended)</option>
+                                    <option value="100">100% of Dwelling Coverage</option>
+                                </select>
+                            </div>
+
+                            <div class="coverage-card">
+                                <div class="coverage-header">
+                                    <span class="coverage-icon">⚖️</span>
+                                    <h3 class="coverage-title">Liability Coverage</h3>
+                                </div>
+                                <p class="coverage-description">
+                                    Protects you if someone is injured on your property.
+                                </p>
+                                <select name="liability_coverage" class="form-control" required>
+                                    <option value="">Select Coverage</option>
+                                    <option value="100000">$100,000</option>
+                                    <option value="300000" selected>$300,000 (Recommended)</option>
+                                    <option value="500000">$500,000</option>
+                                    <option value="1000000">$1,000,000</option>
+                                </select>
+                            </div>
+
+                            <div class="coverage-card">
+                                <div class="coverage-header">
+                                    <span class="coverage-icon">💵</span>
+                                    <h3 class="coverage-title">Deductible</h3>
+                                </div>
+                                <p class="coverage-description">
+                                    The amount you pay out of pocket before insurance kicks in.
+                                </p>
+                                <select name="deductible" class="form-control" required>
+                                    <option value="">Select Deductible</option>
+                                    <option value="500">$500</option>
+                                    <option value="1000" selected>$1,000 (Most Common)</option>
+                                    <option value="2500">$2,500</option>
+                                    <option value="5000">$5,000</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Step 5: Additional Information -->
+                        <div class="form-step" data-step="5">
+                            <h2 style="margin-bottom: 1.5rem;">Additional Information</h2>
+                            <div class="form-grid">
+                                <div class="form-group-full">
+                                    <label class="form-label" for="home-additional-info">Any additional information?</label>
+                                    <textarea id="home-additional-info" name="additional_info" class="form-control" rows="4" placeholder="Previous claims, renovations, special features, etc."></textarea>
+                                </div>
+                                <div class="form-group-full">
+                                    <label class="form-label">Current Insurance Status</label>
+                                    <select name="current_insurance" class="form-control">
+                                        <option value="">Select Status</option>
+                                        <option value="Currently Insured">Currently Insured</option>
+                                        <option value="Policy Expiring Soon">Policy Expiring Soon</option>
+                                        <option value="Not Currently Insured">Not Currently Insured</option>
+                                        <option value="First Time Buyer">First Time Buyer</option>
+                                    </select>
+                                </div>
+                                <div class="form-group-full">
+                                    <label class="form-label">
+                                        <input type="checkbox" name="consent" value="yes" required>
+                                        I consent to be contacted regarding my insurance quote and understand that my information will be kept secure.
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Navigation -->
+                        <div class="form-navigation">
+                            <button type="button" class="btn-nav btn-prev" onclick="previousStep('home')" disabled>Previous</button>
+                            <button type="button" class="btn-nav btn-next" onclick="nextStep('home')">Next</button>
+                            <button type="submit" class="btn-nav btn-submit" style="display: none;">Get My Quote</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Success Message -->
+                <div id="success-message" class="form-section" style="display: none;">
+                    <div class="success-message">
+                        <div class="success-icon">✅</div>
+                        <h2 class="success-title">Thank You!</h2>
+                        <p class="success-description">
+                            We've received your information and one of our insurance experts will contact you within 24 hours with your personalized quote.
+                        </p>
+                        <p style="margin-top: 2rem;">
+                            <strong>What happens next?</strong><br>
+                            • We'll review your information<br>
+                            • Compare rates from multiple carriers<br>
+                            • Contact you with the best options<br>
+                            • Help you save money on your insurance!
+                        </p>
+                        <div style="margin-top: 2rem;">
+                            <a href="tel:3368351993" class="btn-nav btn-next" style="display: inline-block; text-decoration: none;">
+                                Call Us Now: (336) 835-1993
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Current form states
+        const formStates = {
+            auto: {
+                currentStep: 1,
+                totalSteps: 6,
+                form: 'auto-quote-form'
+            },
+            home: {
+                currentStep: 1,
+                totalSteps: 5,
+                form: 'home-quote-form'
+            }
+        };
+
+        // Switch between quote types
+        function switchQuoteType(type) {
+            // Update tabs
+            document.querySelectorAll('.quote-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Show/hide forms
+            document.querySelectorAll('.form-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(`${type}-form`).classList.add('active');
+        }
+
+        // Navigate between steps
+        function nextStep(formType) {
+            const state = formStates[formType];
+            const currentStepElement = document.querySelector(`#${formType}-form .form-step.active`);
+            
+            // Validate current step
+            const inputs = currentStepElement.querySelectorAll('input[required], select[required]');
+            let valid = true;
+            inputs.forEach(input => {
+                if (!input.value) {
+                    input.style.borderColor = '#ff4444';
+                    valid = false;
+                } else {
+                    input.style.borderColor = '#e0e0e0';
+                }
+            });
+
+            if (!valid) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            // Special handling for step 2 in auto form
+            if (formType === 'auto' && state.currentStep === 2) {
+                const infoMethod = document.querySelector('input[name="info_method"]:checked');
+                if (infoMethod && infoMethod.value === 'upload') {
+                    const fileInput = document.getElementById('declaration-upload');
+                    if (!fileInput.files.length) {
+                        alert('Please upload your declaration page or choose to enter information manually.');
+                        return;
+                    }
+                }
+            }
+
+            if (state.currentStep < state.totalSteps) {
+                // Hide current step
+                currentStepElement.classList.remove('active');
+                
+                // Show next step
+                state.currentStep++;
+                const nextStepElement = document.querySelector(`#${formType}-form .form-step[data-step="${state.currentStep}"]`);
+                nextStepElement.classList.add('active');
+                
+                // Update progress
+                updateProgress(formType);
+                
+                // Update buttons
+                updateButtons(formType);
+                
+                // Scroll to top of form
+                document.querySelector('.quote-forms').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function previousStep(formType) {
+            const state = formStates[formType];
+            
+            if (state.currentStep > 1) {
+                // Hide current step
+                const currentStepElement = document.querySelector(`#${formType}-form .form-step.active`);
+                currentStepElement.classList.remove('active');
+                
+                // Show previous step
+                state.currentStep--;
+                const prevStepElement = document.querySelector(`#${formType}-form .form-step[data-step="${state.currentStep}"]`);
+                prevStepElement.classList.add('active');
+                
+                // Update progress
+                updateProgress(formType);
+                
+                // Update buttons
+                updateButtons(formType);
+                
+                // Scroll to top of form
+                document.querySelector('.quote-forms').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function updateProgress(formType) {
+            const state = formStates[formType];
+            const progressBar = document.getElementById(`${formType}-progress`);
+            const progressText = document.getElementById(`${formType}-progress-text`);
+            
+            const percentage = (state.currentStep / state.totalSteps) * 100;
+            progressBar.style.width = `${percentage}%`;
+            progressText.textContent = `Step ${state.currentStep} of ${state.totalSteps}`;
+        }
+
+        function updateButtons(formType) {
+            const state = formStates[formType];
+            const form = document.getElementById(`${formType}-form`);
+            const prevBtn = form.querySelector('.btn-prev');
+            const nextBtn = form.querySelector('.btn-next');
+            const submitBtn = form.querySelector('.btn-submit');
+            
+            // Previous button
+            prevBtn.disabled = state.currentStep === 1;
+            
+            // Next/Submit buttons
+            if (state.currentStep === state.totalSteps) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'inline-block';
+            } else {
+                nextBtn.style.display = 'inline-block';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        // Handle info method selection
+        function selectInfoMethod(method) {
+            const options = document.querySelectorAll('.upload-option');
+            options.forEach(option => option.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            
+            const uploadSection = document.getElementById('upload-section');
+            const manualSection = document.getElementById('manual-section');
+            
+            if (method === 'upload') {
+                uploadSection.style.display = 'block';
+                manualSection.style.display = 'none';
+            } else {
+                uploadSection.style.display = 'none';
+                manualSection.style.display = 'block';
+            }
+        }
+
+        // Handle file upload
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const fileName = document.getElementById('file-name');
+                const filePreview = document.getElementById('file-preview');
+                
+                fileName.textContent = file.name;
+                filePreview.style.display = 'block';
+            }
+        }
+
+        // Add driver
+        let driverCount = 1;
+        function addDriver() {
+            driverCount++;
+            const container = document.getElementById('drivers-container');
+            const newDriver = document.createElement('div');
+            newDriver.className = 'entry-container driver-entry';
+            newDriver.innerHTML = `
+                <button type="button" class="remove-entry" onclick="removeEntry(this)">×</button>
+                <h3 style="margin-bottom: 1rem;">Driver ${driverCount}</h3>
+                <div class="form-grid">
+                    <div class="form-group-full">
+                        <label class="form-label">Full Name *</label>
+                        <input type="text" name="driver_name[]" class="form-control" required>
+                    </div>
+                    <div>
+                        <label class="form-label">Date of Birth *</label>
+                        <input type="date" name="driver_dob[]" class="form-control" required>
+                    </div>
+                    <div>
+                        <label class="form-label">Gender *</label>
+                        <select name="driver_gender[]" class="form-control" required>
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Marital Status *</label>
+                        <select name="driver_marital[]" class="form-control" required>
+                            <option value="">Select Status</option>
+                            <option value="Single">Single</option>
+                            <option value="Married">Married</option>
+                            <option value="Divorced">Divorced</option>
+                            <option value="Widowed">Widowed</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">License Number</label>
+                        <input type="text" name="driver_license[]" class="form-control">
+                    </div>
+                </div>
+            `;
+            container.appendChild(newDriver);
+        }
+
+        // Add vehicle
+        let vehicleCount = 1;
+        function addVehicle() {
+            vehicleCount++;
+            const container = document.getElementById('vehicles-container');
+            const newVehicle = document.createElement('div');
+            newVehicle.className = 'entry-container vehicle-entry';
+            newVehicle.innerHTML = `
+                <button type="button" class="remove-entry" onclick="removeEntry(this)">×</button>
+                <h3 style="margin-bottom: 1rem;">Vehicle ${vehicleCount}</h3>
+                <div class="form-grid">
+                    <div>
+                        <label class="form-label">Year *</label>
+                        <input type="number" name="vehicle_year[]" class="form-control" min="1900" max="2025" required>
+                    </div>
+                    <div>
+                        <label class="form-label">Make *</label>
+                        <input type="text" name="vehicle_make[]" class="form-control" placeholder="e.g., Honda" required>
+                    </div>
+                    <div>
+                        <label class="form-label">Model *</label>
+                        <input type="text" name="vehicle_model[]" class="form-control" placeholder="e.g., Civic" required>
+                    </div>
+                    <div class="form-group-full">
+                        <label class="form-label">VIN (Optional)</label>
+                        <input type="text" name="vehicle_vin[]" class="form-control" placeholder="Vehicle Identification Number">
+                    </div>
+                    <div>
+                        <label class="form-label">Primary Use *</label>
+                        <select name="vehicle_use[]" class="form-control" required>
+                            <option value="">Select Use</option>
+                            <option value="Commute">Commute to Work/School</option>
+                            <option value="Pleasure">Pleasure/Personal</option>
+                            <option value="Business">Business</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Annual Mileage *</label>
+                        <input type="number" name="vehicle_mileage[]" class="form-control" placeholder="e.g., 12000" required>
+                    </div>
+                </div>
+            `;
+            container.appendChild(newVehicle);
+        }
+
+        // Remove entry
+        function removeEntry(button) {
+            button.parentElement.remove();
+        }
+
+        // Form submission
+        document.getElementById('auto-quote-form').addEventListener('submit', handleFormSubmit);
+        document.getElementById('home-quote-form').addEventListener('submit', handleFormSubmit);
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const submitBtn = form.querySelector('.btn-submit');
+            
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            // Add form type to the submission
+            const formType = form.id.includes('auto') ? 'Auto Insurance Quote' : 'Homeowners Insurance Quote';
+            const formData = new FormData(form);
+            formData.append('form_type', formType);
+            
+            // Submit to Formspree
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Show success message
+                    document.querySelectorAll('.form-section').forEach(section => {
+                        section.style.display = 'none';
+                    });
+                    document.getElementById('success-message').style.display = 'block';
+                    
+                    // Scroll to top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    
+                    // Reset form
+                    form.reset();
+                    
+                    // Reset to step 1
+                    const formTypeKey = form.id.includes('auto') ? 'auto' : 'home';
+                    formStates[formTypeKey].currentStep = 1;
+                    
+                } else {
+                    throw new Error('Form submission failed');
+                }
+            })
+            .catch(error => {
+                alert('There was a problem submitting your form. Please try again or call us at (336) 835-1993.');
+                console.error('Form submission error:', error);
+            })
+            .finally(() => {
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Get My Quote';
+            });
+        }
+
+        // Initialize forms on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial button states
+            updateButtons('auto');
+            updateButtons('home');
+        });
+    </script>
+</body>
+</html>
