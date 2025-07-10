@@ -67,11 +67,14 @@ function createAutoQuoteHeroHTML() {
         }
         
         /* Form in fullscreen mode */
-        .quote-fullscreen-container #auto-hero-form {
-            width: 100%;
-            max-width: none;
-            margin: 0;
-            padding: 0;
+        #auto-hero-form.in-fullscreen {
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            border: none !important;
         }
         
         /* Adjust form elements for larger screen */
@@ -79,10 +82,21 @@ function createAutoQuoteHeroHTML() {
             margin-bottom: 1.5rem;
         }
         
-        .quote-fullscreen-container .form-control {
-            padding: 1rem;
-            font-size: 1.1rem;
-            width: 100%;
+        .quote-fullscreen-container .form-control,
+        #auto-hero-form.in-fullscreen .form-control {
+            padding: 1rem !important;
+            font-size: 1.1rem !important;
+            width: 100% !important;
+            border: 2px solid #e0e0e0 !important;
+            border-radius: 8px !important;
+            display: block !important;
+            box-sizing: border-box !important;
+        }
+        
+        .quote-fullscreen-container .form-control:focus,
+        #auto-hero-form.in-fullscreen .form-control:focus {
+            border-color: var(--color-primary) !important;
+            outline: none !important;
         }
         
         .quote-fullscreen-container .step-title {
@@ -90,10 +104,22 @@ function createAutoQuoteHeroHTML() {
             margin-bottom: 2rem;
         }
         
-        .quote-fullscreen-container .form-label {
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
-            display: block;
+        .quote-fullscreen-container .form-label,
+        #auto-hero-form.in-fullscreen .form-label {
+            font-size: 1rem !important;
+            margin-bottom: 0.5rem !important;
+            display: block !important;
+            font-weight: 600 !important;
+        }
+        
+        /* Ensure select elements also get proper styling */
+        .quote-fullscreen-container select.form-control,
+        #auto-hero-form.in-fullscreen select.form-control {
+            appearance: none !important;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E") !important;
+            background-repeat: no-repeat !important;
+            background-position: right 1rem center !important;
+            padding-right: 2.5rem !important;
         }
         
         .quote-fullscreen-container .info-method-card {
@@ -258,6 +284,18 @@ function createAutoQuoteHeroHTML() {
             transition: all 0.3s ease;
             cursor: pointer;
             margin-top: 1rem;
+        }
+        
+        /* Ensure upload area displays properly in fullscreen */
+        .quote-fullscreen-container .upload-area,
+        #auto-hero-form.in-fullscreen .upload-area {
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        
+        /* Fix manual section in fullscreen */
+        #auto-hero-form.in-fullscreen #manual-section {
+            width: 100% !important;
         }
 
         .upload-area:hover {
@@ -1001,15 +1039,28 @@ function showFullscreen() {
     const overlay = document.getElementById('quote-fullscreen-overlay');
     const form = document.getElementById('auto-hero-form');
     const fullscreenContent = document.getElementById('fullscreen-form-content');
+    const progressFullscreen = document.getElementById('progress-fullscreen');
+    
+    // Clear fullscreen content first
+    fullscreenContent.innerHTML = '';
+    
+    // Move progress bar to fullscreen
+    fullscreenContent.appendChild(progressFullscreen);
     
     // Move form to fullscreen container
     fullscreenContent.appendChild(form);
+    
+    // Add a class to form for fullscreen styling
+    form.classList.add('in-fullscreen');
     
     // Show overlay
     overlay.classList.add('active');
     
     // Prevent body scroll
     document.body.style.overflow = 'hidden';
+    
+    // Force update progress bar
+    updateProgress();
 }
 
 // Close fullscreen overlay
@@ -1017,6 +1068,15 @@ function closeFullscreen() {
     const overlay = document.getElementById('quote-fullscreen-overlay');
     const form = document.getElementById('auto-hero-form');
     const heroContainer = document.getElementById('auto-quote-hero');
+    const progressStep1 = document.getElementById('progress-step1');
+    
+    // Remove fullscreen class
+    form.classList.remove('in-fullscreen');
+    
+    // Move progress bar back to hero if on step 1
+    if (currentStep === 1 && progressStep1) {
+        heroContainer.insertBefore(progressStep1, form);
+    }
     
     // Move form back to hero container
     heroContainer.appendChild(form);
