@@ -509,8 +509,8 @@ function createAutoQuoteHeroHTML() {
     <div class="auto-quote-hero" id="auto-quote-hero">
         <h3 style="text-align: center; margin-bottom: 1.5rem;">Get Your Free Auto Insurance Quote</h3>
         
-        <!-- Progress Bar for Step 1 -->
-        <div class="quote-progress" id="progress-step1">
+        <!-- Progress Bar -->
+        <div class="quote-progress">
             <div class="progress-bar">
                 <div class="progress-fill" id="progress-fill" style="width: 16.66%"></div>
             </div>
@@ -781,24 +781,6 @@ function createAutoQuoteHeroHTML() {
 
         <p class="form-note" style="margin-top: 1rem;">✓ No spam, ever. Your information is secure.</p>
     </div>
-    
-    <!-- Fullscreen Overlay for Steps 2-6 -->
-    <div class="quote-fullscreen-overlay" id="quote-fullscreen-overlay">
-        <div class="quote-fullscreen-container">
-            <button class="close-fullscreen" onclick="closeFullscreen()">×</button>
-            
-            <!-- Progress Bar for fullscreen -->
-            <div class="quote-progress" id="progress-fullscreen">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progress-fill-fullscreen" style="width: 33.33%"></div>
-                </div>
-                <div class="progress-text" id="progress-text-fullscreen">Step 2 of 6</div>
-            </div>
-            
-            <!-- Form content will be moved here dynamically -->
-            <div id="fullscreen-form-content"></div>
-        </div>
-    </div>
     `;
 }
 
@@ -810,21 +792,12 @@ let vehicleCount = 1;
 
 // Update progress
 function updateProgress() {
-    if (currentStep === 1) {
-        const progressFill = document.getElementById('progress-fill');
-        const progressText = document.getElementById('progress-text');
-        
-        const percentage = (currentStep / totalSteps) * 100;
-        progressFill.style.width = `${percentage}%`;
-        progressText.textContent = `Step ${currentStep} of ${totalSteps}`;
-    } else {
-        const progressFillFullscreen = document.getElementById('progress-fill-fullscreen');
-        const progressTextFullscreen = document.getElementById('progress-text-fullscreen');
-        
-        const percentage = (currentStep / totalSteps) * 100;
-        progressFillFullscreen.style.width = `${percentage}%`;
-        progressTextFullscreen.textContent = `Step ${currentStep} of ${totalSteps}`;
-    }
+    const progressFill = document.getElementById('progress-fill');
+    const progressText = document.getElementById('progress-text');
+    
+    const percentage = (currentStep / totalSteps) * 100;
+    progressFill.style.width = `${percentage}%`;
+    progressText.textContent = `Step ${currentStep} of ${totalSteps}`;
 }
 
 // Navigate to next step
@@ -863,21 +836,14 @@ function nextStep() {
         currentStepElement.classList.remove('active');
         currentStep++;
         
-        // If moving from step 1 to step 2, show fullscreen
-        if (currentStep === 2) {
-            showFullscreen();
-        }
-        
         const nextStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
         nextStepElement.classList.add('active');
         
         updateProgress();
         updateButtons();
         
-        // Scroll to top of appropriate container
-        if (currentStep > 1) {
-            document.querySelector('.quote-fullscreen-container').scrollTop = 0;
-        }
+        // Scroll to top of form
+        document.querySelector('.auto-quote-hero').scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 }
 
@@ -888,24 +854,14 @@ function previousStep() {
         currentStepElement.classList.remove('active');
         
         currentStep--;
-        
-        // If going back to step 1, close fullscreen
-        if (currentStep === 1) {
-            closeFullscreen();
-        }
-        
         const prevStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
         prevStepElement.classList.add('active');
         
         updateProgress();
         updateButtons();
         
-        // Scroll to top of appropriate container
-        if (currentStep === 1) {
-            document.querySelector('.auto-quote-hero').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        } else {
-            document.querySelector('.quote-fullscreen-container').scrollTop = 0;
-        }
+        // Scroll to top of form
+        document.querySelector('.auto-quote-hero').scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 }
 
@@ -1136,14 +1092,9 @@ function handleFormSubmit(e) {
     })
     .then(response => {
         if (response.ok) {
-            // Close fullscreen if open
-            if (currentStep > 1) {
-                closeFullscreen();
-            }
-            
             // Show success message
             document.getElementById('auto-hero-form').style.display = 'none';
-            document.querySelector('#progress-step1').style.display = 'none';
+            document.querySelector('.quote-progress').style.display = 'none';
             document.getElementById('success-message').style.display = 'block';
             
             // Reset form
