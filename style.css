@@ -95,6 +95,52 @@
             overflow-x: hidden;
         }
 
+        /* Prevent layout shift for all images */
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Specific aspect ratios for known image types */
+        img[width][height] {
+            aspect-ratio: attr(width) / attr(height);
+        }
+
+        /* Reserve space for dynamic content to prevent CLS */
+        .analyzer-modal__content {
+            min-height: 400px;
+        }
+
+        /* Mobile menu container - prevent layout shift */
+        .navbar-menu {
+            contain: layout style;
+        }
+
+        /* Form elements - prevent layout shift during validation */
+        .form-control {
+            min-height: 48px;
+        }
+
+        /* Buttons - prevent layout shift on state changes */
+        .btn {
+            min-height: 48px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* Service cards - stable dimensions */
+        .service-card,
+        .analyzer-card,
+        .feature-card {
+            min-height: 280px;
+        }
+
+        /* Trust badges - stable dimensions */
+        .trust-badge {
+            min-width: 100px;
+            min-height: 120px;
+        }
+
         /* Animated background gradient */
         body::before {
             content: '';
