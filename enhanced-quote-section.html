@@ -176,6 +176,7 @@
             background: #f9f9f9;
             transition: all 0.3s ease;
             cursor: pointer;
+            display: block;
         }
 
         .upload-area:hover {
@@ -452,8 +453,8 @@
                             </p>
                             
                             <div style="margin-bottom: 2rem;">
-                                <label class="upload-option" onclick="selectInfoMethod('upload')">
-                                    <input type="radio" name="info_method" value="upload" style="display: none;">
+                                <label class="upload-option" for="info-method-upload">
+                                    <input type="radio" name="info_method" value="upload" id="info-method-upload" class="sr-only" onchange="selectInfoMethod('upload')">
                                     <div style="display: flex; align-items: center; gap: 1rem;">
                                         <span style="font-size: 2rem;">📄</span>
                                         <div>
@@ -465,8 +466,8 @@
                                     </div>
                                 </label>
                                 
-                                <label class="upload-option" onclick="selectInfoMethod('manual')">
-                                    <input type="radio" name="info_method" value="manual" style="display: none;" checked>
+                                <label class="upload-option" for="info-method-manual">
+                                    <input type="radio" name="info_method" value="manual" id="info-method-manual" class="sr-only" onchange="selectInfoMethod('manual')" checked>
                                     <div style="display: flex; align-items: center; gap: 1rem;">
                                         <span style="font-size: 2rem;">✏️</span>
                                         <div>
@@ -480,14 +481,14 @@
                             </div>
 
                             <div id="upload-section" style="display: none;">
-                                <div class="upload-area" onclick="document.getElementById('declaration-upload').click()">
+                                <label for="declaration-upload" class="upload-area">
                                     <div class="upload-icon">📤</div>
                                     <h3>Click to upload your declaration page</h3>
                                     <p style="color: var(--color-text-secondary);">or drag and drop your file here</p>
                                     <p style="font-size: 0.9rem; color: var(--color-text-secondary); margin-top: 1rem;">
                                         Accepted formats: PDF, JPG, PNG (Max 10MB)
                                     </p>
-                                    <input type="file" id="declaration-upload" name="declaration_page" accept=".pdf,.jpg,.jpeg,.png" style="display: none;" onchange="handleFileUpload(event)">
+                                    <input type="file" id="declaration-upload" name="declaration_page" accept=".pdf,.jpg,.jpeg,.png" class="sr-only" onchange="handleFileUpload(event)">
                                     <div id="file-preview" style="margin-top: 1rem; display: none;">
                                         <p style="color: var(--color-success);">✓ <span id="file-name"></span></p>
                                     </div>
