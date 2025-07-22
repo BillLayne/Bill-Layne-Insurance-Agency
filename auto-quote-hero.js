@@ -1069,7 +1069,7 @@ function initializeAutoQuoteHero() {
         const form = document.getElementById('auto-hero-form');
         form.addEventListener('submit', handleFormSubmit);
         
-        console.log('Auto quote hero form initialized');
+        // console.log('Auto quote hero form initialized');
     }
 }
 

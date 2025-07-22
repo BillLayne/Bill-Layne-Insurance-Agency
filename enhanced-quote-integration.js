@@ -486,9 +486,9 @@ function initializeEnhancedQuote() {
         updateMiniButtons('auto');
         updateMiniButtons('home');
         
-        console.log('Enhanced quote form initialized successfully');
+        // console.log('Enhanced quote form initialized successfully');
     } else {
-        console.error('Could not find existing quote form to replace');
+        // console.error('Could not find existing quote form to replace');
     }
 }
 
