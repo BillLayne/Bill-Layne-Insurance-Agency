@@ -60,12 +60,16 @@
         .navbar-brand a{text-decoration:none}
         .navbar-brand-name{font-family:var(--font-serif);font-size:1.5rem;font-weight:800;color:var(--color-primary);display:block}
         .hero{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:60px 0;color:white;min-height:400px}
-        .hero h1{min-height:3em}
-        .hero p{min-height:2em}
+        .hero__content{min-height:280px}
+        .hero__headline{font-size:clamp(1.75rem,5vw,2.5rem);min-height:3.5em;line-height:1.2}
+        .hero__subheadline{font-size:clamp(1rem,3vw,1.25rem);min-height:3em;line-height:1.5}
+        .hero__features{min-height:80px}
         .btn{min-width:150px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
         .carrier-main-logo{width:150px;height:60px;object-fit:contain}
         img{max-width:100%;height:auto;display:block}
-        @media(max-width:768px){.navbar-brand-name{font-size:1.25rem}.hero{min-height:300px}}
+        .mobile-sticky-header{position:fixed;bottom:-100px;left:0;right:0;height:70px;transition:bottom 0.3s ease}
+        .mobile-sticky-header.visible{bottom:0}
+        @media(max-width:768px){.navbar-brand-name{font-size:1.25rem}.hero{min-height:300px}.hero__content{min-height:220px}}
     </style>
     
     <!-- Load main CSS asynchronously -->
@@ -518,11 +522,13 @@
                     <meta itemprop="position" content="1">
                     <a href="https://billlayne.github.io/ethereal-blog-landing/?tags=Auto%20Insurance" class="guide-card__link" itemprop="url" target="_blank">
                         <div class="guide-card__image">
-                            <img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
+                            <img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=300&q=80" 
                                  alt="Car Insurance Guide" 
                                  loading="lazy"
                                  width="400"
-                                 height="300">
+                                 height="300"
+                                 decoding="async"
+                                 style="aspect-ratio: 400/300; object-fit: cover;">
                             <div class="guide-card__overlay">
                                 <span class="guide-card__icon">🚗</span>
                             </div>
@@ -1062,11 +1068,25 @@
     
     <script>
         // Scroll functions
+        // Cache DOM queries to prevent forced reflows
+        let navbarHeight = null;
+        let mobileHeader = null;
+        let lastScrollY = 0;
+        let ticking = false;
+        
+        function initializeElements() {
+            const navbar = document.querySelector('.navbar');
+            navbarHeight = navbar ? navbar.offsetHeight : 72;
+            mobileHeader = document.querySelector('.mobile-sticky-header');
+            if (mobileHeader && window.innerWidth <= 768) {
+                mobileHeader.style.display = 'block';
+            }
+        }
+        
         function scrollToQuote() {
             const quoteForm = document.querySelector('.quote-form');
             if (quoteForm) {
-                const headerHeight = document.querySelector('.navbar').offsetHeight;
-                const targetPosition = quoteForm.offsetTop - headerHeight - 20;
+                const targetPosition = quoteForm.offsetTop - navbarHeight - 20;
                 
                 window.scrollTo({
                     top: targetPosition,
@@ -1090,15 +1110,45 @@
             });
         }
 
-        // Scroll to top button visibility
-        window.addEventListener('scroll', function() {
-            const scrollButton = document.querySelector('.scroll-to-top');
-            if (window.pageYOffset > 300) {
-                scrollButton.classList.add('visible');
+        // Handle mobile sticky header visibility
+        function updateMobileHeader() {
+            if (!mobileHeader || window.innerWidth > 768) return;
+            
+            if (window.scrollY > 200) {
+                mobileHeader.classList.add('visible');
             } else {
-                scrollButton.classList.remove('visible');
+                mobileHeader.classList.remove('visible');
             }
-        });
+        }
+        
+        // Scroll to top button visibility
+        let scrollButton = null;
+        let scrollTicking = false;
+        
+        function updateScrollButton() {
+            if (!scrollButton) {
+                scrollButton = document.querySelector('.scroll-to-top');
+            }
+            if (scrollButton) {
+                if (window.pageYOffset > 300) {
+                    scrollButton.classList.add('visible');
+                } else {
+                    scrollButton.classList.remove('visible');
+                }
+            }
+            updateMobileHeader();
+            scrollTicking = false;
+        }
+        
+        window.addEventListener('scroll', function() {
+            if (!scrollTicking) {
+                window.requestAnimationFrame(updateScrollButton);
+                scrollTicking = true;
+            }
+        }, { passive: true });
+        
+        // Initialize on DOM ready
+        window.addEventListener('DOMContentLoaded', initializeElements);
 
         // Form validation and submission
         function validateForm(form) {
@@ -1270,7 +1320,7 @@
     </script>
 
     <!-- Mobile Sticky Header -->
-    <div class="mobile-sticky-header">
+    <div class="mobile-sticky-header" style="display: none;">
         <div class="mobile-sticky-cta">
             <a href="tel:3368351993" class="mobile-call-btn">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
