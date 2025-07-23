@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Optimization Script</title>
+</head>
+<body>
+    <h1>Image Optimization Script for NC Auto & Home Website</h1>
+    <p>Upload images to convert them to WebP format with proper sizing</p>
+    
+    <input type="file" id="imageInput" multiple accept="image/*">
+    <div id="output"></div>
+
+    <script>
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const files = e.target.files;
+            const output = document.getElementById('output');
+            output.innerHTML = '';
+
+            // Target sizes for logos based on PageSpeed report
+            const logoSizes = {
+                'nc-grange': { width: 63, height: 40 },
+                'alamance': { width: 63, height: 40 },
+                'national-general': { width: 63, height: 40 },
+                'dairyland': { width: 63, height: 40 },
+                'progressive': { width: 63, height: 40 },
+                'nationwide': { width: 63, height: 40 },
+                'travelers': { width: 63, height: 40 }
+            };
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.onload = function() {
+                        // Create canvas for resizing
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Determine target size
+                        let targetWidth = 63;
+                        let targetHeight = 40;
+                        
+                        // For larger images, use responsive sizing
+                        if (img.width > 200 || img.height > 200) {
+                            targetWidth = Math.min(img.width, 800);
+                            targetHeight = Math.round((targetWidth / img.width) * img.height);
+                        }
+                        
+                        canvas.width = targetWidth;
+                        canvas.height = targetHeight;
+                        
+                        // Draw resized image
+                        ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+                        
+                        // Convert to WebP
+                        canvas.toBlob(function(blob) {
+                            const url = URL.createObjectURL(blob);
+                            const link = document.createElement('a');
+                            link.href = url;
+                            link.download = file.name.replace(/\.[^/.]+$/, '') + '.webp';
+                            link.textContent = 'Download ' + link.download + ' (Size: ' + Math.round(blob.size/1024) + 'KB)';
+                            
+                            const div = document.createElement('div');
+                            div.appendChild(link);
+                            div.innerHTML += '<br>Original: ' + img.width + 'x' + img.height + ' → Optimized: ' + targetWidth + 'x' + targetHeight;
+                            output.appendChild(div);
+                        }, 'image/webp', 0.85);
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+    </script>
+</body>
+</html>

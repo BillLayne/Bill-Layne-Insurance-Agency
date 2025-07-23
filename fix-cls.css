@@ -1,0 +1,91 @@
+/* CSS to fix Cumulative Layout Shift (CLS) issues */
+
+/* 1. Define explicit dimensions for images to prevent layout shift */
+.logo-item img {
+    width: 63px;
+    height: 40px;
+    object-fit: contain;
+}
+
+/* 2. Reserve space for hero elements */
+.hero {
+    min-height: 400px; /* Adjust based on your actual hero height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero h1 {
+    min-height: 3em; /* Reserve space for title */
+}
+
+.hero p {
+    min-height: 2em; /* Reserve space for subtitle */
+}
+
+/* 3. Prevent font loading layout shifts */
+@font-face {
+    font-family: 'YourFont';
+    src: url('your-font.woff2') format('woff2');
+    font-display: optional; /* or swap with fallback metrics */
+}
+
+/* 4. Set aspect ratios for responsive images */
+.responsive-image-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio - adjust as needed */
+    overflow: hidden;
+}
+
+.responsive-image-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 5. Skeleton screens for dynamic content */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* 6. Fixed heights for common elements */
+.navbar {
+    height: 60px; /* Fixed height prevents shift */
+}
+
+.footer {
+    min-height: 200px; /* Minimum height prevents shift */
+}
+
+/* 7. Prevent button and link shifts */
+.cta-button {
+    min-width: 150px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 8. Mobile-specific CLS fixes */
+@media (max-width: 768px) {
+    .hero {
+        min-height: 300px;
+    }
+    
+    .logo-item img {
+        width: 50px;
+        height: 32px;
+    }
+}
