@@ -54,21 +54,26 @@
         :root{--color-primary:#1e3a8a;--color-primary-light:#3b82f6;--color-accent:#10b981;--color-background:#ffffff;--color-surface:#f8fafc;--color-text:#1e293b;--color-border:#e2e8f0;--font-serif:'Montserrat',-apple-system,sans-serif;--font-sans:'Open Sans',-apple-system,sans-serif;--space-sm:0.75rem;--space-md:1rem;--space-lg:1.5rem;--space-xl:2rem}
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:var(--font-sans);color:var(--color-text);background:var(--color-background);line-height:1.6}
-        .navbar{background:rgba(255,255,255,0.95);position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);box-shadow:0 2px 10px rgba(0,0,0,0.1)}
+        .navbar{background:rgba(255,255,255,0.95);position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);box-shadow:0 2px 10px rgba(0,0,0,0.1);min-height:72px}
         .container{max-width:1200px;margin:0 auto;padding:0 var(--space-lg)}
-        .navbar-content{display:flex;align-items:center;justify-content:space-between;padding:var(--space-md) 0}
+        .navbar-content{display:flex;align-items:center;justify-content:space-between;padding:var(--space-md) 0;min-height:56px}
         .navbar-brand a{text-decoration:none}
         .navbar-brand-name{font-family:var(--font-serif);font-size:1.5rem;font-weight:800;color:var(--color-primary);display:block}
-        .hero{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:60px 0;color:white}
-        @media(max-width:768px){.navbar-brand-name{font-size:1.25rem}}
+        .hero{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:60px 0;color:white;min-height:400px}
+        .hero h1{min-height:3em}
+        .hero p{min-height:2em}
+        .btn{min-width:150px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+        .carrier-main-logo{width:150px;height:60px;object-fit:contain}
+        img{max-width:100%;height:auto;display:block}
+        @media(max-width:768px){.navbar-brand-name{font-size:1.25rem}.hero{min-height:300px}}
     </style>
     
     <!-- Load main CSS asynchronously -->
-    <link rel="preload" href="style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="style.css"></noscript>
+    <link rel="preload" href="style.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="style.min.css"></noscript>
     
     <!-- Lazy Loading Script -->
-    <script src="lazy-load.js" defer></script>
+    <script src="lazy-load.min.js" defer></script>
 
     <!-- Schema.org Structured Data -->
     <script type="application/ld+json">
@@ -201,16 +206,20 @@
     </script>
 
     <!-- EmailJS SDK -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <!-- EmailJS will be loaded after page load -->
     <script type="text/javascript">
-        // Wait for EmailJS to load before initializing
+        // Load EmailJS after page content
         window.addEventListener('load', function() {
-            if (typeof emailjs !== 'undefined') {
-                emailjs.init("Av6wKxL6HR-FIMtgm");
-                // console.log('EmailJS initialized successfully');
-            } else {
-                console.error('EmailJS SDK failed to load'); // Keep this for debugging
-            }
+            const emailScript = document.createElement('script');
+            emailScript.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
+            emailScript.async = true;
+            emailScript.onload = function() {
+                // Initialize EmailJS after it loads
+                if (typeof emailjs !== 'undefined') {
+                    emailjs.init("Av6wKxL6HR-FIMtgm");
+                }
+            };
+            document.body.appendChild(emailScript);
         });
     </script>
 </head>
@@ -317,25 +326,46 @@
             </div>
             <div class="carriers__grid">
                 <div class="carrier-logo">
-                    <img src="Logos/progressive logo.png" alt="Progressive Insurance" class="carrier-main-logo" loading="lazy" width="150" height="60">
+                    <picture>
+                        <source srcset="Logos/progressive logo.webp" type="image/webp">
+                        <img src="Logos/progressive logo.png" alt="Progressive Insurance" class="carrier-main-logo" loading="lazy" width="150" height="60" decoding="async">
+                    </picture>
                 </div>
                 <div class="carrier-logo">
-                    <img src="Logos/Nationwide logo.png" alt="Nationwide Insurance" class="carrier-main-logo" loading="lazy" width="150" height="60">
+                    <picture>
+                        <source srcset="Logos/Nationwide logo.webp" type="image/webp">
+                        <img src="Logos/Nationwide logo.png" alt="Nationwide Insurance" class="carrier-main-logo" loading="lazy" width="150" height="60" decoding="async">
+                    </picture>
                 </div>
                 <div class="carrier-logo">
-                    <img src="Logos/Travelers Logo.png" alt="Travelers Insurance" class="carrier-main-logo" loading="lazy" width="150" height="60">
+                    <picture>
+                        <source srcset="Logos/Travelers Logo.webp" type="image/webp">
+                        <img src="Logos/Travelers Logo.png" alt="Travelers Insurance" class="carrier-main-logo" loading="lazy" width="150" height="60" decoding="async">
+                    </picture>
                 </div>
                 <div class="carrier-logo">
-                    <img src="Logos/National General Logo.png" alt="National General Insurance" class="carrier-main-logo" loading="lazy" width="150" height="60">
+                    <picture>
+                        <source srcset="Logos/National General Logo.webp" type="image/webp">
+                        <img src="Logos/National General Logo.png" alt="National General Insurance" class="carrier-main-logo" loading="lazy" width="150" height="60" decoding="async">
+                    </picture>
                 </div>
                 <div class="carrier-logo">
-                    <img src="Logos/alamance farmers logo.png" alt="Alamance Farmers Insurance" class="carrier-main-logo" loading="lazy" width="150" height="60">
+                    <picture>
+                        <source srcset="Logos/alamance farmers logo.webp" type="image/webp">
+                        <img src="Logos/alamance farmers logo.png" alt="Alamance Farmers Insurance" class="carrier-main-logo" loading="lazy" width="150" height="60" decoding="async">
+                    </picture>
                 </div>
                 <div class="carrier-logo">
-                    <img src="Logos/NC Grange Mutual Logo.png" alt="NC Grange Mutual Insurance" class="carrier-main-logo" loading="lazy" width="150" height="60">
+                    <picture>
+                        <source srcset="Logos/NC Grange Mutual Logo.webp" type="image/webp">
+                        <img src="Logos/NC Grange Mutual Logo.png" alt="NC Grange Mutual Insurance" class="carrier-main-logo" loading="lazy" width="150" height="60" decoding="async">
+                    </picture>
                 </div>
                 <div class="carrier-logo">
-                    <img src="Logos/Dairyland logo.png" alt="Dairyland Insurance" class="carrier-main-logo" loading="lazy" width="150" height="60">
+                    <picture>
+                        <source srcset="Logos/Dairyland logo.webp" type="image/webp">
+                        <img src="Logos/Dairyland logo.png" alt="Dairyland Insurance" class="carrier-main-logo" loading="lazy" width="150" height="60" decoding="async">
+                    </picture>
                 </div>
                 <div class="carrier-logo">
                     <span class="carrier-text">Hagerty</span>
@@ -344,10 +374,16 @@
                     <span class="carrier-text">American Modern</span>
                 </div>
                 <div class="carrier-logo">
-                    <img src="https://i.imgur.com/rHIo4r5.jpg" alt="Foremost Insurance" class="carrier-main-logo" loading="lazy" width="150" height="60">
+                    <picture>
+                        <source srcset="Logos/foremost.webp" type="image/webp">
+                        <img src="Logos/foremost.jpg" alt="Foremost Insurance" class="carrier-main-logo" loading="lazy" width="150" height="60" decoding="async">
+                    </picture>
                 </div>
                 <div class="carrier-logo">
-                    <img src="https://i.imgur.com/otPRl9b.png" alt="Universal Property Insurance" class="carrier-main-logo" loading="lazy" width="150" height="60">
+                    <picture>
+                        <source srcset="Logos/Universal logo.webp" type="image/webp">
+                        <img src="Logos/Universal logo.png" alt="Universal Property Insurance" class="carrier-main-logo" loading="lazy" width="150" height="60" decoding="async">
+                    </picture>
                 </div>
             </div>
         </div>
@@ -1019,10 +1055,10 @@
     </div>
 
     <!-- Load the enhanced JavaScript -->
-    <script src="app.js" defer></script>
+    <script src="app.min.js" defer></script>
     
     <!-- Load the enhanced auto quote form -->
-    <script src="auto-quote-hero.js" defer></script>
+    <script src="auto-quote-hero.min.js" defer></script>
     
     <script>
         // Scroll functions
