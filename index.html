@@ -305,7 +305,7 @@
                 </nav>
                 <div class="navbar-cta">
                     <a href="tel:3368351993" class="phone-number">(336) 835-1993</a>
-                    <button class="btn btn--primary" onclick="openQuoteModal()">Start My Free Quote</button>
+                    <button class="btn btn--primary" onclick="scrollToQuote()">Start My Free Quote</button>
                 </div>
                 <button class="mobile-menu-toggle" aria-label="Toggle menu">
                     <span></span>
@@ -1479,6 +1479,13 @@
                     navbarMenu.classList.toggle('active');
                     this.classList.toggle('active');
                 });
+                
+            // Check for #quote hash and scroll to form
+            if (window.location.hash === '#quote') {
+                setTimeout(function() {
+                    scrollToQuote();
+                }, 500);
+            }
 
                 // Close menu when clicking outside
                 document.addEventListener('click', function(event) {
@@ -1511,13 +1518,12 @@
                 </svg>
                 Call Now
             </a>
-            <button class="mobile-quote-btn" onclick="openQuoteModal()">
+            <button class="mobile-quote-btn" onclick="scrollToQuote()">
                 Get Free Quote
             </button>
         </div>
     </div>
 
-    <!-- Enhanced Quote Modal will be loaded by script -->
-    <script src="quote-modal-enhanced.js" defer></script>
+    <!-- Quote modal removed - all quote buttons now scroll to main form -->
 </body>
 </html>
