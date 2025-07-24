@@ -20,15 +20,18 @@
                     </svg>
                 </button>
                 <div class="auto-quote-hero modal-quote-form">
-                    <h3 id="modalTitle">Get Your Free Auto Insurance Quote</h3>
-                    <p class="form-subtitle">Save up to 40% on your auto insurance in just 5 minutes</p>
-                    
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="modal-progress-fill" style="width: 16.66%"></div>
+                    <div class="modal-header">
+                        <h3 id="modalTitle">Get Your Free Auto Insurance Quote</h3>
+                        <p class="form-subtitle">Save up to 40% on your auto insurance in just 5 minutes</p>
+                        
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="modal-progress-fill" style="width: 16.66%"></div>
+                        </div>
+                        <div class="progress-text" id="modal-progress-text">Step 1 of 6</div>
                     </div>
-                    <div class="progress-text" id="modal-progress-text">Step 1 of 6</div>
 
-                    <form id="modalQuoteForm" action="https://formspree.io/f/xkgbdjgy" method="POST" enctype="multipart/form-data">
+                    <div class="modal-form-content">
+                        <form id="modalQuoteForm" action="https://formspree.io/f/xkgbdjgy" method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="form_type" value="Auto Insurance Quote - Modal">
                         <input type="hidden" name="source" value="Quote Modal">
                         
@@ -280,19 +283,21 @@
                             </div>
                         </div>
 
-                        <!-- Navigation Buttons -->
-                        <div class="form-navigation">
-                            <button type="button" class="btn btn-secondary btn-prev" onclick="modalPreviousStep()" disabled>
-                                ← Previous
-                            </button>
-                            <button type="button" class="btn btn-primary btn-next" onclick="modalNextStep()">
-                                Next →
-                            </button>
-                            <button type="submit" class="btn btn-primary btn-submit" style="display: none;">
-                                Get My Quote
-                            </button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="form-navigation">
+                        <button type="button" class="btn btn-secondary btn-prev" onclick="modalPreviousStep()" disabled>
+                            ← Previous
+                        </button>
+                        <button type="button" class="btn btn-primary btn-next" onclick="modalNextStep()">
+                            Next →
+                        </button>
+                        <button type="submit" class="btn btn-primary btn-submit" style="display: none;" form="modalQuoteForm">
+                            Get My Quote
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -380,30 +385,47 @@
 
         .modal-quote-form {
             background: white;
-            padding: 2rem;
+            padding: 0;
             border-radius: 1rem;
-            min-height: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-            overflow-x: hidden;
+            height: 85vh;
+            max-height: 600px;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 2rem 2rem 1rem;
+            border-bottom: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 1rem 1rem 0 0;
+        }
+
+        .modal-form-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 2rem;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: thin;
             scrollbar-color: rgba(0,0,0,0.2) transparent;
         }
 
-        .modal-quote-form::-webkit-scrollbar {
+        .modal-form-content::-webkit-scrollbar {
             width: 8px;
         }
 
-        .modal-quote-form::-webkit-scrollbar-track {
-            background: transparent;
+        .modal-form-content::-webkit-scrollbar-track {
+            background: #f0f0f0;
         }
 
-        .modal-quote-form::-webkit-scrollbar-thumb {
-            background-color: rgba(0,0,0,0.2);
+        .modal-form-content::-webkit-scrollbar-thumb {
+            background-color: rgba(0,0,0,0.3);
             border-radius: 4px;
+        }
+
+        .modal-form-content::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(0,0,0,0.5);
         }
 
         .modal-quote-form form {
@@ -603,8 +625,11 @@
         .form-navigation {
             display: flex;
             justify-content: space-between;
-            margin-top: 2rem;
+            padding: 1.5rem 2rem;
             gap: 1rem;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            border-radius: 0 0 1rem 1rem;
         }
 
         .btn {
@@ -709,10 +734,21 @@
             }
 
             .modal-quote-form {
-                padding: 1.5rem;
-                min-height: 100vh;
+                height: 100vh;
                 max-height: 100vh;
                 border-radius: 0;
+            }
+
+            .modal-header {
+                padding: 1.5rem 1.5rem 1rem;
+            }
+
+            .modal-form-content {
+                padding: 1.5rem;
+            }
+
+            .form-navigation {
+                padding: 1rem 1.5rem;
             }
 
             .quote-modal__close {
