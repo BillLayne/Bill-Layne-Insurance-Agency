@@ -384,8 +384,65 @@
 
         .form-subtitle {
             text-align: center;
-            color: var(--color-text-secondary);
+            color: var(--color-text-secondary, #64748b);
             margin-bottom: 2rem;
+        }
+
+        /* Form Elements Styling */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--color-text, #2c3e50);
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--color-text, #2c3e50);
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 2px solid #e0e0e0;
+            border-radius: 0.5rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            color: var(--color-text, #2c3e50);
+            background-color: #fff;
+            border-color: var(--color-primary, #1e3a8a);
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(30, 58, 138, 0.25);
+        }
+
+        .form-control::placeholder {
+            color: #999;
+            opacity: 1;
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 12px;
+            padding-right: 2.5rem;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+        }
+
+        .required {
+            color: #dc3545;
         }
 
         /* Progress Bar */
@@ -511,6 +568,23 @@
             gap: 1rem;
         }
 
+        .btn {
+            display: inline-block;
+            font-weight: 600;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: 0.5rem;
+            transition: all 0.15s ease-in-out;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
         .btn-prev, .btn-next, .btn-submit {
             padding: 0.75rem 2rem;
             border-radius: 8px;
@@ -529,18 +603,22 @@
             background: #d0d0d0;
         }
 
-        .btn-primary {
-            background: var(--color-primary);
+        .btn-primary, .btn--primary {
+            background: var(--color-primary, #1e3a8a);
             color: white;
         }
 
-        .btn-primary:hover {
-            background: var(--color-primary-dark);
+        .btn-primary:hover, .btn--primary:hover {
+            background: var(--color-primary-dark, #0f172a);
         }
 
         .btn-prev:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+        }
+
+        .btn--full-width {
+            width: 100%;
         }
 
         .checkbox-label {
