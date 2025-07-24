@@ -3200,9 +3200,13 @@ const learningCenterSectionStyles = `
 document.head.insertAdjacentHTML('beforeend', learningCenterSectionStyles);
 
 // Initialize the Learning Center when DOM is loaded
+// COMMENTED OUT: This was creating a duplicate Learning Center section
+// The Learning Center is already in the HTML, so we don't need to add it dynamically
+/*
 document.addEventListener('DOMContentLoaded', function() {
     // Add a small delay to ensure the existing analyzer system is fully loaded
     setTimeout(addLearningCenterSection, 100);
 });
+*/
 
 console.log('Interactive Learning Center loaded successfully!');
