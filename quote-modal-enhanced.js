@@ -347,10 +347,10 @@
         .quote-modal__content--enhanced {
             max-width: 800px;
             width: 95%;
-            max-height: 90vh;
+            height: 85vh;
+            max-height: 700px;
             animation: modalSlideUp 0.3s ease;
-            display: flex;
-            flex-direction: column;
+            display: block;
             position: relative;
         }
 
@@ -387,11 +387,12 @@
             background: white;
             padding: 0;
             border-radius: 1rem;
-            height: 85vh;
+            height: 80vh;
             max-height: 600px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            position: relative;
         }
 
         .modal-header {
@@ -403,7 +404,7 @@
 
         .modal-form-content {
             flex: 1;
-            overflow-y: auto;
+            overflow-y: scroll;
             overflow-x: hidden;
             padding: 2rem;
             -webkit-overflow-scrolling: touch;
@@ -411,6 +412,7 @@
             scrollbar-color: rgba(0,0,0,0.2) transparent;
             min-height: 0;
             background: white;
+            position: relative;
         }
 
         .modal-form-content::-webkit-scrollbar {
@@ -450,6 +452,7 @@
         /* Form Elements Styling */
         .form-group {
             margin-bottom: 1.5rem;
+            position: relative;
         }
 
         .form-label {
@@ -529,11 +532,12 @@
         /* Form Steps */
         .form-step {
             display: none;
-            min-height: 300px;
         }
 
         .form-step.active {
             display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
             animation: fadeIn 0.3s ease;
         }
 
