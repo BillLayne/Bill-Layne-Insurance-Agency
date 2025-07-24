@@ -343,16 +343,16 @@
             max-width: 800px;
             width: 95%;
             max-height: 90vh;
-            overflow-y: auto;
             animation: modalSlideUp 0.3s ease;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         .quote-modal__close {
-            position: absolute;
-            top: -10px;
-            right: -10px;
+            position: fixed;
+            top: 20px;
+            right: 20px;
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -364,7 +364,7 @@
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
-            z-index: 10;
+            z-index: 10000;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
 
@@ -383,8 +383,27 @@
             padding: 2rem;
             border-radius: 1rem;
             min-height: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            overflow-x: hidden;
             display: flex;
             flex-direction: column;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0,0,0,0.2) transparent;
+        }
+
+        .modal-quote-form::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-quote-form::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .modal-quote-form::-webkit-scrollbar-thumb {
+            background-color: rgba(0,0,0,0.2);
+            border-radius: 4px;
         }
 
         .modal-quote-form form {
@@ -684,14 +703,23 @@
         /* Mobile Optimizations */
         @media (max-width: 768px) {
             .quote-modal__content--enhanced {
-                width: 95%;
-                max-height: 95vh;
-                margin: 10px;
+                width: 100%;
+                max-height: 100vh;
+                margin: 0;
             }
 
             .modal-quote-form {
                 padding: 1.5rem;
-                min-height: 400px;
+                min-height: 100vh;
+                max-height: 100vh;
+                border-radius: 0;
+            }
+
+            .quote-modal__close {
+                top: 10px;
+                right: 10px;
+                width: 35px;
+                height: 35px;
             }
 
             .step-title {
