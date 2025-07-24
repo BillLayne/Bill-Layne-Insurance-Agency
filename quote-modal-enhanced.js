@@ -301,10 +301,79 @@
     // Enhanced Modal CSS
     const modalCSS = `
         <style>
+        /* Base Modal Styles - Fixed Positioning */
+        .quote-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .quote-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+        }
+
+        .quote-modal__overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            cursor: pointer;
+        }
+
         /* Enhanced Quote Modal Styles */
+        .quote-modal__content {
+            position: relative;
+            z-index: 1;
+        }
+
         .quote-modal__content--enhanced {
             max-width: 800px;
             width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideUp 0.3s ease;
+        }
+
+        .quote-modal__close {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--color-primary, #1e3a8a);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .quote-modal__close:hover {
+            background: var(--color-primary-dark, #0f172a);
+            transform: rotate(90deg);
+        }
+
+        .quote-modal__close svg {
+            width: 20px;
+            height: 20px;
         }
 
         .modal-quote-form {
@@ -494,6 +563,24 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Prevent body scroll when modal is open */
+        body.modal-open {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
         }
 
         /* Mobile Optimizations */
