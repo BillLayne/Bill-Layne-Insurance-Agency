@@ -409,6 +409,8 @@
             -webkit-overflow-scrolling: touch;
             scrollbar-width: thin;
             scrollbar-color: rgba(0,0,0,0.2) transparent;
+            min-height: 0;
+            background: white;
         }
 
         .modal-form-content::-webkit-scrollbar {
@@ -429,9 +431,7 @@
         }
 
         .modal-quote-form form {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
+            width: 100%;
         }
 
         .modal-quote-form h3 {
@@ -530,11 +530,10 @@
         .form-step {
             display: none;
             min-height: 300px;
-            flex: 1;
         }
 
         .form-step.active {
-            display: block;
+            display: block !important;
             animation: fadeIn 0.3s ease;
         }
 
