@@ -89,46 +89,126 @@
             padding: 0 20px;
         }
         
-        /* Header */
-        .header {
+        /* Header Navigation */
+        .navbar {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 15px 0;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid #e2e8f0;
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 100;
             box-shadow: 0 2px 20px rgba(0,0,0,0.1);
         }
-        
-        .header-content {
+
+        .navbar-content {
+            padding: 1rem 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
+            gap: 2rem;
         }
-        
-        .logo img {
-            height: 50px;
-            width: auto;
-        }
-        
-        .header-contact {
+
+        .navbar-brand {
             display: flex;
             flex-direction: column;
-            align-items: flex-end;
+            gap: 0.25rem;
         }
-        
-        .phone {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2c3e50;
+
+        .navbar-brand a {
             text-decoration: none;
-            margin-bottom: 5px;
+            transition: transform 0.3s ease;
         }
-        
-        .address {
-            font-size: 14px;
-            color: #666;
+
+        .navbar-brand a:hover {
+            transform: translateX(5px);
+        }
+
+        .navbar-brand-name {
+            font-family: Georgia, serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1e3a8a;
+            display: block;
+        }
+
+        .navbar-brand span {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #1e293b;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #3b82f6;
+        }
+
+        .navbar-cta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .phone-number {
+            font-weight: 600;
+            color: #1e3a8a;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .phone-number:hover {
+            color: #3b82f6;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn--primary {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+        }
+
+        .btn--primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(30, 58, 138, 0.2);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 4px;
+            padding: 0.5rem;
+        }
+
+        .mobile-menu-toggle span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: #1e293b;
+            transition: transform 0.3s ease;
         }
         
         /* Hero Section */
@@ -800,6 +880,18 @@
         
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
+            .navbar-menu,
+            .navbar-cta {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+
+            .navbar-content {
+                padding: 0.75rem 0;
+            }
             .hero {
                 background-attachment: scroll; /* Fixed backgrounds can cause issues on mobile */
                 padding: 80px 0;
@@ -926,16 +1018,31 @@
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
+    <header class="navbar">
         <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <img src="https://i.imgur.com/cBAgeX8.png" alt="Bill Layne Insurance Agency Logo">
+            <div class="navbar-content">
+                <div class="navbar-brand">
+                    <a href="index.html" aria-label="Bill Layne Insurance Agency Home">
+                        <strong class="navbar-brand-name">Bill Layne Insurance</strong>
+                        <span>Protecting NC Since 2004</span>
+                    </a>
                 </div>
-                <div class="header-contact">
-                    <a href="tel:336-835-1993" class="phone">📞 (336) 835-1993</a>
-                    <div class="address">1283 N Bridge St, Elkin, NC 28621</div>
+                <nav class="navbar-menu">
+                    <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="nav-link" target="_blank">Home Insurance</a>
+                    <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="nav-link" target="_blank">Auto Insurance</a>
+                    <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="nav-link" target="_blank">Claims Center</a>
+                    <a href="blog.html" class="nav-link">Blog</a>
+                    <a href="contact-us.html" class="nav-link">Contact Us</a>
+                </nav>
+                <div class="navbar-cta">
+                    <a href="tel:3368351993" class="phone-number">(336) 835-1993</a>
+                    <button class="btn btn--primary" onclick="window.location.href='index.html#quote'">Start My Free Quote</button>
                 </div>
+                <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
             </div>
         </div>
     </header>
@@ -1429,6 +1536,19 @@
             card.style.transform = 'translateY(20px)';
             card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
             observer.observe(card);
+        });
+
+        // Mobile menu toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+            const navbarMenu = document.querySelector('.navbar-menu');
+            
+            if (mobileMenuToggle && navbarMenu) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    navbarMenu.classList.toggle('active');
+                });
+            }
         });
     </script>
 </body>
