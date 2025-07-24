@@ -345,6 +345,8 @@
             max-height: 90vh;
             overflow-y: auto;
             animation: modalSlideUp 0.3s ease;
+            display: flex;
+            flex-direction: column;
         }
 
         .quote-modal__close {
@@ -380,6 +382,22 @@
             background: white;
             padding: 2rem;
             border-radius: 1rem;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-quote-form form {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-quote-form h3 {
+            font-size: 1.75rem;
+            color: var(--color-primary, #1e3a8a);
+            margin-bottom: 0.5rem;
+            text-align: center;
         }
 
         .form-subtitle {
@@ -470,6 +488,8 @@
         /* Form Steps */
         .form-step {
             display: none;
+            min-height: 300px;
+            flex: 1;
         }
 
         .form-step.active {
@@ -663,8 +683,15 @@
 
         /* Mobile Optimizations */
         @media (max-width: 768px) {
+            .quote-modal__content--enhanced {
+                width: 95%;
+                max-height: 95vh;
+                margin: 10px;
+            }
+
             .modal-quote-form {
                 padding: 1.5rem;
+                min-height: 400px;
             }
 
             .step-title {
