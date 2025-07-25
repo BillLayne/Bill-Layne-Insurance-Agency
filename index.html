@@ -1474,40 +1474,64 @@
             }
         }
 
-        // Mobile menu toggle functionality
+        // Enhanced Mobile Menu Functionality
         document.addEventListener('DOMContentLoaded', function() {
-            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-            const navbarMenu = document.querySelector('.nav-menu');
+            console.log('Initializing mobile menu...');
             
-            if (mobileMenuToggle && navbarMenu) {
-                mobileMenuToggle.addEventListener('click', function() {
-                    navbarMenu.classList.toggle('active');
-                    this.classList.toggle('active');
-                });
+            // Get elements - try multiple selectors for compatibility
+            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle, #mobileMenuToggle');
+            const navMenu = document.querySelector('.nav-menu, #navMenu');
+            const body = document.body;
+            
+            if (!mobileMenuToggle || !navMenu) {
+                console.error('Mobile menu elements not found');
+                return;
+            }
+            
+            console.log('Mobile menu elements found:', { toggle: mobileMenuToggle, menu: navMenu });
+            
+            // Toggle menu on click
+            mobileMenuToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
                 
+                // Toggle active states
+                navMenu.classList.toggle('active');
+                mobileMenuToggle.classList.toggle('active');
+                body.classList.toggle('menu-open');
+                
+                // Toggle aria-expanded for accessibility
+                const isExpanded = navMenu.classList.contains('active');
+                mobileMenuToggle.setAttribute('aria-expanded', isExpanded);
+                
+                console.log('Menu toggled:', isExpanded);
+            });
+            
+            // Close menu when clicking links
+            const navLinks = navMenu.querySelectorAll('a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    navMenu.classList.remove('active');
+                    mobileMenuToggle.classList.remove('active');
+                    body.classList.remove('menu-open');
+                });
+            });
+            
+            // Close menu on outside click
+            document.addEventListener('click', function(e) {
+                // Check if click is outside the navigation container
+                if (!e.target.closest('.navbar-content, .nav-container')) {
+                    navMenu.classList.remove('active');
+                    mobileMenuToggle.classList.remove('active');
+                    body.classList.remove('menu-open');
+                }
+            });
+            
             // Check for #quote hash and scroll to form
             if (window.location.hash === '#quote') {
                 setTimeout(function() {
                     scrollToQuote();
                 }, 500);
-            }
-
-                // Close menu when clicking outside
-                document.addEventListener('click', function(event) {
-                    if (!event.target.closest('.nav-container')) {
-                        navbarMenu.classList.remove('active');
-                        mobileMenuToggle.classList.remove('active');
-                    }
-                });
-
-                // Close menu when clicking on a link
-                const navLinks = document.querySelectorAll('.nav-link');
-                navLinks.forEach(link => {
-                    link.addEventListener('click', function() {
-                        navbarMenu.classList.remove('active');
-                        mobileMenuToggle.classList.remove('active');
-                    });
-                });
             }
         });
 
