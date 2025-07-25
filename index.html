@@ -1481,10 +1481,13 @@
             const mobileMenuToggle = document.getElementById('mobileMenuToggle');
             const headerNav = document.querySelector('.header-nav');
             
-            if (mobileMenuToggle) {
-                mobileMenuToggle.addEventListener('click', function() {
+            if (mobileMenuToggle && headerNav) {
+                mobileMenuToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
                     headerNav.classList.toggle('active');
                     mobileMenuToggle.classList.toggle('active');
+                    console.log('Menu toggled:', headerNav.classList.contains('active'));
                 });
             }
             
