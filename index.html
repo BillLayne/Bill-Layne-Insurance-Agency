@@ -1557,10 +1557,54 @@
                 console.log('Toggle element:', mobileMenuToggle);
                 console.log('Nav element:', headerNav);
                 console.log('Current window width:', window.innerWidth);
-                console.log('Menu is active:', headerNav.classList.contains('active'));
+                console.log('Menu is active:', headerNav ? headerNav.classList.contains('active') : 'No headerNav');
+                
+                // Debug DOM structure
+                console.log('🔍 DOM Debug:');
+                console.log('All elements with mobile-menu-toggle:', document.querySelectorAll('.mobile-menu-toggle'));
+                console.log('All elements with header-nav:', document.querySelectorAll('.header-nav'));
+                console.log('All elements with nav-menu:', document.querySelectorAll('.nav-menu'));
+                console.log('All elements with navbar-menu:', document.querySelectorAll('.navbar-menu'));
+                
+                // Check computed styles
+                if (headerNav) {
+                    const styles = window.getComputedStyle(headerNav);
+                    console.log('header-nav computed styles:', {
+                        display: styles.display,
+                        visibility: styles.visibility,
+                        opacity: styles.opacity,
+                        transform: styles.transform,
+                        position: styles.position,
+                        zIndex: styles.zIndex
+                    });
+                }
             };
             
             console.log('✅ Mobile menu initialized successfully!');
+        });
+        
+        // FALLBACK: Also check for navbar-menu structure (like Auto/Home Insurance pages)
+        document.addEventListener('DOMContentLoaded', function() {
+            const navbarMenuToggle = document.querySelector('.mobile-menu-toggle');
+            const navbarMenu = document.querySelector('.navbar-menu');
+            
+            if (navbarMenuToggle && navbarMenu && !document.querySelector('.header-nav')) {
+                console.log('📱 Using navbar-menu structure');
+                
+                navbarMenuToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    navbarMenu.classList.toggle('active');
+                    this.classList.toggle('active');
+                });
+                
+                // Close menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!event.target.closest('.navbar-content')) {
+                        navbarMenu.classList.remove('active');
+                        navbarMenuToggle.classList.remove('active');
+                    }
+                });
+            }
         });
             
             // Check for #quote hash and scroll to form

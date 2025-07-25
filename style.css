@@ -2651,18 +2651,41 @@ body.menu-open {
     -webkit-touch-callout: none;
 }
 
-/* Remove any conflicting old navbar styles */
-.navbar-menu {
-    display: none !important;
-}
-
-@media (max-width: 768px) {
-    .navbar-content {
-        display: none !important;
+/* Support for navbar-menu structure (like Auto/Home Insurance pages) */
+@media (max-width: 900px) {
+    /* If using navbar-menu structure */
+    .navbar-menu {
+        position: fixed !important;
+        top: 80px !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        background: white !important;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15) !important;
+        transform: translateX(-100%) !important;
+        transition: transform 0.3s ease !important;
+        z-index: 999 !important;
+        padding: 20px !important;
+        max-height: calc(100vh - 80px) !important;
+        overflow-y: auto !important;
     }
     
-    .navbar {
-        display: none !important;
+    .navbar-menu.active {
+        transform: translateX(0) !important;
+    }
+    
+    .navbar-menu .nav-link {
+        display: block !important;
+        padding: 15px 20px !important;
+        text-align: left !important;
+        border-bottom: 1px solid #f0f0f0 !important;
+        color: #333333 !important;
+        text-decoration: none !important;
+    }
+    
+    .navbar-menu .nav-link:hover {
+        background-color: #f8f9fa !important;
+        color: #0066ff !important;
     }
 }
 
