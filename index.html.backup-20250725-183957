@@ -287,39 +287,38 @@
 </head>
 <body>
     <!-- Header -->
-<!-- Unified Header -->
-<header class="unified-header">
-  <div class="header-container">
-    <div class="header-logo">
-      <a href="https://billlayneinsurance.com/" class="logo-link">
-        Bill Layne Insurance
-      </a>
-    </div>
-    
-    <nav class="header-nav">
-      <ul class="nav-menu">
-        <li><a href="https://billlayne.github.io/Auto-Insurance-Center/" class="nav-link">Auto</a></li>
-        <li><a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="nav-link">Home</a></li>
-        <li><a href="https://billlayneinsurance.com/areas-we-serve.html" class="nav-link">Services</a></li>
-        <li><a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="nav-link">Claims</a></li>
-        <li><a href="https://billlayne.github.io/Resources/" class="nav-link">Resources</a></li>
-        <li><a href="https://billlayneinsurance.com/blog" class="nav-link">Blog</a></li>
-        <li><a href="https://billlayneinsurance.com/contact-us.html" class="nav-link">Contact</a></li>
-      </ul>
+<!-- Updated Header with Consistent Design -->
+<!-- Header -->
+<!-- Header -->
+<header class="site-header">
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="https://billlayneinsurance.com/" class="nav-logo">
+                Bill Layne Insurance
+            </a>
+            
+            <div class="nav-menu" id="navMenu">
+                <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="nav-link">Home</a>
+                <a href="https://billlayneinsurance.com/areas-we-serve.html" class="nav-link">Services</a>
+                <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="nav-link">Auto</a>
+                <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="nav-link">Claims</a>
+                <a href="https://billlayne.github.io/Resources/" class="nav-link">Resources</a>
+                <a href="blog.html" class="nav-link">Blog</a>
+                <a href="contact-us.html" class="nav-link">Contact</a>
+            </div>
+            
+            <div class="nav-actions">
+                <a href="tel:+13368351993" class="nav-cta">
+                    <i class="fas fa-phone"></i> 336-835-1993
+                </a>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
     </nav>
-    
-    <div class="header-cta">
-      <a href="tel:3368351993" class="phone-button">
-        <span class="phone-icon">📞</span> (336) 835-1993
-      </a>
-    </div>
-    
-    <button class="mobile-menu-toggle" id="mobileMenuToggle">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-  </div>
 </header>
 
     <!-- Hero Section -->
@@ -1477,17 +1476,15 @@
 
         // Mobile menu toggle functionality
         document.addEventListener('DOMContentLoaded', function() {
-            // Mobile menu toggle for unified header
-            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-            const headerNav = document.querySelector('.header-nav');
+            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+            const navbarMenu = document.querySelector('.nav-menu');
             
-            if (mobileMenuToggle) {
+            if (mobileMenuToggle && navbarMenu) {
                 mobileMenuToggle.addEventListener('click', function() {
-                    headerNav.classList.toggle('active');
-                    mobileMenuToggle.classList.toggle('active');
+                    navbarMenu.classList.toggle('active');
+                    this.classList.toggle('active');
                 });
-            }
-            
+                
             // Check for #quote hash and scroll to form
             if (window.location.hash === '#quote') {
                 setTimeout(function() {
@@ -1495,37 +1492,23 @@
                 }, 500);
             }
 
-            // Close menu when clicking outside
-            document.addEventListener('click', function(event) {
-                if (!event.target.closest('.header-container')) {
-                    headerNav.classList.remove('active');
-                    mobileMenuToggle.classList.remove('active');
-                }
-            });
+                // Close menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!event.target.closest('.nav-container')) {
+                        navbarMenu.classList.remove('active');
+                        mobileMenuToggle.classList.remove('active');
+                    }
+                });
 
-            // Set active page based on URL
-            const currentURL = window.location.href;
-            const navLinks = document.querySelectorAll('.nav-link');
-            
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                
-                // Check for exact match or partial match
-                if (currentURL === link.href || currentURL.includes(link.href)) {
-                    link.classList.add('active');
-                }
-                
-                // Special cases for main domain pages
-                if (link.textContent === 'Services' && currentURL.includes('areas-we-serve')) {
-                    link.classList.add('active');
-                }
-                if (link.textContent === 'Blog' && currentURL.includes('/blog')) {
-                    link.classList.add('active');
-                }
-                if (link.textContent === 'Contact' && currentURL.includes('contact')) {
-                    link.classList.add('active');
-                }
-            });
+                // Close menu when clicking on a link
+                const navLinks = document.querySelectorAll('.nav-link');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        navbarMenu.classList.remove('active');
+                        mobileMenuToggle.classList.remove('active');
+                    });
+                });
+            }
         });
 
 
