@@ -522,7 +522,10 @@ function createAutoQuoteHeroHTML() {
             
             <!-- Step 1: Personal Information -->
             <div class="form-step active" data-step="1">
-                <h4 class="step-title">Tell us about yourself</h4>
+                <h4 class="step-title">Get Your Auto Insurance Quote - Step 1</h4>
+                <p style="text-align: center; color: #666; margin-bottom: 1.5rem; font-size: 0.95rem;">
+                    Start your personalized auto insurance quote by providing your basic information
+                </p>
                 
                 <div class="form-group">
                     <label class="form-label">First Name <span class="required">*</span></label>
