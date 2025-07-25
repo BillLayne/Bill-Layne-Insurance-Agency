@@ -255,6 +255,59 @@
     </footer>
 
     <script>
+        // Enhanced Mobile menu toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const headerNav = document.querySelector('.header-nav');
+            const body = document.body;
+            
+            if (mobileMenuToggle && headerNav) {
+                mobileMenuToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Toggle active classes
+                    headerNav.classList.toggle('active');
+                    mobileMenuToggle.classList.toggle('active');
+                    
+                    // Prevent body scroll when menu is open
+                    if (headerNav.classList.contains('active')) {
+                        body.classList.add('menu-open');
+                    } else {
+                        body.classList.remove('menu-open');
+                    }
+                });
+                
+                // Close menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!event.target.closest('.unified-header')) {
+                        headerNav.classList.remove('active');
+                        mobileMenuToggle.classList.remove('active');
+                        body.classList.remove('menu-open');
+                    }
+                });
+                
+                // Close menu when clicking on a nav link
+                const navLinks = headerNav.querySelectorAll('.nav-link');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        headerNav.classList.remove('active');
+                        mobileMenuToggle.classList.remove('active');
+                        body.classList.remove('menu-open');
+                    });
+                });
+                
+                // Handle window resize
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth > 900) {
+                        headerNav.classList.remove('active');
+                        mobileMenuToggle.classList.remove('active');
+                        body.classList.remove('menu-open');
+                    }
+                });
+            }
+        });
+        
         // Redirect to external blog after a brief moment to ensure SEO crawlers see this page
         // Commented out - only enable if you want automatic redirect
         // setTimeout(() => {
