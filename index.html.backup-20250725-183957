@@ -287,39 +287,38 @@
 </head>
 <body>
     <!-- Header -->
-<!-- Unified Header -->
-<header class="unified-header">
-  <div class="header-container">
-    <div class="header-logo">
-      <a href="https://billlayneinsurance.com/" class="logo-link">
-        Bill Layne Insurance
-      </a>
-    </div>
-    
-    <nav class="header-nav">
-      <ul class="nav-menu">
-        <li><a href="https://billlayne.github.io/Auto-Insurance-Center/" class="nav-link">Auto</a></li>
-        <li><a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="nav-link">Home</a></li>
-        <li><a href="https://billlayneinsurance.com/areas-we-serve.html" class="nav-link">Services</a></li>
-        <li><a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="nav-link">Claims</a></li>
-        <li><a href="https://billlayne.github.io/Resources/" class="nav-link">Resources</a></li>
-        <li><a href="https://billlayneinsurance.com/blog" class="nav-link">Blog</a></li>
-        <li><a href="https://billlayneinsurance.com/contact-us.html" class="nav-link">Contact</a></li>
-      </ul>
+<!-- Updated Header with Consistent Design -->
+<!-- Header -->
+<!-- Header -->
+<header class="site-header">
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="https://billlayneinsurance.com/" class="nav-logo">
+                Bill Layne Insurance
+            </a>
+            
+            <div class="nav-menu" id="navMenu">
+                <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="nav-link">Home</a>
+                <a href="https://billlayneinsurance.com/areas-we-serve.html" class="nav-link">Services</a>
+                <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="nav-link">Auto</a>
+                <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="nav-link">Claims</a>
+                <a href="https://billlayne.github.io/Resources/" class="nav-link">Resources</a>
+                <a href="blog.html" class="nav-link">Blog</a>
+                <a href="contact-us.html" class="nav-link">Contact</a>
+            </div>
+            
+            <div class="nav-actions">
+                <a href="tel:+13368351993" class="nav-cta">
+                    <i class="fas fa-phone"></i> 336-835-1993
+                </a>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
     </nav>
-    
-    <div class="header-cta">
-      <a href="tel:3368351993" class="phone-button">
-        <span class="phone-icon">📞</span> (336) 835-1993
-      </a>
-    </div>
-    
-    <button class="mobile-menu-toggle" id="mobileMenuToggle">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-  </div>
 </header>
 
     <!-- Hero Section -->
@@ -1475,90 +1474,17 @@
             }
         }
 
-        // Enhanced Mobile Menu Functionality - Merged Version
+        // Mobile menu toggle functionality
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Initializing mobile menu...');
+            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+            const navbarMenu = document.querySelector('.nav-menu');
             
-            // Try multiple selectors for compatibility with both structures
-            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle, #mobileMenuToggle');
-            const navMenu = document.querySelector('.nav-menu, #navMenu, .header-nav, .navbar-menu');
-            const body = document.body;
-            
-            if (!mobileMenuToggle || !navMenu) {
-                console.error('❌ Mobile menu elements not found!');
-                return;
-            }
-            
-            console.log('📱 Mobile menu elements found:', { toggle: mobileMenuToggle, menu: navMenu });
-            
-            // Toggle menu on click
-            mobileMenuToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // Toggle active states
-                const isActive = navMenu.classList.toggle('active');
-                mobileMenuToggle.classList.toggle('active');
-                body.classList.toggle('menu-open');
-                
-                // Toggle aria-expanded for accessibility
-                mobileMenuToggle.setAttribute('aria-expanded', isActive);
-                
-                console.log('📱 Menu toggled:', isActive ? 'opened' : 'closed');
-            });
-            
-            // Close menu when clicking links
-            const navLinks = navMenu.querySelectorAll('a');
-            navLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    navMenu.classList.remove('active');
-                    mobileMenuToggle.classList.remove('active');
-                    body.classList.remove('menu-open');
-                    console.log('📱 Menu closed via nav link');
+            if (mobileMenuToggle && navbarMenu) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    navbarMenu.classList.toggle('active');
+                    this.classList.toggle('active');
                 });
-            });
-            
-            // Close menu on outside click
-            document.addEventListener('click', function(e) {
-                // Check if click is outside any navigation container
-                if (!e.target.closest('.navbar-content, .nav-container, .unified-header, .header-container')) {
-                    if (navMenu.classList.contains('active')) {
-                        navMenu.classList.remove('active');
-                        mobileMenuToggle.classList.remove('active');
-                        body.classList.remove('menu-open');
-                        console.log('📱 Menu closed via outside click');
-                    }
-                }
-            });
-            
-            // Handle window resize
-            window.addEventListener('resize', function() {
-                if (window.innerWidth > 900) {
-                    navMenu.classList.remove('active');
-                    mobileMenuToggle.classList.remove('active');
-                    body.classList.remove('menu-open');
-                    console.log('📱 Menu closed via resize');
-                }
-            });
-            
-            // Test function - you can call this from browser console
-            window.testMobileMenu = function() {
-                console.log('🧪 Testing mobile menu...');
-                console.log('Toggle element:', mobileMenuToggle);
-                console.log('Nav element:', navMenu);
-                console.log('Current window width:', window.innerWidth);
-                console.log('Menu is active:', navMenu.classList.contains('active'));
                 
-                // Debug DOM structure
-                console.log('🔍 DOM Debug:');
-                console.log('All mobile-menu-toggle:', document.querySelectorAll('.mobile-menu-toggle'));
-                console.log('All nav-menu:', document.querySelectorAll('.nav-menu'));
-                console.log('All header-nav:', document.querySelectorAll('.header-nav'));
-                console.log('All navbar-menu:', document.querySelectorAll('.navbar-menu'));
-            };
-            
-            console.log('✅ Mobile menu initialized successfully!');
-            
             // Check for #quote hash and scroll to form
             if (window.location.hash === '#quote') {
                 setTimeout(function() {
@@ -1566,118 +1492,26 @@
                 }, 500);
             }
 
-            // Set active page based on URL
-            const currentURL = window.location.href;
-            const navLinks = document.querySelectorAll('.nav-link');
-            
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                
-                // Check for exact match or partial match
-                if (currentURL === link.href || currentURL.includes(link.href)) {
-                    link.classList.add('active');
-                }
-                
-                // Special cases for main domain pages
-                if (link.textContent === 'Services' && currentURL.includes('areas-we-serve')) {
-                    link.classList.add('active');
-                }
-                if (link.textContent === 'Blog' && currentURL.includes('/blog')) {
-                    link.classList.add('active');
-                }
-                if (link.textContent === 'Contact' && currentURL.includes('contact')) {
-                    link.classList.add('active');
-                }
-            });
+                // Close menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!event.target.closest('.nav-container')) {
+                        navbarMenu.classList.remove('active');
+                        mobileMenuToggle.classList.remove('active');
+                    }
+                });
+
+                // Close menu when clicking on a link
+                const navLinks = document.querySelectorAll('.nav-link');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        navbarMenu.classList.remove('active');
+                        mobileMenuToggle.classList.remove('active');
+                    });
+                });
+            }
         });
 
 
-    </script>
-    
-    <!-- SIMPLIFIED MOBILE MENU FIX -->
-    <style>
-        @media (max-width: 900px) {
-            /* Force mobile menu to work */
-            .header-nav {
-                position: fixed !important;
-                top: 70px !important;
-                left: 0 !important;
-                right: 0 !important;
-                width: 100% !important;
-                height: auto !important;
-                background-color: #ffffff !important;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
-                display: none !important;
-                z-index: 99999 !important;
-            }
-            
-            .header-nav.show-menu {
-                display: block !important;
-            }
-            
-            .header-nav .nav-menu {
-                display: flex !important;
-                flex-direction: column !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                list-style: none !important;
-            }
-            
-            .header-nav .nav-menu li {
-                border-bottom: 1px solid #eee !important;
-            }
-            
-            .header-nav .nav-menu .nav-link {
-                display: block !important;
-                padding: 20px !important;
-                color: #333 !important;
-                text-decoration: none !important;
-                font-size: 16px !important;
-            }
-            
-            .mobile-menu-toggle {
-                display: block !important;
-                position: relative !important;
-                z-index: 100000 !important;
-            }
-        }
-    </style>
-    
-    <script>
-        // SIMPLE MOBILE MENU THAT WORKS
-        (function() {
-            // Wait for page to load
-            window.addEventListener('load', function() {
-                console.log('🔧 Simple mobile menu init...');
-                
-                const toggle = document.querySelector('.mobile-menu-toggle');
-                const nav = document.querySelector('.header-nav');
-                
-                if (toggle && nav) {
-                    // Remove all existing listeners first
-                    const newToggle = toggle.cloneNode(true);
-                    toggle.parentNode.replaceChild(newToggle, toggle);
-                    
-                    // Add new simple click handler
-                    newToggle.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        if (nav.classList.contains('show-menu')) {
-                            nav.classList.remove('show-menu');
-                            console.log('Menu closed');
-                        } else {
-                            nav.classList.add('show-menu');
-                            console.log('Menu opened');
-                        }
-                    });
-                    
-                    console.log('✅ Simple menu ready!');
-                } else {
-                    console.error('❌ Menu elements not found');
-                }
-            });
-        })();
     </script>
 
     <!-- Mobile Sticky Header -->

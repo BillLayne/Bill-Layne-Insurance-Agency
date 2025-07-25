@@ -347,41 +347,45 @@
             }
         }
     </style>
+    
+    <!-- Link to main stylesheet for unified header -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <!-- Header -->
-<!-- Updated Header with Consistent Design -->
-<!-- Header -->
-<!-- Header -->
-<header class="site-header">
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="https://billlayneinsurance.com/" class="nav-logo">
-                Bill Layne Insurance
-            </a>
-            
-            <div class="nav-menu" id="navMenu">
-                <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="nav-link">Home</a>
-                <a href="https://billlayneinsurance.com/areas-we-serve.html" class="nav-link">Services</a>
-                <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="nav-link">Auto</a>
-                <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="nav-link">Claims</a>
-                <a href="https://billlayne.github.io/Resources/" class="nav-link">Resources</a>
-                <a href="blog.html" class="nav-link">Blog</a>
-                <a href="contact-us.html" class="nav-link">Contact</a>
-            </div>
-            
-            <div class="nav-actions">
-                <a href="tel:+13368351993" class="nav-cta">
-                    <i class="fas fa-phone"></i> 336-835-1993
-                </a>
-                <button class="mobile-menu-toggle" id="mobileMenuToggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
-        </div>
+<!-- Unified Header -->
+<header class="unified-header">
+  <div class="header-container">
+    <div class="header-logo">
+      <a href="https://billlayneinsurance.com/" class="logo-link">
+        Bill Layne Insurance
+      </a>
+    </div>
+    
+    <nav class="header-nav">
+      <ul class="nav-menu">
+        <li><a href="https://billlayne.github.io/Auto-Insurance-Center/" class="nav-link">Auto</a></li>
+        <li><a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="nav-link">Home</a></li>
+        <li><a href="https://billlayneinsurance.com/areas-we-serve.html" class="nav-link active">Services</a></li>
+        <li><a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="nav-link">Claims</a></li>
+        <li><a href="https://billlayne.github.io/Resources/" class="nav-link">Resources</a></li>
+        <li><a href="https://billlayneinsurance.com/blog" class="nav-link">Blog</a></li>
+        <li><a href="https://billlayneinsurance.com/contact-us.html" class="nav-link">Contact</a></li>
+      </ul>
     </nav>
+    
+    <div class="header-cta">
+      <a href="tel:3368351993" class="phone-button">
+        <span class="phone-icon">📞</span> (336) 835-1993
+      </a>
+    </div>
+    
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
 </header>
 
     <!-- Hero Section -->
@@ -560,5 +564,147 @@
             <p>&copy; 2025 Bill Layne Insurance | Licensed in North Carolina | <a href="/">Return to Homepage</a></p>
         </div>
     </footer>
+    
+    <script>
+    // Enhanced Mobile menu toggle functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const headerNav = document.querySelector('.header-nav');
+        const body = document.body;
+        
+        if (mobileMenuToggle && headerNav) {
+            mobileMenuToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Toggle active classes
+                headerNav.classList.toggle('active');
+                mobileMenuToggle.classList.toggle('active');
+                
+                // Prevent body scroll when menu is open
+                if (headerNav.classList.contains('active')) {
+                    body.classList.add('menu-open');
+                } else {
+                    body.classList.remove('menu-open');
+                }
+            });
+            
+            // Close menu when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.unified-header')) {
+                    headerNav.classList.remove('active');
+                    mobileMenuToggle.classList.remove('active');
+                    body.classList.remove('menu-open');
+                }
+            });
+            
+            // Close menu when clicking on a nav link
+            const navLinks = headerNav.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    headerNav.classList.remove('active');
+                    mobileMenuToggle.classList.remove('active');
+                    body.classList.remove('menu-open');
+                });
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 900) {
+                    headerNav.classList.remove('active');
+                    mobileMenuToggle.classList.remove('active');
+                    body.classList.remove('menu-open');
+                }
+            });
+        }
+        
+        // Set active page
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            if (link.href.includes('areas-we-serve')) {
+                link.classList.add('active');
+            }
+        });
+    });
+    </script>
+    
+    <!-- SIMPLIFIED MOBILE MENU FIX -->
+    <style>
+        @media (max-width: 900px) {
+            /* Force mobile menu to work */
+            .header-nav {
+                position: fixed !important;
+                top: 70px !important;
+                left: 0 !important;
+                right: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                background-color: #ffffff !important;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
+                display: none !important;
+                z-index: 99999 !important;
+            }
+            
+            .header-nav.show-menu {
+                display: block !important;
+            }
+            
+            .header-nav .nav-menu {
+                display: flex !important;
+                flex-direction: column !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                list-style: none !important;
+            }
+            
+            .header-nav .nav-menu li {
+                border-bottom: 1px solid #eee !important;
+            }
+            
+            .header-nav .nav-menu .nav-link {
+                display: block !important;
+                padding: 20px !important;
+                color: #333 !important;
+                text-decoration: none !important;
+                font-size: 16px !important;
+            }
+            
+            .mobile-menu-toggle {
+                display: block !important;
+                position: relative !important;
+                z-index: 100000 !important;
+            }
+        }
+    </style>
+    
+    <script>
+        // SIMPLE MOBILE MENU THAT WORKS
+        (function() {
+            // Wait for page to load
+            window.addEventListener('load', function() {
+                const toggle = document.querySelector('.mobile-menu-toggle');
+                const nav = document.querySelector('.header-nav');
+                
+                if (toggle && nav) {
+                    // Remove all existing listeners first
+                    const newToggle = toggle.cloneNode(true);
+                    toggle.parentNode.replaceChild(newToggle, toggle);
+                    
+                    // Add new simple click handler
+                    newToggle.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        if (nav.classList.contains('show-menu')) {
+                            nav.classList.remove('show-menu');
+                        } else {
+                            nav.classList.add('show-menu');
+                        }
+                    });
+                }
+            });
+        })();
+    </script>
 </body>
 </html>
