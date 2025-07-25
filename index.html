@@ -1641,6 +1641,92 @@
 
 
     </script>
+    
+    <!-- SIMPLIFIED MOBILE MENU FIX -->
+    <style>
+        @media (max-width: 900px) {
+            /* Force mobile menu to work */
+            .header-nav {
+                position: fixed !important;
+                top: 70px !important;
+                left: 0 !important;
+                right: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                background-color: #ffffff !important;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
+                display: none !important;
+                z-index: 99999 !important;
+            }
+            
+            .header-nav.show-menu {
+                display: block !important;
+            }
+            
+            .header-nav .nav-menu {
+                display: flex !important;
+                flex-direction: column !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                list-style: none !important;
+            }
+            
+            .header-nav .nav-menu li {
+                border-bottom: 1px solid #eee !important;
+            }
+            
+            .header-nav .nav-menu .nav-link {
+                display: block !important;
+                padding: 20px !important;
+                color: #333 !important;
+                text-decoration: none !important;
+                font-size: 16px !important;
+            }
+            
+            .mobile-menu-toggle {
+                display: block !important;
+                position: relative !important;
+                z-index: 100000 !important;
+            }
+        }
+    </style>
+    
+    <script>
+        // SIMPLE MOBILE MENU THAT WORKS
+        (function() {
+            // Wait for page to load
+            window.addEventListener('load', function() {
+                console.log('🔧 Simple mobile menu init...');
+                
+                const toggle = document.querySelector('.mobile-menu-toggle');
+                const nav = document.querySelector('.header-nav');
+                
+                if (toggle && nav) {
+                    // Remove all existing listeners first
+                    const newToggle = toggle.cloneNode(true);
+                    toggle.parentNode.replaceChild(newToggle, toggle);
+                    
+                    // Add new simple click handler
+                    newToggle.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        if (nav.classList.contains('show-menu')) {
+                            nav.classList.remove('show-menu');
+                            console.log('Menu closed');
+                        } else {
+                            nav.classList.add('show-menu');
+                            console.log('Menu opened');
+                        }
+                    });
+                    
+                    console.log('✅ Simple menu ready!');
+                } else {
+                    console.error('❌ Menu elements not found');
+                }
+            });
+        })();
+    </script>
 
     <!-- Mobile Sticky Header -->
     <div class="mobile-sticky-header" style="display: none;">
