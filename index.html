@@ -1475,68 +1475,93 @@
             }
         }
 
-        // Enhanced Mobile menu toggle functionality
+        // ENHANCED MOBILE MENU JAVASCRIPT - REPLACE EXISTING
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Initializing mobile menu...');
+            
+            // Get elements
             const mobileMenuToggle = document.getElementById('mobileMenuToggle');
             const headerNav = document.querySelector('.header-nav');
             const body = document.body;
+            const navLinks = document.querySelectorAll('.header-nav .nav-link');
             
-            console.log('Mobile menu elements:', {mobileMenuToggle, headerNav});
+            // Debug logging
+            console.log('📱 Mobile menu elements:', {
+                toggle: mobileMenuToggle,
+                nav: headerNav,
+                links: navLinks.length
+            });
             
-            if (mobileMenuToggle && headerNav) {
-                mobileMenuToggle.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    // Toggle active classes
-                    headerNav.classList.toggle('active');
-                    mobileMenuToggle.classList.toggle('active');
-                    
-                    // Optional: Prevent body scroll when menu is open
-                    if (headerNav.classList.contains('active')) {
-                        body.classList.add('menu-open');
-                    } else {
-                        body.classList.remove('menu-open');
-                    }
-                    
-                    console.log('Menu toggled:', {
-                        isActive: headerNav.classList.contains('active'),
-                        headerNav: headerNav,
-                        navMenu: headerNav.querySelector('.nav-menu')
-                    });
-                });
-                
-                // Close menu when clicking outside
-                document.addEventListener('click', function(event) {
-                    if (!event.target.closest('.unified-header')) {
-                        headerNav.classList.remove('active');
-                        mobileMenuToggle.classList.remove('active');
-                        body.classList.remove('menu-open');
-                    }
-                });
-                
-                // Close menu when clicking on a nav link
-                const navLinks = headerNav.querySelectorAll('.nav-link');
-                navLinks.forEach(link => {
-                    link.addEventListener('click', function() {
-                        headerNav.classList.remove('active');
-                        mobileMenuToggle.classList.remove('active');
-                        body.classList.remove('menu-open');
-                    });
-                });
-                
-                // Handle window resize
-                window.addEventListener('resize', function() {
-                    if (window.innerWidth > 900) {
-                        headerNav.classList.remove('active');
-                        mobileMenuToggle.classList.remove('active');
-                        body.classList.remove('menu-open');
-                    }
-                });
-                
-            } else {
-                console.error('Mobile menu elements not found:', {mobileMenuToggle, headerNav});
+            if (!mobileMenuToggle || !headerNav) {
+                console.error('❌ Mobile menu elements not found!');
+                return;
             }
+            
+            // Click handler for toggle button
+            mobileMenuToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const isActive = headerNav.classList.contains('active');
+                
+                if (isActive) {
+                    // Close menu
+                    headerNav.classList.remove('active');
+                    mobileMenuToggle.classList.remove('active');
+                    body.classList.remove('menu-open');
+                    console.log('📱 Menu closed');
+                } else {
+                    // Open menu
+                    headerNav.classList.add('active');
+                    mobileMenuToggle.classList.add('active');
+                    body.classList.add('menu-open');
+                    console.log('📱 Menu opened');
+                }
+            });
+            
+            // Close menu when clicking on nav links
+            navLinks.forEach(function(link) {
+                link.addEventListener('click', function() {
+                    headerNav.classList.remove('active');
+                    mobileMenuToggle.classList.remove('active');
+                    body.classList.remove('menu-open');
+                    console.log('📱 Menu closed via nav link');
+                });
+            });
+            
+            // Close menu when clicking outside
+            document.addEventListener('click', function(e) {
+                const isClickInsideMenu = e.target.closest('.unified-header');
+                
+                if (!isClickInsideMenu && headerNav.classList.contains('active')) {
+                    headerNav.classList.remove('active');
+                    mobileMenuToggle.classList.remove('active');
+                    body.classList.remove('menu-open');
+                    console.log('📱 Menu closed via outside click');
+                }
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 900) {
+                    headerNav.classList.remove('active');
+                    mobileMenuToggle.classList.remove('active');
+                    body.classList.remove('menu-open');
+                    console.log('📱 Menu closed via resize');
+                }
+            });
+            
+            // Test function - you can call this from browser console
+            window.testMobileMenu = function() {
+                console.log('🧪 Testing mobile menu...');
+                console.log('Toggle element:', mobileMenuToggle);
+                console.log('Nav element:', headerNav);
+                console.log('Current window width:', window.innerWidth);
+                console.log('Menu is active:', headerNav.classList.contains('active'));
+            };
+            
+            console.log('✅ Mobile menu initialized successfully!');
+        });
             
             // Check for #quote hash and scroll to form
             if (window.location.hash === '#quote') {
