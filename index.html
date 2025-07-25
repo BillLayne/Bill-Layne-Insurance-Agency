@@ -1475,30 +1475,30 @@
             }
         }
 
-        // Mobile menu toggle functionality - Simple working version from NC Insurance Claims Center
+        // Mobile menu toggle functionality - Fixed for current HTML structure
         document.addEventListener('DOMContentLoaded', function() {
             const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-            const navbarMenu = document.querySelector('.nav-menu');
+            const headerNav = document.querySelector('.header-nav'); // Target the nav container, not the ul
 
-            if (mobileMenuToggle && navbarMenu) {
+            if (mobileMenuToggle && headerNav) {
                 mobileMenuToggle.addEventListener('click', function() {
-                    navbarMenu.classList.toggle('active');
+                    headerNav.classList.toggle('active');
                     mobileMenuToggle.classList.toggle('active');
                 });
 
                 // Close menu when clicking outside
                 document.addEventListener('click', function(event) {
-                    if (!event.target.closest('.navbar-content, .nav-container')) {
-                        navbarMenu.classList.remove('active');
+                    if (!event.target.closest('.header-container')) {
+                        headerNav.classList.remove('active');
                         mobileMenuToggle.classList.remove('active');
                     }
                 });
 
                 // Close menu when clicking on a nav link
-                const menuLinks = document.querySelectorAll('.nav-menu .nav-link');
+                const menuLinks = document.querySelectorAll('.header-nav .nav-link');
                 menuLinks.forEach(link => {
                     link.addEventListener('click', function() {
-                        navbarMenu.classList.remove('active');
+                        headerNav.classList.remove('active');
                         mobileMenuToggle.classList.remove('active');
                     });
                 });
