@@ -1475,89 +1475,34 @@
             }
         }
 
-        // Enhanced Mobile Menu Functionality - Merged Version
+        // Mobile menu toggle functionality - Simple working version from NC Insurance Claims Center
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Initializing mobile menu...');
-            
-            // Try multiple selectors for compatibility with both structures
-            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle, #mobileMenuToggle');
-            const navMenu = document.querySelector('.nav-menu, #navMenu, .header-nav, .navbar-menu');
-            const body = document.body;
-            
-            if (!mobileMenuToggle || !navMenu) {
-                console.error('❌ Mobile menu elements not found!');
-                return;
-            }
-            
-            console.log('📱 Mobile menu elements found:', { toggle: mobileMenuToggle, menu: navMenu });
-            
-            // Toggle menu on click
-            mobileMenuToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // Toggle active states
-                const isActive = navMenu.classList.toggle('active');
-                mobileMenuToggle.classList.toggle('active');
-                body.classList.toggle('menu-open');
-                
-                // Toggle aria-expanded for accessibility
-                mobileMenuToggle.setAttribute('aria-expanded', isActive);
-                
-                console.log('📱 Menu toggled:', isActive ? 'opened' : 'closed');
-            });
-            
-            // Close menu when clicking links
-            const navLinks = navMenu.querySelectorAll('a');
-            navLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    navMenu.classList.remove('active');
-                    mobileMenuToggle.classList.remove('active');
-                    body.classList.remove('menu-open');
-                    console.log('📱 Menu closed via nav link');
+            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+            const navbarMenu = document.querySelector('.nav-menu');
+
+            if (mobileMenuToggle && navbarMenu) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    navbarMenu.classList.toggle('active');
+                    mobileMenuToggle.classList.toggle('active');
                 });
-            });
-            
-            // Close menu on outside click
-            document.addEventListener('click', function(e) {
-                // Check if click is outside any navigation container
-                if (!e.target.closest('.navbar-content, .nav-container, .unified-header, .header-container')) {
-                    if (navMenu.classList.contains('active')) {
-                        navMenu.classList.remove('active');
+
+                // Close menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!event.target.closest('.navbar-content, .nav-container')) {
+                        navbarMenu.classList.remove('active');
                         mobileMenuToggle.classList.remove('active');
-                        body.classList.remove('menu-open');
-                        console.log('📱 Menu closed via outside click');
                     }
-                }
-            });
-            
-            // Handle window resize
-            window.addEventListener('resize', function() {
-                if (window.innerWidth > 900) {
-                    navMenu.classList.remove('active');
-                    mobileMenuToggle.classList.remove('active');
-                    body.classList.remove('menu-open');
-                    console.log('📱 Menu closed via resize');
-                }
-            });
-            
-            // Test function - you can call this from browser console
-            window.testMobileMenu = function() {
-                console.log('🧪 Testing mobile menu...');
-                console.log('Toggle element:', mobileMenuToggle);
-                console.log('Nav element:', navMenu);
-                console.log('Current window width:', window.innerWidth);
-                console.log('Menu is active:', navMenu.classList.contains('active'));
-                
-                // Debug DOM structure
-                console.log('🔍 DOM Debug:');
-                console.log('All mobile-menu-toggle:', document.querySelectorAll('.mobile-menu-toggle'));
-                console.log('All nav-menu:', document.querySelectorAll('.nav-menu'));
-                console.log('All header-nav:', document.querySelectorAll('.header-nav'));
-                console.log('All navbar-menu:', document.querySelectorAll('.navbar-menu'));
-            };
-            
-            console.log('✅ Mobile menu initialized successfully!');
+                });
+
+                // Close menu when clicking on a nav link
+                const menuLinks = document.querySelectorAll('.nav-menu .nav-link');
+                menuLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        navbarMenu.classList.remove('active');
+                        mobileMenuToggle.classList.remove('active');
+                    });
+                });
+            }
             
             // Check for #quote hash and scroll to form
             if (window.location.hash === '#quote') {
