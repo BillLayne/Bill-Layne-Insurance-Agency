@@ -267,11 +267,11 @@
                     e.stopPropagation();
                     
                     // Toggle active classes
-                    headerNav.classList.toggle('active');
+                    headerNav.classList.toggle('show-menu');
                     mobileMenuToggle.classList.toggle('active');
                     
                     // Prevent body scroll when menu is open
-                    if (headerNav.classList.contains('active')) {
+                    if (headerNav.classList.contains('show-menu')) {
                         body.classList.add('menu-open');
                     } else {
                         body.classList.remove('menu-open');
@@ -281,7 +281,7 @@
                 // Close menu when clicking outside
                 document.addEventListener('click', function(event) {
                     if (!event.target.closest('.unified-header')) {
-                        headerNav.classList.remove('active');
+                        headerNav.classList.remove('show-menu');
                         mobileMenuToggle.classList.remove('active');
                         body.classList.remove('menu-open');
                     }
@@ -291,7 +291,7 @@
                 const navLinks = headerNav.querySelectorAll('.nav-link');
                 navLinks.forEach(link => {
                     link.addEventListener('click', function() {
-                        headerNav.classList.remove('active');
+                        headerNav.classList.remove('show-menu');
                         mobileMenuToggle.classList.remove('active');
                         body.classList.remove('menu-open');
                     });
@@ -300,7 +300,7 @@
                 // Handle window resize
                 window.addEventListener('resize', function() {
                     if (window.innerWidth > 900) {
-                        headerNav.classList.remove('active');
+                        headerNav.classList.remove('show-menu');
                         mobileMenuToggle.classList.remove('active');
                         body.classList.remove('menu-open');
                     }
@@ -357,24 +357,5 @@
             }
         }
     </style>
-    
-    <script>
-        // Override any existing handlers with simple toggle
-        window.addEventListener('load', function() {
-            const toggle = document.querySelector('.mobile-menu-toggle');
-            const nav = document.querySelector('.header-nav');
-            
-            if (toggle && nav) {
-                const newToggle = toggle.cloneNode(true);
-                toggle.parentNode.replaceChild(newToggle, toggle);
-                
-                newToggle.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    nav.classList.toggle('show-menu');
-                });
-            }
-        });
-    </script>
 </body>
 </html>
