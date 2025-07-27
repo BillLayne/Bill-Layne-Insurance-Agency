@@ -267,11 +267,11 @@
                     e.stopPropagation();
                     
                     // Toggle active classes
-                    headerNav.classList.toggle('show-menu');
+                    headerNav.classList.toggle('active');
                     mobileMenuToggle.classList.toggle('active');
                     
                     // Prevent body scroll when menu is open
-                    if (headerNav.classList.contains('show-menu')) {
+                    if (headerNav.classList.contains('active')) {
                         body.classList.add('menu-open');
                     } else {
                         body.classList.remove('menu-open');
@@ -281,7 +281,7 @@
                 // Close menu when clicking outside
                 document.addEventListener('click', function(event) {
                     if (!event.target.closest('.unified-header')) {
-                        headerNav.classList.remove('show-menu');
+                        headerNav.classList.remove('active');
                         mobileMenuToggle.classList.remove('active');
                         body.classList.remove('menu-open');
                     }
@@ -291,7 +291,7 @@
                 const navLinks = headerNav.querySelectorAll('.nav-link');
                 navLinks.forEach(link => {
                     link.addEventListener('click', function() {
-                        headerNav.classList.remove('show-menu');
+                        headerNav.classList.remove('active');
                         mobileMenuToggle.classList.remove('active');
                         body.classList.remove('menu-open');
                     });
@@ -300,7 +300,7 @@
                 // Handle window resize
                 window.addEventListener('resize', function() {
                     if (window.innerWidth > 900) {
-                        headerNav.classList.remove('show-menu');
+                        headerNav.classList.remove('active');
                         mobileMenuToggle.classList.remove('active');
                         body.classList.remove('menu-open');
                     }
@@ -314,48 +314,5 @@
         //     window.location.href = 'https://billlayne.github.io/ethereal-blog-landing/';
         // }, 3000);
     </script>
-    
-    <!-- SIMPLIFIED MOBILE MENU FIX -->
-    <style>
-        @media (max-width: 900px) {
-            /* Force mobile menu to work */
-            .header-nav {
-                position: fixed !important;
-                top: 70px !important;
-                left: 0 !important;
-                right: 0 !important;
-                width: 100% !important;
-                height: auto !important;
-                background-color: #ffffff !important;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
-                display: none !important;
-                z-index: 99999 !important;
-            }
-            
-            .header-nav.show-menu {
-                display: block !important;
-            }
-            
-            .header-nav .nav-menu {
-                display: flex !important;
-                flex-direction: column !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                list-style: none !important;
-            }
-            
-            .header-nav .nav-menu li {
-                border-bottom: 1px solid #eee !important;
-            }
-            
-            .header-nav .nav-menu .nav-link {
-                display: block !important;
-                padding: 20px !important;
-                color: #333 !important;
-                text-decoration: none !important;
-                font-size: 16px !important;
-            }
-        }
-    </style>
 </body>
 </html>
