@@ -1,3 +1,70 @@
+// ==================================================================
+// UNIFIED MOBILE MENU IMPLEMENTATION
+// ==================================================================
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const headerNav = document.querySelector('.header-nav');
+    const navbarMenu = document.querySelector('.navbar-menu'); // For pages using navbar-menu
+    const body = document.body;
+    
+    if (mobileMenuToggle) {
+        // Toggle menu functionality
+        mobileMenuToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Toggle active classes
+            if (headerNav) {
+                headerNav.classList.toggle('active');
+            }
+            if (navbarMenu) {
+                navbarMenu.classList.toggle('active');
+            }
+            mobileMenuToggle.classList.toggle('active');
+            
+            // Prevent body scroll when menu is open
+            const isActive = mobileMenuToggle.classList.contains('active');
+            if (isActive) {
+                body.classList.add('menu-open');
+            } else {
+                body.classList.remove('menu-open');
+            }
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const isClickInsideHeader = event.target.closest('.unified-header, .site-header, .navbar');
+            if (!isClickInsideHeader) {
+                if (headerNav) headerNav.classList.remove('active');
+                if (navbarMenu) navbarMenu.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+                body.classList.remove('menu-open');
+            }
+        });
+        
+        // Close menu when clicking on a nav link
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                if (headerNav) headerNav.classList.remove('active');
+                if (navbarMenu) navbarMenu.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+                body.classList.remove('menu-open');
+            });
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 900) {
+                if (headerNav) headerNav.classList.remove('active');
+                if (navbarMenu) navbarMenu.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+                body.classList.remove('menu-open');
+            }
+        });
+    }
+});
+
 // Enhanced Coverage Analyzer System for Bill Layne Insurance
 // This replaces the placeholder analyzer functions with fully functional tools
 
