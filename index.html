@@ -233,9 +233,15 @@
         
         /* Custom styles */
         .header-scrolled {
-            background-color: rgba(255, 255, 255, 0.95);
+            background-color: rgba(255, 255, 255, 0.95) !important;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(5px);
+        }
+        
+        @media (min-width: 768px) {
+            .header-scrolled {
+                background-color: rgba(255, 255, 255, 0.95) !important;
+            }
         }
         
         .hero-bg {
@@ -321,11 +327,11 @@
 <body class="bg-gray-50">
 
     <!-- Header Section -->
-    <header id="main-header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+    <header id="main-header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white shadow-md md:bg-transparent md:shadow-none">
         <div class="container mx-auto px-6 py-4">
             <div class="flex justify-between items-center">
                 <!-- Logo -->
-                <a href="index.html" class="text-white text-2xl font-bold">Bill Layne Insurance</a>
+                <a href="index.html" class="text-gray-800 md:text-white text-2xl font-bold">Bill Layne Insurance</a>
                 
                 <!-- Desktop Navigation -->
                 <nav class="hidden md:flex items-center space-x-1">
@@ -776,9 +782,15 @@
         function styleHeader() {
             const isScrolled = window.scrollY > 50;
             header.classList.toggle('header-scrolled', isScrolled);
-            headerLogo.classList.toggle('text-white', !isScrolled);
-            headerLogo.classList.toggle('text-gray-800', isScrolled);
-            // Mobile menu button stays dark for visibility
+            
+            // Handle logo color for desktop only (mobile always dark)
+            if (window.innerWidth >= 768) {
+                headerLogo.classList.toggle('text-white', !isScrolled);
+                headerLogo.classList.toggle('text-gray-800', isScrolled);
+            } else {
+                headerLogo.classList.add('text-gray-800');
+                headerLogo.classList.remove('text-white');
+            }
             navLinks.forEach(link => {
                 link.classList.toggle('text-white', !isScrolled);
                 link.classList.toggle('hover:text-blue-300', !isScrolled);
@@ -804,6 +816,7 @@
         styleHeader(); // Initial call
         window.addEventListener('scroll', styleHeader);
         window.addEventListener('scroll', handleScroll);
+        window.addEventListener('resize', styleHeader);
 
         // --- Mobile Menu Toggle ---
         mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
