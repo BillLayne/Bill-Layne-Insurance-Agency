@@ -32,7 +32,7 @@
         
         /* Custom hero background image with an overlay for text readability */
         .hero-bg {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1571168200192-357145b3655a?q=80&w=2070&auto=format&fit=crop');
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://github.com/BillLayne/bill-layne-images/blob/main/logos/Car%20Insurance.png?raw=true');
             background-size: cover;
             background-position: center;
         }
@@ -54,6 +54,48 @@
         /* Dropdown menu styles */
         .dropdown-menu {
             transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        /* Scrollable tool content */
+        .tool-content-wrapper {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+        
+        /* Custom scrollbar for tool content */
+        .tool-content-wrapper::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .tool-content-wrapper::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        .tool-content-wrapper::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+        
+        .tool-content-wrapper::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        /* Mobile sticky call button */
+        .mobile-call-button {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 40;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-call-button {
+                display: block;
+            }
         }
     </style>
 </head>
@@ -202,6 +244,7 @@
                 <div id="auto-evaluator" class="tab-content tab-content-active">
                     <div class="bg-gray-100 p-8 rounded-lg">
                         <h3 class="text-2xl font-bold text-center mb-6">Auto Coverage Checkup</h3>
+                        <div class="tool-content-wrapper">
                         <form id="auto-coverage-form" class="space-y-4">
                             <div>
                                 <label for="vehicle-value" class="block font-medium text-gray-700">Estimated Vehicle Value ($)</label>
@@ -221,6 +264,7 @@
                             <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-md font-bold hover:bg-blue-700">Evaluate My Auto Coverage</button>
                         </form>
                         <div id="auto-results" class="mt-6 p-4 bg-white rounded-md shadow hidden"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -228,6 +272,7 @@
                 <div id="home-evaluator" class="tab-content">
                     <div class="bg-gray-100 p-8 rounded-lg">
                         <h3 class="text-2xl font-bold text-center mb-6">Home Insurance Evaluator</h3>
+                        <div class="tool-content-wrapper">
                         <form id="home-coverage-form" class="space-y-4">
                             <div>
                                 <label for="home-value" class="block font-medium text-gray-700">Estimated Home Rebuild Cost ($)</label>
@@ -247,12 +292,14 @@
                             <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-md font-bold hover:bg-blue-700">Evaluate My Home Coverage</button>
                         </form>
                         <div id="home-results" class="mt-6 p-4 bg-white rounded-md shadow hidden"></div>
+                        </div>
                     </div>
                 </div>
                 
                 <!-- Insurance Quiz -->
                 <div id="insurance-quiz" class="tab-content">
                     <div class="bg-gray-100 p-8 rounded-lg">
+                        <div class="tool-content-wrapper">
                         <div id="quiz-container">
                             <h3 class="text-2xl font-bold text-center mb-6">What's Your Insurance IQ?</h3>
                             <div id="quiz-question" class="text-lg font-semibold mb-4"></div>
@@ -263,6 +310,7 @@
                             <p id="quiz-score" class="text-lg mb-2"></p>
                             <p id="quiz-feedback" class="text-gray-700 mb-4"></p>
                             <button id="quiz-restart" class="bg-blue-600 text-white py-2 px-4 rounded-md font-bold hover:bg-blue-700">Try Again</button>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -369,6 +417,14 @@
             <p class="text-sm text-gray-400 mt-2">1283 N Bridge St, Elkin NC 28621 | (336) 835-1993</p>
         </div>
     </footer>
+
+    <!-- Mobile Sticky Call Button -->
+    <div class="mobile-call-button">
+        <a href="tel:3368351993" class="bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-full shadow-lg flex items-center gap-3 transition-all hover:scale-105">
+            <i class="fas fa-phone"></i>
+            <span>Call (336) 835-1993</span>
+        </a>
+    </div>
 
     <script>
     document.addEventListener('DOMContentLoaded', function () {
