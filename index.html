@@ -5,60 +5,264 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bill Layne Insurance Agency - Serving Elkin, NC</title>
     
-    <!-- Tailwind CSS for modern, responsive styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts: Inter for a clean, modern look -->
+    <!-- Preconnect to Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Optimized Google Fonts - Only necessary weights -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
+    <!-- Critical CSS inline for fastest load -->
     <style>
-        /* Use the Inter font family */
-        body {
-            font-family: 'Inter', sans-serif;
-            scroll-behavior: smooth;
+        /* Critical CSS - Extracted from Tailwind classes actually used */
+        *, ::before, ::after { box-sizing: border-box; border-width: 0; border-style: solid; border-color: #e5e7eb; }
+        html { line-height: 1.5; -webkit-text-size-adjust: 100%; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { margin: 0; line-height: inherit; font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
+        a { color: inherit; text-decoration: inherit; }
+        button, input, select, textarea { font-family: inherit; font-size: 100%; font-weight: inherit; line-height: inherit; color: inherit; margin: 0; padding: 0; }
+        button { text-transform: none; -webkit-appearance: button; background-color: transparent; background-image: none; }
+        
+        /* Layout */
+        .container { width: 100%; margin-right: auto; margin-left: auto; padding-right: 1.5rem; padding-left: 1.5rem; }
+        @media (min-width: 640px) { .container { max-width: 640px; } }
+        @media (min-width: 768px) { .container { max-width: 768px; } }
+        @media (min-width: 1024px) { .container { max-width: 1024px; } }
+        @media (min-width: 1280px) { .container { max-width: 1280px; } }
+        
+        /* Flexbox & Grid */
+        .flex { display: flex; }
+        .grid { display: grid; }
+        .hidden { display: none; }
+        .block { display: block; }
+        .inline-block { display: inline-block; }
+        .flex-col { flex-direction: column; }
+        .flex-wrap { flex-wrap: wrap; }
+        .items-start { align-items: flex-start; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1rem; }
+        .gap-8 { gap: 2rem; }
+        .gap-12 { gap: 3rem; }
+        .gap-x-8 { column-gap: 2rem; }
+        .gap-y-4 { row-gap: 1rem; }
+        
+        /* Spacing */
+        .p-2 { padding: 0.5rem; }
+        .p-3 { padding: 0.75rem; }
+        .p-4 { padding: 1rem; }
+        .p-8 { padding: 2rem; }
+        .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
+        .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+        .px-8 { padding-left: 2rem; padding-right: 2rem; }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+        .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+        .py-10 { padding-top: 2.5rem; padding-bottom: 2.5rem; }
+        .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+        .py-20 { padding-top: 5rem; padding-bottom: 5rem; }
+        .pt-32 { padding-top: 8rem; }
+        .pb-32 { padding-bottom: 8rem; }
+        .pl-4 { padding-left: 1rem; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .mt-1 { margin-top: 0.25rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .mb-12 { margin-bottom: 3rem; }
+        .ml-2 { margin-left: 0.5rem; }
+        .ml-4 { margin-left: 1rem; }
+        .mr-2 { margin-right: 0.5rem; }
+        .mr-3 { margin-right: 0.75rem; }
+        
+        /* Sizing */
+        .w-3 { width: 0.75rem; }
+        .w-4 { width: 1rem; }
+        .w-5 { width: 1.25rem; }
+        .w-6 { width: 1.5rem; }
+        .w-16 { width: 4rem; }
+        .w-full { width: 100%; }
+        .h-3 { height: 0.75rem; }
+        .h-4 { height: 1rem; }
+        .h-5 { height: 1.25rem; }
+        .h-6 { height: 1.5rem; }
+        .h-12 { height: 3rem; }
+        .h-16 { height: 4rem; }
+        .h-96 { height: 24rem; }
+        .max-w-2xl { max-width: 42rem; }
+        .max-w-3xl { max-width: 48rem; }
+        .max-w-4xl { max-width: 56rem; }
+        
+        /* Position */
+        .fixed { position: fixed; }
+        .absolute { position: absolute; }
+        .relative { position: relative; }
+        .top-0 { top: 0; }
+        .left-0 { left: 0; }
+        .right-0 { right: 0; }
+        .bottom-20 { bottom: 5rem; }
+        .left-50 { left: 50%; }
+        .z-40 { z-index: 40; }
+        .z-50 { z-index: 50; }
+        
+        /* Typography */
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+        .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+        .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+        .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+        .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+        .text-6xl { font-size: 3.75rem; line-height: 1; }
+        .font-medium { font-weight: 500; }
+        .font-semibold { font-weight: 600; }
+        .font-bold { font-weight: 700; }
+        .font-extrabold { font-weight: 800; }
+        .uppercase { text-transform: uppercase; }
+        .leading-tight { line-height: 1.25; }
+        .tracking-wider { letter-spacing: 0.05em; }
+        
+        /* Colors */
+        .text-white { color: rgb(255 255 255); }
+        .text-gray-200 { color: rgb(229 231 235); }
+        .text-gray-400 { color: rgb(156 163 175); }
+        .text-gray-600 { color: rgb(75 85 99); }
+        .text-gray-700 { color: rgb(55 65 81); }
+        .text-gray-800 { color: rgb(31 41 55); }
+        .text-blue-600 { color: rgb(37 99 235); }
+        .text-green-500 { color: rgb(34 197 94); }
+        .text-yellow-400 { color: rgb(250 204 21); }
+        
+        .bg-white { background-color: rgb(255 255 255); }
+        .bg-gray-50 { background-color: rgb(249 250 251); }
+        .bg-gray-100 { background-color: rgb(243 244 246); }
+        .bg-gray-800 { background-color: rgb(31 41 55); }
+        .bg-blue-50 { background-color: rgb(239 246 255); }
+        .bg-blue-600 { background-color: rgb(37 99 235); }
+        .bg-green-500 { background-color: rgb(34 197 94); }
+        
+        /* Borders */
+        .border { border-width: 1px; }
+        .border-b { border-bottom-width: 1px; }
+        .rounded { border-radius: 0.25rem; }
+        .rounded-md { border-radius: 0.375rem; }
+        .rounded-lg { border-radius: 0.5rem; }
+        .rounded-full { border-radius: 9999px; }
+        
+        /* Effects */
+        .shadow-lg { box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+        .shadow-xl { box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
+        .opacity-0 { opacity: 0; }
+        .opacity-100 { opacity: 1; }
+        
+        /* Transitions */
+        .transition { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+        .transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+        .transition-transform { transition-property: transform; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+        .duration-300 { transition-duration: 300ms; }
+        
+        /* Transform */
+        .transform { transform: translateX(var(--tw-translate-x, 0)) translateY(var(--tw-translate-y, 0)); }
+        .-translate-y-2 { --tw-translate-y: -0.5rem; }
+        .scale-105 { --tw-scale-x: 1.05; --tw-scale-y: 1.05; transform: scale(1.05); }
+        .scale-110 { --tw-scale-x: 1.1; --tw-scale-y: 1.1; transform: scale(1.1); }
+        .rotate-180 { transform: rotate(180deg); }
+        
+        /* Other */
+        .overflow-hidden { overflow: hidden; }
+        .overflow-y-auto { overflow-y: auto; }
+        .whitespace-nowrap { white-space: nowrap; }
+        .space-y-4 > :not([hidden]) ~ :not([hidden]) { margin-top: 1rem; }
+        .space-y-3 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.75rem; }
+        .space-x-1 > :not([hidden]) ~ :not([hidden]) { margin-left: 0.25rem; }
+        
+        /* Hover states */
+        .hover\:text-gray-800:hover { color: rgb(31 41 55); }
+        .hover\:text-blue-300:hover { color: rgb(147 197 253); }
+        .hover\:text-blue-600:hover { color: rgb(37 99 235); }
+        .hover\:text-blue-700:hover { color: rgb(29 78 216); }
+        .hover\:bg-gray-100:hover { background-color: rgb(243 244 246); }
+        .hover\:bg-blue-50:hover { background-color: rgb(239 246 255); }
+        .hover\:bg-blue-100:hover { background-color: rgb(219 234 254); }
+        .hover\:bg-blue-700:hover { background-color: rgb(29 78 216); }
+        .hover\:bg-green-600:hover { background-color: rgb(22 163 74); }
+        .hover\:scale-105:hover { transform: scale(1.05); }
+        .hover\:scale-110:hover { transform: scale(1.1); }
+        .hover\:-translate-y-2:hover { transform: translateY(-0.5rem); }
+        
+        /* Group hover */
+        .group:hover .group-hover\:block { display: block; }
+        .group:hover .group-hover\:opacity-100 { opacity: 1; }
+        .group:hover .group-hover\:translate-y-0 { --tw-translate-y: 0px; }
+        
+        /* Focus states */
+        .focus\:outline-none:focus { outline: 2px solid transparent; outline-offset: 2px; }
+        .focus\:ring-2:focus { box-shadow: 0 0 0 3px rgb(59 130 246 / 0.5); }
+        
+        /* Responsive */
+        @media (min-width: 640px) {
+            .sm\:flex-row { flex-direction: row; }
         }
-
-        /* Style for the header when it becomes sticky */
+        
+        @media (min-width: 768px) {
+            .md\:flex { display: flex; }
+            .md\:hidden { display: none; }
+            .md\:w-1\/2 { width: 50%; }
+            .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .md\:flex-row { flex-direction: row; }
+            .md\:text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+            .md\:text-6xl { font-size: 3.75rem; line-height: 1; }
+            .md\:text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+            .md\:pb-40 { padding-bottom: 10rem; }
+        }
+        
+        @media (min-width: 1024px) {
+            .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .lg\:flex-row { flex-direction: row; }
+            .lg\:w-1\/2 { width: 50%; }
+        }
+        
+        /* Custom styles */
         .header-scrolled {
             background-color: rgba(255, 255, 255, 0.95);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(5px);
         }
         
-        /* Custom hero background image with an overlay for text readability */
         .hero-bg {
             background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://github.com/BillLayne/bill-layne-images/blob/main/logos/Car%20Insurance.png?raw=true');
             background-size: cover;
             background-position: center;
         }
         
-        /* Styles for the active tab */
         .tab-active {
-            background-color: #2563EB; /* blue-600 */
-            color: white;
+            background-color: #2563EB;
+            color: white !important;
         }
         
-        /* Hide non-active tab content */
         .tab-content {
             display: none;
         }
+        
         .tab-content-active {
             display: block;
         }
-
-        /* Dropdown menu styles */
+        
         .dropdown-menu {
             transition: opacity 0.3s ease, transform 0.3s ease;
             top: 100%;
             padding-top: 0.5rem;
         }
         
-        /* Create invisible bridge to prevent menu from closing */
         .dropdown-menu::before {
             content: '';
             position: absolute;
@@ -68,14 +272,12 @@
             height: 0.5rem;
         }
         
-        /* Scrollable tool content */
         .tool-content-wrapper {
             max-height: 60vh;
             overflow-y: auto;
             padding-right: 0.5rem;
         }
         
-        /* Custom scrollbar for tool content */
         .tool-content-wrapper::-webkit-scrollbar {
             width: 6px;
         }
@@ -94,7 +296,6 @@
             background: #555;
         }
         
-        /* Mobile sticky call button */
         .mobile-call-button {
             position: fixed;
             bottom: 20px;
@@ -102,6 +303,12 @@
             transform: translateX(-50%);
             z-index: 40;
             display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .mobile-call-button.show {
+            opacity: 1;
         }
         
         @media (max-width: 768px) {
@@ -127,7 +334,10 @@
                     <!-- Services Dropdown -->
                     <div class="relative group">
                         <button class="nav-link px-3 py-2 rounded-md flex items-center">
-                            Services <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                            Services 
+                            <svg class="ml-2 w-3 h-3 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                            </svg>
                         </button>
                         <div class="dropdown-menu absolute hidden group-hover:block bg-white shadow-lg rounded-md py-2 w-48 opacity-0 group-hover:opacity-100">
                             <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Auto Insurance</a>
@@ -140,7 +350,10 @@
                     <!-- Areas We Serve Dropdown -->
                     <div class="relative group">
                         <button class="nav-link px-3 py-2 rounded-md flex items-center">
-                            Areas We Serve <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                            Areas We Serve 
+                            <svg class="ml-2 w-3 h-3 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                            </svg>
                         </button>
                         <div class="dropdown-menu absolute hidden group-hover:block bg-white shadow-lg rounded-md py-2 w-48 opacity-0 group-hover:opacity-100">
                             <a href="areas-we-serve.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">All Areas</a>
@@ -156,21 +369,33 @@
                 
                 <!-- Mobile Menu Button -->
                 <button id="mobile-menu-button" class="md:hidden text-white text-2xl">
-                    <i class="fas fa-bars"></i>
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                    </svg>
                 </button>
             </div>
         </div>
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-white">
             <a href="index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home</a>
-            <button class="mobile-dropdown-toggle w-full text-left flex justify-between items-center py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Services <i class="fas fa-chevron-down text-xs"></i></button>
+            <button class="mobile-dropdown-toggle w-full text-left flex justify-between items-center py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">
+                Services 
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
             <div class="mobile-dropdown-menu hidden pl-4">
                 <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Auto Insurance</a>
                 <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home Insurance</a>
                 <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Claim Center</a>
                 <a href="https://billlayne.github.io/Resources/" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Resources</a>
             </div>
-            <button class="mobile-dropdown-toggle w-full text-left flex justify-between items-center py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Areas We Serve <i class="fas fa-chevron-down text-xs"></i></button>
+            <button class="mobile-dropdown-toggle w-full text-left flex justify-between items-center py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">
+                Areas We Serve 
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
             <div class="mobile-dropdown-menu hidden pl-4">
                  <a href="areas-we-serve.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">All Areas</a>
                  <a href="insurance-elkin-nc.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Elkin, NC</a>
@@ -190,7 +415,10 @@
                 Protecting our neighbors with tailored auto, home, and business insurance. We find the best coverage at the right price, so you can have peace of mind.
             </p>
             <a href="auto-quote.html" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg shadow-xl transition-transform transform hover:scale-105 inline-block text-lg">
-                <i class="fas fa-shield-alt mr-2"></i> Get Your Free Quote Today
+                <svg class="mr-2 w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                Get Your Free Quote Today
             </a>
         </div>
     </section>
@@ -222,17 +450,30 @@
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Service Cards -->
                 <div class="bg-white rounded-lg shadow-lg p-8 text-center transform hover:-translate-y-2 transition-transform duration-300">
-                    <div class="text-blue-600 mb-4"><i class="fas fa-car fa-3x"></i></div>
+                    <div class="text-blue-600 mb-4">
+                        <svg class="w-16 h-16 mx-auto" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 11l1.5-4.5h11L19 11m-14 0h14m-14 0v8m14-8v8m-11-8v8m8-8v8M5 15h14M7.5 17.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm12 0a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM5.447 9.106A1 1 0 016.382 8.5h11.236a1 1 0 01.935.606l1.5 4.5A1 1 0 0119.118 15H4.882a1 1 0 01-.935-1.394l1.5-4.5z"/>
+                        </svg>
+                    </div>
                     <h3 class="text-xl font-bold mb-2">Auto Insurance</h3>
                     <p class="text-gray-600">From daily commuters to classic cars, we'll find the policy that fits your ride and your budget.</p>
                 </div>
                 <div class="bg-white rounded-lg shadow-lg p-8 text-center transform hover:-translate-y-2 transition-transform duration-300">
-                    <div class="text-blue-600 mb-4"><i class="fas fa-home fa-3x"></i></div>
+                    <div class="text-blue-600 mb-4">
+                        <svg class="w-16 h-16 mx-auto" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                        </svg>
+                    </div>
                     <h3 class="text-xl font-bold mb-2">Home Insurance</h3>
                     <p class="text-gray-600">Protect your biggest investment and everything in it with comprehensive homeowners coverage.</p>
                 </div>
                 <div class="bg-white rounded-lg shadow-lg p-8 text-center transform hover:-translate-y-2 transition-transform duration-300">
-                    <div class="text-blue-600 mb-4"><i class="fas fa-briefcase fa-3x"></i></div>
+                    <div class="text-blue-600 mb-4">
+                        <svg class="w-16 h-16 mx-auto" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                            <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"></path>
+                        </svg>
+                    </div>
                     <h3 class="text-xl font-bold mb-2">Business Insurance</h3>
                     <p class="text-gray-600">Customized solutions to protect your business, employees, and customers from the unexpected.</p>
                 </div>
@@ -347,15 +588,21 @@
                     <p class="text-gray-600 mb-6">We're not just agents; we're your neighbors. We are committed to the Elkin community and providing personalized service you can't get from a 1-800 number.</p>
                     <ul class="space-y-4">
                         <li class="flex items-start">
-                            <i class="fas fa-check-circle text-blue-600 mt-1 mr-3"></i>
+                            <svg class="text-blue-600 mt-1 mr-3 w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
                             <span><span class="font-bold">Local Expertise:</span> Deeply rooted in and knowledgeable about the needs of North Carolina residents.</span>
                         </li>
                         <li class="flex items-start">
-                            <i class="fas fa-check-circle text-blue-600 mt-1 mr-3"></i>
+                            <svg class="text-blue-600 mt-1 mr-3 w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
                             <span><span class="font-bold">Independent Agency:</span> We compare quotes from multiple top-rated carriers to find you the best value.</span>
                         </li>
                         <li class="flex items-start">
-                            <i class="fas fa-check-circle text-blue-600 mt-1 mr-3"></i>
+                            <svg class="text-blue-600 mt-1 mr-3 w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
                             <span><span class="font-bold">Dedicated Support:</span> From claims to coverage questions, we're here to help you every step of the way.</span>
                         </li>
                     </ul>
@@ -374,17 +621,68 @@
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Testimonial Cards -->
                 <div class="bg-gray-50 rounded-lg shadow-lg p-8">
-                    <div class="text-yellow-400 mb-4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <div class="text-yellow-400 mb-4">
+                        <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                    </div>
                     <p class="text-gray-600 mb-4">"Bill and his team saved me hundreds on my car insurance and made the whole process incredibly easy. Highly recommend!"</p>
                     <p class="font-bold text-gray-800">- Sarah J.</p>
                 </div>
                 <div class="bg-gray-50 rounded-lg shadow-lg p-8">
-                    <div class="text-yellow-400 mb-4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <div class="text-yellow-400 mb-4">
+                        <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                    </div>
                     <p class="text-gray-600 mb-4">"When we had to file a claim on our home, the support we received was outstanding. They handled everything and were so compassionate."</p>
                     <p class="font-bold text-gray-800">- The Miller Family</p>
                 </div>
                 <div class="bg-gray-50 rounded-lg shadow-lg p-8">
-                    <div class="text-yellow-400 mb-4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <div class="text-yellow-400 mb-4">
+                        <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                    </div>
                     <p class="text-gray-600 mb-4">"As a small business owner, I need an agent who understands my risks. Bill Layne Insurance has been a fantastic partner for years."</p>
                     <p class="font-bold text-gray-800">- David Chen</p>
                 </div>
@@ -403,7 +701,7 @@
                 <!-- Map -->
                 <div class="lg:w-1/2 h-96 rounded-lg overflow-hidden">
                     <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3219.238426011348!2d-80.85416488472913!3d36.3792039800742!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88518f8f0f0f0f0f%3A0x8a2f7f9f9f9f9f9f!2s1283%20N%20Bridge%20St%2C%20Elkin%2C%20NC%2028621!5e0!3m2!1sen!2sus!4v1698269188123!5m2!1sen!2sus" 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3219.238426011348!2d-80.85416488472913!3d36.3792039800742!2m3!1f0!2f0!3f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88518f8f0f0f0f0f%3A0x8a2f7f9f9f9f9f9f!2s1283%20N%20Bridge%20St%2C%20Elkin%2C%20NC%2028621!5e0!3m2!1sen!2sus!4v1698269188123!5m2!1sen!2sus" 
                         width="100%" 
                         height="100%" 
                         style="border:0;" 
@@ -416,9 +714,25 @@
                 <div class="lg:w-1/2 flex items-center">
                      <div class="w-full">
                         <h3 class="text-2xl font-bold text-gray-800 mb-4">Our Office</h3>
-                        <p class="text-gray-600 mb-2"><i class="fas fa-map-marker-alt w-6 text-center mr-2 text-blue-600"></i>1283 N Bridge St, Elkin NC 28621</p>
-                        <p class="text-gray-600 mb-2"><i class="fas fa-phone w-6 text-center mr-2 text-blue-600"></i>(336) 835-1993</p>
-                        <p class="text-gray-600 mb-4"><i class="fas fa-envelope w-6 text-center mr-2 text-blue-600"></i>Save@BillLayneInsurance.com</p>
+                        <p class="text-gray-600 mb-2">
+                            <svg class="w-5 h-5 inline-block text-center mr-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                            </svg>
+                            1283 N Bridge St, Elkin NC 28621
+                        </p>
+                        <p class="text-gray-600 mb-2">
+                            <svg class="w-5 h-5 inline-block text-center mr-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                            </svg>
+                            (336) 835-1993
+                        </p>
+                        <p class="text-gray-600 mb-4">
+                            <svg class="w-5 h-5 inline-block text-center mr-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                            </svg>
+                            Save@BillLayneInsurance.com
+                        </p>
                         <h4 class="font-bold mt-4 mb-2">Office Hours:</h4>
                         <p class="text-gray-600">Monday - Friday: 9:00 AM - 5:00 PM</p>
                      </div>
@@ -438,7 +752,9 @@
     <!-- Mobile Sticky Call Button -->
     <div class="mobile-call-button">
         <a href="tel:3368351993" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-full shadow-lg flex items-center gap-2 transition-all hover:scale-105 text-sm whitespace-nowrap">
-            <i class="fas fa-phone"></i>
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+            </svg>
             <span>(336) 835-1993</span>
         </a>
     </div>
@@ -451,6 +767,10 @@
         const navLinks = header.querySelectorAll('.nav-link');
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
+        const mobileCallButton = document.querySelector('.mobile-call-button');
+        
+        // Track scroll position for phone button
+        let lastScrollTop = 0;
 
         // Function to style header on scroll
         function styleHeader() {
@@ -467,8 +787,24 @@
                 link.classList.toggle('hover:text-blue-600', isScrolled);
             });
         }
+        
+        // Function to control phone button visibility
+        function handleScroll() {
+            const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // Show button only when scrolling down and past hero section
+            if (currentScroll > lastScrollTop && currentScroll > 300) {
+                mobileCallButton.classList.add('show');
+            } else {
+                mobileCallButton.classList.remove('show');
+            }
+            
+            lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+        }
+        
         styleHeader(); // Initial call
         window.addEventListener('scroll', styleHeader);
+        window.addEventListener('scroll', handleScroll);
 
         // --- Mobile Menu Toggle ---
         mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
@@ -478,7 +814,7 @@
             button.addEventListener('click', () => {
                 const dropdown = button.nextElementSibling;
                 dropdown.classList.toggle('hidden');
-                button.querySelector('i').classList.toggle('rotate-180');
+                button.querySelector('svg').classList.toggle('rotate-180');
             });
         });
 

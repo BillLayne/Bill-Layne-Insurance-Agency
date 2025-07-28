@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill Layne Insurance Agency - Serving Elkin, NC</title>
+    
+    <!-- Tailwind CSS for modern, responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter for a clean, modern look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        /* Use the Inter font family */
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        /* Style for the header when it becomes sticky */
+        .header-scrolled {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+        }
+        
+        /* Custom hero background image with an overlay for text readability */
+        .hero-bg {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://github.com/BillLayne/bill-layne-images/blob/main/logos/Car%20Insurance.png?raw=true');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        /* Styles for the active tab */
+        .tab-active {
+            background-color: #2563EB; /* blue-600 */
+            color: white !important;
+        }
+        
+        /* Hide non-active tab content */
+        .tab-content {
+            display: none;
+        }
+        .tab-content-active {
+            display: block;
+        }
+
+        /* Dropdown menu styles */
+        .dropdown-menu {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            top: 100%;
+            padding-top: 0.5rem;
+        }
+        
+        /* Create invisible bridge to prevent menu from closing */
+        .dropdown-menu::before {
+            content: '';
+            position: absolute;
+            top: -0.5rem;
+            left: 0;
+            right: 0;
+            height: 0.5rem;
+        }
+        
+        /* Scrollable tool content */
+        .tool-content-wrapper {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+        
+        /* Custom scrollbar for tool content */
+        .tool-content-wrapper::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .tool-content-wrapper::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        .tool-content-wrapper::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+        
+        .tool-content-wrapper::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        /* Mobile sticky call button */
+        .mobile-call-button {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 40;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .mobile-call-button.show {
+            opacity: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-call-button {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Header Section -->
+    <header id="main-header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <!-- Logo -->
+                <a href="index.html" class="text-white text-2xl font-bold">Bill Layne Insurance</a>
+                
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex items-center space-x-1">
+                    <a href="index.html" class="nav-link px-3 py-2 rounded-md">Home</a>
+                    
+                    <!-- Services Dropdown -->
+                    <div class="relative group">
+                        <button class="nav-link px-3 py-2 rounded-md flex items-center">
+                            Services <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div class="dropdown-menu absolute hidden group-hover:block bg-white shadow-lg rounded-md py-2 w-48 opacity-0 group-hover:opacity-100">
+                            <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Auto Insurance</a>
+                            <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Home Insurance</a>
+                            <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Claim Center</a>
+                            <a href="https://billlayne.github.io/Resources/" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Resources</a>
+                        </div>
+                    </div>
+
+                    <!-- Areas We Serve Dropdown -->
+                    <div class="relative group">
+                        <button class="nav-link px-3 py-2 rounded-md flex items-center">
+                            Areas We Serve <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div class="dropdown-menu absolute hidden group-hover:block bg-white shadow-lg rounded-md py-2 w-48 opacity-0 group-hover:opacity-100">
+                            <a href="areas-we-serve.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">All Areas</a>
+                            <a href="insurance-elkin-nc.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Elkin, NC</a>
+                            <a href="insurance-mount-airy-nc.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Mount Airy, NC</a>
+                        </div>
+                    </div>
+
+                    <a href="blog.html" class="nav-link px-3 py-2 rounded-md">Blog</a>
+                    <a href="contact-us.html" class="nav-link px-3 py-2 rounded-md">Contact</a>
+                    <a href="auto-quote.html" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-transform transform hover:scale-105 ml-4">Get a Quote</a>
+                </nav>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-button" class="md:hidden text-white text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white">
+            <a href="index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home</a>
+            <button class="mobile-dropdown-toggle w-full text-left flex justify-between items-center py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Services <i class="fas fa-chevron-down text-xs"></i></button>
+            <div class="mobile-dropdown-menu hidden pl-4">
+                <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Auto Insurance</a>
+                <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home Insurance</a>
+                <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Claim Center</a>
+                <a href="https://billlayne.github.io/Resources/" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Resources</a>
+            </div>
+            <button class="mobile-dropdown-toggle w-full text-left flex justify-between items-center py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Areas We Serve <i class="fas fa-chevron-down text-xs"></i></button>
+            <div class="mobile-dropdown-menu hidden pl-4">
+                 <a href="areas-we-serve.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">All Areas</a>
+                 <a href="insurance-elkin-nc.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Elkin, NC</a>
+                 <a href="insurance-mount-airy-nc.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Mount Airy, NC</a>
+            </div>
+            <a href="blog.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Blog</a>
+            <a href="contact-us.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Contact</a>
+            <a href="auto-quote.html" class="block py-3 px-4 text-center bg-blue-600 text-white font-bold">Get a Quote</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-bg text-white pt-32 pb-32 md:pb-40">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4">Protecting Our NC Neighbors, On the Road and At Home</h1>
+            <p class="text-lg md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto">
+                Protecting our neighbors with tailored auto, home, and business insurance. We find the best coverage at the right price, so you can have peace of mind.
+            </p>
+            <a href="auto-quote.html" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg shadow-xl transition-transform transform hover:scale-105 inline-block text-lg">
+                <i class="fas fa-shield-alt mr-2"></i> Get Your Free Quote Today
+            </a>
+        </div>
+    </section>
+
+    <!-- Trusted Partners Section -->
+    <section class="bg-white py-12">
+        <div class="container mx-auto px-6">
+            <h3 class="text-center text-gray-700 text-sm font-bold uppercase tracking-wider mb-8">Proudly Partnered With America's Top Insurers</h3>
+            <div class="flex flex-wrap justify-center items-center gap-x-8 gap-y-4">
+                <img src="https://placehold.co/120x50/003087/ffffff?text=Nationwide" alt="Nationwide Logo" class="h-12 hover:scale-110 transition duration-300">
+                <img src="https://placehold.co/120x50/0080FF/ffffff?text=Progressive" alt="Progressive Logo" class="h-12 hover:scale-110 transition duration-300">
+                <img src="https://placehold.co/120x50/d32026/ffffff?text=Travelers" alt="Travelers Logo" class="h-12 hover:scale-110 transition duration-300">
+                <img src="https://placehold.co/120x50/0052CC/ffffff?text=Foremost" alt="Foremost Logo" class="h-12 hover:scale-110 transition duration-300">
+                <img src="https://placehold.co/120x50/FF6B00/ffffff?text=National+General" alt="National General Logo" class="h-12 hover:scale-110 transition duration-300">
+                <img src="https://placehold.co/120x50/006847/ffffff?text=Alamance" alt="Alamance Farmers Logo" class="h-12 hover:scale-110 transition duration-300">
+                <img src="https://placehold.co/120x50/8B0000/ffffff?text=NC+Grange" alt="NC Grange Logo" class="h-12 hover:scale-110 transition duration-300">
+                <img src="https://placehold.co/120x50/1B4F93/ffffff?text=Dairyland" alt="Dairyland Logo" class="h-12 hover:scale-110 transition duration-300">
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Insurance Built For You</h2>
+                <p class="text-gray-600 mt-2 max-w-2xl mx-auto">We offer a complete range of insurance products to protect what matters most.</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Service Cards -->
+                <div class="bg-white rounded-lg shadow-lg p-8 text-center transform hover:-translate-y-2 transition-transform duration-300">
+                    <div class="text-blue-600 mb-4"><i class="fas fa-car fa-3x"></i></div>
+                    <h3 class="text-xl font-bold mb-2">Auto Insurance</h3>
+                    <p class="text-gray-600">From daily commuters to classic cars, we'll find the policy that fits your ride and your budget.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-8 text-center transform hover:-translate-y-2 transition-transform duration-300">
+                    <div class="text-blue-600 mb-4"><i class="fas fa-home fa-3x"></i></div>
+                    <h3 class="text-xl font-bold mb-2">Home Insurance</h3>
+                    <p class="text-gray-600">Protect your biggest investment and everything in it with comprehensive homeowners coverage.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-8 text-center transform hover:-translate-y-2 transition-transform duration-300">
+                    <div class="text-blue-600 mb-4"><i class="fas fa-briefcase fa-3x"></i></div>
+                    <h3 class="text-xl font-bold mb-2">Business Insurance</h3>
+                    <p class="text-gray-600">Customized solutions to protect your business, employees, and customers from the unexpected.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Interactive Tools Section -->
+    <section id="tools" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Interactive Insurance Tools</h2>
+                <p class="text-gray-600 mt-2 max-w-2xl mx-auto">Not sure what you need? Use our free tools to get a better idea of your coverage needs.</p>
+            </div>
+            
+            <!-- Tab Navigation -->
+            <div class="flex justify-center border-b mb-8">
+                <button data-tab="auto-evaluator" class="tab-button tab-active py-2 px-6 font-semibold text-gray-600 hover:text-blue-600 focus:outline-none">Auto Evaluator</button>
+                <button data-tab="home-evaluator" class="tab-button py-2 px-6 font-semibold text-gray-600 hover:text-blue-600 focus:outline-none">Home Evaluator</button>
+                <button data-tab="insurance-quiz" class="tab-button py-2 px-6 font-semibold text-gray-600 hover:text-blue-600 focus:outline-none">Insurance Quiz</button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="max-w-4xl mx-auto">
+                <!-- Auto Coverage Evaluator -->
+                <div id="auto-evaluator" class="tab-content tab-content-active">
+                    <div class="bg-gray-100 p-8 rounded-lg">
+                        <h3 class="text-2xl font-bold text-center mb-6">Auto Coverage Checkup</h3>
+                        <div class="tool-content-wrapper">
+                        <form id="auto-coverage-form" class="space-y-4">
+                            <div>
+                                <label for="vehicle-value" class="block font-medium text-gray-700">Estimated Vehicle Value ($)</label>
+                                <input type="number" id="vehicle-value" class="w-full mt-1 p-2 border rounded-md" placeholder="e.g., 25000">
+                            </div>
+                            <div>
+                                <label for="daily-commute" class="block font-medium text-gray-700">Daily Commute (miles, one-way)</label>
+                                <input type="number" id="daily-commute" class="w-full mt-1 p-2 border rounded-md" placeholder="e.g., 15">
+                            </div>
+                            <div>
+                                <label for="has-loan" class="block font-medium text-gray-700">Do you have a loan or lease on this vehicle?</label>
+                                <select id="has-loan" class="w-full mt-1 p-2 border rounded-md">
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-md font-bold hover:bg-blue-700">Evaluate My Auto Coverage</button>
+                        </form>
+                        <div id="auto-results" class="mt-6 p-4 bg-white rounded-md shadow hidden"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Home Coverage Evaluator -->
+                <div id="home-evaluator" class="tab-content">
+                    <div class="bg-gray-100 p-8 rounded-lg">
+                        <h3 class="text-2xl font-bold text-center mb-6">Home Insurance Evaluator</h3>
+                        <div class="tool-content-wrapper">
+                        <form id="home-coverage-form" class="space-y-4">
+                            <div>
+                                <label for="home-value" class="block font-medium text-gray-700">Estimated Home Rebuild Cost ($)</label>
+                                <input type="number" id="home-value" class="w-full mt-1 p-2 border rounded-md" placeholder="e.g., 300000">
+                            </div>
+                            <div>
+                                <label for="personal-property" class="block font-medium text-gray-700">Value of Personal Belongings ($)</label>
+                                <input type="number" id="personal-property" class="w-full mt-1 p-2 border rounded-md" placeholder="e.g., 75000">
+                            </div>
+                             <div>
+                                <label for="has-pool" class="block font-medium text-gray-700">Do you have a swimming pool or trampoline?</label>
+                                <select id="has-pool" class="w-full mt-1 p-2 border rounded-md">
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-md font-bold hover:bg-blue-700">Evaluate My Home Coverage</button>
+                        </form>
+                        <div id="home-results" class="mt-6 p-4 bg-white rounded-md shadow hidden"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Insurance Quiz -->
+                <div id="insurance-quiz" class="tab-content">
+                    <div class="bg-gray-100 p-8 rounded-lg">
+                        <div class="tool-content-wrapper">
+                        <div id="quiz-container">
+                            <h3 class="text-2xl font-bold text-center mb-6">What's Your Insurance IQ?</h3>
+                            <div id="quiz-question" class="text-lg font-semibold mb-4"></div>
+                            <div id="quiz-options" class="space-y-3"></div>
+                        </div>
+                        <div id="quiz-results-container" class="hidden text-center">
+                            <h3 class="text-2xl font-bold mb-4">Quiz Complete!</h3>
+                            <p id="quiz-score" class="text-lg mb-2"></p>
+                            <p id="quiz-feedback" class="text-gray-700 mb-4"></p>
+                            <button id="quiz-restart" class="bg-blue-600 text-white py-2 px-4 rounded-md font-bold hover:bg-blue-700">Try Again</button>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us Section -->
+    <section class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <div class="md:w-1/2">
+                    <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/DownTown%20Elkin.png?raw=true" alt="Downtown Elkin NC" class="rounded-lg shadow-xl">
+                </div>
+                <div class="md:w-1/2">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Why Choose Bill Layne Insurance?</h2>
+                    <p class="text-gray-600 mb-6">We're not just agents; we're your neighbors. We are committed to the Elkin community and providing personalized service you can't get from a 1-800 number.</p>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mt-1 mr-3"></i>
+                            <span><span class="font-bold">Local Expertise:</span> Deeply rooted in and knowledgeable about the needs of North Carolina residents.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mt-1 mr-3"></i>
+                            <span><span class="font-bold">Independent Agency:</span> We compare quotes from multiple top-rated carriers to find you the best value.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mt-1 mr-3"></i>
+                            <span><span class="font-bold">Dedicated Support:</span> From claims to coverage questions, we're here to help you every step of the way.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="bg-white py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800">What Our Clients Say</h2>
+                <p class="text-gray-600 mt-2">Real stories from our satisfied customers.</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Testimonial Cards -->
+                <div class="bg-gray-50 rounded-lg shadow-lg p-8">
+                    <div class="text-yellow-400 mb-4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="text-gray-600 mb-4">"Bill and his team saved me hundreds on my car insurance and made the whole process incredibly easy. Highly recommend!"</p>
+                    <p class="font-bold text-gray-800">- Sarah J.</p>
+                </div>
+                <div class="bg-gray-50 rounded-lg shadow-lg p-8">
+                    <div class="text-yellow-400 mb-4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="text-gray-600 mb-4">"When we had to file a claim on our home, the support we received was outstanding. They handled everything and were so compassionate."</p>
+                    <p class="font-bold text-gray-800">- The Miller Family</p>
+                </div>
+                <div class="bg-gray-50 rounded-lg shadow-lg p-8">
+                    <div class="text-yellow-400 mb-4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="text-gray-600 mb-4">"As a small business owner, I need an agent who understands my risks. Bill Layne Insurance has been a fantastic partner for years."</p>
+                    <p class="font-bold text-gray-800">- David Chen</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact and Map Section -->
+    <section id="contact" class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Let's Get In Touch</h2>
+                <p class="text-gray-600 mt-2">We're ready to help. Call us, email us, or stop by our office.</p>
+            </div>
+            <div class="flex flex-col lg:flex-row gap-8 bg-white p-8 rounded-lg shadow-xl">
+                <!-- Map -->
+                <div class="lg:w-1/2 h-96 rounded-lg overflow-hidden">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3219.238426011348!2d-80.85416488472913!3d36.3792039800742!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88518f8f0f0f0f0f%3A0x8a2f7f9f9f9f9f9f!2s1283%20N%20Bridge%20St%2C%20Elkin%2C%20NC%2028621!5e0!3m2!1sen!2sus!4v1698269188123!5m2!1sen!2sus" 
+                        width="100%" 
+                        height="100%" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+                <!-- Contact Info -->
+                <div class="lg:w-1/2 flex items-center">
+                     <div class="w-full">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">Our Office</h3>
+                        <p class="text-gray-600 mb-2"><i class="fas fa-map-marker-alt w-6 text-center mr-2 text-blue-600"></i>1283 N Bridge St, Elkin NC 28621</p>
+                        <p class="text-gray-600 mb-2"><i class="fas fa-phone w-6 text-center mr-2 text-blue-600"></i>(336) 835-1993</p>
+                        <p class="text-gray-600 mb-4"><i class="fas fa-envelope w-6 text-center mr-2 text-blue-600"></i>Save@BillLayneInsurance.com</p>
+                        <h4 class="font-bold mt-4 mb-2">Office Hours:</h4>
+                        <p class="text-gray-600">Monday - Friday: 9:00 AM - 5:00 PM</p>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-10">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; 2024 Bill Layne Insurance. All Rights Reserved.</p>
+            <p class="text-sm text-gray-400 mt-2">1283 N Bridge St, Elkin NC 28621 | (336) 835-1993</p>
+        </div>
+    </footer>
+
+    <!-- Mobile Sticky Call Button -->
+    <div class="mobile-call-button">
+        <a href="tel:3368351993" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-full shadow-lg flex items-center gap-2 transition-all hover:scale-105 text-sm whitespace-nowrap">
+            <i class="fas fa-phone"></i>
+            <span>(336) 835-1993</span>
+        </a>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // --- General Navigation ---
+        const header = document.getElementById('main-header');
+        const headerLogo = header.querySelector('a');
+        const navLinks = header.querySelectorAll('.nav-link');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileCallButton = document.querySelector('.mobile-call-button');
+        
+        // Track scroll position for phone button
+        let lastScrollTop = 0;
+
+        // Function to style header on scroll
+        function styleHeader() {
+            const isScrolled = window.scrollY > 50;
+            header.classList.toggle('header-scrolled', isScrolled);
+            headerLogo.classList.toggle('text-white', !isScrolled);
+            headerLogo.classList.toggle('text-gray-800', isScrolled);
+            mobileMenuButton.classList.toggle('text-white', !isScrolled);
+            mobileMenuButton.classList.toggle('text-gray-800', isScrolled);
+            navLinks.forEach(link => {
+                link.classList.toggle('text-white', !isScrolled);
+                link.classList.toggle('hover:text-blue-300', !isScrolled);
+                link.classList.toggle('text-gray-700', isScrolled);
+                link.classList.toggle('hover:text-blue-600', isScrolled);
+            });
+        }
+        
+        // Function to control phone button visibility
+        function handleScroll() {
+            const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // Show button only when scrolling down and past hero section
+            if (currentScroll > lastScrollTop && currentScroll > 300) {
+                mobileCallButton.classList.add('show');
+            } else {
+                mobileCallButton.classList.remove('show');
+            }
+            
+            lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+        }
+        
+        styleHeader(); // Initial call
+        window.addEventListener('scroll', styleHeader);
+        window.addEventListener('scroll', handleScroll);
+
+        // --- Mobile Menu Toggle ---
+        mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+
+        // --- Mobile Dropdown Toggles ---
+        document.querySelectorAll('.mobile-dropdown-toggle').forEach(button => {
+            button.addEventListener('click', () => {
+                const dropdown = button.nextElementSibling;
+                dropdown.classList.toggle('hidden');
+                button.querySelector('i').classList.toggle('rotate-180');
+            });
+        });
+
+        // --- Tabbed Tools Functionality ---
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.dataset.tab;
+
+                tabButtons.forEach(btn => btn.classList.remove('tab-active'));
+                button.classList.add('tab-active');
+
+                tabContents.forEach(content => {
+                    content.classList.remove('tab-content-active');
+                    if (content.id === tabId) {
+                        content.classList.add('tab-content-active');
+                    }
+                });
+            });
+        });
+
+        // --- Auto Coverage Evaluator ---
+        const autoForm = document.getElementById('auto-coverage-form');
+        const autoResults = document.getElementById('auto-results');
+        if(autoForm) {
+            autoForm.addEventListener('submit', e => {
+                e.preventDefault();
+                const vehicleValue = parseInt(document.getElementById('vehicle-value').value) || 0;
+                const hasLoan = document.getElementById('has-loan').value === 'yes';
+                
+                let recommendations = `<h4 class="font-bold text-lg mb-2">Our Recommendation:</h4><ul class="list-disc list-inside space-y-2">`;
+                if (hasLoan || vehicleValue > 5000) {
+                    recommendations += `<li><span class="font-semibold">Comprehensive & Collision:</span> Essential to cover damage to your vehicle and required by lenders.</li>`;
+                } else {
+                     recommendations += `<li><span class="font-semibold">Liability Only:</span> Might be sufficient if your car has a low value and you own it outright. However, consider the cost of replacement.</li>`;
+                }
+                recommendations += `<li><span class="font-semibold">Uninsured/Underinsured Motorist:</span> Crucial for protecting yourself from drivers with little or no insurance.</li>`;
+                recommendations += `<li><span class="font-semibold">Medical Payments:</span> Helps cover medical expenses for you and your passengers regardless of fault.</li>`;
+                recommendations += `</ul><p class="mt-4 text-sm">This is a general recommendation. For a personalized quote, please contact us!</p>`;
+
+                autoResults.innerHTML = recommendations;
+                autoResults.classList.remove('hidden');
+            });
+        }
+
+        // --- Home Coverage Evaluator ---
+        const homeForm = document.getElementById('home-coverage-form');
+        const homeResults = document.getElementById('home-results');
+        if(homeForm) {
+            homeForm.addEventListener('submit', e => {
+                e.preventDefault();
+                const rebuildCost = parseInt(document.getElementById('home-value').value) || 0;
+                const hasPool = document.getElementById('has-pool').value === 'yes';
+
+                let recommendations = `<h4 class="font-bold text-lg mb-2">Our Recommendation:</h4><ul class="list-disc list-inside space-y-2">`;
+                recommendations += `<li><span class="font-semibold">Dwelling Coverage:</span> Should be at least ${rebuildCost.toLocaleString()} to fully cover a rebuild.</li>`;
+                recommendations += `<li><span class="font-semibold">Personal Property:</span> Typically 50-70% of dwelling coverage. Let's discuss if you have high-value items.</li>`;
+                if (hasPool) {
+                    recommendations += `<li><span class="font-semibold">Increased Liability:</span> Pools and trampolines increase risk. We strongly recommend at least $500,000 in liability coverage or a separate umbrella policy.</li>`;
+                } else {
+                    recommendations += `<li><span class="font-semibold">Standard Liability:</span> We recommend at least $300,000 to protect your assets.</li>`;
+                }
+                recommendations += `</ul><p class="mt-4 text-sm">This is a general recommendation. For a personalized quote, please contact us!</p>`;
+
+                homeResults.innerHTML = recommendations;
+                homeResults.classList.remove('hidden');
+            });
+        }
+
+        // --- Insurance Quiz ---
+        const quizData = [
+            { question: "What does 'deductible' mean in an insurance policy?", options: ["The amount the insurance company deducts from your bill", "The amount you pay before insurance pays", "A discount on your premium"], answer: "The amount you pay before insurance pays" },
+            { question: "Which coverage is typically required by law for drivers?", options: ["Collision", "Liability", "Comprehensive"], answer: "Liability" },
+            { question: "What does a standard homeowners policy typically NOT cover?", options: ["Fire damage", "Theft", "Floods"], answer: "Floods" }
+        ];
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        const quizContainer = document.getElementById('quiz-container');
+        const quizQuestionEl = document.getElementById('quiz-question');
+        const quizOptionsEl = document.getElementById('quiz-options');
+        const quizResultsContainer = document.getElementById('quiz-results-container');
+        const quizScoreEl = document.getElementById('quiz-score');
+        const quizFeedbackEl = document.getElementById('quiz-feedback');
+        const quizRestartBtn = document.getElementById('quiz-restart');
+
+        function loadQuiz() {
+            if(!quizContainer) return;
+            if (currentQuestionIndex < quizData.length) {
+                const currentQuestion = quizData[currentQuestionIndex];
+                quizQuestionEl.textContent = currentQuestion.question;
+                quizOptionsEl.innerHTML = '';
+                currentQuestion.options.forEach(optionText => {
+                    const button = document.createElement('button');
+                    button.textContent = optionText;
+                    button.className = 'w-full p-3 bg-white border rounded-md text-left hover:bg-blue-100';
+                    button.onclick = () => selectAnswer(optionText);
+                    quizOptionsEl.appendChild(button);
+                });
+            } else {
+                showQuizResults();
+            }
+        }
+
+        function selectAnswer(selectedOption) {
+            if (selectedOption === quizData[currentQuestionIndex].answer) {
+                score++;
+            }
+            currentQuestionIndex++;
+            loadQuiz();
+        }
+
+        function showQuizResults() {
+            quizContainer.classList.add('hidden');
+            quizResultsContainer.classList.remove('hidden');
+            quizScoreEl.textContent = `You scored ${score} out of ${quizData.length}!`;
+            let feedback = "You're an insurance expert!";
+            if (score < quizData.length) feedback = "Great job! Insurance can be tricky, but you're on your way.";
+            if (score < 2) feedback = "A good start! We're here to help you understand all the details.";
+            quizFeedbackEl.textContent = feedback;
+        }
+        
+        if(quizRestartBtn) {
+            quizRestartBtn.addEventListener('click', () => {
+                currentQuestionIndex = 0;
+                score = 0;
+                quizResultsContainer.classList.add('hidden');
+                quizContainer.classList.remove('hidden');
+                loadQuiz();
+            });
+        }
+
+        loadQuiz(); // Initial load
+    });
+    </script>
+
+</body>
+</html>
