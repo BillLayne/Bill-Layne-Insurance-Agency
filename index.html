@@ -118,6 +118,7 @@
         .quote-form-modern{max-width:400px}
         .form-title{color:var(--color-text);font-size:1.5rem;font-weight:700;margin-bottom:1.5rem;text-align:center}
         .form-input-modern{width:100%;padding:1rem 1.25rem;border:2px solid #e5e7eb;border-radius:0.75rem;font-size:16px;min-height:48px;transition:all 0.3s ease;background:#fff}
+        textarea.form-input-modern{resize:vertical;min-height:100px;font-family:inherit}
         .form-input-modern:focus{outline:none;border-color:var(--color-primary);box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
         select.form-input-modern{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 8L2 4h8z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem}
         input[type="file"].form-input-modern{cursor:pointer;padding:0.75rem}
@@ -432,9 +433,95 @@
                                 </select>
                             </div>
                             
+                            <!-- Auto Insurance Details (shown when auto or both is selected) -->
+                            <div id="autoInsuranceDetails" style="display: none;">
+                                <h4 style="color: #374151; font-size: 1.1rem; margin: 1.5rem 0 1rem; font-weight: 600;">Vehicle Information</h4>
+                                
+                                <div class="form-group">
+                                    <label for="vehicleYear" class="form-label">Vehicle Year</label>
+                                    <input type="number" id="vehicleYear" name="vehicleYear" class="form-input-modern" placeholder="2020" min="1900" max="2025">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="vehicleMake" class="form-label">Vehicle Make</label>
+                                    <input type="text" id="vehicleMake" name="vehicleMake" class="form-input-modern" placeholder="Toyota">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="vehicleModel" class="form-label">Vehicle Model</label>
+                                    <input type="text" id="vehicleModel" name="vehicleModel" class="form-input-modern" placeholder="Camry">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="vehicleVIN" class="form-label">VIN (Optional)</label>
+                                    <input type="text" id="vehicleVIN" name="vehicleVIN" class="form-input-modern" placeholder="1HGBH41JXMN109186">
+                                </div>
+                                
+                                <h4 style="color: #374151; font-size: 1.1rem; margin: 1.5rem 0 1rem; font-weight: 600;">Current Coverage</h4>
+                                
+                                <div class="form-group">
+                                    <label for="currentProvider" class="form-label">Current Insurance Company</label>
+                                    <input type="text" id="currentProvider" name="currentProvider" class="form-input-modern" placeholder="State Farm, Progressive, etc.">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="currentPremium" class="form-label">Current Monthly Premium</label>
+                                    <input type="text" id="currentPremium" name="currentPremium" class="form-input-modern" placeholder="$150">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="coverageLimits" class="form-label">Current Liability Limits</label>
+                                    <select id="coverageLimits" name="coverageLimits" class="form-input-modern">
+                                        <option value="">Select your current limits</option>
+                                        <option value="state-minimum">State Minimum (25/50/25)</option>
+                                        <option value="50/100/50">50/100/50</option>
+                                        <option value="100/300/100">100/300/100</option>
+                                        <option value="250/500/250">250/500/250</option>
+                                        <option value="unsure">Not Sure</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="deductible" class="form-label">Collision/Comprehensive Deductible</label>
+                                    <select id="deductible" name="deductible" class="form-input-modern">
+                                        <option value="">Select deductible</option>
+                                        <option value="250">$250</option>
+                                        <option value="500">$500</option>
+                                        <option value="1000">$1,000</option>
+                                        <option value="2500">$2,500</option>
+                                        <option value="no-coverage">No Coverage</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Home Insurance Details (shown when home or both is selected) -->
+                            <div id="homeInsuranceDetails" style="display: none;">
+                                <h4 style="color: #374151; font-size: 1.1rem; margin: 1.5rem 0 1rem; font-weight: 600;">Home Information</h4>
+                                
+                                <div class="form-group">
+                                    <label for="homeAddress" class="form-label">Property Address</label>
+                                    <input type="text" id="homeAddress" name="homeAddress" class="form-input-modern" placeholder="123 Main St, Elkin, NC 28621">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="homeYear" class="form-label">Year Built</label>
+                                    <input type="number" id="homeYear" name="homeYear" class="form-input-modern" placeholder="1995" min="1800" max="2025">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="homeValue" class="form-label">Estimated Home Value</label>
+                                    <input type="text" id="homeValue" name="homeValue" class="form-input-modern" placeholder="$250,000">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="squareFootage" class="form-label">Square Footage</label>
+                                    <input type="text" id="squareFootage" name="squareFootage" class="form-input-modern" placeholder="2,000">
+                                </div>
+                            </div>
+                            
                             <div class="form-group">
-                                <label for="currentProvider" class="form-label">Current Insurance Provider (Optional)</label>
-                                <input type="text" id="currentProvider" name="currentProvider" class="form-input-modern" placeholder="e.g., State Farm, Progressive">
+                                <label for="additionalInfo" class="form-label">Additional Information (Optional)</label>
+                                <textarea id="additionalInfo" name="additionalInfo" class="form-input-modern" rows="3" placeholder="Any additional details about your insurance needs..."></textarea>
                             </div>
                             
                             <div class="form-group">
@@ -1456,6 +1543,30 @@
                     }
                 });
             }
+            
+            // Show/hide insurance type specific fields
+            const insuranceTypeSelect = document.getElementById('insuranceType');
+            if (insuranceTypeSelect) {
+                insuranceTypeSelect.addEventListener('change', function(e) {
+                    const autoDetails = document.getElementById('autoInsuranceDetails');
+                    const homeDetails = document.getElementById('homeInsuranceDetails');
+                    const selectedType = e.target.value;
+                    
+                    // Hide all sections first
+                    if (autoDetails) autoDetails.style.display = 'none';
+                    if (homeDetails) homeDetails.style.display = 'none';
+                    
+                    // Show relevant sections
+                    if (selectedType === 'auto' && autoDetails) {
+                        autoDetails.style.display = 'block';
+                    } else if (selectedType === 'home' && homeDetails) {
+                        homeDetails.style.display = 'block';
+                    } else if (selectedType === 'both') {
+                        if (autoDetails) autoDetails.style.display = 'block';
+                        if (homeDetails) homeDetails.style.display = 'block';
+                    }
+                });
+            }
         });
 
         // Form validation and submission
@@ -1506,16 +1617,58 @@
             
             // Add message field with all info for Formspree
             const insuranceType = formData.get('insuranceType') || 'auto';
-            const currentProvider = formData.get('currentProvider') || 'Not specified';
             const hasDocument = formData.get('policyDocument') && formData.get('policyDocument').size > 0 ? 'Yes' : 'No';
             
-            const message = `New quote request:
+            let message = `New quote request:
 - Name: ${formData.get('name')}
 - Phone: ${formData.get('phone')}
 - Email: ${formData.get('email')}
-- Insurance Type: ${insuranceType}
-- Current Provider: ${currentProvider}
-- Policy Document Uploaded: ${hasDocument}${additionalInfo}`;
+- Insurance Type: ${insuranceType}`;
+
+            // Add auto insurance details if provided
+            if (insuranceType === 'auto' || insuranceType === 'both') {
+                const vehicleYear = formData.get('vehicleYear');
+                const vehicleMake = formData.get('vehicleMake');
+                const vehicleModel = formData.get('vehicleModel');
+                
+                if (vehicleYear || vehicleMake || vehicleModel) {
+                    message += `\n\nVehicle Information:`;
+                    if (vehicleYear) message += `\n- Year: ${vehicleYear}`;
+                    if (vehicleMake) message += `\n- Make: ${vehicleMake}`;
+                    if (vehicleModel) message += `\n- Model: ${vehicleModel}`;
+                    if (formData.get('vehicleVIN')) message += `\n- VIN: ${formData.get('vehicleVIN')}`;
+                }
+                
+                if (formData.get('currentProvider') || formData.get('currentPremium')) {
+                    message += `\n\nCurrent Auto Coverage:`;
+                    if (formData.get('currentProvider')) message += `\n- Provider: ${formData.get('currentProvider')}`;
+                    if (formData.get('currentPremium')) message += `\n- Premium: ${formData.get('currentPremium')}`;
+                    if (formData.get('coverageLimits')) message += `\n- Liability Limits: ${formData.get('coverageLimits')}`;
+                    if (formData.get('deductible')) message += `\n- Deductible: $${formData.get('deductible')}`;
+                }
+            }
+
+            // Add home insurance details if provided
+            if (insuranceType === 'home' || insuranceType === 'both') {
+                const homeAddress = formData.get('homeAddress');
+                const homeYear = formData.get('homeYear');
+                const homeValue = formData.get('homeValue');
+                
+                if (homeAddress || homeYear || homeValue) {
+                    message += `\n\nHome Information:`;
+                    if (homeAddress) message += `\n- Address: ${homeAddress}`;
+                    if (homeYear) message += `\n- Year Built: ${homeYear}`;
+                    if (homeValue) message += `\n- Value: ${homeValue}`;
+                    if (formData.get('squareFootage')) message += `\n- Square Footage: ${formData.get('squareFootage')}`;
+                }
+            }
+
+            // Add additional info if provided
+            if (formData.get('additionalInfo')) {
+                message += `\n\nAdditional Information:\n${formData.get('additionalInfo')}`;
+            }
+
+            message += `\n\nPolicy Document Uploaded: ${hasDocument}${additionalInfo}`;
             
             formData.append('message', message);
             
