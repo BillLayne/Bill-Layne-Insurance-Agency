@@ -15,161 +15,7 @@ function createAutoQuoteHeroHTML() {
             transition: all 0.5s ease;
         }
         
-        /* Full screen overlay for steps 2-6 */
-        .quote-fullscreen-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 9999;
-            overflow-y: auto;
-            padding: 2rem 0;
-        }
-        
-        .quote-fullscreen-overlay.active {
-            display: block;
-        }
-        
-        .quote-fullscreen-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            padding: 3rem;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            position: relative;
-            min-height: 90vh;
-        }
-        
-        .close-fullscreen {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: #f0f0f0;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-        
-        .close-fullscreen:hover {
-            background: #e0e0e0;
-            transform: rotate(90deg);
-        }
-        
-        /* Form in fullscreen mode */
-        #auto-hero-form.in-fullscreen {
-            width: 100% !important;
-            max-width: none !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            background: transparent !important;
-            box-shadow: none !important;
-            border: none !important;
-        }
-        
-        /* Adjust form elements for larger screen */
-        .quote-fullscreen-container .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .quote-fullscreen-container .form-control,
-        #auto-hero-form.in-fullscreen .form-control {
-            padding: 1rem !important;
-            font-size: 1.1rem !important;
-            width: 100% !important;
-            border: 2px solid #e0e0e0 !important;
-            border-radius: 8px !important;
-            display: block !important;
-            box-sizing: border-box !important;
-        }
-        
-        .quote-fullscreen-container .form-control:focus,
-        #auto-hero-form.in-fullscreen .form-control:focus {
-            border-color: var(--color-primary) !important;
-            outline: none !important;
-        }
-        
-        .quote-fullscreen-container .step-title {
-            font-size: 1.8rem;
-            margin-bottom: 2rem;
-        }
-        
-        .quote-fullscreen-container .form-label,
-        #auto-hero-form.in-fullscreen .form-label {
-            font-size: 1rem !important;
-            margin-bottom: 0.5rem !important;
-            display: block !important;
-            font-weight: 600 !important;
-        }
-        
-        /* Ensure select elements also get proper styling */
-        .quote-fullscreen-container select.form-control,
-        #auto-hero-form.in-fullscreen select.form-control {
-            appearance: none !important;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E") !important;
-            background-repeat: no-repeat !important;
-            background-position: right 1rem center !important;
-            padding-right: 2.5rem !important;
-        }
-        
-        .quote-fullscreen-container .info-method-card {
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .quote-fullscreen-container .method-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        
-        .quote-fullscreen-container .method-title {
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .quote-fullscreen-container .form-navigation {
-            position: sticky;
-            bottom: 0;
-            background: white;
-            padding: 2rem 0 0;
-            margin-top: 3rem;
-        }
-        
-        /* Ensure form steps display properly in fullscreen */
-        .quote-fullscreen-container .form-step {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        .quote-fullscreen-container .form-step.active {
-            display: block;
-        }
-        
-        /* Fullscreen-specific layouts */
-        .quote-fullscreen-container .driver-vehicle-entry,
-        .quote-fullscreen-container .coverage-option {
-            background: #f9f9f9;
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-        }
-        
-        @media (max-width: 768px) {
-            .quote-fullscreen-container {
-                padding: 2rem 1.5rem;
-                margin: 0 1rem;
-            }
-        }
+        /* Remove full-screen overlay - keep form in hero section */
 
         .quote-progress {
             margin-bottom: 1.5rem;
@@ -517,7 +363,7 @@ function createAutoQuoteHeroHTML() {
             <div class="progress-text" id="progress-text">Step 1 of 6</div>
         </div>
 
-        <form id="auto-hero-form" action="https://formspree.io/f/xkgbdjgy" method="POST" enctype="multipart/form-data">
+        <form id="auto-hero-form">
             <input type="hidden" name="form_type" value="Auto Insurance Quote - Hero Section">
             
             <!-- Step 1: Personal Information -->
@@ -1086,15 +932,55 @@ function handleFormSubmit(e) {
     
     const formData = new FormData(e.target);
     
-    fetch(e.target.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'Accept': 'application/json'
-        }
-    })
-    .then(response => {
-        if (response.ok) {
+    // Prepare data for EmailJS
+    const templateParams = {
+        // Personal Information
+        from_name: `${formData.get('firstname')} ${formData.get('lastname')}`,
+        firstname: formData.get('firstname'),
+        lastname: formData.get('lastname'),
+        from_email: formData.get('email'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        contact_method: formData.get('contact_method'),
+        
+        // Insurance type (always auto for this form)
+        insurance_type: 'Auto Insurance',
+        
+        // Current Insurance Info
+        current_insurance: formData.get('current_insurance'),
+        current_carrier: formData.get('current_carrier') || 'N/A',
+        coverage_expiration: formData.get('coverage_expiration') || 'N/A',
+        
+        // Additional Info
+        previous_claims: formData.get('previous_claims'),
+        violations: formData.get('violations'),
+        additional_notes: formData.get('additional_notes') || 'None',
+        
+        // Process drivers data
+        drivers_info: processDriversData(formData),
+        
+        // Process vehicles data
+        vehicles_info: processVehiclesData(formData),
+        
+        // Coverage preferences
+        coverage_info: processCoverageData(formData),
+        
+        // Full message for template
+        message: generateFullMessage(formData)
+    };
+    
+    // Check if EmailJS is loaded
+    if (typeof emailjs === 'undefined') {
+        console.error('EmailJS is not loaded!');
+        alert('There was an error loading the email service. Please try again or call us at (336) 835-1993.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Get My Quote';
+        return;
+    }
+    
+    // Send email using EmailJS
+    emailjs.send('service_4flmw3k', 'template_6k9bgwi', templateParams)
+        .then(function(response) {
             // Show success message
             document.getElementById('auto-hero-form').style.display = 'none';
             document.querySelector('.quote-progress').style.display = 'none';
@@ -1106,15 +992,86 @@ function handleFormSubmit(e) {
             
             // Scroll to top
             document.querySelector('.auto-quote-hero').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        } else {
-            throw new Error('Form submission failed');
+        })
+        .catch(function(error) {
+            console.error('EmailJS Error:', error);
+            alert('There was a problem submitting your form. Please try again or call us at (336) 835-1993.');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Get My Quote';
+        });
+}
+
+// Helper functions to process form data
+function processDriversData(formData) {
+    let driversInfo = '';
+    let driverCount = 1;
+    
+    // Check for driver data in formData
+    for (let [key, value] of formData.entries()) {
+        if (key.startsWith('driver_') && key.includes('_name')) {
+            const driverNum = key.match(/driver_(\d+)_name/);
+            if (driverNum) {
+                const num = driverNum[1];
+                driversInfo += `\nDriver ${driverCount}:\n`;
+                driversInfo += `- Name: ${value}\n`;
+                driversInfo += `- DOB: ${formData.get(`driver_${num}_dob`) || 'N/A'}\n`;
+                driversInfo += `- Gender: ${formData.get(`driver_${num}_gender`) || 'N/A'}\n`;
+                driversInfo += `- Marital Status: ${formData.get(`driver_${num}_marital`) || 'N/A'}\n`;
+                driverCount++;
+            }
         }
-    })
-    .catch(error => {
-        alert('There was a problem submitting your form. Please try again or call us at (336) 835-1993.');
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Get My Quote';
-    });
+    }
+    
+    return driversInfo || 'No driver information provided';
+}
+
+function processVehiclesData(formData) {
+    let vehiclesInfo = '';
+    let vehicleCount = 1;
+    
+    // Check for vehicle data in formData
+    for (let [key, value] of formData.entries()) {
+        if (key.startsWith('vehicle_') && key.includes('_year')) {
+            const vehicleNum = key.match(/vehicle_(\d+)_year/);
+            if (vehicleNum) {
+                const num = vehicleNum[1];
+                vehiclesInfo += `\nVehicle ${vehicleCount}:\n`;
+                vehiclesInfo += `- Year: ${value}\n`;
+                vehiclesInfo += `- Make: ${formData.get(`vehicle_${num}_make`) || 'N/A'}\n`;
+                vehiclesInfo += `- Model: ${formData.get(`vehicle_${num}_model`) || 'N/A'}\n`;
+                vehiclesInfo += `- VIN: ${formData.get(`vehicle_${num}_vin`) || 'N/A'}\n`;
+                vehicleCount++;
+            }
+        }
+    }
+    
+    return vehiclesInfo || 'No vehicle information provided';
+}
+
+function processCoverageData(formData) {
+    let coverageInfo = '\nCoverage Preferences:\n';
+    coverageInfo += `- Liability Limits: ${formData.get('liability_limits') || 'Not specified'}\n`;
+    coverageInfo += `- Collision: ${formData.get('collision') === 'on' ? 'Yes' : 'No'}\n`;
+    coverageInfo += `- Comprehensive: ${formData.get('comprehensive') === 'on' ? 'Yes' : 'No'}\n`;
+    coverageInfo += `- Uninsured Motorist: ${formData.get('uninsured_motorist') === 'on' ? 'Yes' : 'No'}\n`;
+    coverageInfo += `- Medical Payments: ${formData.get('medical_payments') === 'on' ? 'Yes' : 'No'}\n`;
+    coverageInfo += `- Rental Reimbursement: ${formData.get('rental_reimbursement') === 'on' ? 'Yes' : 'No'}\n`;
+    coverageInfo += `- Roadside Assistance: ${formData.get('roadside_assistance') === 'on' ? 'Yes' : 'No'}\n`;
+    
+    return coverageInfo;
+}
+
+function generateFullMessage(formData) {
+    let message = `New auto insurance quote request from ${formData.get('firstname')} ${formData.get('lastname')}.\n\n`;
+    message += `Contact Information:\n`;
+    message += `- Phone: ${formData.get('phone')}\n`;
+    message += `- Email: ${formData.get('email')}\n`;
+    message += `- Preferred Contact Method: ${formData.get('contact_method')}\n\n`;
+    message += processDriversData(formData) + '\n';
+    message += processVehiclesData(formData) + '\n';
+    message += processCoverageData(formData);
+    
+    return message;
 }
 
 // Initialize when DOM is ready
