@@ -1678,6 +1678,83 @@
 
 
         /* Responsive */
+        /* Mobile Sticky Call Button */
+        .mobile-sticky-call {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+            background: var(--color-accent);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+        }
+
+        .mobile-sticky-call:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+            color: white;
+        }
+
+        .mobile-sticky-call svg {
+            width: 28px;
+            height: 28px;
+            stroke-width: 2.5;
+        }
+
+        /* Show only on mobile */
+        @media (max-width: 768px) {
+            .mobile-sticky-call {
+                display: flex;
+            }
+            
+            /* Hide hero stats on mobile */
+            .hero-stats {
+                display: none !important;
+            }
+            
+            /* Make form more prominent on mobile */
+            .hero__form {
+                background: rgba(255, 255, 255, 0.98);
+                padding: 2rem;
+                border-radius: var(--radius-xl);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                margin-top: 2rem;
+            }
+            
+            .quote-form {
+                width: 100%;
+            }
+            
+            /* Ensure all inputs are at least 48px tall on mobile */
+            .form-input,
+            .form-control,
+            input[type="text"],
+            input[type="email"],
+            input[type="tel"],
+            select,
+            textarea,
+            .btn {
+                min-height: 48px !important;
+                font-size: 16px !important; /* Prevents zoom on iOS */
+                padding: 12px 16px !important;
+            }
+            
+            /* Improve touch targets */
+            a.click-to-call {
+                display: inline-block;
+                padding: 8px 4px;
+                margin: -8px -4px;
+            }
+        }
+
         /* Mobile Sticky Header */
         .mobile-sticky-header {
             display: none;
@@ -2750,6 +2827,155 @@ body.menu-open {
         padding: 6px 12px !important;
         font-size: 13px !important;
     }
+}
+
+/* ==================================================================
+   MOBILE OPTIMIZATIONS - Added for Better UX
+   ================================================================== */
+
+/* Ensure all interactive elements meet 48px touch target */
+@media (max-width: 900px) {
+    /* Universal touch target sizing */
+    button, 
+    input[type="submit"], 
+    input[type="button"], 
+    .btn,
+    a.btn,
+    .phone-button,
+    .cta-button {
+        min-height: 48px !important;
+        font-size: 16px !important; /* Prevents iOS zoom */
+    }
+    
+    /* Form inputs need proper sizing too */
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="number"],
+    select,
+    textarea {
+        min-height: 48px !important;
+        font-size: 16px !important;
+        padding: 12px 16px !important;
+    }
+    
+    /* Click-to-call styling */
+    a[href^="tel:"] {
+        color: #22c55e !important;
+        text-decoration: none !important;
+        font-weight: 600 !important;
+        transition: color 0.3s ease !important;
+    }
+    
+    a[href^="tel:"]:hover {
+        color: #16a34a !important;
+    }
+    
+    /* Mobile sticky call button - Enhanced */
+    .mobile-sticky-call {
+        position: fixed !important;
+        bottom: 20px !important;
+        right: 20px !important;
+        width: 60px !important;
+        height: 60px !important;
+        background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+        color: white !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-decoration: none !important;
+        box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4) !important;
+        z-index: 999 !important;
+        transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+    }
+    
+    .mobile-sticky-call:hover {
+        transform: scale(1.1) !important;
+        box-shadow: 0 6px 30px rgba(34, 197, 94, 0.5) !important;
+    }
+    
+    /* Better spacing for mobile content */
+    .container {
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+    }
+    
+    /* Hero optimizations for mobile */
+    .hero {
+        padding: 40px 0 !important;
+    }
+    
+    .hero-content {
+        grid-template-columns: 1fr !important;
+        gap: 30px !important;
+    }
+    
+    .hero-text {
+        text-align: center !important;
+    }
+    
+    .hero-title {
+        font-size: 1.75rem !important;
+        line-height: 1.3 !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem !important;
+        line-height: 1.5 !important;
+        margin-bottom: 20px !important;
+    }
+    
+    /* Hide stats on mobile to reduce clutter */
+    .hero-stats {
+        display: none !important;
+    }
+    
+    /* Make form more prominent on mobile */
+    .quote-form {
+        background: rgba(255, 255, 255, 0.98) !important;
+        padding: 25px 20px !important;
+        border-radius: 12px !important;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+    }
+    
+    /* Trust badges optimization */
+    .trust-grid {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+    
+    /* Analyzer cards stack properly */
+    .analyzer-grid {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+    }
+    
+    /* Better button styling on mobile */
+    .btn-primary {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3) !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.5px !important;
+    }
+    
+    /* Improve readability */
+    body {
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+    }
+    
+    /* Prevent horizontal scroll */
+    body, html {
+        overflow-x: hidden !important;
+    }
+    
+    /* Better tap highlighting */
+    a, button, input, select, textarea {
+        -webkit-tap-highlight-color: rgba(37, 99, 235, 0.1);
+    }
+}
     
     .phone-icon {
         display: none !important;
