@@ -13,625 +13,435 @@
     <meta property="og:image" content="https://i.imgur.com/cBAgeX8.png">
     <meta property="og:type" content="website">
     
-    <style>
-        :root {
-            --color-primary: #1e3a8a;
-            --color-primary-light: #3b82f6;
-            --color-secondary: #dc2626;
-            --color-accent: #f59e0b;
-            --color-background: #f8fafc;
-            --color-surface: #ffffff;
-            --color-text: #1e293b;
-            --color-text-secondary: #64748b;
-            --color-white: #ffffff;
-            
-            --font-serif: 'Georgia', serif;
-            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            
-            --font-size-base: 16px;
-            --font-size-sm: 0.875rem;
-            --font-size-lg: 1.125rem;
-            --font-size-xl: 1.25rem;
-            --font-size-2xl: 1.5rem;
-            --font-size-3xl: 2rem;
-            --font-size-4xl: 2.5rem;
-            
-            --space-xs: 0.25rem;
-            --space-sm: 0.5rem;
-            --space-md: 1rem;
-            --space-lg: 1.5rem;
-            --space-xl: 2rem;
-            --space-2xl: 3rem;
-            --space-3xl: 4rem;
-            
-            --radius-sm: 0.25rem;
-            --radius-md: 0.5rem;
-            --radius-lg: 1rem;
-            
-            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: var(--font-sans);
-            font-size: var(--font-size-base);
-            line-height: 1.6;
-            color: var(--color-text);
-            background-color: var(--color-background);
-            overflow-x: hidden;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 var(--space-md);
-        }
-
-        /* Header Styles */
-        .header {
-            background: var(--color-surface);
-            box-shadow: var(--shadow-sm);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header__content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: var(--space-md) 0;
-        }
-
-        .header__logo {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            color: var(--color-text);
-        }
-
-        .header__logo img {
-            height: 50px;
-            margin-right: var(--space-md);
-        }
-
-        .header__logo h1 {
-            font-family: var(--font-serif);
-            font-size: var(--font-size-xl);
-            font-weight: 700;
-        }
-
-        .header__contact {
-            display: flex;
-            gap: var(--space-lg);
-            align-items: center;
-        }
-
-        .header__phone {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            color: var(--color-primary);
-            font-weight: 600;
-            text-decoration: none;
-            font-size: var(--font-size-lg);
-        }
-
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
-            color: var(--color-white);
-            padding: var(--space-3xl) 0;
-            text-align: center;
-        }
-
-        .hero h2 {
-            font-family: var(--font-serif);
-            font-size: var(--font-size-4xl);
-            margin-bottom: var(--space-lg);
-        }
-
-        .hero p {
-            font-size: var(--font-size-xl);
-            max-width: 800px;
-            margin: 0 auto var(--space-xl);
-            opacity: 0.9;
-        }
-
-        /* Service Areas Grid */
-        .service-areas {
-            padding: var(--space-3xl) 0;
-        }
-
-        .service-areas__intro {
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto var(--space-3xl);
-        }
-
-        .service-areas__intro h3 {
-            font-family: var(--font-serif);
-            font-size: var(--font-size-3xl);
-            color: var(--color-primary);
-            margin-bottom: var(--space-lg);
-        }
-
-        .areas-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--space-xl);
-            margin-bottom: var(--space-3xl);
-        }
-
-        .area-card {
-            background: var(--color-surface);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-            padding: var(--space-xl);
-            text-align: center;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .area-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-xl);
-            border-color: var(--color-primary-light);
-        }
-
-        .area-card__icon {
-            font-size: 3rem;
-            margin-bottom: var(--space-md);
-        }
-
-        .area-card h4 {
-            font-family: var(--font-serif);
-            font-size: var(--font-size-2xl);
-            color: var(--color-primary);
-            margin-bottom: var(--space-sm);
-        }
-
-        .area-card__zip {
-            color: var(--color-text-secondary);
-            font-size: var(--font-size-sm);
-            margin-bottom: var(--space-md);
-        }
-
-        .area-card__features {
-            list-style: none;
-            text-align: left;
-            margin-bottom: var(--space-lg);
-        }
-
-        .area-card__features li {
-            padding: var(--space-xs) 0;
-            padding-left: var(--space-lg);
-            position: relative;
-        }
-
-        .area-card__features li:before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: var(--color-accent);
-            font-weight: bold;
-        }
-
-        .area-card__cta {
-            display: inline-block;
-            background: var(--color-primary);
-            color: var(--color-white);
-            padding: var(--space-sm) var(--space-lg);
-            border-radius: var(--radius-md);
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .area-card__cta:hover {
-            background: var(--color-primary-light);
-            transform: scale(1.05);
-        }
-
-        /* Coverage Map Section */
-        .coverage-map {
-            background: var(--color-surface);
-            padding: var(--space-3xl) 0;
-            text-align: center;
-        }
-
-        .coverage-map h3 {
-            font-family: var(--font-serif);
-            font-size: var(--font-size-3xl);
-            color: var(--color-primary);
-            margin-bottom: var(--space-xl);
-        }
-
-        .map-placeholder {
-            background: var(--color-background);
-            border: 2px dashed var(--color-primary-light);
-            border-radius: var(--radius-lg);
-            padding: var(--space-3xl);
-            margin-bottom: var(--space-xl);
-        }
-
-        /* CTA Section */
-        .cta-section {
-            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
-            color: var(--color-white);
-            padding: var(--space-3xl) 0;
-            text-align: center;
-        }
-
-        .cta-section h3 {
-            font-family: var(--font-serif);
-            font-size: var(--font-size-3xl);
-            margin-bottom: var(--space-lg);
-        }
-
-        .cta-buttons {
-            display: flex;
-            gap: var(--space-lg);
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: var(--space-md) var(--space-xl);
-            border-radius: var(--radius-md);
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn--primary {
-            background: var(--color-white);
-            color: var(--color-primary);
-        }
-
-        .btn--secondary {
-            background: transparent;
-            color: var(--color-white);
-            border: 2px solid var(--color-white);
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        /* Footer */
-        .footer {
-            background: var(--color-text);
-            color: var(--color-white);
-            padding: var(--space-2xl) 0;
-            text-align: center;
-        }
-
-        .footer p {
-            opacity: 0.8;
-        }
-
-        .footer a {
-            color: var(--color-primary-light);
-            text-decoration: none;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .hero h2 {
-                font-size: var(--font-size-3xl);
-            }
-
-            .header__content {
-                flex-direction: column;
-                gap: var(--space-md);
-            }
-
-            .areas-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .cta-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-        }
-    </style>
+    <!-- Resource Hints for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
-    <!-- Link to main stylesheet for unified header -->
-    <link rel="stylesheet" href="style.css">
+    <!-- CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Mobile Menu Fix -->
     <style>
-        /* Ensure mobile menu button is clickable */
-        .mobile-menu-toggle {
-            pointer-events: auto !important;
-            touch-action: manipulation !important;
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        
-        /* Ensure the button is visible and positioned correctly on mobile */
-        @media (max-width: 900px) {
-            .mobile-menu-toggle {
-                display: flex !important;
-                position: relative !important;
-                z-index: 1002 !important;
-            }
-            
-            /* Ensure header nav can be toggled */
-            .header-nav {
-                display: none !important;
-            }
-            
-            .header-nav.active {
-                display: block !important;
-            }
-        }
+        .animate-fadeInUp { animation: fadeInUp 0.8s ease-out; }
+        .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .hover-lift:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
     </style>
 </head>
-<body>
+<body class="font-['Inter'] bg-gray-50">
+    <!-- Sticky Call Button for Mobile -->
+    <a href="tel:3368351993" class="fixed bottom-6 right-6 z-50 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 md:hidden">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+        </svg>
+    </a>
+
     <!-- Header -->
-<!-- Unified Header -->
-<header class="unified-header">
-  <div class="header-container">
-    <div class="header-logo">
-      <a href="https://billlayneinsurance.com/" class="logo-link">
-        Bill Layne Insurance
-      </a>
-    </div>
-    
-    <nav class="header-nav">
-      <ul class="nav-menu">
-        <li><a href="https://billlayne.github.io/Auto-Insurance-Center/" class="nav-link">Auto</a></li>
-        <li><a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="nav-link">Home</a></li>
-        <li><a href="https://billlayneinsurance.com/areas-we-serve.html" class="nav-link active">Services</a></li>
-        <li><a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="nav-link">Claims</a></li>
-        <li><a href="https://billlayne.github.io/Resources/" class="nav-link">Resources</a></li>
-        <li><a href="https://billlayneinsurance.com/blog" class="nav-link">Blog</a></li>
-        <li><a href="https://billlayneinsurance.com/contact-us.html" class="nav-link">Contact</a></li>
-      </ul>
-    </nav>
-    
-    <div class="header-cta">
-      <a href="tel:3368351993" class="phone-button">
-        <span class="phone-icon">📞</span> (336) 835-1993
-      </a>
-    </div>
-    
-    <button class="mobile-menu-toggle" id="mobileMenuToggle">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-  </div>
-</header>
+    <header class="fixed top-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm shadow-sm transition-all duration-300" id="header">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center">
+                    <a href="https://billlayneinsurance.com/" class="text-2xl font-bold text-amber-800">
+                        Bill Layne Insurance
+                    </a>
+                </div>
+                
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="text-gray-700 hover:text-blue-600 transition-colors">Auto</a>
+                    <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="text-gray-700 hover:text-blue-600 transition-colors">Home</a>
+                    <a href="https://billlayneinsurance.com/areas-we-serve.html" class="text-blue-600 font-semibold">Services</a>
+                    <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="text-gray-700 hover:text-blue-600 transition-colors">Claims</a>
+                    <a href="https://billlayne.github.io/Resources/" class="text-gray-700 hover:text-blue-600 transition-colors">Resources</a>
+                    <a href="https://billlayneinsurance.com/blog" class="text-gray-700 hover:text-blue-600 transition-colors">Blog</a>
+                    <a href="https://billlayneinsurance.com/contact-us.html" class="text-gray-700 hover:text-blue-600 transition-colors">Contact</a>
+                </nav>
+                
+                <div class="hidden md:block">
+                    <a href="tel:3368351993" class="bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition-colors flex items-center gap-2">
+                        <span>📞</span> (336) 835-1993
+                    </a>
+                </div>
+                
+                <button class="md:hidden p-2" id="mobileMenuToggle">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="hidden fixed inset-0 bg-white z-50" id="mobileMenu">
+            <div class="flex flex-col h-full">
+                <div class="flex items-center justify-between p-4 border-b">
+                    <span class="text-xl font-bold">Menu</span>
+                    <button id="closeMobileMenu" class="p-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <nav class="flex-1 overflow-y-auto">
+                    <div class="flex flex-col p-4 space-y-4">
+                        <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="text-lg py-2 text-gray-700">Auto</a>
+                        <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="text-lg py-2 text-gray-700">Home</a>
+                        <a href="https://billlayneinsurance.com/areas-we-serve.html" class="text-lg py-2 text-blue-600 font-semibold">Services</a>
+                        <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="text-lg py-2 text-gray-700">Claims</a>
+                        <a href="https://billlayne.github.io/Resources/" class="text-lg py-2 text-gray-700">Resources</a>
+                        <a href="https://billlayneinsurance.com/blog" class="text-lg py-2 text-gray-700">Blog</a>
+                        <a href="https://billlayneinsurance.com/contact-us.html" class="text-lg py-2 text-gray-700">Contact</a>
+                    </div>
+                </nav>
+                <div class="p-4 border-t">
+                    <a href="tel:3368351993" class="block w-full bg-blue-600 text-white text-center py-3 rounded-full">
+                        Call (336) 835-1993
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
 
     <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h2>Proudly Serving Northwest North Carolina</h2>
-            <p>Bill Layne Insurance provides comprehensive insurance coverage to families and businesses throughout Surry County and surrounding areas. Find your local insurance agent below.</p>
+    <section class="bg-gradient-to-br from-blue-700 to-blue-600 text-white pt-32 pb-20">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6 animate-fadeInUp">Proudly Serving Northwest North Carolina</h1>
+            <p class="text-xl max-w-3xl mx-auto opacity-90 animate-fadeInUp">Bill Layne Insurance provides comprehensive insurance coverage to families and businesses throughout Surry County and surrounding areas. Find your local insurance agent below.</p>
         </div>
     </section>
 
     <!-- Service Areas -->
-    <section class="service-areas">
-        <div class="container">
-            <div class="service-areas__intro">
-                <h3>Our Service Areas</h3>
-                <p>With over 20 years of experience serving North Carolina, we understand the unique insurance needs of each community we serve. Click on your town below to learn more about local coverage options.</p>
+    <section class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Our Service Areas</h2>
+                <p class="text-lg text-gray-600">With over 20 years of experience serving North Carolina, we understand the unique insurance needs of each community we serve. Click on your town below to learn more about local coverage options.</p>
             </div>
 
-            <div class="areas-grid">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Elkin -->
-                <div class="area-card">
-                    <div class="area-card__icon">🏛️</div>
-                    <h4>Elkin, NC</h4>
-                    <p class="area-card__zip">ZIP: 28621</p>
-                    <ul class="area-card__features">
-                        <li>Main office location</li>
-                        <li>Same-day service</li>
-                        <li>Walk-ins welcome</li>
-                        <li>All insurance types</li>
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center hover-lift border-2 border-transparent hover:border-blue-500 transition-all duration-300">
+                    <div class="text-5xl mb-4">🏛️</div>
+                    <h3 class="text-2xl font-bold text-blue-700 mb-2">Elkin, NC</h3>
+                    <p class="text-sm text-gray-500 mb-4">ZIP: 28621</p>
+                    <ul class="text-left mb-6 space-y-2">
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Main office location</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Same-day service</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Walk-ins welcome</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>All insurance types</span>
+                        </li>
                     </ul>
-                    <a href="/insurance-elkin-nc" class="area-card__cta">Elkin Insurance →</a>
+                    <a href="/insurance-elkin-nc.html" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                        Elkin Insurance →
+                    </a>
                 </div>
 
                 <!-- Mount Airy -->
-                <div class="area-card">
-                    <div class="area-card__icon">🏔️</div>
-                    <h4>Mount Airy, NC</h4>
-                    <p class="area-card__zip">ZIP: 27030</p>
-                    <ul class="area-card__features">
-                        <li>Home of Mayberry</li>
-                        <li>Local agent network</li>
-                        <li>Historic downtown coverage</li>
-                        <li>Tourism business insurance</li>
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center hover-lift border-2 border-transparent hover:border-blue-500 transition-all duration-300">
+                    <div class="text-5xl mb-4">🏔️</div>
+                    <h3 class="text-2xl font-bold text-blue-700 mb-2">Mount Airy, NC</h3>
+                    <p class="text-sm text-gray-500 mb-4">ZIP: 27030</p>
+                    <ul class="text-left mb-6 space-y-2">
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Home of Mayberry</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Local agent network</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Historic downtown coverage</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Tourism business insurance</span>
+                        </li>
                     </ul>
-                    <a href="/insurance-mount-airy-nc" class="area-card__cta">Mount Airy Insurance →</a>
+                    <a href="/insurance-mount-airy-nc.html" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                        Mount Airy Insurance →
+                    </a>
                 </div>
 
                 <!-- Dobson -->
-                <div class="area-card">
-                    <div class="area-card__icon">⚖️</div>
-                    <h4>Dobson, NC</h4>
-                    <p class="area-card__zip">ZIP: 27017</p>
-                    <ul class="area-card__features">
-                        <li>County seat services</li>
-                        <li>Government employee plans</li>
-                        <li>Rural property coverage</li>
-                        <li>Farm insurance options</li>
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center hover-lift border-2 border-transparent hover:border-blue-500 transition-all duration-300">
+                    <div class="text-5xl mb-4">⚖️</div>
+                    <h3 class="text-2xl font-bold text-blue-700 mb-2">Dobson, NC</h3>
+                    <p class="text-sm text-gray-500 mb-4">ZIP: 27017</p>
+                    <ul class="text-left mb-6 space-y-2">
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>County seat services</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Government employee plans</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Rural property coverage</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Farm insurance options</span>
+                        </li>
                     </ul>
-                    <a href="/insurance-dobson-nc" class="area-card__cta">Dobson Insurance →</a>
+                    <a href="/insurance-dobson-nc.html" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                        Dobson Insurance →
+                    </a>
                 </div>
 
                 <!-- Pilot Mountain -->
-                <div class="area-card">
-                    <div class="area-card__icon">⛰️</div>
-                    <h4>Pilot Mountain, NC</h4>
-                    <p class="area-card__zip">ZIP: 27041</p>
-                    <ul class="area-card__features">
-                        <li>Outdoor recreation coverage</li>
-                        <li>Small business insurance</li>
-                        <li>Residential services</li>
-                        <li>State park area coverage</li>
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center hover-lift border-2 border-transparent hover:border-blue-500 transition-all duration-300">
+                    <div class="text-5xl mb-4">⛰️</div>
+                    <h3 class="text-2xl font-bold text-blue-700 mb-2">Pilot Mountain, NC</h3>
+                    <p class="text-sm text-gray-500 mb-4">ZIP: 27041</p>
+                    <ul class="text-left mb-6 space-y-2">
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Outdoor recreation coverage</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Small business insurance</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Residential services</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>State park area coverage</span>
+                        </li>
                     </ul>
-                    <a href="/insurance-pilot-mountain-nc" class="area-card__cta">Pilot Mountain Insurance →</a>
+                    <a href="/insurance-pilot-mountain-nc.html" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                        Pilot Mountain Insurance →
+                    </a>
                 </div>
 
                 <!-- Jonesville -->
-                <div class="area-card">
-                    <div class="area-card__icon">🏘️</div>
-                    <h4>Jonesville, NC</h4>
-                    <p class="area-card__zip">ZIP: 28642</p>
-                    <ul class="area-card__features">
-                        <li>Yadkin Valley coverage</li>
-                        <li>Wine country insurance</li>
-                        <li>Agricultural policies</li>
-                        <li>Family-owned business plans</li>
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center hover-lift border-2 border-transparent hover:border-blue-500 transition-all duration-300">
+                    <div class="text-5xl mb-4">🏘️</div>
+                    <h3 class="text-2xl font-bold text-blue-700 mb-2">Jonesville, NC</h3>
+                    <p class="text-sm text-gray-500 mb-4">ZIP: 28642</p>
+                    <ul class="text-left mb-6 space-y-2">
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Yadkin Valley coverage</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Wine country insurance</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Agricultural policies</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Family-owned business plans</span>
+                        </li>
                     </ul>
-                    <a href="/insurance-jonesville-nc" class="area-card__cta">Jonesville Insurance →</a>
+                    <a href="/insurance-jonesville-nc.html" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                        Jonesville Insurance →
+                    </a>
                 </div>
 
                 <!-- Yadkinville -->
-                <div class="area-card">
-                    <div class="area-card__icon">🍇</div>
-                    <h4>Yadkinville, NC</h4>
-                    <p class="area-card__zip">ZIP: 27055</p>
-                    <ul class="area-card__features">
-                        <li>Yadkin County services</li>
-                        <li>Vineyard insurance</li>
-                        <li>Agricultural coverage</li>
-                        <li>Historic property plans</li>
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center hover-lift border-2 border-transparent hover:border-blue-500 transition-all duration-300">
+                    <div class="text-5xl mb-4">🍇</div>
+                    <h3 class="text-2xl font-bold text-blue-700 mb-2">Yadkinville, NC</h3>
+                    <p class="text-sm text-gray-500 mb-4">ZIP: 27055</p>
+                    <ul class="text-left mb-6 space-y-2">
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Yadkin County services</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Vineyard insurance</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Agricultural coverage</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Historic property plans</span>
+                        </li>
                     </ul>
-                    <a href="/insurance-yadkinville-nc" class="area-card__cta">Yadkinville Insurance →</a>
+                    <a href="/insurance-yadkinville-nc.html" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                        Yadkinville Insurance →
+                    </a>
                 </div>
 
                 <!-- Boonville -->
-                <div class="area-card">
-                    <div class="area-card__icon">🌳</div>
-                    <h4>Boonville, NC</h4>
-                    <p class="area-card__zip">ZIP: 27011</p>
-                    <ul class="area-card__features">
-                        <li>Rural property experts</li>
-                        <li>Farm & ranch coverage</li>
-                        <li>Equipment insurance</li>
-                        <li>Seasonal home policies</li>
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center hover-lift border-2 border-transparent hover:border-blue-500 transition-all duration-300">
+                    <div class="text-5xl mb-4">🌳</div>
+                    <h3 class="text-2xl font-bold text-blue-700 mb-2">Boonville, NC</h3>
+                    <p class="text-sm text-gray-500 mb-4">ZIP: 27011</p>
+                    <ul class="text-left mb-6 space-y-2">
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Rural property experts</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Farm & ranch coverage</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Equipment insurance</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Seasonal home policies</span>
+                        </li>
                     </ul>
-                    <a href="/insurance-boonville-nc" class="area-card__cta">Boonville Insurance →</a>
+                    <a href="/insurance-boonville-nc.html" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                        Boonville Insurance →
+                    </a>
                 </div>
 
                 <!-- North Wilkesboro -->
-                <div class="area-card">
-                    <div class="area-card__icon">🏁</div>
-                    <h4>North Wilkesboro, NC</h4>
-                    <p class="area-card__zip">ZIP: 28659</p>
-                    <ul class="area-card__features">
-                        <li>Racing heritage coverage</li>
-                        <li>Commercial fleet insurance</li>
-                        <li>Manufacturing policies</li>
-                        <li>Motorsports insurance</li>
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center hover-lift border-2 border-transparent hover:border-blue-500 transition-all duration-300">
+                    <div class="text-5xl mb-4">🏁</div>
+                    <h3 class="text-2xl font-bold text-blue-700 mb-2">North Wilkesboro, NC</h3>
+                    <p class="text-sm text-gray-500 mb-4">ZIP: 28659</p>
+                    <ul class="text-left mb-6 space-y-2">
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Racing heritage coverage</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Commercial fleet insurance</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Manufacturing policies</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Motorsports insurance</span>
+                        </li>
                     </ul>
-                    <a href="/insurance-north-wilkesboro-nc" class="area-card__cta">North Wilkesboro Insurance →</a>
+                    <a href="/insurance-north-wilkesboro-nc.html" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                        North Wilkesboro Insurance →
+                    </a>
                 </div>
 
                 <!-- King -->
-                <div class="area-card">
-                    <div class="area-card__icon">👑</div>
-                    <h4>King, NC</h4>
-                    <p class="area-card__zip">ZIP: 27021</p>
-                    <ul class="area-card__features">
-                        <li>Stokes County coverage</li>
-                        <li>Suburban home insurance</li>
-                        <li>Growing family plans</li>
-                        <li>New construction coverage</li>
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center hover-lift border-2 border-transparent hover:border-blue-500 transition-all duration-300">
+                    <div class="text-5xl mb-4">👑</div>
+                    <h3 class="text-2xl font-bold text-blue-700 mb-2">King, NC</h3>
+                    <p class="text-sm text-gray-500 mb-4">ZIP: 27021</p>
+                    <ul class="text-left mb-6 space-y-2">
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Stokes County coverage</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Suburban home insurance</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>Growing family plans</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-2">✓</span>
+                            <span>New construction coverage</span>
+                        </li>
                     </ul>
-                    <a href="/insurance-king-nc" class="area-card__cta">King Insurance →</a>
+                    <a href="/insurance-king-nc.html" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                        King Insurance →
+                    </a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Coverage Map Section -->
-    <section class="coverage-map">
-        <div class="container">
-            <h3>Our Coverage Area</h3>
-            <div class="map-placeholder">
-                <p>📍 Interactive map showing all service areas throughout Northwest North Carolina</p>
-                <p>We provide insurance services within a 50-mile radius of Elkin, NC</p>
+    <section class="bg-white py-20">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-8">Our Coverage Area</h2>
+            <div class="bg-gray-50 border-2 border-dashed border-blue-400 rounded-xl p-12 mb-8">
+                <p class="text-2xl mb-4">📍 Interactive map showing all service areas throughout Northwest North Carolina</p>
+                <p class="text-lg text-gray-600">We provide insurance services within a 50-mile radius of Elkin, NC</p>
             </div>
-            <p>Don't see your town listed? We likely still serve your area! Call <strong>(336) 835-1993</strong> to confirm coverage.</p>
+            <p class="text-lg text-gray-700">Don't see your town listed? We likely still serve your area! Call <strong class="text-blue-600">(336) 835-1993</strong> to confirm coverage.</p>
         </div>
     </section>
 
     <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="container">
-            <h3>Ready to Get Started?</h3>
-            <p>Whether you're in Elkin or anywhere in Northwest NC, we're here to help protect what matters most.</p>
-            <div class="cta-buttons">
-                <a href="tel:3368351993" class="btn btn--primary">Call Now: (336) 835-1993</a>
-                <a href="index.html#quote" class="btn btn--secondary">Get Online Quote</a>
+    <section class="bg-gradient-to-br from-blue-700 to-blue-600 text-white py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to Get Started?</h2>
+            <p class="text-xl mb-8 opacity-90">Whether you're in Elkin or anywhere in Northwest NC, we're here to help protect what matters most.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="tel:3368351993" class="bg-white text-blue-600 px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors font-semibold inline-flex items-center justify-center">
+                    Call Now: (336) 835-1993
+                </a>
+                <a href="index.html#quote" class="border-2 border-white text-white px-8 py-4 rounded-lg hover:bg-white hover:text-blue-600 transition-colors font-semibold inline-flex items-center justify-center">
+                    Get Online Quote
+                </a>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2025 Bill Layne Insurance | Licensed in North Carolina | <a href="/">Return to Homepage</a></p>
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2025 Bill Layne Insurance | Licensed in North Carolina | <a href="/" class="text-blue-400 hover:text-blue-300">Return to Homepage</a></p>
         </div>
     </footer>
     
     <!-- Mobile Menu JavaScript -->
     <script>
+        // Mobile menu functionality
         document.addEventListener('DOMContentLoaded', function() {
             const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-            const headerNav = document.querySelector('.header-nav');
-
-            if (mobileMenuToggle && headerNav) {
-                // Simple toggle functionality
-                mobileMenuToggle.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    headerNav.classList.toggle('active');
-                    mobileMenuToggle.classList.toggle('active');
-                });
-
-                // Close menu when clicking outside
-                document.addEventListener('click', function(event) {
-                    if (!event.target.closest('.header-container')) {
-                        headerNav.classList.remove('active');
-                        mobileMenuToggle.classList.remove('active');
-                    }
-                });
-
-                // Close menu when clicking on a nav link
-                const menuLinks = document.querySelectorAll('.header-nav .nav-link');
-                menuLinks.forEach(link => {
-                    link.addEventListener('click', function() {
-                        headerNav.classList.remove('active');
-                        mobileMenuToggle.classList.remove('active');
-                    });
-                });
-            }
+            const mobileMenu = document.getElementById('mobileMenu');
+            const closeMobileMenu = document.getElementById('closeMobileMenu');
             
-            // Set active page
-            const currentPath = window.location.pathname;
-            const navLinks = document.querySelectorAll('.nav-link');
-            navLinks.forEach(link => {
-                if (link.href.includes('areas-we-serve')) {
-                    link.classList.add('active');
+            mobileMenuToggle.addEventListener('click', () => {
+                mobileMenu.classList.remove('hidden');
+            });
+            
+            closeMobileMenu.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+            
+            // Header scroll effect
+            let lastScroll = 0;
+            window.addEventListener('scroll', () => {
+                const currentScroll = window.pageYOffset;
+                const header = document.getElementById('header');
+                
+                if (currentScroll > 100) {
+                    header.classList.add('bg-white', 'shadow-md');
+                    header.classList.remove('bg-white/95');
+                } else {
+                    header.classList.remove('bg-white', 'shadow-md');
+                    header.classList.add('bg-white/95');
                 }
+                
+                lastScroll = currentScroll;
             });
         });
     </script>
