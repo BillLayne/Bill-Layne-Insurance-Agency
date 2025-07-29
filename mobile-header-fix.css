@@ -14,19 +14,17 @@
     
     /* Fixed header container to prevent layout shift */
     .unified-header .header-container {
-        display: grid !important;
-        grid-template-columns: 1fr auto auto !important;
+        display: flex !important;
+        justify-content: space-between !important;
         align-items: center !important;
-        gap: 10px !important;
         height: 70px !important;
         padding: 0 20px !important;
         position: relative !important;
     }
     
-    /* Logo - Grid column 1 */
+    /* Logo */
     .header-logo {
-        grid-column: 1 !important;
-        justify-self: start !important;
+        flex: 1 1 auto !important;
         min-width: 0 !important; /* Allows text truncation */
     }
     
@@ -38,38 +36,17 @@
         text-overflow: ellipsis !important;
         overflow: hidden !important;
         white-space: nowrap !important;
-        max-width: 180px !important; /* Increased from 140px to show full text */
+        max-width: 200px !important; /* Increased to show full text */
     }
     
-    /* Phone Button - Grid column 2 */
+    /* Hide all CTA buttons in mobile header */
     .header-cta {
-        grid-column: 2 !important;
-        justify-self: center !important;
-    }
-    
-    /* Only show phone button, not Get a Quote in mobile header */
-    .header-cta.phone-button:not([href*="tel:"]) {
         display: none !important;
     }
     
-    .phone-button[href*="tel:"] {
-        padding: 8px 12px !important;
-        font-size: clamp(0.75rem, 3vw, 0.875rem) !important;
-        white-space: nowrap !important;
-        border-radius: 20px !important;
-        min-width: fit-content !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        background-color: #10b981 !important;
-        color: white !important;
-        text-decoration: none !important;
-        gap: 4px !important;
-    }
-    
-    /* Mobile Menu Toggle - Grid column 3 - ALWAYS RESERVE SPACE */
+    /* Mobile Menu Toggle - ALWAYS RESERVE SPACE */
     .mobile-menu-toggle {
-        grid-column: 3 !important;
-        justify-self: end !important;
+        flex: 0 0 auto !important;
         display: flex !important; /* Always visible, prevents CLS */
         width: 44px !important; /* Fixed width prevents shift */
         height: 44px !important; /* Touch target */
@@ -182,22 +159,62 @@
         border-top: 1px solid #e5e7eb !important;
     }
     
-    /* Style Get a Quote button in mobile menu */
-    #mobile-menu a[href="auto-quote.html"] {
+    /* Make mobile menu links more visible */
+    #mobile-menu a:not([href="auto-quote.html"]) {
+        font-size: 16px !important;
+        padding: 14px 20px !important;
+        color: #1f2937 !important;
+        font-weight: 500 !important;
+        border-bottom: 1px solid #f3f4f6 !important;
+    }
+    
+    #mobile-menu button.mobile-dropdown-toggle {
+        font-size: 16px !important;
+        padding: 14px 20px !important;
+        color: #1f2937 !important;
+        font-weight: 500 !important;
+        border-bottom: 1px solid #f3f4f6 !important;
+    }
+    
+    /* Dropdown submenu items */
+    #mobile-menu .mobile-dropdown-menu a {
+        font-size: 15px !important;
+        padding: 12px 20px 12px 32px !important;
+        background-color: #f9fafb !important;
+        border-bottom: 1px solid #e5e7eb !important;
+    }
+    
+    /* Style CTA buttons in mobile menu */
+    #mobile-menu a[href="auto-quote.html"],
+    #mobile-menu a[href*="tel:"] {
         margin: 10px 16px !important;
         display: block !important;
         text-align: center !important;
-        background-color: #2563eb !important;
         color: white !important;
         padding: 12px 24px !important;
         border-radius: 8px !important;
         font-weight: bold !important;
         text-decoration: none !important;
         transition: background-color 0.2s ease !important;
+        font-size: 16px !important;
+    }
+    
+    #mobile-menu a[href="auto-quote.html"] {
+        background-color: #2563eb !important;
+        margin-bottom: 16px !important;
     }
     
     #mobile-menu a[href="auto-quote.html"]:hover {
         background-color: #1d4ed8 !important;
+    }
+    
+    #mobile-menu a[href*="tel:"] {
+        background-color: #10b981 !important;
+        margin-top: 16px !important;
+    }
+    
+    #mobile-menu a[href*="tel:"]:hover {
+        background-color: #059669 !important;
     }
 }
 
@@ -206,22 +223,11 @@
     .unified-header .header-container {
         height: 64px !important;
         padding: 0 16px !important;
-        gap: 8px !important;
     }
     
     .logo-link {
-        max-width: 150px !important; /* Increased from 120px */
-        font-size: 1rem !important;
-    }
-    
-    .phone-button[href*="tel:"] {
-        padding: 6px 10px !important;
-        font-size: 0.75rem !important;
-    }
-    
-    /* Hide phone icon on very small screens to save space */
-    .phone-icon {
-        display: none !important;
+        max-width: 180px !important; /* Increased to fit full text */
+        font-size: 0.95rem !important;
     }
     
     .mobile-menu-toggle {
