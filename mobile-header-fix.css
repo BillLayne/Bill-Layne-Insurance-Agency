@@ -1,10 +1,9 @@
 /* ==================================================================
-   CRITICAL MOBILE HEADER FIX - Prevents Layout Shift & Improves CLS
-   Bill Layne Insurance Agency - Mobile Performance Optimization
+   ENHANCED MOBILE HEADER FIX - Complete Mobile Menu Solution
+   Bill Layne Insurance Agency - Mobile Performance & UX Optimization
    ================================================================== */
 
-/* Problem: The mobile menu toggle creates layout shift when appearing */
-/* Solution: Reserve space and use proper positioning */
+/* Core mobile header styles for proper layout and functionality */
 
 @media (max-width: 900px) {
     /* Hide desktop navigation including Get a Quote button */
@@ -25,9 +24,8 @@
     
     /* Logo */
     .header-logo {
-        flex: 0 1 auto !important;
+        flex: 1 1 auto !important;
         min-width: 0 !important; /* Allows text truncation */
-        margin-right: auto !important; /* Push menu button to right */
     }
     
     .logo-link {
@@ -41,8 +39,14 @@
         max-width: 200px !important; /* Increased to show full text */
     }
     
-    /* Hide all CTA buttons in mobile header */
+    /* Phone button styling in mobile header */
     .header-cta {
+        flex: 0 0 auto !important;
+        margin-right: 10px !important;
+    }
+    
+    /* Show only mobile phone button */
+    .header-cta .phone-button:not(.md\:hidden) {
         display: none !important;
     }
     
@@ -155,20 +159,67 @@
         pointer-events: none !important;
     }
     
-    /* Mobile menu links styling */
+    /* Mobile menu container styling */
     #mobile-menu {
+        position: absolute !important;
+        top: 100% !important;
+        left: 0 !important;
+        right: 0 !important;
         background-color: #ffffff !important;
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
         border-top: 1px solid #e5e7eb !important;
+        max-height: calc(100vh - 70px) !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
     }
     
-    /* Make mobile menu links more visible */
-    #mobile-menu a:not([href="auto-quote.html"]):not([href*="tel:"]) {
+    /* Enhanced mobile menu link styling */
+    #mobile-menu > a,
+    #mobile-menu > button {
+        display: block !important;
         font-size: 16px !important;
-        padding: 14px 20px !important;
-        color: #1f2937 !important;
+        padding: 16px 20px !important;
+        color: #374151 !important;
         font-weight: 500 !important;
         border-bottom: 1px solid #f3f4f6 !important;
+        text-decoration: none !important;
+        transition: all 0.2s ease !important;
+        position: relative !important;
+    }
+    
+    #mobile-menu > a:hover,
+    #mobile-menu > button:hover {
+        background-color: #f9fafb !important;
+        color: #2563eb !important;
+    }
+    
+    /* Mobile dropdown menu styling */
+    .mobile-dropdown-menu {
+        background-color: #f9fafb !important;
+        border-bottom: 1px solid #e5e7eb !important;
+    }
+    
+    .mobile-dropdown-menu a {
+        display: block !important;
+        padding: 12px 24px 12px 40px !important;
+        font-size: 15px !important;
+        color: #6b7280 !important;
+        text-decoration: none !important;
+        transition: all 0.2s ease !important;
+    }
+    
+    .mobile-dropdown-menu a:hover {
+        background-color: #f3f4f6 !important;
+        color: #2563eb !important;
+    }
+    
+    /* Dropdown arrow animation */
+    .mobile-dropdown-toggle svg {
+        transition: transform 0.3s ease !important;
+    }
+    
+    .mobile-dropdown-toggle svg.rotate-180 {
+        transform: rotate(180deg) !important;
     }
     
     /* Style CTA buttons in mobile menu */
