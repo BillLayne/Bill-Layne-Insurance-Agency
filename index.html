@@ -246,17 +246,12 @@
         img { max-width: 100%; height: auto; }
         
         /* Custom styles */
-        /* Mobile first - white background by default */
+        /* Always white/semi-transparent background for visibility */
         #main-header {
-            background-color: rgba(255, 255, 255, 1);
-        }
-        
-        /* Desktop - transparent background */
-        @media (min-width: 768px) {
-            #main-header {
-                background-color: transparent;
-                box-shadow: none;
-            }
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
         
         .header-scrolled {
@@ -481,16 +476,16 @@
             <div class="flex justify-between items-center">
                 <!-- Logo -->
                 <div class="header-logo">
-                    <a href="index.html" class="logo-link text-gray-800 md:text-white text-2xl font-bold">Bill Layne Insurance</a>
+                    <a href="index.html" class="logo-link text-gray-800 text-2xl font-bold">Bill Layne Insurance</a>
                 </div>
                 
                 <!-- Desktop Navigation -->
                 <nav class="header-nav desktop-nav hidden md:flex items-center space-x-1">
-                    <a href="index.html" class="nav-link px-3 py-2 rounded-md text-white hover:text-blue-300">Home</a>
+                    <a href="index.html" class="nav-link px-3 py-2 rounded-md text-gray-700 hover:text-blue-600">Home</a>
                     
                     <!-- Services Dropdown -->
                     <div class="relative group">
-                        <button class="nav-link px-3 py-2 rounded-md flex items-center text-white hover:text-blue-300">
+                        <button class="nav-link px-3 py-2 rounded-md flex items-center text-gray-700 hover:text-blue-600">
                             Services 
                             <svg class="ml-2 w-3 h-3 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
@@ -506,7 +501,7 @@
 
                     <!-- Areas We Serve Dropdown -->
                     <div class="relative group">
-                        <button class="nav-link px-3 py-2 rounded-md flex items-center text-white hover:text-blue-300">
+                        <button class="nav-link px-3 py-2 rounded-md flex items-center text-gray-700 hover:text-blue-600">
                             Areas We Serve 
                             <svg class="ml-2 w-3 h-3 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
@@ -519,8 +514,8 @@
                         </div>
                     </div>
 
-                    <a href="blog.html" class="nav-link px-3 py-2 rounded-md text-white hover:text-blue-300">Blog</a>
-                    <a href="contact-us.html" class="nav-link px-3 py-2 rounded-md text-white hover:text-blue-300">Contact</a>
+                    <a href="blog.html" class="nav-link px-3 py-2 rounded-md text-gray-700 hover:text-blue-600">Blog</a>
+                    <a href="contact-us.html" class="nav-link px-3 py-2 rounded-md text-gray-700 hover:text-blue-600">Contact</a>
                     <a href="auto-quote.html" class="header-cta phone-button bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-transform transform hover:scale-105 ml-4">Get a Quote</a>
                 </nav>
                 
@@ -934,19 +929,16 @@
             const isScrolled = window.scrollY > 50;
             header.classList.toggle('header-scrolled', isScrolled);
             
-            // Handle logo color for desktop only (mobile always dark)
-            if (window.innerWidth >= 768) {
-                headerLogo.classList.toggle('text-white', !isScrolled);
-                headerLogo.classList.toggle('text-gray-800', isScrolled);
-            } else {
-                headerLogo.classList.add('text-gray-800');
-                headerLogo.classList.remove('text-white');
-            }
+            // Keep text dark at all times for better visibility
+            headerLogo.classList.add('text-gray-800');
+            headerLogo.classList.remove('text-white');
+            
+            // Keep navigation links dark as well
             navLinks.forEach(link => {
-                link.classList.toggle('text-white', !isScrolled);
-                link.classList.toggle('hover:text-blue-300', !isScrolled);
-                link.classList.toggle('text-gray-700', isScrolled);
-                link.classList.toggle('hover:text-blue-600', isScrolled);
+                link.classList.add('text-gray-700');
+                link.classList.add('hover:text-blue-600');
+                link.classList.remove('text-white');
+                link.classList.remove('hover:text-blue-300');
             });
         }
         
