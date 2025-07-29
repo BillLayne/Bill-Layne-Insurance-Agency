@@ -7,6 +7,11 @@
 /* Solution: Reserve space and use proper positioning */
 
 @media (max-width: 900px) {
+    /* Hide desktop navigation including Get a Quote button */
+    .desktop-nav {
+        display: none !important;
+    }
+    
     /* Fixed header container to prevent layout shift */
     .unified-header .header-container {
         display: grid !important;
@@ -33,7 +38,7 @@
         text-overflow: ellipsis !important;
         overflow: hidden !important;
         white-space: nowrap !important;
-        max-width: 140px !important;
+        max-width: 180px !important; /* Increased from 140px to show full text */
     }
     
     /* Phone Button - Grid column 2 */
@@ -42,12 +47,23 @@
         justify-self: center !important;
     }
     
-    .phone-button {
+    /* Only show phone button, not Get a Quote in mobile header */
+    .header-cta.phone-button:not([href*="tel:"]) {
+        display: none !important;
+    }
+    
+    .phone-button[href*="tel:"] {
         padding: 8px 12px !important;
         font-size: clamp(0.75rem, 3vw, 0.875rem) !important;
         white-space: nowrap !important;
         border-radius: 20px !important;
         min-width: fit-content !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        background-color: #10b981 !important;
+        color: white !important;
+        text-decoration: none !important;
+        gap: 4px !important;
     }
     
     /* Mobile Menu Toggle - Grid column 3 - ALWAYS RESERVE SPACE */
@@ -158,6 +174,31 @@
         height: 1px !important;
         pointer-events: none !important;
     }
+    
+    /* Mobile menu links styling */
+    #mobile-menu {
+        background-color: #ffffff !important;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+        border-top: 1px solid #e5e7eb !important;
+    }
+    
+    /* Style Get a Quote button in mobile menu */
+    #mobile-menu a[href="auto-quote.html"] {
+        margin: 10px 16px !important;
+        display: block !important;
+        text-align: center !important;
+        background-color: #2563eb !important;
+        color: white !important;
+        padding: 12px 24px !important;
+        border-radius: 8px !important;
+        font-weight: bold !important;
+        text-decoration: none !important;
+        transition: background-color 0.2s ease !important;
+    }
+    
+    #mobile-menu a[href="auto-quote.html"]:hover {
+        background-color: #1d4ed8 !important;
+    }
 }
 
 /* Very small screens optimization */
@@ -169,11 +210,11 @@
     }
     
     .logo-link {
-        max-width: 120px !important;
+        max-width: 150px !important; /* Increased from 120px */
         font-size: 1rem !important;
     }
     
-    .phone-button {
+    .phone-button[href*="tel:"] {
         padding: 6px 10px !important;
         font-size: 0.75rem !important;
     }
