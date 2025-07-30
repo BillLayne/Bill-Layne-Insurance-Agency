@@ -39,8 +39,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
     <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeInUp { animation: fadeInUp 0.8s ease-out; }
+        .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .hover-lift:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+    </style>
     
     <!-- Blog Schema -->
     <script type="application/ld+json">
@@ -77,7 +87,14 @@
     }
     </script>
 </head>
-<body>
+<body class="font-['Inter'] bg-gray-50">
+    <!-- Sticky Call Button for Mobile -->
+    <a href="tel:3368351993" class="fixed bottom-6 right-6 z-50 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 md:hidden">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+        </svg>
+    </a>
+
     <!-- Header -->
 <header id="main-header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
     <div class="container mx-auto px-6 py-4">
@@ -154,17 +171,20 @@
 </header>
 
     <!-- Breadcrumb -->
-    <nav class="breadcrumb" aria-label="breadcrumb">
-        <div class="breadcrumb__container">
-            <ol class="breadcrumb__list" itemscope itemtype="https://schema.org/BreadcrumbList">
-                <li class="breadcrumb__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <a href="/" class="breadcrumb__link" itemprop="item">
+    <nav class="pt-28 pb-4 bg-white" aria-label="breadcrumb">
+        <div class="container mx-auto px-4">
+            <ol class="flex items-center space-x-2 text-sm" itemscope itemtype="https://schema.org/BreadcrumbList">
+                <li class="flex items-center" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a href="/" class="text-gray-600 hover:text-blue-600 transition-colors" itemprop="item">
                         <span itemprop="name">Home</span>
                     </a>
                     <meta itemprop="position" content="1" />
+                    <svg class="w-4 h-4 mx-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                    </svg>
                 </li>
-                <li class="breadcrumb__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <span class="breadcrumb__current" itemprop="name">Insurance Blog</span>
+                <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <span class="text-gray-900 font-medium" itemprop="name">Insurance Blog</span>
                     <meta itemprop="position" content="2" />
                 </li>
             </ol>
@@ -172,123 +192,145 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero" style="padding: 60px 0 40px;">
-        <div class="container">
-            <div class="hero__content" style="display: flex; justify-content: center; align-items: center; min-height: 300px;">
-                <div class="hero__text" style="text-align: center; max-width: 800px; width: 100%;">
-                    <h1 class="hero__headline" style="text-align: center; margin-bottom: 1.5rem;">Insurance Blog & Resources</h1>
-                    <p class="hero__subheadline" style="text-align: center; margin: 0 auto 2rem; max-width: 700px;">
-                        Stay informed with the latest insurance tips, coverage guides, and money-saving strategies 
-                        for North Carolina residents. Our blog is your resource for making smart insurance decisions.
-                    </p>
-                    <div style="text-align: center; margin-top: 2rem;">
-                        <a href="https://billlayne.github.io/ethereal-blog-landing/" class="btn btn--primary btn--lg" target="_blank">
-                            Browse All Articles
-                        </a>
-                    </div>
-                </div>
+    <section class="relative bg-blue-600 text-white py-20" style="background-image: url('https://github.com/BillLayne/bill-layne-images/blob/main/logos/blog%20hero.png?raw=true'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="container relative mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6 animate-fadeInUp drop-shadow-lg">Insurance Blog & Resources</h1>
+                <p class="text-xl opacity-90 mb-8 animate-fadeInUp drop-shadow-md">
+                    Stay informed with the latest insurance tips, coverage guides, and money-saving strategies 
+                    for North Carolina residents. Our blog is your resource for making smart insurance decisions.
+                </p>
+                <a href="https://billlayne.github.io/ethereal-blog-landing/" 
+                   class="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors font-semibold text-lg animate-fadeInUp shadow-lg" 
+                   target="_blank">
+                    Browse All Articles
+                </a>
             </div>
         </div>
     </section>
 
     <!-- Blog Categories -->
-    <section class="services" style="padding: 60px 0;">
-        <div class="container">
-            <div class="section-header">
-                <h2>Popular Blog Categories</h2>
-                <p>Find articles on topics that matter to you</p>
+    <section class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Popular Blog Categories</h2>
+                <p class="text-lg text-gray-600">Find articles on topics that matter to you</p>
             </div>
-            <div class="services__grid">
-                <a href="https://billlayne.github.io/ethereal-blog-landing/?tags=Auto%20Insurance" class="service-card" style="text-decoration: none; color: inherit;" target="_blank">
-                    <span class="service-card__icon">🚗</span>
-                    <h3>Auto Insurance</h3>
-                    <p>Coverage tips, state requirements, and ways to save on car insurance in North Carolina.</p>
-                    <span style="color: var(--color-primary); font-weight: 600;">Read Auto Articles →</span>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <a href="https://billlayne.github.io/ethereal-blog-landing/?tags=Auto%20Insurance" 
+                   class="bg-white rounded-xl shadow-lg p-8 text-center hover-lift block border-2 border-transparent hover:border-blue-500 transition-all duration-300" 
+                   target="_blank">
+                    <span class="text-5xl mb-4 block">🚗</span>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Auto Insurance</h3>
+                    <p class="text-gray-600 mb-4">Coverage tips, state requirements, and ways to save on car insurance in North Carolina.</p>
+                    <span class="text-blue-600 font-semibold">Read Auto Articles →</span>
                 </a>
-                <a href="https://billlayne.github.io/ethereal-blog-landing/?tags=Home%20Insurance" class="service-card" style="text-decoration: none; color: inherit;" target="_blank">
-                    <span class="service-card__icon">🏠</span>
-                    <h3>Home Insurance</h3>
-                    <p>Protect your home from storms, understand coverage options, and reduce premiums.</p>
-                    <span style="color: var(--color-primary); font-weight: 600;">Read Home Articles →</span>
+                
+                <a href="https://billlayne.github.io/ethereal-blog-landing/?tags=Home%20Insurance" 
+                   class="bg-white rounded-xl shadow-lg p-8 text-center hover-lift block border-2 border-transparent hover:border-blue-500 transition-all duration-300" 
+                   target="_blank">
+                    <span class="text-5xl mb-4 block">🏠</span>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Home Insurance</h3>
+                    <p class="text-gray-600 mb-4">Protect your home from storms, understand coverage options, and reduce premiums.</p>
+                    <span class="text-blue-600 font-semibold">Read Home Articles →</span>
                 </a>
-                <a href="https://billlayne.github.io/ethereal-blog-landing/" class="service-card" style="text-decoration: none; color: inherit;" target="_blank">
-                    <span class="service-card__icon">💡</span>
-                    <h3>Insurance Tips</h3>
-                    <p>General insurance advice, money-saving strategies, and industry updates.</p>
-                    <span style="color: var(--color-primary); font-weight: 600;">Read All Tips →</span>
+                
+                <a href="https://billlayne.github.io/ethereal-blog-landing/" 
+                   class="bg-white rounded-xl shadow-lg p-8 text-center hover-lift block border-2 border-transparent hover:border-blue-500 transition-all duration-300" 
+                   target="_blank">
+                    <span class="text-5xl mb-4 block">💡</span>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Insurance Tips</h3>
+                    <p class="text-gray-600 mb-4">General insurance advice, money-saving strategies, and industry updates.</p>
+                    <span class="text-blue-600 font-semibold">Read All Tips →</span>
                 </a>
             </div>
         </div>
     </section>
 
     <!-- Recent Topics -->
-    <section class="features" style="padding: 60px 0; background: var(--color-surface);">
-        <div class="container">
-            <div class="section-header">
-                <h2>Recent Blog Topics</h2>
-                <p>Stay updated with our latest insurance insights</p>
+    <section class="bg-white py-20">
+        <div class="container mx-auto px-4">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Recent Blog Topics</h2>
+                <p class="text-lg text-gray-600">Stay updated with our latest insurance insights</p>
             </div>
-            <div class="features__grid">
-                <div class="feature-card">
-                    <span class="feature-card__icon">📋</span>
-                    <h3>Coverage Guides</h3>
-                    <p>Detailed explanations of different types of insurance coverage and what you need.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+                <div class="text-center">
+                    <div class="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-3xl">📋</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Coverage Guides</h3>
+                    <p class="text-gray-600">Detailed explanations of different types of insurance coverage and what you need.</p>
                 </div>
-                <div class="feature-card">
-                    <span class="feature-card__icon">💰</span>
-                    <h3>Money-Saving Tips</h3>
-                    <p>Practical advice on reducing premiums without sacrificing coverage quality.</p>
+                
+                <div class="text-center">
+                    <div class="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-3xl">💰</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Money-Saving Tips</h3>
+                    <p class="text-gray-600">Practical advice on reducing premiums without sacrificing coverage quality.</p>
                 </div>
-                <div class="feature-card">
-                    <span class="feature-card__icon">⚖️</span>
-                    <h3>NC Insurance Laws</h3>
-                    <p>Updates on North Carolina insurance requirements and regulatory changes.</p>
+                
+                <div class="text-center">
+                    <div class="bg-purple-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-3xl">⚖️</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">NC Insurance Laws</h3>
+                    <p class="text-gray-600">Updates on North Carolina insurance requirements and regulatory changes.</p>
                 </div>
-                <div class="feature-card">
-                    <span class="feature-card__icon">🛡️</span>
-                    <h3>Claims Advice</h3>
-                    <p>How to file claims properly and get the compensation you deserve.</p>
+                
+                <div class="text-center">
+                    <div class="bg-amber-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-3xl">🛡️</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Claims Advice</h3>
+                    <p class="text-gray-600">How to file claims properly and get the compensation you deserve.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- CTA Section -->
-    <section class="analyzer-section" style="padding: 60px 0;">
-        <div class="container">
-            <div class="analyzer-cta">
-                <h2 style="text-align: center; margin-bottom: 1rem;">Have Insurance Questions?</h2>
-                <p>Can't find what you're looking for in our blog? Contact us directly for personalized advice.</p>
-                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                    <a href="tel:3368351993" class="btn btn--primary btn--lg">Call (336) 835-1993</a>
-                    <a href="https://billlayne.github.io/ethereal-blog-landing/" class="btn btn--secondary btn--lg" target="_blank">Visit Full Blog</a>
-                </div>
+    <section class="bg-gradient-to-r from-blue-700 to-blue-600 py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Have Insurance Questions?</h2>
+            <p class="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+                Can't find what you're looking for in our blog? Contact us directly for personalized advice.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="tel:3368351993" class="bg-white text-blue-600 px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors font-semibold inline-flex items-center justify-center">
+                    Call (336) 835-1993
+                </a>
+                <a href="https://billlayne.github.io/ethereal-blog-landing/" class="border-2 border-white text-white px-8 py-4 rounded-lg hover:bg-white hover:text-blue-600 transition-colors font-semibold inline-flex items-center justify-center" target="_blank">
+                    Visit Full Blog
+                </a>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer__content">
-                <div class="footer__main">
-                    <div class="footer__brand">
-                        <h3>Bill Layne Insurance Blog</h3>
-                        <p>Your trusted source for insurance information in North Carolina.</p>
-                    </div>
-                    <div class="footer__links">
-                        <h4>Quick Links</h4>
-                        <ul>
-                            <li><a href="index.html">Home</a></li>
-                            <li><a href="https://billlayne.github.io/ethereal-blog-landing/" target="_blank">All Blog Posts</a></li>
-                            <li><a href="index.html#quote">Get a Quote</a></li>
-                            <li><a href="index.html#contact">Contact Us</a></li>
-                        </ul>
-                    </div>
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div>
+                    <h3 class="text-2xl font-bold mb-4">Bill Layne Insurance Blog</h3>
+                    <p class="text-gray-400">Your trusted source for insurance information in North Carolina.</p>
                 </div>
-                <div class="footer__bottom">
-                    <p>&copy; 2024 Bill Layne Insurance. All rights reserved.</p>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+                        <li><a href="https://billlayne.github.io/ethereal-blog-landing/" target="_blank" class="text-gray-400 hover:text-white transition-colors">All Blog Posts</a></li>
+                        <li><a href="index.html#quote" class="text-gray-400 hover:text-white transition-colors">Get a Quote</a></li>
+                        <li><a href="index.html#contact" class="text-gray-400 hover:text-white transition-colors">Contact Us</a></li>
+                    </ul>
                 </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center">
+                <p class="text-gray-400">&copy; 2025 Bill Layne Insurance. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -321,12 +363,6 @@
                 });
             }
         });
-        
-        // Redirect to external blog after a brief moment to ensure SEO crawlers see this page
-        // Commented out - only enable if you want automatic redirect
-        // setTimeout(() => {
-        //     window.location.href = 'https://billlayne.github.io/ethereal-blog-landing/';
-        // }, 3000);
     </script>
 </body>
 </html>

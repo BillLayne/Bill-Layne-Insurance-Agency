@@ -174,616 +174,34 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
-    <link rel="preconnect" href="https://github.com">
     
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@300;400;500;600&display=swap" as="style">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <!-- CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Load main CSS -->
-    <link rel="stylesheet" href="style.css">
-    
-    <!-- Additional CSS for Contact Page -->
     <style>
-        /* Contact Page Specific Styles */
-        .contact-hero {
-            background: linear-gradient(135deg, rgba(30, 58, 138, 0.9) 0%, rgba(59, 130, 246, 0.85) 100%);
-            padding: 80px 0;
-            position: relative;
-            overflow: hidden;
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .contact-hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
-            pointer-events: none;
-        }
-
-        .contact-hero__content {
-            position: relative;
-            z-index: 1;
-            text-align: center;
-            color: white;
-        }
-
-        .contact-hero__title {
-            font-family: var(--font-serif);
-            font-size: var(--font-size-3xl);
-            font-weight: 800;
-            background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: var(--space-lg);
-            line-height: 1.2;
-        }
-
-        .contact-hero__subtitle {
-            font-size: var(--font-size-lg);
-            color: rgba(255, 255, 255, 0.9);
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.8;
-        }
-
-        /* Staff Section */
-        .staff-section {
-            padding: var(--space-3xl) 0;
-            background: var(--color-background);
-        }
-
-        .staff-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: var(--space-xl);
-            margin-top: var(--space-2xl);
-        }
-
-        .staff-card {
-            background: var(--color-surface);
-            border-radius: var(--radius-xl);
-            overflow: hidden;
-            box-shadow: var(--shadow-card);
-            transition: var(--transition-base);
-            text-align: center;
-            border: 1px solid var(--color-border);
-        }
-
-        .staff-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-2xl);
-            border-color: var(--color-primary);
-        }
-
-        .staff-card__image {
-            position: relative;
-            height: 300px;
-            overflow: hidden;
-            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
-        }
-
-        .staff-card__image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .staff-card:hover .staff-card__image img {
-            transform: scale(1.05);
-        }
-
-        .staff-card__content {
-            padding: var(--space-xl);
-        }
-
-        .staff-card__name {
-            font-family: var(--font-serif);
-            font-size: var(--font-size-lg);
-            font-weight: 700;
-            color: var(--color-text);
-            margin-bottom: var(--space-xs);
-        }
-
-        .staff-card__title {
-            font-size: var(--font-size-base);
-            color: var(--color-primary);
-            font-weight: 600;
-            margin-bottom: var(--space-lg);
-        }
-
-        .staff-card__contact {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-sm);
-        }
-
-        .staff-card__link {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-xs);
-            color: var(--color-text-secondary);
-            text-decoration: none;
-            transition: var(--transition-base);
-            padding: var(--space-sm);
-            border-radius: var(--radius-md);
-        }
-
-        .staff-card__link:hover {
-            color: var(--color-primary);
-            background: rgba(30, 58, 138, 0.1);
-        }
-
-        .staff-card__link svg {
-            width: 18px;
-            height: 18px;
-        }
-
-        /* Staff Placeholder Styles */
-        .staff-placeholder {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .staff-card:hover .staff-placeholder {
-            transform: translate(-50%, -50%) scale(1.05);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .staff-initials {
-            font-family: var(--font-serif);
-            font-size: 36px;
-            font-weight: 700;
-            color: white;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            letter-spacing: 2px;
-        }
-
-        /* Contact Form Section */
-        .contact-form-section {
-            padding: var(--space-3xl) 0;
-            background: var(--color-surface);
-        }
-
-        .contact-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--space-3xl);
-            margin-top: var(--space-2xl);
-        }
-
-        .contact-info {
-            background: var(--color-background);
-            padding: var(--space-2xl);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-card);
-            border: 1px solid var(--color-border);
-        }
-
-        .contact-info h3 {
-            font-family: var(--font-serif);
-            font-size: var(--font-size-xl);
-            color: var(--color-text);
-            margin-bottom: var(--space-xl);
-        }
-
-        .contact-info__item {
-            display: flex;
-            align-items: flex-start;
-            gap: var(--space-md);
-            margin-bottom: var(--space-lg);
-            padding: var(--space-lg);
-            background: var(--color-surface);
-            border-radius: var(--radius-lg);
-            transition: var(--transition-base);
-        }
-
-        .contact-info__item:hover {
-            transform: translateX(5px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .contact-info__icon {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .contact-info__icon svg {
-            width: 24px;
-            height: 24px;
-            stroke: white;
-        }
-
-        .contact-info__details h4 {
-            font-size: var(--font-size-base);
-            font-weight: 600;
-            color: var(--color-text);
-            margin-bottom: var(--space-xs);
-        }
-
-        .contact-info__details p,
-        .contact-info__details a {
-            color: var(--color-text-secondary);
-            text-decoration: none;
-            line-height: 1.6;
-        }
-
-        .contact-info__details a:hover {
-            color: var(--color-primary);
-        }
-
-        .contact-form-wrapper {
-            background: var(--color-background);
-            padding: var(--space-2xl);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-card);
-            border: 1px solid var(--color-border);
-        }
-
-        .contact-form h3 {
-            font-family: var(--font-serif);
-            font-size: var(--font-size-xl);
-            color: var(--color-text);
-            margin-bottom: var(--space-xl);
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--space-lg);
-        }
-
-        .form-group.full-width {
-            grid-column: 1 / -1;
-        }
-
-        .form-control.textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        /* Trust Signals Section */
-        .trust-signals-section {
-            padding: var(--space-3xl) 0;
-            background: linear-gradient(135deg, rgba(30, 58, 138, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
-            position: relative;
-        }
-
-        .trust-signals-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: var(--space-xl);
-            margin-top: var(--space-2xl);
-        }
-
-        .trust-signal-card {
-            background: var(--color-surface);
-            padding: var(--space-xl);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-card);
-            text-align: center;
-            transition: var(--transition-base);
-            border: 1px solid var(--color-border);
-        }
-
-        .trust-signal-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-xl);
-            border-color: var(--color-primary-light);
-        }
-
-        .trust-signal-icon {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto var(--space-lg);
-            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .trust-signal-icon svg {
-            width: 30px;
-            height: 30px;
-            stroke: white;
-        }
-
-        .trust-signal-title {
-            font-family: var(--font-serif);
-            font-size: var(--font-size-lg);
-            font-weight: 700;
-            color: var(--color-text);
-            margin-bottom: var(--space-sm);
-        }
-
-        .trust-signal-description {
-            color: var(--color-text-secondary);
-            line-height: 1.6;
-        }
-
-        /* Service Areas Section */
-        .service-areas-section {
-            padding: var(--space-3xl) 0;
-            background: var(--color-background);
-        }
-
-        .service-areas-content {
-            background: var(--color-surface);
-            padding: var(--space-2xl);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-card);
-            margin-top: var(--space-2xl);
-        }
-
-        .service-areas-intro {
-            text-align: center;
-            margin-bottom: var(--space-2xl);
-        }
-
-        .service-areas-intro h3 {
-            font-family: var(--font-serif);
-            font-size: var(--font-size-xl);
-            color: var(--color-text);
-            margin-bottom: var(--space-md);
-        }
-
-        .service-areas-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--space-lg);
-        }
-
-        .service-area-item {
-            padding: var(--space-lg);
-            background: var(--color-background);
-            border-radius: var(--radius-lg);
-            border: 2px solid var(--color-border);
-            transition: var(--transition-base);
-            text-align: center;
-        }
-
-        .service-area-item:hover {
-            border-color: var(--color-primary);
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .service-area-city {
-            font-weight: 600;
-            color: var(--color-text);
-            margin-bottom: var(--space-xs);
-        }
-
-        .service-area-zip {
-            font-size: var(--font-size-sm);
-            color: var(--color-text-secondary);
-        }
-
-        /* Testimonials Section */
-        .testimonials-section {
-            padding: var(--space-3xl) 0;
-            background: var(--color-surface);
-        }
-
-        .testimonials-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--space-xl);
-            margin-top: var(--space-2xl);
-        }
-
-        .testimonial-card {
-            background: var(--color-background);
-            padding: var(--space-xl);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-card);
-            position: relative;
-            transition: var(--transition-base);
-            border: 1px solid var(--color-border);
-        }
-
-        .testimonial-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .testimonial-quote {
-            font-size: 48px;
-            color: var(--color-primary-light);
-            line-height: 1;
-            margin-bottom: var(--space-md);
-        }
-
-        .testimonial-content {
-            font-style: italic;
-            color: var(--color-text-secondary);
-            margin-bottom: var(--space-lg);
-            line-height: 1.8;
-        }
-
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-        }
-
-        .testimonial-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-        }
-
-        .testimonial-info {
-            flex: 1;
-        }
-
-        .testimonial-name {
-            font-weight: 600;
-            color: var(--color-text);
-            margin-bottom: 2px;
-        }
-
-        .testimonial-location {
-            font-size: var(--font-size-sm);
-            color: var(--color-text-secondary);
-        }
-
-        .testimonial-stars {
-            display: flex;
-            gap: 4px;
-            margin-top: var(--space-xs);
-        }
-
-        .testimonial-stars svg {
-            width: 16px;
-            height: 16px;
-            fill: #fbbf24;
-        }
-
-        /* FAQ Section */
-        .faq-section {
-            padding: var(--space-3xl) 0;
-            background: var(--color-background);
-        }
-
-        .faq-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .faq-list {
-            margin-top: var(--space-2xl);
-        }
-
-        .faq-item {
-            background: var(--color-surface);
-            border-radius: var(--radius-lg);
-            margin-bottom: var(--space-lg);
-            border: 1px solid var(--color-border);
-            overflow: hidden;
-            transition: var(--transition-base);
-        }
-
-        .faq-item:hover {
-            box-shadow: var(--shadow-md);
-        }
-
-        .faq-question {
-            padding: var(--space-lg);
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-            color: var(--color-text);
-            transition: var(--transition-base);
-        }
-
-        .faq-question:hover {
-            color: var(--color-primary);
-        }
-
-        .faq-toggle {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.3s ease;
-        }
-
-        .faq-toggle svg {
-            width: 20px;
-            height: 20px;
-            stroke: var(--color-text-secondary);
-        }
-
-        .faq-item.active .faq-toggle {
-            transform: rotate(180deg);
-        }
-
-        .faq-answer {
-            padding: 0 var(--space-lg) var(--space-lg);
-            color: var(--color-text-secondary);
-            line-height: 1.8;
-            display: none;
-        }
-
-        .faq-item.active .faq-answer {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .contact-hero {
-                padding: 60px 0;
-            }
-
-            .contact-hero__title {
-                font-size: var(--font-size-2xl);
-            }
-
-            .staff-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .contact-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .staff-card__image {
-                height: 250px;
-            }
+        .animate-fadeInUp { animation: fadeInUp 0.8s ease-out; }
+        .animate-fadeIn { animation: fadeIn 0.3s ease; }
+        .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .hover-lift:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .hover-slide { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .hover-slide:hover { transform: translateX(5px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .loading::after {
+            content: '...';
+            animation: loading 1.5s infinite;
+        }
+        @keyframes loading {
+            0% { content: '.'; }
+            33% { content: '..'; }
+            66% { content: '...'; }
         }
     </style>
 
@@ -813,49 +231,86 @@
         }
     </script>
 </head>
-<body>
+<body class="font-['Inter'] bg-gray-50">
+    <!-- Sticky Call Button for Mobile -->
+    <a href="tel:3368351993" class="fixed bottom-6 right-6 z-50 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 md:hidden">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+        </svg>
+    </a>
+
     <!-- Header -->
-<!-- Unified Header -->
-<header class="unified-header">
-  <div class="header-container">
-    <div class="header-logo">
-      <a href="https://billlayneinsurance.com/" class="logo-link">
-        Bill Layne Insurance
-      </a>
-    </div>
-    
-    <nav class="header-nav">
-      <ul class="nav-menu">
-        <li><a href="https://billlayne.github.io/Auto-Insurance-Center/" class="nav-link">Auto</a></li>
-        <li><a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="nav-link">Home</a></li>
-        <li><a href="https://billlayneinsurance.com/areas-we-serve.html" class="nav-link">Services</a></li>
-        <li><a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="nav-link">Claims</a></li>
-        <li><a href="https://billlayne.github.io/Resources/" class="nav-link">Resources</a></li>
-        <li><a href="https://billlayneinsurance.com/blog" class="nav-link">Blog</a></li>
-        <li><a href="https://billlayneinsurance.com/contact-us.html" class="nav-link active">Contact</a></li>
-      </ul>
-    </nav>
-    
-    <div class="header-cta">
-      <a href="tel:3368351993" class="phone-button">
-        <span class="phone-icon">📞</span> (336) 835-1993
-      </a>
-    </div>
-    
-    <button class="mobile-menu-toggle" id="mobileMenuToggle">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-  </div>
-</header>
+    <header class="fixed top-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm shadow-sm transition-all duration-300" id="header">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center">
+                    <a href="https://billlayneinsurance.com/" class="text-2xl font-bold text-amber-800">
+                        Bill Layne Insurance
+                    </a>
+                </div>
+                
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="text-gray-700 hover:text-blue-600 transition-colors">Auto</a>
+                    <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="text-gray-700 hover:text-blue-600 transition-colors">Home</a>
+                    <a href="https://billlayneinsurance.com/areas-we-serve.html" class="text-gray-700 hover:text-blue-600 transition-colors">Services</a>
+                    <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="text-gray-700 hover:text-blue-600 transition-colors">Claims</a>
+                    <a href="https://billlayne.github.io/Resources/" class="text-gray-700 hover:text-blue-600 transition-colors">Resources</a>
+                    <a href="https://billlayneinsurance.com/blog" class="text-gray-700 hover:text-blue-600 transition-colors">Blog</a>
+                    <a href="https://billlayneinsurance.com/contact-us.html" class="text-blue-600 font-semibold">Contact</a>
+                </nav>
+                
+                <div class="hidden md:block">
+                    <a href="tel:3368351993" class="bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition-colors flex items-center gap-2">
+                        <span>📞</span> (336) 835-1993
+                    </a>
+                </div>
+                
+                <button class="md:hidden p-2" id="mobileMenuToggle">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="hidden fixed inset-0 bg-white z-50" id="mobileMenu">
+            <div class="flex flex-col h-full">
+                <div class="flex items-center justify-between p-4 border-b">
+                    <span class="text-xl font-bold">Menu</span>
+                    <button id="closeMobileMenu" class="p-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <nav class="flex-1 overflow-y-auto">
+                    <div class="flex flex-col p-4 space-y-4">
+                        <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="text-lg py-2 text-gray-700">Auto</a>
+                        <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="text-lg py-2 text-gray-700">Home</a>
+                        <a href="https://billlayneinsurance.com/areas-we-serve.html" class="text-lg py-2 text-gray-700">Services</a>
+                        <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="text-lg py-2 text-gray-700">Claims</a>
+                        <a href="https://billlayne.github.io/Resources/" class="text-lg py-2 text-gray-700">Resources</a>
+                        <a href="https://billlayneinsurance.com/blog" class="text-lg py-2 text-gray-700">Blog</a>
+                        <a href="https://billlayneinsurance.com/contact-us.html" class="text-lg py-2 text-blue-600 font-semibold">Contact</a>
+                    </div>
+                </nav>
+                <div class="p-4 border-t">
+                    <a href="tel:3368351993" class="block w-full bg-blue-600 text-white text-center py-3 rounded-full">
+                        Call (336) 835-1993
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
 
     <!-- Contact Hero Section -->
-    <section class="contact-hero">
-        <div class="container">
-            <div class="contact-hero__content">
-                <h1 class="contact-hero__title">Contact Our Team</h1>
-                <p class="contact-hero__subtitle">
+    <section class="relative bg-blue-600 text-white pt-32 pb-20 overflow-hidden" style="background-image: url('https://github.com/BillLayne/bill-layne-images/blob/main/logos/Proud%20Business%20Owners.png?raw=true'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center max-w-3xl mx-auto">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6 animate-fadeInUp drop-shadow-lg">Contact Our Team</h1>
+                <p class="text-xl opacity-90 animate-fadeInUp drop-shadow-md">
                     Get personalized insurance solutions from our experienced team. 
                     We're here to help protect what matters most to you.
                 </p>
@@ -864,148 +319,154 @@
     </section>
 
     <!-- Meet Our Team Section -->
-    <section class="staff-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>Meet Our Insurance Experts</h2>
-                <p>Dedicated professionals committed to finding you the best coverage</p>
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Meet Our Insurance Experts</h2>
+                <p class="text-lg text-gray-600">Dedicated professionals committed to finding you the best coverage</p>
             </div>
-            <div class="staff-grid">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
                 <!-- Bill Layne -->
-                <div class="staff-card">
-                    <div class="staff-card__image">
-                        <div class="staff-placeholder" style="background: linear-gradient(135deg, #6b46c1 0%, #9333ea 100%);">
-                            <span class="staff-initials">BL</span>
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200 hover:border-blue-500 transition-all duration-300">
+                    <div class="h-64 bg-gradient-to-br from-purple-600 to-purple-800 relative">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-32 h-32 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl">
+                                <span class="text-5xl font-bold text-white">BL</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="staff-card__content">
-                        <h3 class="staff-card__name">Bill Layne</h3>
-                        <p class="staff-card__title">Agent/Owner</p>
-                        <div class="staff-card__contact">
-                            <a href="tel:3368351993" class="staff-card__link">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    <div class="p-6 text-center">
+                        <h3 class="text-xl font-bold text-gray-900 mb-1">Bill Layne</h3>
+                        <p class="text-blue-600 font-semibold mb-4">Agent/Owner</p>
+                        <div class="space-y-2">
+                            <a href="tel:3368351993" class="flex items-center justify-center text-gray-600 hover:text-blue-600 transition-colors">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                                 </svg>
                                 (336) 835-1993
                             </a>
-                            <a href="mailto:Bill@BillLayneinsurance.com" class="staff-card__link">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                                    <polyline points="22,6 12,13 2,6"></polyline>
+                            <a href="mailto:Bill@BillLayneinsurance.com" class="flex items-center justify-center text-gray-600 hover:text-blue-600 transition-colors text-sm">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                                 </svg>
-                                Bill@BillLayneinsurance.com
+                                Email Bill
                             </a>
                         </div>
                     </div>
                 </div>
 
                 <!-- Debbie Garner -->
-                <div class="staff-card">
-                    <div class="staff-card__image">
-                        <div class="staff-placeholder" style="background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);">
-                            <span class="staff-initials">DG</span>
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200 hover:border-blue-500 transition-all duration-300">
+                    <div class="h-64 bg-gradient-to-br from-blue-600 to-blue-800 relative">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-32 h-32 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl">
+                                <span class="text-5xl font-bold text-white">DG</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="staff-card__content">
-                        <h3 class="staff-card__name">Debbie Garner</h3>
-                        <p class="staff-card__title">Office Manager</p>
-                        <div class="staff-card__contact">
-                            <a href="tel:3368351993" class="staff-card__link">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    <div class="p-6 text-center">
+                        <h3 class="text-xl font-bold text-gray-900 mb-1">Debbie Garner</h3>
+                        <p class="text-blue-600 font-semibold mb-4">Office Manager</p>
+                        <div class="space-y-2">
+                            <a href="tel:3368351993" class="flex items-center justify-center text-gray-600 hover:text-blue-600 transition-colors">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                                 </svg>
                                 (336) 835-1993
                             </a>
-                            <a href="mailto:Debbie@BillLayneInsurance.com" class="staff-card__link">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                                    <polyline points="22,6 12,13 2,6"></polyline>
+                            <a href="mailto:Debbie@BillLayneInsurance.com" class="flex items-center justify-center text-gray-600 hover:text-blue-600 transition-colors text-sm">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                                 </svg>
-                                Debbie@BillLayneInsurance.com
+                                Email Debbie
                             </a>
                         </div>
                     </div>
                 </div>
 
                 <!-- Tina Jennings -->
-                <div class="staff-card">
-                    <div class="staff-card__image">
-                        <div class="staff-placeholder" style="background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);">
-                            <span class="staff-initials">TJ</span>
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200 hover:border-blue-500 transition-all duration-300">
+                    <div class="h-64 bg-gradient-to-br from-green-600 to-green-800 relative">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-32 h-32 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl">
+                                <span class="text-5xl font-bold text-white">TJ</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="staff-card__content">
-                        <h3 class="staff-card__name">Tina Jennings</h3>
-                        <p class="staff-card__title">Agent</p>
-                        <div class="staff-card__contact">
-                            <a href="tel:3368351993" class="staff-card__link">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    <div class="p-6 text-center">
+                        <h3 class="text-xl font-bold text-gray-900 mb-1">Tina Jennings</h3>
+                        <p class="text-blue-600 font-semibold mb-4">Agent</p>
+                        <div class="space-y-2">
+                            <a href="tel:3368351993" class="flex items-center justify-center text-gray-600 hover:text-blue-600 transition-colors">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                                 </svg>
                                 (336) 835-1993
                             </a>
-                            <a href="mailto:Tina@BillLayneInsurance.com" class="staff-card__link">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                                    <polyline points="22,6 12,13 2,6"></polyline>
+                            <a href="mailto:Tina@BillLayneInsurance.com" class="flex items-center justify-center text-gray-600 hover:text-blue-600 transition-colors text-sm">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                                 </svg>
-                                Tina@BillLayneInsurance.com
+                                Email Tina
                             </a>
                         </div>
                     </div>
                 </div>
 
                 <!-- Robin Holbrook -->
-                <div class="staff-card">
-                    <div class="staff-card__image">
-                        <div class="staff-placeholder" style="background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);">
-                            <span class="staff-initials">RH</span>
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200 hover:border-blue-500 transition-all duration-300">
+                    <div class="h-64 bg-gradient-to-br from-orange-600 to-orange-800 relative">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-32 h-32 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl">
+                                <span class="text-5xl font-bold text-white">RH</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="staff-card__content">
-                        <h3 class="staff-card__name">Robin Holbrook</h3>
-                        <p class="staff-card__title">Agent</p>
-                        <div class="staff-card__contact">
-                            <a href="tel:3368351993" class="staff-card__link">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    <div class="p-6 text-center">
+                        <h3 class="text-xl font-bold text-gray-900 mb-1">Robin Holbrook</h3>
+                        <p class="text-blue-600 font-semibold mb-4">Agent</p>
+                        <div class="space-y-2">
+                            <a href="tel:3368351993" class="flex items-center justify-center text-gray-600 hover:text-blue-600 transition-colors">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                                 </svg>
                                 (336) 835-1993
                             </a>
-                            <a href="mailto:Robin@BillLayneInsurance.com" class="staff-card__link">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                                    <polyline points="22,6 12,13 2,6"></polyline>
+                            <a href="mailto:Robin@BillLayneInsurance.com" class="flex items-center justify-center text-gray-600 hover:text-blue-600 transition-colors text-sm">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                                 </svg>
-                                Robin@BillLayneInsurance.com
+                                Email Robin
                             </a>
                         </div>
                     </div>
                 </div>
 
                 <!-- Scott Holbrook -->
-                <div class="staff-card">
-                    <div class="staff-card__image">
-                        <div class="staff-placeholder" style="background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);">
-                            <span class="staff-initials">SH</span>
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift border border-gray-200 hover:border-blue-500 transition-all duration-300">
+                    <div class="h-64 bg-gradient-to-br from-cyan-600 to-cyan-800 relative">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-32 h-32 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl">
+                                <span class="text-5xl font-bold text-white">SH</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="staff-card__content">
-                        <h3 class="staff-card__name">Scott Holbrook</h3>
-                        <p class="staff-card__title">Agent</p>
-                        <div class="staff-card__contact">
-                            <a href="tel:3368351993" class="staff-card__link">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    <div class="p-6 text-center">
+                        <h3 class="text-xl font-bold text-gray-900 mb-1">Scott Holbrook</h3>
+                        <p class="text-blue-600 font-semibold mb-4">Agent</p>
+                        <div class="space-y-2">
+                            <a href="tel:3368351993" class="flex items-center justify-center text-gray-600 hover:text-blue-600 transition-colors">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                                 </svg>
                                 (336) 835-1993
                             </a>
-                            <a href="mailto:Scott@BillLayneInsurance.com" class="staff-card__link">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                                    <polyline points="22,6 12,13 2,6"></polyline>
+                            <a href="mailto:Scott@BillLayneInsurance.com" class="flex items-center justify-center text-gray-600 hover:text-blue-600 transition-colors text-sm">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                                 </svg>
-                                Scott@BillLayneInsurance.com
+                                Email Scott
                             </a>
                         </div>
                     </div>
@@ -1015,98 +476,104 @@
     </section>
 
     <!-- Trust Signals Section -->
-    <section class="trust-signals-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>Why Choose Bill Layne Insurance?</h2>
-                <p>Your trusted insurance partner in Surry County for over 45 years</p>
+    <section class="py-20 bg-gradient-to-br from-blue-50 to-blue-100">
+        <div class="container mx-auto px-4">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Why Choose Bill Layne Insurance?</h2>
+                <p class="text-lg text-gray-600">Your trusted insurance partner in Surry County for over 45 years</p>
             </div>
-            <div class="trust-signals-grid">
-                <div class="trust-signal-card">
-                    <div class="trust-signal-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M8 2v4M16 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center hover-lift border border-gray-200">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                         </svg>
                     </div>
-                    <h3 class="trust-signal-title">Serving Since 1979</h3>
-                    <p class="trust-signal-description">45+ years of trusted service to Surry County families and businesses</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Serving Since 1979</h3>
+                    <p class="text-gray-600">45+ years of trusted service to Surry County families and businesses</p>
                 </div>
-                <div class="trust-signal-card">
-                    <div class="trust-signal-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path>
+                
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center hover-lift border border-gray-200">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
                     </div>
-                    <h3 class="trust-signal-title">Family-Owned & Operated</h3>
-                    <p class="trust-signal-description">Personal service from a team that treats you like family</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Family-Owned & Operated</h3>
+                    <p class="text-gray-600">Personal service from a team that treats you like family</p>
                 </div>
-                <div class="trust-signal-card">
-                    <div class="trust-signal-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center hover-lift border border-gray-200">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
                         </svg>
                     </div>
-                    <h3 class="trust-signal-title">Multi-Carrier Agency</h3>
-                    <p class="trust-signal-description">Access to multiple insurance companies for the best rates and coverage</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Multi-Carrier Agency</h3>
+                    <p class="text-gray-600">Access to multiple insurance companies for the best rates and coverage</p>
                 </div>
-                <div class="trust-signal-card">
-                    <div class="trust-signal-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                            <circle cx="12" cy="10" r="3"></circle>
+                
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center hover-lift border border-gray-200">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                         </svg>
                     </div>
-                    <h3 class="trust-signal-title">Local Expertise</h3>
-                    <p class="trust-signal-description">Deep knowledge of North Carolina insurance requirements and local needs</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Local Expertise</h3>
+                    <p class="text-gray-600">Deep knowledge of North Carolina insurance requirements and local needs</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Service Areas Section -->
-    <section class="service-areas-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>Insurance Near Me - Serving All of Surry County</h2>
-                <p>Find trusted insurance coverage in your local area</p>
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Insurance Near Me - Serving All of Surry County</h2>
+                <p class="text-lg text-gray-600">Find trusted insurance coverage in your local area</p>
             </div>
-            <div class="service-areas-content">
-                <div class="service-areas-intro">
-                    <h3>Proudly Serving These Communities</h3>
-                    <p>Looking for insurance near me? Bill Layne Insurance provides personalized insurance solutions throughout Surry County and surrounding areas.</p>
+            
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <div class="text-center mb-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Proudly Serving These Communities</h3>
+                    <p class="text-gray-600">Looking for insurance near me? Bill Layne Insurance provides personalized insurance solutions throughout Surry County and surrounding areas.</p>
                 </div>
-                <div class="service-areas-grid">
-                    <a href="insurance-elkin-nc.html" class="service-area-item" style="text-decoration: none; color: inherit;">
-                        <div class="service-area-city">Elkin</div>
-                        <div class="service-area-zip">28621</div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <a href="insurance-elkin-nc.html" class="p-6 bg-gray-50 rounded-lg text-center hover:bg-blue-50 hover:shadow-md transition-all duration-300 hover-lift">
+                        <div class="font-semibold text-gray-900">Elkin</div>
+                        <div class="text-sm text-gray-600">28621</div>
                     </a>
-                    <div class="service-area-item">
-                        <div class="service-area-city">Mount Airy</div>
-                        <div class="service-area-zip">27030</div>
+                    <div class="p-6 bg-gray-50 rounded-lg text-center hover:bg-blue-50 hover:shadow-md transition-all duration-300 hover-lift">
+                        <div class="font-semibold text-gray-900">Mount Airy</div>
+                        <div class="text-sm text-gray-600">27030</div>
                     </div>
-                    <div class="service-area-item">
-                        <div class="service-area-city">Dobson</div>
-                        <div class="service-area-zip">27017</div>
+                    <div class="p-6 bg-gray-50 rounded-lg text-center hover:bg-blue-50 hover:shadow-md transition-all duration-300 hover-lift">
+                        <div class="font-semibold text-gray-900">Dobson</div>
+                        <div class="text-sm text-gray-600">27017</div>
                     </div>
-                    <div class="service-area-item">
-                        <div class="service-area-city">Pilot Mountain</div>
-                        <div class="service-area-zip">27041</div>
+                    <div class="p-6 bg-gray-50 rounded-lg text-center hover:bg-blue-50 hover:shadow-md transition-all duration-300 hover-lift">
+                        <div class="font-semibold text-gray-900">Pilot Mountain</div>
+                        <div class="text-sm text-gray-600">27041</div>
                     </div>
-                    <div class="service-area-item">
-                        <div class="service-area-city">Jonesville</div>
-                        <div class="service-area-zip">28642</div>
+                    <div class="p-6 bg-gray-50 rounded-lg text-center hover:bg-blue-50 hover:shadow-md transition-all duration-300 hover-lift">
+                        <div class="font-semibold text-gray-900">Jonesville</div>
+                        <div class="text-sm text-gray-600">28642</div>
                     </div>
-                    <div class="service-area-item">
-                        <div class="service-area-city">Boonville</div>
-                        <div class="service-area-zip">27011</div>
+                    <div class="p-6 bg-gray-50 rounded-lg text-center hover:bg-blue-50 hover:shadow-md transition-all duration-300 hover-lift">
+                        <div class="font-semibold text-gray-900">Boonville</div>
+                        <div class="text-sm text-gray-600">27011</div>
                     </div>
-                    <div class="service-area-item">
-                        <div class="service-area-city">Yadkinville</div>
-                        <div class="service-area-zip">27055</div>
+                    <div class="p-6 bg-gray-50 rounded-lg text-center hover:bg-blue-50 hover:shadow-md transition-all duration-300 hover-lift">
+                        <div class="font-semibold text-gray-900">Yadkinville</div>
+                        <div class="text-sm text-gray-600">27055</div>
                     </div>
-                    <div class="service-area-item">
-                        <div class="service-area-city">State Road</div>
-                        <div class="service-area-zip">28676</div>
+                    <div class="p-6 bg-gray-50 rounded-lg text-center hover:bg-blue-50 hover:shadow-md transition-all duration-300 hover-lift">
+                        <div class="font-semibold text-gray-900">State Road</div>
+                        <div class="text-sm text-gray-600">28676</div>
                     </div>
                 </div>
             </div>
@@ -1114,97 +581,106 @@
     </section>
 
     <!-- Testimonials Section -->
-    <section class="testimonials-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>What Our Clients Say</h2>
-                <p>Real reviews from real customers in Surry County</p>
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">What Our Clients Say</h2>
+                <p class="text-lg text-gray-600">Real reviews from real customers in Surry County</p>
             </div>
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <div class="testimonial-quote">"</div>
-                    <p class="testimonial-content">
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <div class="bg-gray-50 rounded-xl p-8 shadow-lg hover-lift">
+                    <div class="text-5xl text-blue-200 mb-4">"</div>
+                    <p class="text-gray-600 italic mb-6">
                         Bill and his team saved me over $600 a year on my auto insurance! They took the time to review all my options and found coverage that was actually better than what I had. Highly recommend!
                     </p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">JM</div>
-                        <div class="testimonial-info">
-                            <div class="testimonial-name">Jennifer M.</div>
-                            <div class="testimonial-location">Mount Airy, NC</div>
-                            <div class="testimonial-stars">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-semibold">
+                            JM
+                        </div>
+                        <div class="ml-4">
+                            <div class="font-semibold text-gray-900">Jennifer M.</div>
+                            <div class="text-sm text-gray-600">Mount Airy, NC</div>
+                            <div class="flex mt-1">
+                                <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 24 24">
                                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                                 </svg>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 24 24">
                                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                                 </svg>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 24 24">
                                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                                 </svg>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 24 24">
                                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                                 </svg>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 24 24">
                                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                                 </svg>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="testimonial-card">
-                    <div class="testimonial-quote">"</div>
-                    <p class="testimonial-content">
+                
+                <div class="bg-gray-50 rounded-xl p-8 shadow-lg hover-lift">
+                    <div class="text-5xl text-blue-200 mb-4">"</div>
+                    <p class="text-gray-600 italic mb-6">
                         When my house was damaged in a storm, Debbie walked me through the entire claims process. She even met with the adjuster to make sure everything was covered. This is what local service is all about!
                     </p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">RT</div>
-                        <div class="testimonial-info">
-                            <div class="testimonial-name">Robert T.</div>
-                            <div class="testimonial-location">Elkin, NC</div>
-                            <div class="testimonial-stars">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-semibold">
+                            RT
+                        </div>
+                        <div class="ml-4">
+                            <div class="font-semibold text-gray-900">Robert T.</div>
+                            <div class="text-sm text-gray-600">Elkin, NC</div>
+                            <div class="flex mt-1">
+                                <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 24 24">
                                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                                 </svg>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 24 24">
                                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                                 </svg>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 24 24">
                                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                                 </svg>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 24 24">
                                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                                 </svg>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 24 24">
                                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                                 </svg>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="testimonial-card">
-                    <div class="testimonial-quote">"</div>
-                    <p class="testimonial-content">
+                
+                <div class="bg-gray-50 rounded-xl p-8 shadow-lg hover-lift">
+                    <div class="text-5xl text-blue-200 mb-4">"</div>
+                    <p class="text-gray-600 italic mb-6">
                         I've been with Bill Layne Insurance for 15 years. They always answer my questions promptly and make sure I understand my coverage. It's nice to work with people who genuinely care about their customers.
                     </p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">SC</div>
-                        <div class="testimonial-info">
-                            <div class="testimonial-name">Sarah C.</div>
-                            <div class="testimonial-location">Dobson, NC</div>
-                            <div class="testimonial-stars">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-semibold">
+                            SC
+                        </div>
+                        <div class="ml-4">
+                            <div class="font-semibold text-gray-900">Sarah C.</div>
+                            <div class="text-sm text-gray-600">Dobson, NC</div>
+                            <div class="flex mt-1">
+                                <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 24 24">
                                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                                 </svg>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 24 24">
                                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                                 </svg>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 24 24">
                                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                                 </svg>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 24 24">
                                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                                 </svg>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 24 24">
                                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                                 </svg>
                             </div>
@@ -1216,63 +692,67 @@
     </section>
 
     <!-- FAQ Section -->
-    <section class="faq-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>Frequently Asked Questions</h2>
-                <p>Get answers to common questions about our insurance services</p>
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+                <p class="text-lg text-gray-600">Get answers to common questions about our insurance services</p>
             </div>
-            <div class="faq-container">
-                <div class="faq-list">
-                    <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFAQ(this)">
-                            <span>How quickly can I get a quote?</span>
-                            <div class="faq-toggle">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="6 9 12 15 18 9"></polyline>
+            
+            <div class="max-w-3xl mx-auto">
+                <div class="space-y-4">
+                    <div class="faq-item bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+                        <div class="faq-question px-6 py-4 cursor-pointer flex justify-between items-center hover:bg-gray-50 transition-colors" onclick="toggleFAQ(this)">
+                            <span class="font-semibold text-gray-900">How quickly can I get a quote?</span>
+                            <div class="faq-toggle transition-transform duration-300">
+                                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </div>
                         </div>
-                        <div class="faq-answer">
+                        <div class="faq-answer px-6 pb-4 text-gray-600 animate-fadeIn">
                             We can typically provide you with a comprehensive insurance quote within 15-30 minutes. For auto insurance, we can often quote you while you're on the phone. For home or commercial insurance, we may need a bit more information, but we'll work quickly to get you competitive rates from multiple carriers. Just call us at (336) 835-1993 or fill out our contact form to get started.
                         </div>
                     </div>
-                    <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFAQ(this)">
-                            <span>Do you offer payment plans?</span>
-                            <div class="faq-toggle">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="6 9 12 15 18 9"></polyline>
+                    
+                    <div class="faq-item bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+                        <div class="faq-question px-6 py-4 cursor-pointer flex justify-between items-center hover:bg-gray-50 transition-colors" onclick="toggleFAQ(this)">
+                            <span class="font-semibold text-gray-900">Do you offer payment plans?</span>
+                            <div class="faq-toggle transition-transform duration-300">
+                                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </div>
                         </div>
-                        <div class="faq-answer">
+                        <div class="faq-answer px-6 pb-4 text-gray-600 animate-fadeIn">
                             Yes! We understand that paying for insurance all at once can be challenging. Most of our insurance carriers offer flexible payment plans, including monthly payment options. We'll help you find a payment schedule that fits your budget while ensuring you maintain continuous coverage. Ask about payment options when you get your quote.
                         </div>
                     </div>
-                    <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFAQ(this)">
-                            <span>Can you help with claims from other carriers?</span>
-                            <div class="faq-toggle">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="6 9 12 15 18 9"></polyline>
+                    
+                    <div class="faq-item bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+                        <div class="faq-question px-6 py-4 cursor-pointer flex justify-between items-center hover:bg-gray-50 transition-colors" onclick="toggleFAQ(this)">
+                            <span class="font-semibold text-gray-900">Can you help with claims from other carriers?</span>
+                            <div class="faq-toggle transition-transform duration-300">
+                                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </div>
                         </div>
-                        <div class="faq-answer">
+                        <div class="faq-answer px-6 pb-4 text-gray-600 animate-fadeIn">
                             While we primarily assist with claims for policies we've written, we're always happy to provide guidance and advice to anyone in our community. If you're having trouble with a claim from another carrier, give us a call. We can often provide helpful insights about the claims process and may be able to help you understand your options. Plus, this might be a good time to review your coverage and see if we can offer you better protection and service.
                         </div>
                     </div>
-                    <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFAQ(this)">
-                            <span>What insurance companies do you represent?</span>
-                            <div class="faq-toggle">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="6 9 12 15 18 9"></polyline>
+                    
+                    <div class="faq-item bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+                        <div class="faq-question px-6 py-4 cursor-pointer flex justify-between items-center hover:bg-gray-50 transition-colors" onclick="toggleFAQ(this)">
+                            <span class="font-semibold text-gray-900">What insurance companies do you represent?</span>
+                            <div class="faq-toggle transition-transform duration-300">
+                                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </div>
                         </div>
-                        <div class="faq-answer">
+                        <div class="faq-answer px-6 pb-4 text-gray-600 animate-fadeIn">
                             As an independent insurance agency, we represent multiple top-rated insurance carriers. This allows us to shop your coverage with several companies to find the best combination of price and protection for your specific needs. Our carriers include both national brands and strong regional companies that specialize in North Carolina coverage. Contact us to learn which carriers would be the best fit for your insurance needs.
                         </div>
                     </div>
@@ -1282,112 +762,114 @@
     </section>
 
     <!-- Contact Form & Info Section -->
-    <section class="contact-form-section" id="contact-form">
-        <div class="container">
-            <div class="section-header">
-                <h2>Get In Touch</h2>
-                <p>Have questions? Need a quote? We're here to help!</p>
+    <section class="py-20 bg-white" id="contact-form">
+        <div class="container mx-auto px-4">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Get In Touch</h2>
+                <p class="text-lg text-gray-600">Have questions? Need a quote? We're here to help!</p>
             </div>
-            <div class="contact-grid">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
                 <!-- Contact Information -->
-                <div class="contact-info">
-                    <h3>Contact Information</h3>
+                <div class="bg-gray-50 rounded-xl p-8 shadow-lg">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-8">Contact Information</h3>
                     
-                    <div class="contact-info__item">
-                        <div class="contact-info__icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                <circle cx="12" cy="10" r="3"></circle>
-                            </svg>
-                        </div>
-                        <div class="contact-info__details">
-                            <h4>Office Location</h4>
-                            <p>PO Box 827<br>Elkin, NC 28621</p>
-                        </div>
-                    </div>
-
-                    <div class="contact-info__item">
-                        <div class="contact-info__icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                            </svg>
-                        </div>
-                        <div class="contact-info__details">
-                            <h4>Phone</h4>
-                            <a href="tel:3368351993">(336) 835-1993</a>
-                        </div>
-                    </div>
-
-                    <div class="contact-info__item">
-                        <div class="contact-info__icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                                <polyline points="22,6 12,13 2,6"></polyline>
-                            </svg>
-                        </div>
-                        <div class="contact-info__details">
-                            <h4>Email</h4>
-                            <a href="mailto:Save@BillLayneInsurance.com">Save@BillLayneInsurance.com</a>
-                        </div>
-                    </div>
-
-                    <div class="contact-info__item">
-                        <div class="contact-info__icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polyline points="12 6 12 12 16 14"></polyline>
-                            </svg>
-                        </div>
-                        <div class="contact-info__details">
-                            <h4>Office Hours</h4>
-                            <p>Monday - Friday<br>9:00 AM - 5:00 PM</p>
-                        </div>
-                    </div>
-                    <div class="contact-info__item">
-                        <div class="contact-info__icon" style="background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5Z"></path>
-                                <path d="M12 5L8 21l4-7 4 7-4-16"></path>
-                            </svg>
-                        </div>
-                        <div class="contact-info__details">
-                            <h4>24/7 Claims Emergency</h4>
-                            <p><strong>For after-hours claims:</strong><br>
-                            Call your carrier's 24/7 hotline<br>
-                            <small>We'll follow up next business day</small></p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Contact Form -->
-                <div class="contact-form-wrapper">
-                    <h3>Send Us a Message</h3>
-                    <form id="contactForm" class="contact-form">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="firstName" class="form-label">First Name</label>
-                                <input type="text" id="firstName" name="firstName" class="form-control" required>
+                    <div class="space-y-6">
+                        <div class="flex items-start hover-slide p-6 bg-white rounded-lg">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
                             </div>
-                            <div class="form-group">
-                                <label for="lastName" class="form-label">Last Name</label>
-                                <input type="text" id="lastName" name="lastName" class="form-control" required>
+                            <div class="ml-4">
+                                <h4 class="font-semibold text-gray-900 mb-1">Office Location</h4>
+                                <p class="text-gray-600">PO Box 827<br>Elkin, NC 28621</p>
                             </div>
                         </div>
                         
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="email" class="form-label">Email Address</label>
-                                <input type="email" id="email" name="email" class="form-control" required>
+                        <div class="flex items-start hover-slide p-6 bg-white rounded-lg">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                </svg>
                             </div>
-                            <div class="form-group">
-                                <label for="phone" class="form-label">Phone Number</label>
-                                <input type="tel" id="phone" name="phone" class="form-control" required>
+                            <div class="ml-4">
+                                <h4 class="font-semibold text-gray-900 mb-1">Phone</h4>
+                                <a href="tel:3368351993" class="text-gray-600 hover:text-blue-600 transition-colors">(336) 835-1993</a>
                             </div>
                         </div>
-
-                        <div class="form-group full-width">
-                            <label for="subject" class="form-label">Subject</label>
-                            <select id="subject" name="subject" class="form-control" required>
+                        
+                        <div class="flex items-start hover-slide p-6 bg-white rounded-lg">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="font-semibold text-gray-900 mb-1">Email</h4>
+                                <a href="mailto:Save@BillLayneInsurance.com" class="text-gray-600 hover:text-blue-600 transition-colors">Save@BillLayneInsurance.com</a>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start hover-slide p-6 bg-white rounded-lg">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="font-semibold text-gray-900 mb-1">Office Hours</h4>
+                                <p class="text-gray-600">Monday - Friday<br>9:00 AM - 5:00 PM</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start hover-slide p-6 bg-white rounded-lg border-2 border-red-200">
+                            <div class="w-12 h-12 bg-gradient-to-br from-red-600 to-red-700 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0016.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 002 8.5c0 2.3 1.5 4.05 3 5.5Z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5L8 21l4-7 4 7-4-16"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="font-semibold text-gray-900 mb-1">24/7 Claims Emergency</h4>
+                                <p class="text-gray-600"><strong>For after-hours claims:</strong><br>
+                                Call your carrier's 24/7 hotline<br>
+                                <small>We'll follow up next business day</small></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contact Form -->
+                <div class="bg-gray-50 rounded-xl p-8 shadow-lg">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-8">Send Us a Message</h3>
+                    <form id="contactForm" class="space-y-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label for="firstName" class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                                <input type="text" id="firstName" name="firstName" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                            </div>
+                            <div>
+                                <label for="lastName" class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                                <input type="text" id="lastName" name="lastName" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                <input type="email" id="email" name="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                            </div>
+                            <div>
+                                <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                                <input type="tel" id="phone" name="phone" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="subject" class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+                            <select id="subject" name="subject" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
                                 <option value="">Select a Subject</option>
                                 <option value="quote">Get a Quote</option>
                                 <option value="policy">Policy Question</option>
@@ -1395,13 +877,15 @@
                                 <option value="general">General Inquiry</option>
                             </select>
                         </div>
-
-                        <div class="form-group full-width">
-                            <label for="message" class="form-label">Message</label>
-                            <textarea id="message" name="message" class="form-control textarea" rows="4" required></textarea>
+                        
+                        <div>
+                            <label for="message" class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                            <textarea id="message" name="message" rows="4" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-vertical"></textarea>
                         </div>
-
-                        <button type="submit" class="btn btn--primary btn--lg btn--full-width">Send Message</button>
+                        
+                        <button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-lg hover:bg-blue-700 transition-colors font-semibold text-lg">
+                            Send Message
+                        </button>
                     </form>
                 </div>
             </div>
@@ -1409,74 +893,56 @@
     </section>
 
     <!-- Footer -->
-    <footer id="contact" class="footer" itemscope itemtype="https://schema.org/InsuranceAgency">
-        <div class="container">
-            <div class="footer__content">
-                <div class="footer__main">
-                    <div class="footer__brand">
-                        <h3>Bill Layne Insurance</h3>
-                        <p>Your Trusted North Carolina Insurance Partner Since 2004</p>
-                    </div>
-                    <div class="footer__contact">
-                        <h4>Contact Information</h4>
-                        <p><strong>Phone:</strong> <a href="tel:3368351993" itemprop="telephone">(336) 835-1993</a></p>
-                        <p><strong>Email:</strong> <a href="mailto:Save@BillLayneInsurance.com" itemprop="email">Save@BillLayneInsurance.com</a></p>
-                        <p itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
-                            <strong>Address:</strong> 
-                            <span itemprop="postOfficeBoxNumber">PO Box 827</span>, 
-                            <span itemprop="addressLocality">Elkin</span>, 
-                            <span itemprop="addressRegion">NC</span> 
-                            <span itemprop="postalCode">28621</span>
-                        </p>
-                        <p><strong>Hours:</strong> <time itemprop="openingHours" datetime="Mo-Fr 09:00-17:00">Monday - Friday: 9:00 AM - 5:00 PM</time></p>
-                    </div>
-                    <div class="footer__links">
-                        <h4>Quick Links</h4>
-                        <ul>
-                            <li><a href="index.html">Home</a></li>
-                            <li><a href="#services">Auto Insurance</a></li>
-                            <li><a href="#services">Home Insurance</a></li>
-                            <li><a href="#services">Commercial Insurance</a></li>
-                            <li><a href="#about">About Us</a></li>
-                        </ul>
-                    </div>
+    <footer class="bg-gray-900 text-white py-12" itemscope itemtype="https://schema.org/InsuranceAgency">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h3 class="text-2xl font-bold mb-4">Bill Layne Insurance</h3>
+                    <p class="text-gray-400">Your Trusted North Carolina Insurance Partner Since 2004</p>
                 </div>
-                <div class="footer__bottom">
-                    <p>&copy; 2025 Bill Layne Insurance. All rights reserved. | Licensed in North Carolina</p>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Contact Information</h4>
+                    <p class="text-gray-400 mb-2"><strong>Phone:</strong> <a href="tel:3368351993" class="hover:text-white transition-colors" itemprop="telephone">(336) 835-1993</a></p>
+                    <p class="text-gray-400 mb-2"><strong>Email:</strong> <a href="mailto:Save@BillLayneInsurance.com" class="hover:text-white transition-colors" itemprop="email">Save@BillLayneInsurance.com</a></p>
+                    <div class="text-gray-400 mb-2" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
+                        <strong>Address:</strong> 
+                        <span itemprop="postOfficeBoxNumber">PO Box 827</span>, 
+                        <span itemprop="addressLocality">Elkin</span>, 
+                        <span itemprop="addressRegion">NC</span> 
+                        <span itemprop="postalCode">28621</span>
+                    </div>
+                    <p class="text-gray-400"><strong>Hours:</strong> <time itemprop="openingHours" datetime="Mo-Fr 09:00-17:00">Monday - Friday: 9:00 AM - 5:00 PM</time></p>
                 </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+                        <li><a href="#services" class="text-gray-400 hover:text-white transition-colors">Auto Insurance</a></li>
+                        <li><a href="#services" class="text-gray-400 hover:text-white transition-colors">Home Insurance</a></li>
+                        <li><a href="#services" class="text-gray-400 hover:text-white transition-colors">Commercial Insurance</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-white transition-colors">About Us</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center">
+                <p class="text-gray-400">&copy; 2025 Bill Layne Insurance. All rights reserved. | Licensed in North Carolina</p>
             </div>
         </div>
     </footer>
 
     <!-- Scroll to Top Button -->
-    <div class="scroll-to-top" onclick="scrollToTop()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="19" x2="12" y2="5"></line>
-            <polyline points="5 12 12 5 19 12"></polyline>
+    <button onclick="scrollToTop()" class="fixed bottom-20 right-6 md:bottom-6 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 opacity-0 transform translate-y-10" id="scrollToTop">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
         </svg>
-    </div>
-
-    <!-- Mobile Sticky Header -->
-    <div class="mobile-sticky-header">
-        <div class="mobile-sticky-cta">
-            <a href="tel:3368351993" class="mobile-call-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                </svg>
-                Call Now
-            </a>
-            <button class="mobile-quote-btn" onclick="scrollToContactForm()">
-                Send Message
-            </button>
-        </div>
-    </div>
+    </button>
 
     <script>
         // Scroll functions
         function scrollToContactForm() {
             const contactForm = document.querySelector('#contact-form');
             if (contactForm) {
-                const headerHeight = document.querySelector('.navbar').offsetHeight;
+                const headerHeight = document.querySelector('#header').offsetHeight;
                 const targetPosition = contactForm.offsetTop - headerHeight - 20;
                 
                 window.scrollTo({
@@ -1493,18 +959,49 @@
             });
         }
 
-        // Scroll to top button visibility
+        // Show/hide scroll to top button
         window.addEventListener('scroll', function() {
-            const scrollButton = document.querySelector('.scroll-to-top');
+            const scrollButton = document.getElementById('scrollToTop');
             if (window.pageYOffset > 300) {
-                scrollButton.classList.add('visible');
+                scrollButton.classList.remove('opacity-0', 'translate-y-10');
+                scrollButton.classList.add('opacity-100', 'translate-y-0');
             } else {
-                scrollButton.classList.remove('visible');
+                scrollButton.classList.add('opacity-0', 'translate-y-10');
+                scrollButton.classList.remove('opacity-100', 'translate-y-0');
             }
         });
 
-        // Mobile menu toggle - REMOVED DUPLICATE SCRIPT
-        // Using the enhanced version below instead
+        // Mobile menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const closeMobileMenu = document.getElementById('closeMobileMenu');
+            
+            mobileMenuToggle.addEventListener('click', () => {
+                mobileMenu.classList.remove('hidden');
+            });
+            
+            closeMobileMenu.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+            
+            // Header scroll effect
+            let lastScroll = 0;
+            window.addEventListener('scroll', () => {
+                const currentScroll = window.pageYOffset;
+                const header = document.getElementById('header');
+                
+                if (currentScroll > 100) {
+                    header.classList.add('bg-white', 'shadow-md');
+                    header.classList.remove('bg-white/95');
+                } else {
+                    header.classList.remove('bg-white', 'shadow-md');
+                    header.classList.add('bg-white/95');
+                }
+                
+                lastScroll = currentScroll;
+            });
+        });
 
         // Contact form submission
         document.getElementById('contactForm').addEventListener('submit', function(e) {
@@ -1572,10 +1069,6 @@
                     }
                 });
         });
-        
-        // Mobile menu functionality is now handled in app.js
     </script>
-    
-    <!-- Mobile menu styles are now in style.css -->
 </body>
 </html>
