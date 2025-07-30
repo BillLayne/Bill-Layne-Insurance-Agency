@@ -514,13 +514,17 @@
             
             // Prepare EmailJS parameters
             const templateParams = {
-                // Personal Information
+                // Required fields for EmailJS template
+                name: `${formData.get('firstname')} ${formData.get('lastname')}`,
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                message: generateFullMessage(formData),
+                
+                // Additional fields (optional)
                 from_name: `${formData.get('firstname')} ${formData.get('lastname')}`,
                 firstname: formData.get('firstname'),
                 lastname: formData.get('lastname'),
                 from_email: formData.get('email'),
-                email: formData.get('email'),
-                phone: formData.get('phone'),
                 contact_method: formData.get('contact_method'),
                 
                 // Current Insurance
@@ -531,10 +535,7 @@
                 // Additional Info
                 previous_claims: formData.get('previous_claims'),
                 violations: formData.get('violations'),
-                additional_notes: formData.get('additional_notes') || 'None',
-                
-                // Process all form data into a comprehensive message
-                message: generateFullMessage(formData)
+                additional_notes: formData.get('additional_notes') || 'None'
             };
             
             // Send via EmailJS
@@ -548,34 +549,20 @@
                 .catch(function(error) {
                     console.error('EmailJS Error:', error);
                     
-                    // Try Formspree as backup
-                    const formspreeData = new FormData();
-                    formspreeData.append('name', templateParams.from_name);
-                    formspreeData.append('email', templateParams.from_email);
-                    formspreeData.append('phone', templateParams.phone);
-                    formspreeData.append('message', templateParams.message);
+                    // Try mailto as fallback
+                    const subject = encodeURIComponent('Auto Insurance Quote Request');
+                    const body = encodeURIComponent(templateParams.message);
+                    const mailtoLink = `mailto:Bill@BillLayneInsurance.com?subject=${subject}&body=${body}`;
                     
-                    fetch('https://formspree.io/f/xkgwnjqv', {
-                        method: 'POST',
-                        body: formspreeData,
-                        headers: {
-                            'Accept': 'application/json'
-                        }
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            document.getElementById('auto-quote-form').parentElement.style.display = 'none';
-                            document.getElementById('success-message').style.display = 'block';
-                        } else {
-                            throw new Error('Formspree submission failed');
-                        }
-                    })
-                    .catch(formspreeError => {
-                        console.error('Formspree Error:', formspreeError);
-                        alert('There was a problem submitting your quote. Please call us at (336) 835-1993 or email Save@BillLayneInsurance.com');
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = 'Submit Quote Request<i class="fas fa-paper-plane ml-2"></i>';
-                    });
+                    // Show success message anyway since email client will open
+                    document.getElementById('auto-quote-form').parentElement.style.display = 'none';
+                    document.getElementById('success-message').style.display = 'block';
+                    
+                    // Open email client
+                    window.location.href = mailtoLink;
+                    
+                    // Log the error for debugging
+                    console.log('EmailJS failed, falling back to mailto. Error details:', error);
                 });
         });
 
