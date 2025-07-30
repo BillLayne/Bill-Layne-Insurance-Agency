@@ -17,18 +17,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
-        window.addEventListener('load', function() {
-            const emailScript = document.createElement('script');
-            emailScript.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
-            emailScript.async = true;
-            emailScript.onload = function() {
-                if (typeof emailjs !== 'undefined') {
-                    emailjs.init("Av6wKxL6HR-FIMtgm");
-                }
-            };
-            document.body.appendChild(emailScript);
-        });
+        (function() {
+            // Initialize EmailJS with your public key
+            // To set up EmailJS:
+            // 1. Go to https://www.emailjs.com and sign in
+            // 2. Add your email service (Gmail, Outlook, etc.)
+            // 3. Create an email template with these variables:
+            //    {{from_name}}, {{from_email}}, {{phone}}, {{message}}
+            // 4. Update the service ID and template ID below
+            emailjs.init("Av6wKxL6HR-FIMtgm");
+        })();
     </script>
 
     <style>
@@ -540,15 +540,42 @@
             // Send via EmailJS
             emailjs.send('service_4flmw3k', 'template_6k9bgwi', templateParams)
                 .then(function(response) {
+                    console.log('EmailJS Success:', response.status, response.text);
                     // Show success message
                     document.getElementById('auto-quote-form').parentElement.style.display = 'none';
                     document.getElementById('success-message').style.display = 'block';
                 })
                 .catch(function(error) {
                     console.error('EmailJS Error:', error);
-                    alert('There was a problem submitting your quote. Please try again or call us at (336) 835-1993.');
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = 'Submit Quote Request<i class="fas fa-paper-plane ml-2"></i>';
+                    
+                    // Try Formspree as backup
+                    const formspreeData = new FormData();
+                    formspreeData.append('name', templateParams.from_name);
+                    formspreeData.append('email', templateParams.from_email);
+                    formspreeData.append('phone', templateParams.phone);
+                    formspreeData.append('message', templateParams.message);
+                    
+                    fetch('https://formspree.io/f/xkgwnjqv', {
+                        method: 'POST',
+                        body: formspreeData,
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            document.getElementById('auto-quote-form').parentElement.style.display = 'none';
+                            document.getElementById('success-message').style.display = 'block';
+                        } else {
+                            throw new Error('Formspree submission failed');
+                        }
+                    })
+                    .catch(formspreeError => {
+                        console.error('Formspree Error:', formspreeError);
+                        alert('There was a problem submitting your quote. Please call us at (336) 835-1993 or email Save@BillLayneInsurance.com');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = 'Submit Quote Request<i class="fas fa-paper-plane ml-2"></i>';
+                    });
                 });
         });
 
