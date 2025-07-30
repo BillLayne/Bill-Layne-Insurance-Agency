@@ -29,6 +29,49 @@
         .animate-fadeInUp { animation: fadeInUp 0.8s ease-out; }
         .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
         .hover-lift:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        
+        /* Simple header styles - matches your working home insurance page */
+
+        /* Header scroll effect */
+        .header-scrolled {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        /* Default header background */
+        #main-header {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Dropdown menu styles */
+        .dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .group:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Mobile menu - no complex overrides needed */
+        #mobile-menu {
+            transition: all 0.3s ease;
+        }
+
+        /* That's it! No complex positioning or !important overrides needed */
     </style>
 </head>
 <body class="font-['Inter'] bg-gray-50">
@@ -40,67 +83,77 @@
     </a>
 
     <!-- Header -->
-    <header class="fixed top-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm shadow-sm transition-all duration-300" id="header">
-        <div class="container mx-auto px-4">
-            <div class="flex items-center justify-between h-20">
-                <div class="flex items-center">
-                    <a href="https://billlayneinsurance.com/" class="text-2xl font-bold text-amber-800">
-                        Bill Layne Insurance
-                    </a>
-                </div>
+    <header id="main-header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <!-- Logo -->
+                <a href="index.html" class="text-gray-800 text-2xl font-bold">
+                    Bill Layne Insurance
+                </a>
                 
-                <nav class="hidden md:flex items-center space-x-8">
-                    <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="text-gray-700 hover:text-blue-600 transition-colors">Auto</a>
-                    <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="text-gray-700 hover:text-blue-600 transition-colors">Home</a>
-                    <a href="https://billlayneinsurance.com/areas-we-serve.html" class="text-blue-600 font-semibold">Services</a>
-                    <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="text-gray-700 hover:text-blue-600 transition-colors">Claims</a>
-                    <a href="https://billlayne.github.io/Resources/" class="text-gray-700 hover:text-blue-600 transition-colors">Resources</a>
-                    <a href="https://billlayneinsurance.com/blog" class="text-gray-700 hover:text-blue-600 transition-colors">Blog</a>
-                    <a href="https://billlayneinsurance.com/contact-us.html" class="text-gray-700 hover:text-blue-600 transition-colors">Contact</a>
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex items-center space-x-1">
+                    <a href="index.html" class="nav-link px-3 py-2 rounded-md text-gray-700 hover:text-blue-600">Home</a>
+                    
+                    <!-- Services Dropdown -->
+                    <div class="relative group">
+                        <button class="nav-link px-3 py-2 rounded-md flex items-center text-gray-700 hover:text-blue-600">
+                            Services 
+                            <svg class="ml-2 w-3 h-3 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                            </svg>
+                        </button>
+                        <div class="dropdown-menu absolute hidden group-hover:block bg-white shadow-lg rounded-md py-2 w-48 opacity-0 group-hover:opacity-100">
+                            <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Auto Insurance</a>
+                            <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Home Insurance</a>
+                            <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Claim Center</a>
+                            <a href="https://billlayne.github.io/Resources/" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Resources</a>
+                        </div>
+                    </div>
+
+                    <!-- Areas We Serve Dropdown -->
+                    <div class="relative group">
+                        <button class="nav-link px-3 py-2 rounded-md flex items-center text-gray-700 hover:text-blue-600">
+                            Areas We Serve 
+                            <svg class="ml-2 w-3 h-3 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                            </svg>
+                        </button>
+                        <div class="dropdown-menu absolute hidden group-hover:block bg-white shadow-lg rounded-md py-2 w-48 opacity-0 group-hover:opacity-100">
+                            <a href="areas-we-serve.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">All Areas</a>
+                            <a href="insurance-elkin-nc.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Elkin, NC</a>
+                            <a href="insurance-mount-airy-nc.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Mount Airy, NC</a>
+                        </div>
+                    </div>
+
+                    <a href="blog.html" class="nav-link px-3 py-2 rounded-md text-gray-700 hover:text-blue-600">Blog</a>
+                    <a href="contact-us.html" class="nav-link px-3 py-2 rounded-md text-gray-700 hover:text-blue-600">Contact</a>
+                    <a href="auto-quote.html" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-transform transform hover:scale-105 ml-4">Get a Quote</a>
                 </nav>
                 
-                <div class="hidden md:block">
-                    <a href="tel:3368351993" class="bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition-colors flex items-center gap-2">
-                        <span>📞</span> (336) 835-1993
-                    </a>
-                </div>
-                
-                <button class="md:hidden p-2" id="mobileMenuToggle">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-button" class="md:hidden text-gray-700 text-2xl p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
                     </svg>
                 </button>
             </div>
         </div>
         
         <!-- Mobile Menu -->
-        <div class="hidden fixed inset-0 bg-white z-50" id="mobileMenu">
-            <div class="flex flex-col h-full">
-                <div class="flex items-center justify-between p-4 border-b">
-                    <span class="text-xl font-bold">Menu</span>
-                    <button id="closeMobileMenu" class="p-2">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-                <nav class="flex-1 overflow-y-auto">
-                    <div class="flex flex-col p-4 space-y-4">
-                        <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="text-lg py-2 text-gray-700">Auto</a>
-                        <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="text-lg py-2 text-gray-700">Home</a>
-                        <a href="https://billlayneinsurance.com/areas-we-serve.html" class="text-lg py-2 text-blue-600 font-semibold">Services</a>
-                        <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="text-lg py-2 text-gray-700">Claims</a>
-                        <a href="https://billlayne.github.io/Resources/" class="text-lg py-2 text-gray-700">Resources</a>
-                        <a href="https://billlayneinsurance.com/blog" class="text-lg py-2 text-gray-700">Blog</a>
-                        <a href="https://billlayneinsurance.com/contact-us.html" class="text-lg py-2 text-gray-700">Contact</a>
-                    </div>
-                </nav>
-                <div class="p-4 border-t">
-                    <a href="tel:3368351993" class="block w-full bg-blue-600 text-white text-center py-3 rounded-full">
-                        Call (336) 835-1993
-                    </a>
-                </div>
-            </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg border-t border-gray-200">
+            <a href="index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home</a>
+            <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Auto Insurance</a>
+            <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home Insurance</a>
+            <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Claim Center</a>
+            <a href="https://billlayne.github.io/Resources/" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Resources</a>
+            <a href="areas-we-serve.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Areas We Serve</a>
+            <a href="insurance-elkin-nc.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Elkin, NC</a>
+            <a href="insurance-mount-airy-nc.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Mount Airy, NC</a>
+            <a href="blog.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Blog</a>
+            <a href="contact-us.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Contact</a>
+            <a href="tel:3368351993" class="block py-3 px-4 text-center bg-green-500 text-white font-bold mt-3 mb-2">Call (336) 835-1993</a>
+            <a href="auto-quote.html" class="block py-3 px-4 text-center bg-blue-600 text-white font-bold">Get a Quote</a>
         </div>
     </header>
 
@@ -413,19 +466,32 @@
     
     <!-- Mobile Menu JavaScript -->
     <script>
-        // Mobile menu functionality
+        // Simple Mobile Menu JavaScript (matches your working home insurance page)
         document.addEventListener('DOMContentLoaded', function() {
-            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-            const mobileMenu = document.getElementById('mobileMenu');
-            const closeMobileMenu = document.getElementById('closeMobileMenu');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
             
-            mobileMenuToggle.addEventListener('click', () => {
-                mobileMenu.classList.remove('hidden');
-            });
-            
-            closeMobileMenu.addEventListener('click', () => {
-                mobileMenu.classList.add('hidden');
-            });
+            // Simple toggle - exactly like your working page
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+                
+                // Optional: Close menu when clicking on links
+                const mobileNavLinks = mobileMenu.querySelectorAll('a');
+                mobileNavLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileMenu.classList.add('hidden');
+                    });
+                });
+                
+                // Optional: Close menu on window resize (if screen gets larger)
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth >= 768) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            }
             
             // Header scroll effect
             let lastScroll = 0;
