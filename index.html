@@ -382,26 +382,6 @@
             background: #555;
         }
         
-        .mobile-call-button {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 40;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .mobile-call-button.show {
-            opacity: 1;
-        }
-        
-        @media (max-width: 768px) {
-            .mobile-call-button {
-                display: block;
-            }
-        }
     </style>
     
     <!-- Defer non-critical CSS -->
@@ -1147,16 +1127,6 @@
         </div>
     </footer>
 
-    <!-- Mobile Sticky Call Button -->
-    <div class="mobile-call-button">
-        <a href="tel:3368351993" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-full shadow-lg flex items-center gap-2 transition-all hover:scale-105 text-sm whitespace-nowrap">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
-            </svg>
-            <span>(336) 835-1993</span>
-        </a>
-    </div>
-
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         // --- General Navigation ---
@@ -1165,10 +1135,6 @@
         const navLinks = header.querySelectorAll('.nav-link');
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
-        const mobileCallButton = document.querySelector('.mobile-call-button');
-        
-        // Track scroll position for phone button
-        let lastScrollTop = 0;
 
         // Function to style header on scroll
         function styleHeader() {
@@ -1188,23 +1154,9 @@
             });
         }
         
-        // Function to control phone button visibility
-        function handleScroll() {
-            const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-            
-            // Show button only when scrolling down and past hero section
-            if (currentScroll > lastScrollTop && currentScroll > 300) {
-                mobileCallButton.classList.add('show');
-            } else {
-                mobileCallButton.classList.remove('show');
-            }
-            
-            lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
-        }
         
         styleHeader(); // Initial call
         window.addEventListener('scroll', styleHeader);
-        window.addEventListener('scroll', handleScroll);
         window.addEventListener('resize', styleHeader);
 
         // --- Enhanced Mobile Menu with Accessibility ---

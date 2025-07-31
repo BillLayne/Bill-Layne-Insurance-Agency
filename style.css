@@ -3272,6 +3272,16 @@ a:focus,
     backface-visibility: hidden !important;
     -webkit-transform: translateX(-50%) translateZ(0) !important;
     transform: translateX(-50%) translateZ(0) !important;
+    /* Remove any inherited backgrounds */
+    background: none !important;
+    background-color: transparent !important;
+}
+
+/* Remove any pseudo elements that might cause duplicates */
+.mobile-sticky-call::before,
+.mobile-sticky-call::after {
+    display: none !important;
+    content: none !important;
 }
 
 /* Style the inner link */
@@ -3294,6 +3304,17 @@ a:focus,
     border: none !important;
     box-sizing: border-box !important;
     transition: box-shadow 0.3s ease, filter 0.3s ease !important;
+    /* Ensure clean rendering */
+    -webkit-transform: translateZ(0) !important;
+    transform: translateZ(0) !important;
+    will-change: box-shadow, filter !important;
+}
+
+/* Remove pseudo elements from link too */
+.mobile-sticky-call a::before,
+.mobile-sticky-call a::after {
+    display: none !important;
+    content: none !important;
 }
 
 .mobile-sticky-call a:hover,
