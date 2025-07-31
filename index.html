@@ -46,13 +46,22 @@
     
     <!-- Preload Critical Resources -->
     <link rel="preload" href="https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2" as="font" type="font/woff2" crossorigin>
+    
+    <!-- Critical Resource Hints -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link rel="dns-prefetch" href="//i.imgur.com">
+    <link rel="dns-prefetch" href="//github.com">
+    
+    <!-- Hero image with high priority -->
+    <link rel="preload" as="image" href="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Car%20Insurance.png?raw=true" fetchpriority="high" media="(min-width: 768px)">
 
     <!-- Critical CSS inline for fastest load -->
     <style>
-        /* Critical CSS - Extracted from Tailwind classes actually used */
+        /* Enhanced Critical CSS - Above the fold only */
         *, ::before, ::after { box-sizing: border-box; border-width: 0; border-style: solid; border-color: #e5e7eb; }
         html { line-height: 1.5; -webkit-text-size-adjust: 100%; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-        body { margin: 0; line-height: inherit; font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        body { margin: 0; line-height: inherit; font-family: 'Inter', sans-serif; scroll-behavior: smooth; background-color: #f9fafb; }
         h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
         a { color: inherit; text-decoration: inherit; }
         button, input, select, textarea { font-family: inherit; font-size: 100%; font-weight: inherit; line-height: inherit; color: inherit; margin: 0; padding: 0; }
@@ -272,13 +281,18 @@
         .hero { min-height: 60vh; }
         img { max-width: 100%; height: auto; }
         
-        /* Custom styles */
-        /* Always white/semi-transparent background for visibility */
+        /* Header - Critical styles only */
         #main-header {
             background-color: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            transition: all 0.3s ease;
         }
         
         .header-scrolled {
@@ -287,11 +301,34 @@
             backdrop-filter: blur(5px);
         }
         
+        /* Hero - Critical above fold styles */
         .hero-bg {
             background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://github.com/BillLayne/bill-layne-images/blob/main/logos/Car%20Insurance.png?raw=true');
             background-size: cover;
             background-position: center;
+            padding-top: 8rem;
+            padding-bottom: 8rem;
+            color: white;
         }
+        
+        /* Critical utilities */
+        .fixed { position: fixed; }
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .text-center { text-align: center; }
+        .font-bold { font-weight: 700; }
+        .text-white { color: rgb(255 255 255); }
+        .bg-blue-600 { background-color: rgb(37 99 235); }
+        .hover\:bg-blue-700:hover { background-color: rgb(29 78 216); }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .rounded-lg { border-radius: 0.5rem; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .pt-32 { padding-top: 8rem; }
+        .pb-32 { padding-bottom: 8rem; }
         
         .tab-active {
             background-color: #2563EB;
@@ -366,6 +403,10 @@
             }
         }
     </style>
+    
+    <!-- Defer non-critical CSS -->
+    <link rel="preload" href="style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="style.css"></noscript>
     
     <!-- Enhanced Local SEO Schema Markup -->
     <script type="application/ld+json">
@@ -492,6 +533,48 @@
       ]
     }
     </script>
+    
+    <!-- FAQ Schema Markup -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What types of insurance does Bill Layne Insurance offer?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We offer comprehensive auto insurance, homeowners insurance, life insurance, and business insurance through multiple top-rated carriers including Nationwide, Progressive, Travelers, and National General."
+          }
+        },
+        {
+          "@type": "Question", 
+          "name": "Do you serve areas outside of Elkin, NC?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, we proudly serve Elkin, Mount Airy, and all of Surry County, Yadkin County, and Wilkes County in North Carolina."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How can I get a free insurance quote?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You can get a free quote by calling us at (336) 835-1993, visiting our office at 1283 N Bridge St in Elkin, or using our online quote tools on our website."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What makes Bill Layne Insurance different from online insurance companies?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "As an independent agency, we provide personalized service from local agents who understand North Carolina's unique insurance needs. We compare rates from multiple carriers to find you the best coverage at the best price, and we're here to help with claims and policy questions."
+          }
+        }
+      ]
+    }
+    </script>
 </head>
 <body class="bg-gray-50">
     <!-- Skip Navigation Link -->
@@ -613,8 +696,11 @@
             <p class="text-lg md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto">
                 Protecting our neighbors with tailored auto, home, and business insurance. We find the best coverage at the right price, so you can have peace of mind.
             </p>
-            <a href="auto-quote.html" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg shadow-xl transition-transform transform hover:scale-105 inline-block text-lg">
-                <svg class="mr-2 w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <a href="auto-quote.html" 
+               class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg shadow-xl transition-transform transform hover:scale-105 inline-block text-lg"
+               aria-label="Get your free insurance quote - opens in new page"
+               role="button">
+                <svg class="mr-2 w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                 </svg>
                 Get Your Free Quote Today
@@ -640,10 +726,10 @@
     </section>
 
     <!-- Services Section -->
-    <section id="services" class="py-20">
+    <section id="services" class="py-20" role="region" aria-labelledby="services-heading">
         <div class="container mx-auto px-6">
             <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Insurance Built For You</h2>
+                <h2 id="services-heading" class="text-3xl md:text-4xl font-bold text-gray-800">Insurance Built For You</h2>
                 <p class="text-gray-600 mt-2 max-w-2xl mx-auto">
                     We offer a complete range of <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="text-blue-600 hover:text-blue-700 underline font-medium">auto insurance</a>, 
                     <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="text-blue-600 hover:text-blue-700 underline font-medium">home insurance</a>, 
@@ -659,8 +745,22 @@
                             <path d="M5 11l1.5-4.5h11L19 11m-14 0h14m-14 0v8m14-8v8m-11-8v8m8-8v8M5 15h14M7.5 17.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm12 0a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM5.447 9.106A1 1 0 016.382 8.5h11.236a1 1 0 01.935.606l1.5 4.5A1 1 0 0119.118 15H4.882a1 1 0 01-.935-1.394l1.5-4.5z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold mb-2">Auto Insurance</h3>
-                    <p class="text-gray-600">From daily commuters to classic cars, we'll find the policy that fits your ride and your budget.</p>
+                    <h3 class="text-xl font-bold mb-2">
+                        <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="text-gray-800 hover:text-blue-600 transition-colors">
+                            Auto Insurance
+                        </a>
+                    </h3>
+                    <p class="text-gray-600 mb-4">From daily commuters to classic cars, we'll find the policy that fits your ride and your budget. 
+                        <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="text-blue-600 hover:text-blue-700 underline font-medium">
+                            Compare auto insurance rates
+                        </a> from top carriers.
+                    </p>
+                    <div class="text-sm text-gray-500">
+                        <strong>Coverage areas:</strong> 
+                        <a href="areas-we-serve.html#elkin" class="text-blue-600 hover:text-blue-700">Elkin</a>, 
+                        <a href="areas-we-serve.html#mount-airy" class="text-blue-600 hover:text-blue-700">Mount Airy</a>, 
+                        <a href="areas-we-serve.html#surry-county" class="text-blue-600 hover:text-blue-700">Surry County</a>
+                    </div>
                 </div>
                 <div class="bg-white rounded-lg shadow-lg p-8 text-center transform hover:-translate-y-2 transition-transform duration-300">
                     <div class="text-blue-600 mb-4">
@@ -686,18 +786,42 @@
     </section>
     
     <!-- Interactive Tools Section -->
-    <section id="tools" class="py-20 bg-white">
+    <section id="tools" class="py-20 bg-white" role="region" aria-labelledby="tools-heading">
         <div class="container mx-auto px-6">
             <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Interactive Insurance Tools</h2>
+                <h2 id="tools-heading" class="text-3xl md:text-4xl font-bold text-gray-800">Interactive Insurance Tools</h2>
                 <p class="text-gray-600 mt-2 max-w-2xl mx-auto">Not sure what you need? Use our free tools to get a better idea of your coverage needs.</p>
             </div>
             
-            <!-- Tab Navigation -->
-            <div class="flex justify-center border-b mb-8">
-                <button data-tab="auto-evaluator" class="tab-button tab-active py-2 px-6 font-semibold text-gray-600 hover:text-blue-600 focus:outline-none">Auto Evaluator</button>
-                <button data-tab="home-evaluator" class="tab-button py-2 px-6 font-semibold text-gray-600 hover:text-blue-600 focus:outline-none">Home Evaluator</button>
-                <button data-tab="insurance-quiz" class="tab-button py-2 px-6 font-semibold text-gray-600 hover:text-blue-600 focus:outline-none">Insurance Quiz</button>
+            <!-- Enhanced Tab Navigation -->
+            <div class="flex justify-center border-b mb-8" role="tablist" aria-label="Insurance evaluation tools">
+                <button 
+                    data-tab="auto-evaluator" 
+                    class="tab-button tab-active py-2 px-6 font-semibold text-gray-600 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    role="tab"
+                    aria-selected="true"
+                    aria-controls="auto-evaluator"
+                    id="tab-auto">
+                    Auto Evaluator
+                </button>
+                <button 
+                    data-tab="home-evaluator" 
+                    class="tab-button py-2 px-6 font-semibold text-gray-600 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="home-evaluator"
+                    id="tab-home">
+                    Home Evaluator
+                </button>
+                <button 
+                    data-tab="insurance-quiz" 
+                    class="tab-button py-2 px-6 font-semibold text-gray-600 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="insurance-quiz"
+                    id="tab-quiz">
+                    Insurance Quiz
+                </button>
             </div>
 
             <!-- Tab Content -->
@@ -776,7 +900,7 @@
                                 Evaluate My Auto Coverage
                             </button>
                         </form>
-                        <div id="auto-results" class="mt-6 p-4 bg-white rounded-md shadow hidden"></div>
+                        <div id="auto-results" class="mt-6 p-4 bg-white rounded-md shadow hidden" role="region" aria-live="polite" aria-label="Auto coverage evaluation results"></div>
                         </div>
                     </div>
                 </div>
@@ -804,7 +928,7 @@
                             </div>
                             <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-md font-bold hover:bg-blue-700">Evaluate My Home Coverage</button>
                         </form>
-                        <div id="home-results" class="mt-6 p-4 bg-white rounded-md shadow hidden"></div>
+                        <div id="home-results" class="mt-6 p-4 bg-white rounded-md shadow hidden" role="region" aria-live="polite" aria-label="Home coverage evaluation results"></div>
                         </div>
                     </div>
                 </div>
@@ -818,7 +942,7 @@
                             <div id="quiz-question" class="text-lg font-semibold mb-4"></div>
                             <div id="quiz-options" class="space-y-3"></div>
                         </div>
-                        <div id="quiz-results-container" class="hidden text-center">
+                        <div id="quiz-results-container" class="hidden text-center" role="region" aria-live="polite" aria-label="Quiz results">
                             <h3 class="text-2xl font-bold mb-4">Quiz Complete!</h3>
                             <p id="quiz-score" class="text-lg mb-2"></p>
                             <p id="quiz-feedback" class="text-gray-700 mb-4"></p>
@@ -840,7 +964,11 @@
                 </div>
                 <div class="md:w-1/2 text-center md:text-left">
                     <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Why Choose Bill Layne Insurance?</h2>
-                    <p class="text-gray-600 mb-6">We're not just agents; we're your neighbors. We are committed to the Elkin community and providing personalized service you can't get from a 1-800 number.</p>
+                    <p class="text-gray-600 mb-6">We're not just agents; we're your neighbors. We are committed to the 
+                        <a href="areas-we-serve.html" class="text-blue-600 hover:text-blue-700 underline font-medium">Elkin community</a> 
+                        and providing personalized service you can't get from a 1-800 number. Learn more about our 
+                        <a href="blog.html" class="text-blue-600 hover:text-blue-700 underline">insurance tips and insights</a>.
+                    </p>
                     <ul class="space-y-4 text-left max-w-lg mx-auto md:mx-0">
                         <li class="flex items-start">
                             <svg class="text-blue-600 mt-1 mr-3 w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -1264,6 +1392,64 @@
     </script>
     
     <!-- Mobile Menu Handler Script -->
+    
+    <!-- Service Worker Registration -->
+    <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+          .then(function(registration) {
+            console.log('SW registered: ', registration);
+          })
+          .catch(function(registrationError) {
+            console.log('SW registration failed: ', registrationError);
+          });
+      });
+    }
+    </script>
+    
+    <!-- Core Web Vitals Monitoring -->
+    <script>
+    // Monitor Core Web Vitals
+    function getCLS(onPerfEntry) {
+      if (typeof PerformanceObserver !== 'undefined') {
+        const observer = new PerformanceObserver((entryList) => {
+          for (const entry of entryList.getEntries()) {
+            if (entry.hadRecentInput) continue;
+            onPerfEntry(entry.value);
+          }
+        });
+        observer.observe({type: 'layout-shift', buffered: true});
+      }
+    }
+
+    function getFID(onPerfEntry) {
+      if (typeof PerformanceObserver !== 'undefined') {
+        const observer = new PerformanceObserver((entryList) => {
+          for (const entry of entryList.getEntries()) {
+            onPerfEntry(entry.processingStart - entry.startTime);
+          }
+        });
+        observer.observe({type: 'first-input', buffered: true});
+      }
+    }
+
+    function getLCP(onPerfEntry) {
+      if (typeof PerformanceObserver !== 'undefined') {
+        const observer = new PerformanceObserver((entryList) => {
+          const entries = entryList.getEntries();
+          const lastEntry = entries[entries.length - 1];
+          onPerfEntry(lastEntry.startTime);
+        });
+        observer.observe({type: 'largest-contentful-paint', buffered: true});
+      }
+    }
+
+    // Log metrics (remove in production or send to analytics)
+    getCLS(console.log.bind(console, 'CLS:'));
+    getFID(console.log.bind(console, 'FID:'));
+    getLCP(console.log.bind(console, 'LCP:'));
+    </script>
 
 </body>
 </html>
