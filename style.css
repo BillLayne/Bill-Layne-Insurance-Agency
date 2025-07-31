@@ -3259,50 +3259,55 @@ a:focus,
     box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4) !important;
 }
 
-/* FIXED: Mobile Sticky Call Button */
+/* FIXED: Mobile Sticky Call Button Container */
 .mobile-sticky-call {
     position: fixed !important;
     bottom: 20px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
     z-index: 999 !important;
-    background: linear-gradient(135deg, #22c55e, #16a34a) !important;
-    color: #ffffff !important;
-    padding: 12px 24px !important;
-    border-radius: 25px !important;
     display: none !important;
+    /* Prevent any transform issues */
+    -webkit-backface-visibility: hidden !important;
+    backface-visibility: hidden !important;
+    -webkit-transform: translateX(-50%) translateZ(0) !important;
+    transform: translateX(-50%) translateZ(0) !important;
+}
+
+/* Style the inner link */
+.mobile-sticky-call a {
+    display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+    color: #ffffff !important;
+    padding: 14px 24px !important;
+    border-radius: 50px !important;
     text-decoration: none !important;
     box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4) !important;
     font-weight: 600 !important;
     font-size: 16px !important;
-    line-height: 1.2 !important;
+    line-height: 1 !important;
     white-space: nowrap !important;
-    min-height: 48px !important;
-    min-width: 200px !important;
-    width: auto !important;
+    height: 48px !important;
+    width: 220px !important;
     border: none !important;
     box-sizing: border-box !important;
-    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
-    /* Prevent layout shifts */
-    -webkit-backface-visibility: hidden !important;
-    backface-visibility: hidden !important;
-    will-change: transform !important;
+    transition: box-shadow 0.3s ease, filter 0.3s ease !important;
 }
 
-.mobile-sticky-call:hover,
-.mobile-sticky-call:active,
-.mobile-sticky-call:focus {
-    transform: translateX(-50%) scale(1.05) !important;
+.mobile-sticky-call a:hover,
+.mobile-sticky-call a:active,
+.mobile-sticky-call a:focus {
     box-shadow: 0 6px 30px rgba(34, 197, 94, 0.5) !important;
+    filter: brightness(1.1) !important;
     color: #ffffff !important;
     text-decoration: none !important;
 }
 
 /* Ensure inner span doesn't affect layout */
 .mobile-sticky-call span {
-    display: inline-flex !important;
+    display: flex !important;
     align-items: center !important;
     gap: 8px !important;
     color: #ffffff !important;
