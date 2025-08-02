@@ -7,7 +7,40 @@
     
     <!-- Include your existing stylesheets -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2024.12.01">
+    
+    <!-- Development Cache Busting - Only affects localhost -->
+    <script>
+    (function() {
+      // Only run on development environments
+      if (location.hostname === 'localhost' || 
+          location.hostname === '127.0.0.1' || 
+          location.hostname.includes('.local') ||
+          location.search.includes('dev=true')) {
+        
+        const devVersion = Date.now();
+        console.log('🔧 Development mode: Cache busting enabled');
+        
+        // Update CSS files
+        document.querySelectorAll('link[href*=".css"]').forEach(link => {
+          const href = link.getAttribute('href');
+          if (href && !href.includes('googleapis.com') && !href.includes('dev=')) {
+            const separator = href.includes('?') ? '&' : '?';
+            link.setAttribute('href', href + separator + 'dev=' + devVersion);
+          }
+        });
+        
+        // Update JS files
+        document.querySelectorAll('script[src*=".js"]').forEach(script => {
+          const src = script.getAttribute('src');
+          if (src && !src.includes('dev=') && !src.includes('cdn')) {
+            const separator = src.includes('?') ? '&' : '?';
+            script.setAttribute('src', src + separator + 'dev=' + devVersion);
+          }
+        });
+      }
+    })();
+    </script>
     
     <!-- Additional styles for the enhanced quote section -->
     <style>

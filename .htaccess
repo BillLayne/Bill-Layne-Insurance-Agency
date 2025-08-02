@@ -1,71 +1,63 @@
-# Security Headers for Bill Layne Insurance Agency
-# Rename this file to .htaccess and place in your web root
+# Bill Layne Insurance - Optimized Caching Configuration
 
-# Prevent clickjacking attacks
-Header always set X-Frame-Options "SAMEORIGIN"
-
-# Prevent MIME type sniffing
-Header always set X-Content-Type-Options "nosniff"
-
-# Enable XSS filter in browsers
-Header always set X-XSS-Protection "1; mode=block"
-
-# Control referrer information
-Header always set Referrer-Policy "strict-origin-when-cross-origin"
-
-# Content Security Policy
-# Adjust these directives based on your specific needs
-Header always set Content-Security-Policy "default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://fonts.googleapis.com https://cdn.emailjs.com https://www.google-analytics.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https: data:; connect-src 'self' https://api.emailjs.com https://formspree.io;"
-
-# Force HTTPS
-Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
-
-# Compression
-<IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
-</IfModule>
-
-# Browser Caching
 <IfModule mod_expires.c>
-    ExpiresActive On
+    ExpiresActive on
     
-    # Images
-    ExpiresByType image/jpeg "access plus 1 year"
-    ExpiresByType image/gif "access plus 1 year"
-    ExpiresByType image/png "access plus 1 year"
-    ExpiresByType image/webp "access plus 1 year"
-    ExpiresByType image/svg+xml "access plus 1 year"
-    ExpiresByType image/x-icon "access plus 1 year"
+    # Versioned assets - long cache for performance
+    <FilesMatch "\.(css|js|png|jpg|jpeg|gif|svg|woff2?|ttf|eot).*\?v=">
+        ExpiresDefault "access plus 1 year"
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
     
-    # CSS and JavaScript
-    ExpiresByType text/css "access plus 1 month"
-    ExpiresByType text/javascript "access plus 1 month"
-    ExpiresByType application/javascript "access plus 1 month"
+    # HTML files - short cache for updates
+    ExpiresByType text/html "access plus 1 hour"
+    Header set Cache-Control "public, max-age=3600, must-revalidate" "expr=%{CONTENT_TYPE} == 'text/html'"
     
-    # Others
-    ExpiresByType application/pdf "access plus 1 month"
-    ExpiresByType application/x-shockwave-flash "access plus 1 month"
+    # Unversioned CSS/JS - medium cache
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+    
+    # Images - long cache
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/jpg "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+    
+    # Fonts - long cache
+    ExpiresByType application/font-woff "access plus 1 year"
+    ExpiresByType application/font-woff2 "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
 </IfModule>
 
-# Remove ETags
-FileETag None
-
-# Prevent directory browsing
-Options -Indexes
-
-# Block access to hidden files and directories
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteCond %{SCRIPT_FILENAME} -d [OR]
-    RewriteCond %{SCRIPT_FILENAME} -f
-    RewriteRule "(^|/)\." - [F]
+<IfModule mod_headers.c>
+    # Security headers
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+    
+    # Development environment detection
+    SetEnvIf Host "localhost" development
+    SetEnvIf Host "127.0.0.1" development
+    SetEnvIf Host "\.local$" development
+    
+    # Disable caching in development
+    Header always set Cache-Control "no-cache, no-store, must-revalidate" env=development
+    Header always set Pragma "no-cache" env=development
+    Header always set Expires "0" env=development
 </IfModule>
 
-# Custom error pages (create these files)
-ErrorDocument 404 /404.html
-
-# Protect sensitive files
-<FilesMatch "^\.htaccess|\.htpasswd|\.git|composer\.(json|lock)$">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
+# Compression for better performance
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+</IfModule>
