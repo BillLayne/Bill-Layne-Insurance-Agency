@@ -401,6 +401,129 @@
             background: #555;
         }
         
+        /* Trust Signals - Mobile First Design */
+        .trust-signals-wrapper {
+            width: 100%;
+            padding: 0 1rem;
+            margin-top: 2rem;
+        }
+
+        .trust-signals-container {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 24px;
+            padding: 1.25rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .trust-signals-inner {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .trust-metric {
+            text-align: center;
+            padding: 0.5rem;
+        }
+
+        .trust-number {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.2;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .trust-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 500;
+            margin-top: 0.25rem;
+            line-height: 1.2;
+        }
+
+        /* Hide dividers on mobile */
+        .trust-divider {
+            display: none;
+        }
+
+        /* Tablet and up (768px+) */
+        @media (min-width: 768px) {
+            .trust-signals-container {
+                padding: 1.5rem 2.5rem;
+                border-radius: 60px;
+            }
+            
+            .trust-signals-inner {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 2.5rem;
+            }
+            
+            .trust-metric {
+                padding: 0;
+            }
+            
+            .trust-number {
+                font-size: 2.25rem;
+            }
+            
+            .trust-label {
+                font-size: 0.875rem;
+                margin-top: 0.375rem;
+            }
+            
+            /* Show dividers on desktop */
+            .trust-divider {
+                display: block;
+                width: 1px;
+                height: 45px;
+                background: linear-gradient(
+                    to bottom,
+                    transparent,
+                    rgba(255, 255, 255, 0.3) 20%,
+                    rgba(255, 255, 255, 0.3) 80%,
+                    transparent
+                );
+            }
+        }
+
+        /* Large screens (1024px+) */
+        @media (min-width: 1024px) {
+            .trust-signals-inner {
+                gap: 3rem;
+            }
+            
+            .trust-number {
+                font-size: 2.5rem;
+            }
+            
+            .trust-label {
+                font-size: 0.938rem;
+            }
+        }
+
+        /* Extra small phones */
+        @media (max-width: 380px) {
+            .trust-signals-container {
+                padding: 1rem;
+            }
+            
+            .trust-number {
+                font-size: 1.5rem;
+            }
+            
+            .trust-label {
+                font-size: 0.688rem;
+            }
+        }
+        
     </style>
     
     <!-- Defer non-critical CSS -->
@@ -715,14 +838,14 @@
     <!-- Main Content -->
     <main id="main-content">
         <!-- Hero Section -->
-        <section class="hero-bg text-white pt-32 pb-32 md:pb-40">
+        <section class="hero-bg text-white pt-32 pb-24 md:pb-32 relative">
         <div class="container mx-auto px-6 text-center">
             <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4">Protecting Our NC Neighbors, On the Road and At Home</h1>
             <p class="text-lg md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto">
                 Protecting our neighbors with tailored auto, home, and business insurance. We find the best coverage at the right price, so you can have peace of mind.
             </p>
             <a href="auto-quote.html" 
-               class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg shadow-xl transition-transform transform hover:scale-105 inline-block text-lg"
+               class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg shadow-xl transition-transform transform hover:scale-105 inline-block text-lg mb-12"
                aria-label="Get your free insurance quote - opens in new page"
                role="button">
                 <svg class="mr-2 w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -730,6 +853,53 @@
                 </svg>
                 Get Your Free Quote Today
             </a>
+            
+            <!-- Trust Signals Bar - Unified Container -->
+            <div class="trust-signals-wrapper" itemscope itemtype="https://schema.org/InsuranceAgency">
+                <!-- Hidden microdata for enhanced rich snippets -->
+                <meta itemprop="name" content="Bill Layne Insurance Agency">
+                <meta itemprop="telephone" content="+13368351993">
+                <meta itemprop="foundingDate" content="2009">
+                
+                <div class="trust-signals-container">
+                    <div class="trust-signals-inner">
+                        <!-- Years in Business -->
+                        <div class="trust-metric">
+                            <div class="trust-number">15+</div>
+                            <div class="trust-label">Years Serving NC</div>
+                        </div>
+                        
+                        <div class="trust-divider" aria-hidden="true"></div>
+                        
+                        <!-- Customer Count -->
+                        <div class="trust-metric">
+                            <div class="trust-number">1,000+</div>
+                            <div class="trust-label">Happy Customers</div>
+                        </div>
+                        
+                        <div class="trust-divider" aria-hidden="true"></div>
+                        
+                        <!-- Rating -->
+                        <div class="trust-metric" itemprop="aggregateRating" itemscope itemtype="https://schema.org/AggregateRating">
+                            <div class="trust-number">
+                                <span itemprop="ratingValue">4.8</span>★
+                            </div>
+                            <div class="trust-label">
+                                <span itemprop="reviewCount">51</span> Google Reviews
+                            </div>
+                            <meta itemprop="bestRating" content="5">
+                        </div>
+                        
+                        <div class="trust-divider" aria-hidden="true"></div>
+                        
+                        <!-- Carriers -->
+                        <div class="trust-metric">
+                            <div class="trust-number">9</div>
+                            <div class="trust-label">Top Carriers</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -739,7 +909,7 @@
             <h3 class="text-center text-gray-700 text-sm font-bold uppercase tracking-wider mb-8">Proudly Partnered With America's Top Insurers</h3>
             
             <div class="flex flex-wrap justify-center items-center gap-4 sm:gap-6">
-                <!-- Carrier Logos with Mobile-Optimized Container Boxes -->
+                <!-- All Carrier Logos -->
                 <a href="/carriers/nationwide-north-carolina.html" class="group">
                     <div class="w-[120px] h-[70px] sm:w-[140px] sm:h-[80px] bg-white rounded-lg shadow-sm flex items-center justify-center p-2 sm:p-3 group-hover:shadow-md transition-shadow border border-gray-200">
                         <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Nationwide%20Logo%20(1).png?raw=true" alt="Nationwide Insurance logo" class="max-h-full max-w-full object-contain" loading="lazy" width="120" height="60">
@@ -778,6 +948,7 @@
             </div>
         </div>
     </section>
+
 
     <!-- Services Section -->
     <section id="services" class="py-20" role="region" aria-labelledby="services-heading">
