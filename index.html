@@ -18,14 +18,38 @@
     <meta property="og:locale" content="en_US">
     <meta name="twitter:card" content="summary_large_image">
     
-    <!-- Preconnect and Preload for Performance -->
+    <!-- Resource Hints for Performance -->
+    <!-- DNS Prefetch for external resources -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//github.com">
+    <link rel="dns-prefetch" href="//cdn.tailwindcss.com">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+    
+    <!-- Preconnect for critical resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" as="style">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="preload" href="https://github.com/BillLayne/bill-layne-images/blob/main/img/elkin-nc-foothills.jpg?raw=true" as="image">
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Critical inline CSS for above-the-fold content -->
+    <style>
+        /* Critical CSS to prevent layout shift */
+        body { margin: 0; }
+        header { position: fixed; top: 0; width: 100%; background: white; z-index: 50; min-height: 80px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+        .hidden { display: none; }
+        .bg-gray-50 { background-color: #f9fafb; }
+        .text-gray-800 { color: #1f2937; }
+        .bg-white { background-color: #ffffff; }
+        .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+    </style>
+    
+    <!-- Tailwind CSS (deferred) -->
+    <script src="https://cdn.tailwindcss.com" defer></script>
 
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -33,7 +57,7 @@
     <style>
         /* Custom styles for animations and specific elements */
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             scroll-behavior: smooth;
         }
         @keyframes fadeInUp {
@@ -69,6 +93,13 @@
             border-radius: 0.5rem;
             text-decoration: none;
         }
+        
+        /* Reserve space for dynamic content to prevent CLS */
+        .hero-section { min-height: 500px; }
+        .testimonial-section { min-height: 300px; }
+        .insurance-cards { min-height: 400px; }
+        .partner-logos { min-height: 100px; }
+        header { min-height: 80px; }
     </style>
 
     <!-- Enhanced Local SEO Schema Markup (Preserved) -->
@@ -135,6 +166,27 @@
       ]
     }
     </script>
+    
+    <!-- Additional Enhanced Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "InsuranceAgency",
+      "name": "Bill Layne Insurance Agency",
+      "description": "Independent insurance agency serving Elkin, Wilkes County, Surry County, and Yadkin County NC",
+      "url": "https://billlayneinsurance.com",
+      "telephone": "336-835-1993",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "1283 N Bridge St",
+        "addressLocality": "Elkin",
+        "addressRegion": "NC",
+        "postalCode": "28621"
+      },
+      "openingHours": "Mo-Fr 09:00-17:00",
+      "image": "https://i.imgur.com/cBAgeX8.png"
+    }
+    </script>
 </head>
 <body class="bg-gray-50 text-gray-800">
     <a href="#main-content" class="skip-link sr-only">Skip to main content</a>
@@ -151,7 +203,7 @@
                     
                     <!-- Services Dropdown -->
                     <div class="relative group">
-                        <button class="nav-link px-3 py-2 rounded-md flex items-center text-gray-700 hover:text-blue-600">
+                        <button class="nav-link px-3 py-2 rounded-md flex items-center text-gray-700 hover:text-blue-600" aria-label="Services menu" aria-expanded="false">
                             Services 
                             <svg class="ml-2 w-3 h-3 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
@@ -167,7 +219,7 @@
 
                     <!-- Areas We Serve Dropdown -->
                     <div class="relative group">
-                        <button class="nav-link px-3 py-2 rounded-md flex items-center text-gray-700 hover:text-blue-600">
+                        <button class="nav-link px-3 py-2 rounded-md flex items-center text-gray-700 hover:text-blue-600" aria-label="Areas We Serve menu" aria-expanded="false">
                             Areas We Serve 
                             <svg class="ml-2 w-3 h-3 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
@@ -190,7 +242,7 @@
                 </div>
                 
                 <!-- Mobile Menu Button -->
-                <button id="mobile-menu-button" class="md:hidden text-gray-600"><i class="fas fa-bars text-2xl"></i></button>
+                <button id="mobile-menu-button" class="md:hidden text-gray-600" aria-label="Open navigation menu"><i class="fas fa-bars text-2xl"></i></button>
             </div>
         </div>
         <!-- Mobile Menu -->
@@ -213,7 +265,7 @@
         <!-- Hero Section -->
         <section class="relative bg-gray-800 text-white pt-32 pb-20 md:pt-40 md:pb-32">
             <div class="absolute inset-0">
-                <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Car%20Insurance.png?raw=true" alt="Foothills of Elkin, North Carolina" class="w-full h-full object-cover opacity-30" fetchpriority="high">
+                <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Car%20Insurance.png?raw=true" alt="Foothills of Elkin, North Carolina" width="1920" height="1080" class="w-full h-full object-cover opacity-30" fetchpriority="high">
             </div>
             <div class="relative container mx-auto px-4 text-center">
                 <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4 animate-fadeInUp">Protecting Our NC Neighbors</h1>
@@ -261,34 +313,34 @@
                     <!-- Carrier Logos with Mobile-Optimized Container Boxes -->
                     <a href="/carriers/nationwide-north-carolina.html" class="group">
                         <div class="w-[140px] h-[80px] bg-white rounded-lg shadow-sm flex items-center justify-center p-3 group-hover:shadow-md transition-shadow border border-gray-200">
-                            <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Nationwide%20Logo%20(1).png?raw=true" alt="Nationwide" class="max-h-full max-w-full object-contain">
+                            <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Nationwide%20Logo%20(1).png?raw=true" alt="Nationwide" width="150" height="60" class="max-h-full max-w-full object-contain" loading="lazy">
                         </div>
                     </a>
                     <a href="progressive-nc-landing.html" class="group">
                         <div class="w-[140px] h-[80px] bg-white rounded-lg shadow-sm flex items-center justify-center p-3 group-hover:shadow-md transition-shadow border border-gray-200 relative">
-                            <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Progressive%20Logo.png?raw=true" alt="Progressive" class="max-h-full max-w-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300">
+                            <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Progressive%20Logo.png?raw=true" alt="Progressive" width="150" height="60" class="max-h-full max-w-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300" loading="lazy">
                             <p class="absolute bottom-1 text-xs text-blue-600 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">Learn More →</p>
                         </div>
                     </a>
                     <a href="/carriers/national_general_nc_landing.html" class="group">
                         <div class="w-[140px] h-[80px] bg-white rounded-lg shadow-sm flex items-center justify-center p-3 group-hover:shadow-md transition-shadow border border-gray-200">
-                            <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/National%20General%20Logo.png?raw=true" alt="National General" class="max-h-full max-w-full object-contain">
+                            <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/National%20General%20Logo.png?raw=true" alt="National General" width="150" height="60" class="max-h-full max-w-full object-contain" loading="lazy">
                         </div>
                     </a>
                     <a href="travelers-nc-landing.html" class="group">
                         <div class="w-[140px] h-[80px] bg-white rounded-lg shadow-sm flex items-center justify-center p-3 group-hover:shadow-md transition-shadow border border-gray-200 relative">
-                            <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Travelers%20Logo.png?raw=true" alt="Travelers" class="max-h-full max-w-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300">
+                            <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Travelers%20Logo.png?raw=true" alt="Travelers" width="150" height="60" class="max-h-full max-w-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300" loading="lazy">
                             <p class="absolute bottom-1 text-xs text-blue-600 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">Learn More →</p>
                         </div>
                     </a>
-                    <a href="/carriers/" class="group">
+                    <a href="/alamance-farmers.html" class="group">
                         <div class="w-[140px] h-[80px] bg-white rounded-lg shadow-sm flex items-center justify-center p-3 group-hover:shadow-md transition-shadow border border-gray-200">
-                            <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Alamance%20Logo.png?raw=true" alt="Alamance" class="max-h-full max-w-full object-contain">
+                            <img src="https://imgur.com/CNFRCZc.png" alt="Alamance Farmers" width="150" height="60" class="max-h-full max-w-full object-contain" loading="lazy">
                         </div>
                     </a>
-                    <a href="/carriers/" class="group">
+                    <a href="/nc-grange.html" class="group">
                         <div class="w-[140px] h-[80px] bg-white rounded-lg shadow-sm flex items-center justify-center p-3 group-hover:shadow-md transition-shadow border border-gray-200">
-                            <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/NC%20Grange%20Logo.png?raw=true" alt="NC Grange" class="max-h-full max-w-full object-contain">
+                            <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/NC%20Grange%20Logo.png?raw=true" alt="NC Grange" width="150" height="60" class="max-h-full max-w-full object-contain" loading="lazy">
                         </div>
                     </a>
                 </div>
@@ -328,7 +380,7 @@
             <div class="container mx-auto px-4">
                 <div class="flex flex-col md:flex-row items-center gap-12">
                     <div class="md:w-1/2">
-                        <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/DownTown%20Elkin.png?raw=true" alt="Downtown Elkin NC" class="rounded-lg shadow-xl w-full h-auto" loading="lazy">
+                        <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/DownTown%20Elkin.png?raw=true" alt="Downtown Elkin NC" width="600" height="400" class="rounded-lg shadow-xl w-full h-auto" loading="lazy">
                     </div>
                     <div class="md:w-1/2 text-center md:text-left">
                         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Your Neighbor, Your Agent</h2>
@@ -484,7 +536,7 @@
                                     <option value="no">No</option>
                                 </select>
                             </div>
-                            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-md font-bold hover:bg-blue-700">Evaluate My Home Coverage</button>
+                            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-md font-bold hover:bg-blue-700" aria-label="Submit form to evaluate home coverage">Evaluate My Home Coverage</button>
                         </form>
                         <div id="home-results" class="mt-6 p-4 bg-white rounded-md shadow hidden" role="region" aria-live="polite" aria-label="Home coverage evaluation results"></div>
                         </div>
@@ -504,7 +556,7 @@
                             <h3 class="text-2xl font-bold mb-4">Quiz Complete!</h3>
                             <p id="quiz-score" class="text-lg mb-2"></p>
                             <p id="quiz-feedback" class="text-gray-700 mb-4"></p>
-                            <button id="quiz-restart" class="bg-blue-600 text-white py-2 px-4 rounded-md font-bold hover:bg-blue-700">Try Again</button>
+                            <button id="quiz-restart" class="bg-blue-600 text-white py-2 px-4 rounded-md font-bold hover:bg-blue-700" aria-label="Restart insurance quiz">Try Again</button>
                         </div>
                         </div>
                     </div>
@@ -598,8 +650,8 @@
         <i class="fas fa-phone-alt text-2xl"></i>
     </a>
 
-    <!-- EmailJS SDK -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <!-- EmailJS SDK (deferred) -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" defer></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -641,9 +693,17 @@
             });
 
             // --- EmailJS Form Submission ---
-            (function() {
+            // Wait for EmailJS to load before initializing
+            if (typeof emailjs !== 'undefined') {
                 emailjs.init("Av6wKxL6HR-FIMtgm"); // Your Public Key
-            })();
+            } else {
+                // If emailjs is not loaded yet, wait for it
+                window.addEventListener('load', function() {
+                    if (typeof emailjs !== 'undefined') {
+                        emailjs.init("Av6wKxL6HR-FIMtgm");
+                    }
+                });
+            }
 
             const contactForm = document.getElementById('email-form');
             contactForm.addEventListener('submit', function(e) {
