@@ -1704,12 +1704,13 @@
             // ==================================================================
             // UNIFIED MOBILE MENU IMPLEMENTATION
             // ==================================================================
-            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-            const mobileMenu = document.querySelector('.navbar-menu');
-            const mobileMenuClose = document.getElementById('mobileMenuClose');
-            const body = document.body;
-            
-            if (mobileMenuToggle && mobileMenu) {
+            (function() {
+                const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+                const mobileMenu = document.querySelector('.navbar-menu');
+                const mobileMenuClose = document.getElementById('mobileMenuClose');
+                const body = document.body;
+                
+                if (mobileMenuToggle && mobileMenu) {
                 // Toggle menu functionality
                 mobileMenuToggle.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -1765,6 +1766,7 @@
                     }
                 });
             }
+            })(); // End of mobile menu IIFE
 
             // --- Fix dropdown menu hover issues ---
             const dropdowns = document.querySelectorAll('.group');
@@ -1826,12 +1828,19 @@
                     const targetId = this.getAttribute('href');
                     const targetElement = document.querySelector(targetId);
                     if (targetElement) {
-                        // Close mobile menu if open
-                        if (!mobileMenu.classList.contains('hidden')) {
-                            mobileMenu.classList.add('hidden');
+                        // Close mobile menu if open (using unified menu)
+                        const unifiedMobileMenu = document.querySelector('.navbar-menu');
+                        const unifiedMenuToggle = document.getElementById('mobileMenuToggle');
+                        if (unifiedMobileMenu && unifiedMobileMenu.classList.contains('active')) {
+                            unifiedMobileMenu.classList.remove('active');
+                            if (unifiedMenuToggle) {
+                                unifiedMenuToggle.classList.remove('active');
+                            }
+                            document.body.classList.remove('menu-open');
                         }
                         // Scroll smoothly
-                        const headerOffset = mainHeader.offsetHeight;
+                        const mainHeader = document.getElementById('main-header');
+                        const headerOffset = mainHeader ? mainHeader.offsetHeight : 80;
                         const elementPosition = targetElement.getBoundingClientRect().top;
                         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
                         window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
@@ -1884,55 +1893,55 @@
             }
 
             // --- Tabbed Tools Functionality ---
-        const tabButtons = document.querySelectorAll('.tab-button');
-        const tabContents = document.querySelectorAll('.tab-content');
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
 
-        tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const tabId = button.dataset.tab;
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.dataset.tab;
 
-                // Update button states
-                tabButtons.forEach(btn => {
-                    btn.classList.remove('tab-active');
-                    btn.setAttribute('aria-selected', 'false');
-                });
-                button.classList.add('tab-active');
-                button.setAttribute('aria-selected', 'true');
+                    // Update button states
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('tab-active');
+                        btn.setAttribute('aria-selected', 'false');
+                    });
+                    button.classList.add('tab-active');
+                    button.setAttribute('aria-selected', 'true');
 
-                // Update content visibility
-                tabContents.forEach(content => {
-                    content.classList.remove('tab-content-active');
-                    content.style.display = 'none';
-                });
-                
-                const selectedContent = document.getElementById(tabId);
-                if (selectedContent) {
-                    selectedContent.classList.add('tab-content-active');
-                    selectedContent.style.display = 'block';
+                    // Update content visibility
+                    tabContents.forEach(content => {
+                        content.classList.remove('tab-content-active');
+                        content.style.display = 'none';
+                    });
                     
-                    // Initialize quiz when its tab is clicked
-                    if (tabId === 'insurance-quiz') {
-                        initializeQuiz();
+                    const selectedContent = document.getElementById(tabId);
+                    if (selectedContent) {
+                        selectedContent.classList.add('tab-content-active');
+                        selectedContent.style.display = 'block';
+                        
+                        // Initialize quiz when its tab is clicked
+                        if (tabId === 'insurance-quiz') {
+                            initializeQuiz();
+                        }
                     }
-                }
+                });
             });
-        });
-        
-        // Initialize first tab on page load
-        const firstTab = document.querySelector('.tab-button.tab-active');
-        if (firstTab) {
-            const firstTabId = firstTab.dataset.tab;
-            const firstContent = document.getElementById(firstTabId);
-            if (firstContent) {
-                firstContent.style.display = 'block';
+            
+            // Initialize first tab on page load
+            const firstTab = document.querySelector('.tab-button.tab-active');
+            if (firstTab) {
+                const firstTabId = firstTab.dataset.tab;
+                const firstContent = document.getElementById(firstTabId);
+                if (firstContent) {
+                    firstContent.style.display = 'block';
+                }
             }
-        }
 
-        // --- Auto Coverage Evaluator ---
-        const autoForm = document.getElementById('auto-coverage-form');
-        const autoResults = document.getElementById('auto-results');
-        if(autoForm) {
-            autoForm.addEventListener('submit', e => {
+            // --- Auto Coverage Evaluator ---
+            const autoForm = document.getElementById('auto-coverage-form');
+            const autoResults = document.getElementById('auto-results');
+            if(autoForm) {
+                autoForm.addEventListener('submit', e => {
                 e.preventDefault();
                 const vehicleValue = parseInt(document.getElementById('vehicle-value').value) || 0;
                 const dailyCommute = parseInt(document.getElementById('daily-commute').value) || 0;
@@ -1954,16 +1963,16 @@
                 recommendations += '<p class="mt-4 text-sm">Call us at <a href="tel:3368351993" class="text-blue-600 font-bold">(336) 835-1993</a> for a personalized quote!</p>';
 
                 autoResults.innerHTML = recommendations;
-                autoResults.classList.remove('hidden');
-                autoResults.style.display = 'block';
-            });
-        }
+                    autoResults.classList.remove('hidden');
+                    autoResults.style.display = 'block';
+                });
+            }
 
-        // --- Home Coverage Evaluator ---
-        const homeForm = document.getElementById('home-coverage-form');
-        const homeResults = document.getElementById('home-results');
-        if(homeForm) {
-            homeForm.addEventListener('submit', e => {
+            // --- Home Coverage Evaluator ---
+            const homeForm = document.getElementById('home-coverage-form');
+            const homeResults = document.getElementById('home-results');
+            if(homeForm) {
+                homeForm.addEventListener('submit', e => {
                 e.preventDefault();
                 const homeValue = parseInt(document.getElementById('home-value').value) || 0;
                 const personalProperty = parseInt(document.getElementById('personal-property').value) || 0;
@@ -1985,30 +1994,30 @@
                 recommendations += '<p class="mt-4 text-sm">Call us at <a href="tel:3368351993" class="text-blue-600 font-bold">(336) 835-1993</a> for a personalized quote!</p>';
 
                 homeResults.innerHTML = recommendations;
-                homeResults.classList.remove('hidden');
-                homeResults.style.display = 'block';
-            });
-        }
+                    homeResults.classList.remove('hidden');
+                    homeResults.style.display = 'block';
+                });
+            }
 
-        // --- Insurance Quiz ---
-        const quizData = [
+            // --- Insurance Quiz ---
+            const quizData = [
             { question: "What does 'deductible' mean in an insurance policy?", options: ["The amount the insurance company deducts from your bill", "The amount you pay before insurance pays", "A discount on your premium"], answer: "The amount you pay before insurance pays" },
             { question: "Which coverage is typically required by law for drivers?", options: ["Collision", "Liability", "Comprehensive"], answer: "Liability" },
             { question: "What does a standard homeowners policy typically NOT cover?", options: ["Fire damage", "Theft", "Floods"], answer: "Floods" }
-        ];
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let quizInitialized = false;
+            ];
+            let currentQuestionIndex = 0;
+            let score = 0;
+            let quizInitialized = false;
 
-        const quizContainer = document.getElementById('quiz-container');
-        const quizQuestionEl = document.getElementById('quiz-question');
-        const quizOptionsEl = document.getElementById('quiz-options');
-        const quizResultsContainer = document.getElementById('quiz-results-container');
-        const quizScoreEl = document.getElementById('quiz-score');
-        const quizFeedbackEl = document.getElementById('quiz-feedback');
-        const quizRestartBtn = document.getElementById('quiz-restart');
+            const quizContainer = document.getElementById('quiz-container');
+            const quizQuestionEl = document.getElementById('quiz-question');
+            const quizOptionsEl = document.getElementById('quiz-options');
+            const quizResultsContainer = document.getElementById('quiz-results-container');
+            const quizScoreEl = document.getElementById('quiz-score');
+            const quizFeedbackEl = document.getElementById('quiz-feedback');
+            const quizRestartBtn = document.getElementById('quiz-restart');
 
-        function initializeQuiz() {
+            function initializeQuiz() {
             if (quizContainer) {
                 currentQuestionIndex = 0;
                 score = 0;
@@ -2019,7 +2028,7 @@
             }
         }
 
-        function loadQuiz() {
+            function loadQuiz() {
             if(!quizContainer) return;
             if (currentQuestionIndex < quizData.length) {
                 const currentQuestion = quizData[currentQuestionIndex];
@@ -2037,7 +2046,7 @@
             }
         }
 
-        function selectAnswer(selectedOption) {
+            function selectAnswer(selectedOption) {
             if (selectedOption === quizData[currentQuestionIndex].answer) {
                 score++;
             }
@@ -2045,7 +2054,7 @@
             loadQuiz();
         }
 
-        function showQuizResults() {
+            function showQuizResults() {
             quizContainer.classList.add('hidden');
             quizResultsContainer.classList.remove('hidden');
             quizScoreEl.textContent = `You scored ${score} out of ${quizData.length}!`;
@@ -2053,17 +2062,17 @@
             if (score < quizData.length) feedback = "Great job! Insurance can be tricky, but you're on your way.";
             if (score < 2) feedback = "A good start! We're here to help you understand all the details.";
             quizFeedbackEl.textContent = feedback;
-        }
-        
-        if(quizRestartBtn) {
-            quizRestartBtn.addEventListener('click', () => {
-                currentQuestionIndex = 0;
-                score = 0;
-                quizResultsContainer.classList.add('hidden');
-                quizContainer.classList.remove('hidden');
-                loadQuiz();
-            });
-        }
+            }
+            
+            if(quizRestartBtn) {
+                quizRestartBtn.addEventListener('click', () => {
+                    currentQuestionIndex = 0;
+                    score = 0;
+                    quizResultsContainer.classList.add('hidden');
+                    quizContainer.classList.remove('hidden');
+                    loadQuiz();
+                });
+            }
         });
     </script>
     
