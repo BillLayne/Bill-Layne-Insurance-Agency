@@ -13,6 +13,26 @@
     <meta name="language" content="English">
     <meta name="author" content="Bill Layne Insurance">
     
+    <!-- Cache Control for HTML (reasonable caching) -->
+    <meta http-equiv="Cache-Control" content="max-age=3600, must-revalidate">
+    
+    <!-- Version Definition -->
+    <script>
+        // SITE VERSION - Update this when making changes
+        window.SITE_VERSION = '2024.12.13.1';
+        
+        // Check if in development mode
+        const isDevelopment = window.location.hostname === 'localhost' || 
+                             window.location.hostname === '127.0.0.1' ||
+                             window.location.search.includes('dev=true');
+        
+        // Auto-versioning for development only
+        if (isDevelopment) {
+            window.SITE_VERSION = Date.now();
+            console.log('Development mode: Cache disabled');
+        }
+    </script>
+    
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://billlayne.github.io/Bill-Layne-Insurance.gitbhub.io/insurance-quiz.html">
@@ -37,8 +57,12 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     
+    <!-- Preload Resources -->
+    <link rel="preload" href="style.css?v=2024.12.13.1" as="style">
+    <link rel="preload" href="app.js?v=2024.12.13.1" as="script">
+    
     <!-- CSS -->
-    <link rel="stylesheet" href="style.css?v=2024.12.01">
+    <link rel="stylesheet" href="style.css?v=2024.12.13.1">
     <link rel="stylesheet" href="insurance-quiz.css?v=2024.12.01">
     
     <!-- Development Cache Busting - Only affects localhost -->
@@ -219,6 +243,8 @@
         </div>
     </div>
 
+    <!-- Main JavaScript with Version -->
+    <script src="app.js?v=2024.12.13.1" defer></script>
     <script src="insurance-quiz.js" defer></script>
     
     <script>

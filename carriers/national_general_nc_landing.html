@@ -13,6 +13,63 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Cache Busting Implementation v2024.12.13.1 -->
+    <script>
+        (function() {
+            const CACHE_VERSION = '2024.12.13.1';
+            
+            // Function to add version parameter to URLs
+            function addVersionToUrl(url) {
+                const separator = url.includes('?') ? '&' : '?';
+                return url + separator + 'v=' + CACHE_VERSION;
+            }
+            
+            // Update all CSS links
+            document.addEventListener('DOMContentLoaded', function() {
+                const links = document.querySelectorAll('link[rel="stylesheet"]');
+                links.forEach(function(link) {
+                    if (!link.href.includes('googleapis.com') && !link.href.includes('cdn.')) {
+                        link.href = addVersionToUrl(link.href);
+                    }
+                });
+                
+                // Update all script sources
+                const scripts = document.querySelectorAll('script[src]');
+                scripts.forEach(function(script) {
+                    if (!script.src.includes('googleapis.com') && !script.src.includes('cdn.')) {
+                        script.src = addVersionToUrl(script.src);
+                    }
+                });
+                
+                // Update all image sources
+                const images = document.querySelectorAll('img');
+                images.forEach(function(img) {
+                    if (img.src && !img.src.includes('github.com') && !img.src.includes('imgur.com') && !img.src.includes('cdn.') && img.src.startsWith(window.location.origin)) {
+                        img.src = addVersionToUrl(img.src);
+                    }
+                });
+                
+                // Set cache control headers via meta tags
+                const cacheControlMeta = document.createElement('meta');
+                cacheControlMeta.httpEquiv = 'Cache-Control';
+                cacheControlMeta.content = 'no-cache, no-store, must-revalidate';
+                document.head.appendChild(cacheControlMeta);
+                
+                const pragmaMeta = document.createElement('meta');
+                pragmaMeta.httpEquiv = 'Pragma';
+                pragmaMeta.content = 'no-cache';
+                document.head.appendChild(pragmaMeta);
+                
+                const expiresMeta = document.createElement('meta');
+                expiresMeta.httpEquiv = 'Expires';
+                expiresMeta.content = '0';
+                document.head.appendChild(expiresMeta);
+                
+                console.log('Cache busting applied - Version: ' + CACHE_VERSION);
+            });
+        })();
+    </script>
+    
     <style>
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }

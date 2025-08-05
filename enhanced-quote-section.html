@@ -5,9 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enhanced Quote Section - Bill Layne Insurance</title>
     
+    <!-- Cache Control for HTML (reasonable caching) -->
+    <meta http-equiv="Cache-Control" content="max-age=3600, must-revalidate">
+    
+    <!-- Version Definition -->
+    <script>
+        // SITE VERSION - Update this when making changes
+        window.SITE_VERSION = '2024.12.13.1';
+        
+        // Check if in development mode
+        const isDevelopment = window.location.hostname === 'localhost' || 
+                             window.location.hostname === '127.0.0.1' ||
+                             window.location.search.includes('dev=true');
+        
+        // Auto-versioning for development only
+        if (isDevelopment) {
+            window.SITE_VERSION = Date.now();
+            console.log('Development mode: Cache disabled');
+        }
+    </script>
+    
+    <!-- Preload Resources -->
+    <link rel="preload" href="style.css?v=2024.12.13.1" as="style">
+    <link rel="preload" href="app.js?v=2024.12.13.1" as="script">
+    
     <!-- Include your existing stylesheets -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=2024.12.01">
+    <link rel="stylesheet" href="style.css?v=2024.12.13.1">
     
     <!-- Development Cache Busting - Only affects localhost -->
     <script>
@@ -1368,5 +1392,8 @@
             updateButtons('home');
         });
     </script>
+    
+    <!-- Main JavaScript with Version -->
+    <script src="app.js?v=2024.12.13.1" defer></script>
 </body>
 </html>

@@ -1,3 +1,11 @@
+/* 
+ * Bill Layne Insurance - JavaScript
+ * Version: 2024.12.13.1
+ * Last Updated: December 13, 2024
+ * Update History:
+ * - 2024.12.13.1: Initial cache-busting implementation
+ */
+
 // ==================================================================
 // UNIFIED MOBILE MENU IMPLEMENTATION
 // ==================================================================

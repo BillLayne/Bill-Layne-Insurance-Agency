@@ -10,44 +10,47 @@
     <meta name="description" content="The page you're looking for couldn't be found. Let us help you find the right insurance information.">
     <meta name="robots" content="noindex, follow">
     
+    <!-- Cache Control for HTML (reasonable caching) -->
+    <meta http-equiv="Cache-Control" content="max-age=3600, must-revalidate">
+    
+    <!-- Version Definition -->
+    <script>
+        // SITE VERSION - Update this when making changes
+        window.SITE_VERSION = '2024.12.13.1';
+        
+        // Check if in development mode
+        const isDevelopment = window.location.hostname === 'localhost' || 
+                             window.location.hostname === '127.0.0.1' ||
+                             window.location.search.includes('dev=true');
+        
+        // Auto-versioning for development only
+        if (isDevelopment) {
+            window.SITE_VERSION = Date.now();
+            console.log('Development mode: Cache disabled');
+        }
+    </script>
+    
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     
     <!-- CSS -->
-    <link rel="stylesheet" href="style.css?v=2024.12.01">
+    <link rel="stylesheet" href="style.css?v=2024.12.13.1">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     
-    <!-- Development Cache Busting - Only affects localhost -->
+    <!-- Development Cache Busting handled by SITE_VERSION above -->
     <script>
-    (function() {
-      // Only run on development environments
-      if (location.hostname === 'localhost' || 
-          location.hostname === '127.0.0.1' || 
-          location.hostname.includes('.local') ||
-          location.search.includes('dev=true')) {
-        
-        const devVersion = Date.now();
-        console.log('🔧 Development mode: Cache busting enabled');
-        
-        // Update CSS files
-        document.querySelectorAll('link[href*=".css"]').forEach(link => {
-          const href = link.getAttribute('href');
-          if (href && !href.includes('googleapis.com') && !href.includes('dev=')) {
-            const separator = href.includes('?') ? '&' : '?';
-            link.setAttribute('href', href + separator + 'dev=' + devVersion);
-          }
+    // Additional development mode cache-busting for dynamic content
+    if (window.isDevelopment) {
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update any dynamically loaded resources
+            document.querySelectorAll('link[href*=".css"]').forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && !href.includes('googleapis.com') && !href.includes('v=')) {
+                    link.setAttribute('href', href + '?v=' + window.SITE_VERSION);
+                }
+            });
         });
-        
-        // Update JS files
-        document.querySelectorAll('script[src*=".js"]').forEach(script => {
-          const src = script.getAttribute('src');
-          if (src && !src.includes('dev=') && !src.includes('cdn')) {
-            const separator = src.includes('?') ? '&' : '?';
-            script.setAttribute('src', src + separator + 'dev=' + devVersion);
-          }
-        });
-      }
-    })();
+    }
     </script>
     
     <style>
@@ -216,5 +219,8 @@
             });
         }
     </script>
+    
+    <!-- Main JavaScript with Version -->
+    <script src="app.js?v=2024.12.13.1" defer></script>
 </body>
 </html>

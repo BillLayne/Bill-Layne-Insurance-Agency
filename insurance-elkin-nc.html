@@ -10,6 +10,26 @@
     <meta name="geo.placename" content="Elkin, North Carolina">
     <meta name="geo.position" content="36.2460;-80.8509">
     
+    <!-- Cache Control for HTML (reasonable caching) -->
+    <meta http-equiv="Cache-Control" content="max-age=3600, must-revalidate">
+    
+    <!-- Version Definition -->
+    <script>
+        // SITE VERSION - Update this when making changes
+        window.SITE_VERSION = '2024.12.13.1';
+        
+        // Check if in development mode
+        const isDevelopment = window.location.hostname === 'localhost' || 
+                             window.location.hostname === '127.0.0.1' ||
+                             window.location.search.includes('dev=true');
+        
+        // Auto-versioning for development only
+        if (isDevelopment) {
+            window.SITE_VERSION = Date.now();
+            console.log('Development mode: Cache disabled');
+        }
+    </script>
+    
     <!-- Local Business Schema -->
     <script type="application/ld+json">
     {
@@ -104,12 +124,27 @@
     }
     </script>
     
-    <!-- Preconnect -->
+    <!-- Resource Hints for Performance -->
+    <!-- DNS Prefetch for external resources -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//github.com">
+    <link rel="dns-prefetch" href="//cdn.tailwindcss.com">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+    
+    <!-- Preconnect for critical resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
-    <!-- Google Fonts -->
+    <!-- Preload critical resources -->
+    <link rel="preload" href="style.css?v=2024.12.13.1" as="style">
+    <link rel="preload" href="app.js?v=2024.12.13.1" as="script">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" as="style">
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Local Styles with Version -->
+    <link rel="stylesheet" href="style.css?v=2024.12.13.1">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -756,5 +791,8 @@
             });
         }
     </script>
+    
+    <!-- Main JavaScript with Version -->
+    <script src="app.js?v=2024.12.13.1" defer></script>
 </body>
 </html>
