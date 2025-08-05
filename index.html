@@ -43,9 +43,8 @@
         .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
         .hidden { display: none; }
         /* Navigation styles */
-        .nav-link { display: inline-block; }
-        @media (min-width: 768px) {
-            .md\:flex { display: flex !important; }
+        .nav-link { 
+            /* Basic nav link styles without display override */
         }
         .bg-gray-50 { background-color: #f9fafb; }
         .text-gray-800 { color: #1f2937; }
@@ -53,8 +52,13 @@
         .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
     </style>
     
-    <!-- Tailwind CSS (deferred) -->
-    <script src="https://cdn.tailwindcss.com" defer></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            important: true
+        }
+    </script>
 
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -99,12 +103,11 @@
             opacity: 1 !important;
         }
 
-        /* FIX: Force navigation links to be visible */
+        /* Navigation link styles without display override */
         #main-header .nav-link {
             color: #374151 !important; /* gray-700 */
             opacity: 1 !important;
             visibility: visible !important;
-            display: inline-block !important;
             font-weight: 500;
             text-decoration: none;
             transition: color 0.3s ease;
@@ -151,41 +154,28 @@
             opacity: 1 !important;
         }
 
-        /* Ensure mobile menu button is visible */
-        #mobile-menu-button {
-            color: #374151 !important;
-            opacity: 1 !important;
-            background: none;
-            border: none;
-            padding: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
+        /* Ensure mobile menu button is visible on mobile only */
+        @media (max-width: 767px) {
+            #mobile-menu-button {
+                display: block !important;
+                color: #374151 !important;
+                opacity: 1 !important;
+                background: none;
+                border: none;
+                padding: 0.5rem;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+            
+            #mobile-menu-button:hover {
+                color: #2563eb !important;
+            }
         }
         
-        #mobile-menu-button:hover {
-            color: #2563eb !important;
-        }
-        
-        /* Mobile Menu Styles */
-        #mobile-menu {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-        
-        #mobile-menu:not(.hidden) {
-            max-height: calc(100vh - 80px);
-            overflow-y: auto;
-        }
-        
-        #mobile-menu.hidden {
-            max-height: 0;
+        @media (min-width: 768px) {
+            #mobile-menu-button {
+                display: none !important;
+            }
         }
         
         #mobile-menu a {
@@ -228,7 +218,7 @@
         /* Mobile Header Layout */
         @media (max-width: 767px) {
             #main-header > div > div {
-                display: flex;
+                display: flex !important;
                 justify-content: space-between;
                 align-items: center;
                 padding: 0 1rem;
@@ -237,17 +227,6 @@
             
             #main-header .text-2xl {
                 font-size: 1.25rem;
-            }
-            
-            /* Hide desktop nav and CTA on mobile */
-            #main-header nav.hidden.md\:flex,
-            #main-header .hidden.md\:flex.items-center.space-x-4 {
-                display: none !important;
-            }
-            
-            /* Show mobile menu button */
-            #mobile-menu-button {
-                display: block !important;
             }
             
             /* Mobile menu specific styles */
@@ -286,43 +265,43 @@
             visibility: visible !important;
         }
         
-        /* Fix Navigation Spacing and Centering */
-        #main-header .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+        /* Fix Navigation Spacing and Centering - Desktop only */
+        @media (min-width: 768px) {
+            #main-header .container {
+                max-width: 1400px;
+                margin: 0 auto;
+            }
 
-        #main-header > div > div {
-            display: grid;
-            grid-template-columns: 250px 1fr 300px;
-            align-items: center;
-            gap: 2rem;
-            height: 80px;
-        }
+            #main-header > div > div {
+                display: grid;
+                grid-template-columns: 250px 1fr 300px;
+                align-items: center;
+                gap: 2rem;
+                height: 80px;
+            }
 
-        /* Logo section */
-        #main-header .text-2xl {
-            white-space: nowrap;
-        }
+            /* Logo section */
+            #main-header .text-2xl {
+                white-space: nowrap;
+            }
 
-        /* Center navigation */
-        #main-header nav.hidden.md\:flex {
-            display: flex !important;
-            justify-content: center;
-            align-items: center;
-        }
+            /* Center navigation */
+            #main-header nav.hidden.md\:flex {
+                justify-content: center;
+                align-items: center;
+            }
 
-        #main-header nav .flex.items-center.space-x-1 {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem; /* More space between menu items */
-        }
+            #main-header nav .flex.items-center.space-x-1 {
+                display: flex;
+                align-items: center;
+                gap: 1.5rem;
+            }
 
-        /* Right section (phone & CTA) */
-        #main-header .hidden.md\:flex.items-center.space-x-4 {
-            display: flex !important;
-            justify-content: flex-end;
-            align-items: center;
+            /* Right section (phone & CTA) */
+            #main-header .hidden.md\:flex.items-center.space-x-4 {
+                justify-content: flex-end;
+                align-items: center;
+            }
         }
 
         /* Fix Dropdown Menu Hover Issues */
@@ -401,10 +380,7 @@
         
         /* Desktop navigation specific */
         @media (min-width: 768px) {
-            #main-header nav.hidden.md\:flex {
-                display: flex !important;
-            }
-            
+            /* Let Tailwind handle display properties */
             #main-header .nav-link {
                 padding: 0.5rem 0.75rem;
                 color: #374151 !important;
@@ -670,53 +646,43 @@
                 </div>
                 
                 <!-- Mobile Menu Button -->
-                <button id="mobile-menu-button" class="md:hidden text-gray-600" aria-label="Open navigation menu">
-                    <i class="fas fa-bars text-2xl"></i>
+                <button id="mobile-menu-button" class="md:hidden p-2 text-gray-700 hover:text-blue-600" aria-label="Open navigation menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
                 </button>
             </div>
         </div>
         
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg border-t">
-            <!-- Phone Link at Top -->
-            <a href="tel:3368351993" class="block py-3 px-4 bg-gray-50 text-center font-semibold text-gray-700 border-b">
-                <i class="fas fa-phone-alt mr-2"></i>(336) 835-1993
-            </a>
-            
-            <!-- Navigation Links -->
-            <nav class="py-2">
-                <a href="index.html" class="block py-3 px-6 text-gray-700 hover:bg-gray-100">Home</a>
-                
-                <!-- Services Section -->
-                <div class="border-t border-gray-100">
-                    <p class="px-6 py-2 text-xs text-gray-500 uppercase tracking-wider font-semibold">Services</p>
-                    <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="block py-3 px-6 pl-10 text-gray-700 hover:bg-gray-100">Auto Insurance</a>
-                    <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="block py-3 px-6 pl-10 text-gray-700 hover:bg-gray-100">Home Insurance</a>
-                    <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="block py-3 px-6 pl-10 text-gray-700 hover:bg-gray-100">Claim Center</a>
-                    <a href="https://billlayne.github.io/Resources/" class="block py-3 px-6 pl-10 text-gray-700 hover:bg-gray-100">Resources</a>
-                </div>
-                
-                <!-- Areas Section -->
-                <div class="border-t border-gray-100">
-                    <p class="px-6 py-2 text-xs text-gray-500 uppercase tracking-wider font-semibold">Areas We Serve</p>
-                    <a href="/areas-we-serve.html" class="block py-3 px-6 pl-10 text-gray-700 hover:bg-gray-100">All Areas</a>
-                    <a href="/insurance-elkin-nc.html" class="block py-3 px-6 pl-10 text-gray-700 hover:bg-gray-100">Elkin, NC</a>
-                    <a href="/insurance-mount-airy-nc.html" class="block py-3 px-6 pl-10 text-gray-700 hover:bg-gray-100">Mount Airy, NC</a>
-                </div>
-                
-                <!-- Other Links -->
-                <div class="border-t border-gray-100">
-                    <a href="/blog.html" class="block py-3 px-6 text-gray-700 hover:bg-gray-100">Blog</a>
-                    <a href="/contact-us.html" class="block py-3 px-6 text-gray-700 hover:bg-gray-100">Contact</a>
-                </div>
-            </nav>
-            
-            <!-- CTA Button -->
-            <div class="p-4 bg-gray-50 border-t">
-                <a href="/auto-quote.html" class="block text-center w-full bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition-all shadow-lg">Get a Quote</a>
-            </div>
-        </div>
     </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="fixed inset-0 bg-black/50 z-50 hidden" id="mobile-menu-overlay"></div>
+
+    <!-- Mobile Menu Panel -->
+    <div class="fixed top-0 right-0 h-full w-64 bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300" id="mobile-menu">
+        <div class="p-4">
+            <button class="absolute top-4 right-4 p-2 text-gray-700 hover:text-blue-600" id="mobile-menu-close">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+            
+            <nav class="mt-8 flex flex-col space-y-4">
+                <a href="/" class="text-gray-700 hover:text-blue-600 py-2">Home</a>
+                <a href="/areas-we-serve.html" class="text-gray-700 hover:text-blue-600 py-2">Services</a>
+                <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="text-gray-700 hover:text-blue-600 py-2">Auto</a>
+                <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="text-gray-700 hover:text-blue-600 py-2">Home Insurance</a>
+                <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="text-gray-700 hover:text-blue-600 py-2">Claims</a>
+                <a href="https://billlayne.github.io/Resources/" class="text-gray-700 hover:text-blue-600 py-2">Resources</a>
+                <a href="/blog.html" class="text-gray-700 hover:text-blue-600 py-2">Blog</a>
+                <a href="/contact-us.html" class="text-gray-700 hover:text-blue-600 py-2">Contact</a>
+                <a href="tel:3368351993" class="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 text-center mt-4">
+                    Call: (336) 835-1993
+                </a>
+            </nav>
+        </div>
+    </div>
 
     <main id="main-content">
         <!-- Hero Section -->
@@ -1147,12 +1113,54 @@
             
             // --- Mobile Menu ---
             const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenuClose = document.getElementById('mobile-menu-close');
             const mobileMenu = document.getElementById('mobile-menu');
-            if (mobileMenuButton && mobileMenu) {
-                mobileMenuButton.addEventListener('click', () => {
-                    mobileMenu.classList.toggle('hidden');
+            const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+            const body = document.body;
+            
+            function openMobileMenu() {
+                if (mobileMenu && mobileMenuOverlay) {
+                    mobileMenu.classList.remove('translate-x-full');
+                    mobileMenuOverlay.classList.remove('hidden');
+                    body.style.overflow = 'hidden';
+                }
+            }
+            
+            function closeMobileMenu() {
+                if (mobileMenu && mobileMenuOverlay) {
+                    mobileMenu.classList.add('translate-x-full');
+                    mobileMenuOverlay.classList.add('hidden');
+                    body.style.overflow = '';
+                }
+            }
+            
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    openMobileMenu();
                 });
             }
+            
+            if (mobileMenuClose) {
+                mobileMenuClose.addEventListener('click', closeMobileMenu);
+            }
+            
+            if (mobileMenuOverlay) {
+                mobileMenuOverlay.addEventListener('click', closeMobileMenu);
+            }
+            
+            // Close menu when clicking a link
+            const mobileMenuLinks = mobileMenu?.querySelectorAll('a');
+            mobileMenuLinks?.forEach(link => {
+                link.addEventListener('click', closeMobileMenu);
+            });
+            
+            // Close menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (mobileMenu && mobileMenuButton && !mobileMenu.contains(e.target) && !mobileMenuButton.contains(e.target)) {
+                    closeMobileMenu();
+                }
+            });
 
             // --- Fix dropdown menu hover issues ---
             const dropdowns = document.querySelectorAll('.group');
@@ -1219,7 +1227,7 @@
                             mobileMenu.classList.add('hidden');
                         }
                         // Scroll smoothly
-                        const headerOffset = header.offsetHeight;
+                        const headerOffset = mainHeader.offsetHeight;
                         const elementPosition = targetElement.getBoundingClientRect().top;
                         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
                         window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
