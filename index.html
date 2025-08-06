@@ -19,7 +19,10 @@
     <meta name="twitter:card" content="summary_large_image">
     
     <!-- Performance optimizations -->
-    <meta http-equiv="Cache-Control" content="public, max-age=7200, must-revalidate">
+    <!-- Force refresh for GitHub Pages update - v2.0.20250806 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <meta http-equiv="X-DNS-Prefetch-Control" content="on">
     <link rel="preconnect" href="https://raw.githubusercontent.com">
     <link rel="dns-prefetch" href="https://raw.githubusercontent.com">
@@ -56,14 +59,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
     <!-- Preload critical resources -->
-    <link rel="preload" href="style.css?v=2024.12.13.1" as="style">
+    <link rel="preload" href="style.css?v=2025.08.06.1" as="style">
     <link rel="preload" href="app.js?v=2024.12.13.1" as="script">
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" as="style">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="preload" href="https://github.com/BillLayne/bill-layne-images/blob/main/img/elkin-nc-foothills.jpg?raw=true" as="image">
     
     <!-- Local Styles with Version -->
-    <link rel="stylesheet" href="style.css?v=2024.12.13.1">
+    <link rel="stylesheet" href="style.css?v=2025.08.06.1">
 
     <!-- Critical inline CSS for above-the-fold content -->
     <style>
@@ -1181,6 +1184,30 @@
       ]
     }
     </script>
+    
+    <!-- Cache Buster for GitHub Pages -->
+    <script>
+        // Version control for cache busting
+        const SITE_VERSION = '2025.08.06.1';
+        const LAST_VERSION_KEY = 'billLayneSiteVersion';
+        
+        // Check if this is a new version
+        const lastVersion = localStorage.getItem(LAST_VERSION_KEY);
+        if (lastVersion && lastVersion !== SITE_VERSION) {
+            // Clear cache for new version
+            console.log('New version detected, clearing cache...');
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => caches.delete(name));
+                });
+            }
+            // Force reload without cache
+            localStorage.setItem(LAST_VERSION_KEY, SITE_VERSION);
+            window.location.reload(true);
+        } else {
+            localStorage.setItem(LAST_VERSION_KEY, SITE_VERSION);
+        }
+    </script>
 </head>
 <body class="bg-gray-50 text-gray-800">
     <a href="#main-content" class="skip-link sr-only">Skip to main content</a>
@@ -2136,7 +2163,7 @@
     </script>
     
     <!-- Main JavaScript with Version -->
-    <script src="app.js?v=2024.12.13.1" defer></script>
+    <script src="app.js?v=2025.08.06.1" defer></script>
     
     <!-- Performance monitoring for Web Vitals -->
     <script>
