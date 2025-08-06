@@ -11,6 +11,7 @@
 // ==================================================================
 document.addEventListener('DOMContentLoaded', function() {
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const mobileMenuClose = document.getElementById('mobileMenuClose');
     const headerNav = document.querySelector('.header-nav');
     const navbarMenu = document.querySelector('.navbar-menu'); // For pages using navbar-menu
     const body = document.body;
@@ -38,6 +39,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 body.classList.remove('menu-open');
             }
         });
+        
+        // Close button functionality
+        if (mobileMenuClose) {
+            mobileMenuClose.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (headerNav) headerNav.classList.remove('active');
+                if (navbarMenu) navbarMenu.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+                body.classList.remove('menu-open');
+            });
+        }
+        
+        // Close menu when clicking overlay
+        const menuOverlay = document.querySelector('.navbar-menu-overlay');
+        if (menuOverlay) {
+            menuOverlay.addEventListener('click', function() {
+                if (headerNav) headerNav.classList.remove('active');
+                if (navbarMenu) navbarMenu.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+                body.classList.remove('menu-open');
+            });
+        }
         
         // Close menu when clicking outside
         document.addEventListener('click', function(event) {
