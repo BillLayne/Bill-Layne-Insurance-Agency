@@ -59,14 +59,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
     <!-- Preload critical resources -->
-    <link rel="preload" href="style.css?v=2025.08.06.1" as="style">
+    <link rel="preload" href="style.css?v=2024.12.13.2" as="style">
     <link rel="preload" href="app.js?v=2024.12.13.1" as="script">
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" as="style">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="preload" href="https://github.com/BillLayne/bill-layne-images/blob/main/img/elkin-nc-foothills.jpg?raw=true" as="image">
     
     <!-- Local Styles with Version -->
-    <link rel="stylesheet" href="style.css?v=2025.08.06.1">
+    <link rel="stylesheet" href="style.css?v=2024.12.13.2">
 
     <!-- Critical inline CSS for above-the-fold content -->
     <style>
@@ -1188,7 +1188,7 @@
     <!-- Cache Buster for GitHub Pages -->
     <script>
         // Version control for cache busting
-        const SITE_VERSION = '2025.08.06.1';
+        const SITE_VERSION = '2024.12.13.2';
         const LAST_VERSION_KEY = 'billLayneSiteVersion';
         
         // Check if this is a new version
@@ -1787,72 +1787,7 @@
                 window.addEventListener('scroll', handleScroll);
             }
             
-            // ==================================================================
-            // UNIFIED MOBILE MENU IMPLEMENTATION
-            // ==================================================================
-            (function() {
-                const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-                const mobileMenu = document.querySelector('.navbar-menu');
-                const mobileMenuClose = document.getElementById('mobileMenuClose');
-                const body = document.body;
-                
-                if (mobileMenuToggle && mobileMenu) {
-                // Toggle menu functionality
-                mobileMenuToggle.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    // Toggle active classes
-                    mobileMenu.classList.toggle('active');
-                    mobileMenuToggle.classList.toggle('active');
-                    
-                    // Prevent body scroll when menu is open
-                    if (mobileMenu.classList.contains('active')) {
-                        body.classList.add('menu-open');
-                    } else {
-                        body.classList.remove('menu-open');
-                    }
-                });
-                
-                // Close button
-                if (mobileMenuClose) {
-                    mobileMenuClose.addEventListener('click', function() {
-                        mobileMenu.classList.remove('active');
-                        mobileMenuToggle.classList.remove('active');
-                        body.classList.remove('menu-open');
-                    });
-                }
-                
-                // Close menu when clicking overlay
-                const menuOverlay = mobileMenu.querySelector('.navbar-menu-overlay');
-                if (menuOverlay) {
-                    menuOverlay.addEventListener('click', function() {
-                        mobileMenu.classList.remove('active');
-                        mobileMenuToggle.classList.remove('active');
-                        body.classList.remove('menu-open');
-                    });
-                }
-                
-                // Close menu when clicking a nav link
-                const navLinks = mobileMenu.querySelectorAll('.nav-link');
-                navLinks.forEach(link => {
-                    link.addEventListener('click', function() {
-                        mobileMenu.classList.remove('active');
-                        mobileMenuToggle.classList.remove('active');
-                        body.classList.remove('menu-open');
-                    });
-                });
-                
-                // Handle window resize
-                window.addEventListener('resize', function() {
-                    if (window.innerWidth > 900) {
-                        mobileMenu.classList.remove('active');
-                        mobileMenuToggle.classList.remove('active');
-                        body.classList.remove('menu-open');
-                    }
-                });
-            }
-            })(); // End of mobile menu IIFE
+            // Mobile menu implementation moved to app.js to avoid conflicts
 
             // --- Fix dropdown menu hover issues ---
             const dropdowns = document.querySelectorAll('.group');
@@ -2163,7 +2098,7 @@
     </script>
     
     <!-- Main JavaScript with Version -->
-    <script src="app.js?v=2025.08.06.1" defer></script>
+    <script src="app.js?v=2024.12.13.2" defer></script>
     
     <!-- Performance monitoring for Web Vitals -->
     <script>
