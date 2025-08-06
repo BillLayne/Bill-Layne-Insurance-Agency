@@ -1,6 +1,16 @@
 # Bill Layne Insurance Performance Optimization
 # Browser Caching Configuration
 
+# Cloudflare Cache Control
+<IfModule mod_headers.c>
+    # Tell Cloudflare not to cache HTML files
+    <FilesMatch "\.(html|htm)$">
+        Header set Cloudflare-CDN-Cache-Control "no-cache"
+        Header set CDN-Cache-Control "no-cache"
+        Header set Surrogate-Control "no-store"
+    </FilesMatch>
+</IfModule>
+
 <IfModule mod_expires.c>
     ExpiresActive On
     ExpiresDefault "access plus 1 week"
