@@ -6,8 +6,10 @@
  * - 2024.12.13.2: Fixed mobile menu functionality
  */
 
-// ==================================================================
-// UNIFIED MOBILE MENU IMPLEMENTATION - FIXED VERSION
+/* ==================================================================
+// MOBILE MENU IMPLEMENTATION - COMMENTED OUT
+// Mobile menu is now handled by inline script in index.html
+// to match the simple dropdown style of other pages
 // ==================================================================
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Initializing mobile menu system...');
@@ -91,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
             toggleMenu(false);
         }
     });
-});
+}); */
 
 // Enhanced Coverage Analyzer System for Bill Layne Insurance
 // This replaces the placeholder analyzer functions with fully functional tools
