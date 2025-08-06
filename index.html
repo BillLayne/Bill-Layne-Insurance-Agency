@@ -560,91 +560,13 @@
             stroke: #2563eb;
         }
 
-        /* Mobile Menu Panel - Enhanced */
+        /* Mobile Menu Panel - REMOVED OLD STYLES
         #mobile-menu {
-            position: fixed;
-            top: 0;
-            right: 0;
-            height: 100vh;
-            width: 280px;
-            background-color: #ffffff;
-            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
-            z-index: 55;
-            transform: translateX(100%);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow-y: auto;
+            // Old fixed positioning removed - now using absolute dropdown
         }
+        */
 
-        #mobile-menu.menu-open {
-            transform: translateX(0);
-        }
-
-        /* Mobile menu links enhancement */
-        #mobile-menu nav a {
-            display: block;
-            padding: 16px 24px;
-            color: #374151;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 16px;
-            border-bottom: 1px solid #e5e7eb;
-            transition: all 0.2s ease;
-            position: relative;
-        }
-
-        #mobile-menu nav a:hover {
-            background-color: #f3f4f6;
-            color: #2563eb;
-            padding-left: 32px;
-        }
-
-        #mobile-menu nav a:active {
-            background-color: #e5e7eb;
-        }
-
-        /* Close button enhancement */
-        #mobile-menu-close {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            padding: 8px;
-            background-color: transparent;
-            border: none;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-
-        #mobile-menu-close:hover {
-            background-color: #f3f4f6;
-        }
-
-        #mobile-menu-close svg {
-            width: 24px;
-            height: 24px;
-            stroke: #6b7280;
-            stroke-width: 2;
-        }
-
-        /* Call button in mobile menu */
-        #mobile-menu a[href^="tel:"] {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            color: #ffffff !important;
-            text-align: center;
-            margin: 16px;
-            border-radius: 12px;
-            padding: 14px 20px;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
-            border: none;
-        }
-
-        #mobile-menu a[href^="tel:"]:hover {
-            background: linear-gradient(135deg, #16a34a, #15803d);
-            padding-left: 20px;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(34, 197, 94, 0.4);
-        }
+        /* Old mobile menu link styles removed - using simple dropdown styles instead */
         End of old mobile menu styles */
 
         /* ===== EVALUATOR BUTTONS FIX ===== */
@@ -861,34 +783,39 @@
         */
 
         /* ===== SIMPLE MOBILE MENU STYLES ===== */
-        /* Simple Mobile Menu Styles */
+        /* Simple Mobile Menu Styles - FIXED VERSION */
         #mobile-menu {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            z-index: 50;
-            max-height: calc(100vh - 80px);
-            overflow-y: auto;
+            position: absolute !important;
+            top: 100% !important;
+            left: 0 !important;
+            right: 0 !important;
+            z-index: 50 !important;
+            max-height: calc(100vh - 80px) !important;
+            overflow-y: auto !important;
+            transform: none !important;
+            width: 100% !important;
+            height: auto !important;
         }
 
         #mobile-menu a {
-            border-bottom: 1px solid #e5e7eb;
-            transition: all 0.2s ease;
+            border-bottom: 1px solid #e5e7eb !important;
+            transition: all 0.2s ease !important;
+            display: block !important;
+            padding: 0.5rem 1rem !important;
         }
 
         #mobile-menu a:hover {
-            background-color: #f3f4f6;
-            padding-left: 1.5rem;
+            background-color: #f3f4f6 !important;
+            padding-left: 1.5rem !important;
         }
 
         #mobile-menu .p-4 {
-            background-color: #f9fafb;
-            padding: 1rem;
+            background-color: #f9fafb !important;
+            padding: 1rem !important;
         }
 
         #mobile-menu .p-4 a {
-            border: none;
+            border: none !important;
         }
 
         /* Ensure header has relative positioning */
@@ -1813,33 +1740,40 @@
             }
             
             // Simple Mobile Menu Toggle (matches working pages)
-            document.addEventListener('DOMContentLoaded', function() {
-                const mobileMenuButton = document.getElementById('mobile-menu-button');
-                const mobileMenu = document.getElementById('mobile-menu');
+            // Note: We're already inside a DOMContentLoaded listener, so we don't need another one
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (mobileMenuButton && mobileMenu) {
+                console.log('Mobile menu elements found, initializing...');
                 
-                if (mobileMenuButton && mobileMenu) {
-                    mobileMenuButton.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        mobileMenu.classList.toggle('hidden');
+                mobileMenuButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    mobileMenu.classList.toggle('hidden');
+                    console.log('Menu toggled, hidden class:', mobileMenu.classList.contains('hidden'));
+                });
+                
+                // Close menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!mobileMenu.contains(event.target) && !mobileMenuButton.contains(event.target)) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+                
+                // Close menu when clicking a link
+                const mobileLinks = mobileMenu.querySelectorAll('a');
+                mobileLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        mobileMenu.classList.add('hidden');
                     });
-                    
-                    // Close menu when clicking outside
-                    document.addEventListener('click', function(event) {
-                        if (!mobileMenu.contains(event.target) && !mobileMenuButton.contains(event.target)) {
-                            mobileMenu.classList.add('hidden');
-                        }
-                    });
-                    
-                    // Close menu when clicking a link
-                    const mobileLinks = mobileMenu.querySelectorAll('a');
-                    mobileLinks.forEach(link => {
-                        link.addEventListener('click', function() {
-                            mobileMenu.classList.add('hidden');
-                        });
-                    });
-                }
-            });
+                });
+            } else {
+                console.error('Mobile menu elements not found:', {
+                    button: !!mobileMenuButton,
+                    menu: !!mobileMenu
+                });
+            }
 
             // --- Fix dropdown menu hover issues ---
             const dropdowns = document.querySelectorAll('.group');
