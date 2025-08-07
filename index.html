@@ -70,6 +70,14 @@
 
     <!-- Critical inline CSS for above-the-fold content -->
     <style>
+        /* CSS Variables */
+        :root {
+            --white: #ffffff;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --blue-600: #2563eb;
+        }
+        
         /* Critical CSS to prevent layout shift - Mobile First */
         * { box-sizing: border-box; }
         body { margin: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
@@ -655,10 +663,11 @@
             }
         }
         
-        /* Small mobile - single column */
+        /* Keep 2 columns even on small mobile */
         @media (max-width: 480px) {
             .services-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
             }
             
             .service-card {
@@ -713,7 +722,8 @@
             flex-wrap: wrap;
         }
         
-        .tab-buttons button {
+        .tab-buttons button,
+        .tab-buttons a {
             padding: 0.75rem 1.5rem;
             background: white;
             border: 2px solid #e5e7eb;
@@ -722,15 +732,19 @@
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
         }
         
-        .tab-buttons button:hover {
+        .tab-buttons button:hover,
+        .tab-buttons a:hover {
             background: #f3f4f6;
             border-color: #2563eb;
             color: #2563eb;
         }
         
-        .tab-buttons button.active {
+        .tab-buttons button.active,
+        .tab-buttons a.active {
             background: #2563eb;
             color: white;
             border-color: #2563eb;
@@ -1730,7 +1744,7 @@
                 </div>
                 
                 <div class="text-center mt-4">
-                    <a href="/services" class="btn btn-blue">View All Services →</a>
+                    <a href="areas-we-serve.html" class="btn btn-blue">View All Services →</a>
                 </div>
             </div>
         </section>
@@ -1759,93 +1773,6 @@
             </div>
         </section>
 
-        <!-- Interactive Tools Section -->
-        <section id="tools" class="tools-section">
-            <div class="container">
-                <h2 class="section-title">Interactive Insurance Tools</h2>
-                <p class="text-center mb-4" style="color: var(--gray-700);">Get instant estimates and personalized recommendations</p>
-                
-                <div class="tab-buttons">
-                    <button class="tab-button active" onclick="switchTab('auto')">Auto Evaluator</button>
-                    <button class="tab-button" onclick="switchTab('home')">Home Evaluator</button>
-                    <button class="tab-button" onclick="switchTab('quiz')">Insurance Quiz</button>
-                </div>
-
-                <!-- Auto Evaluator -->
-                <div id="auto-tab" class="tab-content active">
-                    <div style="background: var(--white); padding: 1.5rem; border-radius: 12px;">
-                        <h3 class="mb-4">Auto Coverage Checkup</h3>
-                        <form id="auto-coverage-form">
-                            <div class="form-group">
-                                <label for="vehicle-value">Vehicle Value ($)</label>
-                                <input type="number" id="vehicle-value" placeholder="25000" min="0" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="daily-commute">Daily Commute (miles)</label>
-                                <input type="number" id="daily-commute" placeholder="20" min="0" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="has-loan">Do you have a loan on this vehicle?</label>
-                                <select id="has-loan" required>
-                                    <option value="">Select...</option>
-                                    <option value="yes">Yes</option>
-                                    <option value="no">No</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-blue" style="width: 100%;">
-                                Get Recommendations
-                            </button>
-                        </form>
-                        <div id="auto-results" class="hidden mt-4 p-4 rounded" style="background: var(--gray-100);"></div>
-                    </div>
-                </div>
-
-                <!-- Home Evaluator -->
-                <div id="home-tab" class="tab-content">
-                    <div style="background: var(--white); padding: 1.5rem; border-radius: 12px;">
-                        <h3 class="mb-4">Home Insurance Evaluator</h3>
-                        <form id="home-coverage-form">
-                            <div class="form-group">
-                                <label for="home-value">Home Value ($)</label>
-                                <input type="number" id="home-value" placeholder="300000" min="0" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="personal-property">Personal Property Value ($)</label>
-                                <input type="number" id="personal-property" placeholder="75000" min="0" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="has-pool">Do you have a pool?</label>
-                                <select id="has-pool" required>
-                                    <option value="">Select...</option>
-                                    <option value="yes">Yes</option>
-                                    <option value="no">No</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-blue" style="width: 100%;">
-                                Calculate Coverage
-                            </button>
-                        </form>
-                        <div id="home-results" class="hidden mt-4 p-4 rounded" style="background: var(--gray-100);"></div>
-                    </div>
-                </div>
-
-                <!-- Insurance Quiz -->
-                <div id="quiz-tab" class="tab-content">
-                    <div style="background: var(--white); padding: 1.5rem; border-radius: 12px;">
-                        <h3 class="mb-4">Insurance Knowledge Quiz</h3>
-                        <div id="quiz-container">
-                            <div id="quiz-question" class="mb-4" style="font-weight: 600;"></div>
-                            <div id="quiz-options"></div>
-                        </div>
-                        <div id="quiz-results" class="hidden mt-4 p-4 rounded" style="background: var(--gray-100);">
-                            <p id="quiz-score" style="font-size: 1.25rem; font-weight: 600; color: var(--primary-color);"></p>
-                            <p id="quiz-feedback"></p>
-                            <button id="quiz-restart" class="btn btn-blue mt-2">Try Again</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
 
     <!-- Testimonials Section -->
     <section class="bg-white py-20">
@@ -1997,6 +1924,51 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" defer></script>
     
     <script>
+        // Tab switching function for Interactive Tools
+        function switchTab(event, tabName) {
+            // Prevent default if it's a button click
+            if (event && event.preventDefault) {
+                event.preventDefault();
+            }
+            
+            console.log('Switching to tab:', tabName); // Debug log
+            
+            // Hide all tab contents
+            const allTabs = document.querySelectorAll('.tab-content');
+            allTabs.forEach(content => {
+                content.classList.remove('active');
+                content.style.display = 'none';
+            });
+            
+            // Remove active class from all buttons
+            const allButtons = document.querySelectorAll('.tab-button');
+            allButtons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            const selectedTab = document.getElementById(tabName + '-tab');
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+                selectedTab.style.display = 'block';
+                console.log('Tab found and displayed:', tabName + '-tab'); // Debug log
+            } else {
+                console.log('Tab not found:', tabName + '-tab'); // Debug log
+            }
+            
+            // Activate the clicked button
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+            
+            // Initialize quiz if quiz tab is selected
+            if (tabName === 'quiz') {
+                if (typeof initializeQuiz === 'function') {
+                    initializeQuiz();
+                }
+            }
+        }
+        
         document.addEventListener('DOMContentLoaded', function () {
             console.log('Page loaded, initializing header...');
             
@@ -2212,13 +2184,19 @@
             });
             
             // Initialize first tab on page load
-            const firstTab = document.querySelector('.tab-button.tab-active');
+            const firstTab = document.querySelector('.tab-button.active');
             if (firstTab) {
-                const firstTabId = firstTab.dataset.tab;
-                const firstContent = document.getElementById(firstTabId);
-                if (firstContent) {
-                    firstContent.style.display = 'block';
+                const autoTab = document.getElementById('auto-tab');
+                if (autoTab) {
+                    autoTab.style.display = 'block';
+                    autoTab.classList.add('active');
                 }
+            }
+            
+            // Also ensure the active tab is visible
+            const activeTabContent = document.querySelector('.tab-content.active');
+            if (activeTabContent) {
+                activeTabContent.style.display = 'block';
             }
 
             // --- Auto Coverage Evaluator ---
@@ -2285,10 +2263,28 @@
 
             // --- Insurance Quiz ---
             const quizData = [
-            { question: "What does 'deductible' mean in an insurance policy?", options: ["The amount the insurance company deducts from your bill", "The amount you pay before insurance pays", "A discount on your premium"], answer: "The amount you pay before insurance pays" },
-            { question: "Which coverage is typically required by law for drivers?", options: ["Collision", "Liability", "Comprehensive"], answer: "Liability" },
-            { question: "What does a standard homeowners policy typically NOT cover?", options: ["Fire damage", "Theft", "Floods"], answer: "Floods" }
+                { question: "What does 'deductible' mean in an insurance policy?", options: ["The amount the insurance company deducts from your bill", "The amount you pay before insurance pays", "A discount on your premium"], answer: "The amount you pay before insurance pays" },
+                { question: "Which coverage is typically required by law for drivers?", options: ["Collision", "Liability", "Comprehensive"], answer: "Liability" },
+                { question: "What does a standard homeowners policy typically NOT cover?", options: ["Fire damage", "Theft", "Floods"], answer: "Floods" }
             ];
+            
+            function startInsuranceQuiz() {
+                document.getElementById('quiz-start').classList.add('hidden');
+                document.getElementById('quiz-container').classList.remove('hidden');
+                document.getElementById('quiz-results').classList.add('hidden');
+                currentQuestionIndex = 0;
+                score = 0;
+                document.getElementById('quiz-total').textContent = quizData.length;
+                loadQuiz();
+            }
+            
+            function restartQuiz() {
+                document.getElementById('quiz-start').classList.remove('hidden');
+                document.getElementById('quiz-container').classList.add('hidden');
+                document.getElementById('quiz-results').classList.add('hidden');
+                currentQuestionIndex = 0;
+                score = 0;
+            }
             let currentQuestionIndex = 0;
             let score = 0;
             let quizInitialized = false;
@@ -2313,22 +2309,29 @@
         }
 
             function loadQuiz() {
-            if(!quizContainer) return;
-            if (currentQuestionIndex < quizData.length) {
-                const currentQuestion = quizData[currentQuestionIndex];
-                quizQuestionEl.textContent = currentQuestion.question;
-                quizOptionsEl.innerHTML = '';
-                currentQuestion.options.forEach(optionText => {
-                    const button = document.createElement('button');
-                    button.textContent = optionText;
-                    button.className = 'w-full p-3 bg-white border rounded-md text-left hover:bg-blue-100';
-                    button.onclick = () => selectAnswer(optionText);
-                    quizOptionsEl.appendChild(button);
-                });
-            } else {
-                showQuizResults();
+                const quizContainer = document.getElementById('quiz-container');
+                const quizQuestionEl = document.getElementById('quiz-question');
+                const quizOptionsEl = document.getElementById('quiz-options');
+                
+                if(!quizContainer) return;
+                
+                if (currentQuestionIndex < quizData.length) {
+                    const currentQuestion = quizData[currentQuestionIndex];
+                    document.getElementById('quiz-current').textContent = currentQuestionIndex + 1;
+                    quizQuestionEl.textContent = currentQuestion.question;
+                    quizOptionsEl.innerHTML = '';
+                    
+                    currentQuestion.options.forEach(optionText => {
+                        const button = document.createElement('button');
+                        button.textContent = optionText;
+                        button.className = 'w-full p-3 bg-gray-50 border-2 border-gray-200 rounded-lg text-left hover:bg-blue-50 hover:border-blue-300 transition-colors';
+                        button.onclick = () => selectAnswer(optionText);
+                        quizOptionsEl.appendChild(button);
+                    });
+                } else {
+                    showQuizResults();
+                }
             }
-        }
 
             function selectAnswer(selectedOption) {
             if (selectedOption === quizData[currentQuestionIndex].answer) {
@@ -2339,13 +2342,19 @@
         }
 
             function showQuizResults() {
-            quizContainer.classList.add('hidden');
-            quizResultsContainer.classList.remove('hidden');
-            quizScoreEl.textContent = `You scored ${score} out of ${quizData.length}!`;
-            let feedback = "You're an insurance expert!";
-            if (score < quizData.length) feedback = "Great job! Insurance can be tricky, but you're on your way.";
-            if (score < 2) feedback = "A good start! We're here to help you understand all the details.";
-            quizFeedbackEl.textContent = feedback;
+                const quizContainer = document.getElementById('quiz-container');
+                const quizResults = document.getElementById('quiz-results');
+                const quizScoreEl = document.getElementById('quiz-score');
+                const quizFeedbackEl = document.getElementById('quiz-feedback');
+                
+                quizContainer.classList.add('hidden');
+                quizResults.classList.remove('hidden');
+                quizScoreEl.textContent = `You scored ${score} out of ${quizData.length}!`;
+                
+                let feedback = "You're an insurance expert!";
+                if (score < quizData.length) feedback = "Great job! Insurance can be tricky, but you're on your way.";
+                if (score < 2) feedback = "A good start! We're here to help you understand all the details.";
+                quizFeedbackEl.textContent = feedback;
             }
             
             if(quizRestartBtn) {
