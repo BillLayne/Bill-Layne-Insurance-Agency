@@ -93,6 +93,172 @@
             background: rgba(255, 255, 255, 0.98) !important;
             backdrop-filter: blur(10px);
         }
+        
+        /* Mobile Menu Styles */
+        .mobile-menu-toggle {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 24px;
+            height: 24px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            z-index: 10;
+        }
+        
+        .mobile-menu-toggle span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: #374151;
+            border-radius: 2px;
+            transition: all 0.3s linear;
+            position: relative;
+            transform-origin: 1px;
+        }
+        
+        .mobile-menu-toggle.active span:first-child {
+            transform: rotate(45deg);
+        }
+        
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg);
+        }
+        
+        .navbar-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .navbar-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .navbar-menu {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 320px;
+            height: 100vh;
+            background-color: #ffffff !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transition: left 0.3s ease;
+            z-index: 60;
+            overflow-y: auto;
+        }
+        
+        .navbar-menu.active {
+            left: 0;
+        }
+        
+        .navbar-menu-content {
+            padding: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .navbar-menu-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .navbar-menu-nav {
+            margin-top: 60px;
+        }
+        
+        .navbar-menu-nav a {
+            display: block;
+            padding: 12px 0;
+            color: #374151 !important;
+            text-decoration: none;
+            font-size: 16px;
+            border-bottom: 1px solid #f3f4f6;
+            transition: color 0.3s ease;
+        }
+        
+        .navbar-menu-nav a:hover {
+            color: #2563eb !important;
+        }
+        
+        .navbar-menu-nav a.active {
+            color: #2563eb !important;
+            font-weight: 600;
+        }
+        
+        .navbar-menu-cta {
+            margin-top: auto;
+            padding-top: 20px;
+        }
+        
+        .navbar-menu-cta .cta-phone {
+            display: block;
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+            color: #ffffff !important;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .navbar-menu-cta .cta-phone:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+        }
+        
+        .navbar-menu-cta .cta-quote {
+            display: block;
+            width: 100%;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+            color: #ffffff !important;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .navbar-menu-cta .cta-quote:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        body.menu-open {
+            overflow: hidden;
+        }
     </style>
 </head>
 <body class="font-['Inter'] bg-gray-50">
@@ -127,37 +293,35 @@
                 </div>
                 
                 <!-- Mobile Menu Button -->
-                <button class="md:hidden text-gray-600 hover:text-gray-900 transition-colors" id="mobile-menu-btn">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
+                <button class="mobile-menu-toggle md:hidden" id="mobileMenuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </button>
             </div>
         </div>
         
         <!-- Mobile Menu Overlay -->
-        <div class="fixed inset-0 z-50 bg-black bg-opacity-50 hidden" id="mobile-menu-overlay">
-            <div class="bg-white w-80 h-full shadow-xl">
-                <div class="p-4 border-b">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xl font-bold text-amber-800">Menu</span>
-                        <button class="text-gray-500 hover:text-gray-700" id="mobile-menu-close">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
+        <div class="navbar-menu-overlay" id="navbarMenuOverlay">
+            <div class="navbar-menu" id="navbarMenu">
+                <div class="navbar-menu-content">
+                    <button class="navbar-menu-close" id="navbarMenuClose">&times;</button>
+                    
+                    <nav class="navbar-menu-nav">
+                        <a href="https://billlayneinsurance.com/">Home</a>
+                        <a href="https://billlayne.github.io/Auto-Insurance-Center/">Auto Insurance</a>
+                        <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/">Home Insurance</a>
+                        <a href="/carriers/" class="active">Insurance Companies</a>
+                        <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/">Claims Center</a>
+                        <a href="https://billlayne.github.io/Resources/">Resources</a>
+                        <a href="https://billlayneinsurance.com/blog">Blog</a>
+                    </nav>
+                    
+                    <div class="navbar-menu-cta">
+                        <a href="tel:3368351993" class="cta-phone">📞 Call (336) 835-1993</a>
+                        <a href="https://billlayneinsurance.com/auto-quote.html" class="cta-quote">Get Free Quote</a>
                     </div>
                 </div>
-                <nav class="p-4">
-                    <a href="https://billlayneinsurance.com/" class="block py-3 text-gray-700 hover:text-blue-600 transition-colors">Home</a>
-                    <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="block py-3 text-gray-700 hover:text-blue-600 transition-colors">Auto Insurance</a>
-                    <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="block py-3 text-gray-700 hover:text-blue-600 transition-colors">Home Insurance</a>
-                    <a href="/carriers/" class="block py-3 text-blue-600 font-semibold">Insurance Companies</a>
-                    <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="block py-3 text-gray-700 hover:text-blue-600 transition-colors">Claims Center</a>
-                    <a href="https://billlayne.github.io/Resources/" class="block py-3 text-gray-700 hover:text-blue-600 transition-colors">Resources</a>
-                    <a href="https://billlayneinsurance.com/blog" class="block py-3 text-gray-700 hover:text-blue-600 transition-colors">Blog</a>
-                    <a href="tel:3368351993" class="block py-3 text-blue-600 font-semibold border-t mt-4 pt-4">Call (336) 835-1993</a>
-                </nav>
             </div>
         </div>
     </header>
@@ -388,21 +552,31 @@
     <!-- JavaScript -->
     <script>
         // Mobile Menu Toggle
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
-        const mobileMenuClose = document.getElementById('mobile-menu-close');
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const navbarMenuOverlay = document.getElementById('navbarMenuOverlay');
+        const navbarMenu = document.getElementById('navbarMenu');
+        const navbarMenuClose = document.getElementById('navbarMenuClose');
         
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenuOverlay.classList.remove('hidden');
-        });
+        function openMobileMenu() {
+            navbarMenuOverlay.classList.add('active');
+            navbarMenu.classList.add('active');
+            mobileMenuToggle.classList.add('active');
+            document.body.classList.add('menu-open');
+        }
         
-        mobileMenuClose.addEventListener('click', () => {
-            mobileMenuOverlay.classList.add('hidden');
-        });
+        function closeMobileMenu() {
+            navbarMenuOverlay.classList.remove('active');
+            navbarMenu.classList.remove('active');
+            mobileMenuToggle.classList.remove('active');
+            document.body.classList.remove('menu-open');
+        }
         
-        mobileMenuOverlay.addEventListener('click', (e) => {
-            if (e.target === mobileMenuOverlay) {
-                mobileMenuOverlay.classList.add('hidden');
+        mobileMenuToggle.addEventListener('click', openMobileMenu);
+        navbarMenuClose.addEventListener('click', closeMobileMenu);
+        
+        navbarMenuOverlay.addEventListener('click', (e) => {
+            if (e.target === navbarMenuOverlay) {
+                closeMobileMenu();
             }
         });
         
