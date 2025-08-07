@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get a Quote - Bill Layne Insurance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        emailjs.init("Av6wKxL6HR-FIMtgm");
+    </script>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-md">
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Get Your Free Quote</h2>
+                    <p class="text-gray-600">Compare rates in 60 seconds</p>
+                </div>
+                
+                <form id="progressiveForm" class="space-y-6">
+                    <div class="form-step" data-step="1">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            What type of insurance do you need?
+                        </label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button type="button" class="insurance-type p-4 border-2 rounded-lg hover:border-blue-500 hover:bg-blue-50" data-type="auto">
+                                <span class="text-2xl">🚗</span>
+                                <span class="block text-sm mt-1">Auto</span>
+                            </button>
+                            <button type="button" class="insurance-type p-4 border-2 rounded-lg hover:border-blue-500 hover:bg-blue-50" data-type="home">
+                                <span class="text-2xl">🏠</span>
+                                <span class="block text-sm mt-1">Home</span>
+                            </button>
+                            <button type="button" class="insurance-type p-4 border-2 rounded-lg hover:border-blue-500 hover:bg-blue-50" data-type="bundle">
+                                <span class="text-2xl">📦</span>
+                                <span class="block text-sm mt-1">Bundle</span>
+                            </button>
+                            <button type="button" class="insurance-type p-4 border-2 rounded-lg hover:border-blue-500 hover:bg-blue-50" data-type="business">
+                                <span class="text-2xl">💼</span>
+                                <span class="block text-sm mt-1">Business</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-step hidden" data-step="2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Your ZIP Code
+                        </label>
+                        <input type="text" id="zipCode" maxlength="5" pattern="[0-9]{5}" 
+                               class="w-full px-4 py-3 border-2 rounded-lg focus:border-blue-500 focus:outline-none"
+                               placeholder="28621">
+                    </div>
+                    
+                    <div class="form-step hidden" data-step="3">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Your Name
+                        </label>
+                        <input type="text" id="fullName" 
+                               class="w-full px-4 py-3 border-2 rounded-lg focus:border-blue-500 focus:outline-none mb-4"
+                               placeholder="John Smith">
+                        
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Phone Number
+                        </label>
+                        <input type="tel" id="phoneNumber" 
+                               class="w-full px-4 py-3 border-2 rounded-lg focus:border-blue-500 focus:outline-none"
+                               placeholder="(336) 555-0123">
+                    </div>
+                    
+                    <div class="form-step hidden" data-step="4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Email Address
+                        </label>
+                        <input type="email" id="emailAddress" 
+                               class="w-full px-4 py-3 border-2 rounded-lg focus:border-blue-500 focus:outline-none"
+                               placeholder="john@example.com">
+                    </div>
+                    
+                    <div class="flex gap-3">
+                        <button type="button" id="prevBtn" class="hidden flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300">
+                            Back
+                        </button>
+                        <button type="button" id="nextBtn" class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700">
+                            Continue
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="mt-6 text-center text-sm text-gray-500">
+                    🔒 SSL Secured • No Spam • Local Agent
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+        const formData = {};
+        
+        // Auto-advance ZIP code
+        document.getElementById('zipCode')?.addEventListener('input', function(e) {
+            if (e.target.value.length === 5) {
+                setTimeout(() => document.getElementById('nextBtn').click(), 500);
+            }
+        });
+        
+        // Insurance type selection
+        document.querySelectorAll('.insurance-type').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.insurance-type').forEach(b => b.classList.remove('border-blue-500', 'bg-blue-50'));
+                this.classList.add('border-blue-500', 'bg-blue-50');
+                formData.insuranceType = this.dataset.type;
+                setTimeout(() => document.getElementById('nextBtn').click(), 300);
+            });
+        });
+        
+        // Navigation
+        document.getElementById('nextBtn').addEventListener('click', function() {
+            if (currentStep < totalSteps) {
+                document.querySelector(`[data-step="${currentStep}"]`).classList.add('hidden');
+                currentStep++;
+                document.querySelector(`[data-step="${currentStep}"]`).classList.remove('hidden');
+                
+                if (currentStep > 1) document.getElementById('prevBtn').classList.remove('hidden');
+                if (currentStep === totalSteps) this.textContent = 'Get My Quotes';
+            } else {
+                submitForm();
+            }
+        });
+        
+        document.getElementById('prevBtn').addEventListener('click', function() {
+            document.querySelector(`[data-step="${currentStep}"]`).classList.add('hidden');
+            currentStep--;
+            document.querySelector(`[data-step="${currentStep}"]`).classList.remove('hidden');
+            
+            if (currentStep === 1) this.classList.add('hidden');
+            document.getElementById('nextBtn').textContent = 'Continue';
+        });
+        
+        function submitForm() {
+            formData.zipCode = document.getElementById('zipCode').value;
+            formData.fullName = document.getElementById('fullName').value;
+            formData.phoneNumber = document.getElementById('phoneNumber').value;
+            formData.emailAddress = document.getElementById('emailAddress').value;
+            
+            emailjs.send('service_4flmw3k', 'template_tc5aalp', formData)
+                .then(() => alert('Quote request sent! We\'ll contact you shortly.'))
+                .catch(() => alert('Please call us at (336) 835-1993'));
+        }
+    </script>
+</body>
+</html>
