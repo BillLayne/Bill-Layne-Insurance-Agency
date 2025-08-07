@@ -90,8 +90,245 @@
         }
         
         .header-scrolled {
-            background: rgba(255, 255, 255, 0.98) !important;
-            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+        }
+        
+        /* ===== NEW, UNIFIED MOBILE MENU STYLES ===== */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .mobile-menu-toggle span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background-color: #333333;
+            margin: 3px 0;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        /* Hamburger Animation */
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+            background-color: #0066ff;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+            background-color: #0066ff;
+        }
+
+        /* Mobile Menu Container */
+        .navbar-menu {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 320px;
+            height: 100vh;
+            background: #ffffff;
+            box-shadow: 4px 0 30px rgba(0, 0, 0, 0.15);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar-menu.active {
+            left: 0;
+        }
+
+        /* Menu Overlay */
+        .navbar-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .navbar-menu.active + .navbar-menu-overlay {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Menu Content */
+        .navbar-menu-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            z-index: 1001;
+            overflow-y: auto;
+        }
+
+        /* Close Button */
+        .navbar-menu-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            transition: all 0.3s ease;
+            z-index: 1002;
+        }
+
+        .navbar-menu-close:hover {
+            transform: rotate(90deg);
+        }
+
+        .navbar-menu-close svg {
+            width: 24px;
+            height: 24px;
+            stroke: #333333;
+        }
+
+        /* Navigation Links */
+        .navbar-menu-nav {
+            padding: 80px 30px 30px;
+            flex: 1;
+        }
+
+        .navbar-menu-nav .nav-link {
+            display: block;
+            padding: 18px 0;
+            color: #333333;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 500;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .navbar-menu-nav .nav-link:hover {
+            color: #0066ff;
+            padding-left: 10px;
+        }
+
+        .navbar-menu-nav .nav-link:hover::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 20px;
+            background: #0066ff;
+        }
+
+        /* CTA Section */
+        .navbar-menu-cta {
+            padding: 30px;
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .navbar-menu-cta .phone-cta {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+        }
+
+        .navbar-menu-cta .phone-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+        }
+
+        .navbar-menu-cta .phone-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .navbar-menu-cta .btn--primary {
+            display: block;
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #0066ff, #0052cc);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 102, 255, 0.3);
+        }
+
+        .navbar-menu-cta .btn--primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 102, 255, 0.4);
+        }
+
+        /* Body scroll lock */
+        body.menu-open {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+        }
+
+        /* Mobile Display */
+        @media (max-width: 900px) {
+            .mobile-menu-toggle {
+                display: flex;
+            }
+            
+            /* Adjust menu width on smaller screens */
+            @media (max-width: 480px) {
+                .navbar-menu {
+                    width: 100%;
+                }
+            }
+        }
+
+        /* Desktop - Hide mobile menu */
+        @media (min-width: 901px) {
+            .mobile-menu-toggle {
+                display: none !important;
+            }
+            
+            .navbar-menu, .navbar-menu-overlay {
+                display: none !important;
+            }
+        }
+        
+        /* Active Nav Link Styling */
+        .nav-link.active {
+            font-weight: 700;
+            color: #2563eb !important;
         }
         
         .gradient-overlay {
@@ -104,172 +341,6 @@
         
         .national-general-red-light {
             background-color: #ef4444;
-        }
-        
-        /* Mobile Menu Styles */
-        .mobile-menu-toggle {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            width: 24px;
-            height: 24px;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            padding: 0;
-            z-index: 10;
-        }
-        
-        .mobile-menu-toggle span {
-            display: block;
-            height: 3px;
-            width: 100%;
-            background-color: #374151;
-            border-radius: 2px;
-            transition: all 0.3s linear;
-            position: relative;
-            transform-origin: 1px;
-        }
-        
-        .mobile-menu-toggle.active span:first-child {
-            transform: rotate(45deg);
-        }
-        
-        .mobile-menu-toggle.active span:nth-child(2) {
-            opacity: 0;
-            transform: translateX(-20px);
-        }
-        
-        .mobile-menu-toggle.active span:nth-child(3) {
-            transform: rotate(-45deg);
-        }
-        
-        .navbar-menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 50;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        
-        .navbar-menu-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .navbar-menu {
-            position: fixed;
-            top: 0;
-            left: -100%;
-            width: 320px;
-            height: 100vh;
-            background-color: #ffffff !important;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            transition: left 0.3s ease;
-            z-index: 60;
-            overflow-y: auto;
-        }
-        
-        .navbar-menu.active {
-            left: 0;
-        }
-        
-        .navbar-menu-content {
-            padding: 20px;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .navbar-menu-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: #6b7280;
-            cursor: pointer;
-            padding: 0;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .navbar-menu-nav {
-            margin-top: 60px;
-        }
-        
-        .navbar-menu-nav a {
-            display: block;
-            padding: 12px 0;
-            color: #374151 !important;
-            text-decoration: none;
-            font-size: 16px;
-            border-bottom: 1px solid #f3f4f6;
-            transition: color 0.3s ease;
-        }
-        
-        .navbar-menu-nav a:hover {
-            color: #dc2626 !important;
-        }
-        
-        .navbar-menu-nav a.active {
-            color: #dc2626 !important;
-            font-weight: 600;
-        }
-        
-        .navbar-menu-cta {
-            margin-top: auto;
-            padding-top: 20px;
-        }
-        
-        .navbar-menu-cta .cta-phone {
-            display: block;
-            width: 100%;
-            padding: 12px 16px;
-            margin-bottom: 12px;
-            background: linear-gradient(135deg, #22c55e, #16a34a) !important;
-            color: #ffffff !important;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        
-        .navbar-menu-cta .cta-phone:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
-        }
-        
-        .navbar-menu-cta .cta-quote {
-            display: block;
-            width: 100%;
-            padding: 12px 16px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
-            color: #ffffff !important;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        
-        .navbar-menu-cta .cta-quote:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        }
-        
-        body.menu-open {
-            overflow: hidden;
         }
     </style>
 </head>
@@ -305,38 +376,41 @@
                 </div>
                 
                 <!-- Mobile Menu Button -->
-                <button class="mobile-menu-toggle md:hidden" id="mobileMenuToggle">
+                <button id="mobileMenuToggle" class="mobile-menu-toggle md:hidden" aria-label="Open menu">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
             </div>
         </div>
-        
-        <!-- Mobile Menu Overlay -->
-        <div class="navbar-menu-overlay" id="navbarMenuOverlay">
-            <div class="navbar-menu" id="navbarMenu">
-                <div class="navbar-menu-content">
-                    <button class="navbar-menu-close" id="navbarMenuClose">&times;</button>
-                    
-                    <nav class="navbar-menu-nav">
-                        <a href="https://billlayneinsurance.com/">Home</a>
-                        <a href="https://billlayne.github.io/Auto-Insurance-Center/">Auto Insurance</a>
-                        <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/">Home Insurance</a>
-                        <a href="/carriers/" class="active">Insurance Companies</a>
-                        <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/">Claims Center</a>
-                        <a href="https://billlayne.github.io/Resources/">Resources</a>
-                        <a href="https://billlayneinsurance.com/blog">Blog</a>
-                    </nav>
-                    
-                    <div class="navbar-menu-cta">
-                        <a href="tel:3368351993" class="cta-phone">📞 Call (336) 835-1993</a>
-                        <a href="https://billlayneinsurance.com/auto-quote.html" class="cta-quote">Get Free Quote</a>
-                    </div>
-                </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="navbar-menu">
+        <div class="navbar-menu-content">
+            <button class="navbar-menu-close" aria-label="Close menu">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <nav class="navbar-menu-nav">
+                <a href="https://billlayneinsurance.com/" class="nav-link">Home</a>
+                <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="nav-link">Auto Insurance</a>
+                <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="nav-link">Home Insurance</a>
+                <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="nav-link">Claims</a>
+                <a href="https://billlayne.github.io/Resources/" class="nav-link">Resources</a>
+                <a href="https://billlayneinsurance.com/areas-we-serve.html" class="nav-link">Areas We Serve</a>
+                <a href="https://billlayneinsurance.com/blog" class="nav-link">Blog</a>
+                <a href="https://billlayneinsurance.com/contact-us.html" class="nav-link">Contact</a>
+            </nav>
+            <div class="navbar-menu-cta">
+                <a href="tel:3368351993" class="phone-cta">
+                    <svg class="phone-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"></path></svg>
+                    <span>Call (336) 835-1993</span>
+                </a>
+                <a href="https://billlayneinsurance.com/auto-quote.html" class="btn--primary">Get a Free Quote</a>
             </div>
         </div>
-    </header>
+    </div>
+    <div class="navbar-menu-overlay"></div>
 
     <!-- Hero Section -->
     <section class="pt-20 bg-gradient-to-br from-red-600 to-red-800 text-white">
@@ -909,84 +983,39 @@
     </a>
 
     <script>
-        // Header scroll effect
-        function initializeHeader() {
-            const header = document.getElementById('header');
-            const headerLogo = document.getElementById('header-logo');
-            
-            function handleScroll() {
-                const isScrolled = window.scrollY > 50;
-                header.classList.toggle('header-scrolled', isScrolled);
-                
-                // Handle logo color for desktop
-                if (window.innerWidth >= 768) {
-                    if (isScrolled) {
-                        headerLogo.classList.remove('md:text-white');
-                        headerLogo.classList.add('md:text-amber-800');
-                    } else {
-                        headerLogo.classList.remove('md:text-amber-800');
-                        headerLogo.classList.add('md:text-white');
-                    }
-                }
-            }
-            
-            window.addEventListener('scroll', handleScroll);
-            window.addEventListener('resize', handleScroll);
-            handleScroll(); // Initial call
-        }
+        // Mobile Menu Toggle
+        document.addEventListener('DOMContentLoaded', function () {
+            const mobileMenuButton = document.getElementById('mobileMenuToggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuClose = document.querySelector('.navbar-menu-close');
+            const mobileMenuOverlay = document.querySelector('.navbar-menu-overlay');
 
-        // Mobile menu functionality
-        function initializeMobileMenu() {
-            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-            const navbarMenuOverlay = document.getElementById('navbarMenuOverlay');
-            const navbarMenu = document.getElementById('navbarMenu');
-            const navbarMenuClose = document.getElementById('navbarMenuClose');
-            
-            function openMobileMenu() {
-                navbarMenuOverlay.classList.add('active');
-                navbarMenu.classList.add('active');
-                mobileMenuToggle.classList.add('active');
-                document.body.classList.add('menu-open');
-            }
-            
-            function closeMobileMenu() {
-                navbarMenuOverlay.classList.remove('active');
-                navbarMenu.classList.remove('active');
-                mobileMenuToggle.classList.remove('active');
-                document.body.classList.remove('menu-open');
-            }
-            
-            mobileMenuToggle.addEventListener('click', openMobileMenu);
-            navbarMenuClose.addEventListener('click', closeMobileMenu);
-            
-            navbarMenuOverlay.addEventListener('click', (e) => {
-                if (e.target === navbarMenuOverlay) {
-                    closeMobileMenu();
-                }
-            });
-        }
-
-        // Smooth scrolling for anchor links
-        function initializeSmoothScrolling() {
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
+            if (mobileMenuButton && mobileMenu && mobileMenuClose && mobileMenuOverlay) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('active');
+                    mobileMenuOverlay.classList.toggle('active');
+                    document.body.classList.toggle('menu-open');
                 });
-            });
-        }
 
-        // Initialize all functionality when DOM is ready
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeHeader();
-            initializeMobileMenu();
-            initializeSmoothScrolling();
+                const closeMenu = () => {
+                    mobileMenu.classList.remove('active');
+                    mobileMenuOverlay.classList.remove('active');
+                    document.body.classList.remove('menu-open');
+                }
+
+                mobileMenuClose.addEventListener('click', closeMenu);
+                mobileMenuOverlay.addEventListener('click', closeMenu);
+            }
+        });
+
+        // Header Scroll Effect
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('header-scrolled');
+            } else {
+                header.classList.remove('header-scrolled');
+            }
         });
     </script>
 </body>
