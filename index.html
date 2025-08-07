@@ -63,7 +63,7 @@
     <link rel="preload" href="app.js?v=2024.12.13.1" as="script">
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" as="style">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="preload" href="https://github.com/BillLayne/bill-layne-images/blob/main/img/elkin-nc-foothills.jpg?raw=true" as="image">
+    <link rel="preload" href="https://raw.githubusercontent.com/BillLayne/bill-layne-images/refs/heads/main/logos/Car%20Insurance.webp" as="image" fetchpriority="high">
     
     <!-- Local Styles with Version -->
     <link rel="stylesheet" href="style.css?v=2024.12.13.2">
@@ -112,7 +112,7 @@
         }
     </script>
 
-    <!-- Font Awesome for Icons with media query for better mobile loading -->
+    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
 
@@ -1189,19 +1189,25 @@
         .navbar-menu {
             position: fixed;
             top: 0;
-            right: -100%;
-            width: 320px;
+            left: -100%;
+            width: 100%;
             height: 100vh;
             background: #ffffff;
-            box-shadow: -4px 0 30px rgba(0, 0, 0, 0.15);
-            transition: right 0.3s ease;
+            box-shadow: 4px 0 30px rgba(0, 0, 0, 0.15);
+            transition: left 0.3s ease;
             z-index: 1000;
             display: flex;
             flex-direction: column;
         }
+        
+        @media (min-width: 481px) {
+            .navbar-menu {
+                width: 320px;
+            }
+        }
 
         .navbar-menu.active {
-            right: 0;
+            left: 0;
         }
 
         /* Menu Overlay */
@@ -1218,7 +1224,7 @@
             z-index: 999;
         }
 
-        .navbar-menu.active .navbar-menu-overlay {
+        .navbar-menu.active + .navbar-menu-overlay {
             opacity: 1;
             visibility: visible;
         }
@@ -1356,13 +1362,6 @@
             .mobile-menu-toggle {
                 display: flex;
             }
-            
-            /* Adjust menu width on smaller screens */
-            @media (max-width: 480px) {
-                .navbar-menu {
-                    width: 100%;
-                }
-            }
         }
 
         /* Desktop - Hide mobile menu */
@@ -1371,7 +1370,7 @@
                 display: none !important;
             }
             
-            .navbar-menu {
+            .navbar-menu, .navbar-menu-overlay {
                 display: none !important;
             }
         }
@@ -1564,31 +1563,31 @@
     </header>
 
     <!-- Mobile Menu -->
-    <div class="navbar-menu-overlay"></div>
     <div id="mobile-menu" class="navbar-menu">
         <div class="navbar-menu-content">
             <button class="navbar-menu-close" aria-label="Close menu">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
             <nav class="navbar-menu-nav">
-                <a href="/" class="nav-link">Home</a>
-                <a href="/areas-we-serve.html" class="nav-link">Services</a>
+                <a href="https://billlayneinsurance.com/" class="nav-link">Home</a>
+                <a href="https://billlayneinsurance.com/areas-we-serve.html" class="nav-link">Services</a>
                 <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="nav-link">Auto Insurance</a>
                 <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="nav-link">Home Insurance</a>
                 <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="nav-link">Claims</a>
                 <a href="https://billlayne.github.io/Resources/" class="nav-link">Resources</a>
-                <a href="/blog.html" class="nav-link">Blog</a>
-                <a href="/contact-us.html" class="nav-link">Contact</a>
+                <a href="https://billlayneinsurance.com/blog.html" class="nav-link">Blog</a>
+                <a href="https://billlayneinsurance.com/contact-us.html" class="nav-link">Contact</a>
             </nav>
             <div class="navbar-menu-cta">
                 <a href="tel:3368351993" class="phone-cta">
                     <svg class="phone-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"></path></svg>
                     <span>Call (336) 835-1993</span>
                 </a>
-                <a href="/auto-quote.html" class="btn--primary">Get a Free Quote</a>
+                <a href="https://billlayneinsurance.com/auto-quote.html" class="btn--primary">Get a Free Quote</a>
             </div>
         </div>
     </div>
+    <div class="navbar-menu-overlay"></div>
 
 
     <main id="main-content">
@@ -1689,11 +1688,12 @@
                         </div>
                     </a>
                     <a href="carriers/nc-grange-landing.html" class="group">
-                        <div class="w-[140px] h-[80px] bg-white rounded-lg shadow-sm flex items-center justify-center p-3 group-hover:shadow-md transition-shadow border border-gray-200">
+                        <div class="w-[140px] h-[80px] bg-white rounded-lg shadow-sm flex items-center justify-center p-2 group-hover:shadow-md transition-shadow border border-gray-200">
                             <img src="https://raw.githubusercontent.com/BillLayne/bill-layne-images/refs/heads/main/logos/NC%20Grange%20Logo.webp" 
                                  alt="NC Grange Insurance Partner" 
                                  width="150" height="60" 
-                                 class="max-h-full max-w-full object-contain" 
+                                 class="object-contain" 
+                                 style="max-height: 65px; width: auto; transform: scale(1.3);"
                                  loading="lazy" decoding="async">
                         </div>
                     </a>
@@ -2089,17 +2089,27 @@
 
             if (mobileMenuButton && mobileMenu && mobileMenuClose && mobileMenuOverlay) {
                 mobileMenuButton.addEventListener('click', () => {
-                    mobileMenu.classList.add('active');
-                    document.body.classList.add('menu-open');
+                    mobileMenu.classList.toggle('active');
+                    mobileMenuOverlay.classList.toggle('active');
+                    document.body.classList.toggle('menu-open');
+                    mobileMenuButton.classList.toggle('active');
                 });
 
                 const closeMenu = () => {
                     mobileMenu.classList.remove('active');
+                    mobileMenuOverlay.classList.remove('active');
                     document.body.classList.remove('menu-open');
+                    mobileMenuButton.classList.remove('active');
                 }
 
                 mobileMenuClose.addEventListener('click', closeMenu);
                 mobileMenuOverlay.addEventListener('click', closeMenu);
+                
+                // Close menu when clicking on a link
+                const menuLinks = mobileMenu.querySelectorAll('.nav-link');
+                menuLinks.forEach(link => {
+                    link.addEventListener('click', closeMenu);
+                });
             }
 
             // --- Fix dropdown menu hover issues ---
