@@ -4,8 +4,7 @@ const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/style.min.css?v=2024.12.13.4',
-  '/app.js?v=2024.12.13.2',
-  '/lazy-load.min.js?v=2024.12.13.1',
+  '/app.js?v=2024.12.13.3',
   '/critical-enhanced.css',
   // Critical fonts
   'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap'
