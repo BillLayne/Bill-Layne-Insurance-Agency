@@ -58,48 +58,22 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
-    <!-- Optimized Google Fonts loading with only necessary weights -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" as="style">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Optimized Google Fonts loading with font-display swap -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     
     <!-- Preload critical resources -->
-    <link rel="preload" href="style.min.css?v=2024.12.13.4" as="style">
-    <link rel="preload" href="app.js?v=2024.12.13.1" as="script">
+    <link rel="preload" href="style.min.css?v=2024.12.13.5" as="style">
     <link rel="preload" href="https://raw.githubusercontent.com/BillLayne/bill-layne-images/refs/heads/main/logos/Car%20Insurance.webp" as="image" fetchpriority="high">
     
-    <!-- Local Styles with Version (Minified) -->
-    <link rel="stylesheet" href="style.min.css?v=2024.12.13.4">
+    <!-- Local Styles with Version (Minified) - Load asynchronously -->
+    <link rel="preload" href="style.min.css?v=2024.12.13.5" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="style.min.css?v=2024.12.13.5"></noscript>
 
     <!-- Critical inline CSS for above-the-fold content -->
     <style>
-        /* CSS Variables */
-        :root {
-            --white: #ffffff;
-            --gray-700: #374151;
-            --gray-800: #1f2937;
-            --blue-600: #2563eb;
-        }
-        
-        /* Critical CSS to prevent layout shift - Mobile First */
-        * { box-sizing: border-box; }
-        body { margin: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-        header { position: fixed; top: 0; width: 100%; background: white; z-index: 50; min-height: 60px; }
-        @media (min-width: 768px) { header { min-height: 80px; } }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
-        .hidden { display: none; }
-        /* Mobile-first navigation styles */
-        .nav-link { color: #374151; text-decoration: none; }
-        @media (max-width: 767px) {
-            main { padding-top: 60px; }
-            .mobile-only { display: block !important; }
-            .desktop-only { display: none !important; }
-        }
-        @media (min-width: 768px) {
-            .mobile-only { display: none !important; }
-            .desktop-only { display: block !important; }
-        }
-        .bg-gray-50 { background-color: #f9fafb; }
-        .text-gray-800 { color: #1f2937; }
+        :root{--white:#fff;--gray-700:#374151;--gray-800:#1f2937;--blue-600:#2563eb}*{box-sizing:border-box;margin:0;padding:0}body{margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.5;color:#1f2937;-webkit-font-smoothing:antialiased}header{position:fixed;top:0;width:100%;background:#fff;z-index:50;min-height:60px;box-shadow:0 1px 3px rgba(0,0,0,.1)}.container{max-width:1200px;margin:0 auto;padding:0 1rem}.hero-section{padding-top:60px;min-height:400px;background:linear-gradient(135deg,#667eea 0,#764ba2 100%)}@media (max-width:767px){main{padding-top:60px}.mobile-only{display:block!important}.desktop-only{display:none!important}.mobile-menu{position:fixed;top:60px;left:-100%;width:100%;height:calc(100vh - 60px);background:#fff;transition:left .3s ease;overflow-y:auto}.mobile-menu.active{left:0}h1{font-size:1.875rem}h2{font-size:1.5rem}h3{font-size:1.25rem}p{font-size:1rem}.btn{padding:.75rem 1.5rem;font-size:1rem;border-radius:.5rem;display:inline-block;text-decoration:none;transition:transform .2s}}@media (min-width:768px){header{min-height:80px}.hero-section{padding-top:80px}.mobile-only{display:none!important}.desktop-only{display:block!important}}.hidden{display:none!important}.text-center{text-align:center}.font-bold{font-weight:700}.mt-4{margin-top:1rem}.mb-4{margin-bottom:1rem}.p-4{padding:1rem}img{max-width:100%;height:auto;display:block}img[loading=lazy]{background:#f0f0f0}
         .bg-white { background-color: #ffffff; }
         .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
         /* Prevent FOUC */
@@ -2635,9 +2609,9 @@
         });
     </script>
     
-    <!-- Main JavaScript with Version -->
-    <script src="app.js?v=2024.12.13.2" defer></script>
-    <script src="lazy-load.min.js?v=2024.12.13.1" defer></script>
+    <!-- Main JavaScript with Version - Minified and Async -->
+    <script src="app.min.js?v=2024.12.13.5" async></script>
+    <script src="lazy-load.min.js?v=2024.12.13.1" async></script>
     
     <!-- Service Worker Registration -->
     <script>

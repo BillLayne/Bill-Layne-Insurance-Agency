@@ -1,0 +1,121 @@
+/* Critical CSS for Mobile Performance - Inline in <head> */
+:root {
+    --white: #ffffff;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --blue-600: #2563eb;
+}
+
+* { 
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body { 
+    margin: 0; 
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.5;
+    color: #1f2937;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Header - Critical for LCP */
+header { 
+    position: fixed; 
+    top: 0; 
+    width: 100%; 
+    background: white; 
+    z-index: 50; 
+    min-height: 60px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.container { 
+    max-width: 1200px; 
+    margin: 0 auto; 
+    padding: 0 1rem;
+}
+
+/* Hero Section - Critical for FCP/LCP */
+.hero-section {
+    padding-top: 60px;
+    min-height: 400px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+@media (max-width: 767px) {
+    main { padding-top: 60px; }
+    .mobile-only { display: block !important; }
+    .desktop-only { display: none !important; }
+    
+    /* Mobile Navigation */
+    .mobile-menu {
+        position: fixed;
+        top: 60px;
+        left: -100%;
+        width: 100%;
+        height: calc(100vh - 60px);
+        background: white;
+        transition: left 0.3s ease;
+        overflow-y: auto;
+    }
+    
+    .mobile-menu.active {
+        left: 0;
+    }
+    
+    /* Mobile Typography */
+    h1 { font-size: 1.875rem; }
+    h2 { font-size: 1.5rem; }
+    h3 { font-size: 1.25rem; }
+    p { font-size: 1rem; }
+    
+    /* Mobile Buttons */
+    .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 0.5rem;
+        display: inline-block;
+        text-decoration: none;
+        transition: transform 0.2s;
+    }
+}
+
+@media (min-width: 768px) {
+    header { min-height: 80px; }
+    .hero-section { padding-top: 80px; }
+    .mobile-only { display: none !important; }
+    .desktop-only { display: block !important; }
+}
+
+/* Utility Classes */
+.hidden { display: none !important; }
+.text-center { text-align: center; }
+.font-bold { font-weight: 700; }
+.mt-4 { margin-top: 1rem; }
+.mb-4 { margin-bottom: 1rem; }
+.p-4 { padding: 1rem; }
+
+/* Loading States */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Image Optimization */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+img[loading="lazy"] {
+    background: #f0f0f0;
+}
