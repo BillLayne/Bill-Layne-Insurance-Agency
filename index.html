@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Bill Layne Insurance Agency - Independent Insurance in Elkin, NC</title>
     <meta name="description" content="Get personalized insurance coverage from Bill Layne Insurance Agency. Auto, home, life, and business insurance in Elkin, Mount Airy, and Surry County, NC. Call (336) 835-1993.">
     
@@ -70,19 +70,30 @@
 
     <!-- Critical inline CSS for above-the-fold content -->
     <style>
-        /* Critical CSS to prevent layout shift */
-        body { margin: 0; }
-        header { position: fixed; top: 0; width: 100%; background: white; z-index: 50; min-height: 80px; }
+        /* Critical CSS to prevent layout shift - Mobile First */
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        header { position: fixed; top: 0; width: 100%; background: white; z-index: 50; min-height: 60px; }
+        @media (min-width: 768px) { header { min-height: 80px; } }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
         .hidden { display: none; }
-        /* Navigation styles */
-        .nav-link { 
-            /* Basic nav link styles without display override */
+        /* Mobile-first navigation styles */
+        .nav-link { color: #374151; text-decoration: none; }
+        @media (max-width: 767px) {
+            main { padding-top: 60px; }
+            .mobile-only { display: block !important; }
+            .desktop-only { display: none !important; }
+        }
+        @media (min-width: 768px) {
+            .mobile-only { display: none !important; }
+            .desktop-only { display: block !important; }
         }
         .bg-gray-50 { background-color: #f9fafb; }
         .text-gray-800 { color: #1f2937; }
         .bg-white { background-color: #ffffff; }
         .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+        /* Prevent FOUC */
+        html { visibility: visible; opacity: 1; }
     </style>
     
     <!-- Tailwind CSS -->
@@ -93,8 +104,9 @@
         }
     </script>
 
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Font Awesome for Icons with media query for better mobile loading -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
 
     <style>
         /* Custom styles for animations and specific elements */
@@ -144,6 +156,7 @@
             font-weight: 500;
             text-decoration: none;
             transition: color 0.3s ease;
+            display: inline-block !important;
         }
 
         #main-header .nav-link:hover {
@@ -250,28 +263,41 @@
         }
         END OF OLD MOBILE MENU STYLES */
         
-        /* Mobile Header Layout */
+        /* Mobile-First Header Layout */
+        #main-header > div > div {
+            display: flex !important;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1rem;
+            height: 60px;
+        }
+        
+        #main-header .text-2xl {
+            font-size: 1.25rem;
+        }
+        
+        /* Ensure mobile menu is properly positioned */
+        #main-header {
+            position: fixed;
+        }
+        
+        /* Add padding to main content to account for fixed header */
+        main {
+            padding-top: 60px;
+        }
+        
+        /* Touch-friendly mobile menu items */
         @media (max-width: 767px) {
-            #main-header > div > div {
-                display: flex !important;
-                justify-content: space-between;
+            .nav-link, button.nav-link {
+                min-height: 44px;
+                display: flex;
                 align-items: center;
-                padding: 0 1rem;
-                height: 60px;
+                padding: 0.75rem 1rem;
             }
             
-            #main-header .text-2xl {
-                font-size: 1.25rem;
-            }
-            
-            /* Ensure mobile menu is properly positioned */
-            #main-header {
-                position: fixed;
-            }
-            
-            /* Add padding to main content to account for fixed header */
-            main {
-                padding-top: 60px;
+            #mobile-menu a {
+                min-height: 48px;
+                padding: 1rem 1.5rem;
             }
         }
         
@@ -293,6 +319,31 @@
             color: #ffffff !important;
             opacity: 1 !important;
             visibility: visible !important;
+        }
+        
+        /* Desktop Navigation Visibility Fix */
+        @media (min-width: 768px) {
+            .desktop-nav {
+                display: flex !important;
+            }
+            .desktop-cta {
+                display: flex !important;
+            }
+            .mobile-menu-toggle {
+                display: none !important;
+            }
+        }
+        
+        @media (max-width: 767px) {
+            .desktop-nav {
+                display: none !important;
+            }
+            .desktop-cta {
+                display: none !important;
+            }
+            .mobile-menu-toggle {
+                display: flex !important;
+            }
         }
         
         /* Fix Navigation Spacing and Centering - Desktop only */
@@ -410,10 +461,18 @@
         
         /* Desktop navigation specific */
         @media (min-width: 768px) {
-            /* Let Tailwind handle display properties */
             #main-header .nav-link {
                 padding: 0.5rem 0.75rem;
                 color: #374151 !important;
+                display: inline-flex !important;
+                align-items: center;
+            }
+            
+            /* Ensure desktop nav container is visible */
+            #main-header nav {
+                display: flex !important;
+                visibility: visible !important;
+                opacity: 1 !important;
             }
         }
 
@@ -812,6 +871,14 @@
             font-size: 16px !important;
             transition: all 0.3s ease !important;
             background-color: #ffffff !important;
+            min-height: 44px !important; /* Touch-friendly */
+            -webkit-appearance: none; /* Remove iOS defaults */
+        }
+        
+        @media (max-width: 767px) {
+            .form-input-enhanced {
+                padding: 14px 16px !important;
+            }
         }
 
         .form-input-enhanced:focus {
@@ -1179,7 +1246,7 @@
                 </div>
 
                 <!-- Desktop Navigation (Center) -->
-                <nav class="hidden md:flex items-center justify-center flex-1 px-8">
+                <nav class="desktop-nav hidden md:flex items-center justify-center flex-1 px-8">
                     <div class="flex items-center space-x-1">
                         <a href="index.html" class="nav-link px-3 py-2 rounded-md text-gray-700 hover:text-blue-600" style="color: #374151 !important; opacity: 1 !important;">Home</a>
 
@@ -1220,7 +1287,7 @@
                 </nav>
 
                 <!-- Phone & CTA (Right) -->
-                <div class="hidden md:flex items-center space-x-4 flex-shrink-0">
+                <div class="desktop-cta hidden md:flex items-center space-x-4 flex-shrink-0">
                     <a href="tel:3368351993" class="text-gray-700 font-semibold hover:text-blue-600 transition-colors" style="color: #374151 !important; opacity: 1 !important;">(336) 835-1993</a>
                     <a href="/auto-quote.html" class="btn-primary-enhanced transition-all">Get a Quote</a>
                 </div>
@@ -1276,18 +1343,18 @@
                      decoding="async">
             </div>
             <div class="relative container mx-auto px-4 text-center">
-                <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4 animate-fadeInUp">Protecting Our NC Neighbors</h1>
-                <p class="text-lg md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto animate-fadeInUp" style="animation-delay: 0.2s;">
+                <h1 class="text-3xl sm:text-4xl md:text-6xl font-extrabold leading-tight mb-4 animate-fadeInUp">Protecting Our NC Neighbors</h1>
+                <p class="text-base sm:text-lg md:text-xl text-gray-200 mb-6 sm:mb-8 max-w-3xl mx-auto animate-fadeInUp" style="animation-delay: 0.2s;">
                     Personalized auto, home, and business insurance serving Elkin, Mount Airy, Jonesville, and all of Northwest North Carolina. Your local, independent agency that puts you first.
                 </p>
-                <a href="auto-quote.html" class="btn-primary-enhanced inline-block text-lg animate-fadeInUp" style="animation-delay: 0.4s;">
+                <a href="auto-quote.html" class="btn-primary-enhanced inline-block text-base sm:text-lg px-6 py-3 sm:px-8 sm:py-4 animate-fadeInUp" style="animation-delay: 0.4s;">
                     Get Your Free Quote
                 </a>
                 
-                <!-- NEW: Trust Banner -->
-                <div class="mt-16 md:mt-24 animate-fadeInUp" style="animation-delay: 0.6s;">
+                <!-- Trust Banner - Mobile Optimized -->
+                <div class="mt-12 sm:mt-16 md:mt-24 animate-fadeInUp" style="animation-delay: 0.6s;">
                     <div class="max-w-4xl mx-auto bg-white/10 backdrop-blur-md rounded-full p-4 border border-white/20">
-                        <div class="flex flex-wrap justify-center items-center gap-4 md:gap-8">
+                        <div class="flex flex-wrap justify-center items-center gap-3 sm:gap-4 md:gap-8">
                             <div class="text-center">
                                 <p class="text-2xl md:text-3xl font-bold">15+</p>
                                 <p class="text-xs md:text-sm text-gray-300 uppercase tracking-wider">Years Serving NC</p>
@@ -1362,7 +1429,7 @@
                             <img src="https://imgur.com/CNFRCZc.png" alt="Alamance Farmers" width="150" height="60" class="max-h-full max-w-full object-contain" loading="lazy">
                         </div>
                     </a>
-                    <a href="/nc-grange.html" class="group">
+                    <a href="carriers/nc-grange-landing.html" class="group">
                         <div class="w-[140px] h-[80px] bg-white rounded-lg shadow-sm flex items-center justify-center p-3 group-hover:shadow-md transition-shadow border border-gray-200">
                             <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/NC%20Grange%20Logo.png?raw=true" 
                                  alt="NC Grange Insurance Partner" 
