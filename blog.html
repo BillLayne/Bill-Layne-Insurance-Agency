@@ -105,7 +105,7 @@
         }
 
         .mobile-menu-toggle {
-            display: none;
+            display: flex !important;
             background: none;
             border: none;
             cursor: pointer;
@@ -146,20 +146,20 @@
         .navbar-menu {
             position: fixed;
             top: 0;
-            left: -100%;
+            right: -100%;
             width: 320px;
             height: 100vh;
             background: #ffffff !important;
             background-color: #ffffff !important;
-            box-shadow: 4px 0 30px rgba(0, 0, 0, 0.15);
-            transition: left 0.3s ease;
+            box-shadow: -4px 0 30px rgba(0, 0, 0, 0.15);
+            transition: right 0.3s ease;
             z-index: 1000;
             display: flex;
             flex-direction: column;
         }
 
         .navbar-menu.active {
-            left: 0;
+            right: 0;
         }
 
         /* Menu Overlay */
@@ -199,7 +199,7 @@
         .navbar-menu-close {
             position: absolute;
             top: 20px;
-            right: 20px;
+            left: 20px;
             background: none;
             border: none;
             cursor: pointer;
@@ -322,19 +322,14 @@
             @media (max-width: 480px) {
                 .navbar-menu {
                     width: 100%;
+                    right: -100%;
                 }
             }
         }
 
-        /* Desktop - Hide mobile menu */
-        @media (min-width: 901px) {
-            .mobile-menu-toggle {
-                display: none !important;
-            }
-            
-            .navbar-menu {
-                display: none !important;
-            }
+        /* Unified menu - always available */
+        .mobile-menu-toggle {
+            display: flex !important;
         }
     </style>
     
@@ -386,52 +381,21 @@
     <div class="container mx-auto px-6 py-4">
         <div class="flex justify-between items-center">
             <!-- Logo -->
-            <a href="index.html" class="text-gray-800 text-2xl font-bold">
+            <a href="index.html" class="text-2xl font-bold text-amber-800">
                 Bill Layne Insurance
             </a>
             
-            <!-- Desktop Navigation -->
-            <nav class="hidden md:flex items-center space-x-1">
-                <a href="index.html" class="nav-link px-3 py-2 rounded-md text-gray-700 hover:text-blue-600">Home</a>
-                
-                <!-- Services Dropdown -->
-                <div class="relative group">
-                    <button class="nav-link px-3 py-2 rounded-md flex items-center text-gray-700 hover:text-blue-600">
-                        Services 
-                        <svg class="ml-2 w-3 h-3 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                        </svg>
-                    </button>
-                    <div class="dropdown-menu absolute hidden group-hover:block bg-white shadow-lg rounded-md py-2 w-48 opacity-0 group-hover:opacity-100">
-                        <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Auto Insurance</a>
-                        <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Home Insurance</a>
-                        <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Claim Center</a>
-                        <a href="https://billlayne.github.io/Resources/" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Resources</a>
-                    </div>
-                </div>
-
-                <!-- Areas We Serve Dropdown -->
-                <div class="relative group">
-                    <button class="nav-link px-3 py-2 rounded-md flex items-center text-gray-700 hover:text-blue-600">
-                        Areas We Serve 
-                        <svg class="ml-2 w-3 h-3 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                        </svg>
-                    </button>
-                    <div class="dropdown-menu absolute hidden group-hover:block bg-white shadow-lg rounded-md py-2 w-48 opacity-0 group-hover:opacity-100">
-                        <a href="areas-we-serve.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">All Areas</a>
-                        <a href="insurance-elkin-nc.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Elkin, NC</a>
-                        <a href="insurance-mount-airy-nc.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Mount Airy, NC</a>
-                    </div>
-                </div>
-
-                <a href="blog.html" class="nav-link px-3 py-2 rounded-md text-gray-700 hover:text-blue-600">Blog</a>
-                <a href="contact-us.html" class="nav-link px-3 py-2 rounded-md text-gray-700 hover:text-blue-600">Contact</a>
-                <a href="auto-quote.html" class="btn-primary-enhanced transition-all ml-4">Get a Quote</a>
-            </nav>
+            <!-- Spacer for center alignment -->
+            <div class="flex-1"></div>
+            
+            <!-- Phone & CTA (Right) -->
+            <div class="desktop-cta flex items-center space-x-4 flex-shrink-0">
+                <a href="tel:3368351993" class="hidden sm:block text-gray-700 font-semibold hover:text-blue-600 transition-colors" style="color: #374151 !important; opacity: 1 !important;">(336) 835-1993</a>
+                <a href="auto-quote.html" class="hidden sm:block btn-primary-enhanced transition-all">Get a Quote</a>
+            </div>
             
             <!-- Mobile Menu Button -->
-            <button id="mobileMenuToggle" class="mobile-menu-toggle md:hidden" aria-label="Open menu">
+            <button id="mobileMenuToggle" class="mobile-menu-toggle" aria-label="Open menu">
                 <span></span>
                 <span></span>
                 <span></span>
