@@ -1,0 +1,210 @@
+/* ==================================================================
+   ENHANCED MOBILE HEADER FIX - Complete Mobile Menu Solution
+   Bill Layne Insurance Agency - Mobile Performance & UX Optimization
+   ================================================================== */
+
+/* Core mobile header styles for proper layout and functionality */
+
+@media (max-width: 900px) {
+    /* Fixed header container to prevent layout shift */
+    .unified-header .header-container {
+        height: 70px !important;
+        padding: 0 20px !important;
+        position: relative !important;
+        width: 100% !important;
+    }
+    
+    /* Logo - prevent shrinking */
+    .header-logo {
+        flex-shrink: 0 !important;
+        min-width: 0 !important; /* Allows text truncation */
+    }
+    
+    .logo-link {
+        font-size: clamp(1rem, 4vw, 1.2rem) !important;
+        font-weight: 600 !important;
+        line-height: 1.2 !important;
+        display: block !important;
+        text-overflow: ellipsis !important;
+        overflow: hidden !important;
+        white-space: nowrap !important;
+        max-width: 200px !important; /* Increased to show full text */
+    }
+    
+    /* Mobile Menu Toggle - ensure it stays on the right */
+    .mobile-menu-toggle {
+        margin-left: auto !important; /* Force to right side */
+    }
+    
+    /* Navigation Menu - Optimized slide animation */
+    .header-nav {
+        display: block !important; /* Always in DOM, prevents reflow */
+        position: absolute !important;
+        top: 100% !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+        z-index: 1002 !important;
+        
+        /* Use transform instead of display for better performance */
+        opacity: 0 !important;
+        visibility: hidden !important;
+        transform: translateY(-10px) !important;
+        transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                    visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        
+        border-top: 3px solid #0066ff !important;
+        max-height: calc(100vh - 70px) !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        
+        /* GPU acceleration for smoother animations */
+        will-change: opacity, transform !important;
+        backface-visibility: hidden !important;
+    }
+    
+    /* Active state - smooth reveal */
+    .header-nav.active {
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: translateY(0) !important;
+    }
+    
+    /* Prevent body scroll when menu is open - Improved */
+    body.menu-open {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        overflow: hidden !important;
+    }
+    
+    /* Store scroll position to prevent jump */
+    body.menu-open::before {
+        content: '' !important;
+        position: absolute !important;
+        top: var(--scroll-y, 0) !important;
+        left: 0 !important;
+        width: 1px !important;
+        height: 1px !important;
+        pointer-events: none !important;
+    }
+    
+    /* Mobile menu container styling */
+    #mobile-menu {
+        position: absolute !important;
+        top: 100% !important;
+        left: 0 !important;
+        right: 0 !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+        border-top: 1px solid #e5e7eb !important;
+        max-height: calc(100vh - 70px) !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    /* Enhanced mobile menu link styling */
+    #mobile-menu > a,
+    #mobile-menu > button {
+        display: block !important;
+        font-size: 16px !important;
+        padding: 16px 20px !important;
+        color: #374151 !important;
+        font-weight: 500 !important;
+        border-bottom: 1px solid #f3f4f6 !important;
+        text-decoration: none !important;
+        transition: all 0.2s ease !important;
+        position: relative !important;
+    }
+    
+    #mobile-menu > a:hover,
+    #mobile-menu > button:hover {
+        background-color: #f9fafb !important;
+        color: #2563eb !important;
+    }
+    
+    /* Mobile dropdown menu styling */
+    .mobile-dropdown-menu {
+        background-color: #f9fafb !important;
+        border-bottom: 1px solid #e5e7eb !important;
+    }
+    
+    .mobile-dropdown-menu a {
+        display: block !important;
+        padding: 12px 24px 12px 40px !important;
+        font-size: 15px !important;
+        color: #6b7280 !important;
+        text-decoration: none !important;
+        transition: all 0.2s ease !important;
+    }
+    
+    .mobile-dropdown-menu a:hover {
+        background-color: #f3f4f6 !important;
+        color: #2563eb !important;
+    }
+    
+    /* Dropdown arrow animation */
+    .mobile-dropdown-toggle svg {
+        transition: transform 0.3s ease !important;
+    }
+    
+    .mobile-dropdown-toggle svg.rotate-180 {
+        transform: rotate(180deg) !important;
+    }
+    
+    /* Style CTA buttons in mobile menu */
+    #mobile-menu a[href="auto-quote.html"],
+    #mobile-menu a[href*="tel:"] {
+        margin: 10px 16px !important;
+        display: block !important;
+        text-align: center !important;
+        color: white !important;
+        padding: 12px 24px !important;
+        border-radius: 8px !important;
+        font-weight: bold !important;
+        text-decoration: none !important;
+        transition: background-color 0.2s ease !important;
+        font-size: 16px !important;
+    }
+    
+    #mobile-menu a[href="auto-quote.html"] {
+        background-color: #2563eb !important;
+        margin-bottom: 16px !important;
+    }
+    
+    #mobile-menu a[href="auto-quote.html"]:hover {
+        background-color: #1d4ed8 !important;
+    }
+    
+    #mobile-menu a[href*="tel:"] {
+        background-color: #10b981 !important;
+        margin-top: 16px !important;
+    }
+    
+    #mobile-menu a[href*="tel:"]:hover {
+        background-color: #059669 !important;
+    }
+}
+
+/* Very small screens optimization */
+@media (max-width: 480px) {
+    .unified-header .header-container {
+        height: 64px !important;
+        padding: 0 16px !important;
+    }
+    
+    .logo-link {
+        max-width: 180px !important; /* Increased to fit full text */
+        font-size: 0.95rem !important;
+    }
+    
+    /* Keep mobile menu button size consistent */
+    .mobile-menu-toggle {
+        padding: 8px !important;
+    }
+}
