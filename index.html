@@ -41,18 +41,15 @@
         }
     </script>
     
-    <!-- Load style.css immediately -->
+    <!-- Load custom stylesheet for fine-tuning -->
     <link rel="stylesheet" href="style.css">
     
-    <!-- Load Font Awesome with async -->
+    <!-- Load Font Awesome with async to prevent render-blocking -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
     
-    <!-- Preload critical images -->
-    <link rel="preload" as="image" type="image/webp" 
-          href="https://raw.githubusercontent.com/BillLayne/bill-layne-images/main/logos/Nationwide%20Logo%20(1).webp">
-    <link rel="preload" as="image" type="image/webp" 
-          href="https://raw.githubusercontent.com/BillLayne/bill-layne-images/main/logos/Progressive%20Logo.webp">
-    
+    <!-- Preload critical hero image -->
+    <link rel="preload" as="image" href="https://raw.githubusercontent.com/BillLayne/bill-layne-images/main/images/hero-car-insurance-mobile.webp" imagesrcset="https://raw.githubusercontent.com/BillLayne/bill-layne-images/main/images/hero-car-insurance-mobile.webp" imagesizes="100vw">
+
     <!-- Critical inline CSS for immediate render -->
     <style>
         /* Prevent layout shift and ensure smooth initial load */
@@ -213,18 +210,64 @@
             background: rgba(0, 0, 0, 0.4);
         }
     </style>
+
+    <!-- Schema Markup for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "InsuranceAgency",
+      "name": "Bill Layne Insurance Agency",
+      "image": "https://www.billlayneinsurance.com/images/bill-layne-insurance-logo.png",
+      "@id": "https://www.billlayneinsurance.com",
+      "url": "https://www.billlayneinsurance.com",
+      "telephone": "+13368351993",
+      "email": "Save@BillLayneInsurance.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "1283 N Bridge St",
+        "addressLocality": "Elkin",
+        "addressRegion": "NC",
+        "postalCode": "28621",
+        "addressCountry": "US"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 36.2443,
+        "longitude": -80.8487
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "opens": "09:00",
+          "closes": "17:00"
+        }
+      ],
+      "sameAs": [
+        "https://www.facebook.com/BillLayneInsurance",
+        "https://www.google.com/maps/place/Bill+Layne+Insurance+Agency"
+      ],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "bestRating": "5",
+        "worstRating": "1",
+        "ratingCount": "127"
+      }
+    }
+    </script>
 </head>
 
 <body class="bg-gray-50">
-    <!-- Special Offer Banner - Mobile Optimized -->
-    <div class="special-offer-banner bg-gradient-to-r from-yellow-400 to-yellow-500 text-black py-2 px-3 text-center font-bold text-xs sm:text-sm pulse-offer sm:hidden">
+    <!-- Special Offer Banner -->
+    <div class="bg-gradient-to-r from-yellow-400 to-yellow-500 text-black py-2 px-3 text-center font-bold text-xs sm:text-sm pulse-offer sm:hidden">
         🔥 January Special: Save up to $847/year on insurance!
     </div>
     
     <!-- Menu Overlay -->
     <div id="menu-overlay" class="menu-overlay"></div>
     
-    <!-- Header - Keeping exact same structure -->
+    <!-- Header -->
     <header id="main-header" class="f-header">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
@@ -243,12 +286,11 @@
                         <a href="tel:3368351993" class="text-gray-700 font-semibold hover:text-blue-600 transition-colors">
                             <i class="fas fa-phone mr-2"></i>(336) 835-1993
                         </a>
-                        <!-- UPDATED: Get Free Quote button in a styled container -->
                         <a href="auto-quote.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-md">Get Free Quote</a>
                     </div>
                     
-                    <!-- Universal Menu Button -->
-                    <button id="menu-toggle-btn" class="hamburger p-2">
+                    <!-- Universal Menu Button - Accessibility fix with aria-label -->
+                    <button id="menu-toggle-btn" class="hamburger p-2" aria-label="Toggle navigation menu">
                         <span></span>
                         <span></span>
                         <span></span>
@@ -258,11 +300,11 @@
         </div>
     </header>
     
-    <!-- Universal Menu - Keeping exact same structure -->
+    <!-- Universal Menu -->
     <div id="navigation-menu" class="navigation-menu">
         <div class="flex justify-between items-center mb-8">
             <h3 class="text-xl lg:text-2xl font-bold text-gray-800">Navigation</h3>
-            <button id="close-menu" class="text-gray-500 hover:text-gray-700 p-2">
+            <button id="close-menu" class="text-gray-500 hover:text-gray-700 p-2" aria-label="Close navigation menu">
                 <i class="fas fa-times text-xl"></i>
             </button>
         </div>
@@ -308,12 +350,15 @@
             <!-- Background Image with Picture Tag for Optimization -->
             <picture>
                 <!-- Optimized for mobile screens -->
-                <source srcset="images/hero-car-insurance-mobile.webp" media="(max-width: 640px)">
+                <source srcset="https://raw.githubusercontent.com/BillLayne/bill-layne-images/main/images/hero-car-insurance-mobile.webp" media="(max-width: 640px)">
                 <!-- Default for larger screens -->
-                <img src="images/hero-car-insurance.webp" 
+                <img src="https://raw.githubusercontent.com/BillLayne/bill-layne-images/main/images/hero-car-insurance.webp" 
                      alt="A car driving on a scenic North Carolina road" 
                      class="absolute inset-0 h-full w-full object-cover opacity-60" 
-                     loading="eager">
+                     loading="eager" 
+                     fetchpriority="high"
+                     width="1920"
+                     height="1080">
             </picture>
 
             <!-- Overlay for text readability -->
@@ -326,12 +371,12 @@
                     Better Insurance for <span class="block text-yellow-400">North Carolina</span>
                 </h1>
                 
-                <!-- Subheadline -->
+                <!-- Subheadline with improved wrapping -->
                 <p class="text-base sm:text-lg lg:text-xl text-white/90 mb-8 mx-auto">
                     We compare over <span class="text-yellow-400 font-extrabold">10+ Top-Rated Carriers</span> to find you the best coverage and price.
                 </p>
 
-                <!-- Call to Action Buttons - UPDATED with emojis -->
+                <!-- Call to Action Buttons -->
                 <div class="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6 mb-8">
                     <a href="auto-quote.html" 
                        class="bg-yellow-400 text-gray-900 px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-500 transition-colors drop-shadow-md">
@@ -346,34 +391,34 @@
                 <!-- Trust Badges moved to the hero section -->
                 <div class="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6 mt-8 mb-8 flex-wrap">
                     <span class="flex items-center gap-2 text-white/90">
-                        <i class="fas fa-user-shield text-yellow-400 text-2xl"></i>
+                        <svg class="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
                         <span class="text-sm font-semibold whitespace-nowrap">Trusted by 1000+ Clients</span>
                     </span>
                     <span class="flex items-center gap-2 text-white/90">
-                        <i class="fas fa-trophy text-yellow-400 text-2xl"></i>
+                        <svg class="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zM8.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 00-1.414-1.414L10 10.586 8.707 9.293z" clip-rule="evenodd"></path></svg>
                         <span class="text-sm font-semibold whitespace-nowrap">Top-Rated Agency</span>
                     </span>
                     <span class="flex items-center gap-2 text-white/90">
-                        <i class="fas fa-check-circle text-yellow-400 text-2xl"></i>
+                        <svg class="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-9a1 1 0 112 0v5a1 1 0 11-2 0V9zm-2 2a1 1 0 000 2h4a1 1 0 100-2h-4z"></path></svg>
                         <span class="text-sm font-semibold whitespace-nowrap">20+ Years Experience</span>
                     </span>
                 </div>
 
-                <!-- Social Media Links -->
+                <!-- Social Media Links - Accessibility fix with aria-label -->
                 <div class="mt-8 flex justify-center items-center gap-6">
                     <span class="font-semibold text-white/80 text-sm">Follow Us:</span>
                     <div class="flex gap-4">
                         <a href="https://www.facebook.com/BillLayneInsurance" target="_blank" rel="noopener noreferrer" 
-                           class="text-white/80 hover:text-white transform hover:scale-110 transition-transform">
-                            <i class="fab fa-facebook-f text-2xl"></i>
+                           class="text-white/80 hover:text-white transform hover:scale-110 transition-transform" aria-label="Follow us on Facebook">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0H1.325C.593 0 0 .593 0 1.325v21.35C0 23.407.593 24 1.325 24h11.455v-9.294H9.692v-3.622h3.088V7.361c0-3.053 1.838-4.731 4.593-4.731 1.312 0 2.454.098 2.788.142v3.204l-1.898.001c-1.488 0-1.777.707-1.777 1.74V11.08h3.582l-.466 3.622h-3.116V24h6.113c.732 0 1.325-.593 1.325-1.325V1.325C24 .593 23.407 0 22.675 0z"/></svg>
                         </a>
                         <a href="https://twitter.com/billlayneins" target="_blank" rel="noopener noreferrer" 
-                           class="text-white/80 hover:text-white transform hover:scale-110 transition-transform">
-                            <i class="fab fa-twitter text-2xl"></i>
+                           class="text-white/80 hover:text-white transform hover:scale-110 transition-transform" aria-label="Follow us on Twitter">
+                           <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.932 4.932 0 002.164-2.723 9.9 9.9 0 01-3.13 1.194 4.922 4.922 0 00-8.384 4.498A13.935 13.935 0 011.666 3.51a4.922 4.922 0 001.523 6.577 4.973 4.973 0 01-2.23-.616v.062a4.928 4.928 0 003.95 4.827 4.975 4.975 0 01-2.221.084 4.933 4.933 0 004.604 3.424 9.9 9.9 0 01-6.732 1.932A13.916 13.916 0 001 19.34a19.795 19.795 0 0010.746 3.155c12.955 0 20.01-10.745 20.01-20.002v-.895a9.423 9.423 0 002.48-2.573z"/></svg>
                         </a>
                         <a href="https://www.instagram.com/billlayneinsurance/" target="_blank" rel="noopener noreferrer" 
-                           class="text-white/80 hover:text-white transform hover:scale-110 transition-transform">
-                            <i class="fab fa-instagram text-2xl"></i>
+                           class="text-white/80 hover:text-white transform hover:scale-110 transition-transform" aria-label="Follow us on Instagram">
+                           <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.013 4.851.071 1.17.055 1.847.234 2.333.447a4.205 4.205 0 011.693 1.111 4.205 4.205 0 011.111 1.693c.213.486.392 1.163.447 2.333.058 1.267.07 1.647.07 4.851s-.012 3.584-.07 4.851c-.055 1.17-.234 1.847-.447 2.333a4.205 4.205 0 01-1.111 1.693c-.486.213-1.163.392-2.333.447-1.267.058-1.647.07-4.851.07s-3.584-.012-4.851-.07c-1.17-.055-1.847-.234-2.333-.447a4.205 4.205 0 01-1.693-1.111c-.213-.486-.392-1.163-.447-2.333-.058-1.267-.07-1.647-.07-4.851s.012-3.584.07-4.851c.055-1.17.234-1.847.447-2.333a4.205 4.205 0 011.111-1.693c.486-.213 1.163-.392 2.333-.447C8.416 2.176 8.796 2.163 12 2.163zm0 1.517c-3.13 0-3.483.013-4.73.069-1.07.05-1.464.214-1.787.355a2.68 2.68 0 00-.918.604 2.68 2.68 0 00-.604.918c-.141.323-.305.717-.355 1.787-.056 1.247-.069 1.6-.069 4.73s.013 3.483.069 4.73c.05 1.07.214 1.464.355 1.787a2.68 2.68 0 00.604.918 2.68 2.68 0 00.918.604c.323.141.717.305 1.787.355 1.247.056 1.6.069 4.73.069s3.483-.013 4.73-.069c1.07-.05 1.464-.214 1.787-.355a2.68 2.68 0 00.918-.604 2.68 2.68 0 00.604-.918c.141-.323.305-.717.355-1.787.056-1.247.069-1.6.069-4.73s-.013-3.483-.069-4.73c-.05-1.07-.214-1.464-.355-1.787a2.68 2.68 0 00-.604-.918 2.68 2.68 0 00-.918-.604c-.323-.141-.717-.305-1.787-.355-1.247-.056-1.6-.069-4.73-.069zM12 5.839a6.161 6.161 0 100 12.322A6.161 6.161 0 0012 5.839zm0 1.517a4.644 4.644 0 110 9.288 4.644 4.644 0 010-9.288zM18.423 4.717a1.43 1.43 0 100 2.86 1.43 1.43 0 000-2.86z"/></svg>
                         </a>
                     </div>
                 </div>
@@ -393,7 +438,7 @@
                     </p>
                 </div>
                 
-                <!-- Mobile-Optimized Carrier Grid - Show ALL on Mobile -->
+                <!-- Mobile-Optimized Carrier Grid -->
                 <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-8 gap-2 md:gap-4">
                     <!-- Nationwide -->
                     <a href="https://billlayneinsurance.com/carriers/nationwide-north-carolina" 
@@ -401,7 +446,7 @@
                        title="Learn more about Nationwide Insurance in North Carolina">
                         <img src="https://raw.githubusercontent.com/BillLayne/bill-layne-images/main/logos/Nationwide%20Logo%20(1).webp" 
                              alt="Nationwide" 
-                             loading="eager" 
+                             loading="lazy" 
                              width="100" 
                              height="60"
                              decoding="async"
@@ -414,7 +459,7 @@
                        title="Learn more about Progressive Insurance in North Carolina">
                         <img src="https://raw.githubusercontent.com/BillLayne/bill-layne-images/main/logos/Progressive%20Logo.webp" 
                              alt="Progressive" 
-                             loading="eager" 
+                             loading="lazy" 
                              width="100" 
                              height="60"
                              decoding="async"
@@ -427,7 +472,7 @@
                        title="Learn more about National General Insurance in North Carolina">
                         <img src="https://raw.githubusercontent.com/BillLayne/bill-layne-images/main/logos/National%20General%20Insurance%20Logo.webp" 
                              alt="National General" 
-                             loading="eager" 
+                             loading="lazy" 
                              width="100" 
                              height="60"
                              decoding="async"
@@ -440,14 +485,14 @@
                        title="Learn more about Travelers Insurance in North Carolina">
                         <img src="https://raw.githubusercontent.com/BillLayne/bill-layne-images/main/logos/Travelers%20Logo.webp" 
                              alt="Travelers" 
-                             loading="eager" 
+                             loading="lazy" 
                              width="100" 
                              height="60"
                              decoding="async"
                              class="w-full h-auto object-contain max-h-[35px] sm:max-h-[40px] md:max-h-[60px]">
                     </a>
                     
-                    <!-- Alamance - Visible on Mobile Now -->
+                    <!-- Alamance -->
                     <a href="https://billlayneinsurance.com/carriers/alamance-north-carolina" 
                        class="bg-white rounded-lg p-2 md:p-3 shadow-sm hover:shadow-md transition-all hover:scale-105 block"
                        title="Learn more about Alamance Farmers Insurance in North Carolina">
@@ -460,7 +505,7 @@
                              class="w-full h-auto object-contain max-h-[35px] sm:max-h-[40px] md:max-h-[60px]">
                     </a>
                     
-                    <!-- NC Grange - Visible on Mobile Now -->
+                    <!-- NC Grange -->
                     <a href="https://billlayneinsurance.com/carriers/nc-grange-north-carolina" 
                        class="bg-white rounded-lg p-2 md:p-3 shadow-sm hover:shadow-md transition-all hover:scale-105 block"
                        title="Learn more about NC Grange Insurance">
@@ -473,7 +518,7 @@
                              class="w-full h-auto object-contain max-h-[35px] sm:max-h-[40px] md:max-h-[60px]">
                     </a>
                     
-                    <!-- Foremost - Visible on Mobile Now -->
+                    <!-- Foremost -->
                     <a href="https://billlayneinsurance.com/carriers/foremost-north-carolina" 
                        class="bg-white rounded-lg p-2 md:p-3 shadow-sm hover:shadow-md transition-all hover:scale-105 block"
                        title="Learn more about Foremost Insurance in North Carolina">
@@ -486,7 +531,7 @@
                              class="w-full h-auto object-contain max-h-[35px] sm:max-h-[40px] md:max-h-[60px]">
                     </a>
                     
-                    <!-- Hagerty - Visible on Mobile Now -->
+                    <!-- Hagerty -->
                     <a href="https://billlayneinsurance.com/carriers/hagerty-north-carolina" 
                        class="bg-white rounded-lg p-2 md:p-3 shadow-sm hover:shadow-md transition-all hover:scale-105 block"
                        title="Learn more about Hagerty Classic Car Insurance">
@@ -853,13 +898,13 @@
                     <h3 class="text-xl font-bold mb-4">Bill Layne Insurance</h3>
                     <p class="text-gray-400 mb-4">Your local independent insurance agency serving North Carolina families and businesses for over 20 years.</p>
                     <div class="flex space-x-4">
-                        <a href="https://www.facebook.com/dollarbillagency/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white">
+                        <a href="https://www.facebook.com/dollarbillagency/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white" aria-label="Follow us on Facebook">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="https://www.google.com/maps/place/Bill+Layne+Insurance+Agency/@36.2653,-80.8507,17z/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white">
+                        <a href="https://www.google.com/maps/place/Bill+Layne+Insurance+Agency/@36.2653,-80.8507,17z/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white" aria-label="Find us on Google Maps">
                             <i class="fab fa-google"></i>
                         </a>
-                        <a href="https://www.yelp.com/biz/bill-layne-insurance-agency-elkin" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white">
+                        <a href="https://www.yelp.com/biz/bill-layne-insurance-agency-elkin" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white" aria-label="Find us on Yelp">
                             <i class="fab fa-yelp"></i>
                         </a>
                     </div>
@@ -909,7 +954,7 @@
     </footer>
 
     <!-- Load app.js immediately -->
-    <script src="app.js"></script>
+    <script src="app.js" defer></script>
     
     <!-- Optimized inline script for immediate functionality -->
     <script>
@@ -1001,51 +1046,5 @@
 
     <!-- Defer email decode script -->
     <script src="https://billlayneinsurance.com/cloudflare-static/email-decode.min.js"></script>
-
-    <!-- Schema Markup for SEO -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "InsuranceAgency",
-      "name": "Bill Layne Insurance Agency",
-      "image": "https://www.billlayneinsurance.com/images/bill-layne-insurance-logo.png",
-      "@id": "https://www.billlayneinsurance.com",
-      "url": "https://www.billlayneinsurance.com",
-      "telephone": "+13368351993",
-      "email": "Save@BillLayneInsurance.com",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "1283 N Bridge St",
-        "addressLocality": "Elkin",
-        "addressRegion": "NC",
-        "postalCode": "28621",
-        "addressCountry": "US"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": 36.2443,
-        "longitude": -80.8487
-      },
-      "openingHoursSpecification": [
-        {
-          "@type": "OpeningHoursSpecification",
-          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-          "opens": "09:00",
-          "closes": "17:00"
-        }
-      ],
-      "sameAs": [
-        "https://www.facebook.com/BillLayneInsurance",
-        "https://www.google.com/maps/place/Bill+Layne+Insurance+Agency"
-      ],
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.8",
-        "bestRating": "5",
-        "worstRating": "1",
-        "ratingCount": "127"
-      }
-    }
-    </script>
 </body>
 </html>
