@@ -160,12 +160,6 @@
                 gap: 0.75rem !important;
             }
             
-            /* Mobile-optimized subheadline */
-            .mobile-subheadline {
-                font-size: 1.1rem !important;
-                line-height: 1.5 !important;
-            }
-            
             /* Special offer banner mobile */
             .special-offer-banner {
                 animation: slideDown 0.5s ease-out;
@@ -200,6 +194,24 @@
         .pulse-offer {
             animation: pulse 2s infinite;
         }
+
+        /* Hero section specific styles */
+        .hero-bg {
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+        }
     </style>
 </head>
 
@@ -231,7 +243,8 @@
                         <a href="tel:3368351993" class="text-gray-700 font-semibold hover:text-blue-600 transition-colors">
                             <i class="fas fa-phone mr-2"></i>(336) 835-1993
                         </a>
-                        <a href="auto-quote.html" class="btn-primary">Get Free Quote</a>
+                        <!-- UPDATED: Get Free Quote button in a styled container -->
+                        <a href="auto-quote.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-md">Get Free Quote</a>
                     </div>
                     
                     <!-- Universal Menu Button -->
@@ -290,83 +303,90 @@
     </div>
 
     <main>
-        <!-- OPTIMIZED HERO SECTION WITH YELLOW/GOLD SUBHEADLINE -->
-        <section class="hero-optimized bg-gradient-to-br from-blue-800 to-blue-600 text-white py-24 md:py-32">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center">
-                    <!-- Trust indicator -->
-                    <p class="text-sm sm:text-base font-semibold text-blue-200 uppercase tracking-wider mb-4">
-                        Trusted by 1,000+ North Carolina Families
-                    </p>
+        <!-- START OF UPGRADED HERO SECTION -->
+        <section class="relative bg-black text-white overflow-hidden py-24 sm:py-32 md:py-40">
+            <!-- Background Image with Picture Tag for Optimization -->
+            <picture>
+                <!-- Optimized for mobile screens -->
+                <source srcset="images/hero-car-insurance-mobile.webp" media="(max-width: 640px)">
+                <!-- Default for larger screens -->
+                <img src="images/hero-car-insurance.webp" 
+                     alt="A car driving on a scenic North Carolina road" 
+                     class="absolute inset-0 h-full w-full object-cover opacity-60" 
+                     loading="eager">
+            </picture>
 
-                    <!-- Main headline -->
-                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-6">
-                        Better Insurance for<br class="hidden sm:block">
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-300">
-                            North Carolina
-                        </span>
-                    </h1>
-                    
-                    <!-- UPDATED Subheadline with Yellow/Gold Highlights -->
-                    <p class="text-lg sm:text-xl lg:text-2xl mb-8 max-w-3xl mx-auto font-semibold mobile-subheadline">
-                        We compare <span class="text-yellow-300 font-bold">10+ top carriers</span> to find you the best 
-                        <span class="text-yellow-300">Auto & Home coverage</span> at a price you'll love.
-                    </p>
-                    
-                    <!-- Interactive Quote Starter -->
-                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 max-w-2xl mx-auto mb-6 border border-white/20">
-                        <h2 class="text-lg font-bold mb-4">What can we help you with today?</h2>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <a href="https://billlayne.github.io/Auto-Insurance-Center/" 
-                               class="mobile-cta-button bg-white text-blue-600 px-6 py-4 sm:py-4 rounded-xl font-bold hover:bg-gray-100 transition-all">
-                                <i class="fas fa-car text-2xl mb-1"></i>
-                                <span class="block">Auto Insurance</span>
-                                <span class="text-xs text-gray-500 mt-1 font-normal">Get Quote in 3 Min</span>
-                            </a>
-                            <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" 
-                               class="mobile-cta-button bg-blue-500 text-white px-6 py-4 sm:py-4 rounded-xl font-bold hover:bg-blue-400 transition-all">
-                                <i class="fas fa-home text-2xl mb-1"></i>
-                                <span class="block">Home Insurance</span>
-                                <span class="text-xs text-blue-200 mt-1 font-normal">Compare & Save</span>
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <!-- Trust Indicators - Single Row Under CTA Box -->
-                    <div class="flex justify-center items-center gap-4 sm:gap-6 text-xs sm:text-sm text-blue-100 mb-8">
-                        <span class="flex items-center whitespace-nowrap">
-                            <i class="fas fa-star text-yellow-400 mr-1 sm:mr-2"></i>
-                            <span class="font-bold">4.8★ 127+ Reviews</span>
-                        </span>
-                        <span class="text-white/30">|</span>
-                        <span class="flex items-center whitespace-nowrap">
-                            <i class="fas fa-shield-alt text-green-400 mr-1 sm:mr-2"></i>
-                            <span class="font-bold">NC Licensed</span>
-                        </span>
-                        <span class="text-white/30">|</span>
-                        <span class="flex items-center whitespace-nowrap">
-                            <i class="fas fa-award text-blue-300 mr-1 sm:mr-2"></i>
-                            <span class="font-bold">20+ Years</span>
-                        </span>
-                    </div>
-                    
-                    <!-- Secondary CTA - Enhanced for Mobile -->
-                    <p class="text-blue-200">
-                        <span class="block sm:inline mb-2 sm:mb-0">Prefer to talk?</span>
-                        <a href="tel:3368351993" class="mobile-phone-button font-bold text-white hover:underline ml-0 sm:ml-2">
-                            📞 Call (336) 835-1993
+            <!-- Overlay for text readability -->
+            <div class="absolute inset-0 bg-blue-900 bg-opacity-70"></div>
+
+            <!-- Content Container -->
+            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
+                <!-- Main Headline - UPDATED FONT SIZE FOR MOBILE -->
+                <h1 class="text-5xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-4 drop-shadow-lg">
+                    Better Insurance for <span class="block text-yellow-400">North Carolina</span>
+                </h1>
+                
+                <!-- Subheadline -->
+                <p class="text-base sm:text-lg lg:text-xl text-white/90 mb-8 mx-auto">
+                    We compare over <span class="text-yellow-400 font-extrabold">10+ Top-Rated Carriers</span> to find you the best coverage and price.
+                </p>
+
+                <!-- Call to Action Buttons - UPDATED with emojis -->
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6 mb-8">
+                    <a href="auto-quote.html" 
+                       class="bg-yellow-400 text-gray-900 px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-500 transition-colors drop-shadow-md">
+                        <i class="fas fa-car mr-2"></i>Get a Free Auto Quote
+                    </a>
+                    <a href="tel:3368351993" 
+                       class="border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-blue-900 transition-colors drop-shadow-md">
+                        <i class="fas fa-home mr-2"></i>Call Us Today
+                    </a>
+                </div>
+
+                <!-- Trust Badges moved to the hero section -->
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6 mt-8 mb-8 flex-wrap">
+                    <span class="flex items-center gap-2 text-white/90">
+                        <i class="fas fa-user-shield text-yellow-400 text-2xl"></i>
+                        <span class="text-sm font-semibold whitespace-nowrap">Trusted by 1000+ Clients</span>
+                    </span>
+                    <span class="flex items-center gap-2 text-white/90">
+                        <i class="fas fa-trophy text-yellow-400 text-2xl"></i>
+                        <span class="text-sm font-semibold whitespace-nowrap">Top-Rated Agency</span>
+                    </span>
+                    <span class="flex items-center gap-2 text-white/90">
+                        <i class="fas fa-check-circle text-yellow-400 text-2xl"></i>
+                        <span class="text-sm font-semibold whitespace-nowrap">20+ Years Experience</span>
+                    </span>
+                </div>
+
+                <!-- Social Media Links -->
+                <div class="mt-8 flex justify-center items-center gap-6">
+                    <span class="font-semibold text-white/80 text-sm">Follow Us:</span>
+                    <div class="flex gap-4">
+                        <a href="https://www.facebook.com/BillLayneInsurance" target="_blank" rel="noopener noreferrer" 
+                           class="text-white/80 hover:text-white transform hover:scale-110 transition-transform">
+                            <i class="fab fa-facebook-f text-2xl"></i>
                         </a>
-                    </p>
+                        <a href="https://twitter.com/billlayneins" target="_blank" rel="noopener noreferrer" 
+                           class="text-white/80 hover:text-white transform hover:scale-110 transition-transform">
+                            <i class="fab fa-twitter text-2xl"></i>
+                        </a>
+                        <a href="https://www.instagram.com/billlayneinsurance/" target="_blank" rel="noopener noreferrer" 
+                           class="text-white/80 hover:text-white transform hover:scale-110 transition-transform">
+                            <i class="fab fa-instagram text-2xl"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>
-
-        <!-- Carriers Section - MOVED UP and Mobile Optimized to Show All -->
+        <!-- END OF UPGRADED HERO SECTION -->
+        
+        <!-- Carriers Section -->
         <section class="py-8 sm:py-12 md:py-16 bg-gradient-to-b from-gray-50 to-white border-b border-gray-200">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-4 sm:mb-6 md:mb-10">
                     <h2 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-2 md:mb-3">
-                        We Compare Quotes From <span class="text-blue-600">10+ Top-Rated Carriers</span>
+                        We Compare Quotes From <span class="font-extrabold text-yellow-500">10+ Top-Rated Carriers</span>
                     </h2>
                     <p class="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
                         One quote, multiple options, guaranteed savings.
@@ -878,7 +898,7 @@
                             </a>
                         </li>
                         <li><i class="fas fa-clock mr-2"></i>Mon-Fri: 9AM-5PM</li>
-                    </ul>
+                    </div>
                 </div>
             </div>
             
@@ -980,7 +1000,7 @@
     </script>
 
     <!-- Defer email decode script -->
-    <script defer src="https://billlayneinsurance.com/cloudflare-static/email-decode.min.js"></script>
+    <script src="https://billlayneinsurance.com/cloudflare-static/email-decode.min.js"></script>
 
     <!-- Schema Markup for SEO -->
     <script type="application/ld+json">
