@@ -84,6 +84,26 @@
                 display: inline !important;
             }
         }
+        
+        /* Add subtle animation for engagement */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hero-content h1 {
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        .hero-content h1 span:last-child {
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
         body { 
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             line-height: 1.5;
@@ -109,6 +129,7 @@
             margin-bottom: 1rem;
             text-align: center;
             width: 100%;
+            letter-spacing: -0.02em; /* Tighter letter spacing for impact */
         }
         @media (min-width: 640px) { h1 { font-size: 3.5rem; } }
         @media (min-width: 1024px) { h1 { font-size: 4rem; } }
@@ -544,9 +565,9 @@
             
             /* Ensure h1 is visible with proper sizing */
             .hero-content h1 {
-                margin-bottom: 0.5rem !important; /* Reduced from 1rem */
-                font-size: 1.6rem !important; /* Smaller to ensure all text fits */
-                line-height: 1.1 !important;
+                margin-bottom: 0.75rem !important;
+                font-size: 2.25rem !important; /* Larger for more impact */
+                line-height: 1.15 !important;
                 color: #ffffff !important;
                 visibility: visible !important;
                 overflow: visible !important;
@@ -555,6 +576,8 @@
                 height: auto !important;
                 min-height: auto !important;
                 padding-top: 0 !important;
+                font-weight: 900 !important;
+                text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
             }
             
             /* Keep "Better Insurance for" visible and properly wrapped on mobile */
@@ -618,7 +641,7 @@
         /* For very small screens, make everything even more compact */
         @media (max-width: 375px) and (max-height: 700px) {
             .hero-content h1 {
-                font-size: 2rem !important;
+                font-size: 1.9rem !important; /* Slightly smaller but still prominent */
             }
             
             .mobile-subheadline {
@@ -706,13 +729,16 @@
             .hero-content h1 {
                 text-align: center !important;
                 width: 100% !important;
-                margin: 0 auto 10px auto !important; /* Reduced bottom margin */
+                margin: 0 auto 15px auto !important; /* Slightly more space */
                 padding: 0 10px !important;
                 display: block !important;
                 position: relative !important;
                 left: 0 !important;
                 right: 0 !important;
                 transform: none !important;
+                font-size: 2.25rem !important; /* Ensure size is applied */
+                font-weight: 900 !important;
+                letter-spacing: -0.03em !important;
             }
             
             /* Ensure all spans within h1 are centered and visible */
@@ -724,11 +750,18 @@
                 color: #ffffff !important;
             }
             
-            /* Make sure the second span (North Carolina) is on its own line */
+            /* Make sure the second span (North Carolina) is on its own line and stands out */
             .hero-content h1 span:last-child {
                 display: block !important;
                 width: 100% !important;
                 margin: 0 auto !important;
+                font-size: 110% !important; /* Slightly larger than first line */
+                background: linear-gradient(90deg, #fbbf24, #fcd34d, #fbbf24);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                text-shadow: none !important;
+                filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.7));
             }
             
             /* Subheading - We compare over 10+ carriers */
@@ -826,6 +859,17 @@
             }
         }
 
+        /* Extra large heading for standard phones */
+        @media (min-width: 380px) and (max-width: 450px) {
+            .hero-content h1 {
+                font-size: 2.75rem !important; /* Bigger for standard phones */
+            }
+            
+            .hero-content h1 span:last-child {
+                font-size: 115% !important; /* Make North Carolina even bigger */
+            }
+        }
+        
         /* Enhanced mobile CTAs for better conversion */
         @media (max-width: 768px) {
             /* Make CTA buttons larger and more distinct */
@@ -902,8 +946,9 @@
         /* iPhone SE, iPhone 8 and smaller phones (375px) */
         @media (max-width: 375px) {
             .hero-content h1 {
-                font-size: 2rem !important;
+                font-size: 2rem !important; /* Still good size for small screens */
                 padding: 0 5px !important;
+                font-weight: 900 !important;
             }
             
             .hero-content .mobile-subheadline {
@@ -920,7 +965,8 @@
         /* iPhone 12 Pro, iPhone 13 (390px) */
         @media (min-width: 376px) and (max-width: 390px) {
             .hero-content h1 {
-                font-size: 2.25rem !important;
+                font-size: 2.35rem !important; /* Slightly larger */
+                font-weight: 900 !important;
             }
             
             .hero-content {
@@ -935,7 +981,8 @@
         /* Samsung Galaxy S20, Pixel phones (412px) */
         @media (min-width: 391px) and (max-width: 428px) {
             .hero-content h1 {
-                font-size: 2.5rem !important;
+                font-size: 2.5rem !important; /* Even larger for bigger screens */
+                font-weight: 900 !important;
             }
             
             .hero-content .bg-white\/10 {
@@ -1184,9 +1231,9 @@
                     <div class="text-center">
                         <!-- Main headline -->
                         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-4" style="text-align: center; width: 100%; margin: 0 auto;">
-                            <span class="inline" style="visibility: visible; opacity: 1; color: white;">Better Insurance for</span>
+                            <span class="inline" style="visibility: visible; opacity: 1; color: white; font-weight: 900;">Better Insurance for</span>
                             <br class="block">
-                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-300" style="visibility: visible; opacity: 1;">
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-400" style="visibility: visible; opacity: 1; font-weight: 900; font-size: 110%;">
                                 North Carolina
                             </span>
                         </h1>
