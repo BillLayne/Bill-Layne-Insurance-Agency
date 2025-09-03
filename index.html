@@ -476,40 +476,90 @@
             }
         }
 
-        /* Fix mobile hero for insurance marketing best practices */
+        /* Optimized mobile hero to fit all content in viewport */
         @media (max-width: 768px) {
-            /* Ensure hero is tall enough for all content */
+            /* Hero container that fits mobile screens */
             .hero-optimized {
                 min-height: 100vh !important;
-                max-height: none !important;
-                padding-top: 100px !important; /* Account for header */
-                padding-bottom: 2rem !important;
+                padding-top: 70px !important; /* Space for header */
+                padding-bottom: 1rem !important;
+                display: flex;
+                flex-direction: column;
                 position: relative;
-                overflow: visible !important;
             }
             
             /* Fix image to show house (the insured asset) prominently */
             .hero-image,
             picture img {
                 object-fit: cover !important;
-                object-position: center 23% !important; /* Shows house, not just driveway */
+                object-position: center 25% !important; /* Shows house clearly */
                 width: 100% !important;
                 height: 100% !important;
             }
             
-            /* Ensure content container has proper spacing */
+            /* Ensure hero content uses available space efficiently */
             .hero-content {
-                padding-top: 2rem !important;
-                padding-bottom: 2rem !important;
-                min-height: calc(100vh - 100px);
+                flex: 1;
                 display: flex;
-                flex-direction: column;
-                justify-content: center;
+                align-items: flex-start; /* Start from top instead of center */
+                padding: 2rem 1rem 1rem !important; /* More top padding */
+                overflow-y: auto;
+                overflow-x: hidden;
             }
             
-            /* Fix text container spacing */
+            /* Compact text spacing */
             .hero-content .text-center {
-                padding: 0 1rem;
+                padding: 0 0.5rem;
+                width: 100%;
+            }
+            
+            /* Ensure h1 is visible with proper sizing */
+            .hero-content h1 {
+                margin-bottom: 1rem !important;
+                font-size: 2.5rem !important; /* Readable size */
+                line-height: 1.15 !important;
+                color: #ffffff !important;
+                visibility: visible !important;
+            }
+            
+            /* Reduce CTA box padding */
+            .hero-content .bg-white\/10 {
+                padding: 1rem !important; /* Reduced from 1.5rem */
+                margin-bottom: 1rem !important;
+            }
+            
+            /* Compact CTA buttons */
+            .mobile-cta-button {
+                min-height: 50px !important; /* Reduced from 60px */
+                padding: 0.75rem 1rem !important;
+                font-size: 1rem !important;
+            }
+            
+            /* More compact trust badges */
+            .hero-content .flex.flex-col.sm\:flex-row {
+                margin-top: 0.75rem !important;
+                margin-bottom: 0.75rem !important;
+                gap: 0.5rem !important;
+            }
+            
+            .hero-content .bg-white\/20 {
+                padding: 0.4rem 0.8rem !important;
+                font-size: 0.85rem !important;
+            }
+            
+            /* Hide social media on very small screens if needed */
+            @media (max-height: 700px) {
+                .hero-content .mt-8 {
+                    display: none !important;
+                }
+            }
+            
+            /* Show social media on taller screens */
+            @media (min-height: 700px) {
+                .hero-content .mt-8 {
+                    margin-top: 1rem !important;
+                    margin-bottom: 1rem !important;
+                }
             }
         }
 
@@ -521,10 +571,36 @@
             }
         }
 
-        /* Fix for short phones/landscape */
-        @media (max-width: 768px) and (max-height: 700px) {
+        /* For very small screens, make everything even more compact */
+        @media (max-width: 375px) and (max-height: 700px) {
+            .hero-content h1 {
+                font-size: 2rem !important;
+            }
+            
+            .mobile-subheadline {
+                font-size: 0.95rem !important;
+            }
+            
+            .mobile-cta-button {
+                min-height: 45px !important;
+                font-size: 0.95rem !important;
+            }
+        }
+
+        /* Landscape mobile - optimize for horizontal viewing */
+        @media (max-width: 768px) and (orientation: landscape) {
             .hero-optimized {
-                min-height: 600px !important;
+                min-height: 100vh !important;
+                padding-top: 60px !important;
+            }
+            
+            .hero-content h1 {
+                font-size: 2rem !important; /* Smaller in landscape */
+            }
+            
+            /* Social media optional in landscape */
+            .hero-content .mt-8 {
+                margin-top: 0.5rem !important;
             }
         }
 
@@ -781,13 +857,9 @@
                         </h1>
                         
                         <!-- UPDATED Subheadline with Yellow/Gold Highlights -->
-                        <p class="text-lg sm:text-xl lg:text-2xl mb-8 max-w-3xl mx-auto font-semibold mobile-subheadline">
+                        <p class="text-lg sm:text-xl lg:text-2xl mb-4 sm:mb-8 max-w-3xl mx-auto font-semibold mobile-subheadline">
                             <span class="inline">We compare over <span class="text-yellow-300 font-extrabold">10+ Top-Rated Carriers</span> to find you the best coverage and price.</span>
-                        </p>
-                        
-                        <!-- Mobile-only savings callout -->
-                        <p class="block sm:hidden text-green-300 font-bold text-lg mt-2 mb-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.9);">
-                            💰 Save up to $847/year!
+                            <span class="block sm:hidden text-green-300 text-base mt-2" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.9);">💰 Save up to $847/year!</span>
                         </p>
                         
                         <!-- Interactive Quote Starter -->
@@ -807,10 +879,17 @@
                                     <span class="text-xs text-blue-200 mt-1 font-normal">Compare & Save</span>
                                 </a>
                             </div>
+                            
+                            <!-- COMPACT TRUST BADGES FOR MOBILE -->
+                            <div class="flex flex-wrap justify-center items-center gap-2 mt-4 sm:hidden">
+                                <span class="text-xs text-white/90">⭐ 4.8★ Reviews</span>
+                                <span class="text-xs text-white/90">✓ NC Licensed</span>
+                                <span class="text-xs text-white/90">✓ 20+ Years</span>
+                            </div>
                         </div>
                         
-                        <!-- Trust Indicators - Refactored for better mobile display -->
-                        <div class="flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-6 text-xs sm:text-sm text-blue-100 mb-8">
+                        <!-- Trust Indicators - Hidden on mobile, shown on desktop -->
+                        <div class="hidden sm:flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-6 text-xs sm:text-sm text-blue-100 mb-8">
                             <!-- Review Badge -->
                             <div class="bg-white/20 hover:bg-white/30 transition-all px-4 py-2 rounded-full flex items-center gap-2">
                                 <i class="fas fa-star text-yellow-300"></i>
