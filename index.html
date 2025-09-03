@@ -23,13 +23,15 @@
     <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
     <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
     
-    <!-- Load Google Fonts immediately -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Optimized Google Fonts - Only load used weights (600,700,900) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;900&display=swap" rel="stylesheet">
     
-    <!-- Load Tailwind CSS immediately to prevent FOUC -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Defer Tailwind CSS for better mobile performance -->
     <script>
-        tailwind.config = {
+        // Load Tailwind after critical content
+        tailwind = {config: {
             important: true,
             theme: {
                 extend: {
@@ -38,14 +40,21 @@
                     }
                 }
             }
-        }
+        }};
     </script>
+    <script src="https://cdn.tailwindcss.com" defer></script>
     
     
     <!-- Load Font Awesome with async -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
     
-    <!-- Preload critical images -->
+    <!-- Preload critical images - Mobile hero image for mobile devices -->
+    <link rel="preload" as="image" type="image/jpeg" 
+          href="https://github.com/BillLayne/bill-layne-images/blob/main/logos/hero-mobile.jpg?raw=true"
+          media="(max-width: 768px)">
+    <link rel="preload" as="image" type="image/jpeg" 
+          href="https://github.com/BillLayne/bill-layne-images/blob/main/logos/hero-desktop-v5.jpg?raw=true"
+          media="(min-width: 769px)">
     <link rel="preload" as="image" type="image/webp" 
           href="https://raw.githubusercontent.com/BillLayne/bill-layne-images/main/logos/Nationwide%20Logo%20(1).webp">
     <link rel="preload" as="image" type="image/webp" 
@@ -53,8 +62,35 @@
     
     <!-- Critical inline CSS for immediate render -->
     <style>
-        /* All custom styles combined here */
-
+        /* Critical CSS for instant rendering before Tailwind loads */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            line-height: 1.5;
+            color: #1f2937;
+            background: #f9fafb;
+        }
+        
+        /* Critical hero styles for mobile */
+        .hero-optimized {
+            background: linear-gradient(135deg, #1e40af, #2563eb);
+            color: white;
+            padding: 6rem 1rem 4rem;
+            position: relative;
+            overflow: hidden;
+            min-height: 600px;
+        }
+        
+        /* Critical text styles */
+        h1 { font-size: 2.5rem; font-weight: 900; line-height: 1.2; margin-bottom: 1rem; }
+        @media (min-width: 640px) { h1 { font-size: 3.5rem; } }
+        @media (min-width: 1024px) { h1 { font-size: 4rem; } }
+        
+        .text-center { text-align: center; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .max-w-7xl { max-width: 80rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        
         /* Prevent layout shift and ensure smooth initial load */
         body {
             opacity: 0;
@@ -409,6 +445,18 @@
 </head>
 
 <body class="bg-gray-50">
+    <!-- Quick load optimization -->
+    <script>
+        // Show body content quickly on mobile
+        setTimeout(function() {
+            document.body.classList.add('loaded');
+        }, 100);
+        // Fallback for slower connections
+        window.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('loaded');
+        });
+    </script>
+    
     <!-- Special Offer Banner - Mobile Optimized -->
     <div class="special-offer-banner bg-gradient-to-r from-yellow-400 to-yellow-500 text-black py-2 px-3 text-center font-bold text-xs sm:text-sm pulse-offer sm:hidden">
         🔥 January Special: Save up to $847/year on insurance!
