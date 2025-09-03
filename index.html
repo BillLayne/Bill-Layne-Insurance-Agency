@@ -64,6 +64,26 @@
     <style>
         /* Critical CSS for instant rendering before Tailwind loads */
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* MOBILE-FIRST CENTERING RESET */
+        @media (max-width: 768px) {
+            * {
+                box-sizing: border-box !important;
+            }
+            
+            html, body {
+                overflow-x: hidden !important;
+                width: 100% !important;
+            }
+            
+            /* FAILSAFE: Force both parts of heading to be visible */
+            h1 span {
+                visibility: visible !important;
+                opacity: 1 !important;
+                position: static !important;
+                display: inline !important;
+            }
+        }
         body { 
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             line-height: 1.5;
@@ -82,7 +102,14 @@
         }
         
         /* Critical text styles */
-        h1 { font-size: 2.5rem; font-weight: 900; line-height: 1.2; margin-bottom: 1rem; }
+        h1 { 
+            font-size: 2.5rem; 
+            font-weight: 900; 
+            line-height: 1.2; 
+            margin-bottom: 1rem;
+            text-align: center;
+            width: 100%;
+        }
         @media (min-width: 640px) { h1 { font-size: 3.5rem; } }
         @media (min-width: 1024px) { h1 { font-size: 4rem; } }
         
@@ -375,7 +402,7 @@
         /* Fix mobile hero image distortion */
         @media (max-width: 768px) {
             .hero-optimized {
-                min-height: 600px; /* Ensure minimum height on mobile */
+                min-height: auto; /* Let content determine height */
             }
             
             .hero-image,
@@ -398,8 +425,9 @@
         /* Portrait orientation specific fix */
         @media (max-width: 768px) and (orientation: portrait) {
             .hero-optimized {
-                min-height: 100vh; /* Full viewport height */
-                max-height: 800px; /* Cap maximum height */
+                min-height: auto; /* Let content determine height */
+                height: auto;
+                max-height: none; /* Remove height cap */
             }
             
             .hero-image,
@@ -480,9 +508,10 @@
         @media (max-width: 768px) {
             /* Hero container that fits mobile screens */
             .hero-optimized {
-                min-height: 100vh !important;
-                padding-top: 70px !important; /* Space for header */
-                padding-bottom: 1rem !important;
+                min-height: auto !important; /* Allow natural height */
+                height: auto !important;
+                padding-top: 60px !important; /* Reduced space for header */
+                padding-bottom: 10px !important;
                 display: flex;
                 flex-direction: column;
                 position: relative;
@@ -502,7 +531,7 @@
                 flex: 1;
                 display: flex;
                 align-items: flex-start; /* Start from top instead of center */
-                padding: 2rem 1rem 1rem !important; /* More top padding */
+                padding: 0.5rem 1rem 0.5rem !important; /* Minimal padding */
                 overflow-y: auto;
                 overflow-x: hidden;
             }
@@ -515,23 +544,32 @@
             
             /* Ensure h1 is visible with proper sizing */
             .hero-content h1 {
-                margin-bottom: 1rem !important;
-                font-size: 2.25rem !important; /* Slightly smaller to fit */
-                line-height: 1.15 !important;
+                margin-bottom: 0.5rem !important; /* Reduced from 1rem */
+                font-size: 1.6rem !important; /* Smaller to ensure all text fits */
+                line-height: 1.1 !important;
                 color: #ffffff !important;
                 visibility: visible !important;
+                overflow: visible !important;
+                display: block !important;
+                width: 100% !important;
+                height: auto !important;
+                min-height: auto !important;
+                padding-top: 0 !important;
             }
             
-            /* Keep "Better Insurance for" on one line */
+            /* Keep "Better Insurance for" visible and properly wrapped on mobile */
             .hero-content h1 span:first-child {
-                white-space: nowrap !important;
-                display: inline-block !important;
+                white-space: normal !important;
+                display: inline !important;
+                visibility: visible !important;
+                opacity: 1 !important;
             }
             
-            /* Reduce CTA box padding */
+            /* Reduce CTA box padding and margin */
             .hero-content .bg-white\/10 {
-                padding: 1rem !important; /* Reduced from 1.5rem */
-                margin-bottom: 1rem !important;
+                padding: 0.75rem !important; /* Further reduced */
+                margin-bottom: 0.5rem !important; /* Reduced margin */
+                margin-top: 0.5rem !important; /* Add small top margin */
             }
             
             /* Compact CTA buttons */
@@ -596,8 +634,10 @@
         /* Landscape mobile - optimize for horizontal viewing */
         @media (max-width: 768px) and (orientation: landscape) {
             .hero-optimized {
-                min-height: 100vh !important;
-                padding-top: 60px !important;
+                min-height: auto !important;
+                height: auto !important;
+                padding-top: 40px !important;
+                padding-bottom: 10px !important;
             }
             
             .hero-content h1 {
@@ -623,6 +663,166 @@
                 /* Removed text-stroke and pixel borders that cause boxes */
                 display: inline-block;
                 padding: 0 2px; /* Slight padding for spacing */
+            }
+        }
+
+        /* COMPREHENSIVE MOBILE CENTERING FIX */
+        @media (max-width: 768px) {
+            /* Force center alignment on all hero text elements */
+            .hero-content * {
+                text-align: center !important;
+            }
+            
+            /* Ensure hero content container is properly centered */
+            .hero-content {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 auto !important;
+                padding: 0 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+            
+            /* Fix the container wrapper */
+            .hero-content > div {
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 15px !important;
+            }
+            
+            /* Center the text-center div */
+            .hero-content .text-center {
+                width: 100% !important;
+                margin: 0 auto !important;
+                padding: 0 10px !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+            }
+            
+            /* Main heading - Better Insurance for North Carolina */
+            .hero-content h1 {
+                text-align: center !important;
+                width: 100% !important;
+                margin: 0 auto 10px auto !important; /* Reduced bottom margin */
+                padding: 0 10px !important;
+                display: block !important;
+                position: relative !important;
+                left: 0 !important;
+                right: 0 !important;
+                transform: none !important;
+            }
+            
+            /* Ensure all spans within h1 are centered and visible */
+            .hero-content h1 span {
+                text-align: center !important;
+                display: inline !important; /* Changed from block to inline */
+                visibility: visible !important;
+                opacity: 1 !important;
+                color: #ffffff !important;
+            }
+            
+            /* Make sure the second span (North Carolina) is on its own line */
+            .hero-content h1 span:last-child {
+                display: block !important;
+                width: 100% !important;
+                margin: 0 auto !important;
+            }
+            
+            /* Subheading - We compare over 10+ carriers */
+            .hero-content .mobile-subheadline,
+            .hero-content p {
+                text-align: center !important;
+                width: 100% !important;
+                margin: 0 auto 8px auto !important; /* Reduced bottom margin */
+                padding: 0 10px !important;
+                display: block !important;
+                position: relative !important;
+                left: 0 !important;
+                right: 0 !important;
+                transform: none !important;
+            }
+            
+            /* Save money text */
+            .hero-content .text-green-300 {
+                text-align: center !important;
+                width: 100% !important;
+                margin: 5px auto !important; /* Reduced margin */
+                display: block !important;
+                font-size: 0.95rem !important; /* Slightly smaller */
+            }
+            
+            /* White box container for "What can we help you with today?" */
+            .hero-content .bg-white\/10 {
+                width: 90% !important;
+                max-width: 400px !important;
+                margin: 10px auto !important; /* Reduced margin */
+                display: block !important;
+                text-align: center !important;
+            }
+            
+            /* Heading inside the white box */
+            .hero-content .bg-white\/10 h2 {
+                text-align: center !important;
+                width: 100% !important;
+                margin: 0 auto 10px auto !important; /* Reduced bottom margin */
+                padding: 0 !important;
+                font-size: 1rem !important; /* Slightly smaller */
+            }
+            
+            /* Button grid container */
+            .hero-content .grid {
+                width: 100% !important;
+                margin: 0 auto !important;
+                justify-items: center !important;
+            }
+            
+            /* Individual buttons */
+            .hero-content .mobile-cta-button {
+                width: 100% !important;
+                max-width: 350px !important;
+                margin: 10px auto !important;
+                text-align: center !important;
+            }
+            
+            /* Trust badges container */
+            .hero-content .flex.flex-wrap {
+                width: 100% !important;
+                justify-content: center !important;
+                margin: 0 auto !important;
+            }
+            
+            /* Remove any floats */
+            .hero-content,
+            .hero-content * {
+                float: none !important;
+            }
+            
+            /* Reset any transforms */
+            .hero-content,
+            .hero-content * {
+                transform: translateX(0) !important;
+            }
+            
+            /* Ensure no negative margins */
+            .hero-content,
+            .hero-content * {
+                margin-left: auto !important;
+                margin-right: auto !important;
+            }
+            
+            /* Reset any absolute positioning in hero content */
+            .hero-content h1,
+            .hero-content h2,
+            .hero-content p,
+            .hero-content div {
+                position: relative !important;
+                left: auto !important;
+                right: auto !important;
+                top: auto !important;
+                bottom: auto !important;
             }
         }
 
@@ -694,6 +894,134 @@
             .hero-optimized {
                 overflow-x: hidden;
                 overflow-y: visible !important;
+            }
+        }
+        
+        /* SPECIFIC DEVICE MEDIA QUERIES FOR PERFECT CENTERING */
+        
+        /* iPhone SE, iPhone 8 and smaller phones (375px) */
+        @media (max-width: 375px) {
+            .hero-content h1 {
+                font-size: 2rem !important;
+                padding: 0 5px !important;
+            }
+            
+            .hero-content .mobile-subheadline {
+                font-size: 1rem !important;
+                padding: 0 5px !important;
+            }
+            
+            .hero-content .bg-white\/10 {
+                width: 95% !important;
+                padding: 15px 10px !important;
+            }
+        }
+        
+        /* iPhone 12 Pro, iPhone 13 (390px) */
+        @media (min-width: 376px) and (max-width: 390px) {
+            .hero-content h1 {
+                font-size: 2.25rem !important;
+            }
+            
+            .hero-content {
+                padding: 0 !important;
+            }
+            
+            .hero-content .text-center {
+                padding: 0 12px !important;
+            }
+        }
+        
+        /* Samsung Galaxy S20, Pixel phones (412px) */
+        @media (min-width: 391px) and (max-width: 428px) {
+            .hero-content h1 {
+                font-size: 2.5rem !important;
+            }
+            
+            .hero-content .bg-white\/10 {
+                width: 92% !important;
+            }
+        }
+        
+        /* Landscape orientation mobile fix */
+        @media (max-width: 896px) and (orientation: landscape) {
+            .hero-content * {
+                text-align: center !important;
+            }
+            
+            .hero-content h1 {
+                font-size: 1.8rem !important;
+                margin-bottom: 10px !important;
+            }
+            
+            .hero-content .mobile-subheadline {
+                font-size: 0.9rem !important;
+                margin-bottom: 10px !important;
+            }
+            
+            .hero-content .bg-white\/10 {
+                padding: 10px !important;
+                margin: 10px auto !important;
+            }
+        }
+        
+        /* Tablet portrait mode (768px - 1024px) */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .hero-content .text-center {
+                max-width: 90% !important;
+                margin: 0 auto !important;
+            }
+            
+            .hero-content h1 {
+                text-align: center !important;
+                font-size: 3rem !important;
+            }
+            
+            .hero-content .bg-white\/10 {
+                max-width: 600px !important;
+                margin: 30px auto !important;
+            }
+        }
+        
+        /* Force text centering with maximum specificity */
+        @media screen and (max-width: 768px) {
+            /* Override any inline styles or conflicting rules */
+            .hero-optimized .hero-content .text-center > * {
+                text-align: center !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+            }
+            
+            /* Ensure heading centering with maximum specificity */
+            section.hero-optimized div.hero-content div.text-center h1 {
+                text-align: center !important;
+                width: 100% !important;
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+            
+            /* CRITICAL FIX: Ensure "Better Insurance for" is visible */
+            section.hero-optimized div.hero-content div.text-center h1 span:first-child {
+                display: inline !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                color: #ffffff !important;
+                font-size: inherit !important;
+                white-space: normal !important;
+            }
+            
+            /* Ensure "North Carolina" stays on second line */
+            section.hero-optimized div.hero-content div.text-center h1 span:last-child {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                width: 100% !important;
+            }
+            
+            /* Fix potential Tailwind conflicts */
+            .hero-optimized [class*="text-"] {
+                text-align: center !important;
             }
         }
     </style>
@@ -855,22 +1183,23 @@
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center">
                         <!-- Main headline -->
-                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-4">
-                            <span class="inline">Better Insurance for</span><br>
-                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-300">
+                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-4" style="text-align: center; width: 100%; margin: 0 auto;">
+                            <span class="inline" style="visibility: visible; opacity: 1; color: white;">Better Insurance for</span>
+                            <br class="block">
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-300" style="visibility: visible; opacity: 1;">
                                 North Carolina
                             </span>
                         </h1>
                         
                         <!-- UPDATED Subheadline with Yellow/Gold Highlights -->
-                        <p class="text-lg sm:text-xl lg:text-2xl mb-4 sm:mb-8 max-w-3xl mx-auto font-semibold mobile-subheadline">
-                            <span class="inline">We compare over <span class="text-yellow-300 font-extrabold">10+ Top-Rated Carriers</span> to find you the best coverage and price.</span>
-                            <span class="block sm:hidden text-green-300 text-base mt-2" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.9);">💰 Save up to $847/year!</span>
+                        <p class="text-lg sm:text-xl lg:text-2xl mb-2 sm:mb-8 max-w-3xl mx-auto font-semibold mobile-subheadline" style="text-align: center; width: 100%; margin: 0 auto 8px auto;">
+                            <span class="inline" style="text-align: center;">We compare over <span class="text-yellow-300 font-extrabold">10+ Top-Rated Carriers</span> to find you the best coverage and price.</span>
+                            <span class="block sm:hidden text-green-300 text-base mt-2" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.9); text-align: center; display: block; width: 100%;">💰 Save up to $847/year!</span>
                         </p>
                         
                         <!-- Interactive Quote Starter -->
-                        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 max-w-2xl mx-auto mb-6 border border-white/20">
-                            <h2 class="text-lg font-bold mb-4">What can we help you with today?</h2>
+                        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 max-w-2xl mx-auto mb-3 border border-white/20" style="text-align: center; margin: 10px auto;">
+                            <h2 class="text-lg font-bold mb-2" style="text-align: center; width: 100%; margin: 0 auto 10px auto;">What can we help you with today?</h2>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <a href="https://billlayne.github.io/Auto-Insurance-Center/" 
                                    class="mobile-cta-button bg-white text-blue-600 px-6 py-4 sm:py-4 rounded-xl font-bold hover:bg-gray-100 transition-all">
