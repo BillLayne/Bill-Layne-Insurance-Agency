@@ -48,96 +48,17 @@
     <!-- Load Font Awesome with async -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
     
-    <!-- Preload critical images - Mobile hero image for mobile devices -->
-    <link rel="preload" as="image" type="image/jpeg" 
-          href="https://github.com/BillLayne/bill-layne-images/blob/main/logos/hero-mobile.jpg?raw=true"
-          media="(max-width: 768px)">
-    <link rel="preload" as="image" type="image/jpeg" 
-          href="https://github.com/BillLayne/bill-layne-images/blob/main/logos/hero-desktop-v5.jpg?raw=true"
-          media="(min-width: 769px)">
-    <link rel="preload" as="image" type="image/webp" 
-          href="https://raw.githubusercontent.com/BillLayne/bill-layne-images/main/logos/Nationwide%20Logo%20(1).webp">
-    <link rel="preload" as="image" type="image/webp" 
-          href="https://raw.githubusercontent.com/BillLayne/bill-layne-images/main/logos/Progressive%20Logo.webp">
-    
     <!-- Critical inline CSS for immediate render -->
     <style>
         /* Critical CSS for instant rendering before Tailwind loads */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        /* MOBILE-FIRST CENTERING RESET */
-        @media (max-width: 768px) {
-            * {
-                box-sizing: border-box !important;
-            }
-            
-            html, body {
-                overflow-x: hidden !important;
-                width: 100% !important;
-            }
-            
-            /* FAILSAFE: Force both parts of heading to be visible */
-            h1 span {
-                visibility: visible !important;
-                opacity: 1 !important;
-                position: static !important;
-                display: inline !important;
-            }
-        }
-        
-        /* Add subtle animation for engagement */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .hero-content h1 {
-            animation: fadeInUp 0.8s ease-out;
-        }
-        
-        .hero-content h1 span:last-child {
-            animation: fadeInUp 1s ease-out 0.2s both;
-        }
         body { 
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             line-height: 1.5;
             color: #1f2937;
             background: #f9fafb;
         }
-        
-        /* Critical hero styles for mobile */
-        .hero-optimized {
-            background: linear-gradient(135deg, #1e40af, #2563eb);
-            color: white;
-            padding: 6rem 1rem 4rem;
-            position: relative;
-            overflow: hidden;
-            min-height: 600px;
-        }
-        
-        /* Critical text styles */
-        h1 { 
-            font-size: 2.5rem; 
-            font-weight: 900; 
-            line-height: 1.2; 
-            margin-bottom: 1rem;
-            text-align: center;
-            width: 100%;
-            letter-spacing: -0.02em; /* Tighter letter spacing for impact */
-        }
-        @media (min-width: 640px) { h1 { font-size: 3.5rem; } }
-        @media (min-width: 1024px) { h1 { font-size: 4rem; } }
-        
-        .text-center { text-align: center; }
-        .mx-auto { margin-left: auto; margin-right: auto; }
-        .max-w-7xl { max-width: 80rem; }
-        .px-4 { padding-left: 1rem; padding-right: 1rem; }
         
         /* Prevent layout shift and ensure smooth initial load */
         body {
@@ -184,6 +105,325 @@
             right: 0;
         }
         
+        /* NEW HERO STYLES */
+        .hero-updated {
+            position: relative;
+            min-height: 650px;
+            /* Increased top padding to add space below the header */
+            padding: 140px 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: url('https://github.com/BillLayne/bill-layne-images/blob/main/logos/hero-desktop-v5.jpg?raw=true');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        /* Light blue overlay */
+        .hero-updated::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(30, 64, 175, 0.4);
+            z-index: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-updated {
+                background-image: url('https://github.com/BillLayne/bill-layne-images/blob/main/logos/hero-mobile.jpg?raw=true');
+                min-height: auto;
+                 /* Increased top padding for mobile view */
+                padding: 120px 15px 40px;
+            }
+        }
+        
+        /* Content Container */
+        .hero-content-updated {
+            text-align: center;
+            max-width: 100%;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            padding: 0 10px;
+        }
+        
+        /* Main Headline */
+        .hero-content-updated h1 {
+            color: #ffffff;
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            text-shadow: 
+                3px 3px 10px rgba(0, 0, 0, 1),
+                0 0 20px rgba(0, 0, 0, 0.9);
+            letter-spacing: -0.03em;
+        }
+        
+        .hero-content-updated h1 .highlight {
+            color: #fcd34d;
+            font-size: 4.5rem;
+            margin-top: 0.2rem;
+            text-shadow: 
+                4px 4px 15px rgba(0, 0, 0, 1),
+                0 0 30px rgba(0, 0, 0, 0.9);
+            font-weight: 900;
+            letter-spacing: -0.04em;
+        }
+
+        /* Responsive adjustments for headline */
+        @media (min-width: 768px) {
+            .hero-content-updated h1 {
+                font-size: 4.5rem;
+            }
+            
+            .hero-content-updated h1 .highlight {
+                font-size: 6rem;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .hero-content-updated h1 {
+                font-size: 5rem;
+            }
+            
+            .hero-content-updated h1 .highlight {
+                font-size: 6.5rem;
+            }
+        }
+        
+        .hero-content-updated .tagline {
+            color: #ffffff;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            text-shadow: 
+                3px 3px 8px rgba(0, 0, 0, 1),
+                0 0 20px rgba(0, 0, 0, 0.9);
+        }
+
+        .tagline-highlight {
+            color: #fcd34d;
+            font-weight: 900;
+            text-shadow: 2px 2px 8px rgba(0,0,0,1);
+        }
+        
+        /* Service Icons */
+        .hero-services {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin: 2rem 0;
+        }
+        
+        .hero-service-item {
+            text-decoration: none;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .hero-service-item:hover {
+            transform: scale(1.1);
+        }
+        
+        .hero-service-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        
+        .hero-service-item:hover .hero-service-icon {
+            background: rgba(0, 0, 0, 0.85);
+            border-color: #ffffff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .hero-service-label {
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
+        }
+        
+        /* Description */
+        .hero-description {
+            color: #ffffff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 2rem auto;
+            max-width: 900px;
+            line-height: 1.5;
+            text-shadow: 
+                3px 3px 8px rgba(0, 0, 0, 1),
+                0 0 20px rgba(0, 0, 0, 0.95);
+        }
+        
+        /* CTA Buttons */
+        .hero-cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2.5rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .hero-btn {
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 2px solid transparent;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        .hero-btn-primary {
+            background: #ffffff;
+            color: #333333;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            animation: pulse 2.5s infinite;
+        }
+        
+        .hero-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            animation-play-state: paused;
+        }
+        
+        .hero-btn-secondary {
+            background: rgba(0, 0, 0, 0.6);
+            color: #ffffff;
+            border: 2px solid #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+        
+        .hero-btn-secondary:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transform: translateY(-2px);
+        }
+        
+        /* Trust Badges */
+        .hero-trust-badges {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .hero-badge {
+            background: rgba(0, 0, 0, 0.7);
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+        }
+        
+        .hero-badge i {
+            color: #fcd34d;
+        }
+        
+        /* MOBILE OPTIMIZATIONS */
+        @media (max-width: 768px) {
+            .hero-content-updated h1 {
+                font-size: 2.2rem;
+                line-height: 1.2;
+            }
+            
+            .hero-content-updated h1 .highlight {
+                font-size: 2.8rem;
+            }
+            
+            .hero-content-updated .tagline {
+                font-size: 1.1rem;
+            }
+            
+            .hero-description {
+                font-size: 1rem;
+                margin-top: 1.5rem;
+            }
+            
+            .hero-services {
+                gap: 2rem;
+                margin: 1.5rem 0;
+            }
+            
+            .hero-service-icon {
+                width: 65px;
+                height: 65px;
+                font-size: 2rem;
+            }
+            
+            .hero-cta-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.75rem;
+                margin: 2rem 0;
+            }
+            
+            .hero-btn {
+                width: 100%;
+                max-width: 320px;
+                justify-content: center;
+                padding: 14px 28px;
+            }
+
+            .hero-trust-badges {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.75rem;
+                margin: 2rem 0 1rem;
+            }
+        }
+        
+        /* Existing styles continue... */
+        .text-center { text-align: center; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .max-w-7xl { max-width: 80rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        
         /* Prevent image layout shift */
         img {
             max-width: 100%;
@@ -192,303 +432,12 @@
             aspect-ratio: attr(width) / attr(height);
         }
         
-        /* Mobile optimizations */
-        @media (max-width: 640px) {
-            .py-12 {
-                padding-top: 2rem !important;
-                padding-bottom: 2rem !important;
-            }
-            
-            .grid.grid-cols-3 .bg-white {
-                padding: 0.5rem !important;
-            }
-            
-            .max-h-\[40px\] {
-                max-height: 40px !important;
-            }
-            
-            .hover\:shadow-md:hover,
-            .hover\:scale-105:hover {
-                box-shadow: none !important;
-                transform: none !important;
-            }
-            
-            /* Enhanced mobile CTA buttons */
-            .mobile-cta-button {
-                min-height: 64px !important;
-                display: flex !important;
-                flex-direction: column !important;
-                align-items: center !important;
-                justify-content: center !important;
-                position: relative !important;
-            }
-            
-            /* Make phone number more prominent on mobile */
-            .mobile-phone-button {
-                background: rgba(255, 255, 255, 0.15) !important;
-                padding: 10px 20px !important;
-                border-radius: 25px !important;
-                display: inline-block !important;
-                font-weight: bold !important;
-                transition: all 0.3s ease !important;
-            }
-            
-            .mobile-phone-button:hover {
-                background: rgba(255, 255, 255, 0.25) !important;
-                transform: scale(1.05) !important;
-            }
-            
-            /* Stack trust indicators vertically on mobile */
-            .mobile-trust-stack {
-                flex-direction: column !important;
-                gap: 0.75rem !important;
-            }
-            
-            /* Mobile-optimized subheadline */
-            .mobile-subheadline {
-                font-size: 1.1rem !important;
-                line-height: 1.5 !important;
-            }
-            
-            /* Special offer banner mobile */
-            .special-offer-banner {
-                animation: slideDown 0.5s ease-out;
-            }
-            
-            @keyframes slideDown {
-                from {
-                    transform: translateY(-100%);
-                }
-                to {
-                    transform: translateY(0);
-                }
-            }
-        }
-        
         /* Reduce CLS */
         .grid img {
             aspect-ratio: 5/3;
             object-fit: contain;
         }
         
-        /* Pulse animation for special offer */
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.8;
-            }
-        }
-        
-        .pulse-offer {
-            animation: pulse 2s infinite;
-        }
-
-        /* Hero optimization styles for lazy loading */
-        .hero-placeholder {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            filter: blur(20px);
-            transform: scale(1.1);
-            transition: opacity 0.3s ease-out;
-            z-index: 0;
-        }
-
-        .hero-placeholder.hidden {
-            opacity: 0;
-        }
-
-        .hero-image {
-            opacity: 0;
-            transition: opacity 0.7s ease-in-out;
-        }
-
-        .hero-image.loaded {
-            opacity: 1;
-        }
-
-        /* Balanced hero text visibility - lighter overlay, stronger text shadows */
-        .hero-optimized::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 40%;  /* Only cover top portion where text is */
-            background: linear-gradient(180deg, 
-                        rgba(30, 64, 175, 0.5) 0%,   /* Reduced from 0.85 to 0.5 */
-                        rgba(30, 64, 175, 0.3) 50%,   /* Reduced from 0.5 to 0.3 */
-                        transparent 100%);             /* Fade to transparent */
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 10 !important;
-        }
-
-        /* Stronger text shadows for visibility without dark overlay */
-        .hero-content h1 {
-            text-shadow: 3px 3px 10px rgba(0, 0, 0, 1), 
-                         2px 2px 20px rgba(0, 0, 0, 0.9),
-                         0 0 40px rgba(0, 0, 0, 0.8),
-                         0 0 60px rgba(30, 64, 175, 1);
-            font-weight: 900;
-            /* Removed text-stroke to fix box artifacts */
-        }
-
-        /* Special styling ONLY for North Carolina text - WHITE COLOR */
-        .hero-content h1 .text-transparent {
-            color: #ffffff !important;
-            text-shadow: 3px 3px 12px rgba(0, 0, 0, 1),
-                         2px 2px 25px rgba(0, 0, 0, 1),
-                         0 0 45px rgba(0, 0, 0, 0.95),
-                         0 0 65px rgba(30, 64, 175, 1);
-            /* Removed individual pixel borders that cause boxes */
-            font-weight: 900;
-        }
-
-        /* Override gradient to make text white */
-        .hero-content h1 .bg-clip-text {
-            background: none !important;
-            -webkit-background-clip: unset !important;
-            background-clip: unset !important;
-            -webkit-text-fill-color: #ffffff !important;
-            color: #ffffff !important;
-        }
-
-        .hero-content h2 {
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 1),
-                         0 0 25px rgba(0, 0, 0, 0.9),
-                         0 0 40px rgba(30, 64, 175, 0.8);
-            font-weight: 800;
-        }
-
-        .hero-content p, 
-        .mobile-subheadline {
-            text-shadow: 2px 2px 6px rgba(0, 0, 0, 1),
-                         0 0 20px rgba(0, 0, 0, 0.95),
-                         0 0 30px rgba(0, 0, 0, 0.9);
-            font-weight: 700;
-        }
-
-        /* Make yellow text pop */
-        .text-yellow-300 {
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 1),
-                         0 0 15px rgba(0, 0, 0, 0.95),
-                         0 0 25px rgba(0, 0, 0, 0.8);
-            /* Removed pixel borders that cause boxes */
-            color: #fde047 !important;
-            font-weight: 900;
-        }
-
-        /* Lighter CTA box with blur for readability */
-        .hero-content .bg-white\/10 {
-            background: rgba(30, 64, 175, 0.4) !important;  /* Reduced from 0.85 */
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.5) !important;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Trust badges with better contrast */
-        .hero-content .bg-white\/20 {
-            background: rgba(30, 64, 175, 0.5) !important;  /* Reduced from 0.8 */
-            border: 2px solid rgba(255, 255, 255, 0.4);
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(8px);
-        }
-
-        /* Keep image visible */
-        .hero-image.loaded {
-            opacity: 1 !important;  /* Full opacity - image fully visible */
-        }
-
-        /* Mobile needs slightly more overlay for small screens */
-        @media (max-width: 768px) {
-            .hero-optimized::before {
-                background: linear-gradient(180deg, 
-                            rgba(30, 64, 175, 0.6) 0%, 
-                            rgba(30, 64, 175, 0.4) 50%, 
-                            transparent 100%);
-            }
-        }
-
-        /* Fix mobile hero image distortion */
-        @media (max-width: 768px) {
-            .hero-optimized {
-                min-height: auto; /* Let content determine height */
-            }
-            
-            .hero-image,
-            picture img {
-                object-fit: cover !important;  /* Maintain aspect ratio */
-                object-position: center center !important; /* Center the focal point */
-                width: 100% !important;
-                height: 100% !important;
-            }
-            
-            /* Adjust image position to show house and cars better on mobile */
-            @media (max-height: 700px) {
-                .hero-image,
-                picture img {
-                    object-position: center 40% !important; /* Shift focus up slightly */
-                }
-            }
-        }
-
-        /* Portrait orientation specific fix */
-        @media (max-width: 768px) and (orientation: portrait) {
-            .hero-optimized {
-                min-height: auto; /* Let content determine height */
-                height: auto;
-                max-height: none; /* Remove height cap */
-            }
-            
-            .hero-image,
-            picture img {
-                object-fit: cover !important;
-                object-position: center 35% !important; /* Focus on house/cars area */
-            }
-        }
-
-        /* Landscape orientation specific fix */
-        @media (max-width: 768px) and (orientation: landscape) {
-            .hero-optimized {
-                min-height: 500px;
-            }
-            
-            .hero-image,
-            picture img {
-                object-fit: cover !important;
-                object-position: center center !important;
-            }
-        }
-
-        /* Ensure placeholder also maintains aspect ratio */
-        .hero-placeholder {
-            background-size: cover !important;
-            background-position: center center !important;
-        }
-
-        /* Fix for very small screens */
-        @media (max-width: 375px) {
-            .hero-optimized {
-                min-height: 550px;
-            }
-            
-            .hero-image,
-            picture img {
-                object-position: center 30% !important; /* Show more of the house */
-            }
-        }
-
         /* Make insurance company logos larger on mobile */
         @media (max-width: 768px) {
             /* Target Nationwide logo */
@@ -554,553 +503,6 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-            }
-        }
-
-        /* Optimized mobile hero to fit all content in viewport */
-        @media (max-width: 768px) {
-            /* Hero container that fits mobile screens */
-            .hero-optimized {
-                min-height: auto !important; /* Allow natural height */
-                height: auto !important;
-                padding-top: 60px !important; /* Reduced space for header */
-                padding-bottom: 10px !important;
-                display: flex;
-                flex-direction: column;
-                position: relative;
-            }
-            
-            /* Fix image to show house (the insured asset) prominently */
-            .hero-image,
-            picture img {
-                object-fit: cover !important;
-                object-position: center 25% !important; /* Shows house clearly */
-                width: 100% !important;
-                height: 100% !important;
-            }
-            
-            /* Ensure hero content uses available space efficiently */
-            .hero-content {
-                flex: 1;
-                display: flex;
-                align-items: flex-start; /* Start from top instead of center */
-                padding: 0.5rem 1rem 0.5rem !important; /* Minimal padding */
-                overflow-y: auto;
-                overflow-x: hidden;
-            }
-            
-            /* Compact text spacing */
-            .hero-content .text-center {
-                padding: 0 0.5rem;
-                width: 100%;
-            }
-            
-            /* Ensure h1 is visible with proper sizing */
-            .hero-content h1 {
-                margin-bottom: 0.75rem !important;
-                font-size: 2rem !important; /* Adjusted to fit on one line */
-                line-height: 1.15 !important;
-                color: #ffffff !important;
-                visibility: visible !important;
-                overflow: visible !important;
-                display: block !important;
-                width: 100% !important;
-                height: auto !important;
-                min-height: auto !important;
-                padding-top: 0 !important;
-                font-weight: 900 !important;
-                text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
-            }
-            
-            
-            /* Reduce CTA box padding and margin */
-            .hero-content .bg-white\/10 {
-                padding: 0.75rem !important; /* Further reduced */
-                margin-bottom: 0.5rem !important; /* Reduced margin */
-                margin-top: 0.5rem !important; /* Add small top margin */
-            }
-            
-            /* Compact CTA buttons */
-            .mobile-cta-button {
-                min-height: 50px !important; /* Reduced from 60px */
-                padding: 0.75rem 1rem !important;
-                font-size: 1rem !important;
-            }
-            
-            /* More compact trust badges */
-            .hero-content .flex.flex-col.sm\:flex-row {
-                margin-top: 0.75rem !important;
-                margin-bottom: 0.75rem !important;
-                gap: 0.5rem !important;
-            }
-            
-            .hero-content .bg-white\/20 {
-                padding: 0.4rem 0.8rem !important;
-                font-size: 0.85rem !important;
-            }
-            
-            /* Hide social media on very small screens if needed */
-            @media (max-height: 700px) {
-                .hero-content .mt-8 {
-                    display: none !important;
-                }
-            }
-            
-            /* Show social media on taller screens */
-            @media (min-height: 700px) {
-                .hero-content .mt-8 {
-                    margin-top: 1rem !important;
-                    margin-bottom: 1rem !important;
-                }
-            }
-        }
-
-        /* Fix for very tall phones */
-        @media (max-width: 768px) and (min-height: 800px) {
-            .hero-image,
-            picture img {
-                object-position: center 20% !important; /* Show even more house on tall screens */
-            }
-        }
-
-        /* For very small screens, make everything even more compact */
-        @media (max-width: 375px) and (max-height: 700px) {
-            .hero-content h1 {
-                font-size: 1.9rem !important; /* Slightly smaller but still prominent */
-            }
-            
-            .mobile-subheadline {
-                font-size: 0.95rem !important;
-            }
-            
-            .mobile-cta-button {
-                min-height: 45px !important;
-                font-size: 0.95rem !important;
-            }
-        }
-
-        /* Landscape mobile - optimize for horizontal viewing */
-        @media (max-width: 768px) and (orientation: landscape) {
-            .hero-optimized {
-                min-height: auto !important;
-                height: auto !important;
-                padding-top: 40px !important;
-                padding-bottom: 10px !important;
-            }
-            
-            .hero-content h1 {
-                font-size: 2rem !important; /* Smaller in landscape */
-            }
-            
-            /* Social media optional in landscape */
-            .hero-content .mt-8 {
-                margin-top: 0.5rem !important;
-            }
-        }
-
-        /* Enhanced yellow text for mobile */
-        @media (max-width: 768px) {
-            .text-yellow-300 {
-                color: #fcd34d !important; /* Brighter yellow */
-                font-weight: 900 !important;
-                text-shadow: 
-                    3px 3px 8px rgba(0, 0, 0, 1),
-                    2px 2px 15px rgba(0, 0, 0, 0.95),
-                    0 0 25px rgba(0, 0, 0, 0.9),
-                    0 0 40px rgba(0, 0, 0, 0.8) !important;
-                /* Removed text-stroke and pixel borders that cause boxes */
-                display: inline-block;
-                padding: 0 2px; /* Slight padding for spacing */
-            }
-        }
-
-        /* COMPREHENSIVE MOBILE CENTERING FIX */
-        @media (max-width: 768px) {
-            /* Force center alignment on all hero text elements */
-            .hero-content * {
-                text-align: center !important;
-            }
-            
-            /* Ensure hero content container is properly centered */
-            .hero-content {
-                width: 100% !important;
-                max-width: 100% !important;
-                margin: 0 auto !important;
-                padding: 0 !important;
-                display: flex !important;
-                flex-direction: column !important;
-                align-items: center !important;
-                justify-content: center !important;
-            }
-            
-            /* Fix the container wrapper */
-            .hero-content > div {
-                width: 100% !important;
-                margin: 0 !important;
-                padding: 0 15px !important;
-            }
-            
-            /* Center the text-center div */
-            .hero-content .text-center {
-                width: 100% !important;
-                margin: 0 auto !important;
-                padding: 0 10px !important;
-                display: flex !important;
-                flex-direction: column !important;
-                align-items: center !important;
-            }
-            
-            /* Main heading - Better Insurance for North Carolina */
-            .hero-content h1 {
-                text-align: center !important;
-                width: 100% !important;
-                margin: 0 auto 15px auto !important; /* Slightly more space */
-                padding: 0 10px !important;
-                display: block !important;
-                position: relative !important;
-                left: 0 !important;
-                right: 0 !important;
-                transform: none !important;
-                font-size: 2.25rem !important; /* Ensure size is applied */
-                font-weight: 900 !important;
-                letter-spacing: -0.03em !important;
-            }
-            
-            /* Ensure all spans within h1 are centered and visible */
-            .hero-content h1 span {
-                text-align: center !important;
-                visibility: visible !important;
-                opacity: 1 !important;
-                color: #ffffff !important;
-            }
-            
-            /* First span specific - keep on one line */
-            .hero-content h1 span:first-child {
-                display: block !important;
-                white-space: nowrap !important;
-                overflow: visible !important;
-            }
-            
-            /* Make sure "North Carolina" stays together on second line */
-            .hero-content h1 span:last-child {
-                display: block !important;
-                width: 100% !important;
-                margin: 0 auto !important;
-                white-space: nowrap !important; /* Keep on one line */
-                font-size: 110% !important; /* Slightly larger than first line */
-                background: linear-gradient(90deg, #fbbf24, #fcd34d, #fbbf24);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                text-shadow: none !important;
-                filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.7));
-            }
-            
-            /* Subheading - We compare over 10+ carriers */
-            .hero-content .mobile-subheadline,
-            .hero-content p {
-                text-align: center !important;
-                width: 100% !important;
-                margin: 0 auto 8px auto !important; /* Reduced bottom margin */
-                padding: 0 10px !important;
-                display: block !important;
-                position: relative !important;
-                left: 0 !important;
-                right: 0 !important;
-                transform: none !important;
-            }
-            
-            /* Save money text */
-            .hero-content .text-green-300 {
-                text-align: center !important;
-                width: 100% !important;
-                margin: 5px auto !important; /* Reduced margin */
-                display: block !important;
-                font-size: 0.95rem !important; /* Slightly smaller */
-            }
-            
-            /* White box container for "What can we help you with today?" */
-            .hero-content .bg-white\/10 {
-                width: 90% !important;
-                max-width: 400px !important;
-                margin: 10px auto !important; /* Reduced margin */
-                display: block !important;
-                text-align: center !important;
-            }
-            
-            /* Heading inside the white box */
-            .hero-content .bg-white\/10 h2 {
-                text-align: center !important;
-                width: 100% !important;
-                margin: 0 auto 10px auto !important; /* Reduced bottom margin */
-                padding: 0 !important;
-                font-size: 1rem !important; /* Slightly smaller */
-            }
-            
-            /* Button grid container */
-            .hero-content .grid {
-                width: 100% !important;
-                margin: 0 auto !important;
-                justify-items: center !important;
-            }
-            
-            /* Individual buttons */
-            .hero-content .mobile-cta-button {
-                width: 100% !important;
-                max-width: 350px !important;
-                margin: 10px auto !important;
-                text-align: center !important;
-            }
-            
-            /* Trust badges container */
-            .hero-content .flex.flex-wrap {
-                width: 100% !important;
-                justify-content: center !important;
-                margin: 0 auto !important;
-            }
-            
-            /* Remove any floats */
-            .hero-content,
-            .hero-content * {
-                float: none !important;
-            }
-            
-            /* Reset any transforms */
-            .hero-content,
-            .hero-content * {
-                transform: translateX(0) !important;
-            }
-            
-            /* Ensure no negative margins */
-            .hero-content,
-            .hero-content * {
-                margin-left: auto !important;
-                margin-right: auto !important;
-            }
-            
-            /* Reset any absolute positioning in hero content */
-            .hero-content h1,
-            .hero-content h2,
-            .hero-content p,
-            .hero-content div {
-                position: relative !important;
-                left: auto !important;
-                right: auto !important;
-                top: auto !important;
-                bottom: auto !important;
-            }
-        }
-
-        /* Extra large heading for standard phones */
-        @media (min-width: 380px) and (max-width: 450px) {
-            .hero-content h1 {
-                font-size: 2.15rem !important; /* Optimized to prevent wrapping */
-            }
-            
-            .hero-content h1 span:last-child {
-                font-size: 115% !important; /* Make North Carolina even bigger */
-            }
-        }
-        
-        /* Enhanced mobile CTAs for better conversion */
-        @media (max-width: 768px) {
-            /* Make CTA buttons larger and more distinct */
-            .mobile-cta-button {
-                min-height: 60px !important; /* Larger touch target */
-                padding: 1rem 1.5rem !important;
-                font-size: 1.1rem !important;
-                position: relative;
-                overflow: hidden;
-            }
-            
-            /* Primary CTA (Auto Insurance) - make it stand out */
-            .mobile-cta-button:first-child {
-                background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%) !important;
-                border: 2px solid #3b82f6 !important;
-                color: #1e40af !important;
-                box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3) !important;
-            }
-            
-            /* Secondary CTA (Home Insurance) */
-            .mobile-cta-button:last-child {
-                background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
-                border: 2px solid transparent !important;
-                box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4) !important;
-            }
-            
-            /* Add subtle animation on tap */
-            .mobile-cta-button:active {
-                transform: scale(0.98);
-            }
-        }
-
-        /* Fix trust badges on mobile */
-        @media (max-width: 768px) {
-            /* Trust indicators container */
-            .hero-content .flex.flex-col.sm\:flex-row {
-                margin-top: 1.5rem !important;
-                margin-bottom: 1.5rem !important;
-                gap: 0.75rem !important;
-            }
-            
-            /* Individual trust badges */
-            .hero-content .bg-white\/20 {
-                background: rgba(30, 64, 175, 0.7) !important;
-                border: 2px solid rgba(255, 255, 255, 0.5) !important;
-                backdrop-filter: blur(10px);
-                padding: 0.5rem 1rem !important;
-                font-size: 0.9rem !important;
-                white-space: nowrap;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            }
-            
-            /* Ensure social media links are visible */
-            .hero-content .mt-8 {
-                margin-bottom: 2rem !important;
-                padding-bottom: 1rem;
-            }
-        }
-
-        /* Prevent content cutoff on mobile */
-        @media (max-width: 768px) {
-            body {
-                overflow-x: hidden;
-            }
-            
-            .hero-optimized {
-                overflow-x: hidden;
-                overflow-y: visible !important;
-            }
-        }
-        
-        /* SPECIFIC DEVICE MEDIA QUERIES FOR PERFECT CENTERING */
-        
-        /* iPhone SE, iPhone 8 and smaller phones (375px) */
-        @media (max-width: 375px) {
-            .hero-content h1 {
-                font-size: 1.75rem !important; /* Smaller to fit "Better Insurance for" on one line */
-                padding: 0 5px !important;
-                font-weight: 900 !important;
-            }
-            
-            .hero-content .mobile-subheadline {
-                font-size: 1rem !important;
-                padding: 0 5px !important;
-            }
-            
-            .hero-content .bg-white\/10 {
-                width: 95% !important;
-                padding: 15px 10px !important;
-            }
-        }
-        
-        /* iPhone 12 Pro, iPhone 13 (390px) */
-        @media (min-width: 376px) and (max-width: 390px) {
-            .hero-content h1 {
-                font-size: 2.1rem !important; /* Adjusted to prevent wrapping */
-                font-weight: 900 !important;
-            }
-            
-            .hero-content {
-                padding: 0 !important;
-            }
-            
-            .hero-content .text-center {
-                padding: 0 12px !important;
-            }
-        }
-        
-        /* Samsung Galaxy S20, Pixel phones (412px) */
-        @media (min-width: 391px) and (max-width: 428px) {
-            .hero-content h1 {
-                font-size: 2.2rem !important; /* Adjusted for one line */
-                font-weight: 900 !important;
-            }
-            
-            .hero-content .bg-white\/10 {
-                width: 92% !important;
-            }
-        }
-        
-        /* Landscape orientation mobile fix */
-        @media (max-width: 896px) and (orientation: landscape) {
-            .hero-content * {
-                text-align: center !important;
-            }
-            
-            .hero-content h1 {
-                font-size: 1.8rem !important;
-                margin-bottom: 10px !important;
-            }
-            
-            .hero-content .mobile-subheadline {
-                font-size: 0.9rem !important;
-                margin-bottom: 10px !important;
-            }
-            
-            .hero-content .bg-white\/10 {
-                padding: 10px !important;
-                margin: 10px auto !important;
-            }
-        }
-        
-        /* Tablet portrait mode (768px - 1024px) */
-        @media (min-width: 768px) and (max-width: 1024px) {
-            .hero-content .text-center {
-                max-width: 90% !important;
-                margin: 0 auto !important;
-            }
-            
-            .hero-content h1 {
-                text-align: center !important;
-                font-size: 3rem !important;
-            }
-            
-            .hero-content .bg-white\/10 {
-                max-width: 600px !important;
-                margin: 30px auto !important;
-            }
-        }
-        
-        /* Force text centering with maximum specificity */
-        @media screen and (max-width: 768px) {
-            /* Override any inline styles or conflicting rules */
-            .hero-optimized .hero-content .text-center > * {
-                text-align: center !important;
-                margin-left: auto !important;
-                margin-right: auto !important;
-            }
-            
-            /* Ensure heading centering with maximum specificity */
-            section.hero-optimized div.hero-content div.text-center h1 {
-                text-align: center !important;
-                width: 100% !important;
-                display: block !important;
-                visibility: visible !important;
-                opacity: 1 !important;
-            }
-            
-            /* CRITICAL FIX: Ensure "Better Insurance for" is visible */
-            section.hero-optimized div.hero-content div.text-center h1 span:first-child {
-                display: inline !important;
-                visibility: visible !important;
-                opacity: 1 !important;
-                color: #ffffff !important;
-                font-size: inherit !important;
-                white-space: normal !important;
-            }
-            
-            /* Ensure "North Carolina" stays on second line */
-            section.hero-optimized div.hero-content div.text-center h1 span:last-child {
-                display: block !important;
-                visibility: visible !important;
-                opacity: 1 !important;
-                width: 100% !important;
-            }
-            
-            /* Fix potential Tailwind conflicts */
-            .hero-optimized [class*="text-"] {
-                text-align: center !important;
             }
         }
     </style>
@@ -1205,141 +607,72 @@
     </div>
 
     <main>
-        <!-- OPTIMIZED HERO SECTION WITH LAZY-LOADING BACKGROUND -->
-        <section class="hero-optimized bg-gradient-to-br from-blue-800 to-blue-600 text-white py-24 md:py-32 relative overflow-hidden">
-            
-            <!-- Optimized Background Image Container -->
-            <div class="absolute inset-0 z-0">
+        <!-- NEW UPDATED HERO SECTION -->
+        <section class="hero-updated">
+            <div class="hero-content-updated">
+                <!-- Main Headline -->
+                <h1>
+                    Save up to <span class="highlight">$847</span> on your
+                    <br>North Carolina Insurance
+                </h1>
                 
-                <!-- Blurred Placeholder - Instant Load (300 bytes) -->
-                <div id="hero-placeholder" 
-                     class="hero-placeholder"
-                     style="background-image: url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDACgcHiMeGSgjISMtKygwPGRBPDc3PHtYXUlkkYCZlo+AjIqgtObDoKrarYqMyP/L2u71////m8H////6/+b9//j/2wBDASstLTw1PHZBQXb4pYyl+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj/wAARCAALABQDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAwAC/8QAFxABAQEBAAAAAAAAAAAAAAAAAAECEv/EABUBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFhEBAQEAAAAAAAAAAAAAAAAAAAER/9oADAMBAAIRAxEAPwAcklFGkSknSEjof//Z');">
+                <!-- Tagline -->
+                <p class="tagline">
+                    We do the shopping for you, comparing <span class="tagline-highlight">10+ top carriers</span> to find the best rates.
+                </p>
+
+                <!-- CTA Buttons -->
+                <div class="hero-cta-buttons">
+                    <a href="tel:3368351993" class="hero-btn hero-btn-primary">
+                        <i class="fas fa-phone"></i>
+                        Talk to an Agent Now
+                    </a>
+                    <a href="auto-quote.html" class="hero-btn hero-btn-secondary">
+                        <i class="fas fa-calculator"></i>
+                        Start Your Free Quote
+                    </a>
                 </div>
                 
-                <!-- Responsive Hero Image with Multiple Sizes -->
-                <picture>
-                    <!-- Mobile WebP (82KB) - Smallest screens -->
-                    <source media="(max-width: 768px)"
-                            srcset="https://github.com/BillLayne/bill-layne-images/blob/main/logos/hero-mobile.webp?raw=true"
-                            type="image/webp">
-                    
-                    <!-- Mobile JPEG Fallback (36KB) -->
-                    <source media="(max-width: 768px)"
-                            srcset="https://github.com/BillLayne/bill-layne-images/blob/main/logos/hero-mobile.jpg?raw=true"
-                            type="image/jpeg">
-                    
-                    <!-- Tablet WebP (95KB) - Medium screens -->
-                    <source media="(max-width: 1200px)"
-                            srcset="https://github.com/BillLayne/bill-layne-images/blob/main/logos/hero-tablet.webp?raw=true"
-                            type="image/webp">
-                    
-                    <!-- Tablet JPEG Fallback (92KB) -->
-                    <source media="(max-width: 1200px)"
-                            srcset="https://github.com/BillLayne/bill-layne-images/blob/main/logos/hero-tablet.jpg?raw=true"
-                            type="image/jpeg">
-                    
-                    <!-- Desktop WebP (149KB) - Large screens -->
-                    <source srcset="https://github.com/BillLayne/bill-layne-images/blob/main/logos/hero-desktop-v5.webp?raw=true"
-                            type="image/webp">
-                    
-                    <!-- Desktop JPEG Fallback (172KB) -->
-                    <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/hero-desktop-v5.jpg?raw=true"
-                         alt="Bill Layne Insurance - Protecting North Carolina homes and vehicles in Elkin, Mount Airy, and Surry County"
-                         class="hero-image absolute inset-0 w-full h-full object-cover"
-                         loading="eager"
-                         fetchpriority="high"
-                         style="object-fit: cover; object-position: center center;"
-                         onload="this.classList.add('loaded'); document.getElementById('hero-placeholder').classList.add('hidden');">
-                </picture>
-                
-                <!-- Subtle gradient only where text appears -->
-                <div class="absolute inset-0 bg-gradient-to-b from-black/15 via-transparent to-black/10 z-1"></div>
-            </div>
-            
-            <!-- Hero Content - PRESERVE ALL EXISTING CONTENT -->
-            <div class="hero-content relative z-10">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="text-center">
-                        <!-- Main headline -->
-                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-4" style="text-align: center; width: 100%; margin: 0 auto;">
-                            <span class="inline" style="visibility: visible; opacity: 1; color: white; font-weight: 900;">Better Insurance for</span>
-                            <br class="block">
-                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-400" style="visibility: visible; opacity: 1; font-weight: 900; font-size: 110%;">
-                                North Carolina
-                            </span>
-                        </h1>
-                        
-                        <!-- UPDATED Subheadline with Yellow/Gold Highlights -->
-                        <p class="text-lg sm:text-xl lg:text-2xl mb-2 sm:mb-8 max-w-3xl mx-auto font-semibold mobile-subheadline" style="text-align: center; width: 100%; margin: 0 auto 8px auto;">
-                            <span class="inline" style="text-align: center;">We compare over <span class="text-yellow-300 font-extrabold">10+ Top-Rated Carriers</span> to find you the best coverage and price.</span>
-                            <span class="block sm:hidden text-green-300 text-base mt-2" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.9); text-align: center; display: block; width: 100%;">💰 Save up to $847/year!</span>
-                        </p>
-                        
-                        <!-- Interactive Quote Starter -->
-                        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 max-w-2xl mx-auto mb-3 border border-white/20" style="text-align: center; margin: 10px auto;">
-                            <h2 class="text-lg font-bold mb-2" style="text-align: center; width: 100%; margin: 0 auto 10px auto;">What can we help you with today?</h2>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <a href="https://billlayne.github.io/Auto-Insurance-Center/" 
-                                   class="mobile-cta-button bg-white text-blue-600 px-6 py-4 sm:py-4 rounded-xl font-bold hover:bg-gray-100 transition-all">
-                                    <i class="fas fa-car text-2xl mb-1"></i>
-                                    <span class="block">Auto Insurance</span>
-                                    <span class="text-xs text-gray-500 mt-1 font-normal">Get a Free Quote</span>
-                                </a>
-                                <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" 
-                                   class="mobile-cta-button bg-blue-500 text-white px-6 py-4 sm:py-4 rounded-xl font-bold hover:bg-blue-400 transition-all">
-                                    <i class="fas fa-home text-2xl mb-1"></i>
-                                    <span class="block">Home Insurance</span>
-                                    <span class="text-xs text-blue-200 mt-1 font-normal">Compare & Save</span>
-                                </a>
-                            </div>
-                            
-                            <!-- COMPACT TRUST BADGES FOR MOBILE -->
-                            <div class="flex flex-wrap justify-center items-center gap-2 mt-4 sm:hidden">
-                                <span class="text-xs text-white/90">⭐ 4.8★ Reviews</span>
-                                <span class="text-xs text-white/90">✓ NC Licensed</span>
-                                <span class="text-xs text-white/90">✓ 20+ Years</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Trust Indicators - Hidden on mobile, shown on desktop -->
-                        <div class="hidden sm:flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-6 text-xs sm:text-sm text-blue-100 mb-8">
-                            <!-- Review Badge -->
-                            <div class="bg-white/20 hover:bg-white/30 transition-all px-4 py-2 rounded-full flex items-center gap-2">
-                                <i class="fas fa-star text-yellow-300"></i>
-                                <span class="font-bold whitespace-nowrap">4.8★ 127+ Reviews</span>
-                            </div>
-                            
-                            <!-- License Badge -->
-                            <div class="bg-white/20 hover:bg-white/30 transition-all px-4 py-2 rounded-full flex items-center gap-2">
-                                <i class="fas fa-shield-alt text-green-300"></i>
-                                <span class="font-bold whitespace-nowrap">NC Licensed</span>
-                            </div>
-                            
-                            <!-- Experience Badge -->
-                            <div class="bg-white/20 hover:bg-white/30 transition-all px-4 py-2 rounded-full flex items-center gap-2">
-                                <i class="fas fa-award text-blue-300"></i>
-                                <span class="font-bold whitespace-nowrap">20+ Years</span>
-                            </div>
-                        </div>
-
-                        <!-- Social Media Links -->
-                        <div class="mt-8 text-blue-200">
-                            <p class="mb-2">Follow Us:</p>
-                            <div class="flex justify-center items-center gap-4">
-                                <a href="https://www.facebook.com/dollarbillagency/" target="_blank" rel="noopener noreferrer" class="text-white/80 hover:text-white transition-colors" aria-label="Follow us on Facebook">
-                                    <i class="fab fa-facebook-f text-2xl"></i>
-                                </a>
-                                <a href="https://twitter.com/billlayneins" target="_blank" rel="noopener noreferrer" class="text-white/80 hover:text-white transition-colors" aria-label="Follow us on Twitter">
-                                    <i class="fab fa-twitter text-2xl"></i>
-                                </a>
-                                <a href="https://www.instagram.com/billlayneinsurance/" target="_blank" rel="noopener noreferrer" class="text-white/80 hover:text-white transition-colors" aria-label="Follow us on Instagram">
-                                    <i class="fab fa-instagram text-2xl"></i>
-                                </a>
-                            </div>
-                        </div>
+                <!-- Trust Badges -->
+                <div class="hero-trust-badges">
+                    <div class="hero-badge">
+                        <i class="fas fa-shield-alt"></i>
+                        NC Licensed Agency
+                    </div>
+                    <div class="hero-badge">
+                        <i class="fas fa-award"></i>
+                        Serving NC for 20+ Years
+                    </div>
+                    <div class="hero-badge">
+                        <i class="fas fa-users"></i>
+                        1,000s of Happy Clients
                     </div>
                 </div>
+
+                <!-- Service Icons -->
+                <div class="hero-services">
+                    <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="hero-service-item">
+                        <div class="hero-service-icon">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <span class="hero-service-label">Auto</span>
+                    </a>
+                    <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="hero-service-item">
+                        <div class="hero-service-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <span class="hero-service-label">Home</span>
+                    </a>
+                    <a href="areas-we-serve.html#business" class="hero-service-item">
+                        <div class="hero-service-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <span class="hero-service-label">Business</span>
+                    </a>
+                </div>
+                
+                <!-- Description text removed as requested -->
+
             </div>
         </section>
 
@@ -2041,3 +1374,4 @@
         </script>
     </body>
     </html>
+
