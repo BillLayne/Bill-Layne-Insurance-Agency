@@ -70,15 +70,32 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
-        /* Hero Section */
+        /* Hero Section with North Carolina Mountain Landscape */
         .services-hero {
-            background-image: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 58, 138, 0.98) 100%), url('https://placehold.co/1920x1080/334155/64748B?text=NC+Map');
+            background-image: 
+                linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 58, 138, 0.95) 100%), 
+                url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
             background-size: cover;
             background-position: center;
             position: relative;
             overflow: hidden;
             padding-top: 100px;
         }
+        
+        /* Alternative background options - use any of these if preferred:
+           
+           Option 1 - North Carolina Blue Ridge Mountains:
+           url('https://images.unsplash.com/photo-1570641963303-92ce4845ed4c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')
+           
+           Option 2 - Highway/Road Network:
+           url('https://images.unsplash.com/photo-1556075798-4825dfaaf498?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')
+           
+           Option 3 - Map with Pins:
+           url('https://images.unsplash.com/photo-1569163139394-de4798aa62b6?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')
+           
+           Option 4 - Aerial View of Roads:
+           url('https://images.unsplash.com/photo-1614016062437-9b47f35fd118?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')
+        */
 
         @media (min-width: 768px) {
             .services-hero {
@@ -429,6 +446,63 @@
             .search-result-item .county-name {
                 font-size: 11px;
             }
+        }
+
+        /* Estimator Form Styles */
+        .estimator-input {
+            transition: all 0.3s ease;
+        }
+        
+        .estimator-input:focus {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+        }
+
+        /* Emergency Resource Cards */
+        .emergency-card {
+            transition: all 0.3s ease;
+        }
+        
+        .emergency-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Print Styles for Emergency Resources */
+        @media print {
+            header, footer, .navigation-menu, .btn-primary, .hamburger {
+                display: none !important;
+            }
+            
+            .services-hero, #autoEstimatorForm, #homeEstimatorForm {
+                display: none !important;
+            }
+            
+            body {
+                font-size: 12pt;
+            }
+            
+            .emergency-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+
+        /* Pulse animation for emergency numbers */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+        
+        .emergency-pulse {
+            animation: pulse 2s infinite;
         }
     </style>
 </head>
@@ -824,6 +898,380 @@
             </div>
         </section>
 
+        <!-- ZIP Code Quick Estimator Section -->
+        <section class="py-16 bg-gradient-to-br from-blue-50 to-indigo-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl lg:text-4xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-calculator text-blue-600 mr-3"></i>
+                        Quick Rate Estimator
+                    </h2>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                        Get an instant ballpark estimate for your insurance needs. This tool provides rough estimates based on typical rates in your area.
+                    </p>
+                    <div class="mt-4 p-3 bg-yellow-100 border-2 border-yellow-300 rounded-lg max-w-2xl mx-auto">
+                        <p class="text-sm text-yellow-800 font-semibold">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            These are estimates only. Actual rates depend on many factors. Contact us for an accurate quote.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <!-- Auto Insurance Estimator -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-car text-blue-600 mr-2"></i>
+                            Auto Insurance Estimator
+                        </h3>
+                        
+                        <form id="autoEstimatorForm" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">ZIP Code</label>
+                                <input type="text" id="autoZip" maxlength="5" pattern="[0-9]{5}" 
+                                    class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                                    placeholder="Enter ZIP (e.g., 28621)">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Driver Age</label>
+                                <select id="driverAge" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none">
+                                    <option value="">Select Age Range</option>
+                                    <option value="teen">16-20</option>
+                                    <option value="young">21-24</option>
+                                    <option value="adult">25-64</option>
+                                    <option value="senior">65+</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Driving Record</label>
+                                <select id="drivingRecord" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none">
+                                    <option value="">Select Record</option>
+                                    <option value="clean">Clean (No violations)</option>
+                                    <option value="minor">1-2 Minor violations</option>
+                                    <option value="major">Accident or major violation</option>
+                                    <option value="sr22">Need SR-22</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Coverage Level</label>
+                                <select id="coverageLevel" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none">
+                                    <option value="">Select Coverage</option>
+                                    <option value="liability">Liability Only</option>
+                                    <option value="standard">Standard (Comp/Collision)</option>
+                                    <option value="full">Full Coverage</option>
+                                </select>
+                            </div>
+
+                            <button type="button" onclick="calculateAutoEstimate()" 
+                                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">
+                                <i class="fas fa-calculator mr-2"></i>Calculate Estimate
+                            </button>
+                        </form>
+
+                        <!-- Auto Results -->
+                        <div id="autoResults" class="hidden mt-6 p-4 bg-green-50 border-2 border-green-200 rounded-lg">
+                            <h4 class="font-bold text-green-800 mb-2">Estimated Monthly Range:</h4>
+                            <div class="text-3xl font-black text-green-600" id="autoEstimateRange">$0 - $0</div>
+                            <p class="text-sm text-gray-600 mt-2">*Based on typical rates in your area</p>
+                            <button onclick="requestAutoQuote()" class="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">
+                                <i class="fas fa-phone mr-2"></i>Get Exact Quote: (336) 835-1993
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Home Insurance Estimator -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-home text-green-600 mr-2"></i>
+                            Home Insurance Estimator
+                        </h3>
+                        
+                        <form id="homeEstimatorForm" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">ZIP Code</label>
+                                <input type="text" id="homeZip" maxlength="5" pattern="[0-9]{5}" 
+                                    class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                                    placeholder="Enter ZIP (e.g., 28621)">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Home Value</label>
+                                <select id="homeValue" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none">
+                                    <option value="">Select Value Range</option>
+                                    <option value="low">Under $150,000</option>
+                                    <option value="midlow">$150,000 - $250,000</option>
+                                    <option value="mid">$250,000 - $400,000</option>
+                                    <option value="high">$400,000 - $600,000</option>
+                                    <option value="luxury">Over $600,000</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Home Age</label>
+                                <select id="homeAge" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none">
+                                    <option value="">Select Age</option>
+                                    <option value="new">0-10 years</option>
+                                    <option value="modern">11-25 years</option>
+                                    <option value="older">26-50 years</option>
+                                    <option value="historic">Over 50 years</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Claims History</label>
+                                <select id="claimsHistory" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none">
+                                    <option value="">Select History</option>
+                                    <option value="none">No claims (5+ years)</option>
+                                    <option value="one">1 claim (last 5 years)</option>
+                                    <option value="multiple">2+ claims (last 5 years)</option>
+                                </select>
+                            </div>
+
+                            <button type="button" onclick="calculateHomeEstimate()" 
+                                class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">
+                                <i class="fas fa-calculator mr-2"></i>Calculate Estimate
+                            </button>
+                        </form>
+
+                        <!-- Home Results -->
+                        <div id="homeResults" class="hidden mt-6 p-4 bg-blue-50 border-2 border-blue-200 rounded-lg">
+                            <h4 class="font-bold text-blue-800 mb-2">Estimated Annual Range:</h4>
+                            <div class="text-3xl font-black text-blue-600" id="homeEstimateRange">$0 - $0</div>
+                            <p class="text-sm text-gray-600 mt-2">*Based on typical rates in your area</p>
+                            <button onclick="requestHomeQuote()" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
+                                <i class="fas fa-phone mr-2"></i>Get Exact Quote: (336) 835-1993
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Disclaimer -->
+                <div class="mt-8 p-4 bg-gray-100 rounded-lg">
+                    <p class="text-xs text-gray-600 text-center">
+                        <strong>Important:</strong> These estimates are for informational purposes only and are based on regional averages and typical rating factors. 
+                        Actual premiums are determined by many individual factors including credit score, exact location, vehicle details, coverage limits, deductibles, 
+                        and insurance company guidelines. Contact Bill Layne Insurance at (336) 835-1993 for an accurate, personalized quote.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Local Emergency Resources Section -->
+        <section class="py-16 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl lg:text-4xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-phone-alt text-red-600 mr-3"></i>
+                        Local Emergency Resources
+                    </h2>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                        Keep these important numbers handy. Save this page for quick access during emergencies.
+                    </p>
+                    <button onclick="window.print()" class="mt-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-6 rounded-lg transition-colors">
+                        <i class="fas fa-print mr-2"></i>Print This List
+                    </button>
+                </div>
+
+                <!-- Emergency Numbers Grid -->
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                    <!-- Surry County -->
+                    <div class="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-6 border-2 border-red-200">
+                        <h3 class="font-bold text-lg text-red-800 mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>Surry County
+                        </h3>
+                        <div class="space-y-3 text-sm">
+                            <div>
+                                <p class="font-semibold text-gray-800">Emergency: 911</p>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">Sheriff (Non-Emergency)</p>
+                                <a href="tel:3364015000" class="text-blue-600 hover:underline">(336) 401-5000</a>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">Northern Hospital (Mt. Airy)</p>
+                                <a href="tel:3367192000" class="text-blue-600 hover:underline">(336) 719-2000</a>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">Hugh Chatham (Elkin)</p>
+                                <a href="tel:3365278000" class="text-blue-600 hover:underline">(336) 527-8000</a>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">Poison Control</p>
+                                <a href="tel:18002221222" class="text-blue-600 hover:underline">1-800-222-1222</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Yadkin County -->
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border-2 border-blue-200">
+                        <h3 class="font-bold text-lg text-blue-800 mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>Yadkin County
+                        </h3>
+                        <div class="space-y-3 text-sm">
+                            <div>
+                                <p class="font-semibold text-gray-800">Emergency: 911</p>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">Sheriff (Non-Emergency)</p>
+                                <a href="tel:3366792018" class="text-blue-600 hover:underline">(336) 679-2018</a>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">Yadkin Valley Hospital</p>
+                                <a href="tel:3366792041" class="text-blue-600 hover:underline">(336) 679-2041</a>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">Emergency Management</p>
+                                <a href="tel:3368493304" class="text-blue-600 hover:underline">(336) 849-3304</a>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">Animal Control</p>
+                                <a href="tel:3368497901" class="text-blue-600 hover:underline">(336) 849-7901</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Wilkes County -->
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border-2 border-green-200">
+                        <h3 class="font-bold text-lg text-green-800 mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>Wilkes County
+                        </h3>
+                        <div class="space-y-3 text-sm">
+                            <div>
+                                <p class="font-semibold text-gray-800">Emergency: 911</p>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">Sheriff (Non-Emergency)</p>
+                                <a href="tel:3366516100" class="text-blue-600 hover:underline">(336) 651-6100</a>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">Wilkes Medical Center</p>
+                                <a href="tel:3366518100" class="text-blue-600 hover:underline">(336) 651-8100</a>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">Emergency Services</p>
+                                <a href="tel:3366516565" class="text-blue-600 hover:underline">(336) 651-6565</a>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">Health Department</p>
+                                <a href="tel:3366518599" class="text-blue-600 hover:underline">(336) 651-8599</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stokes County -->
+                    <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border-2 border-purple-200">
+                        <h3 class="font-bold text-lg text-purple-800 mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>Stokes County
+                        </h3>
+                        <div class="space-y-3 text-sm">
+                            <div>
+                                <p class="font-semibold text-gray-800">Emergency: 911</p>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">Sheriff (Non-Emergency)</p>
+                                <a href="tel:3365938217" class="text-blue-600 hover:underline">(336) 593-8217</a>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">Emergency Management</p>
+                                <a href="tel:3365938213" class="text-blue-600 hover:underline">(336) 593-8213</a>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">Novant Health (King)</p>
+                                <a href="tel:3369835700" class="text-blue-600 hover:underline">(336) 983-5700</a>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">Health Department</p>
+                                <a href="tel:3365932411" class="text-blue-600 hover:underline">(336) 593-2411</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Resources -->
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Utility Companies -->
+                    <div class="bg-gray-50 rounded-xl p-6">
+                        <h4 class="font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-bolt text-yellow-500 mr-2"></i>Utility Emergencies
+                        </h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="font-semibold">Duke Energy</span>
+                                <a href="tel:18004192095" class="text-blue-600">1-800-419-2095</a>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-semibold">Energy United</span>
+                                <a href="tel:18004426171" class="text-blue-600">1-800-442-6171</a>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-semibold">Gas Leaks</span>
+                                <a href="tel:18779320003" class="text-blue-600">1-877-932-0003</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Towing Services -->
+                    <div class="bg-gray-50 rounded-xl p-6">
+                        <h4 class="font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-truck text-blue-500 mr-2"></i>24/7 Towing Services
+                        </h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="font-semibold">AAA Carolina</span>
+                                <a href="tel:18002224357" class="text-blue-600">1-800-222-4357</a>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-semibold">Elkin Area</span>
+                                <a href="tel:3368351212" class="text-blue-600">(336) 835-1212</a>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-semibold">Mt. Airy Area</span>
+                                <a href="tel:3367866166" class="text-blue-600">(336) 786-6166</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Weather & Road Info -->
+                    <div class="bg-gray-50 rounded-xl p-6">
+                        <h4 class="font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-cloud text-gray-500 mr-2"></i>Weather & Roads
+                        </h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="font-semibold">NC DOT Roads</span>
+                                <a href="tel:8773687623" class="text-blue-600">1-877-368-7623</a>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-semibold">Red Cross</span>
+                                <a href="tel:18007332767" class="text-blue-600">1-800-733-2767</a>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-semibold">FEMA</span>
+                                <a href="tel:18006213362" class="text-blue-600">1-800-621-3362</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insurance Claims Quick Access -->
+                <div class="mt-8 p-6 bg-blue-50 rounded-xl border-2 border-blue-200">
+                    <h4 class="font-bold text-blue-800 mb-4 text-center text-xl">
+                        <i class="fas fa-file-alt mr-2"></i>Need to File a Claim?
+                    </h4>
+                    <div class="text-center">
+                        <p class="text-gray-700 mb-4">Call us first for guidance on the claims process</p>
+                        <a href="tel:3368351993" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full text-lg transition-colors">
+                            <i class="fas fa-phone mr-2"></i>Bill Layne Insurance: (336) 835-1993
+                        </a>
+                        <p class="text-sm text-gray-600 mt-4">We're here to help 24/7 during emergencies</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Bottom CTA Section -->
         <section class="py-16 bg-blue-600 text-white">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -1132,6 +1580,158 @@
         document.querySelectorAll('.location-card').forEach(el => {
             observer.observe(el);
         });
+
+        // ZIP Code Estimator Functions
+        const ncZipCodes = {
+            // Surry County
+            '28621': { county: 'Surry', risk: 1.0 },  // Elkin
+            '27030': { county: 'Surry', risk: 1.05 }, // Mount Airy
+            '27017': { county: 'Surry', risk: 0.95 }, // Dobson
+            '27041': { county: 'Surry', risk: 1.0 },  // Pilot Mountain
+            // Yadkin County
+            '28642': { county: 'Yadkin', risk: 0.95 }, // Jonesville
+            '27055': { county: 'Yadkin', risk: 0.9 },  // Yadkinville
+            '27011': { county: 'Yadkin', risk: 0.9 },  // Boonville
+            '27018': { county: 'Yadkin', risk: 0.85 }, // East Bend
+            // Wilkes County
+            '28659': { county: 'Wilkes', risk: 1.0 },  // North Wilkesboro
+            '28697': { county: 'Wilkes', risk: 1.0 },  // Wilkesboro
+            '28670': { county: 'Wilkes', risk: 0.85 }, // Ronda
+            // Stokes County
+            '27021': { county: 'Stokes', risk: 1.1 },  // King
+            '27016': { county: 'Stokes', risk: 0.85 }, // Danbury
+            '27052': { county: 'Stokes', risk: 0.95 }, // Walnut Cove
+        };
+
+        function getZipRiskFactor(zip) {
+            return ncZipCodes[zip] ? ncZipCodes[zip].risk : 1.0;
+        }
+
+        function calculateAutoEstimate() {
+            const zip = document.getElementById('autoZip').value;
+            const age = document.getElementById('driverAge').value;
+            const record = document.getElementById('drivingRecord').value;
+            const coverage = document.getElementById('coverageLevel').value;
+
+            if (!zip || !age || !record || !coverage) {
+                alert('Please fill in all fields to get an estimate');
+                return;
+            }
+
+            // Base rates (monthly)
+            let baseRate = 100;
+            
+            // Age multipliers
+            const ageMultipliers = {
+                'teen': 2.5,
+                'young': 1.8,
+                'adult': 1.0,
+                'senior': 1.1
+            };
+            
+            // Record multipliers
+            const recordMultipliers = {
+                'clean': 1.0,
+                'minor': 1.3,
+                'major': 1.8,
+                'sr22': 2.2
+            };
+            
+            // Coverage multipliers
+            const coverageMultipliers = {
+                'liability': 0.6,
+                'standard': 1.0,
+                'full': 1.4
+            };
+
+            // Calculate estimate
+            const zipRisk = getZipRiskFactor(zip);
+            const estimate = baseRate * ageMultipliers[age] * recordMultipliers[record] * 
+                           coverageMultipliers[coverage] * zipRisk;
+            
+            // Create range (±15%)
+            const lowEstimate = Math.round(estimate * 0.85);
+            const highEstimate = Math.round(estimate * 1.15);
+
+            // Display results
+            document.getElementById('autoEstimateRange').textContent = `$${lowEstimate} - $${highEstimate}`;
+            document.getElementById('autoResults').classList.remove('hidden');
+            
+            // Scroll to results
+            document.getElementById('autoResults').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function calculateHomeEstimate() {
+            const zip = document.getElementById('homeZip').value;
+            const value = document.getElementById('homeValue').value;
+            const age = document.getElementById('homeAge').value;
+            const claims = document.getElementById('claimsHistory').value;
+
+            if (!zip || !value || !age || !claims) {
+                alert('Please fill in all fields to get an estimate');
+                return;
+            }
+
+            // Base rate per $100k of value (annual)
+            let baseRate = 400;
+            
+            // Value multipliers
+            const valueMultipliers = {
+                'low': 0.8,
+                'midlow': 1.0,
+                'mid': 1.2,
+                'high': 1.4,
+                'luxury': 1.6
+            };
+            
+            // Age multipliers
+            const ageMultipliers = {
+                'new': 0.9,
+                'modern': 1.0,
+                'older': 1.2,
+                'historic': 1.4
+            };
+            
+            // Claims multipliers
+            const claimsMultipliers = {
+                'none': 0.9,
+                'one': 1.2,
+                'multiple': 1.5
+            };
+
+            // Calculate estimate
+            const zipRisk = getZipRiskFactor(zip);
+            const estimate = baseRate * valueMultipliers[value] * ageMultipliers[age] * 
+                           claimsMultipliers[claims] * zipRisk * 3; // x3 for realistic annual rate
+            
+            // Create range (±15%)
+            const lowEstimate = Math.round(estimate * 0.85);
+            const highEstimate = Math.round(estimate * 1.15);
+
+            // Display results
+            document.getElementById('homeEstimateRange').textContent = `$${lowEstimate} - $${highEstimate}`;
+            document.getElementById('homeResults').classList.remove('hidden');
+            
+            // Scroll to results
+            document.getElementById('homeResults').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function requestAutoQuote() {
+            window.location.href = 'tel:3368351993';
+        }
+
+        function requestHomeQuote() {
+            window.location.href = 'tel:3368351993';
+        }
+
+        // Format ZIP code inputs
+        document.getElementById('autoZip')?.addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '');
+        });
+
+        document.getElementById('homeZip')?.addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '');
+        });
     </script>
 
     <!-- Local Business Schema -->
@@ -1183,4 +1783,3 @@
     </script>
 </body>
 </html>
-
