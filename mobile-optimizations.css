@@ -1,0 +1,180 @@
+/* Mobile Performance Optimizations for Bill Layne Insurance */
+
+/* Reduce animations on mobile for better performance */
+@media (max-width: 768px) {
+    * {
+        animation-duration: 0.2s !important;
+        transition-duration: 0.2s !important;
+    }
+    
+    /* Disable parallax on mobile */
+    .parallax {
+        background-attachment: scroll !important;
+    }
+    
+    /* Optimize font sizes for mobile */
+    .text-5xl { font-size: 2rem !important; }
+    .text-4xl { font-size: 1.75rem !important; }
+    .text-3xl { font-size: 1.5rem !important; }
+    
+    /* Reduce padding on mobile */
+    .py-20 { padding-top: 3rem !important; padding-bottom: 3rem !important; }
+    .py-16 { padding-top: 2.5rem !important; padding-bottom: 2.5rem !important; }
+    
+    /* Optimize images on mobile */
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    /* Optimize buttons for mobile touch */
+    .btn, button, a.btn {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 12px 20px;
+    }
+    
+    /* Hide non-essential elements on mobile */
+    .desktop-only {
+        display: none !important;
+    }
+    
+    /* Optimize form inputs for mobile */
+    input, select, textarea {
+        font-size: 16px !important; /* Prevents zoom on iOS */
+        min-height: 44px;
+    }
+    
+    /* Optimize navigation menu */
+    .navigation-menu {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    /* Reduce shadow complexity on mobile */
+    .shadow-lg {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .shadow-xl {
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.1) !important;
+    }
+}
+
+/* Touch-friendly improvements */
+@media (pointer: coarse) {
+    /* Increase touch targets */
+    a, button, [role="button"] {
+        min-height: 44px;
+        min-width: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Remove hover effects on touch devices */
+    .hover\:scale-105:hover {
+        transform: none !important;
+    }
+    
+    /* Add active states for better feedback */
+    a:active, button:active {
+        opacity: 0.8;
+        transform: scale(0.98);
+    }
+}
+
+/* Optimize for slow connections */
+@media (prefers-reduced-data: reduce) {
+    /* Use system fonts */
+    body {
+        font-family: system-ui, -apple-system, sans-serif !important;
+    }
+    
+    /* Disable background images */
+    [style*="background-image"] {
+        background-image: none !important;
+        background-color: #f3f4f6 !important;
+    }
+    
+    /* Simplify gradients */
+    [class*="gradient"] {
+        background: #3b82f6 !important;
+    }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Optimize for small screens */
+@media (max-width: 375px) {
+    /* iPhone SE and smaller */
+    .container {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    .text-2xl {
+        font-size: 1.25rem !important;
+    }
+    
+    .grid-cols-3 {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* Lazy loading styles */
+img[data-src] {
+    filter: blur(5px);
+    transition: filter 0.3s;
+}
+
+img.loaded {
+    filter: blur(0);
+}
+
+[data-bg] {
+    background-color: #f3f4f6;
+}
+
+.bg-loaded {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Performance-optimized utilities */
+.will-change-transform {
+    will-change: transform;
+}
+
+.will-change-opacity {
+    will-change: opacity;
+}
+
+.gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+/* Optimize web fonts loading */
+.font-loading body {
+    opacity: 0;
+}
+
+.fonts-loaded body {
+    opacity: 1;
+    transition: opacity 0.3s ease-in;
+}
