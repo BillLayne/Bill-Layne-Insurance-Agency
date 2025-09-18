@@ -136,6 +136,115 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        /* Success Modal Popup */
+        .success-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .success-modal.active {
+            display: flex;
+        }
+        
+        .success-modal-content {
+            background: white;
+            padding: 3rem;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .success-checkmark {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+        }
+        
+        .checkmark-circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            stroke: #28a745;
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+        
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 2;
+            stroke: #fff;
+            stroke-miterlimit: 10;
+            box-shadow: inset 0px 0px 0px #28a745;
+            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+        }
+        
+        .checkmark-check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+        
+        @keyframes stroke {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        @keyframes scale {
+            0%, 100% {
+                transform: none;
+            }
+            50% {
+                transform: scale3d(1.1, 1.1, 1);
+            }
+        }
+        
+        @keyframes fill {
+            100% {
+                box-shadow: inset 0px 0px 0px 40px #28a745;
+            }
+        }
+        
+        .confirmation-number-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            font-size: 1.25rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -145,6 +254,60 @@
             <div class="spinner"></div>
             <p class="text-lg font-semibold">Submitting your quote request...</p>
             <p class="text-sm text-gray-600 mt-2">Please don't close this window</p>
+        </div>
+    </div>
+
+    <!-- Success Confirmation Modal -->
+    <div id="successModal" class="success-modal">
+        <div class="success-modal-content">
+            <div class="success-checkmark">
+                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                    <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
+            </div>
+            
+            <h2 class="text-3xl font-bold text-gray-800 mb-3">Thank You!</h2>
+            <p class="text-lg text-gray-600 mb-4">Your auto insurance quote request has been successfully submitted!</p>
+            
+            <div class="confirmation-number-box">
+                <p class="text-sm opacity-90 mb-1">Your Confirmation Number</p>
+                <p class="text-2xl" id="modal-confirmation-number">AUTO-20250117-0001</p>
+            </div>
+            
+            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6 text-left">
+                <p class="text-sm text-gray-700">
+                    <i class="fas fa-clock text-blue-500 mr-2"></i>
+                    <strong>What happens next?</strong><br>
+                    Our insurance specialists will review your information and contact you within 24 hours with competitive quotes from multiple carriers.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="text-center">
+                    <i class="fas fa-phone-alt text-blue-500 text-2xl mb-2"></i>
+                    <p class="text-sm text-gray-600">Questions?</p>
+                    <p class="font-semibold">336-835-1993</p>
+                </div>
+                <div class="text-center">
+                    <i class="fas fa-envelope text-blue-500 text-2xl mb-2"></i>
+                    <p class="text-sm text-gray-600">Email Us</p>
+                    <p class="font-semibold">Save@BillLayneInsurance.com</p>
+                </div>
+            </div>
+            
+            <p class="text-sm text-gray-500 mb-6">
+                A confirmation email has been sent to <span id="customer-email" class="font-semibold"></span>
+            </p>
+            
+            <div class="flex gap-3 justify-center">
+                <button onclick="closeSuccessModal()" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">
+                    Close
+                </button>
+                <a href="index.html" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition inline-block">
+                    Return to Home
+                </a>
+            </div>
         </div>
     </div>
 
@@ -411,7 +574,7 @@
                     </div>
                 </form>
 
-                <!-- Success Message -->
+                <!-- Success Message (Hidden - Using Modal Instead) -->
                 <div id="success-message" class="text-center py-12" style="display: none;">
                     <i class="fas fa-check-circle text-green-500 text-6xl mb-4"></i>
                     <h2 class="text-2xl font-bold mb-2">Thank You!</h2>
@@ -567,6 +730,25 @@
         function removeEntry(button) {
             button.closest('.driver-entry, .vehicle-entry').remove();
         }
+        
+        // Close success modal
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.remove('active');
+        }
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSuccessModal();
+            }
+        });
+        
+        // Close modal when clicking outside
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSuccessModal();
+            }
+        });
 
         // Get metadata
         function getMetadata() {
@@ -670,18 +852,30 @@
                     // Generate local confirmation number (script will generate its own)
                     const confirmationNumber = `AUTO-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, '0')}${String(new Date().getDate()).padStart(2, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
                     
-                    // Update confirmation number in success message
+                    // Update confirmation number in both places
+                    document.getElementById('modal-confirmation-number').textContent = confirmationNumber;
                     document.getElementById('confirmation-number').textContent = confirmationNumber;
                     
-                    // Hide form and show success
-                    document.getElementById('auto-quote-form').parentElement.style.display = 'none';
-                    document.getElementById('success-message').style.display = 'block';
+                    // Update customer email in modal
+                    document.getElementById('customer-email').textContent = data.email;
                     
                     // Hide loading overlay
                     loadingOverlay.classList.remove('active');
                     
+                    // Show success modal popup
+                    document.getElementById('successModal').classList.add('active');
+                    
                     // Store confirmation in sessionStorage for reference
                     sessionStorage.setItem('lastQuoteConfirmation', confirmationNumber);
+                    
+                    // Reset form for potential new submission
+                    document.getElementById('auto-quote-form').reset();
+                    currentStep = 1;
+                    showStep(1);
+                    
+                    // Reset submit button
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Submit Quote Request<i class="fas fa-paper-plane ml-2"></i>';
                 }, 1500);
                 
             } catch (error) {
