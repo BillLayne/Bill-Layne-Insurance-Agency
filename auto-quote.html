@@ -153,7 +153,7 @@
         }
         
         .success-modal.active {
-            display: flex;
+            display: flex !important;
         }
         
         .success-modal-content {
@@ -267,8 +267,16 @@
                 </svg>
             </div>
             
-            <h2 class="text-3xl font-bold text-gray-800 mb-3">Thank You!</h2>
+            <h2 class="text-3xl font-bold text-gray-800 mb-3">Thank You for Reaching Out!</h2>
             <p class="text-lg text-gray-600 mb-4">Your auto insurance quote request has been successfully submitted!</p>
+            
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                <p class="text-gray-700">
+                    <i class="fas fa-shopping-cart text-green-600 mr-2"></i>
+                    <strong>We're now shopping your coverage with ALL our carriers!</strong><br>
+                    <span class="text-sm">Our team will compare rates from multiple insurance companies to find you the best coverage at the most competitive price.</span>
+                </p>
+            </div>
             
             <div class="confirmation-number-box">
                 <p class="text-sm opacity-90 mb-1">Your Confirmation Number</p>
@@ -279,7 +287,10 @@
                 <p class="text-sm text-gray-700">
                     <i class="fas fa-clock text-blue-500 mr-2"></i>
                     <strong>What happens next?</strong><br>
-                    Our insurance specialists will review your information and contact you within 24 hours with competitive quotes from multiple carriers.
+                    • We're immediately shopping your coverage with Nationwide, Progressive, Travelers, and more!<br>
+                    • Our specialists will compare rates from multiple carriers<br>
+                    • You'll receive personalized quotes within 24 hours<br>
+                    • We'll contact you via your preferred method
                 </p>
             </div>
             
@@ -733,7 +744,36 @@
         
         // Close success modal
         function closeSuccessModal() {
-            document.getElementById('successModal').classList.remove('active');
+            const modal = document.getElementById('successModal');
+            if (modal) {
+                modal.classList.remove('active');
+                modal.style.display = 'none';
+                
+                // Reset form after closing modal
+                document.getElementById('auto-quote-form').reset();
+                currentStep = 1;
+                showStep(1);
+                driverCount = 1;
+                vehicleCount = 1;
+                
+                // Clear any extra driver/vehicle entries
+                document.querySelectorAll('.driver-entry[data-driver]:not([data-driver="1"])').forEach(el => el.remove());
+                document.querySelectorAll('.vehicle-entry[data-vehicle]:not([data-vehicle="1"])').forEach(el => el.remove());
+            }
+        }
+        
+        // Test function to show modal (for debugging)
+        function testSuccessModal() {
+            const modal = document.getElementById('successModal');
+            if (modal) {
+                document.getElementById('modal-confirmation-number').textContent = 'AUTO-TEST-0001';
+                document.getElementById('customer-email').textContent = 'test@example.com';
+                modal.style.display = 'flex';
+                modal.classList.add('active');
+                console.log('Test modal shown');
+            } else {
+                console.error('Modal not found!');
+            }
         }
         
         // Close modal with Escape key
@@ -835,6 +875,8 @@
             };
             
             try {
+                console.log('Submitting to Google Apps Script...');
+                
                 // Send to Google Apps Script
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
@@ -845,33 +887,49 @@
                     body: JSON.stringify(data)
                 });
                 
+                console.log('Request sent, waiting for confirmation...');
+                
                 // Since mode is 'no-cors', we won't get a readable response
                 // But the request will still be sent to the script
                 // Show success message after a brief delay to ensure request is sent
                 setTimeout(() => {
+                    console.log('Showing success modal...');
+                    
                     // Generate local confirmation number (script will generate its own)
                     const confirmationNumber = `AUTO-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, '0')}${String(new Date().getDate()).padStart(2, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
                     
-                    // Update confirmation number in both places
-                    document.getElementById('modal-confirmation-number').textContent = confirmationNumber;
-                    document.getElementById('confirmation-number').textContent = confirmationNumber;
+                    // Update confirmation number in modal
+                    const modalConfirmationEl = document.getElementById('modal-confirmation-number');
+                    if (modalConfirmationEl) {
+                        modalConfirmationEl.textContent = confirmationNumber;
+                    }
                     
                     // Update customer email in modal
-                    document.getElementById('customer-email').textContent = data.email;
+                    const customerEmailEl = document.getElementById('customer-email');
+                    if (customerEmailEl) {
+                        customerEmailEl.textContent = data.email;
+                    }
                     
-                    // Hide loading overlay
+                    // Hide loading overlay first
                     loadingOverlay.classList.remove('active');
+                    loadingOverlay.style.display = 'none';
                     
-                    // Show success modal popup
-                    document.getElementById('successModal').classList.add('active');
+                    // Show success modal popup with force display
+                    const successModal = document.getElementById('successModal');
+                    if (successModal) {
+                        console.log('Success modal found, displaying...');
+                        successModal.style.display = 'flex';
+                        successModal.classList.add('active');
+                        // Force a reflow to ensure animation plays
+                        successModal.offsetHeight;
+                    } else {
+                        console.error('Success modal not found!');
+                        // Fallback alert
+                        alert(`Thank you for reaching out! We're now shopping your coverage with all our carriers.\n\nYour confirmation number: ${confirmationNumber}\n\nWe'll contact you within 24 hours with competitive quotes.`);
+                    }
                     
                     // Store confirmation in sessionStorage for reference
                     sessionStorage.setItem('lastQuoteConfirmation', confirmationNumber);
-                    
-                    // Reset form for potential new submission
-                    document.getElementById('auto-quote-form').reset();
-                    currentStep = 1;
-                    showStep(1);
                     
                     // Reset submit button
                     submitBtn.disabled = false;
