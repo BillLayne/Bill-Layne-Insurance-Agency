@@ -504,7 +504,20 @@
             visibility: visible;
         }
         
-        /* Hamburger Animation */
+        /* FIX 1: Hamburger Animation - Improved visibility on mobile */
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            z-index: 51;
+            position: relative;
+        }
+        
         .hamburger span {
             display: block;
             width: 25px;
@@ -513,6 +526,14 @@
             margin: 3px 0;
             transition: 0.3s;
             border-radius: 2px;
+        }
+        
+        /* Ensure hamburger is always visible on mobile */
+        @media (max-width: 767px) {
+            .hamburger {
+                display: flex !important;
+                visibility: visible !important;
+            }
         }
         
         .hamburger.active span:nth-child(1) {
@@ -756,6 +777,21 @@
             animation: fadeInUp 0.8s ease-out forwards;
         }
         
+        /* FIX 2: Improved button text for desktop quote buttons */
+        .insurance-quote-options .btn-primary {
+            padding: 10px 20px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .insurance-quote-options .btn-primary .quote-text {
+            font-size: 11px;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+        
         /* Responsive Adjustments */
         @media (max-width: 768px) {
             .f-sidebar {
@@ -882,15 +918,15 @@
             transform: scale(1.3);
         }
         
-        /* Special styling for NC Grange logo - MUCH LARGER */
+        /* FIX 3: NC Grange logo - EVEN LARGER inside container */
         .nc-grange-logo {
-            transform: scale(1.5);
+            transform: scale(2.0) !important;  /* Increased from 1.5 to 2.0 */
             max-height: 100% !important;
         }
         
         /* Responsive NC Grange logo sizing */
         .nc-grange-logo-responsive {
-            transform: scale(1.0);
+            transform: scale(1.4);  /* Increased from 1.0 to 1.4 */
             max-height: 70px;
             max-width: 100%;
             object-fit: contain;
@@ -898,7 +934,7 @@
         
         @media (min-width: 768px) {
             .nc-grange-logo-responsive {
-                transform: scale(1.15);
+                transform: scale(1.6);  /* Increased from 1.15 to 1.6 */
                 max-height: 85px;
                 max-width: 100%;
             }
@@ -917,6 +953,11 @@
             
             .travelers-logo {
                 transform: scale(1.2);
+            }
+            
+            /* NC Grange on mobile */
+            .nc-grange-logo-responsive {
+                transform: scale(1.3);  /* Slightly increased for mobile too */
             }
         }
         
@@ -977,16 +1018,22 @@
                         <a href="tel:3368351993" class="text-gray-700 font-semibold hover:text-blue-600 transition-colors">
                             <i class="fas fa-phone mr-2"></i>(336) 835-1993
                         </a>
+                        <!-- FIX 2: Updated buttons with clearer text -->
                         <div class="insurance-quote-options flex gap-2">
-    <a href="auto-quote.html" class="btn-primary">
-        <i class="fas fa-car mr-1"></i>Auto
-    </a>
-    <a href="home-quote.html" class="btn-primary">
-        <i class="fas fa-home mr-1"></i>Home
-    </a>
-</div>
+                            <a href="auto-quote.html" class="btn-primary">
+                                <i class="fas fa-car"></i>
+                                <span>Auto</span>
+                                <span class="quote-text">Quote</span>
+                            </a>
+                            <a href="home-quote.html" class="btn-primary">
+                                <i class="fas fa-home"></i>
+                                <span>Home</span>
+                                <span class="quote-text">Quote</span>
+                            </a>
+                        </div>
+                    </div>
                     
-                    <!-- Universal Menu Button -->
+                    <!-- Universal Menu Button - FIX 1: Ensured visibility -->
                     <button id="menu-toggle-btn" class="hamburger p-2">
                         <span></span>
                         <span></span>
@@ -1219,7 +1266,7 @@
                                 <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Hagerty.webp?raw=true" alt="Hagerty" class="w-full h-auto object-contain max-h-[50px] md:max-h-[70px]" loading="lazy">
                             </a>
                             
-                            <!-- NC GRANGE MUTUAL ADDED -->
+                            <!-- NC GRANGE MUTUAL ADDED - FIX 3: Made larger -->
                             <a href="/carriers/nc-grange.html" class="carrier-logo-container bg-white rounded-lg p-3 md:p-3 shadow-sm hover:shadow-lg transition-all hover:scale-105 block border border-gray-100">
                                 <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/NC%20Grange%20Logo.webp?raw=true" alt="NC Grange Mutual" class="nc-grange-logo-responsive w-full h-auto object-contain" loading="lazy">
                             </a>
@@ -1964,4 +2011,3 @@
     </script>
 </body>
 </html>
-
