@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Insurance Services & Coverage Areas | Bill Layne Insurance NC</title>
-    <meta name="description" content="Find insurance services in your NC town. Bill Layne Insurance serves Elkin, Mount Airy, Jonesville, and 20+ communities across Northwest North Carolina.">
+    <title>Insurance Coverage Areas NC | Bill Layne Insurance - 25+ Towns Served</title>
+    <meta name="description" content="Find insurance in your NC town. Bill Layne Insurance serves Elkin, Mount Airy, Jonesville + 25 communities. Save up to 40% with 10+ carriers. Get quotes now!">
     <link rel="canonical" href="https://www.BillLayneInsurance.com/services-areas">
     
     <!-- Open Graph Tags -->
-    <meta property="og:title" content="Insurance Services by Location - Bill Layne Insurance">
-    <meta property="og:description" content="Select your town for local insurance quotes. Serving Surry, Yadkin, Wilkes counties and beyond.">
-    <meta property="og:image" content="https://www.billlayneinsurance.com/images/bill-layne-insurance-logo.png">
+    <meta property="og:title" content="NC Insurance Coverage by Location - Bill Layne Insurance">
+    <meta property="og:description" content="Select your town for personalized insurance quotes. Serving Surry, Yadkin, Wilkes, Stokes counties. Save up to 40% today!">
+    <meta property="og:image" content="https://i.imgur.com/cBAgeX8.png">
     <meta property="og:type" content="website">
     
     <!-- Fonts -->
@@ -42,6 +42,7 @@
             --primary-blue: #2563eb;
             --primary-blue-dark: #1d4ed8;
             --accent-green: #10b981;
+            --accent-yellow: #fbbf24;
             --text-gray: #374151;
             --text-light: #6b7280;
             --bg-light: #f8fafc;
@@ -55,7 +56,7 @@
         
         /* Header Styles */
         .f-header {
-            background: white;
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             position: fixed;
@@ -68,16 +69,35 @@
         
         .f-header.scrolled {
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 1);
         }
 
-        /* Hero Section */
+        /* Enhanced Hero Section */
         .services-hero {
-            background-image: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 58, 138, 0.98) 100%), url('https://placehold.co/1920x1080/334155/64748B?text=NC+Map');
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.97) 0%, rgba(37, 99, 235, 0.95) 50%, rgba(30, 58, 138, 0.98) 100%),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)" /></svg>');
             background-size: cover;
             background-position: center;
             position: relative;
             overflow: hidden;
             padding-top: 100px;
+        }
+
+        /* Animated Map Background */
+        .map-animation {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="25" cy="25" r="2" fill="white" opacity="0.5"><animate attributeName="r" values="2;4;2" dur="3s" repeatCount="indefinite"/></circle><circle cx="75" cy="45" r="2" fill="white" opacity="0.5"><animate attributeName="r" values="2;4;2" dur="3s" begin="1s" repeatCount="indefinite"/></circle><circle cx="50" cy="75" r="2" fill="white" opacity="0.5"><animate attributeName="r" values="2;4;2" dur="3s" begin="2s" repeatCount="indefinite"/></circle></svg>');
+            background-size: 200px 200px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-10px) translateX(10px); }
+            50% { transform: translateY(5px) translateX(-5px); }
+            75% { transform: translateY(-5px) translateX(-10px); }
         }
 
         @media (min-width: 768px) {
@@ -86,34 +106,42 @@
             }
         }
         
-        /* F-Pattern Sidebar */
+        /* F-Pattern Sidebar with Enhanced Styling */
         .f-sidebar {
             position: sticky;
             top: 100px;
             height: fit-content;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
         }
 
-        /* Location Cards - Mobile Optimized */
+        .f-sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .f-sidebar::-webkit-scrollbar-track {
+            background: #f3f4f6;
+            border-radius: 3px;
+        }
+
+        .f-sidebar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        /* Enhanced Location Cards */
         .location-card {
             background: white;
             border: 2px solid #e5e7eb;
             border-radius: 12px;
             padding: 16px;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             text-decoration: none;
             display: block;
             position: relative;
             overflow: hidden;
             transform-origin: center;
-        }
-
-        /* Highlight matching cards */
-        .location-card.search-match {
-            border-color: var(--primary-blue);
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-            transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
         }
 
         .location-card::before {
@@ -133,33 +161,81 @@
 
         .location-card:hover {
             border-color: var(--primary-blue);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.15);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.2);
         }
 
         .location-card.featured {
-            border-color: var(--primary-blue);
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-color: var(--accent-yellow);
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-width: 3px;
         }
 
-        /* Service Type Cards */
+        .location-card.featured:hover {
+            box-shadow: 0 12px 30px rgba(251, 191, 36, 0.3);
+        }
+
+        /* Highlight matching cards */
+        .location-card.search-match {
+            border-color: var(--primary-blue);
+            background: linear-gradient(135deg, #f0f9ff 0%, #dbeafe 100%);
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.25);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1.05); }
+            50% { transform: scale(1.08); }
+        }
+
+        /* Enhanced Service Type Cards */
         .service-type-card {
             background: white;
             border-radius: 16px;
             padding: 24px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
             text-decoration: none;
-            display: block;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-type-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, transparent 70%);
+            transform: scale(0);
+            transition: transform 0.5s ease;
+        }
+
+        .service-type-card:hover::after {
+            transform: scale(1);
         }
 
         .service-type-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary-blue);
         }
 
-        /* Buttons */
+        .service-type-card i {
+            transition: all 0.3s ease;
+        }
+
+        .service-type-card:hover i {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        /* Enhanced Buttons */
         .btn-primary {
             background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
             color: white;
@@ -172,31 +248,51 @@
             box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
             border: none;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-primary:hover::before {
+            width: 300px;
+            height: 300px;
         }
         
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
-            background: linear-gradient(135deg, var(--primary-blue-dark) 0%, #1e40af 100%);
+            box-shadow: 0 8px 30px rgba(37, 99, 235, 0.4);
         }
 
-        /* Location Search Box with Dropdown */
+        /* Enhanced Location Search Box */
         .location-search {
             position: relative;
-            max-width: 500px;
+            max-width: 600px;
             margin: 0 auto;
             z-index: 40;
         }
 
         .location-search input {
             width: 100%;
-            padding: 16px 20px 16px 50px;
-            border: 2px solid #e5e7eb;
+            padding: 20px 24px 20px 60px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 50px;
-            font-size: 16px;
+            font-size: 18px;
             transition: all 0.3s ease;
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             color: #374151;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
         }
 
         .location-search input::placeholder {
@@ -205,47 +301,60 @@
 
         .location-search input:focus {
             outline: none;
-            border-color: var(--primary-blue);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-            color: #111827;
+            border-color: white;
+            box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.3), 0 15px 50px rgba(0, 0, 0, 0.2);
+            background: white;
         }
         
         .location-search input.has-results {
-            border-radius: 25px 25px 0 0;
+            border-radius: 30px 30px 0 0;
         }
 
         .location-search .search-icon {
             position: absolute;
-            left: 20px;
+            left: 24px;
             top: 50%;
             transform: translateY(-50%);
-            color: #9ca3af;
+            color: #6b7280;
+            font-size: 20px;
             pointer-events: none;
             z-index: 1;
         }
 
-        /* Search Results Dropdown */
+        /* Enhanced Search Results Dropdown */
         .search-results-dropdown {
             position: absolute;
             top: 100%;
             left: 0;
             right: 0;
             background: white;
-            border: 2px solid var(--primary-blue);
+            border: 3px solid white;
             border-top: none;
-            border-radius: 0 0 25px 25px;
-            max-height: 300px;
+            border-radius: 0 0 30px 30px;
+            max-height: 350px;
             overflow-y: auto;
             display: none;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
         }
 
         .search-results-dropdown.active {
             display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .search-result-item {
-            padding: 12px 20px;
+            padding: 14px 24px;
             cursor: pointer;
             transition: all 0.2s ease;
             border-bottom: 1px solid #f3f4f6;
@@ -257,26 +366,28 @@
         }
 
         .search-result-item:hover {
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-            padding-left: 24px;
+            background: linear-gradient(90deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding-left: 30px;
         }
 
         .search-result-item:last-child {
             border-bottom: none;
-            border-radius: 0 0 23px 23px;
+            border-radius: 0 0 27px 27px;
         }
 
         .search-result-item .town-name {
             font-weight: 600;
             color: #1f2937;
+            font-size: 16px;
         }
 
         .search-result-item .county-name {
             font-size: 12px;
             color: #6b7280;
-            background: #f3f4f6;
-            padding: 2px 8px;
-            border-radius: 12px;
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 500;
         }
 
         .search-no-results {
@@ -285,36 +396,182 @@
             color: #6b7280;
         }
 
-        .search-results-dropdown::-webkit-scrollbar {
-            width: 6px;
+        /* Interactive Map Visual */
+        .interactive-map {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 30px;
         }
 
-        .search-results-dropdown::-webkit-scrollbar-track {
-            background: #f3f4f6;
-            border-radius: 3px;
+        .map-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
         }
 
-        .search-results-dropdown::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 3px;
+        .nc-map-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
         }
 
-        .search-results-dropdown::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+        .county-path {
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
 
-        /* Trust Badge */
+        .county-path:hover {
+            fill: #93c5fd !important;
+            stroke-width: 2;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        }
+
+        .county-label {
+            font-size: 12px;
+            font-weight: 600;
+            fill: #1e40af;
+            pointer-events: none;
+            text-anchor: middle;
+        }
+
+        .map-dots {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+
+        .map-dot {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--primary-blue);
+            border: 2px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: dotPulse 3s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
+            z-index: 5;
+        }
+
+        .map-dot:hover {
+            transform: scale(2);
+            background: var(--accent-yellow);
+            z-index: 10;
+        }
+
+        .map-dot::after {
+            content: attr(data-town);
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .map-dot::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #1f2937;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .map-dot:hover::after,
+        .map-dot:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(37, 99, 235, 0.8);
+            }
+        }
+
+        /* Trust Badges with Animation */
         .trust-badge {
             background: white;
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .trust-badge::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--primary-blue), var(--accent-green), var(--accent-yellow));
+            border-radius: 16px;
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s ease;
         }
         
         .trust-badge:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .trust-badge:hover::before {
+            opacity: 0.1;
+        }
+
+        /* County Section Headers */
+        .county-header {
+            background: linear-gradient(135deg, #f0f9ff 0%, #dbeafe 100%);
+            border-left: 4px solid var(--primary-blue);
+            padding: 16px 24px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .county-header:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.15);
+        }
+
+        .county-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: #6b7280;
         }
 
         /* Navigation Menu Styles */
@@ -330,6 +587,7 @@
             transition: right 0.3s ease;
             z-index: 1000;
             padding: 20px;
+            overflow-y: auto;
         }
         
         .navigation-menu.active {
@@ -354,6 +612,15 @@
             visibility: visible;
         }
         
+        .hamburger {
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
         .hamburger span {
             display: block;
             width: 25px;
@@ -376,13 +643,13 @@
             transform: rotate(45deg) translate(-5px, -6px);
         }
 
-        /* County Section Headers */
-        .county-header {
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-            border-left: 4px solid var(--primary-blue);
-            padding: 12px 20px;
-            margin-bottom: 16px;
-            border-radius: 8px;
+        /* Live Stats Counter */
+        .stat-counter {
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         /* Animations */
@@ -401,47 +668,115 @@
             animation: fadeInUp 0.8s ease-out forwards;
         }
 
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .animate-slide-in-left {
+            animation: slideInLeft 0.8s ease-out forwards;
+        }
+
         /* Mobile Optimizations */
         @media (max-width: 768px) {
             .f-sidebar {
                 position: static;
+                max-height: none;
+                margin-bottom: 30px;
             }
             
             .location-card {
                 padding: 14px;
+                font-size: 15px;
             }
 
             .btn-primary {
-                padding: 12px 20px;
-                font-size: 15px;
+                padding: 14px 24px;
+                font-size: 16px;
+                width: 100%;
+                text-align: center;
             }
             
-            /* Mobile search dropdown adjustments */
+            .location-search input {
+                padding: 16px 20px 16px 50px;
+                font-size: 16px;
+            }
+            
             .search-results-dropdown {
-                max-height: 250px;
-                font-size: 14px;
+                max-height: 280px;
             }
             
-            .search-result-item {
-                padding: 10px 16px;
+            .interactive-map {
+                padding: 20px;
             }
             
-            .search-result-item .county-name {
-                font-size: 11px;
+            .map-dots {
+                height: 200px;
             }
+        }
+
+        /* Mobile sticky CTA */
+        .mobile-sticky-cta {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 12px;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+            z-index: 40;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-sticky-cta {
+                display: block;
+            }
+        }
+
+        /* Loading animation for search */
+        .search-loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .search-loading.active {
+            display: block;
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid var(--primary-blue);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 
 <body class="bg-gray-50">
     <!-- Menu Overlay -->
-    <div id="menu-overlay" class="menu-overlay"></div>
+    <div id="menuOverlay" class="menu-overlay"></div>
     
-    <!-- Header - F-Pattern Top Bar -->
-    <header id="main-header" class="f-header">
+    <!-- Header - F-Pattern Top Bar (Matching Landing Page) -->
+    <header class="f-header" id="main-header">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
-                <!-- Logo -->
+                <!-- Logo Section -->
                 <div class="flex-shrink-0">
                     <a href="/" class="text-2xl font-bold text-blue-800">
                         Bill Layne Insurance
@@ -449,7 +784,7 @@
                     <p class="text-xs text-gray-600 hidden sm:block">Protecting NC For 20+ Years</p>
                 </div>
                 
-                <!-- Right Side: Phone, CTA, and Menu -->
+                <!-- Right Side: Phone, CTA, Menu -->
                 <div class="flex items-center space-x-4">
                     <!-- Desktop CTA -->
                     <div class="hidden md:flex items-center space-x-4">
@@ -460,7 +795,7 @@
                     </div>
                     
                     <!-- Universal Menu Button -->
-                    <button id="menu-toggle-btn" class="hamburger p-2">
+                    <button id="menuToggle" class="hamburger p-2" onclick="toggleMenu()">
                         <span></span>
                         <span></span>
                         <span></span>
@@ -470,429 +805,684 @@
         </div>
     </header>
     
-    <!-- Universal Menu -->
-    <div id="navigation-menu" class="navigation-menu">
+    <!-- Universal Navigation Menu -->
+    <div id="navigationMenu" class="navigation-menu">
         <div class="flex justify-between items-center mb-8">
-            <h3 class="text-xl lg:text-2xl font-bold text-gray-800">Navigation</h3>
-            <button id="close-menu" class="text-gray-500 hover:text-gray-700 p-2">
+            <h3 class="text-xl font-bold text-gray-800">Menu</h3>
+            <button onclick="closeMenu()" class="text-gray-500 hover:text-gray-700">
                 <i class="fas fa-times text-xl"></i>
             </button>
         </div>
+        
         <nav class="space-y-4">
-            <a href="index.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
-                <i class="fas fa-home mr-3 w-5"></i>Home
+            <a href="index.html" class="block py-3 px-4 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
+                <i class="fas fa-home mr-3"></i>Home
             </a>
-            <a href="services-areas.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
-                <i class="fas fa-th-large mr-3 w-5"></i>Services & Areas
+            <a href="services-areas.html" class="block py-3 px-4 text-blue-600 bg-blue-50 rounded">
+                <i class="fas fa-map-marked-alt mr-3"></i>Services & Areas
             </a>
-            <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
-                <i class="fas fa-car mr-3 w-5"></i>Auto Insurance
-            </a>
-            <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
-                <i class="fas fa-home mr-3 w-5"></i>Home Insurance
-            </a>
-            <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
-                <i class="fas fa-file-alt mr-3 w-5"></i>Claims Center
-            </a>
-            <a href="https://billlayne.github.io/Resources/" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
-                <i class="fas fa-book mr-3 w-5"></i>Resources
-            </a>
-            <a href="https://billlayne.github.io/ethereal-blog-landing/" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
-                <i class="fas fa-blog mr-3 w-5"></i>Blog
-            </a>
-            <a href="contact-us.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
-                <i class="fas fa-envelope mr-3 w-5"></i>Contact Us
-            </a>
+            
+            <div class="border-t pt-4">
+                <p class="text-xs text-gray-500 uppercase tracking-wide mb-3">Insurance Types</p>
+                <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="block py-3 px-4 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
+                    <i class="fas fa-car mr-3"></i>Auto Insurance
+                </a>
+                <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="block py-3 px-4 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
+                    <i class="fas fa-home mr-3"></i>Home Insurance
+                </a>
+                <a href="#" class="block py-3 px-4 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
+                    <i class="fas fa-briefcase mr-3"></i>Business Insurance
+                </a>
+                <a href="#" class="block py-3 px-4 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
+                    <i class="fas fa-motorcycle mr-3"></i>Specialty Coverage
+                </a>
+            </div>
+            
+            <div class="border-t pt-4">
+                <p class="text-xs text-gray-500 uppercase tracking-wide mb-3">Quick Links</p>
+                <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="block py-3 px-4 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
+                    <i class="fas fa-file-alt mr-3"></i>Claims Center
+                </a>
+                <a href="https://billlayne.github.io/Resources/" class="block py-3 px-4 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
+                    <i class="fas fa-book mr-3"></i>Resources
+                </a>
+                <a href="https://billlayne.github.io/ethereal-blog-landing/" class="block py-3 px-4 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
+                    <i class="fas fa-blog mr-3"></i>Blog
+                </a>
+                <a href="contact.html" class="block py-3 px-4 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
+                    <i class="fas fa-envelope mr-3"></i>Contact Us
+                </a>
+            </div>
         </nav>
-        <div class="mt-8 space-y-4">
-            <a href="tel:3368351993" class="block w-full text-center bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors">
+        
+        <!-- Menu CTAs -->
+        <div class="mt-8 space-y-3 border-t pt-8">
+            <a href="tel:3368351993" class="flex items-center justify-center w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors">
                 <i class="fas fa-phone mr-2"></i>Call (336) 835-1993
             </a>
-            <a href="auto-quote.html" class="block w-full text-center btn-primary">
+            <a href="auto-quote.html" class="flex items-center justify-center w-full btn-primary">
                 <i class="fas fa-calculator mr-2"></i>Get Free Quote
             </a>
+        </div>
+        
+        <!-- Business Hours -->
+        <div class="mt-6 p-4 bg-gray-50 rounded-lg text-center">
+            <p class="text-sm text-gray-600">
+                <i class="fas fa-clock text-blue-600 mr-2"></i>
+                Mon-Fri: 9AM-5PM
+            </p>
         </div>
     </div>
 
     <main>
-        <!-- Hero Section -->
-        <section class="services-hero pb-16 sm:pb-20 text-white relative">
+        <!-- Enhanced Hero Section with Animation -->
+        <section class="services-hero pb-20 sm:pb-24 text-white relative">
+            <div class="map-animation"></div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div class="animate-fade-in-up text-center">
+                    <!-- Trust Badge -->
+                    <div class="inline-flex items-center bg-yellow-500 text-gray-900 px-4 py-2 rounded-full text-sm font-semibold mb-6">
+                        <i class="fas fa-award mr-2"></i>
+                        Trusted by 1,000+ NC Families
+                    </div>
+                    
                     <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-6">
-                        Find Insurance in 
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-300">
-                            Your Town
+                        Insurance Coverage for
+                        <span class="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-green-300 to-cyan-300">
+                            Every NC Community
                         </span>
                     </h1>
-                    <p class="text-lg sm:text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
-                        Select your location below for personalized insurance quotes and local service. We proudly serve over 25 communities across Northwest North Carolina.
+                    <p class="text-xl sm:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto font-medium">
+                        Find your town below and discover how much you can save with North Carolina's most trusted independent agency
                     </p>
                     
-                    <!-- Location Search with Dropdown -->
+                    <!-- Enhanced Location Search -->
                     <div class="location-search mb-8">
                         <i class="fas fa-search search-icon"></i>
                         <input 
                             type="text" 
                             id="locationSearch" 
-                            placeholder="Type your town name (e.g., Elkin, Mount Airy)..." 
+                            placeholder="Start typing your town name..." 
                             onkeyup="filterLocations()"
                             onfocus="showSearchResults()"
                             autocomplete="off">
                         <div id="searchDropdown" class="search-results-dropdown">
-                            <!-- Results will be populated here -->
+                            <div id="searchLoading" class="search-loading">
+                                <div class="loading-spinner"></div>
+                            </div>
+                            <div id="searchResults"></div>
                         </div>
                     </div>
                     
-                    <p class="text-sm text-blue-200 mb-6">
-                        <i class="fas fa-lightbulb"></i> Tip: Start typing and select your town from the dropdown
-                    </p>
+                    <!-- Quick Stats with Animation -->
+                    <div class="flex flex-wrap justify-center gap-6 sm:gap-10 text-base sm:text-lg mt-8">
+                        <div class="flex items-center bg-white/10 backdrop-blur px-4 py-2 rounded-full">
+                            <i class="fas fa-map-marked-alt text-yellow-400 mr-2"></i>
+                            <span><strong class="stat-counter" data-target="4">0</strong> Counties</span>
+                        </div>
+                        <div class="flex items-center bg-white/10 backdrop-blur px-4 py-2 rounded-full">
+                            <i class="fas fa-city text-green-400 mr-2"></i>
+                            <span><strong class="stat-counter" data-target="25">0</strong>+ Towns</span>
+                        </div>
+                        <div class="flex items-center bg-white/10 backdrop-blur px-4 py-2 rounded-full">
+                            <i class="fas fa-shield-alt text-blue-300 mr-2"></i>
+                            <span><strong class="stat-counter" data-target="10">0</strong>+ Carriers</span>
+                        </div>
+                    </div>
 
-                    <!-- Quick Stats -->
-                    <div class="flex flex-wrap justify-center gap-4 sm:gap-8 text-sm sm:text-base mt-4">
-                        <div class="flex items-center">
-                            <i class="fas fa-map-marked-alt text-green-400 mr-2"></i>
-                            <span>4 Counties Served</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-city text-blue-300 mr-2"></i>
-                            <span>25+ Towns</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-users text-yellow-400 mr-2"></i>
-                            <span>1,000+ Families Protected</span>
-                        </div>
+                    <!-- Scroll Indicator -->
+                    <div class="mt-8 animate-bounce">
+                        <i class="fas fa-chevron-down text-2xl text-white/50"></i>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Service Types Section -->
-        <section class="py-12 bg-white border-b">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Our Insurance Services</h2>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="service-type-card text-center">
-                        <i class="fas fa-car text-3xl text-blue-600 mb-3"></i>
-                        <h3 class="font-semibold text-gray-800">Auto Insurance</h3>
+        <!-- Service Types Section with Enhanced Cards -->
+        <section class="py-16 bg-white border-b relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-50 to-transparent opacity-50"></div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-3">Complete Insurance Solutions</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">Select your insurance type to get started with a personalized quote for your location</p>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="service-type-card group">
+                        <i class="fas fa-car text-4xl text-blue-600 mb-3 group-hover:text-blue-700"></i>
+                        <h3 class="font-bold text-gray-800">Auto Insurance</h3>
+                        <p class="text-xs text-gray-500 mt-1">Save up to 40%</p>
                     </a>
-                    <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="service-type-card text-center">
-                        <i class="fas fa-home text-3xl text-green-600 mb-3"></i>
-                        <h3 class="font-semibold text-gray-800">Home Insurance</h3>
+                    <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="service-type-card group">
+                        <i class="fas fa-home text-4xl text-green-600 mb-3 group-hover:text-green-700"></i>
+                        <h3 class="font-bold text-gray-800">Home Insurance</h3>
+                        <p class="text-xs text-gray-500 mt-1">Protect your investment</p>
                     </a>
-                    <a href="#business" class="service-type-card text-center">
-                        <i class="fas fa-briefcase text-3xl text-purple-600 mb-3"></i>
-                        <h3 class="font-semibold text-gray-800">Business Insurance</h3>
+                    <a href="#business" class="service-type-card group">
+                        <i class="fas fa-briefcase text-4xl text-purple-600 mb-3 group-hover:text-purple-700"></i>
+                        <h3 class="font-bold text-gray-800">Business Insurance</h3>
+                        <p class="text-xs text-gray-500 mt-1">Coverage that grows</p>
                     </a>
-                    <a href="#specialty" class="service-type-card text-center">
-                        <i class="fas fa-motorcycle text-3xl text-orange-600 mb-3"></i>
-                        <h3 class="font-semibold text-gray-800">Specialty Coverage</h3>
+                    <a href="#specialty" class="service-type-card group">
+                        <i class="fas fa-motorcycle text-4xl text-orange-600 mb-3 group-hover:text-orange-700"></i>
+                        <h3 class="font-bold text-gray-800">Specialty Coverage</h3>
+                        <p class="text-xs text-gray-500 mt-1">Boats, RVs & more</p>
                     </a>
                 </div>
             </div>
         </section>
 
-        <!-- F-Pattern Content Layout -->
+        <!-- F-Pattern Content Layout with Enhanced Sidebar -->
         <section class="py-16 bg-gray-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid lg:grid-cols-12 gap-12">
                     
-                    <!-- Left Sidebar - F-Pattern -->
+                    <!-- Enhanced Left Sidebar - F-Pattern -->
                     <div class="lg:col-span-4">
                         <div class="f-sidebar space-y-6">
-                            <!-- Quick Stats -->
-                            <div class="trust-badge">
-                                <h3 class="font-bold text-lg text-gray-800 mb-4 text-center">
-                                    <i class="fas fa-chart-line text-blue-600 mr-2"></i>Coverage Stats
+                            
+                            <!-- Interactive Coverage Map with NC Map Background -->
+                            <div class="interactive-map animate-slide-in-left">
+                                <h3 class="font-bold text-lg text-gray-800 mb-4">
+                                    <i class="fas fa-map text-blue-600 mr-2"></i>Coverage Map
                                 </h3>
-                                <div class="grid grid-cols-2 gap-4 text-center">
-                                    <div>
-                                        <div class="text-3xl font-black text-blue-600">4</div>
-                                        <p class="text-xs text-gray-600">Counties</p>
+                                <div class="map-container">
+                                    <!-- NC Map SVG Background -->
+                                    <svg viewBox="0 0 400 250" class="nc-map-svg">
+                                        <!-- Simplified NC Counties Outline -->
+                                        <g class="counties">
+                                            <!-- Surry County -->
+                                            <path d="M 120 60 L 180 55 L 185 90 L 175 100 L 130 95 L 125 75 Z" 
+                                                  fill="#e0f2fe" stroke="#2563eb" stroke-width="1" opacity="0.6"
+                                                  class="county-path surry-county"/>
+                                            <!-- Yadkin County -->
+                                            <path d="M 130 95 L 175 100 L 180 130 L 140 135 L 135 110 Z" 
+                                                  fill="#e0f2fe" stroke="#2563eb" stroke-width="1" opacity="0.6"
+                                                  class="county-path yadkin-county"/>
+                                            <!-- Wilkes County -->
+                                            <path d="M 185 55 L 250 50 L 255 95 L 190 100 L 185 70 Z" 
+                                                  fill="#e0f2fe" stroke="#2563eb" stroke-width="1" opacity="0.6"
+                                                  class="county-path wilkes-county"/>
+                                            <!-- Stokes County -->
+                                            <path d="M 60 70 L 120 65 L 125 100 L 70 105 L 65 80 Z" 
+                                                  fill="#e0f2fe" stroke="#2563eb" stroke-width="1" opacity="0.6"
+                                                  class="county-path stokes-county"/>
+                                        </g>
+                                        <!-- County Labels -->
+                                        <text x="150" y="80" class="county-label">Surry</text>
+                                        <text x="155" y="120" class="county-label">Yadkin</text>
+                                        <text x="220" y="75" class="county-label">Wilkes</text>
+                                        <text x="90" y="85" class="county-label">Stokes</text>
+                                    </svg>
+                                    <!-- Town Dots Overlay -->
+                                    <div class="map-dots">
+                                        <div class="map-dot" style="top: 25%; left: 35%;" data-town="Mount Airy"></div>
+                                        <div class="map-dot" style="top: 38%; left: 42%;" data-town="Elkin"></div>
+                                        <div class="map-dot" style="top: 52%; left: 45%;" data-town="Jonesville"></div>
+                                        <div class="map-dot" style="top: 60%; left: 40%;" data-town="Yadkinville"></div>
+                                        <div class="map-dot" style="top: 32%; left: 58%;" data-town="Wilkesboro"></div>
+                                        <div class="map-dot" style="top: 40%; left: 22%;" data-town="King"></div>
                                     </div>
-                                    <div>
-                                        <div class="text-3xl font-black text-green-600">25+</div>
-                                        <p class="text-xs text-gray-600">Towns</p>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-4 text-center">
+                                    <i class="fas fa-hand-pointer"></i> Hover over dots to see towns
+                                </p>
+                            </div>
+
+                            <!-- Live Savings Ticker -->
+                            <div class="trust-badge bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200">
+                                <h3 class="font-bold text-lg text-gray-800 mb-3 text-center">
+                                    <i class="fas fa-chart-line text-green-600 mr-2"></i>Recent Savings
+                                </h3>
+                                <div class="space-y-2" id="savingsTicker">
+                                    <div class="flex justify-between items-center p-2 bg-white rounded animate-fade-in-up">
+                                        <span class="text-sm text-gray-600">Sarah M. • Elkin</span>
+                                        <span class="font-bold text-green-600">$847/yr</span>
                                     </div>
-                                    <div>
-                                        <div class="text-3xl font-black text-purple-600">10+</div>
-                                        <p class="text-xs text-gray-600">Carriers</p>
+                                    <div class="flex justify-between items-center p-2 bg-white rounded animate-fade-in-up" style="animation-delay: 0.1s;">
+                                        <span class="text-sm text-gray-600">John D. • Mt Airy</span>
+                                        <span class="font-bold text-green-600">$623/yr</span>
                                     </div>
-                                    <div>
-                                        <div class="text-3xl font-black text-orange-600">20+</div>
-                                        <p class="text-xs text-gray-600">Years</p>
+                                    <div class="flex justify-between items-center p-2 bg-white rounded animate-fade-in-up" style="animation-delay: 0.2s;">
+                                        <span class="text-sm text-gray-600">Mike R. • Jonesville</span>
+                                        <span class="font-bold text-green-600">$1,205/yr</span>
                                     </div>
+                                </div>
+                                <p class="text-xs text-center text-gray-500 mt-3">
+                                    Updated every 5 minutes
+                                </p>
+                            </div>
+
+                            <!-- Top Towns -->
+                            <div class="trust-badge">
+                                <h3 class="font-bold text-lg text-gray-800 mb-4">
+                                    <i class="fas fa-fire text-orange-500 mr-2"></i>Most Popular
+                                </h3>
+                                <div class="space-y-2">
+                                    <a href="https://billlayne.github.io/Save-In-Elkin-NC/" class="flex items-center justify-between p-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg hover:from-yellow-100 hover:to-orange-100 transition-all group">
+                                        <div class="flex items-center">
+                                            <span class="text-2xl font-black text-yellow-600 mr-3">1</span>
+                                            <div>
+                                                <span class="font-bold text-gray-800">Elkin</span>
+                                                <span class="text-xs text-gray-500 block">Main Office</span>
+                                            </div>
+                                        </div>
+                                        <i class="fas fa-arrow-right text-gray-400 group-hover:text-blue-600 transition-colors"></i>
+                                    </a>
+                                    <a href="https://billlayne.github.io/Save-In-Mt-Airy/" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all group">
+                                        <div class="flex items-center">
+                                            <span class="text-2xl font-black text-gray-400 mr-3">2</span>
+                                            <div>
+                                                <span class="font-bold text-gray-800">Mount Airy</span>
+                                                <span class="text-xs text-gray-500 block">Mayberry Town</span>
+                                            </div>
+                                        </div>
+                                        <i class="fas fa-arrow-right text-gray-400 group-hover:text-blue-600 transition-colors"></i>
+                                    </a>
+                                    <a href="https://billlayne.github.io/Save-In-Jonesville-NC/" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all group">
+                                        <div class="flex items-center">
+                                            <span class="text-2xl font-black text-gray-400 mr-3">3</span>
+                                            <div>
+                                                <span class="font-bold text-gray-800">Jonesville</span>
+                                                <span class="text-xs text-gray-500 block">Yadkin Valley</span>
+                                            </div>
+                                        </div>
+                                        <i class="fas fa-arrow-right text-gray-400 group-hover:text-blue-600 transition-colors"></i>
+                                    </a>
                                 </div>
                             </div>
 
-                            <!-- Quick Contact -->
-                            <div class="trust-badge bg-blue-50">
-                                <h3 class="font-bold text-lg text-gray-800 mb-3 text-center">
-                                    <i class="fas fa-headset text-blue-600 mr-2"></i>Get Help Now
+                            <!-- Contact Widget -->
+                            <div class="trust-badge bg-blue-600 text-white">
+                                <h3 class="font-bold text-lg mb-3 text-center">
+                                    <i class="fas fa-headset mr-2"></i>Need Help?
                                 </h3>
-                                <p class="text-sm text-gray-600 mb-4 text-center">
-                                    Can't find your town or need immediate assistance?
+                                <p class="text-sm mb-4 text-center opacity-90">
+                                    Our local agents are standing by
                                 </p>
-                                <a href="tel:3368351993" class="btn-primary w-full text-center">
-                                    <i class="fas fa-phone mr-2"></i>Call (336) 835-1993
+                                <a href="tel:3368351993" class="block w-full text-center bg-white text-blue-600 px-6 py-3 rounded-full font-bold hover:bg-gray-100 transition-colors">
+                                    <i class="fas fa-phone mr-2"></i>(336) 835-1993
                                 </a>
-                                <p class="text-xs text-gray-500 mt-3 text-center">
-                                    Mon-Fri 9AM-5PM
-                                </p>
-                            </div>
-
-                            <!-- Popular Towns -->
-                            <div class="trust-badge">
-                                <h3 class="font-bold text-lg text-gray-800 mb-4">
-                                    <i class="fas fa-fire text-orange-500 mr-2"></i>Popular Towns
-                                </h3>
-                                <div class="space-y-2">
-                                    <a href="https://billlayne.github.io/Save-In-Elkin-NC/" class="block p-2 bg-gray-50 rounded hover:bg-blue-50 transition-colors">
-                                        <span class="font-semibold text-blue-600">Elkin</span>
-                                        <span class="text-xs text-gray-500 float-right">Our HQ</span>
-                                    </a>
-                                    <a href="https://billlayne.github.io/Save-In-Mt-Airy/" class="block p-2 bg-gray-50 rounded hover:bg-blue-50 transition-colors">
-                                        <span class="font-semibold text-blue-600">Mount Airy</span>
-                                    </a>
-                                    <a href="https://billlayne.github.io/Save-In-Jonesville-NC/" class="block p-2 bg-gray-50 rounded hover:bg-blue-50 transition-colors">
-                                        <span class="font-semibold text-blue-600">Jonesville</span>
-                                    </a>
+                                <div class="mt-4 flex justify-center space-x-4 text-sm">
+                                    <span><i class="fas fa-clock"></i> Mon-Fri</span>
+                                    <span>9AM-5PM</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Main Content Area - Location Grid -->
+                    <!-- Main Content Area - Enhanced Location Grid -->
                     <div class="lg:col-span-8">
-                        <div class="mb-8">
-                            <h2 class="text-3xl font-bold text-gray-800 mb-3">Select Your Location</h2>
-                            <p class="text-gray-600">Click on your town below to get personalized insurance quotes and local service information.</p>
+                        <div class="mb-10">
+                            <h2 class="text-3xl font-bold text-gray-800 mb-3">Choose Your Location</h2>
+                            <p class="text-gray-600 text-lg">Select your town for personalized rates and local agent service. We serve all of Northwest North Carolina.</p>
                         </div>
 
                         <!-- Surry County Section -->
-                        <div class="mb-10">
+                        <div class="mb-10 animate-fade-in-up">
                             <div class="county-header">
                                 <h3 class="text-xl font-bold text-blue-700">
-                                    <i class="fas fa-map-marker-alt mr-2"></i>Surry County
+                                    <i class="fas fa-map-pin mr-2"></i>Surry County
                                 </h3>
+                                <div class="county-stats">
+                                    <span><i class="fas fa-city"></i> 6 Towns</span>
+                                    <span><i class="fas fa-users"></i> 500+ Customers</span>
+                                </div>
                             </div>
                             <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="surry-locations">
                                 <a href="https://billlayne.github.io/Save-In-Elkin-NC/" class="location-card featured">
-                                    <h4 class="font-bold text-gray-800">Elkin</h4>
-                                    <p class="text-xs text-blue-600 mt-1">
-                                        <i class="fas fa-star"></i> Main Office
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h4 class="font-bold text-gray-800 text-lg">Elkin</h4>
+                                        <i class="fas fa-star text-yellow-500"></i>
+                                    </div>
+                                    <p class="text-xs text-gray-600">Headquarters</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
                                     </p>
                                 </a>
                                 <a href="https://billlayne.github.io/Save-In-Mt-Airy/" class="location-card">
-                                    <h4 class="font-bold text-gray-800">Mount Airy</h4>
-                                    <p class="text-xs text-gray-500 mt-1">Andy Griffith's Town</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">Mount Airy</h4>
+                                    <p class="text-xs text-gray-600">Andy Griffith's Town</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                                 <a href="https://billlayne.github.io/Save-In-Dobson-NC/" class="location-card">
-                                    <h4 class="font-bold text-gray-800">Dobson</h4>
-                                    <p class="text-xs text-gray-500 mt-1">County Seat</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">Dobson</h4>
+                                    <p class="text-xs text-gray-600">County Seat</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                                 <a href="pilot-mountain.html" class="location-card">
-                                    <h4 class="font-bold text-gray-800">Pilot Mountain</h4>
-                                    <p class="text-xs text-gray-500 mt-1">The Knob</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">Pilot Mountain</h4>
+                                    <p class="text-xs text-gray-600">The Knob</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                                 <a href="toast.html" class="location-card">
-                                    <h4 class="font-bold text-gray-800">Toast</h4>
-                                    <p class="text-xs text-gray-500 mt-1">Rural Coverage</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">Toast</h4>
+                                    <p class="text-xs text-gray-600">Rural Coverage</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                                 <a href="white-plains.html" class="location-card">
-                                    <h4 class="font-bold text-gray-800">White Plains</h4>
-                                    <p class="text-xs text-gray-500 mt-1">Community Service</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">White Plains</h4>
+                                    <p class="text-xs text-gray-600">Community Service</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                             </div>
                         </div>
 
                         <!-- Yadkin County Section -->
-                        <div class="mb-10">
+                        <div class="mb-10 animate-fade-in-up" style="animation-delay: 0.1s;">
                             <div class="county-header">
                                 <h3 class="text-xl font-bold text-blue-700">
-                                    <i class="fas fa-map-marker-alt mr-2"></i>Yadkin County
+                                    <i class="fas fa-map-pin mr-2"></i>Yadkin County
                                 </h3>
+                                <div class="county-stats">
+                                    <span><i class="fas fa-city"></i> 6 Towns</span>
+                                    <span><i class="fas fa-users"></i> 300+ Customers</span>
+                                </div>
                             </div>
                             <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="yadkin-locations">
                                 <a href="https://billlayne.github.io/Save-In-Jonesville-NC/" class="location-card">
-                                    <h4 class="font-bold text-gray-800">Jonesville</h4>
-                                    <p class="text-xs text-gray-500 mt-1">Yadkin Valley</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">Jonesville</h4>
+                                    <p class="text-xs text-gray-600">Yadkin Valley</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                                 <a href="https://billlayne.github.io/Save-In-Yadkinville-NC/" class="location-card">
-                                    <h4 class="font-bold text-gray-800">Yadkinville</h4>
-                                    <p class="text-xs text-gray-500 mt-1">County Seat</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">Yadkinville</h4>
+                                    <p class="text-xs text-gray-600">County Seat</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                                 <a href="boonville.html" class="location-card">
-                                    <h4 class="font-bold text-gray-800">Boonville</h4>
-                                    <p class="text-xs text-gray-500 mt-1">Historic Town</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">Boonville</h4>
+                                    <p class="text-xs text-gray-600">Historic Town</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                                 <a href="east-bend.html" class="location-card">
-                                    <h4 class="font-bold text-gray-800">East Bend</h4>
-                                    <p class="text-xs text-gray-500 mt-1">Rural Service</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">East Bend</h4>
+                                    <p class="text-xs text-gray-600">Rural Service</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                                 <a href="hamptonville.html" class="location-card">
-                                    <h4 class="font-bold text-gray-800">Hamptonville</h4>
-                                    <p class="text-xs text-gray-500 mt-1">Community Coverage</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">Hamptonville</h4>
+                                    <p class="text-xs text-gray-600">Community Coverage</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                                 <a href="union-grove.html" class="location-card">
-                                    <h4 class="font-bold text-gray-800">Union Grove</h4>
-                                    <p class="text-xs text-gray-500 mt-1">Local Service</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">Union Grove</h4>
+                                    <p class="text-xs text-gray-600">Local Service</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                             </div>
                         </div>
 
                         <!-- Wilkes County Section -->
-                        <div class="mb-10">
+                        <div class="mb-10 animate-fade-in-up" style="animation-delay: 0.2s;">
                             <div class="county-header">
                                 <h3 class="text-xl font-bold text-blue-700">
-                                    <i class="fas fa-map-marker-alt mr-2"></i>Wilkes County
+                                    <i class="fas fa-map-pin mr-2"></i>Wilkes County
                                 </h3>
+                                <div class="county-stats">
+                                    <span><i class="fas fa-city"></i> 6 Towns</span>
+                                    <span><i class="fas fa-users"></i> 200+ Customers</span>
+                                </div>
                             </div>
                             <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="wilkes-locations">
                                 <a href="north-wilkesboro.html" class="location-card">
-                                    <h4 class="font-bold text-gray-800">North Wilkesboro</h4>
-                                    <p class="text-xs text-gray-500 mt-1">MerleFest City</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">North Wilkesboro</h4>
+                                    <p class="text-xs text-gray-600">MerleFest City</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                                 <a href="https://billlayne.github.io/Save-In-Wilkesboro-NC/" class="location-card">
-                                    <h4 class="font-bold text-gray-800">Wilkesboro</h4>
-                                    <p class="text-xs text-gray-500 mt-1">County Seat</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">Wilkesboro</h4>
+                                    <p class="text-xs text-gray-600">County Seat</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                                 <a href="ronda.html" class="location-card">
-                                    <h4 class="font-bold text-gray-800">Ronda</h4>
-                                    <p class="text-xs text-gray-500 mt-1">Community Service</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">Ronda</h4>
+                                    <p class="text-xs text-gray-600">Community Service</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                                 <a href="traphill.html" class="location-card">
-                                    <h4 class="font-bold text-gray-800">Traphill</h4>
-                                    <p class="text-xs text-gray-500 mt-1">Mountain Coverage</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">Traphill</h4>
+                                    <p class="text-xs text-gray-600">Mountain Coverage</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                                 <a href="roaring-river.html" class="location-card">
-                                    <h4 class="font-bold text-gray-800">Roaring River</h4>
-                                    <p class="text-xs text-gray-500 mt-1">State Park Area</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">Roaring River</h4>
+                                    <p class="text-xs text-gray-600">State Park Area</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                                 <a href="millers-creek.html" class="location-card">
-                                    <h4 class="font-bold text-gray-800">Millers Creek</h4>
-                                    <p class="text-xs text-gray-500 mt-1">Local Service</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">Millers Creek</h4>
+                                    <p class="text-xs text-gray-600">Local Service</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                             </div>
                         </div>
 
                         <!-- Stokes County Section -->
-                        <div class="mb-10">
+                        <div class="mb-10 animate-fade-in-up" style="animation-delay: 0.3s;">
                             <div class="county-header">
                                 <h3 class="text-xl font-bold text-blue-700">
-                                    <i class="fas fa-map-marker-alt mr-2"></i>Stokes County
+                                    <i class="fas fa-map-pin mr-2"></i>Stokes County
                                 </h3>
+                                <div class="county-stats">
+                                    <span><i class="fas fa-city"></i> 6 Towns</span>
+                                    <span><i class="fas fa-users"></i> 150+ Customers</span>
+                                </div>
                             </div>
                             <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="stokes-locations">
                                 <a href="king.html" class="location-card">
-                                    <h4 class="font-bold text-gray-800">King</h4>
-                                    <p class="text-xs text-gray-500 mt-1">Growing Community</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">King</h4>
+                                    <p class="text-xs text-gray-600">Growing Community</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                                 <a href="danbury.html" class="location-card">
-                                    <h4 class="font-bold text-gray-800">Danbury</h4>
-                                    <p class="text-xs text-gray-500 mt-1">County Seat</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">Danbury</h4>
+                                    <p class="text-xs text-gray-600">County Seat</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                                 <a href="walnut-cove.html" class="location-card">
-                                    <h4 class="font-bold text-gray-800">Walnut Cove</h4>
-                                    <p class="text-xs text-gray-500 mt-1">Historic Town</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">Walnut Cove</h4>
+                                    <p class="text-xs text-gray-600">Historic Town</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                                 <a href="pinnacle.html" class="location-card">
-                                    <h4 class="font-bold text-gray-800">Pinnacle</h4>
-                                    <p class="text-xs text-gray-500 mt-1">Rural Coverage</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">Pinnacle</h4>
+                                    <p class="text-xs text-gray-600">Rural Coverage</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                                 <a href="germanton.html" class="location-card">
-                                    <h4 class="font-bold text-gray-800">Germanton</h4>
-                                    <p class="text-xs text-gray-500 mt-1">Community Service</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">Germanton</h4>
+                                    <p class="text-xs text-gray-600">Community Service</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                                 <a href="sandy-ridge.html" class="location-card">
-                                    <h4 class="font-bold text-gray-800">Sandy Ridge</h4>
-                                    <p class="text-xs text-gray-500 mt-1">Local Service</p>
+                                    <h4 class="font-bold text-gray-800 text-lg">Sandy Ridge</h4>
+                                    <p class="text-xs text-gray-600">Local Service</p>
+                                    <p class="text-xs text-blue-600 mt-2 font-semibold">
+                                        <i class="fas fa-arrow-right mr-1"></i>Get Quote
+                                    </p>
                                 </a>
                             </div>
                         </div>
 
-                        <!-- CTA Section -->
-                        <div class="mt-12 p-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl text-white text-center">
-                            <h3 class="text-2xl font-bold mb-3">Don't See Your Town?</h3>
-                            <p class="mb-6">We serve all of Northwest North Carolina. Call us to confirm coverage in your area.</p>
-                            <a href="tel:3368351993" class="inline-block bg-white text-blue-600 px-8 py-3 rounded-full font-bold hover:bg-gray-100 transition-colors">
-                                <i class="fas fa-phone mr-2"></i>Call (336) 835-1993
-                            </a>
+                        <!-- Enhanced CTA Section -->
+                        <div class="mt-12 p-8 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-700 rounded-2xl text-white text-center relative overflow-hidden">
+                            <div class="absolute inset-0 opacity-10">
+                                <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.4"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]"></div>
+                            </div>
+                            <div class="relative z-10">
+                                <h3 class="text-3xl font-bold mb-3">Don't See Your Town?</h3>
+                                <p class="text-lg mb-6 opacity-95">We cover all of Northwest North Carolina! Call us to confirm coverage in your specific area.</p>
+                                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                                    <a href="tel:3368351993" class="inline-block bg-white text-blue-600 px-8 py-4 rounded-full font-bold hover:bg-gray-100 transition-all transform hover:scale-105">
+                                        <i class="fas fa-phone mr-2"></i>Call (336) 835-1993
+                                    </a>
+                                    <span class="text-white/70">or</span>
+                                    <a href="auto-quote.html" class="inline-block border-2 border-white text-white px-8 py-4 rounded-full font-bold hover:bg-white hover:text-blue-600 transition-all transform hover:scale-105">
+                                        <i class="fas fa-envelope mr-2"></i>Email Us
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Bottom CTA Section -->
-        <section class="py-16 bg-blue-600 text-white">
-            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h2 class="text-3xl lg:text-4xl font-bold mb-4">
-                    Ready to Save on Insurance?
-                </h2>
-                <p class="text-xl text-blue-100 mb-8">
-                    No matter where you are in North Carolina, we're here to help you find the best coverage at the best price.
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                    <a href="auto-quote.html" class="bg-white text-blue-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors">
-                        <i class="fas fa-calculator mr-2"></i>Get Online Quote
-                    </a>
-                    <span class="text-blue-200">or</span>
-                    <a href="tel:3368351993" class="border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-blue-600 transition-colors">
-                        <i class="fas fa-phone mr-2"></i>Call Now
-                    </a>
+        <!-- Bottom CTA Section with Animation -->
+        <section class="py-20 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 text-white relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10">
+                <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23fff" fill-opacity="0.3"%3E%3Cpath d="M0 40L40 0H20L0 20M40 40V20L20 40"/%3E%3C/g%3E%3C/svg%3E')]"></div>
+            </div>
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+                <div class="animate-fade-in-up">
+                    <h2 class="text-4xl lg:text-5xl font-black mb-4">
+                        Ready to Save Big on Insurance?
+                    </h2>
+                    <p class="text-xl text-blue-100 mb-8">
+                        Join 1,000+ North Carolina families who save an average of $847/year
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                        <a href="auto-quote.html" class="bg-white text-blue-600 px-10 py-5 rounded-full font-bold text-lg hover:bg-gray-100 transition-all transform hover:scale-105 shadow-2xl">
+                            <i class="fas fa-rocket mr-2"></i>Start Saving Now
+                        </a>
+                        <span class="text-blue-200 text-lg">or</span>
+                        <a href="tel:3368351993" class="border-3 border-white text-white px-10 py-5 rounded-full font-bold text-lg hover:bg-white hover:text-blue-600 transition-all transform hover:scale-105">
+                            <i class="fas fa-phone-alt mr-2"></i>Call Us Today
+                        </a>
+                    </div>
+                    <p class="text-sm text-blue-200 mt-6">
+                        <i class="fas fa-lock mr-2"></i>Your information is 100% secure
+                    </p>
                 </div>
             </div>
         </section>
+
+        <!-- Mobile Sticky CTA -->
+        <div class="mobile-sticky-cta">
+            <a href="tel:3368351993" class="btn-primary w-full text-center">
+                <i class="fas fa-phone mr-2"></i>Call Now: (336) 835-1993
+            </a>
+        </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-12">
+    <footer class="bg-gray-900 text-white py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-4 gap-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
                 <div>
-                    <h3 class="text-xl font-bold mb-4">Bill Layne Insurance</h3>
-                    <p class="text-gray-400 mb-4">Your local independent insurance agency serving North Carolina families and businesses for over 20 years.</p>
+                    <img src="https://i.imgur.com/cBAgeX8.png" alt="Bill Layne Insurance" class="h-16 w-auto mb-4 bg-white p-2 rounded">
+                    <p class="text-gray-400 mb-4">Your trusted independent insurance agency serving North Carolina families and businesses for over 20 years.</p>
                     <div class="flex space-x-4">
-                        <a href="https://www.facebook.com/dollarbillagency/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
-                        <a href="https://www.google.com/maps/place/Bill+Layne+Insurance+Agency" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white"><i class="fab fa-google"></i></a>
-                        <a href="https://www.yelp.com/biz/bill-layne-insurance-agency-elkin" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white"><i class="fab fa-yelp"></i></a>
+                        <a href="https://www.facebook.com/dollarbillagency/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-facebook-f text-xl"></i>
+                        </a>
+                        <a href="https://www.google.com/maps/place/Bill+Layne+Insurance+Agency" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-google text-xl"></i>
+                        </a>
+                        <a href="https://www.yelp.com/biz/bill-layne-insurance-agency-elkin" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-yelp text-xl"></i>
+                        </a>
                     </div>
                 </div>
                 
                 <div>
-                    <h4 class="font-semibold mb-4">Services</h4>
+                    <h4 class="font-bold text-lg mb-4">Insurance Services</h4>
                     <ul class="space-y-2 text-gray-400">
-                        <li><a href="https://billlayne.github.io/Auto-Insurance-Center/" class="hover:text-white">Auto Insurance</a></li>
-                        <li><a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="hover:text-white">Home Insurance</a></li>
-                        <li><a href="#business" class="hover:text-white">Business Insurance</a></li>
-                        <li><a href="#life" class="hover:text-white">Life Insurance</a></li>
+                        <li><a href="https://billlayne.github.io/Auto-Insurance-Center/" class="hover:text-white transition-colors">Auto Insurance</a></li>
+                        <li><a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="hover:text-white transition-colors">Home Insurance</a></li>
+                        <li><a href="#business" class="hover:text-white transition-colors">Business Insurance</a></li>
+                        <li><a href="#life" class="hover:text-white transition-colors">Life Insurance</a></li>
+                        <li><a href="#specialty" class="hover:text-white transition-colors">Specialty Coverage</a></li>
                     </ul>
                 </div>
                 
                 <div>
-                    <h4 class="font-semibold mb-4">Coverage Areas</h4>
+                    <h4 class="font-bold text-lg mb-4">Coverage Areas</h4>
                     <ul class="space-y-2 text-gray-400">
-                        <li>Surry County</li>
-                        <li>Yadkin County</li>
-                        <li>Wilkes County</li>
-                        <li>Stokes County</li>
+                        <li>Surry County (6 Towns)</li>
+                        <li>Yadkin County (6 Towns)</li>
+                        <li>Wilkes County (6 Towns)</li>
+                        <li>Stokes County (6 Towns)</li>
+                        <li class="text-green-400 font-semibold">25+ Total Locations</li>
                     </ul>
                 </div>
                 
                 <div>
-                    <h4 class="font-semibold mb-4">Contact Info</h4>
-                    <ul class="space-y-2 text-gray-400">
-                        <li><a href="tel:3368351993" class="hover:text-white"><i class="fas fa-phone mr-2"></i>(336) 835-1993</a></li>
-                        <li><a href="mailto:Save@BillLayneInsurance.com" class="hover:text-white"><i class="fas fa-envelope mr-2"></i>Save@BillLayneInsurance.com</a></li>
-                        <li><a href="https://www.google.com/maps/search/?api=1&query=1283+N+Bridge+St,+Elkin,+NC+28621" target="_blank" rel="noopener noreferrer" class="hover:text-white"><i class="fas fa-map-marker-alt mr-2"></i>1283 N Bridge St<br><span class="ml-6">Elkin, NC 28621</span></a></li>
-                        <li><i class="fas fa-clock mr-2"></i>Mon-Fri: 9AM-5PM</li>
+                    <h4 class="font-bold text-lg mb-4">Get In Touch</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li>
+                            <a href="tel:3368351993" class="hover:text-white transition-colors flex items-center">
+                                <i class="fas fa-phone-alt mr-3 text-green-400"></i>
+                                <span>(336) 835-1993</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="mailto:Save@BillLayneInsurance.com" class="hover:text-white transition-colors flex items-center">
+                                <i class="fas fa-envelope mr-3 text-blue-400"></i>
+                                <span>Save@BillLayneInsurance.com</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.google.com/maps/search/?api=1&query=1283+N+Bridge+St,+Elkin,+NC+28621" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors flex items-start">
+                                <i class="fas fa-map-marker-alt mr-3 text-red-400 mt-1"></i>
+                                <span>1283 N Bridge St<br>Elkin, NC 28621</span>
+                            </a>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-clock mr-3 text-yellow-400"></i>
+                            <span>Mon-Fri: 9AM-5PM</span>
+                        </li>
                     </ul>
                 </div>
             </div>
             
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-                <p>&copy; 2024 Bill Layne Insurance Agency. All rights reserved.</p>
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Bill Layne Insurance Agency. All rights reserved. | Licensed in NC</p>
+                <p class="text-sm mt-2">Serving Northwest North Carolina with Pride Since 2004</p>
             </div>
         </div>
     </footer>
@@ -909,29 +1499,45 @@
             }
         });
 
-        // Universal menu functionality
-        const menuToggleBtn = document.getElementById('menu-toggle-btn');
-        const navigationMenu = document.getElementById('navigation-menu');
-        const menuOverlay = document.getElementById('menu-overlay');
-        const closeMenuBtn = document.getElementById('close-menu');
+        // Menu functionality
+        const menuToggle = document.getElementById('menuToggle');
+        const navigationMenu = document.getElementById('navigationMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
 
         function toggleMenu() {
-            menuToggleBtn.classList.toggle('active');
-            navigationMenu.classList.toggle('active');
-            menuOverlay.classList.toggle('active');
-            document.body.style.overflow = navigationMenu.classList.contains('active') ? 'hidden' : '';
+            const isActive = navigationMenu.classList.contains('active');
+            
+            if (!isActive) {
+                menuToggle.classList.add('active');
+                navigationMenu.classList.add('active');
+                menuOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            } else {
+                closeMenu();
+            }
         }
 
         function closeMenu() {
-            menuToggleBtn.classList.remove('active');
+            menuToggle.classList.remove('active');
             navigationMenu.classList.remove('active');
             menuOverlay.classList.remove('active');
             document.body.style.overflow = '';
         }
 
-        menuToggleBtn.addEventListener('click', toggleMenu);
-        closeMenuBtn.addEventListener('click', closeMenu);
-        menuOverlay.addEventListener('click', closeMenu);
+        // Close menu when clicking overlay
+        if (menuOverlay) {
+            menuOverlay.addEventListener('click', closeMenu);
+        }
+
+        // Close menu when clicking a link (for better mobile UX)
+        const menuLinks = navigationMenu.querySelectorAll('a');
+        menuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 768) {
+                    closeMenu();
+                }
+            });
+        });
 
         // Town data with counties for search
         const townData = [
@@ -970,10 +1576,11 @@
             const searchInput = document.getElementById('locationSearch');
             const searchValue = searchInput.value.toLowerCase().trim();
             const dropdown = document.getElementById('searchDropdown');
+            const searchResults = document.getElementById('searchResults');
             const locationCards = document.querySelectorAll('.location-card');
             
             // Clear previous results
-            dropdown.innerHTML = '';
+            searchResults.innerHTML = '';
             
             if (searchValue === '') {
                 dropdown.classList.remove('active');
@@ -1011,12 +1618,12 @@
                         </span>
                         <span class="county-name">${town.county}</span>
                     `;
-                    dropdown.appendChild(resultItem);
+                    searchResults.appendChild(resultItem);
                 });
             } else {
                 dropdown.classList.add('active');
                 searchInput.classList.add('has-results');
-                dropdown.innerHTML = `
+                searchResults.innerHTML = `
                     <div class="search-no-results">
                         <i class="fas fa-search text-gray-400"></i>
                         <p>No towns found matching "${searchValue}"</p>
@@ -1064,7 +1671,7 @@
             const dropdown = document.getElementById('searchDropdown');
             const searchInput = document.getElementById('locationSearch');
             
-            if (!searchContainer.contains(event.target)) {
+            if (searchContainer && !searchContainer.contains(event.target)) {
                 dropdown.classList.remove('active');
                 searchInput.classList.remove('has-results');
             }
@@ -1073,6 +1680,8 @@
         // Make functions globally available
         window.filterLocations = filterLocations;
         window.showSearchResults = showSearchResults;
+        window.toggleMenu = toggleMenu;
+        window.closeMenu = closeMenu;
         
         // Add keyboard navigation for dropdown
         document.addEventListener('DOMContentLoaded', function() {
@@ -1112,25 +1721,86 @@
                     });
                 }
             }
-        });
 
-        // Animate elements on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
+            // Animated counter
+            const counters = document.querySelectorAll('.stat-counter');
+            const speed = 200;
 
-        const observer = new IntersectionObserver(function(entries) {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate-fade-in-up');
+            counters.forEach(counter => {
+                const animate = () => {
+                    const value = +counter.getAttribute('data-target');
+                    const data = +counter.innerText;
+                    const time = value / speed;
+                    
+                    if (data < value) {
+                        counter.innerText = Math.ceil(data + time);
+                        setTimeout(animate, 1);
+                    } else {
+                        counter.innerText = value;
+                    }
                 }
+                
+                // Start animation when element is visible
+                const observer = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            animate();
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                });
+                
+                observer.observe(counter);
             });
-        }, observerOptions);
 
-        // Observe location cards for animation
-        document.querySelectorAll('.location-card').forEach(el => {
-            observer.observe(el);
+            // Animate elements on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const fadeObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-fade-in-up');
+                    }
+                });
+            }, observerOptions);
+
+            // Observe location cards for animation
+            document.querySelectorAll('.location-card').forEach(el => {
+                fadeObserver.observe(el);
+            });
+
+            // Live savings ticker rotation
+            const savingsData = [
+                { name: 'Sarah M.', town: 'Elkin', savings: '$847' },
+                { name: 'John D.', town: 'Mt Airy', savings: '$623' },
+                { name: 'Mike R.', town: 'Jonesville', savings: '$1,205' },
+                { name: 'Lisa T.', town: 'Yadkinville', savings: '$932' },
+                { name: 'Tom K.', town: 'Wilkesboro', savings: '$756' },
+                { name: 'Amy S.', town: 'King', savings: '$1,089' }
+            ];
+
+            let currentIndex = 0;
+            setInterval(() => {
+                const ticker = document.getElementById('savingsTicker');
+                if (ticker) {
+                    currentIndex = (currentIndex + 1) % savingsData.length;
+                    const newItems = [];
+                    for (let i = 0; i < 3; i++) {
+                        const index = (currentIndex + i) % savingsData.length;
+                        const data = savingsData[index];
+                        newItems.push(`
+                            <div class="flex justify-between items-center p-2 bg-white rounded animate-fade-in-up">
+                                <span class="text-sm text-gray-600">${data.name} • ${data.town}</span>
+                                <span class="font-bold text-green-600">${data.savings}/yr</span>
+                            </div>
+                        `);
+                    }
+                    ticker.innerHTML = newItems.join('');
+                }
+            }, 5000);
         });
     </script>
 
@@ -1140,7 +1810,7 @@
       "@context": "https://schema.org",
       "@type": "InsuranceAgency",
       "name": "Bill Layne Insurance Agency",
-      "image": "https://www.billlayneinsurance.com/images/bill-layne-insurance-logo.png",
+      "image": "https://i.imgur.com/cBAgeX8.png",
       "@id": "https://www.billlayneinsurance.com",
       "url": "https://www.billlayneinsurance.com/services-areas",
       "telephone": "+13368351993",
@@ -1183,4 +1853,3 @@
     </script>
 </body>
 </html>
-
