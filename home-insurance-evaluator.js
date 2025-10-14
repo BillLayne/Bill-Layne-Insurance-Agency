@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', function() {
     populateYearDropdown();
     setupFormValidation();
     updateProgressBar();
+
+    // Ensure first step is visible
+    showStep(1);
 });
 
 // Populate year built dropdown
