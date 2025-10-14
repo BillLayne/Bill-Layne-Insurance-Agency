@@ -27,8 +27,10 @@ function setupFormValidation() {
 // Update progress bar
 function updateProgressBar() {
     const progressBar = document.getElementById('progressBar');
-    const progress = (currentStep / totalSteps) * 100;
-    progressBar.style.width = `${progress}%`;
+    if (progressBar) {
+        const progress = (currentStep / totalSteps) * 100;
+        progressBar.style.width = `${progress}%`;
+    }
 }
 
 // Navigate to next step
