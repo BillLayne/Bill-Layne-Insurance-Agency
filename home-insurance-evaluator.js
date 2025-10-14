@@ -41,8 +41,10 @@ function setupFormValidation() {
 // Update progress bar
 function updateProgressBar() {
     const progressBar = document.getElementById('progressBar');
-    const progress = (currentStep / totalSteps) * 100;
-    progressBar.style.width = `${progress}%`;
+    if (progressBar) {
+        const progress = (currentStep / totalSteps) * 100;
+        progressBar.style.width = `${progress}%`;
+    }
 }
 
 // Navigate to next step
@@ -65,23 +67,23 @@ function previousStep() {
 // Show specific step
 function showStep(step) {
     const steps = document.querySelectorAll('.form-step');
-    steps.forEach(s => s.classList.remove('active'));
-    
+    steps.forEach(s => s.classList.add('hidden'));
+
     const targetStep = document.querySelector(`[data-step="${step}"]`);
     if (targetStep) {
-        targetStep.classList.add('active');
+        targetStep.classList.remove('hidden');
     }
-    
+
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // Validate current step
 function validateCurrentStep() {
-    const activeStep = document.querySelector('.form-step.active');
+    const activeStep = document.querySelector('.form-step:not(.hidden)');
     const requiredFields = activeStep.querySelectorAll('[required]');
     let isValid = true;
-    
+
     requiredFields.forEach(field => {
         if (!field.value) {
             field.classList.add('error');
@@ -90,19 +92,19 @@ function validateCurrentStep() {
             field.classList.remove('error');
         }
     });
-    
+
     if (!isValid) {
         alert('Please fill in all required fields.');
     }
-    
+
     return isValid;
 }
 
 // Save step data
 function saveStepData() {
-    const activeStep = document.querySelector('.form-step.active');
+    const activeStep = document.querySelector('.form-step:not(.hidden)');
     const inputs = activeStep.querySelectorAll('input, select');
-    
+
     inputs.forEach(input => {
         if (input.type === 'checkbox') {
             formData[input.name || input.id] = input.checked;
