@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Home Insurance Quote - Bill Layne Insurance</title>
+    
+    <!-- Cache Control -->
+    <meta http-equiv="Cache-Control" content="max-age=3600, must-revalidate">
+    
+    <!-- Version and Script URL Configuration -->
+    <script>
+        // SITE VERSION
+        window.SITE_VERSION = '2025.01.17.1';
+        
+        // GOOGLE APPS SCRIPT URL - Your deployed script URL for HOME insurance
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyPu-dsGoSxKcY0j_tVC9XCin-sRUJLGrUDX-ekcmoaRapukLWWpxMFjFpTQIXvKlfa/exec';
+        
+        // Check if in development mode
+        const isDevelopment = window.location.hostname === 'localhost' || 
+                             window.location.hostname === '127.0.0.1' ||
+                             window.location.search.includes('dev=true');
+        
+        if (isDevelopment) {
+            window.SITE_VERSION = Date.now();
+            console.log('Development mode: Cache disabled');
+        }
+    </script>
+    
+    <!-- Resource Hints -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//cdn.tailwindcss.com">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" as="style">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .progress-fill {
+            transition: width 0.5s ease;
+        }
+        
+        .form-step {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .form-step.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .loading-overlay.active {
+            display: flex;
+        }
+        
+        .loading-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #003366;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Success Modal Popup */
+        .success-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .success-modal.active {
+            display: flex !important;
+        }
+        
+        .success-modal-content {
+            background: white;
+            padding: 3rem;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .success-checkmark {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+        }
+        
+        .checkmark-circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            stroke: #28a745;
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+        
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 2;
+            stroke: #fff;
+            stroke-miterlimit: 10;
+            box-shadow: inset 0px 0px 0px #28a745;
+            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+        }
+        
+        .checkmark-check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+        
+        @keyframes stroke {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        @keyframes scale {
+            0%, 100% {
+                transform: none;
+            }
+            50% {
+                transform: scale3d(1.1, 1.1, 1);
+            }
+        }
+        
+        @keyframes fill {
+            100% {
+                box-shadow: inset 0px 0px 0px 40px #28a745;
+            }
+        }
+        
+        .confirmation-number-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            font-size: 1.25rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p class="text-lg font-semibold">Submitting your quote request...</p>
+            <p class="text-sm text-gray-600 mt-2">Please don't close this window</p>
+        </div>
+    </div>
+
+    <!-- Success Confirmation Modal -->
+    <div id="successModal" class="success-modal">
+        <div class="success-modal-content">
+            <div class="success-checkmark">
+                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                    <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
+            </div>
+            
+            <h2 class="text-3xl font-bold text-gray-800 mb-3">Thank You for Reaching Out!</h2>
+            <p class="text-lg text-gray-600 mb-4">Your home insurance quote request has been successfully submitted!</p>
+            
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                <p class="text-gray-700">
+                    <i class="fas fa-shopping-cart text-green-600 mr-2"></i>
+                    <strong>We're now shopping your coverage with ALL our carriers!</strong><br>
+                    <span class="text-sm">Our team will compare rates from multiple insurance companies to find you the best coverage at the most competitive price for your home.</span>
+                </p>
+            </div>
+            
+            <div class="confirmation-number-box">
+                <p class="text-sm opacity-90 mb-1">Your Confirmation Number</p>
+                <p class="text-2xl" id="modal-confirmation-number">HOME-20250117-0001</p>
+            </div>
+            
+            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6 text-left">
+                <p class="text-sm text-gray-700">
+                    <i class="fas fa-clock text-blue-500 mr-2"></i>
+                    <strong>What happens next?</strong><br>
+                    • We're immediately shopping your home coverage with Nationwide, Progressive, Travelers, and more!<br>
+                    • Our specialists will analyze your property details<br>
+                    • You'll receive personalized quotes within 24 hours<br>
+                    • We'll contact you via your preferred method
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="text-center">
+                    <i class="fas fa-phone-alt text-blue-500 text-2xl mb-2"></i>
+                    <p class="text-sm text-gray-600">Questions?</p>
+                    <p class="font-semibold">336-835-1993</p>
+                </div>
+                <div class="text-center">
+                    <i class="fas fa-envelope text-blue-500 text-2xl mb-2"></i>
+                    <p class="text-sm text-gray-600">Email Us</p>
+                    <p class="font-semibold">Save@BillLayneInsurance.com</p>
+                </div>
+            </div>
+            
+            <p class="text-sm text-gray-500 mb-6">
+                A confirmation email has been sent to <span id="customer-email" class="font-semibold"></span>
+            </p>
+            
+            <div class="flex gap-3 justify-center">
+                <button onclick="closeSuccessModal()" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">
+                    Close
+                </button>
+                <a href="index.html" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition inline-block">
+                    Return to Home
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="text-2xl font-bold text-gray-800">Bill Layne Insurance</a>
+                <a href="index.html" class="text-gray-600 hover:text-gray-800">
+                    <i class="fas fa-times text-xl"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Form Container -->
+    <main class="py-8">
+        <div class="container mx-auto px-6 max-w-2xl">
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <!-- Progress Bar -->
+                <div class="mb-8">
+                    <div class="flex justify-between text-sm text-gray-600 mb-2">
+                        <span>Step <span id="current-step">1</span> of 8</span>
+                        <span><span id="progress-percent">13</span>% Complete</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div id="progress-bar" class="bg-blue-600 h-2 rounded-full progress-fill" style="width: 13%"></div>
+                    </div>
+                </div>
+
+                <form id="home-quote-form">
+                    <!-- Step 1: Personal Information -->
+                    <div class="form-step active" data-step="1">
+                        <h2 class="text-2xl font-bold mb-2">Let's get to know you</h2>
+                        <p class="text-gray-600 mb-6">We'll start with some basic information to personalize your quote.</p>
+                        
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">First Name*</label>
+                                    <input type="text" name="firstname" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Last Name*</label>
+                                    <input type="text" name="lastname" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Email Address*</label>
+                                <input type="email" name="email" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number*</label>
+                                <input type="tel" name="phone" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Preferred Contact Method</label>
+                                <select name="contact_method" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="phone">Phone</option>
+                                    <option value="email">Email</option>
+                                    <option value="text">Text Message</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Property Address -->
+                    <div class="form-step" data-step="2">
+                        <h2 class="text-2xl font-bold mb-2">Property Location</h2>
+                        <p class="text-gray-600 mb-6">Tell us about the property you want to insure.</p>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Property Address*</label>
+                                <input type="text" name="property_address" required placeholder="123 Main Street" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="md:col-span-1">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">City*</label>
+                                    <input type="text" name="property_city" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">State*</label>
+                                    <select name="property_state" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Select State</option>
+                                        <option value="NC" selected>North Carolina</option>
+                                        <option value="SC">South Carolina</option>
+                                        <option value="VA">Virginia</option>
+                                        <option value="GA">Georgia</option>
+                                        <option value="TN">Tennessee</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">ZIP Code*</label>
+                                    <input type="text" name="property_zip" required pattern="[0-9]{5}" maxlength="5" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Property Type*</label>
+                                    <select name="property_type" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Select Type</option>
+                                        <option value="Single Family">Single Family Home</option>
+                                        <option value="Townhouse">Townhouse</option>
+                                        <option value="Condo">Condo</option>
+                                        <option value="Mobile Home">Mobile/Manufactured Home</option>
+                                        <option value="Multi-Family">Multi-Family</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Property Use*</label>
+                                    <select name="property_use" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Select Use</option>
+                                        <option value="Primary Residence">Primary Residence</option>
+                                        <option value="Secondary/Vacation">Secondary/Vacation Home</option>
+                                        <option value="Rental Property">Rental Property</option>
+                                        <option value="Vacant">Vacant</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Property Details -->
+                    <div class="form-step" data-step="3">
+                        <h2 class="text-2xl font-bold mb-2">Property Details</h2>
+                        <p class="text-gray-600 mb-6">Help us understand more about your home.</p>
+                        
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Year Built*</label>
+                                    <input type="number" name="year_built" required min="1800" max="2025" placeholder="2000" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Square Footage*</label>
+                                    <input type="number" name="square_footage" required min="100" placeholder="2000" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Purchase Date</label>
+                                    <input type="date" name="purchase_date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Purchase Price</label>
+                                    <input type="number" name="purchase_price" placeholder="250000" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Number of Stories*</label>
+                                    <select name="num_stories" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Select</option>
+                                        <option value="1">1 Story</option>
+                                        <option value="1.5">1.5 Stories</option>
+                                        <option value="2">2 Stories</option>
+                                        <option value="2.5">2.5 Stories</option>
+                                        <option value="3">3+ Stories</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Bedrooms</label>
+                                    <select name="bedrooms" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Select</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5+</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Bathrooms</label>
+                                    <select name="bathrooms" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Select</option>
+                                        <option value="1">1</option>
+                                        <option value="1.5">1.5</option>
+                                        <option value="2">2</option>
+                                        <option value="2.5">2.5</option>
+                                        <option value="3">3</option>
+                                        <option value="3.5">3.5</option>
+                                        <option value="4">4+</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Construction Type*</label>
+                                    <select name="construction_type" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Select Type</option>
+                                        <option value="Frame">Frame</option>
+                                        <option value="Brick">Brick</option>
+                                        <option value="Brick Veneer">Brick Veneer</option>
+                                        <option value="Masonry">Masonry</option>
+                                        <option value="Stucco">Stucco</option>
+                                        <option value="Vinyl Siding">Vinyl Siding</option>
+                                        <option value="Wood Siding">Wood Siding</option>
+                                        <option value="Cement Fiber">Cement Fiber</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Foundation Type</label>
+                                    <select name="foundation_type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Select Type</option>
+                                        <option value="Slab">Slab</option>
+                                        <option value="Crawl Space">Crawl Space</option>
+                                        <option value="Basement">Basement</option>
+                                        <option value="Pier">Pier</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Garage Type</label>
+                                <select name="garage_type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Select Type</option>
+                                    <option value="None">No Garage</option>
+                                    <option value="1 Car Attached">1 Car Attached</option>
+                                    <option value="2 Car Attached">2 Car Attached</option>
+                                    <option value="3 Car Attached">3+ Car Attached</option>
+                                    <option value="1 Car Detached">1 Car Detached</option>
+                                    <option value="2 Car Detached">2 Car Detached</option>
+                                    <option value="3 Car Detached">3+ Car Detached</option>
+                                    <option value="Carport">Carport</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Roof Information -->
+                    <div class="form-step" data-step="4">
+                        <h2 class="text-2xl font-bold mb-2">Roof Information</h2>
+                        <p class="text-gray-600 mb-6">The roof is an important factor in determining your coverage.</p>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Roof Age (in years)*</label>
+                                <input type="number" name="roof_age" required min="0" max="100" placeholder="5" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <p class="text-xs text-gray-500 mt-1">Enter 0 if brand new</p>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Roof Material*</label>
+                                <select name="roof_material" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Select Material</option>
+                                    <option value="Asphalt Shingle">Asphalt Shingle</option>
+                                    <option value="Architectural Shingle">Architectural Shingle</option>
+                                    <option value="Metal">Metal</option>
+                                    <option value="Tile">Tile</option>
+                                    <option value="Slate">Slate</option>
+                                    <option value="Wood Shingle">Wood Shingle</option>
+                                    <option value="Rubber">Rubber</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Roof Condition</label>
+                                <select name="roof_condition" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Select Condition</option>
+                                    <option value="Excellent">Excellent - Like New</option>
+                                    <option value="Good">Good - Well Maintained</option>
+                                    <option value="Fair">Fair - Some Wear</option>
+                                    <option value="Poor">Poor - Needs Repair</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 5: Safety & Security -->
+                    <div class="form-step" data-step="5">
+                        <h2 class="text-2xl font-bold mb-2">Safety & Security Features</h2>
+                        <p class="text-gray-600 mb-6">These features can qualify you for discounts.</p>
+                        
+                        <div class="space-y-3">
+                            <label class="flex items-center p-3 border rounded-md hover:bg-gray-50">
+                                <input type="checkbox" name="security_system" class="mr-3">
+                                <div>
+                                    <span class="font-medium">Security System</span>
+                                    <p class="text-sm text-gray-500">Monitored burglar alarm</p>
+                                </div>
+                            </label>
+                            
+                            <label class="flex items-center p-3 border rounded-md hover:bg-gray-50">
+                                <input type="checkbox" name="smoke_detectors" class="mr-3">
+                                <div>
+                                    <span class="font-medium">Smoke Detectors</span>
+                                    <p class="text-sm text-gray-500">Working smoke detectors on all levels</p>
+                                </div>
+                            </label>
+                            
+                            <label class="flex items-center p-3 border rounded-md hover:bg-gray-50">
+                                <input type="checkbox" name="fire_extinguisher" class="mr-3">
+                                <div>
+                                    <span class="font-medium">Fire Extinguisher</span>
+                                    <p class="text-sm text-gray-500">ABC-rated fire extinguisher</p>
+                                </div>
+                            </label>
+                            
+                            <label class="flex items-center p-3 border rounded-md hover:bg-gray-50">
+                                <input type="checkbox" name="deadbolts" class="mr-3">
+                                <div>
+                                    <span class="font-medium">Deadbolt Locks</span>
+                                    <p class="text-sm text-gray-500">On all exterior doors</p>
+                                </div>
+                            </label>
+                            
+                            <label class="flex items-center p-3 border rounded-md hover:bg-gray-50">
+                                <input type="checkbox" name="fire_sprinklers" class="mr-3">
+                                <div>
+                                    <span class="font-medium">Fire Sprinkler System</span>
+                                    <p class="text-sm text-gray-500">Automatic fire suppression system</p>
+                                </div>
+                            </label>
+                            
+                            <label class="flex items-center p-3 border rounded-md hover:bg-gray-50">
+                                <input type="checkbox" name="water_leak_detection" class="mr-3">
+                                <div>
+                                    <span class="font-medium">Water Leak Detection</span>
+                                    <p class="text-sm text-gray-500">Smart water shut-off system</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Step 6: Current Insurance -->
+                    <div class="form-step" data-step="6">
+                        <h2 class="text-2xl font-bold mb-2">Current Insurance Status</h2>
+                        <p class="text-gray-600 mb-6">This helps us find you the best rates.</p>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Do you currently have home insurance?</label>
+                                <select name="current_insurance" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Current Insurance Company (if applicable)</label>
+                                <input type="text" name="current_carrier" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Coverage Expiration Date</label>
+                                <input type="date" name="coverage_expiration" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 7: Coverage Preferences -->
+                    <div class="form-step" data-step="7">
+                        <h2 class="text-2xl font-bold mb-2">Coverage Preferences</h2>
+                        <p class="text-gray-600 mb-6">Tell us about the coverage you're looking for.</p>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Desired Dwelling Coverage Amount</label>
+                                <select name="desired_dwelling_coverage" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Let agent determine</option>
+                                    <option value="$100,000">$100,000</option>
+                                    <option value="$150,000">$150,000</option>
+                                    <option value="$200,000">$200,000</option>
+                                    <option value="$250,000">$250,000</option>
+                                    <option value="$300,000">$300,000</option>
+                                    <option value="$350,000">$350,000</option>
+                                    <option value="$400,000">$400,000</option>
+                                    <option value="$500,000">$500,000</option>
+                                    <option value="$600,000">$600,000+</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Desired Liability Coverage</label>
+                                <select name="desired_liability_coverage" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Let agent determine</option>
+                                    <option value="$100,000">$100,000</option>
+                                    <option value="$300,000">$300,000</option>
+                                    <option value="$500,000">$500,000</option>
+                                    <option value="$1,000,000">$1,000,000</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Preferred Deductible</label>
+                                <select name="desired_deductible" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Let agent determine</option>
+                                    <option value="$500">$500</option>
+                                    <option value="$1,000">$1,000</option>
+                                    <option value="$2,500">$2,500</option>
+                                    <option value="$5,000">$5,000</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 8: Additional Information -->
+                    <div class="form-step" data-step="8">
+                        <h2 class="text-2xl font-bold mb-2">Additional Information</h2>
+                        <p class="text-gray-600 mb-6">Almost done! Just a few more questions.</p>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <h3 class="font-medium text-gray-700 mb-3">Do you have any of the following?</h3>
+                                <div class="space-y-2">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" name="pool" class="mr-2">
+                                        <span>Swimming pool or hot tub</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" name="trampoline" class="mr-2">
+                                        <span>Trampoline</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" name="dogs" class="mr-2" onchange="toggleDogBreeds(this)">
+                                        <span>Dogs</span>
+                                    </label>
+                                    <div id="dog-breeds-div" style="display: none;" class="ml-6 mt-2">
+                                        <input type="text" name="dog_breeds" placeholder="Please specify breed(s)" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" name="business_from_home" class="mr-2">
+                                        <span>Business operated from home</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Have you had any home insurance claims in the past 5 years?</label>
+                                <select name="previous_claims" onchange="toggleClaimsDetails(this)" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                            
+                            <div id="claims-details-div" style="display: none;">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Please describe the claim(s)</label>
+                                <textarea name="claims_details" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Date and type of claim"></textarea>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Additional Notes (Optional)</label>
+                                <textarea name="additional_notes" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Any additional information that might help us get you the best rate..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="flex justify-between mt-8">
+                        <button type="button" id="prev-btn" onclick="previousStep()" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition" style="display: none;">
+                            <i class="fas fa-arrow-left mr-2"></i>Previous
+                        </button>
+                        <button type="button" id="next-btn" onclick="nextStep()" class="ml-auto px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+                            Next<i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                        <button type="submit" id="submit-btn" class="ml-auto px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition" style="display: none;">
+                            Submit Quote Request<i class="fas fa-paper-plane ml-2"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 8;
+
+        function updateProgress() {
+            const percent = Math.round((currentStep / totalSteps) * 100);
+            document.getElementById('current-step').textContent = currentStep;
+            document.getElementById('progress-percent').textContent = percent;
+            document.getElementById('progress-bar').style.width = percent + '%';
+        }
+
+        function showStep(step) {
+            document.querySelectorAll('.form-step').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelector(`[data-step="${step}"]`).classList.add('active');
+            
+            // Update navigation buttons
+            document.getElementById('prev-btn').style.display = step === 1 ? 'none' : 'block';
+            document.getElementById('next-btn').style.display = step === totalSteps ? 'none' : 'block';
+            document.getElementById('submit-btn').style.display = step === totalSteps ? 'block' : 'none';
+            
+            updateProgress();
+        }
+
+        function nextStep() {
+            if (validateStep(currentStep)) {
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    showStep(currentStep);
+                    window.scrollTo(0, 0);
+                }
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function validateStep(step) {
+            const activeStep = document.querySelector(`[data-step="${step}"]`);
+            const requiredFields = activeStep.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('border-red-500');
+                    isValid = false;
+                } else {
+                    field.classList.remove('border-red-500');
+                }
+            });
+            
+            if (!isValid) {
+                alert('Please fill in all required fields.');
+            }
+            
+            return isValid;
+        }
+
+        function toggleDogBreeds(checkbox) {
+            const dogBreedsDiv = document.getElementById('dog-breeds-div');
+            dogBreedsDiv.style.display = checkbox.checked ? 'block' : 'none';
+            if (!checkbox.checked) {
+                document.querySelector('input[name="dog_breeds"]').value = '';
+            }
+        }
+
+        function toggleClaimsDetails(select) {
+            const claimsDetailsDiv = document.getElementById('claims-details-div');
+            claimsDetailsDiv.style.display = select.value === 'Yes' ? 'block' : 'none';
+            if (select.value === 'No') {
+                document.querySelector('textarea[name="claims_details"]').value = '';
+            }
+        }
+
+        // Close success modal
+        function closeSuccessModal() {
+            const modal = document.getElementById('successModal');
+            if (modal) {
+                modal.classList.remove('active');
+                modal.style.display = 'none';
+                
+                // Reset form after closing modal
+                document.getElementById('home-quote-form').reset();
+                currentStep = 1;
+                showStep(1);
+            }
+        }
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSuccessModal();
+            }
+        });
+        
+        // Close modal when clicking outside
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSuccessModal();
+            }
+        });
+
+        // Get metadata
+        function getMetadata() {
+            return {
+                ip: 'Will be captured server-side',
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                screenResolution: `${screen.width}x${screen.height}`,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                timestamp: new Date().toISOString()
+            };
+        }
+
+        // Handle form submission with Google Apps Script
+        document.getElementById('home-quote-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!validateStep(currentStep)) {
+                return;
+            }
+            
+            const submitBtn = document.getElementById('submit-btn');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = 'Submitting... <i class="fas fa-spinner fa-spin ml-2"></i>';
+            loadingOverlay.classList.add('active');
+            
+            const formData = new FormData(e.target);
+            
+            // Prepare data for Google Apps Script
+            const data = {
+                // Personal Information
+                firstname: formData.get('firstname'),
+                lastname: formData.get('lastname'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                contact_method: formData.get('contact_method'),
+                // Property Information
+                property_address: formData.get('property_address'),
+                property_city: formData.get('property_city'),
+                property_state: formData.get('property_state'),
+                property_zip: formData.get('property_zip'),
+                property_type: formData.get('property_type'),
+                property_use: formData.get('property_use'),
+                // Property Details
+                year_built: formData.get('year_built'),
+                square_footage: formData.get('square_footage'),
+                purchase_date: formData.get('purchase_date'),
+                purchase_price: formData.get('purchase_price'),
+                num_stories: formData.get('num_stories'),
+                bedrooms: formData.get('bedrooms'),
+                bathrooms: formData.get('bathrooms'),
+                construction_type: formData.get('construction_type'),
+                foundation_type: formData.get('foundation_type'),
+                garage_type: formData.get('garage_type'),
+                // Roof Information
+                roof_age: formData.get('roof_age'),
+                roof_material: formData.get('roof_material'),
+                roof_condition: formData.get('roof_condition'),
+                // Safety Features
+                security_system: formData.get('security_system') ? true : false,
+                smoke_detectors: formData.get('smoke_detectors') ? true : false,
+                fire_extinguisher: formData.get('fire_extinguisher') ? true : false,
+                deadbolts: formData.get('deadbolts') ? true : false,
+                fire_sprinklers: formData.get('fire_sprinklers') ? true : false,
+                water_leak_detection: formData.get('water_leak_detection') ? true : false,
+                // Current Insurance
+                current_insurance: formData.get('current_insurance'),
+                current_carrier: formData.get('current_carrier'),
+                coverage_expiration: formData.get('coverage_expiration'),
+                // Coverage Preferences
+                desired_dwelling_coverage: formData.get('desired_dwelling_coverage'),
+                desired_liability_coverage: formData.get('desired_liability_coverage'),
+                desired_deductible: formData.get('desired_deductible'),
+                // Additional Information
+                pool: formData.get('pool') ? true : false,
+                trampoline: formData.get('trampoline') ? true : false,
+                dogs: formData.get('dogs') ? true : false,
+                dog_breeds: formData.get('dog_breeds'),
+                business_from_home: formData.get('business_from_home') ? true : false,
+                previous_claims: formData.get('previous_claims'),
+                claims_details: formData.get('claims_details'),
+                additional_notes: formData.get('additional_notes'),
+                metadata: getMetadata()
+            };
+            
+            try {
+                console.log('Submitting to Google Apps Script...');
+                
+                // Send to Google Apps Script
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Important for Google Apps Script
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                console.log('Request sent, waiting for confirmation...');
+                
+                // Show success message after a brief delay
+                setTimeout(() => {
+                    console.log('Showing success modal...');
+                    
+                    // Generate local confirmation number
+                    const confirmationNumber = `HOME-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, '0')}${String(new Date().getDate()).padStart(2, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
+                    
+                    // Update confirmation number in modal
+                    const modalConfirmationEl = document.getElementById('modal-confirmation-number');
+                    if (modalConfirmationEl) {
+                        modalConfirmationEl.textContent = confirmationNumber;
+                    }
+                    
+                    // Update customer email in modal
+                    const customerEmailEl = document.getElementById('customer-email');
+                    if (customerEmailEl) {
+                        customerEmailEl.textContent = data.email;
+                    }
+                    
+                    // Hide loading overlay
+                    loadingOverlay.classList.remove('active');
+                    loadingOverlay.style.display = 'none';
+                    
+                    // Show success modal
+                    const successModal = document.getElementById('successModal');
+                    if (successModal) {
+                        console.log('Success modal found, displaying...');
+                        successModal.style.display = 'flex';
+                        successModal.classList.add('active');
+                        // Force a reflow
+                        successModal.offsetHeight;
+                    } else {
+                        console.error('Success modal not found!');
+                        alert(`Thank you for reaching out! We're now shopping your home coverage with all our carriers.\n\nYour confirmation number: ${confirmationNumber}\n\nWe'll contact you within 24 hours with competitive quotes.`);
+                    }
+                    
+                    // Store confirmation
+                    sessionStorage.setItem('lastHomeQuoteConfirmation', confirmationNumber);
+                    
+                    // Reset submit button
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Submit Quote Request<i class="fas fa-paper-plane ml-2"></i>';
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Submission error:', error);
+                
+                // Hide loading overlay
+                loadingOverlay.classList.remove('active');
+                
+                // Reset submit button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Submit Quote Request<i class="fas fa-paper-plane ml-2"></i>';
+                
+                // Show error but offer mailto fallback
+                const confirmFallback = confirm('There was an issue submitting your quote online. Would you like to send it via email instead?');
+                
+                if (confirmFallback) {
+                    // Prepare mailto fallback
+                    const subject = encodeURIComponent('Home Insurance Quote Request');
+                    const body = encodeURIComponent(generateEmailBody(data));
+                    const mailtoLink = `mailto:Save@BillLayneInsurance.com?subject=${subject}&body=${body}`;
+                    
+                    window.location.href = mailtoLink;
+                }
+            }
+        });
+        
+        // Generate email body for fallback
+        function generateEmailBody(data) {
+            let body = `New Home Insurance Quote Request\n\n`;
+            body += `CONTACT INFORMATION:\n`;
+            body += `Name: ${data.firstname} ${data.lastname}\n`;
+            body += `Email: ${data.email}\n`;
+            body += `Phone: ${data.phone}\n`;
+            body += `Preferred Contact: ${data.contact_method}\n\n`;
+            
+            body += `PROPERTY INFORMATION:\n`;
+            body += `Address: ${data.property_address}\n`;
+            body += `${data.property_city}, ${data.property_state} ${data.property_zip}\n`;
+            body += `Type: ${data.property_type}\n`;
+            body += `Use: ${data.property_use}\n`;
+            body += `Year Built: ${data.year_built}\n`;
+            body += `Square Footage: ${data.square_footage}\n\n`;
+            
+            body += `ROOF INFORMATION:\n`;
+            body += `Age: ${data.roof_age} years\n`;
+            body += `Material: ${data.roof_material}\n`;
+            body += `Condition: ${data.roof_condition || 'Not specified'}\n\n`;
+            
+            body += `SAFETY FEATURES:\n`;
+            body += `Security System: ${data.security_system ? 'Yes' : 'No'}\n`;
+            body += `Smoke Detectors: ${data.smoke_detectors ? 'Yes' : 'No'}\n`;
+            body += `Fire Sprinklers: ${data.fire_sprinklers ? 'Yes' : 'No'}\n\n`;
+            
+            body += `CURRENT INSURANCE:\n`;
+            body += `Has Insurance: ${data.current_insurance}\n`;
+            body += `Current Carrier: ${data.current_carrier || 'N/A'}\n\n`;
+            
+            body += `ADDITIONAL INFORMATION:\n`;
+            body += `Pool: ${data.pool ? 'Yes' : 'No'}\n`;
+            body += `Trampoline: ${data.trampoline ? 'Yes' : 'No'}\n`;
+            body += `Dogs: ${data.dogs ? 'Yes' : 'No'}\n`;
+            if (data.dogs && data.dog_breeds) {
+                body += `Dog Breeds: ${data.dog_breeds}\n`;
+            }
+            body += `Previous Claims: ${data.previous_claims}\n`;
+            if (data.additional_notes) {
+                body += `Notes: ${data.additional_notes}\n`;
+            }
+            
+            return body;
+        }
+    </script>
+</body>
+</html>
