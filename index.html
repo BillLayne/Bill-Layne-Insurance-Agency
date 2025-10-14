@@ -1026,29 +1026,19 @@
         /* AI INSURANCE ASSISTANT STYLES */
         /* ============================================ */
 
-        /* Floating Chat Button */
+        /* Floating Chat Button - HIDDEN (Now in mobile bar and hero) */
         .ai-chat-btn {
-            position: fixed;
-            bottom: 90px;
-            right: 20px;
-            z-index: 999;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
+            display: none !important;
+        }
+
+        /* Hero AI Button - Show on desktop only */
+        #hero-ai-btn {
+            display: none;
         }
 
         @media (min-width: 769px) {
-            .ai-chat-btn {
-                bottom: 20px;
+            #hero-ai-btn {
+                display: inline-flex !important;
             }
         }
 
@@ -1707,6 +1697,10 @@
                         <i class="fas fa-calculator"></i>
                         Get Free Quote
                     </a>
+                    <button id="hero-ai-btn" class="btn w-full sm:w-auto" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); color: white; border: none; cursor: pointer; display: none;">
+                        <i class="fas fa-robot"></i>
+                        Ask AI Assistant
+                    </button>
                 </div>
                 
                 <!-- Text Option -->
@@ -2429,10 +2423,10 @@
             <i class="fas fa-phone"></i>
             <span>Call</span>
         </a>
-        <a href="sms:3368506906" class="mobile-action-btn primary">
-            <i class="fas fa-comment-dots"></i>
-            <span>Text</span>
-        </a>
+        <button id="mobile-ai-btn" class="mobile-action-btn" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); color: white; border: none; cursor: pointer;">
+            <i class="fas fa-robot"></i>
+            <span>Ask AI</span>
+        </button>
         <a href="get-quote.html" class="mobile-action-btn info">
             <i class="fas fa-calculator"></i>
             <span>Quote</span>
@@ -3222,9 +3216,34 @@ Now respond naturally to visitor questions following these guidelines.`;
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
             window.aiChat = new AIInsuranceChat();
+            initializeAIButtons();
         });
     } else {
         window.aiChat = new AIInsuranceChat();
+        initializeAIButtons();
+    }
+
+    // Initialize AI button event listeners
+    function initializeAIButtons() {
+        // Mobile AI button (in action bar)
+        const mobileAIBtn = document.getElementById('mobile-ai-btn');
+        if (mobileAIBtn) {
+            mobileAIBtn.addEventListener('click', () => {
+                if (window.aiChat) {
+                    window.aiChat.toggleChat();
+                }
+            });
+        }
+
+        // Hero AI button (desktop)
+        const heroAIBtn = document.getElementById('hero-ai-btn');
+        if (heroAIBtn) {
+            heroAIBtn.addEventListener('click', () => {
+                if (window.aiChat) {
+                    window.aiChat.toggleChat();
+                }
+            });
+        }
     }
     </script>
 </body>
