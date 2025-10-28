@@ -106,32 +106,40 @@
             line-height: 1.2;
         }
 
-        /* Urgency Banner */
-        .urgency-banner {
+        /* Urgency Banner - Mobile Only */
+        .urgency-banner-mobile {
             background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
             color: white;
             padding: 0.75rem 1rem;
             text-align: center;
             font-weight: 600;
             font-size: 0.875rem;
-            position: relative;
-            z-index: 51;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 52;
+            transition: transform 0.3s ease;
         }
 
-        @media (min-width: 768px) {
-            .urgency-banner {
-                font-size: 1rem;
-                padding: 1rem;
-            }
+        .urgency-banner-mobile.hidden {
+            transform: translateY(-100%);
         }
 
-        .urgency-banner .blink {
+        .urgency-banner-mobile .blink {
             animation: blink 2s ease-in-out infinite;
         }
 
         @keyframes blink {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
+        }
+
+        /* Hide banner on desktop */
+        @media (min-width: 1024px) {
+            .urgency-banner-mobile {
+                display: none;
+            }
         }
 
         /* Clean Header Design */
@@ -301,7 +309,7 @@
         .hero-content {
             max-width: 1280px;
             margin: 0 auto;
-            padding: 1.5rem 1rem 0;
+            padding: 5rem 1rem 0;
             text-align: center;
             position: relative;
             z-index: 10;
@@ -319,7 +327,18 @@
 
         @media (min-width: 1024px) {
             .hero-content {
-                padding: 8rem 1.5rem 0;
+                padding: 6rem 1.5rem 0;
+            }
+        }
+
+        /* Hero Main Heading - Mobile spacing */
+        .hero-main-heading {
+            margin-bottom: 0.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .hero-main-heading {
+                margin-bottom: 1rem;
             }
         }
 
@@ -1519,8 +1538,8 @@
 </head>
 
 <body class="bg-gray-50 text-gray-800 leading-relaxed">
-    <!-- Urgency Banner -->
-    <div class="urgency-banner">
+    <!-- Urgency Banner - Mobile Only -->
+    <div id="urgency-banner-mobile" class="urgency-banner-mobile">
         <span class="blink">🔥</span> <strong>Start Saving Today:</strong> Customers can save an average of $847/year! <strong>Call now:</strong> (336) 835-1993
     </div>
 
@@ -1613,13 +1632,13 @@
         <!-- Enhanced Hero Section - MOBILE OPTIMIZED -->
         <section class="hero-modern">
             <div class="hero-content">
-                <h1 class="text-4xl md:text-6xl lg:text-7xl font-black text-gray-800 text-center mb-4 leading-tight tracking-tight">
+                <h1 class="text-4xl md:text-6xl lg:text-8xl font-black text-gray-800 text-center leading-tight tracking-tight hero-main-heading">
                     Better Insurance for<br>
                     <span class="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">North Carolina</span>
                 </h1>
 
                 <!-- Insurance Types - Compact -->
-                <div class="text-center my-3 text-lg font-semibold text-gray-800 tracking-wide">
+                <div class="text-center my-5 text-lg md:text-3xl font-semibold text-gray-800 tracking-wide">
                     🚗 Auto  |  🏠 Home  |  💼 Business
                 </div>
 
@@ -2520,13 +2539,21 @@
 
     <!-- JavaScript -->
     <script>
-        // Header scroll effect
+        // Header scroll effect & Hide mobile urgency banner on scroll
         window.addEventListener('scroll', function() {
             const header = document.getElementById('main-header');
-            if (window.scrollY > 50) {
+            const urgencyBanner = document.getElementById('urgency-banner-mobile');
+
+            if (window.scrollY > 20) {
                 header.classList.add('scrolled');
+                if (urgencyBanner) {
+                    urgencyBanner.classList.add('hidden');
+                }
             } else {
                 header.classList.remove('scrolled');
+                if (urgencyBanner) {
+                    urgencyBanner.classList.remove('hidden');
+                }
             }
         });
 
