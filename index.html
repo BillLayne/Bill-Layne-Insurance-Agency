@@ -106,42 +106,6 @@
             line-height: 1.2;
         }
 
-        /* Urgency Banner - Mobile Only */
-        .urgency-banner-mobile {
-            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-            color: white;
-            padding: 0.75rem 1rem;
-            text-align: center;
-            font-weight: 600;
-            font-size: 0.875rem;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 52;
-            transition: transform 0.3s ease;
-        }
-
-        .urgency-banner-mobile.hidden {
-            transform: translateY(-100%);
-        }
-
-        .urgency-banner-mobile .blink {
-            animation: blink 2s ease-in-out infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        /* Hide banner on desktop */
-        @media (min-width: 1024px) {
-            .urgency-banner-mobile {
-                display: none;
-            }
-        }
-
         /* Clean Header Design */
         .modern-header {
             position: fixed;
@@ -277,214 +241,394 @@
             transform: rotate(45deg) translate(-5px, -6px);
         }
 
-        /* Enhanced Hero Section - MOBILE OPTIMIZED */
+        /* ========================================= */
+        /* NEW MOBILE-OPTIMIZED HERO SECTION */
+        /* ========================================= */
+
         .hero-modern {
-            padding-top: 0;
-            padding-bottom: 1rem;
-            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+            padding-top: 100px;
+            padding-bottom: 20px;
+            background: linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%);
             position: relative;
             overflow: hidden;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
         }
 
         @media (min-width: 768px) {
             .hero-modern {
-                padding-top: 0;
-                padding-bottom: 1rem;
+                padding-top: 120px;
+                padding-bottom: 60px;
+                min-height: auto;
             }
         }
-        
 
-        .hero-modern::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: radial-gradient(circle at 1px 1px, rgb(226 232 240 / 30%) 1px, transparent 1px);
-            background-size: 40px 40px;
-            pointer-events: none;
+        @media (min-width: 1024px) {
+            .hero-modern {
+                padding-top: 140px;
+                padding-bottom: 80px;
+            }
         }
 
         .hero-content {
             max-width: 1280px;
             margin: 0 auto;
-            padding: 5rem 1rem 0;
+            padding: 0 20px;
             text-align: center;
             position: relative;
             z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            width: 100%;
         }
 
-        @media (min-width: 768px) {
-            .hero-content {
-                padding: 4rem 1.5rem 0;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .hero-content {
-                padding: 6rem 1.5rem 0;
-            }
-        }
-
-        /* Hero Main Heading - Mobile spacing */
-        .hero-main-heading {
-            margin-bottom: 0.25rem;
-        }
-
-        @media (min-width: 768px) {
-            .hero-main-heading {
-                margin-bottom: 1rem;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .hero-main-heading {
-                margin-bottom: 1rem;
-            }
-        }
-
-        /* Trust Badge Enhancement */
-        .hero-badge {
+        /* 1. Trust Badge */
+        .hero-trust-badge {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.6rem 1.2rem;
-            margin-top: 0;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
+            gap: 8px;
+            padding: 12px 20px;
+            background: white;
+            border-radius: 999px;
+            font-size: 0.875rem;
             font-weight: 700;
             color: #1e40af;
-            background: #dbeafe;
-            border-radius: 9999px;
-            border: 2px solid #3b82f6;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 24px;
+            animation: fadeInDown 0.6s ease;
+        }
+
+        .hero-trust-badge i {
+            color: #fbbf24;
         }
 
         @media (min-width: 768px) {
-            .hero-badge {
-                padding: 0.75rem 1.5rem;
-                margin-bottom: 1.5rem;
+            .hero-trust-badge {
                 font-size: 1rem;
+                padding: 14px 24px;
+                margin-bottom: 32px;
             }
         }
 
-        @media (min-width: 1024px) {
-            .hero-badge {
-                padding: 0.875rem 1.75rem;
-                font-size: 1.1rem;
-            }
-        }
-
-        /* Savings Highlight - OPTIMIZED FOR MOBILE */
-        .savings-highlight {
-            display: inline-block;
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            padding: 1rem 1.75rem;
-            border-radius: 9999px;
-            font-size: 1.25rem;
-            font-weight: 900;
-            margin: 0.75rem 0;
-            box-shadow: 0 10px 25px -3px rgba(16, 185, 129, 0.5);
-            border: 3px solid #047857;
-        }
-
-        .savings-amount-hero {
+        /* 2. Main Headline - MOBILE FIRST */
+        .hero-headline-mobile {
             font-size: 2rem;
             font-weight: 900;
-            color: #fef08a;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        @media (min-width: 768px) {
-            .savings-highlight {
-                font-size: 1.1rem;
-                padding: 0.6rem 1.25rem;
-                margin: 0.5rem 0;
-            }
-            .savings-amount-hero {
-                font-size: 1.5rem;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .savings-highlight {
-                font-size: 1.2rem;
-                padding: 0.7rem 1.5rem;
-            }
-            .savings-amount-hero {
-                font-size: 1.75rem;
-            }
-        }
-
-        .hero-title {
-            font-size: 3rem;
-            font-weight: 900;
             line-height: 1.1;
-            color: var(--text-gray);
-            margin-bottom: 1rem;
-            letter-spacing: -0.04em;
-            text-align: center;
-            width: 100%;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            color: #1e293b;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+            animation: fadeInUp 0.6s ease 0.2s both;
         }
 
-        .hero-title .text-gradient {
-            display: block;
-            font-size: 3.5rem;
-            line-height: 1;
-            margin-top: 0.25rem;
+        .text-gradient {
+            font-size: 2.75rem;
             font-weight: 900;
+            background: linear-gradient(135deg, #2563eb 0%, #10b981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            margin: 8px 0;
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         @media (min-width: 768px) {
-            .hero-title {
-                font-size: 4.5rem;
-                margin-top: 3rem;
-                margin-bottom: 0.5rem;
-                letter-spacing: -0.05em;
+            .hero-headline-mobile {
+                font-size: 3.5rem;
+                margin-bottom: 24px;
             }
 
-            .hero-title .text-gradient {
+            .text-gradient {
+                font-size: 4.5rem;
                 display: inline;
-                font-size: 5rem;
-                margin-top: 0;
+                margin: 0;
             }
         }
 
         @media (min-width: 1024px) {
-            .hero-title {
-                font-size: 5rem;
-                margin-top: 4rem;
+            .hero-headline-mobile {
+                font-size: 4.5rem;
             }
 
-            .hero-title .text-gradient {
+            .text-gradient {
                 font-size: 5.5rem;
             }
         }
 
-        .hero-description {
-            font-size: 0.875rem;
-            color: var(--text-gray-secondary);
-            max-width: 100%;
-            width: 100%;
-            margin: 0 auto 0.75rem;
-            line-height: 1.4;
-            text-align: center;
-            padding: 0 0.5rem;
+        /* 3. Sub-headline */
+        .hero-subheadline-mobile {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #475569;
+            margin-bottom: 32px;
+            padding: 0 8px;
+            animation: fadeInUp 0.6s ease 0.4s both;
+        }
+
+        .hero-subheadline-mobile strong {
+            color: #1e293b;
+            font-weight: 700;
         }
 
         @media (min-width: 768px) {
-            .hero-description {
-                font-size: 0.875rem;
-                max-width: 48rem;
-                margin: 0 auto 0.5rem;
-                line-height: 1.4;
+            .hero-subheadline-mobile {
+                font-size: 1.125rem;
+                margin-bottom: 40px;
                 padding: 0;
+            }
+        }
+
+        /* 4. Primary CTA */
+        .btn-primary-hero {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: calc(100% - 32px);
+            max-width: 400px;
+            padding: 20px 32px;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            font-size: 1.125rem;
+            font-weight: 700;
+            border-radius: 16px;
+            text-decoration: none;
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4);
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.6s ease 0.6s both;
+        }
+
+        .btn-primary-hero:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(37, 99, 235, 0.5);
+        }
+
+        .btn-primary-hero:active {
+            transform: translateY(1px);
+            box-shadow: 0 5px 15px -5px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-subtext {
+            font-size: 0.75rem;
+            font-weight: 500;
+            opacity: 0.9;
+            margin-top: 6px;
+            letter-spacing: 0.02em;
+        }
+
+        @media (min-width: 768px) {
+            .btn-primary-hero {
+                width: auto;
+                padding: 24px 48px;
+                font-size: 1.25rem;
+            }
+
+            .btn-subtext {
+                font-size: 0.875rem;
+            }
+        }
+
+        /* 5. Secondary CTA */
+        .hero-secondary-cta {
+            font-size: 0.9375rem;
+            color: #64748b;
+            margin-bottom: 32px;
+            animation: fadeInUp 0.6s ease 0.8s both;
+        }
+
+        .text-link-bold {
+            color: #2563eb;
+            font-weight: 700;
+            text-decoration: none;
+            border-bottom: 2px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        .text-link-bold:hover {
+            border-bottom-color: #2563eb;
+        }
+
+        @media (min-width: 768px) {
+            .hero-secondary-cta {
+                font-size: 1rem;
+            }
+        }
+
+        /* 6. Coverage Icons */
+        .coverage-icons-mobile {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: #475569;
+            animation: fadeInUp 0.6s ease 1s both;
+            margin-bottom: 0;
+        }
+
+        .coverage-icons-mobile span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        @media (min-width: 768px) {
+            .coverage-icons-mobile {
+                font-size: 1rem;
+                gap: 32px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ========================================= */
+        /* CARRIERS IN HERO - MOBILE ONLY */
+        /* ========================================= */
+
+        .carriers-in-hero-mobile {
+            display: block;
+            margin-top: 24px;
+            text-align: center;
+            animation: fadeInUp 0.6s ease 1.2s both;
+        }
+
+        .carriers-intro-hero {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+        }
+
+        /* Mobile: 2-column grid with 6 cards (all carriers including Foremost) */
+        .carrier-grid-hero-mobile {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            max-width: 380px;
+            margin: 0 auto;
+        }
+
+        .carrier-card-hero-mobile {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 12px;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .carrier-card-hero-mobile:active {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+
+        .carrier-card-hero-mobile img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+            max-width: 100%;
+        }
+
+        /* Hide carriers in hero on desktop */
+        @media (min-width: 768px) {
+            .carriers-in-hero-mobile {
+                display: none !important;
+            }
+        }
+
+        /* ========================================= */
+        /* CARRIERS SECTION - DESKTOP ONLY (Below Hero) */
+        /* ========================================= */
+
+        .carriers-section-desktop {
+            display: none !important; /* Force hidden on mobile */
+        }
+
+        @media (min-width: 768px) {
+            .carriers-section-desktop {
+                display: block !important;
+                padding: 48px 20px;
+                background: white;
+                text-align: center;
+            }
+        }
+
+        .carriers-intro {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 32px;
+        }
+
+        /* Desktop: Single row with flex */
+        .carrier-grid-desktop {
+            display: none; /* Hidden by default */
+        }
+
+        @media (min-width: 768px) {
+            .carrier-grid-desktop {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                align-items: center;
+                gap: 32px;
+                max-width: 900px;
+                margin: 0 auto;
+            }
+
+            .carrier-grid-desktop a {
+                transition: transform 0.3s ease;
+            }
+
+            .carrier-grid-desktop a:hover {
+                transform: scale(1.1);
+            }
+
+            .carrier-grid-desktop img {
+                height: 48px;
+                width: auto;
+                object-fit: contain;
+            }
+
+            .carrier-grid-desktop img.travelers-logo {
+                height: 60px !important;
             }
         }
 
@@ -543,90 +687,6 @@
         .btn-success:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-xl);
-        }
-
-        /* Social Proof Bar - MOBILE OPTIMIZED TO SINGLE ROW */
-        .social-proof-bar {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 0.25rem;
-            margin: 0.5rem auto;
-            padding: 0.5rem 0.25rem;
-            background: white;
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            max-width: 98%;
-            width: 98%;
-        }
-
-        @media (min-width: 768px) {
-            .social-proof-bar {
-                gap: 1rem;
-                padding: 0.5rem;
-                margin: 0.5rem auto;
-                max-width: 56rem;
-                width: auto;
-            }
-        }
-
-        .proof-item {
-            text-align: center;
-        }
-
-        .proof-number {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: var(--primary-blue);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.25rem;
-            line-height: 1;
-        }
-
-        @media (min-width: 768px) {
-            .proof-number {
-                font-size: 1.25rem;
-            }
-        }
-
-        .proof-label {
-            font-size: 0.5rem;
-            color: var(--text-light);
-            text-transform: uppercase;
-            letter-spacing: 0.01em;
-            margin-top: 0.15rem;
-            line-height: 1;
-            white-space: nowrap;
-        }
-
-        @media (min-width: 768px) {
-            .proof-label {
-                font-size: 0.6rem;
-                letter-spacing: 0.05em;
-                white-space: normal;
-            }
-        }
-
-        /* Risk Reversal Badge */
-        .guarantee-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: #fef3c7;
-            border: 2px solid #fbbf24;
-            border-radius: 9999px;
-            font-weight: 600;
-            font-size: 0.75rem;
-            color: #92400e;
-            margin: 0.5rem 0;
-        }
-
-        @media (min-width: 768px) {
-            .guarantee-badge {
-                display: none;
-            }
         }
 
         /* Clean Service Cards */
@@ -790,87 +850,6 @@
             font-size: 1.125rem;
         }
 
-        /* Partner Logos */
-        .partners-section {
-            padding: 3rem 0;
-            background: white;
-        }
-
-        .partners-container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
-
-        .partners-title {
-            text-align: center;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-light);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 2rem;
-        }
-
-        .partners-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 2rem 3rem;
-        }
-
-        .partner-logo {
-            height: 2rem;
-            width: auto;
-            object-fit: contain;
-            filter: grayscale(100%);
-            opacity: 0.7;
-            transition: all 0.3s ease;
-        }
-
-        @media (min-width: 768px) {
-            .partner-logo {
-                height: 2.5rem;
-            }
-        }
-
-        .partner-logo:hover {
-            filter: grayscale(0%);
-            opacity: 1;
-        }
-
-        /* Carrier Cards for Mobile */
-        .carrier-card {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-            background: white;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-            min-height: 80px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .carrier-card:hover {
-            border-color: #3b82f6;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-            transform: translateY(-2px);
-        }
-
-        .carrier-card:active {
-            transform: translateY(0);
-        }
-
-        .carrier-logo {
-            height: 48px;
-            width: auto;
-            max-width: 100%;
-            object-fit: contain;
-        }
-
         /* Email Capture */
         .email-capture {
             max-width: 32rem;
@@ -962,24 +941,6 @@
         @media (min-width: 768px) {
             .container {
                 padding: 0 1.5rem;
-            }
-        }
-
-        .text-gradient {
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-green) 50%, #2563eb 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradient-shift 3s ease infinite;
-            background-size: 200% auto;
-        }
-
-        @keyframes gradient-shift {
-            0%, 100% {
-                background-position: 0% center;
-            }
-            50% {
-                background-position: 100% center;
             }
         }
 
@@ -1558,11 +1519,6 @@
 </head>
 
 <body class="bg-gray-50 text-gray-800 leading-relaxed">
-    <!-- Urgency Banner - Mobile Only -->
-    <div id="urgency-banner-mobile" class="urgency-banner-mobile">
-        <span class="blink">🔥</span> <strong>Start Saving Today:</strong> Customers Can Save an average of $847/year! <strong>Call now:</strong> (336) 835-1993
-    </div>
-
     <!-- Menu Overlay -->
     <div id="menu-overlay" class="menu-overlay"></div>
 
@@ -1649,117 +1605,105 @@
     </div>
 
     <main>
-        <!-- Enhanced Hero Section - MOBILE OPTIMIZED -->
+        <!-- ========================================= -->
+        <!-- NEW MOBILE-OPTIMIZED HERO SECTION -->
+        <!-- ========================================= -->
         <section class="hero-modern">
             <div class="hero-content">
-                <h1 class="text-4xl md:text-6xl lg:text-8xl font-black text-gray-800 text-center leading-tight tracking-tight hero-main-heading">
-                    Better Insurance for<br class="hidden lg:block">
-                    <span class="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">North Carolina</span>
+                
+                <!-- 1. Trust Badge First -->
+                <div class="hero-trust-badge">
+                    <i class="fas fa-star"></i>
+                    <span>4.9/5 • 20+ Years • 1,500+ NC Families</span>
+                </div>
+
+                <!-- 2. Emotional Headline with Specific Savings -->
+                <h1 class="hero-headline-mobile">
+                    North Carolina Families<br>
+                    <span class="text-gradient">Save $847/Year</span><br>
+                    on Better Coverage
                 </h1>
 
-                <!-- Social Proof Bar - SINGLE ROW ON MOBILE - MOVED UP FOR TRUST -->
-                <div class="social-proof-bar">
-                    <div class="proof-item">
-                        <span class="proof-number">20+</span>
-                        <span class="proof-label">Years</span>
-                    </div>
-                    <div class="proof-item">
-                        <span class="proof-number">4.9★</span>
-                        <span class="proof-label">Rating</span>
-                    </div>
-                    <div class="proof-item">
-                        <span class="proof-number">1,500+</span>
-                        <span class="proof-label">Families</span>
-                    </div>
-                    <div class="proof-item">
-                        <span class="proof-number">10+</span>
-                        <span class="proof-label">Carriers</span>
-                    </div>
-                </div>
-
-                <!-- Insurance Types - Compact -->
-                <div class="text-center mt-2 mb-5 md:my-5 text-xl md:text-3xl font-semibold text-gray-800 tracking-wide">
-                    🚗 Auto  |  🏠 Home  |  💼 Business
-                </div>
-
-                <div class="savings-highlight pulse">
-                    💰 Customers Can Save <span class="savings-amount-hero">$847</span>/Year Average
-                </div>
-
-                <p class="text-base md:text-lg text-gray-600 text-center max-w-3xl mx-auto mb-6 leading-relaxed">
-                    As an independent agency, we compare quotes from <strong class="text-gray-800">10+ top-rated carriers</strong> to find you the best coverage at the lowest price.
+                <!-- 3. Your Unique Value -->
+                <p class="hero-subheadline-mobile">
+                    We compare <strong>10+ top carriers</strong> to find you the best price.<br>
+                    That's the independent agency advantage.
                 </p>
 
-                <!-- Primary CTAs -->
-                <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center items-center mb-3 sm:mb-6">
-                    <a href="get-quote.html" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 sm:py-4 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 w-full sm:w-auto justify-center">
-                        <i class="fas fa-calculator"></i>
-                        Get Free Quote
-                    </a>
-                    <a href="tel:3368351993" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 sm:py-4 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 w-full sm:w-auto justify-center">
-                        <i class="fas fa-phone-alt"></i>
-                        Call: (336) 835-1993
-                    </a>
-                    <button id="hero-ai-btn" class="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white font-semibold px-8 py-3 sm:py-4 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 w-full sm:w-auto justify-center">
-                        <i class="fas fa-robot"></i>
-                        Ask AI Assistant
-                    </button>
+                <!-- 4. Single Primary CTA -->
+                <a href="get-quote.html" class="btn-primary-hero">
+                    Compare Prices Now
+                    <span class="btn-subtext">Free • No Obligation • 5 Minutes</span>
+                </a>
+
+                <!-- 5. Secondary Option (Less Prominent) -->
+                <div class="hero-secondary-cta">
+                    Prefer to talk? <a href="tel:3368351993" class="text-link-bold">Call (336) 835-1993</a>
                 </div>
 
-                <!-- Guarantee Badge -->
-                <div class="guarantee-badge">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Free Quote • No Obligation • No Pressure</span>
+                <!-- 6. Coverage Types (Minimal) -->
+                <div class="coverage-icons-mobile">
+                    <span>🚗 Auto</span>
+                    <span>🏠 Home</span>
+                    <span>💼 Business</span>
                 </div>
 
-                <!-- Partners/Carriers Section -->
-                <div class="mt-4" style="width: 100%; text-align: center; max-width: 900px; margin-left: auto; margin-right: auto;">
-                    <h3 class="text-center text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3" style="margin-left: auto; margin-right: auto;">We Compare Quotes From These Top-Rated Carriers</h3>
-
-                    <!-- Mobile: 2-column grid with cards -->
-                    <div class="grid grid-cols-2 gap-4 md:hidden px-4">
-                        <a href="/carriers/nationwide.html" class="carrier-card">
-                            <img src="https://i.imgur.com/Mv5V7tV.png" alt="Nationwide Insurance" class="carrier-logo" loading="lazy">
+                <!-- 7. Carriers Section - MOBILE ONLY (In Hero) -->
+                <div class="carriers-in-hero-mobile">
+                    <p class="carriers-intro-hero">We shop these top-rated carriers for you:</p>
+                    
+                    <!-- Mobile: 2-column grid with 6 cards (all carriers including Foremost) -->
+                    <div class="carrier-grid-hero-mobile">
+                        <a href="/carriers/nationwide.html" class="carrier-card-hero-mobile">
+                            <img src="https://i.imgur.com/Mv5V7tV.png" alt="Nationwide Insurance" loading="lazy">
                         </a>
-                        <a href="/carriers/progressive.html" class="carrier-card">
-                            <img src="https://i.imgur.com/K6kTnTa.png" alt="Progressive Insurance" class="carrier-logo" loading="lazy">
+                        <a href="/carriers/progressive.html" class="carrier-card-hero-mobile">
+                            <img src="https://i.imgur.com/K6kTnTa.png" alt="Progressive Insurance" loading="lazy">
                         </a>
-                        <a href="/carriers/travelers.html" class="carrier-card">
-                            <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Travelers%20Logo.webp?raw=true" alt="Travelers Insurance" class="carrier-logo" style="height: 60px !important;" loading="lazy">
+                        <a href="/carriers/travelers.html" class="carrier-card-hero-mobile">
+                            <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Travelers%20Logo.webp?raw=true" alt="Travelers Insurance" style="height: 60px !important;" loading="lazy">
                         </a>
-                        <a href="/carriers/national-general.html" class="carrier-card">
-                            <img src="https://i.imgur.com/HF8oPAF.png" alt="National General Insurance" class="carrier-logo" loading="lazy">
+                        <a href="/carriers/national-general.html" class="carrier-card-hero-mobile">
+                            <img src="https://i.imgur.com/HF8oPAF.png" alt="National General Insurance" loading="lazy">
                         </a>
-                        <a href="/carriers/alamance.html" class="carrier-card">
-                            <img src="https://imgur.com/CNFRCZc.png" alt="Alamance Insurance" class="carrier-logo" loading="lazy">
+                        <a href="/carriers/alamance.html" class="carrier-card-hero-mobile">
+                            <img src="https://imgur.com/CNFRCZc.png" alt="Alamance Insurance" loading="lazy">
                         </a>
-                        <a href="/carriers/foremost.html" class="carrier-card">
-                            <img src="https://i.imgur.com/rHIo4r5.jpg" alt="Foremost Insurance" class="carrier-logo" loading="lazy">
-                        </a>
-                    </div>
-
-                    <!-- Desktop: Single row with flex -->
-                    <div class="hidden md:flex flex-wrap justify-center items-center gap-8">
-                        <a href="/carriers/nationwide.html" class="transition-transform hover:scale-110">
-                            <img src="https://i.imgur.com/Mv5V7tV.png" alt="Nationwide Insurance" class="h-12 w-auto object-contain" loading="lazy">
-                        </a>
-                        <a href="/carriers/progressive.html" class="transition-transform hover:scale-110">
-                            <img src="https://i.imgur.com/K6kTnTa.png" alt="Progressive Insurance" class="h-12 w-auto object-contain" loading="lazy">
-                        </a>
-                        <a href="/carriers/travelers.html" class="transition-transform hover:scale-110">
-                            <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Travelers%20Logo.webp?raw=true" alt="Travelers Insurance" class="w-auto object-contain" style="height: 60px;" loading="lazy">
-                        </a>
-                        <a href="/carriers/national-general.html" class="transition-transform hover:scale-110">
-                            <img src="https://i.imgur.com/HF8oPAF.png" alt="National General Insurance" class="h-12 w-auto object-contain" loading="lazy">
-                        </a>
-                        <a href="/carriers/alamance.html" class="transition-transform hover:scale-110">
-                            <img src="https://imgur.com/CNFRCZc.png" alt="Alamance Insurance" class="h-12 w-auto object-contain" loading="lazy">
-                        </a>
-                        <a href="/carriers/foremost.html" class="transition-transform hover:scale-110">
-                            <img src="https://i.imgur.com/rHIo4r5.jpg" alt="Foremost Insurance" class="h-10 w-auto object-contain" loading="lazy">
+                        <a href="/carriers/foremost.html" class="carrier-card-hero-mobile">
+                            <img src="https://i.imgur.com/rHIo4r5.jpg" alt="Foremost Insurance" loading="lazy">
                         </a>
                     </div>
                 </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================= -->
+        <!-- CARRIERS SECTION - DESKTOP ONLY (Below Hero) -->
+        <!-- ========================================= -->
+        <section class="carriers-section-desktop">
+            <p class="carriers-intro">We shop these top-rated carriers for you:</p>
+            
+            <!-- Desktop: Single row with flex -->
+            <div class="carrier-grid-desktop">
+                <a href="/carriers/nationwide.html">
+                    <img src="https://i.imgur.com/Mv5V7tV.png" alt="Nationwide Insurance" loading="lazy">
+                </a>
+                <a href="/carriers/progressive.html">
+                    <img src="https://i.imgur.com/K6kTnTa.png" alt="Progressive Insurance" loading="lazy">
+                </a>
+                <a href="/carriers/travelers.html">
+                    <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Travelers%20Logo.webp?raw=true" alt="Travelers Insurance" class="travelers-logo" loading="lazy">
+                </a>
+                <a href="/carriers/national-general.html">
+                    <img src="https://i.imgur.com/HF8oPAF.png" alt="National General Insurance" loading="lazy">
+                </a>
+                <a href="/carriers/alamance.html">
+                    <img src="https://imgur.com/CNFRCZc.png" alt="Alamance Insurance" loading="lazy">
+                </a>
+                <a href="/carriers/foremost.html">
+                    <img src="https://i.imgur.com/rHIo4r5.jpg" alt="Foremost Insurance" loading="lazy">
+                </a>
             </div>
         </section>
 
@@ -2559,21 +2503,14 @@
 
     <!-- JavaScript -->
     <script>
-        // Header scroll effect & Hide mobile urgency banner on scroll
+        // Header scroll effect
         window.addEventListener('scroll', function() {
             const header = document.getElementById('main-header');
-            const urgencyBanner = document.getElementById('urgency-banner-mobile');
 
             if (window.scrollY > 20) {
                 header.classList.add('scrolled');
-                if (urgencyBanner) {
-                    urgencyBanner.classList.add('hidden');
-                }
             } else {
                 header.classList.remove('scrolled');
-                if (urgencyBanner) {
-                    urgencyBanner.classList.remove('hidden');
-                }
             }
         });
 
