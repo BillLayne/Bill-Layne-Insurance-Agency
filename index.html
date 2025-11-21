@@ -142,6 +142,9 @@
     </script>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased selection:bg-brand-200 selection:text-brand-900 pb-[72px] md:pb-0">
+    
+    <!-- Root div for React mounting -->
+    <div id="root">
 
     <!-- Navbar -->
     <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 top-0 py-4">
@@ -424,8 +427,53 @@
         </div>
     </section>
 
-    <!-- Services Section -->
+    <!-- How It Works Section (New) -->
     <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Switching is Easier Than You Think</h2>
+                <p class="text-lg text-slate-600 max-w-2xl mx-auto">We handle the heavy lifting. 3 simple steps to better coverage.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-12 text-center relative">
+                <!-- Connecting Line (Desktop) -->
+                <div class="hidden md:block absolute top-12 left-0 w-full h-1 bg-slate-100 -z-10 transform translate-y-1/2"></div>
+
+                <!-- Step 1 -->
+                <div class="bg-white p-6">
+                    <div class="w-24 h-24 bg-brand-100 rounded-full flex items-center justify-center text-brand-600 mx-auto mb-6 shadow-md border-4 border-white relative">
+                        <i data-lucide="file-text" class="w-10 h-10"></i>
+                        <div class="absolute -top-2 -right-2 w-8 h-8 bg-brand-600 text-white rounded-full flex items-center justify-center font-bold border-4 border-white">1</div>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Share Your Details</h3>
+                    <p class="text-slate-600 leading-relaxed">Call us, email us, or upload your current policy. We just need the basics to get started.</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="bg-white p-6">
+                    <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mx-auto mb-6 shadow-md border-4 border-white relative">
+                        <i data-lucide="search" class="w-10 h-10"></i>
+                        <div class="absolute -top-2 -right-2 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold border-4 border-white">2</div>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">We Shop For You</h3>
+                    <p class="text-slate-600 leading-relaxed">We compare rates from 10+ top carriers to find the exact coverage you need at the best price.</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="bg-white p-6">
+                    <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center text-green-600 mx-auto mb-6 shadow-md border-4 border-white relative">
+                        <i data-lucide="smile" class="w-10 h-10"></i>
+                        <div class="absolute -top-2 -right-2 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold border-4 border-white">3</div>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">You Save & Sign</h3>
+                    <p class="text-slate-600 leading-relaxed">We present your options, handle the paperwork, and help you switch. You enjoy the savings.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="py-20 bg-slate-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="text-center mb-16">
                 <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Comprehensive Coverage</h2>
@@ -434,8 +482,8 @@
 
             <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                 <!-- Auto Card -->
-                <div class="group relative overflow-hidden rounded-3xl bg-slate-50 p-8 md:p-12 border border-slate-100 hover:shadow-2xl transition-all duration-300">
-                    <div class="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center text-brand-600 text-2xl mb-6 group-hover:scale-110 transition-transform">
+                <div class="group relative overflow-hidden rounded-3xl bg-white p-8 md:p-12 border border-slate-100 hover:shadow-2xl transition-all duration-300">
+                    <div class="w-16 h-16 bg-brand-50 rounded-2xl shadow-sm flex items-center justify-center text-brand-600 text-2xl mb-6 group-hover:scale-110 transition-transform">
                         <i data-lucide="car" class="w-8 h-8"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-slate-900 mb-4">Auto Insurance</h3>
@@ -471,7 +519,7 @@
     </section>
 
     <!-- About Us Section -->
-    <section id="about" class="py-20 bg-slate-50">
+    <section id="about" class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                 <div class="text-center lg:text-left">
@@ -874,6 +922,8 @@
             <span class="text-[10px] font-bold">Map</span>
         </a>
     </div>
+    
+    </div> <!-- End #root -->
 
     <!-- Chat Widget -->
     <div id="chat-widget-container" class="fixed z-50 flex flex-col items-end transition-all duration-300 bottom-4 right-4 md:bottom-8 md:right-8 pointer-events-none">
@@ -965,9 +1015,9 @@
                 drawerContent.classList.add('translate-x-full');
             }
         }
-        menuBtn.addEventListener('click', () => toggleDrawer(true));
-        drawerClose.addEventListener('click', () => toggleDrawer(false));
-        drawerOverlay.addEventListener('click', () => toggleDrawer(false));
+        if (menuBtn) menuBtn.addEventListener('click', () => toggleDrawer(true));
+        if (drawerClose) drawerClose.addEventListener('click', () => toggleDrawer(false));
+        if (drawerOverlay) drawerOverlay.addEventListener('click', () => toggleDrawer(false));
 
         // FAQ Accordion Logic
         document.querySelectorAll('.faq-item button').forEach(button => {
@@ -1070,9 +1120,6 @@ Guidelines:
             
             try {
                 // Handle API Key safely
-                // Note: On GitHub Pages, process.env won't exist. 
-                // If you deploy this, you must replace process.env.API_KEY with your actual key string
-                // or use a build process.
                 let apiKey = "";
                 try {
                      apiKey = process.env.API_KEY;
@@ -1166,13 +1213,15 @@ Guidelines:
             if (el) el.remove();
         }
 
-        chatForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const text = chatInput.value.trim();
-            if (!text) return;
-            chatInput.value = '';
-            sendMessage(text);
-        });
+        if(chatForm) {
+            chatForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const text = chatInput.value.trim();
+                if (!text) return;
+                chatInput.value = '';
+                sendMessage(text);
+            });
+        }
 
     </script>
 </body>
