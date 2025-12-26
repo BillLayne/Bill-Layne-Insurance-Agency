@@ -62,6 +62,13 @@
     </script>
     <style>
         body { -webkit-tap-highlight-color: transparent; }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
         .bg-vivid-hero {
             background: radial-gradient(circle at top right, #4338ca, #1e1b4b);
             position: relative;
@@ -148,8 +155,8 @@
         <span class="animate-pulse mr-2">🔴</span> NC Insurance Rates updated for <span id="current-date-display">2025</span>. <a href="https://billlayneinsurance.com/get-quote" class="underline decoration-accent-400 decoration-2 underline-offset-2 hover:text-accent-300">Lock in your rate today &rarr;</a>
     </div>
 
-    <!-- NAVIGATION (Static/Absolute Position) -->
-    <nav id="navbar" class="absolute w-full z-50 top-10 h-20 bg-transparent">
+    <!-- NAVIGATION (Sticky to prevent blocking, Z-Index adjusted) -->
+    <nav id="navbar" class="sticky top-0 w-full z-50 h-20 bg-transparent transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex justify-between items-center">
             <a href="index.html" class="flex flex-col leading-none group relative z-50">
                 <span id="nav-logo-text" class="text-xl md:text-2xl font-display font-black tracking-tight transition-colors text-white">
@@ -208,8 +215,8 @@
         </div>
     </div>
 
-    <!-- HERO SECTION (High Conversion) -->
-    <header id="home" class="relative pt-32 pb-16 md:pt-40 md:pb-24 bg-vivid-hero text-white overflow-hidden min-h-[80vh] flex items-center">
+    <!-- HERO SECTION (High Conversion - Negative Margin Added) -->
+    <header id="home" class="-mt-20 relative pt-32 pb-16 md:pt-40 md:pb-24 bg-vivid-hero text-white overflow-hidden min-h-[80vh] flex items-center">
         <!-- CINEMATIC BACKGROUND IMAGE (Mobile & Desktop Texture) -->
         <div class="absolute inset-0 z-0">
             <img src="https://raw.githubusercontent.com/BillLayne/bill-layne-images/617faee947d0b12e42abfd584cd1e9a473c55444/logos/family%20image%20photo.webp" alt="Background Texture" class="w-full h-full object-cover opacity-10 mix-blend-overlay">
@@ -835,6 +842,50 @@
             const closeChat = document.getElementById('close-chat');
             const chatInput = document.getElementById('chat-input');
             const chatForm = document.getElementById('chat-form');
+
+            // Scroll Effects - Handle Sticky Header Appearance
+            window.addEventListener('scroll', () => {
+                const scrolled = window.scrollY > 50; // Increased threshold to match urgency bar height
+                // Add glass background
+                navbar.classList.toggle('glass-nav', scrolled);
+                navbar.classList.toggle('bg-transparent', !scrolled);
+                
+                // Adjust height
+                navbar.classList.toggle('h-16', scrolled);
+                navbar.classList.toggle('h-20', !scrolled);
+                
+                // Change text colors for contrast on white background
+                const logoText = document.getElementById('nav-logo-text');
+                const logoAccent = document.getElementById('nav-logo-accent');
+                const tagline = document.getElementById('nav-tagline');
+                const phoneBtn = document.getElementById('nav-phone-btn');
+                const hamburgerLines = document.querySelectorAll('.nav-hamburger-line');
+
+                if (logoText) {
+                    logoText.classList.toggle('text-white', !scrolled);
+                    logoText.classList.toggle('text-slate-900', scrolled);
+                }
+                if (logoAccent) {
+                    logoAccent.classList.toggle('text-accent-400', !scrolled);
+                    logoAccent.classList.toggle('text-primary-600', scrolled);
+                }
+                if (tagline) {
+                    tagline.classList.toggle('text-indigo-200', !scrolled);
+                    tagline.classList.toggle('text-slate-500', scrolled);
+                }
+                
+                // Phone button border logic (if needed, but it has own bg-white style usually)
+                if (phoneBtn) {
+                    phoneBtn.classList.toggle('border-slate-100', !scrolled);
+                    phoneBtn.classList.toggle('border-slate-200', scrolled);
+                }
+
+                // Hamburger lines color
+                hamburgerLines.forEach(line => {
+                    line.classList.toggle('bg-white', !scrolled);
+                    line.classList.toggle('bg-slate-900', scrolled);
+                });
+            });
 
             // Mobile Menu Logic
             const toggleMenu = (show) => {
