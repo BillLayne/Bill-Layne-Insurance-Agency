@@ -70,25 +70,76 @@
     </script>
     <style>
         body { -webkit-tap-highlight-color: transparent; }
-        
-        /* FIX: Ensure all links/buttons react instantly on touch (removes 300ms delay) */
+
+        /* CRITICAL MOBILE FIX: Make all links fully tappable */
         a, button, input, [role="button"] {
             touch-action: manipulation;
             cursor: pointer;
+            -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+        }
+
+        /* CRITICAL: Ensure link containers are fully clickable on mobile */
+        a.block, a.group {
+            position: relative;
+            z-index: 1;
+            display: block;
+        }
+
+        /* CRITICAL: All children inside links must pass clicks to parent */
+        a > *, a.block > *, a.group > * {
+            pointer-events: none;
+        }
+
+        /* Re-enable pointer events only for nested interactive elements */
+        a button, a input, a a {
+            pointer-events: auto;
+        }
+
+        /* Ensure decorative/absolute elements don't block clicks */
+        a .absolute, a [class*="absolute"] {
+            pointer-events: none !important;
+        }
+
+        /* Mobile-specific: larger touch targets and instant response */
+        @media (max-width: 768px) {
+            a, button {
+                min-height: 44px;
+                position: relative;
+            }
+
+            /* Ensure menu links are fully tappable */
+            #menu-drawer a {
+                display: block;
+                width: 100%;
+                padding: 16px !important;
+                position: relative;
+                z-index: 10;
+            }
+
+            #menu-drawer a > * {
+                pointer-events: none;
+            }
         }
 
         /* FIX: Disable hover effects on touch devices to prevent double-tap issues */
         @media (hover: none) {
             .hover\:scale-105:hover,
             .group:hover .group-hover\:scale-110,
-            .hover\:-translate-y-1:hover { 
-                transform: none !important; 
+            .hover\:-translate-y-1:hover,
+            .hover\:-translate-y-2:hover {
+                transform: none !important;
             }
-            .btn-shine::after { 
-                display: none !important; 
+            .btn-shine::after {
+                display: none !important;
             }
-            .hover\:shadow-xl:hover {
-                box-shadow: none !important;
+            .hover\:shadow-xl:hover,
+            .hover\:shadow-2xl:hover {
+                box-shadow: inherit !important;
+            }
+
+            /* Remove all hover state changes on touch */
+            a:hover, button:hover {
+                transform: none !important;
             }
         }
 
@@ -270,7 +321,7 @@
     <!-- HERO SECTION (High Conversion - Negative Margin) -->
     <header id="home" class="-mt-20 relative pt-32 pb-16 md:pt-40 md:pb-24 bg-vivid-hero text-white overflow-hidden min-h-[80vh] flex items-center">
         <!-- CINEMATIC BACKGROUND IMAGE -->
-        <div class="absolute inset-0 z-0">
+        <div class="absolute inset-0 z-0 pointer-events-none">
             <img src="https://i.imgur.com/ayxaUyZ.jpeg" alt="Bill Layne shaking hands with a client - Local Insurance Agent in Elkin NC" class="w-full h-full object-cover opacity-20 mix-blend-overlay" style="object-position: center 30%;">
             <div class="absolute inset-0 bg-gradient-to-b from-slate-900/80 to-slate-900/95"></div>
         </div>
@@ -1431,6 +1482,28 @@
                     link.addEventListener('click', () => toggleMenu(false));
                 });
             }
+
+            // CRITICAL MOBILE FIX: Force all links to work on touch devices
+            document.querySelectorAll('a[href]').forEach(link => {
+                // Handle touch events directly for mobile
+                link.addEventListener('touchend', function(e) {
+                    const href = this.getAttribute('href');
+                    if (href && href !== '#' && !href.startsWith('javascript:')) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        // Small delay to allow visual feedback
+                        setTimeout(() => {
+                            if (href.startsWith('tel:') || href.startsWith('mailto:')) {
+                                window.location.href = href;
+                            } else if (this.target === '_blank') {
+                                window.open(href, '_blank');
+                            } else {
+                                window.location.href = href;
+                            }
+                        }, 100);
+                    }
+                }, { passive: false });
+            });
 
             // Accordion Logic
             document.querySelectorAll('.accordion-btn').forEach(btn => {
