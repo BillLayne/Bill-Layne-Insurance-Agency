@@ -69,77 +69,58 @@
         }
     </script>
     <style>
-        body { -webkit-tap-highlight-color: transparent; }
-
-        /* CRITICAL MOBILE FIX: Make all links fully tappable */
-        a, button, input, [role="button"] {
+        /* ============================================
+           MOBILE-FIRST TOUCH FIX - CLEAN APPROACH
+           ============================================ */
+        
+        /* Enable tap highlight for visual feedback on mobile */
+        a, button, input[type="submit"], [role="button"] {
+            -webkit-tap-highlight-color: rgba(59, 130, 246, 0.2);
             touch-action: manipulation;
             cursor: pointer;
-            -webkit-tap-highlight-color: rgba(0,0,0,0.1);
         }
 
-        /* CRITICAL: Ensure link containers are fully clickable on mobile */
-        a.block, a.group {
-            position: relative;
-            z-index: 1;
+        /* Ensure links have proper display */
+        a.block, a.flex {
             display: block;
         }
-
-        /* CRITICAL: All children inside links must pass clicks to parent */
-        a > *, a.block > *, a.group > * {
-            pointer-events: none;
+        
+        a.inline-flex {
+            display: inline-flex;
         }
 
-        /* Re-enable pointer events only for nested interactive elements */
-        a button, a input, a a {
-            pointer-events: auto;
-        }
-
-        /* Ensure decorative/absolute elements don't block clicks */
-        a .absolute, a [class*="absolute"] {
-            pointer-events: none !important;
-        }
-
-        /* Mobile-specific: larger touch targets and instant response */
+        /* Mobile touch targets - minimum 44px for accessibility */
         @media (max-width: 768px) {
             a, button {
                 min-height: 44px;
-                position: relative;
             }
-
-            /* Ensure menu links are fully tappable */
+            
+            /* Menu drawer links - enhanced touch targets */
             #menu-drawer a {
-                display: block;
+                display: flex !important;
+                align-items: center;
                 width: 100%;
-                padding: 16px !important;
-                position: relative;
-                z-index: 10;
-            }
-
-            #menu-drawer a > * {
-                pointer-events: none;
+                min-height: 56px;
             }
         }
 
-        /* FIX: Disable hover effects on touch devices to prevent double-tap issues */
-        @media (hover: none) {
+        /* Disable hover transforms on touch devices to prevent double-tap zoom */
+        @media (hover: none) and (pointer: coarse) {
             .hover\:scale-105:hover,
+            .hover\:scale-\[1\.02\]:hover,
             .group:hover .group-hover\:scale-110,
             .hover\:-translate-y-1:hover,
             .hover\:-translate-y-2:hover {
                 transform: none !important;
             }
+            
             .btn-shine::after {
                 display: none !important;
             }
+            
             .hover\:shadow-xl:hover,
             .hover\:shadow-2xl:hover {
                 box-shadow: inherit !important;
-            }
-
-            /* Remove all hover state changes on touch */
-            a:hover, button:hover {
-                transform: none !important;
             }
         }
 
@@ -1140,7 +1121,7 @@
                     <p class="text-slate-500 italic mb-10 leading-relaxed font-medium">"We treat every client like family. My job isn't just to sell you a policy, it's to ensure you're protected when life happens."</p>
                     <div class="flex gap-4">
                         <a href="tel:3368351993" class="flex-1 bg-slate-900 text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-slate-800 transition-colors">Call Office</a>
-                        <a href="mailto:save@billlayneinsurance.com" class="flex-1 bg-slate-50 text-slate-700 py-4 rounded-2xl font-bold border border-slate-200 hover:bg-slate-100 transition-colors">Email</a>
+                        <a href="/cdn-cgi/l/email-protection#86f5e7f0e3c6e4efeaeaeae7ffe8e3efe8f5f3f4e7e8e5e3a8e5e9eb" class="flex-1 bg-slate-50 text-slate-700 py-4 rounded-2xl font-bold border border-slate-200 hover:bg-slate-100 transition-colors">Email</a>
                     </div>
                 </div>
             </div>
@@ -1384,7 +1365,7 @@
     </div>
 
     <!-- UI SCRIPTS (Must run even if AI fails) -->
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         document.addEventListener('DOMContentLoaded', () => {
             // Dynamic Date
             const dateEl = document.getElementById('current-date-display');
@@ -1476,34 +1457,15 @@
             if(menuClose) menuClose.addEventListener('click', () => toggleMenu(false));
             if(menuOverlay) menuOverlay.addEventListener('click', () => toggleMenu(false));
 
-            // Auto-close menu when any link is clicked
+            // Auto-close menu when any link inside drawer is clicked
             if(menuDrawer) {
                 menuDrawer.querySelectorAll('a').forEach(link => {
                     link.addEventListener('click', () => toggleMenu(false));
                 });
             }
 
-            // CRITICAL MOBILE FIX: Force all links to work on touch devices
-            document.querySelectorAll('a[href]').forEach(link => {
-                // Handle touch events directly for mobile
-                link.addEventListener('touchend', function(e) {
-                    const href = this.getAttribute('href');
-                    if (href && href !== '#' && !href.startsWith('javascript:')) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        // Small delay to allow visual feedback
-                        setTimeout(() => {
-                            if (href.startsWith('tel:') || href.startsWith('mailto:')) {
-                                window.location.href = href;
-                            } else if (this.target === '_blank') {
-                                window.open(href, '_blank');
-                            } else {
-                                window.location.href = href;
-                            }
-                        }, 100);
-                    }
-                }, { passive: false });
-            });
+            // MOBILE FIX: Let browser handle links natively - no custom touchend needed
+            // The previous touchend handler was interfering with iOS Safari touch handling
 
             // Accordion Logic
             document.querySelectorAll('.accordion-btn').forEach(btn => {
@@ -1648,11 +1610,4 @@
                     errBubble.className = 'flex justify-center my-2';
                     errBubble.innerHTML = `<span class="bg-red-50 text-red-500 text-[10px] font-bold px-3 py-1 rounded-full border border-red-100 uppercase tracking-wide">Please Call (336) 835-1993</span>`;
                     chatMessages.appendChild(errBubble);
-                    console.error("Chat Error:", err);
-                }
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            };
-        }
-    </script>
-</body>
-</html>
+                    console.error("Chat Erro
