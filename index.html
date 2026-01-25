@@ -37,6 +37,7 @@
                             50: '#eff6ff', 100: '#dbeafe', 400: '#60a5fa', 500: '#3b82f6',
                             600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a',
                         },
+                        // UPDATED: Deeper "Slate" for darkest backgrounds
                         slate: {
                             900: '#0f172a', 
                         },
@@ -69,6 +70,28 @@
     </script>
     <style>
         body { -webkit-tap-highlight-color: transparent; }
+        
+        /* FIX: Ensure all links/buttons react instantly on touch (removes 300ms delay) */
+        a, button, input, [role="button"] {
+            touch-action: manipulation;
+            cursor: pointer;
+        }
+
+        /* FIX: Disable hover effects on touch devices to prevent double-tap issues */
+        @media (hover: none) {
+            .hover\:scale-105:hover,
+            .group:hover .group-hover\:scale-110,
+            .hover\:-translate-y-1:hover { 
+                transform: none !important; 
+            }
+            .btn-shine::after { 
+                display: none !important; 
+            }
+            .hover\:shadow-xl:hover {
+                box-shadow: none !important;
+            }
+        }
+
         .glass-nav {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
@@ -229,8 +252,8 @@
         <div class="flex-1 overflow-y-auto p-4 space-y-2">
             <a href="index.html" class="group block p-4 rounded-xl bg-primary-50 text-primary-700 font-bold flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-primary-600 shadow-sm"><i class="fas fa-home"></i></div> Home</a>
             <a href="areas-we-serve.html" class="group block p-4 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-4 transition-colors"><div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center text-purple-500 group-hover:scale-110 transition-transform"><i class="fas fa-map-marked-alt"></i></div> Areas We Serve</a>
-            <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="group block p-4 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-4 transition-colors"><div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform"><i class="fas fa-car"></i></div> Auto Center</a>
-            <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="group block p-4 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-4 transition-colors"><div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center text-green-500 group-hover:scale-110 transition-transform"><i class="fas fa-house"></i></div> Home Insurance</a>
+            <a href="https://billlayneinsurance.com/get-quote" class="group block p-4 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-4 transition-colors"><div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform"><i class="fas fa-car"></i></div> Auto Center</a>
+            <a href="https://billlayneinsurance.com/get-quote" class="group block p-4 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-4 transition-colors"><div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center text-green-500 group-hover:scale-110 transition-transform"><i class="fas fa-house"></i></div> Home Insurance</a>
             <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="group block p-4 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-4 transition-colors"><div class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform"><i class="fas fa-file-medical-alt"></i></div> Claims Center</a>
             <a href="https://billlayne.github.io/Resources/" class="group block p-4 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-4 transition-colors"><div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center text-orange-500 group-hover:scale-110 transition-transform"><i class="fas fa-book"></i></div> Resources</a>
             <a href="https://billlayne.github.io/ethereal-blog-landing/" target="_blank" class="group block p-4 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-4 transition-colors"><div class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-500 group-hover:scale-110 transition-transform"><i class="fas fa-blog"></i></div> Blog</a>
@@ -1239,16 +1262,13 @@
             <div>
                 <h4 class="text-white font-bold text-lg mb-6 tracking-wide uppercase">Bill Layne Insurance</h4>
                 <p class="text-sm leading-loose opacity-60">Protecting North Carolina families and businesses since 2004. As an independent agency, we work for you, not the insurance companies.</p>
-                <!-- TRUST BADGE: IIANC Member -->
-                <div class="mt-4 flex items-center gap-2 text-xs font-bold text-primary-500">
-                    <i class="fas fa-certificate"></i> Proud Member of IIANC
-                </div>
             </div>
             <div>
                 <h5 class="text-white font-bold mb-6 text-sm uppercase tracking-widest">Connect</h5>
                 <ul class="space-y-4 text-sm">
                     <li><a href="tel:3368351993" class="hover:text-primary-400 transition-colors"><i class="fas fa-phone-alt text-primary-500 mr-2"></i> (336) 835-1993</a></li>
                     <li><i class="fas fa-map-marker-alt text-primary-500 mr-2"></i> 1283 N Bridge St, Elkin, NC</li>
+                    <li><i class="fas fa-clock text-primary-500 mr-2"></i> Mon-Fri: 9am - 5pm</li>
                 </ul>
             </div>
             <div>
@@ -1258,9 +1278,9 @@
             <div>
                 <h5 class="text-white font-bold mb-6 text-sm uppercase tracking-widest">Follow Us</h5>
                 <div class="flex gap-4">
-                    <a href="https://www.facebook.com/dollarbillagency/" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary-600 transition-all text-white" aria-label="Visit our Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.youtube.com/@ncautoandhome" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-red-600 transition-all text-white" aria-label="Visit our YouTube"><i class="fab fa-youtube"></i></a>
-                    <a href="https://x.com/shopsavecompare" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-slate-700 transition-all text-white" aria-label="Visit our Twitter"><i class="fab fa-x-twitter"></i></a>
+                    <a href="https://www.facebook.com/dollarbillagency/" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary-600 transition-all text-white"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.youtube.com/@ncautoandhome" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-red-600 transition-all text-white"><i class="fab fa-youtube"></i></a>
+                    <a href="https://x.com/shopsavecompare" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-slate-700 transition-all text-white"><i class="fab fa-x-twitter"></i></a>
                 </div>
             </div>
         </div>
@@ -1270,7 +1290,7 @@
     </footer>
 
     <!-- MOBILE DOCK (Sticky Conversion Bar) -->
-    <div class="md:hidden fixed bottom-0 left-0 w-full z-[60] glass-nav border-t border-slate-200 shadow-[0_-10px_30px_rgba(0,0,0,0.1)] pb-safe h-20 flex items-center px-6 gap-4">
+    <div class="md:hidden fixed bottom-0 left-0 w-full z-[80] glass-nav border-t border-slate-200 shadow-[0_-10px_30px_rgba(0,0,0,0.1)] pb-safe h-20 flex items-center px-6 gap-4">
         <a href="tel:3368351993" class="flex-1 h-12 rounded-xl bg-slate-100 text-slate-700 font-bold flex items-center justify-center gap-2 active:scale-95 transition-transform">
             <i class="fas fa-phone-alt"></i> Call
         </a>
