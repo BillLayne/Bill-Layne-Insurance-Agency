@@ -241,8 +241,8 @@
     </nav>
 
     <!-- MOBILE DRAWER -->
-    <div id="menu-overlay" class="fixed inset-0 bg-slate-900/60 z-[60] backdrop-blur-md transition-opacity duration-300 opacity-0 pointer-events-none"></div>
-    <div id="menu-drawer" class="fixed top-0 right-0 w-[85vw] md:w-96 h-full bg-white z-[70] shadow-2xl transform translate-x-full transition-transform duration-500 flex flex-col">
+    <div id="menu-overlay" class="fixed inset-0 bg-slate-900/60 z-[90] backdrop-blur-md transition-opacity duration-300 opacity-0 pointer-events-none"></div>
+    <div id="menu-drawer" class="fixed top-0 right-0 w-[85vw] md:w-96 h-full bg-white z-[100] shadow-2xl transform translate-x-full transition-transform duration-500 flex flex-col">
         <div class="p-6 flex justify-between items-center border-b border-slate-100 bg-slate-50">
             <h3 class="text-lg font-display font-black text-slate-900">Agency Menu</h3>
             <button id="menu-close" class="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-slate-200 text-slate-500 hover:text-red-500 transition-colors">
@@ -1424,6 +1424,13 @@
             if(menuBtn) menuBtn.addEventListener('click', () => toggleMenu(true));
             if(menuClose) menuClose.addEventListener('click', () => toggleMenu(false));
             if(menuOverlay) menuOverlay.addEventListener('click', () => toggleMenu(false));
+
+            // Auto-close menu when any link is clicked
+            if(menuDrawer) {
+                menuDrawer.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => toggleMenu(false));
+                });
+            }
 
             // Accordion Logic
             document.querySelectorAll('.accordion-btn').forEach(btn => {
