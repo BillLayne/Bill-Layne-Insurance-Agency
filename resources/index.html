@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Insurance Resources & Tools | Bill Layne Insurance Agency</title>
+    <meta name="description" content="Free insurance tools, calculators, and resources for North Carolina residents. Get coverage estimates, compare policies, and learn about NC insurance laws.">
+    <link rel="canonical" href="../resources/index.html">
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Insurance Resources & Tools - Bill Layne Insurance Agency">
+    <meta property="og:description" content="Access free insurance calculators, educational guides, and money-saving resources. Licensed NC agency serving Elkin, Mount Airy & Surry County.">
+    <meta property="og:image" content="https://i.imgur.com/cBAgeX8.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="/resources/">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eef2ff', 100: '#e0e7ff', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 900: '#312e81',
+                        },
+                        accent: {
+                            400: '#fbbf24', 500: '#f59e0b', 600: '#d97706',
+                        },
+                        teal: { 50: '#f0fdfa', 100: '#ccfbf1', 500: '#14b8a6', 600: '#0d9488' },
+                        blue: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb' },
+                        green: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#22c55e', 600: '#16a34a' },
+                        purple: { 50: '#faf5ff', 100: '#f3e8ff', 500: '#a855f7', 600: '#9333ea' },
+                        slate: { 800: '#1e293b', 900: '#0f172a' }
+                    },
+                    animation: {
+                        'blob': 'blob 10s infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulse-glow 3s infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        },
+                        'pulse-glow': {
+                            '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+                            '50%': { opacity: '0.8', transform: 'scale(1.05)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { -webkit-tap-highlight-color: transparent; }
+        
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255,255,255,0.5);
+        }
+        
+        .bg-vivid-hero {
+            background: radial-gradient(circle at top right, #0d9488, #2563eb);
+        }
+        
+        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Scroll Progress Bar */
+        #scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(to right, #2dd4bf, #3b82f6);
+            z-index: 100;
+            width: 0%;
+            transition: width 0.1s;
+        }
+        
+        /* Search Input Styling */
+        .search-container {
+            position: relative;
+            z-index: 20;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .search-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 1rem 3rem 1rem 1.5rem;
+            border-radius: 9999px;
+            font-size: 1.125rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-input::placeholder { color: rgba(255, 255, 255, 0.8); }
+        
+        .search-input:focus {
+            background: white;
+            color: #1e293b;
+            outline: none;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .search-input:focus::placeholder { color: #94a3b8; }
+        
+        .search-icon {
+            position: absolute;
+            right: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.8);
+            pointer-events: none;
+            transition: color 0.3s;
+        }
+        
+        .search-input:focus + .search-icon { color: #6366f1; }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0"
+  }
+}
+</script>
+</head>
+
+<body class="bg-slate-50 text-slate-800 font-sans overflow-x-hidden selection:bg-teal-200 selection:text-teal-900">
+
+    <!-- Scroll Progress Bar -->
+    <div id="scroll-progress"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 top-0 h-24 bg-transparent">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
+            <div class="flex justify-between items-center h-full">
+                <a href="../index.html" class="flex flex-col leading-none group relative z-50">
+                    <span id="nav-logo-text" class="text-2xl font-display font-extrabold tracking-tight transition-colors text-white">
+                        Bill Layne <span id="nav-logo-accent" class="text-teal-300">Insurance</span>
+                    </span>
+                    <span id="nav-tagline" class="text-[10px] font-bold uppercase tracking-widest mt-1 transition-colors text-teal-100">
+                        Resources & Tools
+                    </span>
+                </a>
+
+                <div class="flex items-center gap-4">
+                    <a href="tel:3368351993" class="hidden md:flex items-center font-bold text-slate-700 hover:text-teal-600 transition-colors bg-white px-5 py-2.5 rounded-full shadow-sm border border-slate-100 text-sm">
+                        <i class="fas fa-phone-alt mr-2 text-teal-500"></i>(336) 835-1993
+                    </a>
+                    <a href="../get-quote.html" class="hidden md:block bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 text-white px-7 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-teal-500/30 transition-all hover:scale-105 active:scale-95">
+                        Get Free Quote
+                    </a>
+                    <button id="menu-toggle" class="p-3 rounded-full transition-colors focus:outline-none hover:bg-white/10 text-white" aria-label="Open Menu">
+                        <div class="w-6 h-5 flex flex-col justify-between relative">
+                            <span class="nav-hamburger-line w-full h-0.5 rounded-full transition-all duration-300 bg-white"></span>
+                            <span class="nav-hamburger-line w-full h-0.5 rounded-full transition-all duration-300 bg-white"></span>
+                            <span class="nav-hamburger-line w-full h-0.5 rounded-full transition-all duration-300 bg-white"></span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Drawer -->
+    <div id="menu-overlay" class="fixed inset-0 bg-slate-900/60 z-[60] backdrop-blur-sm transition-opacity duration-300 opacity-0 pointer-events-none"></div>
+    <div id="menu-drawer" class="fixed top-0 right-0 w-80 max-w-full h-full bg-white z-[70] shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="p-6 flex justify-between items-center border-b border-slate-100">
+            <h3 class="text-lg font-display font-bold text-slate-900">Menu</h3>
+            <button id="menu-close" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 text-slate-500 hover:bg-slate-100 transition-colors">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="flex-1 overflow-y-auto p-4 space-y-1">
+            <a href="../index.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-home w-6 text-primary-500"></i> Home</a>
+            <a href="../areas-we-serve.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-map-marked-alt w-6 text-purple-500"></i> Areas We Serve</a>
+            <a href="../auto-center/index.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-car w-6 text-blue-500"></i> Auto Insurance Center</a>
+            <a href="../home-insurance/index.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-home w-6 text-green-500"></i> Home Insurance</a>
+            <a href="../claims-center/index.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-file-medical-alt w-6 text-red-500"></i> Claims Center</a>
+            <a href="../resources/index.html" class="block p-3 rounded-xl bg-orange-50 text-orange-600 font-bold flex items-center gap-3"><i class="fas fa-book w-6"></i> Resources</a>
+            <a href="../blog/index.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3" ><i class="fas fa-blog w-6 text-indigo-500"></i> Blog</a>
+            <a href="../videos/index.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-video w-6 text-teal-500"></i> Videos</a>
+            <a href="../service-center.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-concierge-bell w-6 text-emerald-500"></i> Service Center</a>
+        <a href="../contact-us.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-envelope w-6 text-slate-400"></i> Contact Us</a>
+        </div>
+        <div class="p-6 border-t border-slate-100 bg-slate-50">
+            <a href="tel:3368351993" class="block w-full py-4 bg-slate-900 text-white text-center rounded-xl font-bold shadow-lg hover:bg-slate-800 transition-colors">Call Now</a>
+        </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-vivid-hero text-white min-h-[60vh] flex items-center">
+        <!-- Background Blobs -->
+        <div class="absolute top-[-20%] left-[-10%] w-[80%] h-[60%] bg-teal-500 rounded-full blur-[100px] opacity-40 animate-blob"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[80%] h-[60%] bg-blue-600 rounded-full blur-[100px] opacity-40 animate-blob animation-delay-2000"></div>
+        
+        <!-- Mobile Gradient Overlay -->
+        <div class="absolute inset-0 z-0 lg:hidden bg-gradient-to-b from-slate-900/60 via-slate-900/70 to-slate-900/90 pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full text-center">
+            <div class="reveal active">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-xs font-bold uppercase tracking-wider mb-8 shadow-lg">
+                    <i class="fas fa-book-reader text-accent-400"></i> Free Tools & Guides
+                </div>
+                <h1 class="text-4xl md:text-6xl lg:text-7xl font-display font-extrabold leading-[1.1] mb-6 drop-shadow-2xl">
+                    Smart Decisions.<br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-200 via-white to-blue-200">Better Coverage.</span>
+                </h1>
+                <p class="text-lg md:text-xl text-teal-100 mb-6 max-w-2xl mx-auto font-medium leading-relaxed drop-shadow-lg">
+                    Free tools, calculators, and guides to help you make informed insurance decisions and save money in North Carolina.
+                </p>
+                <p class="text-sm text-teal-200/80 mb-10 max-w-xl mx-auto">
+                    As an independent agency, we work for <strong class="text-white">you</strong> - not the insurance companies. These resources help you understand your options.
+                </p>
+                
+                <!-- Instant Search Bar -->
+                <div class="search-container mb-12">
+                    <input type="text" id="resourceSearch" placeholder="Search guides, forms, calculators..." class="search-input">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                
+                <!-- Visual Service Icons -->
+                <div class="flex justify-center gap-6 sm:gap-12 mb-8">
+                    <a href="#calculators" class="flex flex-col items-center gap-2 group cursor-pointer text-white hover:text-teal-200 transition-colors">
+                        <div class="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-3xl shadow-lg group-hover:scale-110 transition-transform bg-teal-500/20">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <span class="text-xs font-bold uppercase tracking-wider">Calculators</span>
+                    </a>
+                    <a href="#guides" class="flex flex-col items-center gap-2 group cursor-pointer text-white hover:text-blue-200 transition-colors">
+                        <div class="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-3xl shadow-lg group-hover:scale-110 transition-transform bg-blue-500/20">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <span class="text-xs font-bold uppercase tracking-wider">Guides</span>
+                    </a>
+                    <a href="#savings" class="flex flex-col items-center gap-2 group cursor-pointer text-white hover:text-green-200 transition-colors">
+                        <div class="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-3xl shadow-lg group-hover:scale-110 transition-transform bg-green-500/20">
+                            <i class="fas fa-piggy-bank"></i>
+                        </div>
+                        <span class="text-xs font-bold uppercase tracking-wider">Savings</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN CONTENT LAYOUT -->
+    <section class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-12">
+                
+                <!-- Sticky Sidebar -->
+                <div class="lg:col-span-4 space-y-8">
+                    <!-- Quick Access Tools -->
+                    <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 reveal sticky top-32">
+                        <h3 class="font-bold text-xl text-slate-800 mb-6 flex items-center gap-3">
+                            <i class="fas fa-bolt text-teal-500"></i> Quick Tools
+                        </h3>
+                        <div class="space-y-3">
+                            <a href="auto-coverage-analyzer.html" class="flex items-center p-4 bg-blue-50 rounded-2xl hover:bg-blue-100 transition-all group border border-blue-100">
+                                <div class="w-10 h-10 rounded-full bg-white text-blue-600 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-car"></i></div>
+                                <span class="ml-4 font-bold text-blue-900 text-sm">Auto Analyzer</span>
+                            </a>
+                            <a href="homeowners-estimator.html" class="flex items-center p-4 bg-green-50 rounded-2xl hover:bg-green-100 transition-all group border border-green-100">
+                                <div class="w-10 h-10 rounded-full bg-white text-green-600 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-home"></i></div>
+                                <span class="ml-4 font-bold text-green-900 text-sm">Home Estimator</span>
+                            </a>
+                            <a href="nc-insurance-laws-guide.html" class="flex items-center p-4 bg-purple-50 rounded-2xl hover:bg-purple-100 transition-all group border border-purple-100">
+                                <div class="w-10 h-10 rounded-full bg-white text-purple-600 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-gavel"></i></div>
+                                <span class="ml-4 font-bold text-purple-900 text-sm">NC Laws Guide</span>
+                            </a>
+                            <a href="https://mynolossform.com/" target="_blank" class="flex items-center p-4 bg-teal-50 rounded-2xl hover:bg-teal-100 transition-all group border border-teal-100">
+                                <div class="w-10 h-10 rounded-full bg-white text-teal-600 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-shield-alt"></i></div>
+                                <span class="ml-4 font-bold text-teal-900 text-sm">No Loss Form</span>
+                            </a>
+                            <a href="https://thecancellationform.com/" target="_blank" class="flex items-center p-4 bg-red-50 rounded-2xl hover:bg-red-100 transition-all group border border-red-100">
+                                <div class="w-10 h-10 rounded-full bg-white text-red-600 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-times-circle"></i></div>
+                                <span class="ml-4 font-bold text-red-900 text-sm">Cancel Form</span>
+                            </a>
+                            <a href="https://billlayne.github.io/myinsurancephoto/#/" target="_blank" class="flex items-center p-4 bg-amber-50 rounded-2xl hover:bg-amber-100 transition-all group border border-amber-100">
+                                <div class="w-10 h-10 rounded-full bg-white text-amber-600 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-camera"></i></div>
+                                <span class="ml-4 font-bold text-amber-900 text-sm">My Insurance Photo</span>
+                            </a>
+                            <a href="https://nc-home-inventory.tiiny.site" target="_blank" class="flex items-center p-4 bg-cyan-50 rounded-2xl hover:bg-cyan-100 transition-all group border border-cyan-100">
+                                <div class="w-10 h-10 rounded-full bg-white text-cyan-600 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-clipboard-list"></i></div>
+                                <span class="ml-4 font-bold text-cyan-900 text-sm">Contents Calculator</span>
+                            </a>
+                        </div>
+
+                        <!-- Sidebar CTA -->
+                        <div class="mt-8 pt-8 border-t border-slate-100">
+                            <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 text-center text-white shadow-lg">
+                                <h4 class="font-bold text-lg mb-2">Need Help?</h4>
+                                <p class="text-sm text-slate-300 mb-4">Our licensed agents can walk you through any tool.</p>
+                                <a href="tel:3368351993" class="w-full block bg-white text-slate-900 text-center py-3 rounded-xl font-bold hover:bg-slate-100 transition-colors shadow-md">
+                                    <i class="fas fa-phone-alt mr-2"></i> (336) 835-1993
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="lg:col-span-8">
+                    
+                    <!-- Calculators Section -->
+                    <div id="calculators" class="mb-16 reveal section-container">
+                        <div class="flex items-center gap-4 mb-8">
+                            <div class="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600 text-2xl shadow-sm"><i class="fas fa-calculator"></i></div>
+                            <div>
+                                <h2 class="text-3xl font-display font-bold text-slate-900">Interactive Calculators</h2>
+                                <p class="text-slate-500">Get personalized insurance numbers.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <a href="auto-coverage-analyzer.html" class="resource-card group bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden" data-name="auto coverage analyzer calculator">
+                                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full opacity-50 group-hover:bg-blue-100 transition-colors"></div>
+                                <div class="relative z-10">
+                                    <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 text-2xl mb-6 shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-car"></i></div>
+                                    <h3 class="text-xl font-bold text-slate-900 mb-2">Auto Coverage Analyzer</h3>
+                                    <p class="text-slate-600 text-sm leading-relaxed mb-4">Find the right coverage levels for your vehicles based on NC requirements.</p>
+                                    <span class="text-blue-600 font-bold text-sm flex items-center gap-2 group-hover:gap-3 transition-all">Analyze Now <i class="fas fa-arrow-right"></i></span>
+                                </div>
+                            </a>
+                            <a href="homeowners-estimator.html" class="resource-card group bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden" data-name="homeowners estimator calculator">
+                                <div class="absolute top-0 right-0 w-32 h-32 bg-green-50 rounded-bl-full opacity-50 group-hover:bg-green-100 transition-colors"></div>
+                                <div class="relative z-10">
+                                    <div class="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 text-2xl mb-6 shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-home"></i></div>
+                                    <h3 class="text-xl font-bold text-slate-900 mb-2">Homeowners Estimator</h3>
+                                    <p class="text-slate-600 text-sm leading-relaxed mb-4">Estimate replacement costs and personal property valuation for your home.</p>
+                                    <span class="text-green-600 font-bold text-sm flex items-center gap-2 group-hover:gap-3 transition-all">Estimate Now <i class="fas fa-arrow-right"></i></span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Guides Section -->
+                    <div id="guides" class="mb-16 reveal section-container">
+                        <div class="flex items-center gap-4 mb-8">
+                            <div class="w-12 h-12 rounded-2xl bg-purple-100 flex items-center justify-center text-purple-600 text-2xl shadow-sm"><i class="fas fa-book-open"></i></div>
+                            <div>
+                                <h2 class="text-3xl font-display font-bold text-slate-900">Educational Guides</h2>
+                                <p class="text-slate-500">Learn about requirements and best practices.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <a href="nc-insurance-laws-guide.html" class="resource-card group bg-white p-6 rounded-3xl border border-slate-100 hover:border-purple-200 hover:shadow-lg transition-all" data-name="nc insurance laws guide">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0"><i class="fas fa-gavel"></i></div>
+                                    <div>
+                                        <h3 class="font-bold text-slate-900 mb-1">NC Laws Guide</h3>
+                                        <p class="text-sm text-slate-500 mb-2">State minimums & rights.</p>
+                                        <span class="text-xs font-bold text-purple-600 uppercase tracking-wide">Read Guide</span>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="claims-process-guide.html" class="resource-card group bg-white p-6 rounded-3xl border border-slate-100 hover:border-orange-200 hover:shadow-lg transition-all" data-name="claims process guide">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center flex-shrink-0"><i class="fas fa-clipboard-list"></i></div>
+                                    <div>
+                                        <h3 class="font-bold text-slate-900 mb-1">Claims Process</h3>
+                                        <p class="text-sm text-slate-500 mb-2">Step-by-step filing guide.</p>
+                                        <span class="text-xs font-bold text-orange-600 uppercase tracking-wide">Read Guide</span>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="guides/hwy-21-yard-sales/index.html" class="resource-card group bg-white p-6 rounded-3xl border border-slate-100 hover:border-indigo-200 hover:shadow-lg transition-all" data-name="hwy 21 yard sales guide">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0"><i class="fas fa-road"></i></div>
+                                    <div>
+                                        <h3 class="font-bold text-slate-900 mb-1">Hwy 21 Yard Sales</h3>
+                                        <p class="text-sm text-slate-500 mb-2">Complete route guide.</p>
+                                        <span class="text-xs font-bold text-indigo-600 uppercase tracking-wide">Read Guide</span>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="guides/auto-insurance-changes/index.html" class="resource-card group bg-white p-6 rounded-3xl border border-slate-100 hover:border-red-200 hover:shadow-lg transition-all" data-name="auto insurance changes law">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 rounded-full bg-red-50 text-red-600 flex items-center justify-center flex-shrink-0"><i class="fas fa-car-burst"></i></div>
+                                    <div>
+                                        <h3 class="font-bold text-slate-900 mb-1">Auto Law Updates</h3>
+                                        <p class="text-sm text-slate-500 mb-2">Recent changes in NC.</p>
+                                        <span class="text-xs font-bold text-red-600 uppercase tracking-wide">Read Guide</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Life Stages Section -->
+                    <div id="life-stages" class="mb-16 reveal section-container">
+                        <div class="flex items-center gap-4 mb-8">
+                            <div class="w-12 h-12 rounded-2xl bg-pink-100 flex items-center justify-center text-pink-600 text-2xl shadow-sm"><i class="fas fa-users"></i></div>
+                            <div>
+                                <h2 class="text-3xl font-display font-bold text-slate-900">Life Stages</h2>
+                                <p class="text-slate-500">Tailored guidance for every milestone.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <a href="life-stages/new-parents/index.html" class="resource-card bg-white p-6 rounded-2xl border border-slate-100 text-center hover:shadow-md transition-all hover:-translate-y-1" data-name="new parents family">
+                                <div class="w-12 h-12 bg-pink-50 rounded-full flex items-center justify-center text-pink-500 mx-auto mb-3"><i class="fas fa-baby"></i></div>
+                                <h4 class="font-bold text-slate-800">New Parents</h4>
+                            </a>
+                            <a href="life-stages/first-time-buyers/index.html" class="resource-card bg-white p-6 rounded-2xl border border-slate-100 text-center hover:shadow-md transition-all hover:-translate-y-1" data-name="first time home buyers">
+                                <div class="w-12 h-12 bg-yellow-50 rounded-full flex items-center justify-center text-yellow-500 mx-auto mb-3"><i class="fas fa-key"></i></div>
+                                <h4 class="font-bold text-slate-800">Home Buyers</h4>
+                            </a>
+                            <a href="life-stages/small-business/index.html" class="resource-card bg-white p-6 rounded-2xl border border-slate-100 text-center hover:shadow-md transition-all hover:-translate-y-1" data-name="small business owners">
+                                <div class="w-12 h-12 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-500 mx-auto mb-3"><i class="fas fa-briefcase"></i></div>
+                                <h4 class="font-bold text-slate-800">Business Owners</h4>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Local Savings Section -->
+                    <div id="savings" class="mb-16 reveal section-container">
+                        <div class="flex items-center gap-4 mb-8">
+                            <div class="w-12 h-12 rounded-2xl bg-green-100 flex items-center justify-center text-green-600 text-2xl shadow-sm"><i class="fas fa-piggy-bank"></i></div>
+                            <div>
+                                <h2 class="text-3xl font-display font-bold text-slate-900">Local Savings Guides</h2>
+                                <p class="text-slate-500">Exclusive deals for our neighbors.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid gap-6">
+                            <a href="/insurance-elkin-nc.html" target="_blank" class="resource-card group bg-white p-6 rounded-[2rem] border-2 border-green-100 hover:border-green-400 hover:shadow-lg transition-all flex flex-col sm:flex-row items-center gap-6" data-name="elkin savings deals">
+                                <div class="flex-shrink-0 w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 text-3xl"><i class="fas fa-map-marker-alt"></i></div>
+                                <div class="flex-1 text-center sm:text-left">
+                                    <div class="flex items-center justify-center sm:justify-start gap-3 mb-2">
+                                        <h3 class="text-xl font-bold text-slate-900">Elkin Savings</h3>
+                                        <span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded-full animate-pulse">LIVE</span>
+                                    </div>
+                                    <p class="text-slate-500 text-sm mb-3">Grocery deals, gas prices, and local discounts in Elkin.</p>
+                                    <div class="flex flex-wrap justify-center sm:justify-start gap-2">
+                                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md">Groceries</span>
+                                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md">Gas</span>
+                                    </div>
+                                </div>
+                                <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-green-600 group-hover:translate-x-1 transition-transform"><i class="fas fa-chevron-right"></i></div>
+                            </a>
+
+                            <a href="/insurance-mount-airy-nc.html" target="_blank" class="resource-card group bg-white p-6 rounded-[2rem] border-2 border-green-100 hover:border-green-400 hover:shadow-lg transition-all flex flex-col sm:flex-row items-center gap-6" data-name="mount airy savings deals">
+                                <div class="flex-shrink-0 w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 text-3xl"><i class="fas fa-mountain"></i></div>
+                                <div class="flex-1 text-center sm:text-left">
+                                    <div class="flex items-center justify-center sm:justify-start gap-3 mb-2">
+                                        <h3 class="text-xl font-bold text-slate-900">Mount Airy Savings</h3>
+                                        <span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded-full animate-pulse">LIVE</span>
+                                    </div>
+                                    <p class="text-slate-500 text-sm mb-3">Discounts for Mayberry residents.</p>
+                                    <div class="flex flex-wrap justify-center sm:justify-start gap-2">
+                                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md">Dining</span>
+                                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md">Events</span>
+                                    </div>
+                                </div>
+                                <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-green-600 group-hover:translate-x-1 transition-transform"><i class="fas fa-chevron-right"></i></div>
+                            </a>
+                            
+                            <a href="/insurance-wilkesboro-nc.html" target="_blank" class="resource-card group bg-white p-6 rounded-[2rem] border-2 border-green-100 hover:border-green-400 hover:shadow-lg transition-all flex flex-col sm:flex-row items-center gap-6" data-name="wilkesboro savings deals">
+                                <div class="flex-shrink-0 w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 text-3xl"><i class="fas fa-music"></i></div>
+                                <div class="flex-1 text-center sm:text-left">
+                                    <div class="flex items-center justify-center sm:justify-start gap-3 mb-2">
+                                        <h3 class="text-xl font-bold text-slate-900">Wilkesboro Savings</h3>
+                                        <span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded-full animate-pulse">LIVE</span>
+                                    </div>
+                                    <p class="text-slate-500 text-sm mb-3">Deals for Wilkes County families.</p>
+                                    <div class="flex flex-wrap justify-center sm:justify-start gap-2">
+                                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md">Shopping</span>
+                                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md">MerleFest</span>
+                                    </div>
+                                </div>
+                                <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-green-600 group-hover:translate-x-1 transition-transform"><i class="fas fa-chevron-right"></i></div>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Community Impact -->
+                    <div class="bg-gradient-to-br from-teal-50 to-blue-50 rounded-[2.5rem] p-8 text-center reveal">
+                        <div class="inline-flex items-center justify-center w-12 h-12 bg-white rounded-full text-red-500 text-xl shadow-sm mb-4"><i class="fas fa-heart"></i></div>
+                        <h3 class="text-2xl font-bold text-slate-900 mb-4">Community Impact</h3>
+                        <p class="text-slate-600 mb-8 max-w-xl mx-auto leading-relaxed">
+                            These savings guides are our way of giving back. By helping local residents save money on everyday expenses, we strengthen the economic health of our neighborhoods.
+                        </p>
+                        <div class="grid grid-cols-3 gap-4 border-t border-white/50 pt-8">
+                            <div>
+                                <span class="block text-2xl font-black text-teal-600">$500+</span>
+                                <span class="text-xs font-bold text-slate-500 uppercase">Avg Savings</span>
+                            </div>
+                            <div>
+                                <span class="block text-2xl font-black text-teal-600">50+</span>
+                                <span class="text-xs font-bold text-slate-500 uppercase">Local Biz</span>
+                            </div>
+                            <div>
+                                <span class="block text-2xl font-black text-teal-600">1K+</span>
+                                <span class="text-xs font-bold text-slate-500 uppercase">Helped</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOCIAL MEDIA -->
+    <section class="py-24 bg-gradient-to-br from-slate-50 to-indigo-50 border-t border-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-16 reveal">
+                <span class="text-indigo-600 font-bold tracking-wider uppercase text-xs bg-white px-4 py-1.5 rounded-full border border-indigo-100 mb-4 inline-block shadow-sm">Community</span>
+                <h2 class="text-3xl md:text-4xl font-display font-extrabold text-slate-900 mt-4 mb-3">Join Our Network</h2>
+                <p class="text-slate-500 text-lg">Money-saving tips and local updates.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <a href="https://www.youtube.com/@ncautoandhome" target="_blank" class="group relative overflow-hidden rounded-3xl p-8 hover:-translate-y-2 hover:shadow-xl transition-all duration-300 reveal">
+                    <div class="absolute inset-0 bg-gradient-to-br from-[#FF0000] to-[#CC0000] opacity-90 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="relative z-10 flex flex-col items-center text-center text-white">
+                        <i class="fab fa-youtube text-4xl mb-4 bg-white/20 p-4 rounded-2xl backdrop-blur-sm"></i>
+                        <h3 class="font-bold text-xl">YouTube</h3>
+                        <span class="mt-4 px-4 py-1 bg-white text-red-600 rounded-full text-xs font-bold">Subscribe</span>
+                    </div>
+                </a>
+                <a href="https://www.facebook.com/dollarbillagency/" target="_blank" class="group relative overflow-hidden rounded-3xl p-8 hover:-translate-y-2 hover:shadow-xl transition-all duration-300 reveal delay-100">
+                    <div class="absolute inset-0 bg-gradient-to-br from-[#1877F2] to-[#0C5DC7] opacity-90 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="relative z-10 flex flex-col items-center text-center text-white">
+                        <i class="fab fa-facebook-f text-4xl mb-4 bg-white/20 p-4 rounded-2xl backdrop-blur-sm"></i>
+                        <h3 class="font-bold text-xl">Facebook</h3>
+                        <span class="mt-4 px-4 py-1 bg-white text-blue-600 rounded-full text-xs font-bold">Follow</span>
+                    </div>
+                </a>
+                <a href="https://www.instagram.com/ncautoandhome/" target="_blank" class="group relative overflow-hidden rounded-3xl p-8 hover:-translate-y-2 hover:shadow-xl transition-all duration-300 reveal delay-200">
+                    <div class="absolute inset-0 bg-gradient-to-br from-[#833AB4] via-[#FD1D1D] to-[#F77737] opacity-90 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="relative z-10 flex flex-col items-center text-center text-white">
+                        <i class="fab fa-instagram text-4xl mb-4 bg-white/20 p-4 rounded-2xl backdrop-blur-sm"></i>
+                        <h3 class="font-bold text-xl">Instagram</h3>
+                        <span class="mt-4 px-4 py-1 bg-white text-purple-600 rounded-full text-xs font-bold">Follow</span>
+                    </div>
+                </a>
+                <a href="https://x.com/shopsavecompare" target="_blank" class="group relative overflow-hidden rounded-3xl p-8 hover:-translate-y-2 hover:shadow-xl transition-all duration-300 reveal delay-300">
+                    <div class="absolute inset-0 bg-gradient-to-br from-slate-800 to-black opacity-90 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="relative z-10 flex flex-col items-center text-center text-white">
+                        <i class="fab fa-x-twitter text-4xl mb-4 bg-white/20 p-4 rounded-2xl backdrop-blur-sm"></i>
+                        <h3 class="font-bold text-xl">X / Twitter</h3>
+                        <span class="mt-4 px-4 py-1 bg-white text-slate-900 rounded-full text-xs font-bold">Follow</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose an Independent Agent -->
+    <section class="py-16 bg-gradient-to-r from-slate-800 to-slate-900 text-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+            <p class="text-2xl md:text-3xl font-display font-bold leading-relaxed">
+                <span class="text-teal-400">"</span>The Big Carriers work for their shareholders.<br>
+                <span class="text-teal-400">Bill Layne works for you.</span><span class="text-teal-400">"</span>
+            </p>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 border-t border-slate-800 text-slate-400 py-16 pb-32 md:pb-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 grid md:grid-cols-4 gap-12 mb-12">
+            <div class="col-span-1 md:col-span-1">
+                <h4 class="text-white font-display font-bold text-xl mb-6">Bill Layne Insurance</h4>
+                <p class="text-sm leading-relaxed mb-6">Protecting families in North Carolina since 2004. We are your local, trusted, and independent agency.</p>
+                <div class="flex gap-4">
+                    <a href="https://www.facebook.com/dollarbillagency/" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-blue-600 transition-all"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/ncautoandhome/" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-purple-500 transition-all"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div>
+                <h5 class="text-white font-bold mb-6 tracking-wide">Contact</h5>
+                <ul class="space-y-4 text-sm">
+                    <li><a href="tel:3368351993" class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-phone-alt text-teal-500"></i> (336) 835-1993</a></li>
+                    <li class="flex items-start gap-2"><i class="fas fa-map-marker-alt text-teal-500 mt-1"></i> <span>1283 N Bridge St<br>Elkin, NC 28621</span></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="text-white font-bold mb-6 tracking-wide">Quick Links</h5>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="../index.html" class="hover:text-teal-400 transition-colors">Home Page</a></li>
+                    <li><a href="../auto-center/index.html" class="hover:text-teal-400 transition-colors">Auto Insurance</a></li>
+                    <li><a href="../home-insurance/index.html" class="hover:text-teal-400 transition-colors">Home Insurance</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="text-white font-bold mb-6 tracking-wide">Service Areas</h5>
+                <p class="text-sm leading-loose">Elkin • Mount Airy • Jonesville • Wilkesboro • Dobson • Pilot Mountain • Yadkinville • Statewide NC</p>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 border-t border-slate-800 pt-8">
+            &copy; 2025 Bill Layne Insurance Agency. All Rights Reserved.
+        </div>
+    </footer>
+
+    <!-- MOBILE DOCK -->
+    <div class="md:hidden fixed bottom-0 left-0 w-full z-[60] glass-nav border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] pb-safe">
+        <div class="grid grid-cols-3 h-16 items-end pb-1">
+            <a href="tel:3368351993" class="flex flex-col items-center justify-center h-16 text-slate-600 hover:text-teal-600 active:bg-slate-50">
+                <i class="fas fa-phone-alt text-lg mb-1"></i>
+                <span class="text-[10px] font-bold">Call</span>
+            </a>
+            <div class="relative flex justify-center h-16 items-center">
+                <a href="#calculators" class="absolute -top-6 w-14 h-14 bg-gradient-to-br from-teal-600 to-blue-600 rounded-full shadow-lg border-4 border-white flex items-center justify-center text-white text-xl animate-pulse-glow hover:scale-105 transition-transform" onclick="document.getElementById('calculators').scrollIntoView({behavior: 'smooth'})">
+                    <i class="fas fa-calculator"></i>
+                </a>
+                <span class="text-[10px] font-bold text-teal-700 mt-8">Tools</span>
+            </div>
+            <a href="../get-quote.html" class="flex flex-col items-center justify-center h-16 text-slate-600 hover:text-teal-600 active:bg-slate-50">
+                <i class="fas fa-file-invoice-dollar text-lg mb-1"></i>
+                <span class="text-[10px] font-bold">Quote</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Scroll Progress
+            window.addEventListener('scroll', () => {
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (winScroll / height) * 100;
+                document.getElementById("scroll-progress").style.width = scrolled + "%";
+            });
+
+            // Mobile Menu
+            const menuToggle = document.getElementById('menu-toggle');
+            const menuClose = document.getElementById('menu-close');
+            const menuDrawer = document.getElementById('menu-drawer');
+            const menuOverlay = document.getElementById('menu-overlay');
+            const body = document.body;
+
+            function toggleMenu(show) {
+                if (show) {
+                    menuDrawer.classList.remove('translate-x-full');
+                    menuOverlay.classList.remove('opacity-0', 'pointer-events-none');
+                    body.style.overflow = 'hidden';
+                } else {
+                    menuDrawer.classList.add('translate-x-full');
+                    menuOverlay.classList.add('opacity-0', 'pointer-events-none');
+                    body.style.overflow = '';
+                }
+            }
+            if(menuToggle) menuToggle.addEventListener('click', () => toggleMenu(true));
+            if(menuClose) menuClose.addEventListener('click', () => toggleMenu(false));
+            if(menuOverlay) menuOverlay.addEventListener('click', () => toggleMenu(false));
+
+            // Scroll Reveal
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('active');
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+            // Navbar Scroll
+            const navbar = document.getElementById('navbar');
+            const logoText = document.getElementById('nav-logo-text');
+            const logoAccent = document.getElementById('nav-logo-accent');
+            const tagline = document.getElementById('nav-tagline');
+            const hamburgers = document.querySelectorAll('.nav-hamburger-line');
+            const menuBtn = document.getElementById('menu-toggle');
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 20) {
+                    navbar.classList.add('glass-nav', 'h-20', 'shadow-sm');
+                    navbar.classList.remove('bg-transparent', 'h-24');
+                    logoText.classList.replace('text-white', 'text-slate-900');
+                    logoAccent.classList.replace('text-teal-300', 'text-teal-600');
+                    tagline.classList.replace('text-teal-100', 'text-slate-400');
+                    hamburgers.forEach(el => el.classList.replace('bg-white', 'bg-slate-900'));
+                    menuBtn.classList.replace('hover:bg-white/10', 'hover:bg-slate-100');
+                } else {
+                    navbar.classList.remove('glass-nav', 'h-20', 'shadow-sm');
+                    navbar.classList.add('bg-transparent', 'h-24');
+                    logoText.classList.replace('text-slate-900', 'text-white');
+                    logoAccent.classList.replace('text-teal-600', 'text-teal-300');
+                    tagline.classList.replace('text-slate-400', 'text-teal-100');
+                    hamburgers.forEach(el => el.classList.replace('bg-slate-900', 'bg-white'));
+                    menuBtn.classList.replace('hover:bg-slate-100', 'hover:bg-white/10');
+                }
+            });
+
+            // Instant Search Functionality
+            const searchInput = document.getElementById('resourceSearch');
+            
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    const term = e.target.value.toLowerCase();
+                    const resourceCards = document.querySelectorAll('.resource-card');
+                    const sections = document.querySelectorAll('.section-container');
+                    
+                    resourceCards.forEach(card => {
+                        const name = card.dataset.name ? card.dataset.name.toLowerCase() : '';
+                        const title = card.querySelector('h3, h4').innerText.toLowerCase();
+                        
+                        if (name.includes(term) || title.includes(term)) {
+                            card.style.display = 'flex'; // Use flex or block depending on your layout, Flex works best for these cards
+                            if(!card.classList.contains('flex')) card.style.display = 'block'; // Fallback
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+
+                    // Hide sections if all cards in them are hidden
+                    sections.forEach(section => {
+                        const visibleCards = section.querySelectorAll('.resource-card:not([style*="display: none"])');
+                        if (visibleCards.length === 0) {
+                            section.style.display = 'none';
+                        } else {
+                            section.style.display = 'block';
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+
+    <!-- Schema Markup -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "InsuranceAgency",
+      "name": "Bill Layne Insurance Agency - Resources Center",
+      "url": "/resources/",
+      "telephone": "+13368351993",
+      "email": "Save@BillLayneInsurance.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "1283 N Bridge St",
+        "addressLocality": "Elkin",
+        "addressRegion": "NC",
+        "postalCode": "28621",
+        "addressCountry": "US"
+      },
+      "areaServed": ["Elkin", "Mount Airy", "Jonesville", "Surry County", "Yadkin County", "Wilkes County"],
+      "serviceType": ["Auto Insurance", "Home Insurance", "Commercial Insurance"],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "bestRating": "5",
+        "ratingCount": "127"
+      }
+    }
+    </script>
+</body>
+</html>

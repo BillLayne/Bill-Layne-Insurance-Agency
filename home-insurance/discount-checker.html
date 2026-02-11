@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Insurance Discount Checker - Bill Layne Insurance Agency</title>
+    <meta name="description" content="Discover all available home insurance discounts. Calculate your potential savings instantly. NC homeowners save an average of $600/year.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            important: true,
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* F-Pattern Optimized Styles */
+        :root {
+            --primary-blue: #2563eb;
+            --primary-blue-dark: #1d4ed8;
+            --accent-green: #10b981;
+            --text-gray: #374151;
+            --text-light: #6b7280;
+            --bg-light: #f8fafc;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: var(--text-gray);
+        }
+        
+        /* F-Pattern Header */
+        .f-header {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            transition: all 0.3s ease;
+        }
+        
+        .f-header.scrolled {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* F-Pattern Hero */
+        .f-hero {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
+            position: relative;
+            overflow: hidden;
+            padding-top: 140px;
+            padding-bottom: 40px;
+        }
+        
+        .f-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.03"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+        }
+        
+        /* F-Pattern Sidebar */
+        .f-sidebar {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+        
+        /* Modern Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+            background: linear-gradient(135deg, var(--primary-blue-dark) 0%, #1e40af 100%);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--primary-blue);
+            color: white;
+            transform: translateY(-1px);
+        }
+        
+        /* Navigation Menu */
+        .navigation-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            max-width: 350px;
+            height: 100vh;
+            background: white;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .navigation-menu.active {
+            right: 0;
+        }
+        
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+        
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Hamburger Animation */
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: var(--text-gray);
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+        
+        /* Trust Badge */
+        .trust-badge {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .trust-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Discount Card Styles */
+        .discount-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+        
+        .discount-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: #e5e7eb;
+        }
+        
+        .discount-card.selected {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .discount-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+        
+        .discount-card.selected .discount-checkbox {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+            border-color: var(--primary-blue);
+            color: white;
+        }
+        
+        .category-section {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .category-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px 12px 0 0;
+            font-weight: 700;
+            font-size: 18px;
+            margin: -24px -24px 20px -24px;
+        }
+        
+        /* Progress Bar */
+        .progress-bar-container {
+            background: #e5e7eb;
+            height: 8px;
+            border-radius: 50px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-bar-fill {
+            background: linear-gradient(135deg, var(--accent-green) 0%, #059669 100%);
+            height: 100%;
+            border-radius: 50px;
+            transition: width 0.3s ease;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .f-sidebar {
+                position: static;
+            }
+            
+            .btn-primary, .btn-secondary {
+                padding: 12px 20px;
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Menu Overlay -->
+    <div id="menu-overlay" class="menu-overlay"></div>
+    
+    <!-- Header - F-Pattern Top Bar -->
+    <header id="main-header" class="f-header">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0">
+                    <a href="../index.html" class="text-2xl font-bold text-blue-800">
+                        Bill Layne Insurance
+                    </a>
+                    <p class="text-xs text-gray-600 hidden sm:block">Discount Checker Tool</p>
+                </div>
+                
+                <!-- Right Side: Phone, CTA, and Menu Button -->
+                <div class="flex items-center space-x-4">
+                    <!-- Desktop CTA -->
+                    <div class="hidden md:flex items-center space-x-4">
+                        <a href="tel:3368351993" class="text-gray-700 font-semibold hover:text-blue-600 transition-colors">
+                            <i class="fas fa-phone mr-2"></i>(336) 835-1993
+                        </a>
+                        <a href="../get-quote.html" class="btn-primary">Get Free Quote</a>
+                    </div>
+                    
+                    <!-- Universal Menu Button -->
+                    <button id="menu-toggle-btn" class="hamburger p-2">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Universal Menu -->
+    <div id="navigation-menu" class="navigation-menu">
+        <div class="flex justify-between items-center mb-8">
+            <h3 class="text-xl lg:text-2xl font-bold text-gray-800">Navigation</h3>
+            <button id="close-menu" class="text-gray-500 hover:text-gray-700 p-2">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <nav class="space-y-4">
+            <a href="../index.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-home mr-3 w-5"></i>Home
+            </a>
+            <a href="../areas-we-serve.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-th-large mr-3 w-5"></i>Services
+            </a>
+            <a href="../auto-center/index.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-car mr-3 w-5"></i>Auto Insurance
+            </a>
+            <a href="../home-insurance/index.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-home mr-3 w-5"></i>Home Insurance
+            </a>
+            <a href="../claims-center/index.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-file-alt mr-3 w-5"></i>Claims Center
+            </a>
+            <a href="../resources/index.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-book mr-3 w-5"></i>Resources
+            </a>
+            <a href="../blog/index.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-blog mr-3 w-5"></i>Blog
+            </a>
+            <a href="../service-center.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Service Center</a>
+            <a href="../contact-us.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Contact Us</a>
+            <a href="../videos/index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Videos</a>
+            <a href="../blog/index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Blog</a>
+            <a href="../resources/index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Resources</a>
+            <a href="../claims-center/index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Claims Center</a>
+            <a href="../home-insurance/index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home Insurance</a>
+            <a href="../auto-center/index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Auto Insurance</a>
+            <a href="../areas-we-serve.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Areas We Serve</a>
+            <a href="../index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home</a>
+        <a href="../contact-us.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-envelope mr-3 w-5"></i>Contact Us
+            </a>
+        </nav>
+        <div class="mt-8 space-y-4">
+            <a href="tel:3368351993" class="block w-full text-center bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors">
+                <i class="fas fa-phone mr-2"></i>Call (336) 835-1993
+            </a>
+            <a href="../get-quote.html" class="block w-full text-center btn-primary">
+                <i class="fas fa-calculator mr-2"></i>Get Free Quote
+            </a>
+        </div>
+    </div>
+
+    <main>
+        <!-- Hero Section - F-Pattern Second Horizontal Bar -->
+        <section class="f-hero">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                <div class="animate-fade-in-up">
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-4">
+                        Discount Checker
+                        <span class="block text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-cyan-200">
+                            Find Your Savings
+                        </span>
+                    </h1>
+                    <p class="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
+                        Discover all available home insurance discounts and calculate your potential savings instantly
+                    </p>
+                    
+                    <!-- Stats Bar -->
+                    <div class="flex flex-wrap justify-center gap-8 text-white">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold">28</div>
+                            <div class="text-sm text-blue-200">Available Discounts</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold">$600+</div>
+                            <div class="text-sm text-blue-200">Average Annual Savings</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold">85%</div>
+                            <div class="text-sm text-blue-200">Qualify for 3+ Discounts</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- F-Pattern Content Layout -->
+        <section class="py-20 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Info Box -->
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg mb-8">
+                    <div class="flex items-start">
+                        <i class="fas fa-info-circle text-blue-600 text-xl mr-3 mt-1"></i>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-2">How to Use This Tool</h3>
+                            <p class="text-gray-700">
+                                Check all discounts that apply to your situation. We'll calculate your potential savings and provide an action plan to claim each discount. 
+                                Most homeowners miss out on hundreds of dollars in savings by not knowing about all available discounts!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-12 gap-12">
+                    <!-- Left Sidebar - F-Pattern Vertical Emphasis -->
+                    <div class="lg:col-span-4">
+                        <div class="f-sidebar space-y-6">
+                            <!-- Savings Summary -->
+                            <div class="trust-badge bg-gradient-to-br from-green-500 to-green-600 text-white">
+                                <div class="text-center">
+                                    <div class="text-4xl font-black mb-2" id="totalSavings">$0</div>
+                                    <p class="font-semibold">Potential Annual Savings</p>
+                                </div>
+                                
+                                <div class="progress-bar-container mt-4">
+                                    <div class="progress-bar-fill" id="progressBar" style="width: 0%"></div>
+                                </div>
+                                <p class="text-center text-sm mt-2">
+                                    <span id="checkedCount">0</span> of <span id="totalCount">28</span> discounts selected
+                                </p>
+                            </div>
+                            
+                            <!-- Qualified Discounts List -->
+                            <div class="trust-badge">
+                                <h4 class="font-bold text-gray-800 mb-4 flex items-center">
+                                    <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                                    Your Qualified Discounts
+                                </h4>
+                                <div id="qualifiedList" class="space-y-2 text-sm">
+                                    <p class="text-gray-500 italic text-center py-4">
+                                        Select discounts to see your savings
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <!-- Premium Comparison -->
+                            <div class="trust-badge bg-gradient-to-br from-blue-50 to-indigo-50">
+                                <h4 class="font-bold text-gray-800 mb-4">
+                                    <i class="fas fa-chart-bar text-blue-600 mr-2"></i>
+                                    Premium Comparison
+                                </h4>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Current Premium:</span>
+                                        <span class="font-semibold" id="currentPremium">$1,200</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">With Discounts:</span>
+                                        <span class="font-semibold text-green-600" id="newPremium">$1,200</span>
+                                    </div>
+                                    <hr class="my-2">
+                                    <div class="flex justify-between">
+                                        <span class="font-semibold">Annual Savings:</span>
+                                        <span class="font-bold text-green-600 text-lg" id="annualSavings">$0</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Action Plan -->
+                            <div class="trust-badge" id="actionPlan" style="display: none;">
+                                <h4 class="font-bold text-gray-800 mb-4">
+                                    <i class="fas fa-clipboard-check text-blue-600 mr-2"></i>
+                                    Next Steps
+                                </h4>
+                                <ol class="space-y-3 text-sm">
+                                    <li class="flex items-start">
+                                        <span class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-2 flex-shrink-0">1</span>
+                                        <span>Gather required documentation</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-2 flex-shrink-0">2</span>
+                                        <span>Contact us at (336) 835-1993</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-2 flex-shrink-0">3</span>
+                                        <span>Review your policy</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-2 flex-shrink-0">4</span>
+                                        <span>Enjoy reduced premiums!</span>
+                                    </li>
+                                </ol>
+                            </div>
+                            
+                            <!-- CTA Button -->
+                            <div class="text-center">
+                                <button onclick="resetAll()" class="btn-secondary w-full mb-3">
+                                    <i class="fas fa-redo mr-2"></i>Reset All
+                                </button>
+                                <a href="tel:3368351993" class="btn-primary w-full block">
+                                    <i class="fas fa-phone mr-2"></i>Call to Claim Discounts
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Main Content - F-Pattern Right Side -->
+                    <div class="lg:col-span-8">
+                        <!-- Home Security & Safety -->
+                        <div class="category-section">
+                            <div class="category-header">
+                                <i class="fas fa-shield-alt mr-2"></i>Home Security & Safety
+                            </div>
+                            <div class="grid gap-4">
+                                <div class="discount-card" data-savings="150" data-category="security">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">Security System</h4>
+                                            <p class="text-gray-600 text-sm mb-2">Professionally monitored burglar alarm system</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $150/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>Monitoring contract required</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="discount-card" data-savings="75" data-category="security">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">Smoke Detectors</h4>
+                                            <p class="text-gray-600 text-sm mb-2">Hard-wired smoke detectors throughout the home</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $75/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>Inspection certificate</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="discount-card" data-savings="50" data-category="security">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">Fire Extinguisher</h4>
+                                            <p class="text-gray-600 text-sm mb-2">Accessible fire extinguisher in home</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $50/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>Photo with inspection tag</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="discount-card" data-savings="100" data-category="security">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">Deadbolt Locks</h4>
+                                            <p class="text-gray-600 text-sm mb-2">Deadbolt locks on all exterior doors</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $100/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>Photo verification</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="discount-card" data-savings="200" data-category="security">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">Impact-Resistant Roof</h4>
+                                            <p class="text-gray-600 text-sm mb-2">Class 4 impact-resistant roofing materials</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $200/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>Manufacturer warranty</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Policy & Bundling -->
+                        <div class="category-section">
+                            <div class="category-header">
+                                <i class="fas fa-layer-group mr-2"></i>Policy & Bundling
+                            </div>
+                            <div class="grid gap-4">
+                                <div class="discount-card" data-savings="300" data-category="policy">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">Multi-Policy Discount</h4>
+                                            <p class="text-gray-600 text-sm mb-2">Bundle home and auto insurance with same company</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $300/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>Current auto policy</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="discount-card" data-savings="200" data-category="policy">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">Claims-Free Discount</h4>
+                                            <p class="text-gray-600 text-sm mb-2">No claims filed in the past 3-5 years</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $200/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>Claims history report</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="discount-card" data-savings="150" data-category="policy">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">Loyalty Discount</h4>
+                                            <p class="text-gray-600 text-sm mb-2">Customer for 3+ years with same insurer</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $150/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>Previous policy pages</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="discount-card" data-savings="100" data-category="policy">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">New Customer Discount</h4>
+                                            <p class="text-gray-600 text-sm mb-2">First-time customer with the insurance company</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $100/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>No prior policy needed</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="discount-card" data-savings="50" data-category="policy">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">Automatic Payment</h4>
+                                            <p class="text-gray-600 text-sm mb-2">Set up automatic premium payments</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $50/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>Bank account setup</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Home Features -->
+                        <div class="category-section">
+                            <div class="category-header">
+                                <i class="fas fa-home mr-2"></i>Home Features
+                            </div>
+                            <div class="grid gap-4">
+                                <div class="discount-card" data-savings="250" data-category="home">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">New Home Discount</h4>
+                                            <p class="text-gray-600 text-sm mb-2">Home built within the last 10 years</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $250/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>Certificate of occupancy</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="discount-card" data-savings="175" data-category="home">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">Recent Updates</h4>
+                                            <p class="text-gray-600 text-sm mb-2">Major updates to plumbing, electrical, or HVAC in last 10 years</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $175/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>Permits & receipts</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="discount-card" data-savings="125" data-category="home">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">Gated Community</h4>
+                                            <p class="text-gray-600 text-sm mb-2">Home located in a gated or secured community</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $125/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>HOA documentation</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="discount-card" data-savings="100" data-category="home">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">Fire-Resistant Materials</h4>
+                                            <p class="text-gray-600 text-sm mb-2">Fire-resistant roofing, siding, or construction materials</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $100/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>Building specifications</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="discount-card" data-savings="75" data-category="home">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">Energy Efficient Features</h4>
+                                            <p class="text-gray-600 text-sm mb-2">Energy Star appliances, efficient HVAC, or green building certification</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $75/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>Energy Star certificates</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Personal & Professional -->
+                        <div class="category-section">
+                            <div class="category-header">
+                                <i class="fas fa-user-circle mr-2"></i>Personal & Professional
+                            </div>
+                            <div class="grid gap-4">
+                                <div class="discount-card" data-savings="200" data-category="personal">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">Senior Citizen Discount</h4>
+                                            <p class="text-gray-600 text-sm mb-2">Age 55+ or retired status</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $200/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>Driver's license</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="discount-card" data-savings="150" data-category="personal">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">Military/Veteran Discount</h4>
+                                            <p class="text-gray-600 text-sm mb-2">Active duty, reserve, or veteran military service</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $150/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>Military ID or DD-214</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="discount-card" data-savings="125" data-category="personal">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">Professional Group</h4>
+                                            <p class="text-gray-600 text-sm mb-2">Member of teachers, engineers, or other professional associations</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $125/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>Membership card</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="discount-card" data-savings="100" data-category="personal">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">Alumni Discount</h4>
+                                            <p class="text-gray-600 text-sm mb-2">Graduate of select colleges or universities</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $100/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>Diploma or alumni ID</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="discount-card" data-savings="175" data-category="personal">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">Good Credit Score</h4>
+                                            <p class="text-gray-600 text-sm mb-2">Credit score of 700+ (varies by state)</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $175/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>Credit report</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- North Carolina Specific -->
+                        <div class="category-section">
+                            <div class="category-header">
+                                <i class="fas fa-map-marked-alt mr-2"></i>North Carolina Specific
+                            </div>
+                            <div class="grid gap-4">
+                                <div class="discount-card" data-savings="300" data-category="nc">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">Hurricane Preparedness</h4>
+                                            <p class="text-gray-600 text-sm mb-2">Storm shutters, safe room, or hurricane straps</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $300/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>Installation receipts</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="discount-card" data-savings="150" data-category="nc">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">Wind Mitigation</h4>
+                                            <p class="text-gray-600 text-sm mb-2">Wind-resistant features or building code compliance</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $150/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>Inspection report</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="discount-card" data-savings="100" data-category="nc">
+                                    <div class="flex items-start gap-4">
+                                        <div class="discount-checkbox">
+                                            <i class="fas fa-check" style="display: none;"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-800 mb-1">Building Code Compliance</h4>
+                                            <p class="text-gray-600 text-sm mb-2">Built to or exceeds current NC building codes</p>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-green-600 font-bold">Save up to $100/year</span>
+                                                <span class="text-xs text-gray-500"><i class="fas fa-file-alt mr-1"></i>Building permits</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="py-20 bg-blue-600 text-white">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl lg:text-4xl font-bold mb-4">
+                    Ready to Claim Your Discounts?
+                </h2>
+                <p class="text-xl text-blue-100 mb-8">
+                    Contact Bill Layne Insurance Agency to review your policy and start saving money today
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a href="tel:3368351993" class="btn-secondary text-lg">
+                        <i class="fas fa-phone mr-2"></i>Call (336) 835-1993
+                    </a>
+                    <span class="text-blue-200">or</span>
+                    <a href="../get-quote.html" class="bg-white text-blue-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors">
+                        <i class="fas fa-calculator mr-2"></i>Get Free Quote Online
+                    </a>
+                </div>
+                
+                <div class="mt-8 text-blue-200">
+                    <p class="mb-2">
+                        <i class="fas fa-map-marker-alt mr-2"></i>
+                        1283 N Bridge St, Elkin, NC 28621
+                    </p>
+                    <p>
+                        <i class="fas fa-envelope mr-2"></i>
+                        Save@BillLayneInsurance.com
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <p>&copy; 2025 Bill Layne Insurance Agency. All rights reserved. | NC License #1740293</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('main-header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Universal menu functionality
+        const menuToggleBtn = document.getElementById('menu-toggle-btn');
+        const navigationMenu = document.getElementById('navigation-menu');
+        const menuOverlay = document.getElementById('menu-overlay');
+        const closeMenuBtn = document.getElementById('close-menu');
+
+        function toggleMenu() {
+            menuToggleBtn.classList.toggle('active');
+            navigationMenu.classList.toggle('active');
+            menuOverlay.classList.toggle('active');
+            document.body.style.overflow = navigationMenu.classList.contains('active') ? 'hidden' : '';
+        }
+
+        function closeMenu() {
+            menuToggleBtn.classList.remove('active');
+            navigationMenu.classList.remove('active');
+            menuOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        menuToggleBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', closeMenu);
+        menuOverlay.addEventListener('click', closeMenu);
+
+        // Discount Checker Functionality
+        let selectedDiscounts = new Set();
+        const basePremium = 1200;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeChecker();
+            attachEventListeners();
+        });
+
+        function initializeChecker() {
+            const discountCards = document.querySelectorAll('.discount-card');
+            document.getElementById('totalCount').textContent = discountCards.length;
+            updateDisplay();
+        }
+
+        function attachEventListeners() {
+            const discountCards = document.querySelectorAll('.discount-card');
+            
+            discountCards.forEach((card, index) => {
+                card.addEventListener('click', function() {
+                    toggleDiscount(this, index);
+                });
+                
+                // Add keyboard accessibility
+                card.setAttribute('tabindex', '0');
+                card.setAttribute('role', 'checkbox');
+                card.setAttribute('aria-checked', 'false');
+                
+                card.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleDiscount(this, index);
+                    }
+                });
+            });
+        }
+
+        function toggleDiscount(element, index) {
+            const isSelected = element.classList.contains('selected');
+            const checkIcon = element.querySelector('.fa-check');
+            
+            if (isSelected) {
+                element.classList.remove('selected');
+                element.setAttribute('aria-checked', 'false');
+                checkIcon.style.display = 'none';
+                selectedDiscounts.delete(index);
+            } else {
+                element.classList.add('selected');
+                element.setAttribute('aria-checked', 'true');
+                checkIcon.style.display = 'block';
+                selectedDiscounts.add(index);
+            }
+            
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            let totalSavings = 0;
+            const qualifiedList = document.getElementById('qualifiedList');
+            const discountCards = document.querySelectorAll('.discount-card');
+            
+            qualifiedList.innerHTML = '';
+            
+            if (selectedDiscounts.size === 0) {
+                qualifiedList.innerHTML = '<p class="text-gray-500 italic text-center py-4">Select discounts to see your savings</p>';
+                document.getElementById('actionPlan').style.display = 'none';
+            } else {
+                selectedDiscounts.forEach(index => {
+                    const card = discountCards[index];
+                    const savings = parseInt(card.dataset.savings) || 0;
+                    const discountName = card.querySelector('h4').textContent;
+                    
+                    totalSavings += savings;
+                    
+                    const item = document.createElement('div');
+                    item.className = 'flex justify-between items-center py-2 border-b border-gray-200';
+                    item.innerHTML = `
+                        <span class="text-gray-700">${discountName}</span>
+                        <span class="font-bold text-green-600">$${savings}</span>
+                    `;
+                    qualifiedList.appendChild(item);
+                });
+                document.getElementById('actionPlan').style.display = 'block';
+            }
+            
+            // Update displays
+            document.getElementById('totalSavings').textContent = `$${totalSavings.toLocaleString()}`;
+            document.getElementById('checkedCount').textContent = selectedDiscounts.size;
+            
+            // Update premium comparison
+            const newPremium = Math.max(0, basePremium - totalSavings);
+            document.getElementById('currentPremium').textContent = `$${basePremium.toLocaleString()}`;
+            document.getElementById('newPremium').textContent = `$${newPremium.toLocaleString()}`;
+            document.getElementById('annualSavings').textContent = `$${totalSavings.toLocaleString()}`;
+            
+            // Update progress bar
+            const progressPercentage = (selectedDiscounts.size / discountCards.length) * 100;
+            document.getElementById('progressBar').style.width = `${progressPercentage}%`;
+        }
+
+        function resetAll() {
+            const discountCards = document.querySelectorAll('.discount-card');
+            
+            discountCards.forEach(card => {
+                card.classList.remove('selected');
+                card.setAttribute('aria-checked', 'false');
+                card.querySelector('.fa-check').style.display = 'none';
+            });
+            
+            selectedDiscounts.clear();
+            updateDisplay();
+        }
+    </script>
+</body>
+</html>

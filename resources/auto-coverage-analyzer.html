@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Coverage Analyzer - Bill Layne Insurance Agency</title>
+    <meta name="description" content="Find the right auto insurance coverage levels for your vehicles and driving needs in North Carolina. Free coverage analysis tool.">
+    
+    <!-- SEO Meta Tags -->
+    <link rel="canonical" href="../resources/auto_coverage_analyzer.html">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Auto Coverage Analyzer - Bill Layne Insurance Agency">
+    <meta property="og:description" content="Analyze your auto insurance needs with our free tool. Get personalized coverage recommendations for North Carolina drivers.">
+    <meta property="og:url" content="/resources/auto_coverage_analyzer.html">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            important: true,
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* F-Pattern Optimized Styles */
+        :root {
+            --primary-blue: #2563eb;
+            --primary-blue-dark: #1d4ed8;
+            --accent-green: #10b981;
+            --text-gray: #374151;
+            --text-light: #6b7280;
+            --bg-light: #f8fafc;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: var(--text-gray);
+        }
+        
+        /* F-Pattern Header - Top horizontal bar */
+        .f-header {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            transition: all 0.3s ease;
+        }
+        
+        .f-header.scrolled {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* F-Pattern Hero */
+        .f-hero {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
+            position: relative;
+            overflow: hidden;
+            padding-top: 120px;
+            padding-bottom: 2rem;
+        }
+        
+        .f-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.03"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+        }
+        
+        /* F-Pattern Left Sidebar */
+        .f-sidebar {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+        
+        /* Modern Gradient Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+            background: linear-gradient(135deg, var(--primary-blue-dark) 0%, #1e40af 100%);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--primary-blue);
+            color: white;
+            transform: translateY(-1px);
+        }
+        
+        /* Trust Badge */
+        .trust-badge {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .trust-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Form Card */
+        .form-card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+        
+        /* Universal Menu */
+        .navigation-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            max-width: 350px;
+            height: 100vh;
+            background: white;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .navigation-menu.active {
+            right: 0;
+        }
+        
+        @media (min-width: 768px) {
+            .navigation-menu {
+                max-width: 400px;
+                padding: 30px;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .navigation-menu {
+                max-width: 450px;
+                padding: 40px;
+            }
+        }
+        
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+        
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Hamburger Animation */
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: var(--text-gray);
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+        
+        /* Step Indicator */
+        .step-indicator {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .step-indicator.completed {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        /* Coverage Option */
+        .coverage-option {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .coverage-option:hover {
+            border-color: #3b82f6;
+            background-color: #f8faff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+        
+        .coverage-option.selected {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+        
+        /* Coverage Card */
+        .coverage-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            border-left: 4px solid #3b82f6;
+        }
+        
+        /* Progress Bar */
+        .progress-bar {
+            background: #e5e7eb;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+        
+        /* Form Input */
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        /* Badges */
+        .recommendation-badge {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .warning-badge {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .fade-in {
+            animation: fadeInUp 0.6s ease-in;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .f-sidebar {
+                position: static;
+            }
+            
+            .btn-primary, .btn-secondary {
+                padding: 12px 20px;
+                font-size: 15px;
+            }
+            
+            .form-card {
+                padding: 20px;
+            }
+            
+            .coverage-option {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Menu Overlay -->
+    <div id="menu-overlay" class="menu-overlay"></div>
+    
+    <!-- Header - F-Pattern Top Bar -->
+    <header id="main-header" class="f-header">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0">
+                    <a href="../index.html" class="text-2xl font-bold text-blue-800">
+                        Bill Layne Insurance
+                    </a>
+                    <p class="text-xs text-gray-600 hidden sm:block">Auto Coverage Analyzer</p>
+                </div>
+                
+                <!-- Right Side: Phone, CTA, and Menu Button -->
+                <div class="flex items-center space-x-4">
+                    <!-- Desktop CTA -->
+                    <div class="hidden md:flex items-center space-x-4">
+                        <a href="tel:3368351993" class="text-gray-700 font-semibold hover:text-blue-600 transition-colors">
+                            <i class="fas fa-phone mr-2"></i>(336) 835-1993
+                        </a>
+                        <a href="../get-quote.html" class="btn-primary">Get Free Quote</a>
+                    </div>
+                    
+                    <!-- Universal Menu Button -->
+                    <button id="menu-toggle-btn" class="hamburger p-2">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Universal Menu -->
+    <div id="navigation-menu" class="navigation-menu">
+        <div class="flex justify-between items-center mb-8">
+            <h3 class="text-xl lg:text-2xl font-bold text-gray-800">Navigation</h3>
+            <button id="close-menu" class="text-gray-500 hover:text-gray-700 p-2">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <nav class="space-y-4">
+            <a href="../index.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-home mr-3 w-5"></i>Home
+            </a>
+            <a href="../areas-we-serve.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-th-large mr-3 w-5"></i>Services
+            </a>
+            <a href="../auto-center/index.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-car mr-3 w-5"></i>Auto Insurance
+            </a>
+            <a href="../home-insurance/index.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-home mr-3 w-5"></i>Home Insurance
+            </a>
+            <a href="../claims-center/index.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-file-alt mr-3 w-5"></i>Claims Center
+            </a>
+            <a href="../resources/index.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-book mr-3 w-5"></i>Resources
+            </a>
+            <a href="../blog/index.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-blog mr-3 w-5"></i>Blog
+            </a>
+            <a href="../contact-us.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-envelope mr-3 w-5"></i>Contact Us
+            </a>
+        </nav>
+        <div class="mt-8 space-y-4">
+            <a href="tel:3368351993" class="block w-full text-center bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors">
+                <i class="fas fa-phone mr-2"></i>Call (336) 835-1993
+            </a>
+            <a href="../get-quote.html" class="block w-full text-center btn-primary">
+                <i class="fas fa-calculator mr-2"></i>Get Free Quote
+            </a>
+        </div>
+        
+        <!-- Desktop-only additional info -->
+        <div class="hidden lg:block mt-8 pt-6 border-t border-gray-200">
+            <div class="text-center">
+                <p class="text-sm text-gray-600 mb-2">
+                    <i class="fas fa-map-marker-alt mr-2"></i>
+                    1283 N Bridge St, Elkin, NC 28621
+                </p>
+                <p class="text-sm text-gray-600">
+                    <i class="fas fa-clock mr-2"></i>
+                    Mon-Fri: 9AM-5PM
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <main>
+        <!-- Hero Section - F-Pattern Second Horizontal Bar -->
+        <section class="f-hero text-white relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                <div class="animate-fade-in-up">
+                    <div class="mb-4">
+                        <i class="fas fa-car text-5xl"></i>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black leading-tight mb-4">
+                        Auto Coverage Analyzer
+                    </h1>
+                    <p class="text-lg sm:text-xl text-blue-100 max-w-3xl mx-auto">
+                        Find the right auto insurance coverage levels for your vehicles and driving needs in North Carolina
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Progress Bar -->
+        <div class="bg-white border-b sticky top-20 z-40">
+            <div class="max-w-7xl mx-auto px-4 py-4">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-medium text-gray-600" id="progressText">Step 1 of 4: Vehicle Information</span>
+                    <span class="text-sm text-gray-500" id="progressPercent">25%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 25%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- F-Pattern Content Layout -->
+        <section class="py-12 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid lg:grid-cols-12 gap-12">
+                    <!-- Left Sidebar - F-Pattern Vertical Emphasis -->
+                    <div class="lg:col-span-4">
+                        <div class="f-sidebar space-y-8">
+                            <!-- Progress Overview -->
+                            <div class="trust-badge">
+                                <h4 class="font-bold text-gray-800 mb-4 text-xl">Analysis Progress</h4>
+                                <div class="space-y-3">
+                                    <div class="flex items-center">
+                                        <div class="step-indicator mr-3" id="sidebar-step1">1</div>
+                                        <div>
+                                            <p class="font-medium">Vehicle Information</p>
+                                            <p class="text-xs text-gray-500">Your car details</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center opacity-50" id="sidebar-step2-wrapper">
+                                        <div class="step-indicator mr-3" id="sidebar-step2">2</div>
+                                        <div>
+                                            <p class="font-medium">Driving Profile</p>
+                                            <p class="text-xs text-gray-500">Experience & history</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center opacity-50" id="sidebar-step3-wrapper">
+                                        <div class="step-indicator mr-3" id="sidebar-step3">3</div>
+                                        <div>
+                                            <p class="font-medium">Coverage Preferences</p>
+                                            <p class="text-xs text-gray-500">Your priorities</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center opacity-50" id="sidebar-step4-wrapper">
+                                        <div class="step-indicator mr-3" id="sidebar-step4">4</div>
+                                        <div>
+                                            <p class="font-medium">Your Analysis</p>
+                                            <p class="text-xs text-gray-500">Personalized results</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Why Analyze Coverage -->
+                            <div class="trust-badge">
+                                <h4 class="font-bold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-shield-alt text-blue-600 mr-2"></i>
+                                    Why Analyze Coverage?
+                                </h4>
+                                <ul class="text-sm text-gray-600 space-y-2">
+                                    <li>✓ Find gaps in your current coverage</li>
+                                    <li>✓ Avoid overpaying for unnecessary coverage</li>
+                                    <li>✓ Meet NC legal requirements</li>
+                                    <li>✓ Protect your assets properly</li>
+                                    <li>✓ Get personalized recommendations</li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Need Help? -->
+                            <div class="trust-badge bg-gradient-to-br from-blue-50 to-indigo-50">
+                                <h4 class="font-bold text-gray-800 mb-4">Need Help?</h4>
+                                <p class="text-sm text-gray-600 mb-4">Our agents can help you understand your results and find the best rates.</p>
+                                <a href="tel:3368351993" class="btn-primary w-full block text-center">
+                                    <i class="fas fa-phone mr-2"></i>Call (336) 835-1993
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Main Content - F-Pattern Right Side -->
+                    <div class="lg:col-span-8">
+                        <!-- Step 1: Vehicle Information -->
+                        <div id="step1" class="step-content">
+                            <div class="form-card">
+                                <div class="flex items-center mb-6">
+                                    <div class="step-indicator mr-4">1</div>
+                                    <h2 class="text-2xl font-bold text-gray-800">Vehicle Information</h2>
+                                </div>
+                                
+                                <div class="space-y-6">
+                                    <div class="grid md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Vehicle Year</label>
+                                            <input type="number" id="vehicleYear" min="1990" max="2025" 
+                                                   class="form-input" 
+                                                   placeholder="2020">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Vehicle Value</label>
+                                            <select id="vehicleValue" class="form-input">
+                                                <option value="">Select range</option>
+                                                <option value="under5k">Under $5,000</option>
+                                                <option value="5k-15k">$5,000 - $15,000</option>
+                                                <option value="15k-30k">$15,000 - $30,000</option>
+                                                <option value="30k-50k">$30,000 - $50,000</option>
+                                                <option value="over50k">Over $50,000</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">How do you use this vehicle?</label>
+                                        <div class="grid md:grid-cols-3 gap-3">
+                                            <div class="coverage-option" data-usage="commute">
+                                                <i class="fas fa-briefcase text-blue-500 text-xl mb-2"></i>
+                                                <h4 class="font-medium">Daily Commute</h4>
+                                                <p class="text-sm text-gray-600">Work, school, daily errands</p>
+                                            </div>
+                                            <div class="coverage-option" data-usage="pleasure">
+                                                <i class="fas fa-car text-green-500 text-xl mb-2"></i>
+                                                <h4 class="font-medium">Pleasure Only</h4>
+                                                <p class="text-sm text-gray-600">Weekends, occasional trips</p>
+                                            </div>
+                                            <div class="coverage-option" data-usage="business">
+                                                <i class="fas fa-truck text-purple-500 text-xl mb-2"></i>
+                                                <h4 class="font-medium">Business Use</h4>
+                                                <p class="text-sm text-gray-600">Work deliveries, client visits</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button onclick="nextStep(2)" class="btn-primary w-full mt-8" id="step1Next" disabled>
+                                    Continue to Driving Profile <i class="fas fa-arrow-right ml-2"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Driving Profile -->
+                        <div id="step2" class="step-content hidden">
+                            <div class="form-card">
+                                <div class="flex items-center mb-6">
+                                    <div class="step-indicator mr-4">2</div>
+                                    <h2 class="text-2xl font-bold text-gray-800">Driving Profile</h2>
+                                </div>
+                                
+                                <div class="space-y-6">
+                                    <div class="grid md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Years of Driving Experience</label>
+                                            <select id="drivingExperience" class="form-input">
+                                                <option value="">Select range</option>
+                                                <option value="new">Less than 3 years</option>
+                                                <option value="experienced">3-10 years</option>
+                                                <option value="veteran">10+ years</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Annual Mileage</label>
+                                            <select id="annualMileage" class="form-input">
+                                                <option value="">Select range</option>
+                                                <option value="low">Under 7,500 miles</option>
+                                                <option value="average">7,500 - 15,000 miles</option>
+                                                <option value="high">Over 15,000 miles</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Driving Record (last 5 years)</label>
+                                        <div class="grid md:grid-cols-3 gap-3">
+                                            <div class="coverage-option" data-record="clean">
+                                                <i class="fas fa-check-circle text-green-500 text-xl mb-2"></i>
+                                                <h4 class="font-medium">Clean Record</h4>
+                                                <p class="text-sm text-gray-600">No accidents or violations</p>
+                                            </div>
+                                            <div class="coverage-option" data-record="minor">
+                                                <i class="fas fa-exclamation-triangle text-yellow-500 text-xl mb-2"></i>
+                                                <h4 class="font-medium">Minor Issues</h4>
+                                                <p class="text-sm text-gray-600">1-2 minor violations</p>
+                                            </div>
+                                            <div class="coverage-option" data-record="major">
+                                                <i class="fas fa-times-circle text-red-500 text-xl mb-2"></i>
+                                                <h4 class="font-medium">Multiple Issues</h4>
+                                                <p class="text-sm text-gray-600">Accidents or major violations</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex gap-4 mt-8">
+                                    <button onclick="previousStep(1)" class="btn-secondary">
+                                        <i class="fas fa-arrow-left mr-2"></i>Back
+                                    </button>
+                                    <button onclick="nextStep(3)" class="btn-primary flex-1" id="step2Next" disabled>
+                                        Continue to Coverage Preferences <i class="fas fa-arrow-right ml-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Coverage Preferences -->
+                        <div id="step3" class="step-content hidden">
+                            <div class="form-card">
+                                <div class="flex items-center mb-6">
+                                    <div class="step-indicator mr-4">3</div>
+                                    <h2 class="text-2xl font-bold text-gray-800">Coverage Preferences</h2>
+                                </div>
+                                
+                                <div class="space-y-6">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">What's most important to you?</label>
+                                        <div class="grid md:grid-cols-3 gap-3">
+                                            <div class="coverage-option" data-priority="cost">
+                                                <i class="fas fa-dollar-sign text-green-500 text-xl mb-2"></i>
+                                                <h4 class="font-medium">Lowest Cost</h4>
+                                                <p class="text-sm text-gray-600">Minimum coverage to save money</p>
+                                            </div>
+                                            <div class="coverage-option" data-priority="balanced">
+                                                <i class="fas fa-balance-scale text-blue-500 text-xl mb-2"></i>
+                                                <h4 class="font-medium">Balanced</h4>
+                                                <p class="text-sm text-gray-600">Good protection at fair price</p>
+                                            </div>
+                                            <div class="coverage-option" data-priority="protection">
+                                                <i class="fas fa-shield-alt text-purple-500 text-xl mb-2"></i>
+                                                <h4 class="font-medium">Maximum Protection</h4>
+                                                <p class="text-sm text-gray-600">Comprehensive coverage</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="grid md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Assets to Protect</label>
+                                            <select id="assetsValue" class="form-input">
+                                                <option value="">Select range</option>
+                                                <option value="minimal">Under $50,000</option>
+                                                <option value="moderate">$50,000 - $150,000</option>
+                                                <option value="substantial">$150,000 - $500,000</option>
+                                                <option value="significant">Over $500,000</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Deductible</label>
+                                            <select id="deductible" class="form-input">
+                                                <option value="">Select amount</option>
+                                                <option value="250">$250 (Higher premium)</option>
+                                                <option value="500">$500 (Balanced)</option>
+                                                <option value="1000">$1,000 (Lower premium)</option>
+                                                <option value="2500">$2,500 (Lowest premium)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex gap-4 mt-8">
+                                    <button onclick="previousStep(2)" class="btn-secondary">
+                                        <i class="fas fa-arrow-left mr-2"></i>Back
+                                    </button>
+                                    <button onclick="nextStep(4)" class="btn-primary flex-1" id="step3Next" disabled>
+                                        Get My Analysis <i class="fas fa-chart-bar ml-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 4: Results -->
+                        <div id="step4" class="step-content hidden">
+                            <div class="fade-in space-y-8">
+                                <!-- NC Requirements Section -->
+                                <div class="form-card">
+                                    <div class="flex items-center mb-6">
+                                        <div class="step-indicator completed mr-4">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <h2 class="text-2xl font-bold text-gray-800">North Carolina Requirements</h2>
+                                    </div>
+                                    
+                                    <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+                                        <div class="flex">
+                                            <i class="fas fa-exclamation-triangle text-red-500 mr-3 mt-1"></i>
+                                            <div>
+                                                <h3 class="font-semibold text-red-800">Legal Minimum Requirements</h3>
+                                                <p class="text-red-700">NC law requires minimum coverage, but it may not fully protect your assets.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="grid md:grid-cols-2 gap-6">
+                                        <div class="coverage-card">
+                                            <h4 class="font-semibold text-gray-800 mb-3">Required Coverage</h4>
+                                            <ul class="space-y-2 text-sm">
+                                                <li class="flex justify-between">
+                                                    <span>Bodily Injury (per person)</span>
+                                                    <span class="font-medium">$30,000</span>
+                                                </li>
+                                                <li class="flex justify-between">
+                                                    <span>Bodily Injury (per accident)</span>
+                                                    <span class="font-medium">$60,000</span>
+                                                </li>
+                                                <li class="flex justify-between">
+                                                    <span>Property Damage</span>
+                                                    <span class="font-medium">$25,000</span>
+                                                </li>
+                                                <li class="flex justify-between border-t pt-2 mt-2">
+                                                    <span class="font-medium">Estimated Monthly Cost</span>
+                                                    <span class="font-bold text-green-600" id="minimumCost">$45 - $75</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        
+                                        <div class="coverage-card">
+                                            <h4 class="font-semibold text-gray-800 mb-3">Coverage Gaps</h4>
+                                            <ul class="space-y-2 text-sm text-red-600">
+                                                <li class="flex items-start">
+                                                    <i class="fas fa-times-circle mr-2 mt-0.5"></i>
+                                                    <span>Low limits may not cover serious accidents</span>
+                                                </li>
+                                                <li class="flex items-start">
+                                                    <i class="fas fa-times-circle mr-2 mt-0.5"></i>
+                                                    <span>No coverage for your own vehicle damage</span>
+                                                </li>
+                                                <li class="flex items-start">
+                                                    <i class="fas fa-times-circle mr-2 mt-0.5"></i>
+                                                    <span>No protection against uninsured drivers</span>
+                                                </li>
+                                                <li class="flex items-start">
+                                                    <i class="fas fa-times-circle mr-2 mt-0.5"></i>
+                                                    <span>Personal assets at risk in lawsuits</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Recommended Coverage -->
+                                <div class="form-card" id="recommendedCoverage">
+                                    <div class="flex items-center justify-between mb-6">
+                                        <div class="flex items-center">
+                                            <div class="step-indicator completed mr-4">
+                                                <i class="fas fa-star"></i>
+                                            </div>
+                                            <h2 class="text-2xl font-bold text-gray-800">Recommended for You</h2>
+                                        </div>
+                                        <span class="recommendation-badge">RECOMMENDED</span>
+                                    </div>
+                                    
+                                    <div id="recommendationContent">
+                                        <!-- Content will be populated by JavaScript -->
+                                    </div>
+                                </div>
+
+                                <!-- Money-Saving Tips -->
+                                <div class="form-card">
+                                    <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                                        <i class="fas fa-piggy-bank text-green-500 mr-3"></i>
+                                        Money-Saving Tips
+                                    </h2>
+                                    
+                                    <div class="grid md:grid-cols-2 gap-6">
+                                        <div class="space-y-4">
+                                            <div class="flex items-start">
+                                                <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
+                                                <div>
+                                                    <h4 class="font-medium">Bundle Policies</h4>
+                                                    <p class="text-sm text-gray-600">Save 10-25% by combining auto and home insurance</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
+                                                <div>
+                                                    <h4 class="font-medium">Safe Driver Discounts</h4>
+                                                    <p class="text-sm text-gray-600">Clean driving record can save 10-20%</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
+                                                <div>
+                                                    <h4 class="font-medium">Anti-Theft Devices</h4>
+                                                    <p class="text-sm text-gray-600">Car alarms and GPS tracking save 5-15%</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-4">
+                                            <div class="flex items-start">
+                                                <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
+                                                <div>
+                                                    <h4 class="font-medium">Higher Deductibles</h4>
+                                                    <p class="text-sm text-gray-600">Increase deductible to lower monthly premiums</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
+                                                <div>
+                                                    <h4 class="font-medium">Low Mileage Discount</h4>
+                                                    <p class="text-sm text-gray-600">Drive less than 7,500 miles/year for savings</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
+                                                <div>
+                                                    <h4 class="font-medium">Good Student Discount</h4>
+                                                    <p class="text-sm text-gray-600">Students with B+ average save 10-15%</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="flex gap-4">
+                                    <button onclick="startOver()" class="btn-secondary">
+                                        <i class="fas fa-redo mr-2"></i>Start Over
+                                    </button>
+                                    <button onclick="window.print()" class="btn-secondary">
+                                        <i class="fas fa-print mr-2"></i>Print Results
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact CTA Section -->
+        <section class="py-20 bg-blue-600 text-white">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl lg:text-4xl font-bold mb-4">
+                    Ready to Get Covered?
+                </h2>
+                <p class="text-xl text-blue-100 mb-8">
+                    Our experienced agents can help you find the perfect coverage at the best price
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a href="tel:3368351993" class="btn-secondary text-lg">
+                        <i class="fas fa-phone mr-2"></i>Call (336) 835-1993
+                    </a>
+                    <span class="text-blue-200">or</span>
+                    <a href="../get-quote.html" class="bg-white text-blue-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors">
+                        <i class="fas fa-calculator mr-2"></i>Get Free Quote Online
+                    </a>
+                </div>
+                
+                <div class="mt-8 text-blue-200">
+                    <p class="mb-2">
+                        <i class="fas fa-map-marker-alt mr-2"></i>
+                        1283 N Bridge St, Elkin, NC 28621
+                    </p>
+                    <p>
+                        <i class="fas fa-envelope mr-2"></i>
+                        Save@BillLayneInsurance.com
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Bill Layne Insurance</h3>
+                    <p class="text-gray-400 mb-4">Your trusted insurance partner in North Carolina since 2004.</p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.facebook.com/dollarbillagency/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.google.com/maps/place/Bill+Layne+Insurance+Agency" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white"><i class="fab fa-google"></i></a>
+                        <a href="https://www.yelp.com/biz/bill-layne-insurance-agency-elkin" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white"><i class="fab fa-yelp"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Resources</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="../resources/index.html" class="hover:text-white">All Resources</a></li>
+            <a href="../contact-us.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-envelope w-6 text-slate-500"></i> Contact Us</a>
+            <a href="../service-center.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-concierge-bell w-6 text-emerald-500"></i> Service Center</a>
+            <a href="../videos/index.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-video w-6 text-teal-500"></i> Videos</a>
+            <a href="../blog/index.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-blog w-6 text-indigo-500"></i> Blog</a>
+                        <li><a href="homeowners-estimator.html" class="hover:text-white">Home Estimator</a></li>
+            <a href="../areas-we-serve.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-map-marked-alt w-6 text-purple-500"></i> Areas We Serve</a>
+                        <li><a href="nc-insurance-laws-guide.html" class="hover:text-white">NC Insurance Laws</a></li>
+                        <li><a href="claims-process-guide.html" class="hover:text-white">Claims Guide</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Insurance</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="../auto-center/index.html" class="hover:text-white">Auto Insurance</a></li>
+                        <li><a href="../home-insurance/index.html" class="hover:text-white">Home Insurance</a></li>
+                        <li><a href="../claims-center/index.html" class="hover:text-white">Claims Center</a></li>
+                        <li><a href="../areas-we-serve.html" class="hover:text-white">All Services</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Contact Info</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><i class="fas fa-phone mr-2"></i>(336) 835-1993</li>
+                        <li><i class="fas fa-envelope mr-2"></i>Save@BillLayneInsurance.com</li>
+                        <li><i class="fas fa-map-marker-alt mr-2"></i>1283 N Bridge St<br>Elkin, NC 28621</li>
+                        <li><i class="fas fa-clock mr-2"></i>Mon-Fri: 9AM-5PM</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 Bill Layne Insurance Agency. All rights reserved. | NC License #1740293</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        let currentStep = 1;
+        let formData = {};
+
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('main-header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Universal menu functionality
+        const menuToggleBtn = document.getElementById('menu-toggle-btn');
+        const navigationMenu = document.getElementById('navigation-menu');
+        const menuOverlay = document.getElementById('menu-overlay');
+        const closeMenuBtn = document.getElementById('close-menu');
+
+        function toggleMenu() {
+            menuToggleBtn.classList.toggle('active');
+            navigationMenu.classList.toggle('active');
+            menuOverlay.classList.toggle('active');
+            document.body.style.overflow = navigationMenu.classList.contains('active') ? 'hidden' : '';
+        }
+
+        function closeMenu() {
+            menuToggleBtn.classList.remove('active');
+            navigationMenu.classList.remove('active');
+            menuOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        menuToggleBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', closeMenu);
+        menuOverlay.addEventListener('click', closeMenu);
+
+        // Step navigation
+        function nextStep(step) {
+            // Validate current step
+            if (!validateStep(currentStep)) {
+                return;
+            }
+            
+            // Hide current step
+            document.getElementById(`step${currentStep}`).classList.add('hidden');
+            
+            // Show next step
+            document.getElementById(`step${step}`).classList.remove('hidden');
+            
+            // Update progress
+            updateProgress(step);
+            updateSidebar(step);
+            
+            currentStep = step;
+            
+            // Generate results if going to step 4
+            if (step === 4) {
+                generateRecommendation();
+            }
+            
+            // Scroll to top
+            window.scrollTo({ top: 80, behavior: 'smooth' });
+        }
+
+        function previousStep(step) {
+            // Hide current step
+            document.getElementById(`step${currentStep}`).classList.add('hidden');
+            
+            // Show previous step
+            document.getElementById(`step${step}`).classList.remove('hidden');
+            
+            // Update progress
+            updateProgress(step);
+            updateSidebar(step);
+            
+            currentStep = step;
+            
+            // Scroll to top
+            window.scrollTo({ top: 80, behavior: 'smooth' });
+        }
+
+        function startOver() {
+            // Reset form
+            formData = {};
+            currentStep = 1;
+            
+            // Clear all inputs
+            document.querySelectorAll('input, select').forEach(el => el.value = '');
+            document.querySelectorAll('.coverage-option').forEach(el => el.classList.remove('selected'));
+            
+            // Hide all steps except first
+            document.querySelectorAll('.step-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('step1').classList.remove('hidden');
+            
+            // Reset progress
+            updateProgress(1);
+            updateSidebar(1);
+            
+            // Scroll to top
+            window.scrollTo({ top: 80, behavior: 'smooth' });
+        }
+
+        function validateStep(step) {
+            switch(step) {
+                case 1:
+                    const year = document.getElementById('vehicleYear').value;
+                    const value = document.getElementById('vehicleValue').value;
+                    const usage = document.querySelector('.coverage-option[data-usage].selected');
+                    
+                    if (!year || !value || !usage) {
+                        alert('Please complete all fields before continuing.');
+                        return false;
+                    }
+                    
+                    formData.vehicle = {
+                        year: parseInt(year),
+                        value: value,
+                        usage: usage.dataset.usage
+                    };
+                    return true;
+                    
+                case 2:
+                    const experience = document.getElementById('drivingExperience').value;
+                    const mileage = document.getElementById('annualMileage').value;
+                    const record = document.querySelector('.coverage-option[data-record].selected');
+                    
+                    if (!experience || !mileage || !record) {
+                        alert('Please complete all fields before continuing.');
+                        return false;
+                    }
+                    
+                    formData.driver = {
+                        experience: experience,
+                        mileage: mileage,
+                        record: record.dataset.record
+                    };
+                    return true;
+                    
+                case 3:
+                    const priority = document.querySelector('.coverage-option[data-priority].selected');
+                    const assets = document.getElementById('assetsValue').value;
+                    const deductible = document.getElementById('deductible').value;
+                    
+                    if (!priority || !assets || !deductible) {
+                        alert('Please complete all fields before continuing.');
+                        return false;
+                    }
+                    
+                    formData.preferences = {
+                        priority: priority.dataset.priority,
+                        assets: assets,
+                        deductible: parseInt(deductible)
+                    };
+                    return true;
+            }
+            return true;
+        }
+
+        function updateProgress(step) {
+            const progress = (step / 4) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressPercent').textContent = Math.round(progress) + '%';
+            
+            const stepTexts = [
+                'Step 1 of 4: Vehicle Information',
+                'Step 2 of 4: Driving Profile', 
+                'Step 3 of 4: Coverage Preferences',
+                'Step 4 of 4: Your Analysis'
+            ];
+            
+            document.getElementById('progressText').textContent = stepTexts[step - 1];
+        }
+
+        function updateSidebar(step) {
+            // Update sidebar indicators
+            for (let i = 1; i <= 4; i++) {
+                const indicator = document.getElementById(`sidebar-step${i}`);
+                const wrapper = document.getElementById(`sidebar-step${i}-wrapper`);
+                
+                if (i < step) {
+                    indicator.classList.add('completed');
+                    indicator.innerHTML = '<i class="fas fa-check"></i>';
+                    wrapper.classList.remove('opacity-50');
+                } else if (i === step) {
+                    indicator.classList.remove('completed');
+                    indicator.textContent = i;
+                    wrapper.classList.remove('opacity-50');
+                } else {
+                    indicator.classList.remove('completed');
+                    indicator.textContent = i;
+                    wrapper.classList.add('opacity-50');
+                }
+            }
+        }
+
+        function generateRecommendation() {
+            // Calculate recommended coverage based on form data
+            const recommendation = calculateRecommendation(formData);
+            
+            // Update minimum cost estimate
+            const minCost = calculateMinimumCost(formData);
+            document.getElementById('minimumCost').textContent = `$${minCost.min} - $${minCost.max}`;
+            
+            // Generate recommendation content
+            const content = generateRecommendationHTML(recommendation);
+            document.getElementById('recommendationContent').innerHTML = content;
+        }
+
+        function calculateRecommendation(data) {
+            let rec = {
+                bodilyInjury: [50000, 100000],
+                propertyDamage: 50000,
+                uninsuredMotorist: [50000, 100000],
+                collision: true,
+                comprehensive: true,
+                deductible: data.preferences.deductible,
+                estimatedCost: { min: 85, max: 125 }
+            };
+
+            // Adjust based on vehicle value
+            if (data.vehicle.value === 'over50k') {
+                rec.bodilyInjury = [100000, 300000];
+                rec.propertyDamage = 100000;
+                rec.estimatedCost = { min: 150, max: 220 };
+            } else if (data.vehicle.value === 'under5k') {
+                rec.collision = false;
+                rec.comprehensive = false;
+                rec.estimatedCost = { min: 65, max: 95 };
+            }
+
+            // Adjust based on assets
+            if (data.preferences.assets === 'significant') {
+                rec.bodilyInjury = [250000, 500000];
+                rec.propertyDamage = 250000;
+                rec.umbrella = true;
+                rec.estimatedCost.min += 50;
+                rec.estimatedCost.max += 80;
+            } else if (data.preferences.assets === 'substantial') {
+                rec.bodilyInjury = [100000, 300000];
+                rec.propertyDamage = 100000;
+            }
+
+            // Adjust based on driving record
+            if (data.driver.record === 'major') {
+                rec.estimatedCost.min += 30;
+                rec.estimatedCost.max += 50;
+            } else if (data.driver.record === 'clean') {
+                rec.estimatedCost.min -= 10;
+                rec.estimatedCost.max -= 15;
+            }
+
+            // Adjust based on priority
+            if (data.preferences.priority === 'cost') {
+                rec.bodilyInjury = [30000, 60000];
+                rec.propertyDamage = 25000;
+                rec.deductible = Math.max(rec.deductible, 1000);
+                rec.estimatedCost.min -= 25;
+                rec.estimatedCost.max -= 35;
+            } else if (data.preferences.priority === 'protection') {
+                rec.bodilyInjury = [100000, 300000];
+                rec.propertyDamage = 100000;
+                rec.estimatedCost.min += 20;
+                rec.estimatedCost.max += 30;
+            }
+
+            return rec;
+        }
+
+        function calculateMinimumCost(data) {
+            let base = { min: 45, max: 75 };
+            
+            if (data.driver.record === 'major') {
+                base.min += 25;
+                base.max += 40;
+            } else if (data.driver.record === 'clean') {
+                base.min -= 5;
+                base.max -= 10;
+            }
+            
+            return base;
+        }
+
+        function generateRecommendationHTML(rec) {
+            const formatCurrency = (amount) => `$${amount.toLocaleString()}`;
+            
+            return `
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <div class="coverage-card">
+                        <h4 class="font-semibold text-gray-800 mb-3">Liability Coverage</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex justify-between">
+                                <span>Bodily Injury (per person)</span>
+                                <span class="font-medium">${formatCurrency(rec.bodilyInjury[0])}</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span>Bodily Injury (per accident)</span>
+                                <span class="font-medium">${formatCurrency(rec.bodilyInjury[1])}</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span>Property Damage</span>
+                                <span class="font-medium">${formatCurrency(rec.propertyDamage)}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="coverage-card">
+                        <h4 class="font-semibold text-gray-800 mb-3">Additional Protection</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex justify-between">
+                                <span>Uninsured Motorist</span>
+                                <span class="font-medium">${formatCurrency(rec.uninsuredMotorist[0])}/${formatCurrency(rec.uninsuredMotorist[1])}</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span>Collision Coverage</span>
+                                <span class="font-medium">${rec.collision ? 'Yes' : 'No'}</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span>Comprehensive</span>
+                                <span class="font-medium">${rec.comprehensive ? 'Yes' : 'No'}</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span>Deductible</span>
+                                <span class="font-medium">${formatCurrency(rec.deductible)}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
+                    <div class="flex">
+                        <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
+                        <div>
+                            <h3 class="font-semibold text-green-800">Why This Coverage?</h3>
+                            <p class="text-green-700">Based on your profile, this coverage provides optimal protection for your situation while balancing cost and coverage.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center bg-gray-50 p-6 rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Estimated Monthly Cost</h3>
+                    <div class="text-3xl font-bold text-blue-600">$${rec.estimatedCost.min} - $${rec.estimatedCost.max}</div>
+                    <p class="text-sm text-gray-600 mt-2">*Estimate based on your profile. Actual rates may vary.</p>
+                </div>
+                
+                ${rec.umbrella ? `
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mt-4">
+                    <div class="flex">
+                        <i class="fas fa-umbrella text-blue-500 mr-3 mt-1"></i>
+                        <div>
+                            <h3 class="font-semibold text-blue-800">Consider Umbrella Insurance</h3>
+                            <p class="text-blue-700">With your asset level, a $1M umbrella policy could provide additional protection for just $15-25/month.</p>
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
+            `;
+        }
+
+        // Handle coverage option selections
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.coverage-option')) {
+                const option = e.target.closest('.coverage-option');
+                const group = option.parentElement;
+                
+                // Remove selected class from siblings
+                group.querySelectorAll('.coverage-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked option
+                option.classList.add('selected');
+                
+                // Enable next button if this was the last required field
+                updateNextButton();
+            }
+        });
+
+        // Handle form input changes
+        document.addEventListener('change', function(e) {
+            if (e.target.matches('input, select')) {
+                updateNextButton();
+            }
+        });
+
+        function updateNextButton() {
+            const step = currentStep;
+            let isValid = false;
+            
+            switch(step) {
+                case 1:
+                    const year = document.getElementById('vehicleYear').value;
+                    const value = document.getElementById('vehicleValue').value;
+                    const usage = document.querySelector('.coverage-option[data-usage].selected');
+                    isValid = year && value && usage;
+                    break;
+                case 2:
+                    const experience = document.getElementById('drivingExperience').value;
+                    const mileage = document.getElementById('annualMileage').value;
+                    const record = document.querySelector('.coverage-option[data-record].selected');
+                    isValid = experience && mileage && record;
+                    break;
+                case 3:
+                    const priority = document.querySelector('.coverage-option[data-priority].selected');
+                    const assets = document.getElementById('assetsValue').value;
+                    const deductible = document.getElementById('deductible').value;
+                    isValid = priority && assets && deductible;
+                    break;
+            }
+            
+            const nextButton = document.getElementById(`step${step}Next`);
+            if (nextButton) {
+                nextButton.disabled = !isValid;
+            }
+        }
+    </script>
+</body>
+</html>

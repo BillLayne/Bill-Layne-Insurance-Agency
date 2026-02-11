@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Inventory List - Bill Layne Insurance Agency</title>
+    <meta name="description" content="Create a complete home inventory for insurance. Document belongings, track values, and protect your assets. Free tool from Bill Layne Insurance.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            important: true,
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* F-Pattern Optimized Styles */
+        :root {
+            --primary-blue: #2563eb;
+            --primary-blue-dark: #1d4ed8;
+            --accent-green: #10b981;
+            --text-gray: #374151;
+            --text-light: #6b7280;
+            --bg-light: #f8fafc;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: var(--text-gray);
+        }
+        
+        /* F-Pattern Header */
+        .f-header {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            transition: all 0.3s ease;
+        }
+        
+        .f-header.scrolled {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* F-Pattern Hero */
+        .f-hero {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
+            position: relative;
+            overflow: hidden;
+            padding-top: 140px;
+            padding-bottom: 40px;
+        }
+        
+        .f-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.03"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+        }
+        
+        /* F-Pattern Sidebar */
+        .f-sidebar {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+        
+        /* Modern Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+            background: linear-gradient(135deg, var(--primary-blue-dark) 0%, #1e40af 100%);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--primary-blue);
+            color: white;
+            transform: translateY(-1px);
+        }
+        
+        /* Navigation Menu */
+        .navigation-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            max-width: 350px;
+            height: 100vh;
+            background: white;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .navigation-menu.active {
+            right: 0;
+        }
+        
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+        
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Hamburger Animation */
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: var(--text-gray);
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+        
+        /* Trust Badge */
+        .trust-badge {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .trust-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Room Tabs */
+        .room-tab {
+            padding: 12px 20px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-align: center;
+            position: relative;
+        }
+        
+        .room-tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .room-tab.active {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+        
+        .room-tab .item-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--accent-green);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Inventory Item Card */
+        .inventory-item {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .inventory-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        
+        /* Category Badge */
+        .category-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #e0e7ff;
+            color: var(--primary-blue);
+        }
+        
+        /* Form Styles */
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        /* Add Item Button */
+        .add-item-btn {
+            background: linear-gradient(135deg, var(--accent-green) 0%, #059669 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .add-item-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        /* Delete Button */
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .delete-btn:hover {
+            background: #dc2626;
+        }
+        
+        /* Progress Bar */
+        .progress-bar {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-green) 0%, #059669 100%);
+            transition: width 0.5s ease;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        /* Print Styles */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            
+            .inventory-item {
+                page-break-inside: avoid;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .f-sidebar {
+                position: static;
+            }
+            
+            .btn-primary, .btn-secondary {
+                padding: 12px 20px;
+                font-size: 15px;
+            }
+            
+            .room-tab {
+                font-size: 14px;
+                padding: 10px 16px;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Menu Overlay -->
+    <div id="menu-overlay" class="menu-overlay"></div>
+    
+    <!-- Header - F-Pattern Top Bar -->
+    <header id="main-header" class="f-header no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0">
+                    <a href="../index.html" class="text-2xl font-bold text-blue-800">
+                        Bill Layne Insurance
+                    </a>
+                    <p class="text-xs text-gray-600 hidden sm:block">Home Inventory List</p>
+                </div>
+                
+                <!-- Right Side: Phone, CTA, and Menu Button -->
+                <div class="flex items-center space-x-4">
+                    <!-- Desktop CTA -->
+                    <div class="hidden md:flex items-center space-x-4">
+                        <a href="tel:3368351993" class="text-gray-700 font-semibold hover:text-blue-600 transition-colors">
+                            <i class="fas fa-phone mr-2"></i>(336) 835-1993
+                        </a>
+                        <a href="../get-quote.html" class="btn-primary">Get Free Quote</a>
+                    </div>
+                    
+                    <!-- Universal Menu Button -->
+                    <button id="menu-toggle-btn" class="hamburger p-2">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Universal Menu -->
+    <div id="navigation-menu" class="navigation-menu">
+        <div class="flex justify-between items-center mb-8">
+            <h3 class="text-xl lg:text-2xl font-bold text-gray-800">Navigation</h3>
+            <button id="close-menu" class="text-gray-500 hover:text-gray-700 p-2">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <nav class="space-y-4">
+            <a href="../index.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-home mr-3 w-5"></i>Home
+            </a>
+            <a href="../areas-we-serve.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-th-large mr-3 w-5"></i>Services
+            </a>
+            <a href="../auto-center/index.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-car mr-3 w-5"></i>Auto Insurance
+            </a>
+            <a href="../home-insurance/index.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-home mr-3 w-5"></i>Home Insurance
+            </a>
+            <a href="../claims-center/index.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-file-alt mr-3 w-5"></i>Claims Center
+            </a>
+            <a href="../resources/index.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-book mr-3 w-5"></i>Resources
+            </a>
+            <a href="../blog/index.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-blog mr-3 w-5"></i>Blog
+            </a>
+            <a href="../service-center.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Service Center</a>
+            <a href="../contact-us.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Contact Us</a>
+            <a href="../videos/index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Videos</a>
+            <a href="../blog/index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Blog</a>
+            <a href="../resources/index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Resources</a>
+            <a href="../claims-center/index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Claims Center</a>
+            <a href="../home-insurance/index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home Insurance</a>
+            <a href="../auto-center/index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Auto Insurance</a>
+            <a href="../areas-we-serve.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Areas We Serve</a>
+            <a href="../index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home</a>
+        <a href="../contact-us.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
+                <i class="fas fa-envelope mr-3 w-5"></i>Contact Us
+            </a>
+        </nav>
+        <div class="mt-8 space-y-4">
+            <a href="tel:3368351993" class="block w-full text-center bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors">
+                <i class="fas fa-phone mr-2"></i>Call (336) 835-1993
+            </a>
+            <a href="../get-quote.html" class="block w-full text-center btn-primary">
+                <i class="fas fa-calculator mr-2"></i>Get Free Quote
+            </a>
+        </div>
+    </div>
+
+    <main>
+        <!-- Hero Section - F-Pattern Second Horizontal Bar -->
+        <section class="f-hero no-print">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                <div class="animate-fade-in-up">
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-4">
+                        Home Inventory List
+                        <span class="block text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-cyan-200">
+                            Document Your Belongings
+                        </span>
+                    </h1>
+                    <p class="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
+                        Create a complete inventory of your possessions for insurance claims, coverage verification, and peace of mind
+                    </p>
+                    
+                    <!-- Stats Bar -->
+                    <div class="flex flex-wrap justify-center gap-8 text-white">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold" id="totalItems">0</div>
+                            <div class="text-sm text-blue-200">Total Items</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold" id="totalValue">$0</div>
+                            <div class="text-sm text-blue-200">Total Value</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold" id="roomCount">0</div>
+                            <div class="text-sm text-blue-200">Rooms Documented</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- F-Pattern Content Layout -->
+        <section class="py-20 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Info Box -->
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg mb-8 no-print">
+                    <div class="flex items-start">
+                        <i class="fas fa-info-circle text-blue-600 text-xl mr-3 mt-1"></i>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-2">Why Create an Inventory?</h3>
+                            <p class="text-gray-700">
+                                A detailed home inventory speeds up claims processing, ensures adequate coverage, and helps you remember 
+                                everything you own. Take photos of items and keep receipts with this list for complete documentation.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-12 gap-12">
+                    <!-- Left Sidebar - F-Pattern Vertical Emphasis -->
+                    <div class="lg:col-span-4 no-print">
+                        <div class="f-sidebar space-y-6">
+                            <!-- Inventory Summary -->
+                            <div class="trust-badge bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+                                <div class="text-center">
+                                    <div class="text-3xl font-black mb-2" id="sidebarTotal">$0</div>
+                                    <p class="font-semibold">Total Inventory Value</p>
+                                </div>
+                                <hr class="my-4 border-blue-400">
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span>Items Added:</span>
+                                        <span class="font-bold" id="sidebarItems">0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Avg Item Value:</span>
+                                        <span class="font-bold" id="sidebarAvg">$0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Progress:</span>
+                                        <span class="font-bold" id="sidebarProgress">0%</span>
+                                    </div>
+                                </div>
+                                <div class="progress-bar mt-3">
+                                    <div class="progress-bar-fill" id="progressFill" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Category Breakdown -->
+                            <div class="trust-badge">
+                                <h4 class="font-bold text-gray-800 mb-4 flex items-center">
+                                    <i class="fas fa-chart-pie text-blue-600 mr-2"></i>
+                                    Category Breakdown
+                                </h4>
+                                <div class="space-y-2 text-sm" id="categoryBreakdown">
+                                    <div class="text-gray-500 text-center">No items yet</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Documentation Tips -->
+                            <div class="trust-badge">
+                                <h4 class="font-bold text-gray-800 mb-4">
+                                    <i class="fas fa-camera text-green-600 mr-2"></i>
+                                    Documentation Tips
+                                </h4>
+                                <ul class="text-sm text-gray-600 space-y-2">
+                                    <li>• Take photos of each item</li>
+                                    <li>• Keep receipts in a safe place</li>
+                                    <li>• Record serial numbers</li>
+                                    <li>• Note purchase dates</li>
+                                    <li>• Include model numbers</li>
+                                    <li>• Document item condition</li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Coverage Check -->
+                            <div class="trust-badge bg-gradient-to-br from-yellow-50 to-orange-50">
+                                <h4 class="font-bold text-gray-800 mb-4">
+                                    <i class="fas fa-shield-alt text-yellow-600 mr-2"></i>
+                                    Coverage Guidelines
+                                </h4>
+                                <ul class="text-sm text-gray-700 space-y-2">
+                                    <li>• Personal property: 50-70% of dwelling</li>
+                                    <li>• High-value items need riders</li>
+                                    <li>• Jewelry limit: usually $1,500</li>
+                                    <li>• Electronics: document all</li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="space-y-3">
+                                <button onclick="exportInventory()" class="btn-secondary w-full">
+                                    <i class="fas fa-download mr-2"></i>Export List
+                                </button>
+                                <button onclick="printInventory()" class="btn-secondary w-full">
+                                    <i class="fas fa-print mr-2"></i>Print Inventory
+                                </button>
+                                <button onclick="clearInventory()" class="w-full bg-red-50 text-red-600 border-2 border-red-200 py-3 px-4 rounded-full font-semibold hover:bg-red-100 transition-colors">
+                                    <i class="fas fa-trash mr-2"></i>Clear All
+                                </button>
+                            </div>
+                            
+                            <!-- Need Help CTA -->
+                            <div class="text-center">
+                                <a href="tel:3368351993" class="btn-primary w-full block">
+                                    <i class="fas fa-phone mr-2"></i>Review Coverage
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Main Content - F-Pattern Right Side -->
+                    <div class="lg:col-span-8">
+                        <!-- Room Tabs -->
+                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-8 no-print">
+                            <div class="room-tab active" data-room="living-room">
+                                <i class="fas fa-couch mr-2"></i>Living Room
+                                <span class="item-count" style="display: none;">0</span>
+                            </div>
+                            <div class="room-tab" data-room="kitchen">
+                                <i class="fas fa-utensils mr-2"></i>Kitchen
+                                <span class="item-count" style="display: none;">0</span>
+                            </div>
+                            <div class="room-tab" data-room="master-bedroom">
+                                <i class="fas fa-bed mr-2"></i>Master Bed
+                                <span class="item-count" style="display: none;">0</span>
+                            </div>
+                            <div class="room-tab" data-room="bedroom">
+                                <i class="fas fa-door-open mr-2"></i>Bedroom
+                                <span class="item-count" style="display: none;">0</span>
+                            </div>
+                            <div class="room-tab" data-room="bathroom">
+                                <i class="fas fa-bath mr-2"></i>Bathroom
+                                <span class="item-count" style="display: none;">0</span>
+                            </div>
+                            <div class="room-tab" data-room="office">
+                                <i class="fas fa-laptop mr-2"></i>Office
+                                <span class="item-count" style="display: none;">0</span>
+                            </div>
+                            <div class="room-tab" data-room="garage">
+                                <i class="fas fa-warehouse mr-2"></i>Garage
+                                <span class="item-count" style="display: none;">0</span>
+                            </div>
+                            <div class="room-tab" data-room="other">
+                                <i class="fas fa-box mr-2"></i>Other
+                                <span class="item-count" style="display: none;">0</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Add Item Section -->
+                        <div class="bg-white rounded-lg p-6 shadow-md mb-6 no-print">
+                            <h3 class="font-bold text-gray-800 mb-4">
+                                <i class="fas fa-plus-circle text-green-600 mr-2"></i>
+                                Add Item to <span id="currentRoomName">Living Room</span>
+                            </h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <input type="text" id="itemName" class="form-input" placeholder="Item name (e.g., 55' Samsung TV)">
+                                </div>
+                                <div>
+                                    <select id="itemCategory" class="form-input">
+                                        <option value="">Select Category</option>
+                                        <option value="Electronics">Electronics</option>
+                                        <option value="Furniture">Furniture</option>
+                                        <option value="Appliances">Appliances</option>
+                                        <option value="Jewelry">Jewelry</option>
+                                        <option value="Artwork">Artwork</option>
+                                        <option value="Clothing">Clothing</option>
+                                        <option value="Tools">Tools</option>
+                                        <option value="Sports">Sports Equipment</option>
+                                        <option value="Collectibles">Collectibles</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <input type="number" id="itemValue" class="form-input" placeholder="Value ($)">
+                                </div>
+                                <div>
+                                    <input type="text" id="itemBrand" class="form-input" placeholder="Brand/Manufacturer">
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <button onclick="addItem()" class="add-item-btn">
+                                    <i class="fas fa-plus"></i>
+                                    Add to Inventory
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Items List -->
+                        <div id="itemsList" class="space-y-4">
+                            <!-- Items will be added here dynamically -->
+                            <div class="text-center text-gray-500 py-12">
+                                <i class="fas fa-box-open text-6xl text-gray-300 mb-4"></i>
+                                <p class="text-lg">No items in this room yet</p>
+                                <p class="text-sm">Start adding items to build your inventory</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Summary Section -->
+                        <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-8 mt-8">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">
+                                <i class="fas fa-chart-bar text-blue-600 mr-2"></i>
+                                Room Summary
+                            </h3>
+                            <div class="grid sm:grid-cols-3 gap-4">
+                                <div class="bg-white rounded-lg p-4 text-center">
+                                    <div class="text-2xl font-bold text-blue-600" id="roomItems">0</div>
+                                    <div class="text-sm text-gray-600">Items in Room</div>
+                                </div>
+                                <div class="bg-white rounded-lg p-4 text-center">
+                                    <div class="text-2xl font-bold text-green-600" id="roomValue">$0</div>
+                                    <div class="text-sm text-gray-600">Room Value</div>
+                                </div>
+                                <div class="bg-white rounded-lg p-4 text-center">
+                                    <div class="text-2xl font-bold text-purple-600" id="highestValue">$0</div>
+                                    <div class="text-sm text-gray-600">Highest Item</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="py-20 bg-blue-600 text-white no-print">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl lg:text-4xl font-bold mb-4">
+                    Is Your Coverage Adequate?
+                </h2>
+                <p class="text-xl text-blue-100 mb-8">
+                    Review your inventory with our experts to ensure you have the right coverage for your belongings
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a href="tel:3368351993" class="btn-secondary text-lg">
+                        <i class="fas fa-phone mr-2"></i>Call (336) 835-1993
+                    </a>
+                    <span class="text-blue-200">or</span>
+                    <a href="../get-quote.html" class="bg-white text-blue-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors">
+                        <i class="fas fa-calculator mr-2"></i>Get Coverage Review
+                    </a>
+                </div>
+                
+                <div class="mt-8 text-blue-200">
+                    <p class="mb-2">
+                        <i class="fas fa-map-marker-alt mr-2"></i>
+                        1283 N Bridge St, Elkin, NC 28621
+                    </p>
+                    <p>
+                        <i class="fas fa-envelope mr-2"></i>
+                        Save@BillLayneInsurance.com
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <p>&copy; 2025 Bill Layne Insurance Agency. All rights reserved. | NC License #1740293</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Initialize inventory data
+        let inventory = {
+            'living-room': [],
+            'kitchen': [],
+            'master-bedroom': [],
+            'bedroom': [],
+            'bathroom': [],
+            'office': [],
+            'garage': [],
+            'other': []
+        };
+
+        let currentRoom = 'living-room';
+
+        // Load saved inventory from localStorage
+        if (localStorage.getItem('homeInventory')) {
+            inventory = JSON.parse(localStorage.getItem('homeInventory'));
+            updateAllDisplays();
+        }
+
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('main-header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Universal menu functionality
+        const menuToggleBtn = document.getElementById('menu-toggle-btn');
+        const navigationMenu = document.getElementById('navigation-menu');
+        const menuOverlay = document.getElementById('menu-overlay');
+        const closeMenuBtn = document.getElementById('close-menu');
+
+        function toggleMenu() {
+            menuToggleBtn.classList.toggle('active');
+            navigationMenu.classList.toggle('active');
+            menuOverlay.classList.toggle('active');
+            document.body.style.overflow = navigationMenu.classList.contains('active') ? 'hidden' : '';
+        }
+
+        function closeMenu() {
+            menuToggleBtn.classList.remove('active');
+            navigationMenu.classList.remove('active');
+            menuOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        menuToggleBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', closeMenu);
+        menuOverlay.addEventListener('click', closeMenu);
+
+        // Room tab switching
+        document.querySelectorAll('.room-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.room-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                currentRoom = this.dataset.room;
+                
+                // Update room name display
+                const roomNames = {
+                    'living-room': 'Living Room',
+                    'kitchen': 'Kitchen',
+                    'master-bedroom': 'Master Bedroom',
+                    'bedroom': 'Bedroom',
+                    'bathroom': 'Bathroom',
+                    'office': 'Office',
+                    'garage': 'Garage',
+                    'other': 'Other'
+                };
+                document.getElementById('currentRoomName').textContent = roomNames[currentRoom];
+                
+                displayRoomItems();
+            });
+        });
+
+        // Add item function
+        function addItem() {
+            const name = document.getElementById('itemName').value.trim();
+            const category = document.getElementById('itemCategory').value;
+            const value = parseFloat(document.getElementById('itemValue').value) || 0;
+            const brand = document.getElementById('itemBrand').value.trim();
+            
+            if (!name || !category || value <= 0) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            const item = {
+                id: Date.now(),
+                name: name,
+                category: category,
+                value: value,
+                brand: brand,
+                dateAdded: new Date().toLocaleDateString()
+            };
+            
+            inventory[currentRoom].push(item);
+            saveInventory();
+            
+            // Clear form
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemCategory').value = '';
+            document.getElementById('itemValue').value = '';
+            document.getElementById('itemBrand').value = '';
+            
+            displayRoomItems();
+            updateAllDisplays();
+        }
+
+        // Display items for current room
+        function displayRoomItems() {
+            const itemsList = document.getElementById('itemsList');
+            const roomItems = inventory[currentRoom];
+            
+            if (roomItems.length === 0) {
+                itemsList.innerHTML = `
+                    <div class="text-center text-gray-500 py-12">
+                        <i class="fas fa-box-open text-6xl text-gray-300 mb-4"></i>
+                        <p class="text-lg">No items in this room yet</p>
+                        <p class="text-sm">Start adding items to build your inventory</p>
+                    </div>
+                `;
+            } else {
+                itemsList.innerHTML = roomItems.map(item => `
+                    <div class="inventory-item">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <h4 class="font-bold text-gray-800 text-lg">${item.name}</h4>
+                                <div class="flex items-center gap-3 mt-2">
+                                    <span class="category-badge">${item.category}</span>
+                                    ${item.brand ? `<span class="text-sm text-gray-600">by ${item.brand}</span>` : ''}
+                                </div>
+                                <div class="mt-3 text-sm text-gray-500">
+                                    Added: ${item.dateAdded}
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-green-600">$${item.value.toLocaleString()}</div>
+                                <button onclick="deleteItem('${currentRoom}', ${item.id})" class="delete-btn mt-2">
+                                    <i class="fas fa-trash mr-1"></i>Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            updateRoomSummary();
+        }
+
+        // Delete item
+        function deleteItem(room, itemId) {
+            if (confirm('Are you sure you want to delete this item?')) {
+                inventory[room] = inventory[room].filter(item => item.id !== itemId);
+                saveInventory();
+                displayRoomItems();
+                updateAllDisplays();
+            }
+        }
+
+        // Update room summary
+        function updateRoomSummary() {
+            const roomItems = inventory[currentRoom];
+            const totalItems = roomItems.length;
+            const totalValue = roomItems.reduce((sum, item) => sum + item.value, 0);
+            const highestValue = roomItems.length > 0 ? Math.max(...roomItems.map(item => item.value)) : 0;
+            
+            document.getElementById('roomItems').textContent = totalItems;
+            document.getElementById('roomValue').textContent = `$${totalValue.toLocaleString()}`;
+            document.getElementById('highestValue').textContent = `$${highestValue.toLocaleString()}`;
+        }
+
+        // Update all displays
+        function updateAllDisplays() {
+            let totalItems = 0;
+            let totalValue = 0;
+            let roomsWithItems = 0;
+            let categoryTotals = {};
+            
+            Object.keys(inventory).forEach(room => {
+                const roomItems = inventory[room];
+                if (roomItems.length > 0) {
+                    roomsWithItems++;
+                    
+                    // Update room tab count
+                    const tab = document.querySelector(`.room-tab[data-room="${room}"]`);
+                    if (tab) {
+                        const countBadge = tab.querySelector('.item-count');
+                        countBadge.textContent = roomItems.length;
+                        countBadge.style.display = 'flex';
+                    }
+                }
+                
+                roomItems.forEach(item => {
+                    totalItems++;
+                    totalValue += item.value;
+                    
+                    if (!categoryTotals[item.category]) {
+                        categoryTotals[item.category] = { count: 0, value: 0 };
+                    }
+                    categoryTotals[item.category].count++;
+                    categoryTotals[item.category].value += item.value;
+                });
+            });
+            
+            // Update hero stats
+            document.getElementById('totalItems').textContent = totalItems;
+            document.getElementById('totalValue').textContent = `$${totalValue.toLocaleString()}`;
+            document.getElementById('roomCount').textContent = roomsWithItems;
+            
+            // Update sidebar
+            document.getElementById('sidebarTotal').textContent = `$${totalValue.toLocaleString()}`;
+            document.getElementById('sidebarItems').textContent = totalItems;
+            const avgValue = totalItems > 0 ? Math.round(totalValue / totalItems) : 0;
+            document.getElementById('sidebarAvg').textContent = `$${avgValue.toLocaleString()}`;
+            
+            // Update progress (assuming goal of 100 items or $50,000)
+            const progressPercent = Math.min(100, Math.round((totalItems / 100) * 100));
+            document.getElementById('sidebarProgress').textContent = `${progressPercent}%`;
+            document.getElementById('progressFill').style.width = `${progressPercent}%`;
+            
+            // Update category breakdown
+            const categoryBreakdown = document.getElementById('categoryBreakdown');
+            if (Object.keys(categoryTotals).length > 0) {
+                categoryBreakdown.innerHTML = Object.entries(categoryTotals)
+                    .sort((a, b) => b[1].value - a[1].value)
+                    .map(([category, data]) => `
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">${category}:</span>
+                            <span class="font-semibold">$${data.value.toLocaleString()} (${data.count})</span>
+                        </div>
+                    `).join('');
+            } else {
+                categoryBreakdown.innerHTML = '<div class="text-gray-500 text-center">No items yet</div>';
+            }
+        }
+
+        // Save inventory to localStorage
+        function saveInventory() {
+            localStorage.setItem('homeInventory', JSON.stringify(inventory));
+        }
+
+        // Export inventory
+        function exportInventory() {
+            let csvContent = "Room,Item Name,Category,Brand,Value,Date Added\n";
+            
+            Object.keys(inventory).forEach(room => {
+                inventory[room].forEach(item => {
+                    csvContent += `"${room}","${item.name}","${item.category}","${item.brand}","${item.value}","${item.dateAdded}"\n`;
+                });
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `home-inventory-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+        }
+
+        // Print inventory
+        function printInventory() {
+            window.print();
+        }
+
+        // Clear all inventory
+        function clearInventory() {
+            if (confirm('Are you sure you want to clear your entire inventory? This cannot be undone.')) {
+                inventory = {
+                    'living-room': [],
+                    'kitchen': [],
+                    'master-bedroom': [],
+                    'bedroom': [],
+                    'bathroom': [],
+                    'office': [],
+                    'garage': [],
+                    'other': []
+                };
+                saveInventory();
+                displayRoomItems();
+                updateAllDisplays();
+                
+                // Reset room tab counts
+                document.querySelectorAll('.room-tab .item-count').forEach(badge => {
+                    badge.style.display = 'none';
+                });
+            }
+        }
+
+        // Initialize display
+        displayRoomItems();
+    </script>
+</body>
+</html>
