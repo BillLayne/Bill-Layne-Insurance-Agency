@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -431,6 +431,8 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="../css/mobile-dock.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body class="bg-gray-50">
@@ -460,7 +462,7 @@
                     </div>
                     
                     <!-- Universal Menu Button -->
-                    <button id="menu-toggle-btn" class="hamburger p-2">
+                    <button id="menu-toggle-btn" class="hidden md:block hamburger p-2">
                         <span></span>
                         <span></span>
                         <span></span>
@@ -483,7 +485,7 @@
                 <i class="fas fa-home mr-3 w-5"></i>Home
             </a>
             <a href="../areas-we-serve.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
-                <i class="fas fa-th-large mr-3 w-5"></i>Services
+                <i class="fas fa-map-marked-alt mr-3 w-5"></i>Areas We Serve
             </a>
             <a href="../auto-center/index.html" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium border-b border-gray-200 rounded transition-all">
                 <i class="fas fa-car mr-3 w-5"></i>Auto Insurance
@@ -1056,32 +1058,6 @@
                                 </button>
                             </div>
 
-                            <!-- Safeco -->
-                            <div class="company-card" id="safeco-info">
-                                <div class="card-content">
-                                    <h3 class="text-2xl font-bold mb-4 text-gray-900">Safeco</h3>
-                                    <div class="space-y-3 text-gray-700">
-                                        <p><strong>Website:</strong> <a href="https://www.safeco.com" target="_blank" class="text-blue-600 hover:underline">safeco.com</a></p>
-                                        <p><strong>Make a Payment:</strong> <a href="https://www.safeco.com/customer-resources/customer-support/billing-payment" target="_blank" class="text-blue-600 hover:underline">Pay Online</a></p>
-                                        <p><strong>General:</strong> <a href="tel:1-800-332-3226" class="text-blue-600 hover:underline">800-332-3226</a></p>
-                                        <p><strong>Claims:</strong> <a href="tel:1-800-332-3226" class="text-blue-600 hover:underline">800-332-3226</a></p>
-                                        <div>
-                                            <strong>Mobile App:</strong>
-                                            <div class="flex space-x-4 mt-1">
-                                                <a href="https://apps.apple.com/us/app/safeco-mobile/id1162648539" target="_blank" class="text-blue-600 hover:underline text-sm">
-                                                    <i class="fab fa-apple mr-1"></i>iOS
-                                                </a>
-                                                <a href="https://play.google.com/store/apps/details?id=com.safecoinsurance.consumer" target="_blank" class="text-blue-600 hover:underline text-sm">
-                                                    <i class="fab fa-google-play mr-1"></i>Android
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button onclick="copyInfo('safeco-info')" class="copy-btn mt-6 w-full">
-                                    <i class="fas fa-copy mr-2"></i>Copy Info
-                                </button>
-                            </div>
 
                             <!-- State Farm -->
                             <div class="company-card" id="statefarm-info">
@@ -1448,5 +1424,47 @@
       }
     }
     </script>
+
+    <!-- DOCK SPACER (prevents content from hiding behind dock) -->
+    <div class="dock-spacer md:hidden" style="height: 72px;"></div>
+
+    <!-- MOBILE DOCK -->
+    <div class="mobile-dock">
+        <a href="tel:3368351993" class="dock-btn dock-call">
+            <i class="fas fa-phone-alt"></i> Call
+        </a>
+        <a href="https://billlayneinsurance.com/get-quote" class="dock-btn dock-quote">
+            <i class="fas fa-bolt"></i> Compare Rates
+        </a>
+        <button class="dock-btn dock-menu" onclick="toggleMobileDockMenu()">
+            <i class="fas fa-bars"></i> Menu
+        </button>
+    </div>
+
+    <!-- MENU OVERLAY -->
+    <div class="menu-overlay" id="mobileDockOverlay" onclick="toggleMobileDockMenu()"></div>
+
+    <!-- SLIDE-UP MENU PANEL -->
+    <div class="menu-panel" id="mobileDockPanel">
+        <div class="menu-handle"></div>
+        <div class="menu-panel-header">
+            <span class="menu-panel-title">Bill Layne Insurance</span>
+            <button class="menu-close" onclick="toggleMobileDockMenu()"><i class="fas fa-times"></i></button>
+        </div>
+        <ul class="menu-links">
+            <li><a href="https://www.billlayneinsurance.com"><span class="menu-icon blue"><i class="fas fa-home"></i></span> Home <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/areas-we-serve.html"><span class="menu-icon purple"><i class="fas fa-map-marked-alt"></i></span> Areas We Serve <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/auto-center/"><span class="menu-icon blue"><i class="fas fa-car"></i></span> Auto Insurance <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/home-insurance/"><span class="menu-icon green"><i class="fas fa-house"></i></span> Home Insurance <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/claims-center/"><span class="menu-icon red"><i class="fas fa-file-medical-alt"></i></span> Claims Center <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/resources/"><span class="menu-icon amber"><i class="fas fa-book"></i></span> Resources <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/blog/"><span class="menu-icon purple"><i class="fas fa-blog"></i></span> Blog <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/videos/"><span class="menu-icon red"><i class="fas fa-video"></i></span> Videos <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/service-center.html"><span class="menu-icon green"><i class="fas fa-concierge-bell"></i></span> Service Center <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/contact-us.html"><span class="menu-icon blue"><i class="fas fa-envelope"></i></span> Contact Us <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+        </ul>
+    </div>
+
+    <script src="../js/mobile-dock.js"></script>
 </body>
 </html>

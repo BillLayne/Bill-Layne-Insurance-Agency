@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -227,6 +227,9 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
     </style>
+    <link rel="stylesheet" href="css/mobile-dock.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body class="bg-gray-50">
     <!-- Header -->
@@ -253,8 +256,7 @@
                     <div class="dropdown-menu absolute hidden group-hover:block bg-white shadow-lg rounded-md py-2 w-48 opacity-0 group-hover:opacity-100">
                         <a href="auto-center/index.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Auto Insurance</a>
                         <a href="home-insurance/index.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Home Insurance</a>
-                    <a href="claims-center/index.html" class="nav-link px-3 py-2 rounded-md text-gray-700 hover:text-blue-600">Claims Center</a>
-                        <a href="claims-center/index.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Claim Center</a>
+                        <a href="claims-center/index.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Claims Center</a>
                         <a href="resources/index.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Resources</a>
                     </div>
                 </div>
@@ -282,7 +284,7 @@
             </nav>
             
             <!-- Mobile Menu Button -->
-            <button id="mobile-menu-button" class="md:hidden text-gray-700 text-2xl p-2 rounded-lg hover:bg-gray-100 transition-colors">
+            <button id="mobile-menu-button" class="hidden text-gray-700 text-2xl p-2 rounded-lg hover:bg-gray-100 transition-colors">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
                 </svg>
@@ -293,13 +295,15 @@
     <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg border-t border-gray-200">
         <a href="index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home</a>
+        <a href="areas-we-serve.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Areas We Serve</a>
         <a href="auto-center/index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Auto Insurance</a>
         <a href="home-insurance/index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Home Insurance</a>
-        <a href="claims-center/index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Claim Center</a>
-        <a href="areas-we-serve.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Areas We Serve</a>
-        <a href="blog.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Blog</a>
+        <a href="claims-center/index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Claims Center</a>
+        <a href="resources/index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Resources</a>
+        <a href="blog/index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Blog</a>
+        <a href="videos/index.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Videos</a>
         <a href="service-center.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Service Center</a>
-        <a href="contact-us.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Contact</a>
+        <a href="contact-us.html" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Contact Us</a>
         <a href="tel:3368351993" class="block py-3 px-4 text-center bg-green-500 text-white font-bold mt-3 mb-2">📞 Call (336) 835-1993</a>
         <a href="auto-quote.html" class="block py-3 px-4 text-center bg-blue-600 text-white font-bold">Get a Quote</a>
     </div>
@@ -812,5 +816,47 @@
     
     <!-- Main JavaScript with Version -->
     <script src="app.js?v=2024.12.13.1" defer></script>
+
+    <!-- DOCK SPACER (prevents content from hiding behind dock) -->
+    <div class="dock-spacer md:hidden" style="height: 72px;"></div>
+
+    <!-- MOBILE DOCK -->
+    <div class="mobile-dock">
+        <a href="tel:3368351993" class="dock-btn dock-call">
+            <i class="fas fa-phone-alt"></i> Call
+        </a>
+        <a href="https://billlayneinsurance.com/get-quote" class="dock-btn dock-quote">
+            <i class="fas fa-bolt"></i> Compare Rates
+        </a>
+        <button class="dock-btn dock-menu" onclick="toggleMobileDockMenu()">
+            <i class="fas fa-bars"></i> Menu
+        </button>
+    </div>
+
+    <!-- MENU OVERLAY -->
+    <div class="menu-overlay" id="mobileDockOverlay" onclick="toggleMobileDockMenu()"></div>
+
+    <!-- SLIDE-UP MENU PANEL -->
+    <div class="menu-panel" id="mobileDockPanel">
+        <div class="menu-handle"></div>
+        <div class="menu-panel-header">
+            <span class="menu-panel-title">Bill Layne Insurance</span>
+            <button class="menu-close" onclick="toggleMobileDockMenu()"><i class="fas fa-times"></i></button>
+        </div>
+        <ul class="menu-links">
+            <li><a href="https://www.billlayneinsurance.com"><span class="menu-icon blue"><i class="fas fa-home"></i></span> Home <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/areas-we-serve.html"><span class="menu-icon purple"><i class="fas fa-map-marked-alt"></i></span> Areas We Serve <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/auto-center/"><span class="menu-icon blue"><i class="fas fa-car"></i></span> Auto Insurance <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/home-insurance/"><span class="menu-icon green"><i class="fas fa-house"></i></span> Home Insurance <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/claims-center/"><span class="menu-icon red"><i class="fas fa-file-medical-alt"></i></span> Claims Center <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/resources/"><span class="menu-icon amber"><i class="fas fa-book"></i></span> Resources <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/blog/"><span class="menu-icon purple"><i class="fas fa-blog"></i></span> Blog <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/videos/"><span class="menu-icon red"><i class="fas fa-video"></i></span> Videos <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/service-center.html"><span class="menu-icon green"><i class="fas fa-concierge-bell"></i></span> Service Center <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/contact-us.html"><span class="menu-icon blue"><i class="fas fa-envelope"></i></span> Contact Us <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+        </ul>
+    </div>
+
+    <script src="js/mobile-dock.js"></script>
 </body>
 </html>

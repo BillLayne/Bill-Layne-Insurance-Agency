@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
@@ -157,7 +157,7 @@
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap&family=DM+Sans:wght@400;500;600;700" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Tailwind CSS -->
@@ -328,6 +328,7 @@
             opacity: 1;
         }
     </style>
+    <link rel="stylesheet" href="../css/mobile-dock.css">
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans selection:bg-primary-100 selection:text-primary-900 overflow-x-hidden">
 
@@ -361,7 +362,7 @@
                 <a href="../get-quote.html" class="hidden md:block bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 text-white px-7 py-3 rounded-full text-xs font-black shadow-xl shadow-primary-500/30 transition-all hover:scale-105 hover:shadow-primary-500/50 btn-shine">
                     GET FREE QUOTE
                 </a>
-                <button id="menu-btn" class="p-2 rounded-full transition-colors focus:outline-none hover:bg-slate-100 text-slate-600" aria-label="Open Menu">
+                <button id="menu-btn" class="hidden md:block p-2 rounded-full transition-colors focus:outline-none hover:bg-slate-100 text-slate-600" aria-label="Open Menu">
                     <div class="w-7 h-5 flex flex-col justify-between relative">
                         <span class="nav-hamburger-line w-full h-0.5 rounded-full bg-slate-900 transition-all origin-right"></span>
                         <span class="nav-hamburger-line w-full h-0.5 rounded-full bg-slate-900 transition-all origin-right"></span>
@@ -384,7 +385,7 @@
         <div class="flex-1 overflow-y-auto p-4 space-y-2">
             <a href="../index.html" class="group block p-4 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-4 transition-colors"><div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center text-purple-500 group-hover:scale-110 transition-transform"><i class="fas fa-home"></i></div> Home</a>
             <a href="../areas-we-serve.html" class="group block p-4 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-4 transition-colors"><div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center text-purple-500 group-hover:scale-110 transition-transform"><i class="fas fa-map-marked-alt"></i></div> Areas We Serve</a>
-            <a href="../auto-center/index.html" class="group block p-4 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-4 transition-colors"><div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform"><i class="fas fa-car"></i></div> Auto Center</a>
+            <a href="../auto-center/index.html" class="group block p-4 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-4 transition-colors"><div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform"><i class="fas fa-car"></i></div> Auto Insurance</a>
             <a href="../home-insurance/index.html" class="group block p-4 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-4 transition-colors"><div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center text-green-500 group-hover:scale-110 transition-transform"><i class="fas fa-house"></i></div> Home Insurance</a>
             <a href="../claims-center/index.html" class="group block p-4 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-4 transition-colors"><div class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform"><i class="fas fa-file-medical-alt"></i></div> Claims Center</a>
             <a href="../resources/index.html" class="group block p-4 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-4 transition-colors"><div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center text-orange-500 group-hover:scale-110 transition-transform"><i class="fas fa-book"></i></div> Resources</a>
@@ -1163,5 +1164,47 @@
             document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         });
     </script>
+
+    <!-- DOCK SPACER (prevents content from hiding behind dock) -->
+    <div class="dock-spacer md:hidden" style="height: 72px;"></div>
+
+    <!-- MOBILE DOCK -->
+    <div class="mobile-dock">
+        <a href="tel:3368351993" class="dock-btn dock-call">
+            <i class="fas fa-phone-alt"></i> Call
+        </a>
+        <a href="https://billlayneinsurance.com/get-quote" class="dock-btn dock-quote">
+            <i class="fas fa-bolt"></i> Compare Rates
+        </a>
+        <button class="dock-btn dock-menu" onclick="toggleMobileDockMenu()">
+            <i class="fas fa-bars"></i> Menu
+        </button>
+    </div>
+
+    <!-- MENU OVERLAY -->
+    <div class="menu-overlay" id="mobileDockOverlay" onclick="toggleMobileDockMenu()"></div>
+
+    <!-- SLIDE-UP MENU PANEL -->
+    <div class="menu-panel" id="mobileDockPanel">
+        <div class="menu-handle"></div>
+        <div class="menu-panel-header">
+            <span class="menu-panel-title">Bill Layne Insurance</span>
+            <button class="menu-close" onclick="toggleMobileDockMenu()"><i class="fas fa-times"></i></button>
+        </div>
+        <ul class="menu-links">
+            <li><a href="https://www.billlayneinsurance.com"><span class="menu-icon blue"><i class="fas fa-home"></i></span> Home <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/areas-we-serve.html"><span class="menu-icon purple"><i class="fas fa-map-marked-alt"></i></span> Areas We Serve <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/auto-center/"><span class="menu-icon blue"><i class="fas fa-car"></i></span> Auto Insurance <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/home-insurance/"><span class="menu-icon green"><i class="fas fa-house"></i></span> Home Insurance <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/claims-center/"><span class="menu-icon red"><i class="fas fa-file-medical-alt"></i></span> Claims Center <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/resources/"><span class="menu-icon amber"><i class="fas fa-book"></i></span> Resources <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/blog/"><span class="menu-icon purple"><i class="fas fa-blog"></i></span> Blog <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/videos/"><span class="menu-icon red"><i class="fas fa-video"></i></span> Videos <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/service-center.html"><span class="menu-icon green"><i class="fas fa-concierge-bell"></i></span> Service Center <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/contact-us.html"><span class="menu-icon blue"><i class="fas fa-envelope"></i></span> Contact Us <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+        </ul>
+    </div>
+
+    <script src="../js/mobile-dock.js"></script>
 </body>
 </html>

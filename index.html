@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
@@ -220,7 +220,7 @@
                 "name": "What is the difference between an independent agent and a captive agent?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "A captive agent (like State Farm or Allstate agents) can only sell policies from one company. An independent agent like Bill Layne Insurance represents multiple carriers such as Progressive, Travelers, and Safeco, allowing them to compare rates and coverage options across companies to find the best fit for your needs and budget."
+                    "text": "A captive agent (like State Farm or Allstate agents) can only sell policies from one company. An independent agent like Bill Layne Insurance represents multiple carriers such as Progressive, Travelers, and Nationwide, allowing them to compare rates and coverage options across companies to find the best fit for your needs and budget."
                 }
             },
             {
@@ -295,7 +295,7 @@
             {
                 "@type": "HowToStep",
                 "name": "We Shop Multiple Carriers",
-                "text": "As an independent agency, we compare rates from carriers like Progressive, Travelers, Safeco, and more to find you a competitive rate.",
+                "text": "As an independent agency, we compare rates from carriers like Progressive, Travelers, Nationwide, and more to find you a competitive rate.",
                 "position": 2
             },
             {
@@ -365,8 +365,9 @@
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/mobile-dock.css">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -431,6 +432,12 @@
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(226, 232, 240, 0.8);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        /* Mobile/tablet: navbar needs dark bg so white logo text is visible */
+        @media (max-width: 767px) {
+            #navbar:not(.glass-nav) {
+                background: linear-gradient(to right, #0f172a, #1e1b4b);
+            }
         }
         .bg-vivid-hero {
             background: radial-gradient(circle at top right, #1e40af, #020617);
@@ -505,6 +512,10 @@
             </a>
 
             <div class="flex items-center gap-3 md:gap-6">
+                <!-- Mobile-only Free Quote button -->
+                <a href="get-quote.html" class="md:hidden inline-flex items-center bg-blue-600 text-white px-5 py-2.5 rounded-[10px] text-xs font-[800] shadow-lg shadow-blue-600/25 tracking-wide transition-all active:scale-95 uppercase">
+                    FREE QUOTE
+                </a>
                 <a id="nav-phone-btn" href="tel:3368351993" class="hidden sm:flex items-center font-bold text-slate-700 hover:text-primary-600 transition-all bg-white hover:bg-slate-50 px-5 py-2.5 rounded-full shadow-lg border border-slate-100 text-xs md:text-sm relative group overflow-hidden">
                     <span id="status-dot" class="absolute top-2 right-2 w-2 h-2 rounded-full bg-green-500 animate-pulse hidden"></span>
                     <i class="fas fa-phone-alt mr-2 text-primary-500 group-hover:rotate-12 transition-transform"></i>(336) 835-1993
@@ -512,7 +523,7 @@
                 <a href="get-quote.html" class="hidden md:block bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 text-white px-7 py-3 rounded-full text-xs font-black shadow-xl shadow-primary-500/30 transition-all hover:scale-105 hover:shadow-primary-500/50 btn-shine">
                     GET FREE QUOTE
                 </a>
-                <button id="menu-btn" class="p-2 rounded-full transition-colors focus:outline-none hover:bg-white/10 text-white" aria-label="Open Menu">
+                <button id="menu-btn" class="hidden md:block p-2 rounded-full transition-colors focus:outline-none hover:bg-white/10 text-white" aria-label="Open Menu">
                     <div class="w-7 h-5 flex flex-col justify-between relative">
                         <span class="nav-hamburger-line w-full h-0.5 rounded-full bg-white transition-all origin-right"></span>
                         <span class="nav-hamburger-line w-full h-0.5 rounded-full bg-white transition-all origin-right"></span>
@@ -552,8 +563,69 @@
         </div>
     </div>
 
-    <!-- HERO SECTION -->
-    <header id="home" class="-mt-20 relative pt-24 pb-8 md:pt-40 md:pb-24 bg-vivid-hero text-white overflow-hidden min-h-[85vh] md:min-h-[80vh] flex items-center">
+    <!-- MOBILE HERO (visible <768px only, managed by css/mobile-dock.css) -->
+    <section class="mobile-hero" aria-label="Mobile Hero">
+        <div class="hero-inner">
+            <div class="trust-row">
+                <img src="https://i.imgur.com/ayxaUyZ.jpeg" alt="Bill Layne - Your Local Insurance Agent" class="agent-photo" loading="eager">
+                <div class="google-badge">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" class="google-icon">
+                    <div class="google-badge-text">
+                        <div class="google-stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            <span>4.9</span>
+                        </div>
+                        <span class="google-location">Verified · Elkin, NC</span>
+                    </div>
+                </div>
+            </div>
+            <h2 class="hero-headline">One Call.<br><span class="highlight">Multiple Quotes.</span></h2>
+            <p class="hero-sub">We make top carriers <strong>compete for your rate.</strong> You pick the winner.</p>
+            <p class="carrier-mention"><span>Progressive</span> · <span>Travelers</span> · <span>Nationwide</span> · <span>National General</span> &amp; more</p>
+            <a href="https://billlayneinsurance.com/get-quote" class="hero-cta"><i class="fas fa-bolt"></i> Compare My Rates — Free</a>
+            <div class="savings-stat">
+                <span>NC avg. savings: <strong>$847/yr</strong></span>
+                <span class="dot"></span>
+                <span>Takes 5 min</span>
+            </div>
+            <div class="trust-chips">
+                <span class="trust-chip"><i class="fas fa-check-circle"></i> NC Licensed</span>
+                <span class="trust-chip"><i class="fas fa-check-circle"></i> 20+ Years</span>
+                <span class="trust-chip"><i class="fas fa-check-circle"></i> No Obligation</span>
+            </div>
+        </div>
+    </section>
+    <!-- MOBILE CARRIER STRIP (visible <768px only) -->
+    <div class="carrier-strip mobile-hero-carrier-strip">
+        <div class="carrier-strip-label">These carriers compete for your business</div>
+        <div class="carrier-logos">
+            <img src="https://i.imgur.com/K6kTnTa.png" alt="Progressive">
+            <img src="https://i.imgur.com/I6ONc0K.png" alt="Travelers">
+            <img src="https://i.imgur.com/Mv5V7tV.png" alt="Nationwide">
+            <img src="https://i.imgur.com/HF8oPAF.png" alt="National General">
+            <img src="https://i.imgur.com/rHIo4r5.jpg" alt="Foremost">
+        </div>
+    </div>
+    <!-- MOBILE PROOF BAR (visible <768px only) -->
+    <div class="proof-bar mobile-hero-proof-bar">
+        <div class="proof-grid">
+            <div>
+                <div class="proof-item-number gold">$847</div>
+                <div class="proof-item-label">Avg. Saved</div>
+            </div>
+            <div>
+                <div class="proof-item-number blue">2,000+</div>
+                <div class="proof-item-label">NC Families</div>
+            </div>
+            <div>
+                <div class="proof-item-number green">20+</div>
+                <div class="proof-item-label">Years Local</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DESKTOP HERO SECTION (hidden on mobile <768px) -->
+    <header id="home" class="-mt-20 relative pt-24 pb-8 md:pt-40 md:pb-24 bg-vivid-hero text-white overflow-hidden hidden md:min-h-[80vh] md:flex items-center">
         <!-- BACKGROUND -->
         <div class="absolute inset-0 z-0 pointer-events-none">
             <img src="https://i.imgur.com/ayxaUyZ.jpeg" alt="Bill Layne shaking hands with a client" class="w-full h-full object-cover opacity-20 mix-blend-overlay" style="object-position: center 30%;" fetchpriority="high">
@@ -665,7 +737,7 @@
                     <img src="https://i.imgur.com/Mv5V7tV.png" alt="Progressive" class="h-12 md:h-16 w-auto object-contain hover:scale-110 transition-transform">
                     <img src="https://i.imgur.com/K6kTnTa.png" alt="National General" class="h-12 md:h-16 w-auto object-contain hover:scale-110 transition-transform">
                     <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Travelers%20Logo.webp?raw=true" alt="Travelers" class="h-12 md:h-16 w-auto object-contain hover:scale-110 transition-transform">
-                    <img src="https://i.imgur.com/HF8oPAF.png" alt="Safeco" class="h-12 md:h-16 w-auto object-contain hover:scale-110 transition-transform">
+                    <img src="https://i.imgur.com/HF8oPAF.png" alt="National General" class="h-12 md:h-16 w-auto object-contain hover:scale-110 transition-transform">
                     <img src="https://imgur.com/CNFRCZc.png" alt="Liberty Mutual" class="h-12 md:h-16 w-auto object-contain hover:scale-110 transition-transform">
                     <img src="https://i.imgur.com/rHIo4r5.jpg" alt="Kemper" class="h-12 md:h-16 w-auto object-contain hover:scale-110 transition-transform">
                 </div>
@@ -674,7 +746,7 @@
                     <img src="https://i.imgur.com/Mv5V7tV.png" alt="Progressive" class="h-12 md:h-16 w-auto object-contain hover:scale-110 transition-transform">
                     <img src="https://i.imgur.com/K6kTnTa.png" alt="National General" class="h-12 md:h-16 w-auto object-contain hover:scale-110 transition-transform">
                     <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Travelers%20Logo.webp?raw=true" alt="Travelers" class="h-12 md:h-16 w-auto object-contain hover:scale-110 transition-transform">
-                    <img src="https://i.imgur.com/HF8oPAF.png" alt="Safeco" class="h-12 md:h-16 w-auto object-contain hover:scale-110 transition-transform">
+                    <img src="https://i.imgur.com/HF8oPAF.png" alt="National General" class="h-12 md:h-16 w-auto object-contain hover:scale-110 transition-transform">
                     <img src="https://imgur.com/CNFRCZc.png" alt="Liberty Mutual" class="h-12 md:h-16 w-auto object-contain hover:scale-110 transition-transform">
                     <img src="https://i.imgur.com/rHIo4r5.jpg" alt="Kemper" class="h-12 md:h-16 w-auto object-contain hover:scale-110 transition-transform">
                 </div>
@@ -1022,7 +1094,7 @@
                         <div class="absolute -left-[14px] top-1 w-6 h-6 bg-accent-400 rounded-full border-4 border-white shadow-md"></div>
                         <p class="text-xs font-black text-accent-600 uppercase tracking-widest mb-1">2010</p>
                         <h4 class="font-bold text-slate-900 mb-1">Expanded to Multiple Carriers</h4>
-                        <p class="text-sm text-slate-500">Added Progressive, Travelers, Safeco, and more to give clients real choice and competition for their business.</p>
+                        <p class="text-sm text-slate-500">Added Progressive, Travelers, Nationwide, and more to give clients real choice and competition for their business.</p>
                     </div>
                     <div class="relative pl-8">
                         <div class="absolute -left-[14px] top-1 w-6 h-6 bg-green-500 rounded-full border-4 border-white shadow-md"></div>
@@ -1537,14 +1609,12 @@
                 <p class="text-slate-600 mb-8">Local expertise in Surry, Wilkes, and Yadkin Counties.</p>
                 <!-- Local SEO Text Block (Tag Cloud) -->
                 <div class="flex flex-wrap justify-center gap-2 max-w-4xl mx-auto mb-8">
-                    <a href="/insurance-elkin-nc.html" class="px-3 py-1 bg-slate-50 text-slate-500 rounded-full text-xs font-bold uppercase hover:bg-primary-50 hover:text-primary-600 transition-colors">Elkin</a>
-                    <a href="/insurance-jonesville-nc.html" class="px-3 py-1 bg-slate-50 text-slate-500 rounded-full text-xs font-bold uppercase hover:bg-primary-50 hover:text-primary-600 transition-colors">Jonesville</a>
-                    <a href="/insurance-mount-airy-nc.html" class="px-3 py-1 bg-slate-50 text-slate-500 rounded-full text-xs font-bold uppercase hover:bg-primary-50 hover:text-primary-600 transition-colors">Mount Airy</a>
-                    <a href="/insurance-dobson-nc.html" class="px-3 py-1 bg-slate-50 text-slate-500 rounded-full text-xs font-bold uppercase hover:bg-primary-50 hover:text-primary-600 transition-colors">Dobson</a>
-                    <a href="areas-we-serve.html" class="px-3 py-1 bg-slate-50 text-slate-500 rounded-full text-xs font-bold uppercase hover:bg-primary-50 hover:text-primary-600 transition-colors">State Road</a>
-                    <a href="areas-we-serve.html" class="px-3 py-1 bg-slate-50 text-slate-500 rounded-full text-xs font-bold uppercase hover:bg-primary-50 hover:text-primary-600 transition-colors">Ronda</a>
-                    <a href="/insurance-wilkesboro-nc.html" class="px-3 py-1 bg-slate-50 text-slate-500 rounded-full text-xs font-bold uppercase hover:bg-primary-50 hover:text-primary-600 transition-colors">Wilkesboro</a>
-                    <a href="/insurance-yadkinville-nc.html" class="px-3 py-1 bg-slate-50 text-slate-500 rounded-full text-xs font-bold uppercase hover:bg-primary-50 hover:text-primary-600 transition-colors">Yadkinville</a>
+                    <a href="save-in-elkin-nc/index.html" class="px-3 py-1 bg-slate-50 text-slate-500 rounded-full text-xs font-bold uppercase hover:bg-primary-50 hover:text-primary-600 transition-colors">Elkin</a>
+                    <a href="save-in-dobson-nc/index.html" class="px-3 py-1 bg-slate-50 text-slate-500 rounded-full text-xs font-bold uppercase hover:bg-primary-50 hover:text-primary-600 transition-colors">Dobson</a>
+                    <a href="save-in-mount-airy-nc/index.html" class="px-3 py-1 bg-slate-50 text-slate-500 rounded-full text-xs font-bold uppercase hover:bg-primary-50 hover:text-primary-600 transition-colors">Mt Airy</a>
+                    <a href="save-in-wilkesboro-nc/index.html" class="px-3 py-1 bg-slate-50 text-slate-500 rounded-full text-xs font-bold uppercase hover:bg-primary-50 hover:text-primary-600 transition-colors">Wilkesboro</a>
+                    <a href="save-in-yadkinville-nc/index.html" class="px-3 py-1 bg-slate-50 text-slate-500 rounded-full text-xs font-bold uppercase hover:bg-primary-50 hover:text-primary-600 transition-colors">Yadkinville</a>
+                    <a href="save-in-jonesville-nc/index.html" class="px-3 py-1 bg-slate-50 text-slate-500 rounded-full text-xs font-bold uppercase hover:bg-primary-50 hover:text-primary-600 transition-colors">Jonesville</a>
                 </div>
             </div>
             <div class="rounded-[3rem] overflow-hidden shadow-2xl h-[400px] border-8 border-slate-50 reveal relative">
@@ -1692,7 +1762,7 @@
                 <div class="bg-slate-50 rounded-2xl overflow-hidden border border-slate-100">
                     <button class="accordion-btn w-full px-8 py-5 text-left flex justify-between font-bold text-slate-800">What is the difference between an independent agent and a captive agent?<i class="fas fa-chevron-down transition-transform"></i></button>
                     <div class="accordion-content px-8">
-                        <div class="pb-6 pt-4 border-t text-slate-600 leading-relaxed">A <strong>captive agent</strong> (like State Farm or Allstate agents) can only sell policies from one company. An <strong>independent agent</strong> like Bill Layne Insurance represents multiple carriers such as Progressive, Travelers, and Safeco, allowing us to compare rates and coverage options across companies to find the best fit for your needs and budget. You get more choices and we work for you, not the insurance company.</div>
+                        <div class="pb-6 pt-4 border-t text-slate-600 leading-relaxed">A <strong>captive agent</strong> (like State Farm or Allstate agents) can only sell policies from one company. An <strong>independent agent</strong> like Bill Layne Insurance represents multiple carriers such as Progressive, Travelers, and Nationwide, allowing us to compare rates and coverage options across companies to find the best fit for your needs and budget. You get more choices and we work for you, not the insurance company.</div>
                     </div>
                 </div>
                 <div class="bg-slate-50 rounded-2xl overflow-hidden border border-slate-100">
@@ -1760,17 +1830,44 @@
         </div>
     </footer>
 
-    <!-- MOBILE DOCK (Sticky Conversion Bar) -->
-    <div class="md:hidden fixed bottom-0 left-0 w-full z-[80] glass-nav border-t border-slate-200 shadow-[0_-10px_30px_rgba(0,0,0,0.1)] pb-safe h-20 flex items-center px-6 gap-4">
-        <a href="tel:3368351993" class="flex-1 h-12 rounded-xl bg-slate-100 text-slate-700 font-bold flex items-center justify-center gap-2 active:scale-95 transition-transform">
+    <!-- DOCK SPACER (prevents content from hiding behind dock) -->
+    <div class="dock-spacer md:hidden"></div>
+
+    <!-- MOBILE DOCK -->
+    <div class="mobile-dock">
+        <a href="tel:3368351993" class="dock-btn dock-call">
             <i class="fas fa-phone-alt"></i> Call
         </a>
-        <a href="get-quote.html" class="flex-[2] h-12 rounded-xl bg-primary-600 text-white font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary-500/30 btn-shine active:scale-95 transition-transform animate-pulse-glow">
-            Get Quote
+        <a href="https://billlayneinsurance.com/get-quote" class="dock-btn dock-quote">
+            <i class="fas fa-bolt"></i> Compare Rates
         </a>
-        <button id="mobile-chat-btn" class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl active:scale-95 transition-transform">
-            <i class="fas fa-robot"></i>
+        <button class="dock-btn dock-menu" onclick="toggleMobileDockMenu()">
+            <i class="fas fa-bars"></i> Menu
         </button>
+    </div>
+
+    <!-- MENU OVERLAY -->
+    <div class="menu-overlay" id="mobileDockOverlay" onclick="toggleMobileDockMenu()"></div>
+
+    <!-- SLIDE-UP MENU PANEL -->
+    <div class="menu-panel" id="mobileDockPanel">
+        <div class="menu-handle"></div>
+        <div class="menu-panel-header">
+            <span class="menu-panel-title">Bill Layne Insurance</span>
+            <button class="menu-close" onclick="toggleMobileDockMenu()"><i class="fas fa-times"></i></button>
+        </div>
+        <ul class="menu-links">
+            <li><a href="https://www.billlayneinsurance.com"><span class="menu-icon blue"><i class="fas fa-home"></i></span> Home <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/areas-we-serve.html"><span class="menu-icon purple"><i class="fas fa-map-marked-alt"></i></span> Areas We Serve <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/auto-center/"><span class="menu-icon blue"><i class="fas fa-car"></i></span> Auto Insurance <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/home-insurance/"><span class="menu-icon green"><i class="fas fa-house"></i></span> Home Insurance <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/claims-center/"><span class="menu-icon red"><i class="fas fa-file-medical-alt"></i></span> Claims Center <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/resources/"><span class="menu-icon amber"><i class="fas fa-book"></i></span> Resources <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/blog/"><span class="menu-icon purple"><i class="fas fa-blog"></i></span> Blog <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/videos/"><span class="menu-icon red"><i class="fas fa-video"></i></span> Videos <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/service-center.html"><span class="menu-icon green"><i class="fas fa-concierge-bell"></i></span> Service Center <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/contact-us.html"><span class="menu-icon blue"><i class="fas fa-envelope"></i></span> Contact Us <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+        </ul>
     </div>
 
     <!-- AI CHAT WIDGET -->
@@ -2044,5 +2141,6 @@
             };
         }
     </script>
+    <script src="js/mobile-dock.js"></script>
 </body>
 </html>
