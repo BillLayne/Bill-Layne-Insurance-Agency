@@ -2086,12 +2086,18 @@
         };
     </script>
 
-    <!-- AI MODULE SCRIPT (Isolated) -->
+    <!-- AI MODULE SCRIPT (Isolated) — Proxied through Cloudflare Worker -->
     <script type="module">
         import { GoogleGenAI } from "@google/genai";
 
-        // IMPORTANT: API Key is embedded here for GitHub Pages (Static Hosting)
-        const API_KEY = "AIzaSyCkyG7b1_kEHl-9revl3sGNsZ2YM_D3ywI";
+        // Dummy key — the Cloudflare Worker swaps in the real key server-side
+        const API_KEY = "PROXY_KEY_PLACEHOLDER";
+
+        // Point SDK at your Cloudflare Worker instead of Google directly
+        const ai = new GoogleGenAI({
+            apiKey: API_KEY,
+            httpOptions: { baseUrl: "https://insurance-chat-proxy.bill-7e3.workers.dev" }
+        });
 
         const chatForm = document.getElementById('chat-form');
         const chatInput = document.getElementById('chat-input');
@@ -2119,9 +2125,8 @@
                 chatMessages.scrollTop = chatMessages.scrollHeight;
 
                 try {
-                    const ai = new GoogleGenAI({ apiKey: API_KEY });
                     const response = await ai.models.generateContent({
-                        model: 'gemini-3-flash-preview', // Updated to gemini-3-flash-preview to resolve 404
+                        model: 'gemini-2.0-flash',
                         contents: prompt,
                         config: {
                             systemInstruction: "You are the AI Assistant for Bill Layne Insurance in Elkin, NC. Phone: (336) 835-1993. Independent agency since 2004. We shop multiple carriers like Travelers, Progressive, and Nationwide. Main goal: Get them to call the office or click 'Get Quote'. Keep answers under 40 words. Tone: Helpful, neighborly."
@@ -2139,7 +2144,6 @@
                     typing.remove();
                     const errBubble = document.createElement('div');
                     errBubble.className = 'flex justify-center my-2 flex-col items-center gap-1';
-                    // Show the specific error for debugging
                     errBubble.innerHTML = `
                         <span class="bg-red-50 text-red-500 text-[10px] font-bold px-3 py-1 rounded-full border border-red-100 uppercase tracking-wide">Connection Error</span>
                         <span class="text-[9px] text-red-400 max-w-[200px] text-center">${err.message || 'Unknown Error'}</span>
