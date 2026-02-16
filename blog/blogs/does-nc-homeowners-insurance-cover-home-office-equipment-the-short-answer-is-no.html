@@ -1,0 +1,701 @@
+<div class="gem-post">
+
+<!-- GEM v4.1 YT EDITION DEPENDENCIES -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Bricolage+Grotesque:opsz,wght@12..96,400;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+
+<style>
+/* GEM v4.1 CORE STYLES - SCOPED */
+.gem-post {
+    font-family: 'Outfit', sans-serif;
+    line-height: 1.7;
+    color: #334155;
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    overflow-x: hidden;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.gem-post h1, .gem-post h2, .gem-post h3 { font-family: 'Bricolage Grotesque', sans-serif; color: #0f172a; }
+.gem-post h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 1rem; letter-spacing: -0.02em; }
+.gem-post h2 { font-size: 1.8rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; border-left: 5px solid #FF0033; padding-left: 1rem; }
+.gem-post h3 { font-size: 1.4rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+.gem-post p { margin-bottom: 1.25rem; font-size: 1.1rem; }
+.gem-post ul, .gem-post ol { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+.gem-post li { margin-bottom: 0.5rem; position: relative; padding-left: 0.5rem; }
+.gem-post a { color: #2563eb; text-decoration: underline; font-weight: 600; transition: all 0.2s; }
+.gem-post a:hover { color: #1e40af; background: #eff6ff; }
+
+/* FONT AWESOME ICON SIZING */
+.gem-post i.fa-solid, .gem-post i.fa-regular, .gem-post i.fa-brands { margin-right: 0.3rem; }
+
+/* SCROLL PROGRESS BAR */
+.gem-progress-bar { position: fixed; top: 0; left: 0; width: 0%; height: 4px; background: linear-gradient(90deg, #FF0033, #FF6B35, #FFD23F); z-index: 1100; transition: width 0.1s linear; }
+
+/* HERO IMAGE */
+.hero-img { width: 100%; height: auto; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+/* SNIPPET BAIT BOX */
+.gem-snippet-bait { background: #eff6ff; border-left: 6px solid #3b82f6; padding: 1.5rem; border-radius: 0 8px 8px 0; margin-bottom: 2rem; font-size: 1.15rem; font-weight: 500; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1); }
+
+/* SHARE BAR */
+.gem-share-bar { display: flex; gap: 0.5rem; margin: 1.5rem 0; padding: 1rem; background: #f8fafc; border-radius: 16px; border: 2px solid #e2e8f0; align-items: center; flex-wrap: wrap; }
+.gem-share-label { font-weight: 800; font-size: 0.85rem; color: #0F0F0F; margin-right: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+.gem-share-btn { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none !important; color: white !important; font-size: 1rem; transition: transform 0.15s; cursor: pointer; border: none; }
+.gem-share-btn:active { transform: scale(0.9); }
+.gem-share-fb { background: #1877F2; }
+.gem-share-x { background: #000000; }
+.gem-share-email { background: #EA4335; }
+.gem-share-copy { background: #64748b; }
+.gem-share-copy.copied { background: #22c55e; }
+
+/* CHAPTER PROGRESS PILLS */
+.gem-chapter-track { display: flex; gap: 4px; margin: 1rem 0; flex-wrap: wrap; position: sticky; top: 10px; z-index: 50; }
+.gem-chapter-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; background: #e2e8f0; color: #64748b; text-decoration: none !important; transition: all 0.2s; opacity: 0.9; }
+.gem-chapter-pill:hover { background: #cbd5e1; }
+.gem-chapter-pill.active { background: #FF0033; color: white !important; opacity: 1; box-shadow: 0 4px 6px -1px rgba(255, 0, 51, 0.3); }
+.gem-chapter-pill.read { background: #0F0F0F; color: white !important; }
+
+/* PULL QUOTE */
+.gem-pull-quote { margin: 2rem 0; padding: 2rem 1.5rem; background: #1e293b; border-radius: 16px; text-align: center; position: relative; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); border: 1px solid #334155; }
+.gem-pull-quote::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #FF0033, #FF6B35, #FFD23F, #A8E10C, #00D4FF); }
+.gem-pull-quote-text { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.4rem; font-weight: 800; color: white; line-height: 1.3; letter-spacing: -0.02em; }
+.gem-pull-quote-text .gem-pq-highlight { color: #FFD23F; }
+.gem-pull-quote-source { margin-top: 0.75rem; font-size: 0.8rem; color: #94a3b8; font-weight: 600; }
+
+/* VS COMPARISON CARD */
+.gem-vs-card { margin: 1.5rem 0; border-radius: 16px; overflow: hidden; border: 2px solid #e2e8f0; }
+.gem-vs-header { background: #0F0F0F; color: white; text-align: center; padding: 0.75rem; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.gem-vs-body { display: flex; }
+.gem-vs-side { flex: 1; padding: 1.25rem; text-align: center; }
+.gem-vs-left { background: linear-gradient(180deg, #FEF2F2 0%, #fff 100%); border-top: 4px solid #DC2626; }
+.gem-vs-right { background: linear-gradient(180deg, #F0FDF4 0%, #fff 100%); border-top: 4px solid #16a34a; }
+.gem-vs-divider { width: 3px; background: linear-gradient(180deg, #FF0033, #FFD23F, #22c55e); flex-shrink: 0; }
+.gem-vs-label { font-weight: 800; font-size: 0.95rem; margin-bottom: 0.75rem; display: block; }
+.gem-vs-left .gem-vs-label { color: #DC2626; }
+.gem-vs-right .gem-vs-label { color: #16a34a; }
+.gem-vs-item { font-size: 0.85rem; color: #475569; margin-bottom: 0.4rem; line-height: 1.4; }
+.gem-vs-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+
+/* REVEAL CARD */
+.gem-reveal { margin: 1.5rem 0; border: 2px dashed #7C3AED; border-radius: 16px; overflow: hidden; background: #F5F3FF; position: relative; }
+.gem-reveal-trigger { padding: 1rem 1.25rem; font-weight: 800; color: #7C3AED; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; min-height: 44px; background: white; z-index: 10; position: relative; }
+.gem-reveal-content { display: none; padding: 1.25rem; color: #374151; line-height: 1.6; font-size: 0.95rem; background: white; border-top: 1px solid #DDD6FE; }
+.gem-reveal-content.visible { display: block; animation: gemFadeIn 0.5s ease; }
+@keyframes gemFadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* REACTIONS BAR */
+.gem-reactions { margin: 1.5rem 0; padding: 1.25rem; background: #f8fafc; border-radius: 16px; text-align: center; border: 2px solid #e2e8f0; }
+.gem-reactions-title { font-weight: 700; font-size: 0.9rem; color: #475569; margin-bottom: 0.75rem; }
+.gem-reactions-row { display: flex; justify-content: center; gap: 0.75rem; }
+.gem-react-btn { width: 48px; height: 48px; border-radius: 50%; border: 2px solid #e2e8f0; background: white; font-size: 1.3rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+.gem-react-btn:hover, .gem-react-btn:active { transform: scale(1.15); border-color: #FF0033; }
+.gem-react-btn.selected { background: #FF0033; border-color: #FF0033; color: white !important; transform: scale(1.15); }
+
+/* FAQ SECTION */
+.gem-faq-section { margin: 3rem 0; }
+.gem-faq-header { font-size: 1.8rem; font-weight: 700; margin-bottom: 1.5rem; font-family: 'Bricolage Grotesque', sans-serif; color: #0f172a; }
+.gem-faq-item { border: 2px solid #e2e8f0; border-radius: 12px; margin-bottom: 1rem; background: white; overflow: hidden; transition: border-color 0.2s; }
+.gem-faq-item:hover { border-color: #cbd5e1; }
+.gem-faq-item.active { border-color: #3b82f6; }
+.gem-faq-question { width: 100%; padding: 1.25rem; background: #f8fafc; text-align: left; font-weight: 700; color: #0f172a; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: none; outline: none; font-size: 1.05rem; }
+.gem-faq-question:hover { background: #f1f5f9; }
+.gem-faq-answer { display: none; padding: 1.5rem; color: #475569; line-height: 1.6; background: white; border-top: 1px solid #e2e8f0; font-size: 1rem; }
+.gem-faq-item.active .gem-faq-answer { display: block; animation: gemSlideDown 0.3s ease; }
+.gem-faq-icon { transition: transform 0.3s ease; color: #3b82f6; }
+.gem-faq-item.active .gem-faq-icon { transform: rotate(180deg); }
+@keyframes gemSlideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+/* STEP TIMELINE */
+.gem-steps { margin: 1.5rem 0; padding: 0; }
+.gem-step { display: flex; gap: 1rem; padding-bottom: 1.5rem; position: relative; }
+.gem-step:last-child { padding-bottom: 0; }
+.gem-step-line { width: 40px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.gem-step-dot { width: 36px; height: 36px; border-radius: 50%; background: #0F0F0F; color: white; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; z-index: 1; }
+.gem-step-connector { width: 3px; flex: 1; background: linear-gradient(180deg, #0F0F0F, #e2e8f0); margin-top: 4px; }
+.gem-step:last-child .gem-step-connector { display: none; }
+.gem-step-content { flex: 1; padding-top: 0.35rem; }
+.gem-step-title { font-weight: 800; font-size: 1rem; color: #0F0F0F; margin-bottom: 0.25rem; }
+.gem-step-text { font-size: 0.95rem; color: #475569; line-height: 1.5; }
+
+/* RELATED GRID */
+.gem-related { padding: 2rem 1.25rem; background: #0F0F0F; border-radius: 12px; margin-top: 3rem; }
+.gem-related-title { font-family: 'Bricolage Grotesque', sans-serif; color: white; font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; }
+.gem-related-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.gem-related-card { display: flex; gap: 0.75rem; text-decoration: none !important; background: #272727; border-radius: 12px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; border: 1px solid #404040; }
+.gem-related-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); background: #333; }
+.gem-related-thumb { width: 120px; height: 68px; object-fit: cover; flex-shrink: 0; border-radius: 8px; margin: 0.5rem 0 0.5rem 0.5rem; }
+.gem-related-info { padding: 0.5rem 0.5rem 0.5rem 0; display: flex; flex-direction: column; justify-content: center; }
+.gem-related-info-title { color: white; font-weight: 700; font-size: 0.85rem; line-height: 1.3; margin-bottom: 0.25rem; }
+.gem-related-info-meta { color: #9ca3af; font-size: 0.7rem; }
+@media (min-width: 768px) {
+    .gem-related-grid { grid-template-columns: 1fr 1fr 1fr; }
+    .gem-related-card { flex-direction: column; }
+    .gem-related-thumb { width: 100%; height: 120px; margin: 0; border-radius: 12px 12px 0 0; }
+    .gem-related-info { padding: 0.75rem; }
+}
+
+/* DATA TABLE */
+.gem-table-wrapper { overflow-x: auto; margin: 1.5rem 0; border-radius: 8px; border: 1px solid #e2e8f0; }
+.gem-table { width: 100%; border-collapse: collapse; min-width: 500px; }
+.gem-table th { background: #f1f5f9; text-align: left; padding: 1rem; font-weight: 700; border-bottom: 2px solid #e2e8f0; color: #1e293b; }
+.gem-table td { padding: 1rem; border-bottom: 1px solid #e2e8f0; color: #475569; }
+.gem-table tr:nth-child(even) { background-color: #f8fafc; }
+.gem-table tr:last-child td { border-bottom: none; }
+
+/* CTA BOX */
+.gem-cta-box { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid #334155; border-radius: 16px; padding: 2.5rem; text-align: center; margin-top: 3rem; color: white !important; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+.gem-cta-title { font-size: 1.75rem; font-weight: 800; color: white !important; margin-bottom: 0.75rem; }
+.gem-cta-text { margin-bottom: 2rem; color: #cbd5e1 !important; font-weight: 500; font-size: 1.1rem; }
+.gem-cta-btn { display: inline-block; background: #ef4444; color: white !important; padding: 1rem 2.5rem; border-radius: 50px; font-weight: 700; text-decoration: none !important; box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.5); transition: transform 0.2s, box-shadow 0.2s; border: 2px solid #f87171; }
+.gem-cta-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.6); }
+
+/* CORNER RIBBON */
+.gem-ribbon-wrap { position: relative; }
+.gem-ribbon { position: absolute; top: 12px; right: -8px; background: #FF0033; color: white; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 14px 4px 10px; border-radius: 4px 0 0 4px; z-index: 2; box-shadow: 0 2px 6px rgba(255,0,51,0.3); }
+.gem-ribbon::after { content: ''; position: absolute; top: 100%; right: 0; border: 4px solid transparent; border-top-color: #990020; border-right-color: #990020; }
+.gem-ribbon-new { background: #FF0033; }
+</style>
+
+<!-- Start Content -->
+<div class="gem-post">
+
+<!-- GEM v4.1 YT EDITION DEPENDENCIES -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Bricolage+Grotesque:opsz,wght@12..96,400;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+<style>
+/* GEM v4.1 CORE STYLES - SCOPED */
+.gem-post {
+    font-family: 'Outfit', sans-serif;
+    line-height: 1.7;
+    color: #334155;
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    overflow-x: hidden;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.gem-post h1, .gem-post h2, .gem-post h3 { font-family: 'Bricolage Grotesque', sans-serif; color: #0f172a; }
+.gem-post h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 1rem; letter-spacing: -0.02em; }
+.gem-post h2 { font-size: 1.8rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; border-left: 5px solid #FF0033; padding-left: 1rem; }
+.gem-post h3 { font-size: 1.4rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+.gem-post p { margin-bottom: 1.25rem; font-size: 1.1rem; }
+
+.gem-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 6px;
+    background: linear-gradient(90deg, #FF0033 0%, #B91C1C 100%);
+    z-index: 1000;
+    transition: width 0.2s ease;
+}
+
+.gem-snippet-bait {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    margin: 2rem 0;
+    position: relative;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.hero-img {
+    width: 100%;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.gem-share-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 2rem;
+}
+.gem-share-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.gem-share-fb { background: #1877F2; }
+.gem-share-x { background: #000; }
+.gem-share-email { background: #EA4335; }
+.gem-share-copy { background: #64748b; cursor: pointer; }
+
+.gem-chapter-track {
+    background: #f1f5f9;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+}
+.gem-chapter-track a {
+    display: block;
+    color: #ef4444;
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.gem-pull-quote {
+    background: #0f172a;
+    color: white;
+    padding: 40px;
+    border-radius: 24px;
+    margin: 3rem 0;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    position: relative;
+}
+
+.gem-vs-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 2rem 0;
+}
+.gem-vs-item {
+    padding: 20px;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+.vs-risk { border-top: 4px solid #ef4444; }
+.vs-coverage { border-top: 4px solid #22c55e; }
+
+.gem-reveal {
+    background: #fee2e2;
+    padding: 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: center;
+    font-weight: 700;
+    margin: 2rem 0;
+}
+.gem-reveal-content { display: none; margin-top: 10px; font-weight: 400; }
+
+.gem-table-wrapper { overflow-x: auto; margin: 2rem 0; }
+.gem-table { width: 100%; border-collapse: collapse; }
+.gem-table th { background: #f1f5f9; padding: 12px; text-align: left; border-bottom: 2px solid #cbd5e1; }
+.gem-table td { padding: 12px; border-bottom: 1px solid #e2e8f0; }
+
+.gem-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 2rem 0;
+}
+.gem-step-item {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+.gem-step-num {
+    background: #FF0033;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-weight: 800;
+}
+
+.gem-reactions {
+    border-top: 1px solid #e2e8f0;
+    padding: 20px 0;
+    text-align: center;
+}
+
+.gem-faq-section { margin: 3rem 0; }
+.gem-faq-item { border-bottom: 1px solid #e2e8f0; }
+.gem-faq-question {
+    width: 100%;
+    padding: 15px 0;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    background: none;
+    border: none;
+}
+.gem-faq-answer { display: none; padding-bottom: 15px; }
+
+.gem-cta-box {
+    background: linear-gradient(135deg, #FF0033 0%, #0f172a 100%);
+    color: white;
+    padding: 40px;
+    border-radius: 24px;
+    text-align: center;
+    margin: 4rem 0;
+}
+.gem-cta-box h2 { color: white; border: none; padding: 0; margin-top: 0; }
+.gem-cta-btn {
+    display: inline-block;
+    background: white;
+    color: #FF0033;
+    padding: 12px 32px;
+    border-radius: 50px;
+    font-weight: 800;
+    text-decoration: none;
+    margin-top: 20px;
+}
+
+.gem-related {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 3rem;
+}
+.gem-related-card {
+    text-decoration: none;
+    color: inherit;
+}
+.gem-related-card img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    border-radius: 12px;
+}
+.gem-related-card h4 { font-size: 0.9rem; margin-top: 10px; font-weight: 700; line-height: 1.3; }
+
+@media (max-width: 640px) {
+    .gem-vs-card { grid-template-columns: 1fr; }
+    .gem-related { grid-template-columns: 1fr; }
+}
+</style>
+
+<div class="gem-progress-bar" id="gemProgress"></div>
+
+<h1>Does NC Homeowners Insurance Cover Home Office Equipment? (The Short Answer Is No)</h1>
+
+<div class="gem-snippet-bait">
+    <div class="flex items-center gap-2 mb-2 font-bold text-red-600">
+        <i class="fa-solid fa-bolt"></i> THE FAST ANSWER
+    </div>
+    <p class="m-0">No, a standard NC homeowners policy (HO-3) typically provides very limited coverage for "business property." Most policies cap this at <b>$2,500</b> for equipment kept inside the home and as little as <b>$500</b> for items away from home. If you run a business in Elkin or Surry County, your $5,000 laser engraver or $3,000 server is likely <b>unprotected</b> without a specific business endorsement.</p>
+</div>
+
+<img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=1200" class="hero-img" alt="Home office with expensive technology" />
+
+<div class="gem-share-bar">
+    <a href="#" class="gem-share-btn gem-share-fb"><i class="fa-brands fa-facebook"></i> Share</a>
+    <a href="#" class="gem-share-btn gem-share-x"><i class="fa-brands fa-x-twitter"></i> Post</a>
+    <a href="#" class="gem-share-btn gem-share-email"><i class="fa-solid fa-envelope"></i> Email</a>
+    <div class="gem-share-btn gem-share-copy"><i class="fa-solid fa-link"></i> Copy</div>
+</div>
+
+<div class="gem-chapter-track">
+    <div class="font-bold mb-3 uppercase tracking-wider text-sm opacity-70">Table of Contents</div>
+    <a href="#section1">1. The "Hidden Limit" Trap in NC Policies</a>
+    <a href="#section2">2. Liability: The Risk Your Homeowners Policy Won't Touch</a>
+    <a href="#section3">3. Understanding NC Endorsements vs. Business Policies</a>
+    <a href="#section4">4. How 2026 Regulations Change Your Coverage</a>
+</div>
+
+<div class="gem-key-takeaways bg-slate-50 p-6 rounded-xl border-l-4 border-red-600 mb-8">
+    <h3 class="mt-0">Quick Takeaways</h3>
+    <ul class="list-none p-0">
+        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Standard NC HO-3 policies cap business property at $2,500.</li>
+        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Business liability is almost always excluded from home insurance.</li>
+        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Local Elkin business owners need a "Home Business Endorsement."</li>
+        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Inventory (stock for sale) has even lower limits or zero coverage.</li>
+    </ul>
+</div>
+
+<h2 id="section1">1. The "Hidden Limit" Trap in NC Policies</h2>
+<p>In 2026, more people in the Yadkin Valley are working from home than ever before. Whether you're a freelance graphic designer in Elkin or running an Etsy shop from your garage in Jonesville, you probably have some serious gear. We're talking high-end Macs, 3D printers, specialized lighting, and inventory.</p>
+
+<p>Here is the reality check: Your homeowners insurance is designed to cover <b>personal</b> belongings—your couch, your clothes, your TV. The second a piece of equipment is used primarily for <b>business</b>, it enters a different category in the eyes of the NC Department of Insurance.</p>
+
+<p>Most standard policies in North Carolina have a "Special Limits of Liability" section. For business property on the "residence premises," that limit is usually <b>$2,500</b>. Think about your desk setup. Between the computer, the ergonomic chair, the monitors, and the printer, are you already over $2,500? Probably. And if you take your laptop to a coffee shop in downtown Elkin and it’s stolen? Your coverage might drop to just <b>$500</b>.</p>
+
+<div class="gem-pull-quote">
+    "If your livelihood depends on your tech, a $2,500 limit isn't a safety net—it's a financial trap waiting to snap."
+</div>
+
+<h2 id="section2">2. Liability: The Risk Your Homeowners Policy Won't Touch</h2>
+<p>It isn't just about the physical stuff. Let’s talk about <b>Liability</b>. Imagine a delivery driver from Elkin drops off a package of supplies for your home business, trips on your walkway, and breaks their leg. Or worse, a client comes to your home office for a consultation and has an accident.</p>
+
+<p>Standard North Carolina homeowners policies explicitly exclude "Business Pursuits." If the injury is related to your business, your homeowners liability coverage (typically $100k to $500k) may <b>deny the claim entirely</b>. This leaves you personally responsible for medical bills and legal fees—a situation that could bankrupt a small startup.</p>
+
+<div class="gem-vs-card">
+    <div class="gem-vs-item vs-risk">
+        <div class="font-bold text-red-600 mb-2 uppercase text-sm">The Risk</div>
+        <p class="text-sm">Relying on a standard HO-3 policy for a home-based digital agency.</p>
+        <ul class="text-xs list-disc pl-4 mt-2">
+            <li>$2,500 Property Limit</li>
+            <li>Zero Liability for Clients</li>
+            <li>No Coverage for Data Breach</li>
+        </ul>
+    </div>
+    <div class="gem-vs-item vs-coverage">
+        <div class="font-bold text-green-600 mb-2 uppercase text-sm">The Coverage</div>
+        <p class="text-sm">Adding a Home Business Endorsement via Bill Layne Insurance.</p>
+        <ul class="text-xs list-disc pl-4 mt-2">
+            <li>Full Replacement Cost up to $10k+</li>
+            <li>Full Business Liability Protection</li>
+            <li>Lost Income Coverage Included</li>
+        </ul>
+    </div>
+</div>
+
+<h2 id="section3">3. Understanding NC Endorsements vs. Business Policies</h2>
+<p>So, how do you fix this gap? In North Carolina, you generally have three tiers of protection. Choosing the right one depends on the size and "risk" of your home hustle. Since 2025, NC insurance carriers have become more granular about these distinctions.</p>
+
+<p><b>Tier 1: The Endorsement.</b> This is an "add-on" to your existing homeowners policy. It’s the most affordable option. It bumps up your property limits and adds a layer of liability. This is perfect for consultants or remote workers who don't have foot traffic or heavy inventory.</p>
+
+<p><b>Tier 2: In-Home Business Policy.</b> This is a standalone mini-policy. It offers more robust protection, including "Business Interruption" coverage. If a fire hits your home and you can't work for two months, this policy can help replace your <b>lost income</b>.</p>
+
+<div class="gem-reveal" onclick="this.querySelector('.gem-reveal-content').style.display='block'">
+    <i class="fa-solid fa-lightbulb"></i> DID YOU KNOW? (Tap to reveal a shocking NC fact)
+    <div class="gem-reveal-content">
+        In NC, if you run a daycare out of your home without a specific endorsement, your <b>entire</b> homeowners policy could be voided if the company discovers the "undisclosed business use" during a claim!
+    </div>
+</div>
+
+<div class="gem-table-wrapper">
+    <table class="gem-table">
+        <thead>
+            <tr>
+                <th>Feature</th>
+                <th>Standard Homeowners</th>
+                <th>Business Endorsement</th>
+                <th>Small Business BOP</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Equipment Limit</td>
+                <td>$2,500</td>
+                <td>Up to $10,000</td>
+                <td>$25,000+</td>
+            </tr>
+            <tr>
+                <td>Liability</td>
+                <td>Personal Only</td>
+                <td>Business Included</td>
+                <td>Professional + General</td>
+            </tr>
+            <tr>
+                <td>Lost Income</td>
+                <td><i class="fa-solid fa-xmark text-red-500"></i></td>
+                <td><i class="fa-solid fa-check text-green-500"></i></td>
+                <td><i class="fa-solid fa-check text-green-500"></i></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<h2 id="section4">4. How 2026 Regulations Change Your Coverage</h2>
+<p>As we navigate 2026, North Carolina has implemented stricter guidelines on <b>Cyber Liability</b>. Even a small home office in Elkin is now a target for digital theft. If your home office computer holds client data (emails, addresses, or credit card info) and you get hacked, a standard homeowners policy will offer <b>zero help</b> for the notification costs or legal penalties.</p>
+
+<img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1200" class="hero-img" alt="Digital security and insurance" />
+
+<p>Furthermore, NC's 2025 Auto Law update (shifting minimums to 50/100/50) reminds us that <b>business use of a personal vehicle</b> is another major gap. If you're using your car to deliver products around Elkin, Jonesville, or Mount Airy, your personal auto policy might not cover an accident during "business use."</p>
+
+<h3>The Bill Layne Solution</h3>
+<p>At Bill Layne Insurance, we don't just sell policies; we audit risks. We know the Elkin community because we live here. We understand that your "side gig" might be your family's future. Our team analyzes your specific setup to see if a simple endorsement is enough or if a more protective Business Owners Policy (BOP) is the smarter play.</p>
+
+<div class="gem-steps">
+    <div class="gem-step-item">
+        <div class="gem-step-num">1</div>
+        <div>
+            <strong>Inventory Your Gear:</strong> List everything you use for work and its replacement cost. Don't forget software and specialized furniture.
+        </div>
+    </div>
+    <div class="gem-step-item">
+        <div class="gem-step-num">2</div>
+        <div>
+            <strong>Assess Your Foot Traffic:</strong> Do clients or delivery drivers visit your home office? If yes, your liability risk is high.
+        </div>
+    </div>
+    <div class="gem-step-item">
+        <div class="gem-step-num">3</div>
+        <div>
+            <strong>Call 336-835-1993:</strong> We’ll review your current policy and find the "gap" before a claim happens.
+        </div>
+    </div>
+</div>
+
+<div class="gem-reactions">
+    <p class="font-bold mb-2">Was this guide helpful for your home business?</p>
+    <button class="px-4 py-2 border rounded-lg mr-2 hover:bg-slate-100"><i class="fa-solid fa-thumbs-up"></i> Yes</button>
+    <button class="px-4 py-2 border rounded-lg hover:bg-slate-100"><i class="fa-solid fa-thumbs-down"></i> No</button>
+</div>
+
+<div class="gem-faq-section">
+    <h2>Frequently Asked Questions</h2>
+    
+    <div class="gem-faq-item">
+        <button class="gem-faq-question" onclick="toggleFaq(this)">
+            Does my policy cover my inventory if it's damaged by water?
+            <i class="fa-solid fa-chevron-down gem-faq-icon"></i>
+        </button>
+        <div class="gem-faq-answer">
+            Most standard NC homeowners policies offer extremely low limits (often $0 to $500) for "property held as samples or for sale." To cover inventory, you almost certainly need a business endorsement or a separate policy.
+        </div>
+    </div>
+
+    <div class="gem-faq-item">
+        <button class="gem-faq-question" onclick="toggleFaq(this)">
+            Can I just tell my insurer I don't run a business?
+            <i class="fa-solid fa-chevron-down gem-faq-icon"></i>
+        </button>
+        <div class="gem-faq-answer">
+            This is called "material misrepresentation." If a claim occurs and the adjuster finds evidence of a business (like business cards, specialized equipment, or heavy shipping volume), they can legally deny your claim and cancel your policy.
+        </div>
+    </div>
+
+    <div class="gem-faq-item">
+        <button class="gem-faq-question" onclick="toggleFaq(this)">
+            How much does a Home Business Endorsement cost in NC?
+            <div class="i fa-solid fa-chevron-down gem-faq-icon"></div>
+        </button>
+        <div class="gem-faq-answer">
+            In the Elkin area, many endorsements can be added for as little as $25 to $100 per year, depending on the coverage amount. It is one of the most cost-effective ways to protect a small business.
+        </div>
+    </div>
+</div>
+
+<div class="gem-cta-box">
+    <h2>Protect Your Hustle in Elkin</h2>
+    <p>Don't risk your home and your business on a "maybe." Let the experts at Bill Layne Insurance give you a 2026-ready protection plan.</p>
+    <p class="font-bold mt-4">Bill Layne Insurance</p>
+    <p>1283 N Bridge St, Elkin NC 28621</p>
+    <p><i class="fa-solid fa-phone"></i> 336-835-1993</p>
+    <a href="mailto:Save@BillLayneInsurance.com" class="gem-cta-btn">GET A CUSTOM QUOTE</a>
+</div>
+
+<div class="gem-related">
+    <a href="#" class="gem-related-card">
+        <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=400" alt="NC Homeowners Insurance" />
+        <h4>Top 5 Mistakes NC Homeowners Make in 2026</h4>
+    </a>
+    <a href="#" class="gem-related-card">
+        <img src="https://images.unsplash.com/photo-1454165833767-027ffea9e77b?auto=format&fit=crop&q=80&w=400" alt="Business Insurance" />
+        <h4>Understanding General Liability in Surry County</h4>
+    </a>
+    <a href="#" class="gem-related-card">
+        <img src="https://images.unsplash.com/photo-1554224155-1696413565d3?auto=format&fit=crop&q=80&w=400" alt="Calculator" />
+        <h4>New NC Auto Laws: Are You Carrying 50/100/50?</h4>
+    </a>
+</div>
+
+<script>
+    // Scroll Progress
+    window.onscroll = function() {
+        let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        let scrolled = (winScroll / height) * 100;
+        document.getElementById("gemProgress").style.width = scrolled + "%";
+    };
+
+    // FAQ Toggle
+    window.toggleFaq = function(btn) {
+        const answer = btn.nextElementSibling;
+        const icon = btn.querySelector('.gem-faq-icon');
+        const isOpen = answer.style.display === "block";
+        
+        // Close all others
+        document.querySelectorAll('.gem-faq-answer').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.gem-faq-icon').forEach(el => el.style.transform = 'rotate(0deg)');
+        
+        if (!isOpen) {
+            answer.style.display = "block";
+            icon.style.transform = "rotate(180deg)";
+        }
+    };
+</script>
+
+</div></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Scroll Progress Bar
+    window.addEventListener('scroll', function() {
+        var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var scrolled = (winScroll / height) * 100;
+        var bar = document.getElementById('gemProgress');
+        if (bar) bar.style.width = scrolled + '%';
+        
+        // Chapter Tracker
+        var sections = document.querySelectorAll('.gem-post h2');
+        var pills = document.querySelectorAll('.gem-chapter-pill');
+        var currentId = '';
+        sections.forEach(function(sec) {
+            var top = sec.getBoundingClientRect().top;
+            if (top < window.innerHeight * 0.5) {
+                currentId = sec.id;
+            }
+        });
+        pills.forEach(function(pill) {
+            var pillSection = pill.getAttribute('href').substring(1);
+            pill.classList.remove('active');
+            if (pillSection === currentId) {
+                pill.classList.add('active');
+            }
+        });
+    });
+
+    // Copy Link Button
+    window.copyLink = function(btn) {
+        navigator.clipboard.writeText(window.location.href).then(function() {
+            btn.classList.add('copied');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+            setTimeout(function() {
+                btn.classList.remove('copied');
+                btn.innerHTML = '<i class="fa-solid fa-link"></i>';
+            }, 2000);
+        });
+    };
+
+    // Reveal Card
+    window.toggleReveal = function(el) {
+        var content = el.nextElementSibling;
+        content.classList.toggle('visible');
+        var span = el.querySelector('span:last-child');
+        if (content.classList.contains('visible')) {
+            span.textContent = 'Tap to hide';
+        } else {
+            span.textContent = 'Tap to reveal';
+        }
+    };
+
+    // FAQ Toggle
+    window.toggleFaq = function(btn) {
+        var item = btn.parentElement;
+        item.classList.toggle('active');
+    };
+
+    // Reaction Bar
+    window.react = function(btn) {
+        var all = btn.parentElement.querySelectorAll('.gem-react-btn');
+        all.forEach(function(b) { b.classList.remove('selected'); });
+        btn.classList.add('selected');
+        var title = btn.parentElement.previousElementSibling;
+        if(title) title.textContent = 'Thanks for the feedback!';
+    };
+});
+</script>
