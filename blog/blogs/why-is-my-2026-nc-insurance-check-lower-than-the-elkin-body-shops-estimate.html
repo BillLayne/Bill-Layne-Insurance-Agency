@@ -1,0 +1,506 @@
+
+<!-- GEM v4.1 YT EDITION DEPENDENCIES -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Bricolage+Grotesque:opsz,wght@12..96,400;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+
+<style>
+/* GEM v4.1 CORE STYLES - SCOPED */
+.gem-post {
+    font-family: 'Outfit', sans-serif;
+    line-height: 1.7;
+    color: #334155;
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    overflow-x: hidden;
+}
+.gem-post h1, .gem-post h2, .gem-post h3 { font-family: 'Bricolage Grotesque', sans-serif; color: #0f172a; }
+.gem-post h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 1rem; letter-spacing: -0.02em; }
+.gem-post h2 { font-size: 1.8rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; border-left: 5px solid #FF0033; padding-left: 1rem; }
+.gem-post h3 { font-size: 1.4rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+.gem-post p { margin-bottom: 1.25rem; font-size: 1.1rem; }
+.gem-post ul, .gem-post ol { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+.gem-post li { margin-bottom: 0.5rem; }
+.gem-post a { color: #2563eb; text-decoration: underline; font-weight: 600; }
+
+/* FONT AWESOME ICON SIZING */
+.gem-post i.fa-solid, .gem-post i.fa-regular, .gem-post i.fa-brands { margin-right: 0.3rem; }
+
+/* SCROLL PROGRESS BAR */
+.gem-progress-bar { position: fixed; top: 0; left: 0; width: 0%; height: 4px; background: linear-gradient(90deg, #FF0033, #FF6B35, #FFD23F); z-index: 1100; transition: width 0.1s linear; }
+
+/* HERO IMAGE */
+.hero-img { width: 100%; height: auto; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+/* SNIPPET BAIT BOX */
+.gem-snippet-bait { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 0 8px 8px 0; margin-bottom: 2rem; font-size: 1.15rem; font-weight: 500; }
+
+/* SHARE BAR */
+.gem-share-bar { display: flex; gap: 0.5rem; margin: 1.5rem 0; padding: 1rem; background: #f8fafc; border-radius: 16px; border: 2px solid #e2e8f0; align-items: center; flex-wrap: wrap; }
+.gem-share-label { font-weight: 800; font-size: 0.85rem; color: #0F0F0F; margin-right: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+.gem-share-btn { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none !important; color: white !important; font-size: 1rem; transition: transform 0.15s; cursor: pointer; border: none; }
+.gem-share-btn:active { transform: scale(0.9); }
+.gem-share-fb { background: #1877F2; }
+.gem-share-x { background: #0F0F0F; }
+.gem-share-email { background: #EA4335; }
+.gem-share-copy { background: #64748b; }
+.gem-share-copy.copied { background: #22c55e; }
+
+/* CHAPTER PROGRESS PILLS */
+.gem-chapter-track { display: flex; gap: 4px; margin: 1rem 0; flex-wrap: wrap; position: sticky; top: 10px; z-index: 50; }
+.gem-chapter-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; background: #e2e8f0; color: #64748b; text-decoration: none !important; transition: all 0.2s; opacity: 0.9; }
+.gem-chapter-pill.active { background: #FF0033; color: white !important; opacity: 1; box-shadow: 0 4px 6px -1px rgba(255, 0, 51, 0.3); }
+.gem-chapter-pill.read { background: #0F0F0F; color: white !important; }
+
+/* PULL QUOTE */
+.gem-pull-quote { margin: 2rem 0; padding: 2rem 1.5rem; background: linear-gradient(135deg, #0F0F0F 0%, #1a1a2e 100%); border-radius: 16px; text-align: center; position: relative; overflow: hidden; }
+.gem-pull-quote::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #FF0033, #FF6B35, #FFD23F, #A8E10C, #00D4FF); }
+.gem-pull-quote-text { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.4rem; font-weight: 800; color: white; line-height: 1.3; letter-spacing: -0.02em; }
+.gem-pull-quote-text .gem-pq-highlight { color: #FFD23F; }
+.gem-pull-quote-source { margin-top: 0.75rem; font-size: 0.8rem; color: #9ca3af; font-weight: 600; }
+
+/* VS COMPARISON CARD */
+.gem-vs-card { margin: 1.5rem 0; border-radius: 16px; overflow: hidden; border: 2px solid #e2e8f0; }
+.gem-vs-header { background: #0F0F0F; color: white; text-align: center; padding: 0.75rem; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.gem-vs-body { display: flex; }
+.gem-vs-side { flex: 1; padding: 1.25rem; text-align: center; }
+.gem-vs-left { background: linear-gradient(180deg, #FEF2F2 0%, #fff 100%); }
+.gem-vs-right { background: linear-gradient(180deg, #F0FDF4 0%, #fff 100%); }
+.gem-vs-divider { width: 3px; background: linear-gradient(180deg, #FF0033, #FFD23F, #22c55e); flex-shrink: 0; }
+.gem-vs-label { font-weight: 800; font-size: 0.95rem; margin-bottom: 0.75rem; display: block; }
+.gem-vs-left .gem-vs-label { color: #DC2626; }
+.gem-vs-right .gem-vs-label { color: #16a34a; }
+.gem-vs-item { font-size: 0.85rem; color: #475569; margin-bottom: 0.4rem; line-height: 1.4; }
+.gem-vs-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+
+/* REVEAL CARD */
+.gem-reveal { margin: 1.5rem 0; border: 2px dashed #7C3AED; border-radius: 16px; overflow: hidden; background: #F5F3FF; }
+.gem-reveal-trigger { padding: 1rem 1.25rem; font-weight: 800; color: #7C3AED; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; min-height: 44px; }
+.gem-reveal-content { display: none; padding: 0 1.25rem 1.25rem; color: #374151; line-height: 1.6; font-size: 0.95rem; border-top: 1px solid #DDD6FE; }
+.gem-reveal-content.visible { display: block; }
+
+/* REACTIONS BAR */
+.gem-reactions { margin: 1.5rem 0; padding: 1.25rem; background: #f8fafc; border-radius: 16px; text-align: center; border: 2px solid #e2e8f0; }
+.gem-reactions-title { font-weight: 700; font-size: 0.9rem; color: #475569; margin-bottom: 0.75rem; }
+.gem-reactions-row { display: flex; justify-content: center; gap: 0.75rem; }
+.gem-react-btn { width: 48px; height: 48px; border-radius: 50%; border: 2px solid #e2e8f0; background: white; font-size: 1.3rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+.gem-react-btn:hover, .gem-react-btn:active { transform: scale(1.15); border-color: #FF0033; }
+.gem-react-btn.selected { background: #FF0033; border-color: #FF0033; color: white !important; transform: scale(1.15); }
+
+/* STEP TIMELINE */
+.gem-steps { margin: 1.5rem 0; padding: 0; }
+.gem-step { display: flex; gap: 1rem; padding-bottom: 1.5rem; position: relative; }
+.gem-step:last-child { padding-bottom: 0; }
+.gem-step-line { width: 40px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.gem-step-dot { width: 36px; height: 36px; border-radius: 50%; background: #0F0F0F; color: white; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; z-index: 1; }
+.gem-step-connector { width: 3px; flex: 1; background: linear-gradient(180deg, #0F0F0F, #e2e8f0); margin-top: 4px; }
+.gem-step:last-child .gem-step-connector { display: none; }
+.gem-step-content { flex: 1; padding-top: 0.35rem; }
+.gem-step-title { font-weight: 800; font-size: 1rem; color: #0F0F0F; margin-bottom: 0.25rem; }
+.gem-step-text { font-size: 0.95rem; color: #475569; line-height: 1.5; }
+
+/* RELATED GRID */
+.gem-related { padding: 2rem 1.25rem; background: #0F0F0F; border-radius: 12px; margin-top: 3rem; }
+.gem-related-title { font-family: 'Bricolage Grotesque', sans-serif; color: white; font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; }
+.gem-related-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.gem-related-card { display: flex; gap: 0.75rem; text-decoration: none !important; background: #272727; border-radius: 12px; overflow: hidden; transition: background 0.2s; }
+.gem-related-card:active { background: #333; }
+.gem-related-thumb { width: 120px; height: 68px; object-fit: cover; flex-shrink: 0; border-radius: 8px; margin: 0.5rem 0 0.5rem 0.5rem; }
+.gem-related-info { padding: 0.5rem 0.5rem 0.5rem 0; display: flex; flex-direction: column; justify-content: center; }
+.gem-related-info-title { color: white; font-weight: 700; font-size: 0.85rem; line-height: 1.3; margin-bottom: 0.25rem; }
+.gem-related-info-meta { color: #9ca3af; font-size: 0.7rem; }
+@media (min-width: 768px) {
+    .gem-related-grid { grid-template-columns: 1fr 1fr 1fr; }
+    .gem-related-card { flex-direction: column; }
+    .gem-related-thumb { width: 100%; height: 120px; margin: 0; border-radius: 12px 12px 0 0; }
+    .gem-related-info { padding: 0.75rem; }
+}
+
+/* DATA TABLE */
+.gem-table-wrapper { overflow-x: auto; margin: 1.5rem 0; border-radius: 8px; border: 1px solid #e2e8f0; }
+.gem-table { width: 100%; border-collapse: collapse; min-width: 500px; }
+.gem-table th { background: #f1f5f9; text-align: left; padding: 1rem; font-weight: 700; border-bottom: 2px solid #e2e8f0; }
+.gem-table td { padding: 1rem; border-bottom: 1px solid #e2e8f0; }
+.gem-table tr:last-child td { border-bottom: none; }
+
+/* CTA BOX */
+.gem-cta-box { background: #eff6ff; border: 2px solid #3b82f6; border-radius: 16px; padding: 2rem; text-align: center; margin-top: 3rem; }
+.gem-cta-title { font-size: 1.5rem; font-weight: 800; color: #1e3a8a; margin-bottom: 0.5rem; }
+.gem-cta-text { margin-bottom: 1.5rem; color: #1e40af; }
+.gem-cta-btn { display: inline-block; background: #2563eb; color: white !important; padding: 1rem 2rem; border-radius: 50px; font-weight: 700; text-decoration: none !important; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.5); transition: transform 0.2s; }
+.gem-cta-btn:hover { transform: translateY(-2px); }
+
+/* CORNER RIBBON */
+.gem-ribbon-wrap { position: relative; }
+.gem-ribbon { position: absolute; top: 12px; right: -8px; background: #FF0033; color: white; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 14px 4px 10px; border-radius: 4px 0 0 4px; z-index: 2; box-shadow: 0 2px 6px rgba(255,0,51,0.3); }
+.gem-ribbon::after { content: ''; position: absolute; top: 100%; right: 0; border: 4px solid transparent; border-top-color: #990020; border-right-color: #990020; }
+.gem-ribbon-new { background: #FF0033; }
+</style>
+
+<div class="gem-post"><div class="gem-blog-container">
+
+    <!-- 1. Scroll Progress Bar -->
+    <div class="gem-progress-bar" id="gemProgress"></div>
+
+    <!-- 2. H1 Title -->
+    <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">
+        Why is My 2026 NC Insurance Check Lower Than the Elkin Body Shop's Estimate?
+    </h1>
+
+    <!-- 3. Snippet Bait / TLDR Box -->
+    <div class="gem-snippet-bait bg-blue-50 border-l-8 border-blue-600 p-6 mb-8 rounded-r-lg shadow-sm">
+        <div class="flex items-start">
+            <div class="text-blue-600 text-3xl mr-4 mt-1">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg text-blue-900 mb-2 uppercase tracking-wide">The Short Answer</h3>
+                <p class="text-gray-800 leading-relaxed font-medium">
+                    If your NC insurance check is lower than the body shop's estimate, it is typically due to three factors: the <strong>deductible</strong> (your agreed out-of-pocket cost), <strong>betterment</strong> (depreciation deducted for wearable parts like tires or batteries), or the insurer approving <strong>LKQ (Like Kind and Quality)</strong> parts rather than brand-new OEM parts. Don't panic: this initial check is often just an undisputed starting offer, not the final payment.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Hero Image -->
+    <div class="mb-8 relative rounded-xl overflow-hidden shadow-lg">
+        <img src="https://i.imgur.com/QHZJHVK.png" alt="Car repair estimate comparison in Elkin NC 2026" class="hero-img w-full h-auto object-cover"  width="800" height="450" />
+        <div class="absolute bottom-0 left-0 bg-gradient-to-t from-black to-transparent w-full p-4">
+            <p class="text-white text-sm font-semibold"><i class="fa-solid fa-location-dot"></i> Serving Elkin, Jonesville, and the Yadkin Valley</p>
+        </div>
+    </div>
+
+    <!-- 5. Share Bar -->
+    <div class="gem-share-bar flex flex-wrap gap-3 mb-10 pb-6 border-b border-gray-200">
+        <span class="text-gray-500 font-bold self-center mr-2 uppercase text-xs tracking-wider">Share this Guide:</span>
+        <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-sm font-bold transition"><i class="fa-brands fa-facebook-f"></i> Share</button>
+        <button class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-full text-sm font-bold transition"><i class="fa-brands fa-x-twitter"></i> Repost</button>
+        <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full text-sm font-bold transition"><i class="fa-solid fa-envelope"></i> Email</button>
+        <button class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-full text-sm font-bold transition"><i class="fa-solid fa-link"></i> Copy</button>
+    </div>
+
+    <!-- 6. Chapter Tracker -->
+    <div class="gem-chapter-track bg-gray-50 p-4 rounded-lg mb-10 border border-gray-200">
+        <p class="text-xs font-bold text-gray-400 uppercase mb-2">Jump to Chapter:</p>
+        <div class="flex flex-wrap gap-2 text-sm">
+            <a href="#section1" class="text-blue-600 hover:underline font-semibold">1. The "Sticker Shock"</a> <span class="text-gray-300">|</span>
+            <a href="#section2" class="text-blue-600 hover:underline font-semibold">2. Betterment & Parts</a> <span class="text-gray-300">|</span>
+            <a href="#section3" class="text-blue-600 hover:underline font-semibold">3. The 2026 Tech Factor</a> <span class="text-gray-300">|</span>
+            <a href="#section4" class="text-blue-600 hover:underline font-semibold">4. The Supplement Solution</a>
+        </div>
+    </div>
+
+    <!-- 7. Key Takeaways -->
+    <div class="mb-12">
+        <h3 class="text-2xl font-bold text-gray-900 mb-4">What You Need to Know in 2026</h3>
+        <ul class="space-y-3">
+            <li class="flex items-start">
+                <i class="fa-solid fa-check text-green-500 mt-1 mr-3"></i>
+                <span class="text-gray-700"><strong>The Initial Check is rarely the final amount.</strong> It is simply the "undisputed" amount the insurance company owes you immediately.</span>
+            </li>
+            <li class="flex items-start">
+                <i class="fa-solid fa-check text-green-500 mt-1 mr-3"></i>
+                <span class="text-gray-700"><strong>NC Law allows "LKQ" Parts.</strong> Insurers in North Carolina are not required to pay for brand-new manufacturer parts if a high-quality recycled part is available.</span>
+            </li>
+            <li class="flex items-start">
+                <i class="fa-solid fa-check text-green-500 mt-1 mr-3"></i>
+                <span class="text-gray-700"><strong>Calibration Costs are Hidden.</strong> In 2026, recalibrating safety sensors is expensive. Shops estimate high for this; insurers wait for the invoice.</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 8. Section 1 -->
+    <h2 id="section1" class="text-3xl font-bold text-gray-900 mb-6 border-l-4 border-red-500 pl-4">
+        1. The "Sticker Shock": Estimate vs. Appraisal
+    </h2>
+
+    <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+        It’s a scenario we see too often at <strong>Bill Layne Insurance</strong>. You’re driving down Bridge Street in Elkin, someone pulls out in front of you, and crunch. You take your 2026 SUV to a reputable local body shop. They write an estimate for <strong>$6,200</strong>.
+    </p>
+    <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+        A few days later, you get a check (or a direct deposit notification) from the insurance company for <strong>$4,100</strong>.
+    </p>
+    <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+        Your first reaction? Anger. You think you're being scammed. But before you call a lawyer or scream into a pillow, you need to understand the fundamental difference between what the shop does and what the adjuster does.
+    </p>
+
+    <!-- 9. Pull Quote Card -->
+    <div class="gem-pull-quote bg-gray-900 text-white p-8 my-10 rounded-xl relative overflow-hidden shadow-2xl">
+        <i class="fa-solid fa-quote-left text-gray-700 opacity-20 text-9xl absolute top-0 left-0 -mt-4 -ml-4"></i>
+        <p class="text-2xl md:text-3xl font-serif italic relative z-10 text-center leading-normal">
+            "A body shop writes a wish list of everything that <em>might</em> be broken. An adjuster writes a check for what they can <em>see</em> is broken."
+        </p>
+        <p class="text-center mt-6 text-gray-400 font-sans uppercase tracking-widest text-sm">— The "Visible Damage" Rule</p>
+    </div>
+
+    <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+        The shop wants to prepare you for the worst-case scenario so they don't have to call you later asking for more money. The insurance adjuster, bound by North Carolina regulations, can usually only pay for damage they can verify visually. This gap is normal, and usually, it's temporary.
+    </p>
+
+    <!-- 10. Section 2 -->
+    <h2 id="section2" class="text-3xl font-bold text-gray-900 mb-6 border-l-4 border-red-500 pl-4">
+        2. The Math: Betterment, Deductibles, and Parts
+    </h2>
+
+    <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+        Let’s look at the line items. Why exactly was that check $2,100 short? It usually comes down to "The Big Three."
+    </p>
+
+    <!-- 11. VS Comparison Card -->
+    <div class="gem-vs-card grid md:grid-cols-2 gap-0 border border-gray-300 rounded-xl overflow-hidden mb-10 shadow-lg">
+        <div class="bg-red-50 p-6 border-b md:border-b-0 md:border-r border-red-100">
+            <h4 class="text-xl font-bold text-red-800 mb-2"><i class="fa-solid fa-wrench"></i> The Shop's Estimate</h4>
+            <ul class="text-gray-700 space-y-2 text-sm">
+                <li>• Uses 100% Brand New OEM Parts.</li>
+                <li>• Includes "Teardown" labor upfront.</li>
+                <li>• Assumes suspension damage (Guessing).</li>
+                <li>• <strong>Total: $6,200</strong></li>
+            </ul>
+        </div>
+        <div class="bg-green-50 p-6">
+            <h4 class="text-xl font-bold text-green-800 mb-2"><i class="fa-solid fa-file-invoice-dollar"></i> The Insurance Check</h4>
+            <ul class="text-gray-700 space-y-2 text-sm">
+                <li>• Uses LKQ (Recycled) or Aftermarket parts.</li>
+                <li>• Subtracts your $500 Deductible.</li>
+                <li>• Subtracts "Betterment" on tires.</li>
+                <li>• <strong>Total: $4,100</strong></li>
+            </ul>
+        </div>
+    </div>
+
+    <h3 class="text-2xl font-bold text-gray-900 mb-4">What in the world is "Betterment"?</h3>
+    <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+        This is the most confusing part for NC drivers. Insurance is designed to put you back in the position you were in <em>before</em> the accident—not a better one.
+    </p>
+    <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+        If your car had tires that were 50% worn out, and the accident destroys one, the insurance company owes you a 50% worn tire. Since they can't buy a half-used tire, they buy a new one, but they make you pay for the "upgrade" (the 50% of life you gained). That charge is called <strong>Betterment</strong>.
+    </p>
+
+    <!-- 12. Section 3 -->
+    <h2 id="section3" class="text-3xl font-bold text-gray-900 mb-6 border-l-4 border-red-500 pl-4">
+        3. The 2026 Context: Sensors & Aftermarket Parts
+    </h2>
+
+    <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+        Since 2025, North Carolina auto liability minimums have been <strong>$50,000/$100,000/$50,000</strong>. That increased property damage limit ($50k) is crucial because 2026 model cars are incredibly expensive to fix.
+    </p>
+
+    <!-- 13. Reveal/Spoiler Card -->
+    <div class="gem-reveal bg-gray-800 rounded-xl p-1 mb-10 cursor-pointer group" onclick="this.classList.toggle('active')">
+        <div class="bg-gray-900 p-6 rounded-lg relative overflow-hidden">
+            <div class="overlay absolute inset-0 bg-gray-900 flex flex-col items-center justify-center z-20 transition-opacity duration-300 group-[.active]:opacity-0">
+                <i class="fa-solid fa-fingerprint text-4xl text-blue-400 mb-2 animate-pulse"></i>
+                <p class="text-white font-bold uppercase tracking-widest">Tap to Reveal 2026 Cost Data</p>
+            </div>
+            <div class="content opacity-30 blur-sm transition-all duration-300 group-[.active]:opacity-100 group-[.active]:blur-0 group-[.active]:z-30">
+                <h4 class="text-green-400 font-bold text-lg mb-2"><i class="fa-solid fa-triangle-exclamation"></i> The "Invisible" Cost</h4>
+                <p class="text-white">
+                    In 2026, a simple bumper replacement often requires <strong>ADAS Calibration</strong> (Advanced Driver Assistance Systems). The plastic bumper might cost $400, but aiming the cameras and radar sensors can cost <strong>$800 to $1,500</strong>. Insurance often won't pay this until the shop proves it was done.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+        Furthermore, North Carolina regulations support the use of <strong>Aftermarket Parts</strong> (parts not made by the original manufacturer). While body shops hate them, they are legal for insurance companies to specify, provided they fit and perform the same.
+    </p>
+
+    <!-- 14. Data Table -->
+    <div class="gem-table-wrapper overflow-x-auto mb-10 shadow-md rounded-lg">
+        <table class="gem-table w-full text-left border-collapse bg-white">
+            <thead>
+                <tr class="bg-gray-100 border-b border-gray-300">
+                    <th class="p-4 font-bold text-gray-900">Part Type</th>
+                    <th class="p-4 font-bold text-gray-900">Cost (Avg)</th>
+                    <th class="p-4 font-bold text-gray-900">Who Pays Difference?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border-b border-gray-100">
+                    <td class="p-4 text-gray-700">OEM (Original Brand)</td>
+                    <td class="p-4 text-gray-700">$500</td>
+                    <td class="p-4 text-gray-700">You (unless policy specifies OEM)</td>
+                </tr>
+                <tr class="border-b border-gray-100 bg-blue-50">
+                    <td class="p-4 text-gray-700 font-semibold">Aftermarket / LKQ</td>
+                    <td class="p-4 text-gray-700 font-semibold">$320</td>
+                    <td class="p-4 text-gray-700 font-semibold">Insurance (Standard)</td>
+                </tr>
+                <tr>
+                    <td class="p-4 text-gray-700">Used (Salvage Yard)</td>
+                    <td class="p-4 text-gray-700">$200</td>
+                    <td class="p-4 text-gray-700">Insurance (Common for older cars)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 15. Section 4 -->
+    <h2 id="section4" class="text-3xl font-bold text-gray-900 mb-6 border-l-4 border-red-500 pl-4">
+        4. The Solution: Don't Cash It Yet (File a Supplement)
+    </h2>
+
+    <div class="mb-8 rounded-xl overflow-hidden shadow-md">
+        <img loading="lazy" src="https://i.imgur.com/weuQ8CR.png" alt="Bill Layne Insurance Agent explaining auto claim supplement" class="w-full h-auto object-cover"  width="700" height="400" />
+    </div>
+
+    <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+        Here is the most important advice we can give you: <strong>The first check is just an offer.</strong> It is not the end of the negotiation. If your shop in Elkin finds more damage once they take the bumper off, or if the aftermarket part doesn't fit, they file a <strong>Supplement</strong>.
+    </p>
+
+    <!-- 16. Step-by-Step Timeline -->
+    <div class="gem-steps relative pl-8 border-l-2 border-blue-200 my-10 space-y-8">
+        <div class="step relative">
+            <span class="absolute -left-[41px] bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">1</span>
+            <h4 class="font-bold text-lg text-gray-900">Accept the Initial Payment</h4>
+            <p class="text-gray-600 text-sm">You can usually cash the initial check to get parts ordered. This does <em>not</em> mean you waive the right to ask for more.</p>
+        </div>
+        <div class="step relative">
+            <span class="absolute -left-[41px] bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">2</span>
+            <h4 class="font-bold text-lg text-gray-900">Shop Begins Teardown</h4>
+            <p class="text-gray-600 text-sm">The shop takes the car apart. They find the hidden broken bracket or the sensor that won't align.</p>
+        </div>
+        <div class="step relative">
+            <span class="absolute -left-[41px] bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">3</span>
+            <h4 class="font-bold text-lg text-gray-900">Supplement Filed</h4>
+            <p class="text-gray-600 text-sm">The shop sends photos and new invoices to the insurer. The insurer reviews and issues a second check (The Supplement).</p>
+        </div>
+    </div>
+
+    <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+        Most reputable shops in the Yadkin Valley area know this dance. They expect to file a supplement. Your job is to make sure you have an agent who can help facilitate communication if things stall.
+    </p>
+
+    <!-- 17. Reactions Bar -->
+    <div class="gem-reactions flex justify-center gap-4 my-12">
+        <button class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-full hover:bg-gray-50 transition">
+            <i class="fa-regular fa-thumbs-up text-blue-600"></i> <span class="text-sm font-semibold">Helpful</span>
+        </button>
+        <button class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-full hover:bg-gray-50 transition">
+            <i class="fa-regular fa-lightbulb text-yellow-500"></i> <span class="text-sm font-semibold">Learned Something</span>
+        </button>
+        <button class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-full hover:bg-gray-50 transition">
+            <i class="fa-solid fa-share-nodes text-green-600"></i> <span class="text-sm font-semibold">Sharing This</span>
+        </button>
+    </div>
+
+    <!-- 18. CTA Box -->
+    <div class="gem-cta-box bg-gradient-to-r from-blue-900 to-blue-800 rounded-2xl p-8 text-center shadow-xl mb-12 transform hover:scale-[1.01] transition-transform duration-300">
+        <h3 class="text-3xl font-bold text-white mb-4">Confused by your Claim? We can help.</h3>
+        <p class="text-blue-100 mb-8 text-lg max-w-2xl mx-auto">
+            At Bill Layne Insurance, we don't just sell policies; we help you understand them when it matters most. Whether it's Home, Auto, or Business, get the local expertise you deserve.
+        </p>
+        <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+            <a href="tel:336-835-1993" class="bg-white text-blue-900 hover:bg-gray-100 font-bold py-3 px-8 rounded-full shadow-lg transition flex items-center">
+                <i class="fa-solid fa-phone mr-2"></i> 336-835-1993
+            </a>
+            <a href="https://www.NCAutoandHome.com" class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-900 font-bold py-3 px-8 rounded-full transition flex items-center">
+                <i class="fa-solid fa-globe mr-2"></i> Visit NCAutoandHome.com
+            </a>
+        </div>
+        <p class="text-blue-300 text-sm mt-6">
+            <i class="fa-solid fa-location-dot"></i> 1283 N Bridge St, Elkin NC 28621
+        </p>
+    </div>
+
+    <!-- 19. Related Articles Grid -->
+    <div class="gem-related">
+        <h3 class="text-2xl font-bold text-gray-900 mb-6">More from Bill Layne Insurance</h3>
+        <div class="grid md:grid-cols-3 gap-6">
+            <!-- Card 1 -->
+            <div class="group cursor-pointer">
+                <div class="relative overflow-hidden rounded-lg mb-3">
+                    <img loading="lazy" src="https://i.imgur.com/qOjz0Ot.png" class="w-full h-48 object-cover transform group-hover:scale-110 transition duration-500" alt="Storm Damage Roof" width="400" height="192">
+                    <span class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">3:45 Read</span>
+                </div>
+                <h4 class="font-bold text-gray-900 group-hover:text-blue-600 transition">What is a "Named Storm Deductible" in NC?</h4>
+                <p class="text-gray-500 text-sm mt-1">Wind & Hail coverage explained for Elkin homeowners.</p>
+            </div>
+            <!-- Card 2 -->
+            <div class="group cursor-pointer">
+                <div class="bg-gray-200 h-48 rounded-lg mb-3 flex items-center justify-center text-gray-400">
+                    <i class="fa-solid fa-car-burst text-4xl"></i>
+                </div>
+                <h4 class="font-bold text-gray-900 group-hover:text-blue-600 transition">Did NC raise the Auto Liability Limits in 2025?</h4>
+                <p class="text-gray-500 text-sm mt-1">Yes, and here is why your premiums changed.</p>
+            </div>
+            <!-- Card 3 -->
+            <div class="group cursor-pointer">
+                <div class="bg-gray-200 h-48 rounded-lg mb-3 flex items-center justify-center text-gray-400">
+                    <i class="fa-solid fa-house-chimney-crack text-4xl"></i>
+                </div>
+                <h4 class="font-bold text-gray-900 group-hover:text-blue-600 transition">Home Insurance vs. Inflation (2026 Update)</h4>
+                <p class="text-gray-500 text-sm mt-1">Why your replacement cost keeps going up.</p>
+            </div>
+        </div>
+    </div>
+
+</div></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Scroll Progress Bar
+    window.addEventListener('scroll', function() {
+        var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var scrolled = (winScroll / height) * 100;
+        var bar = document.getElementById('gemProgress');
+        if (bar) bar.style.width = scrolled + '%';
+        
+        // Chapter Tracker
+        var sections = document.querySelectorAll('.gem-post h2');
+        var pills = document.querySelectorAll('.gem-chapter-pill');
+        var currentId = '';
+        sections.forEach(function(sec) {
+            var top = sec.getBoundingClientRect().top;
+            if (top < window.innerHeight * 0.5) {
+                currentId = sec.id;
+            }
+        });
+        pills.forEach(function(pill) {
+            var pillSection = pill.getAttribute('href').substring(1);
+            pill.classList.remove('active');
+            if (pillSection === currentId) {
+                pill.classList.add('active');
+            }
+        });
+    });
+
+    // Copy Link Button
+    window.copyLink = function(btn) {
+        navigator.clipboard.writeText(window.location.href).then(function() {
+            btn.classList.add('copied');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+            setTimeout(function() {
+                btn.classList.remove('copied');
+                btn.innerHTML = '<i class="fa-solid fa-link"></i>';
+            }, 2000);
+        });
+    };
+
+    // Reveal Card
+    window.toggleReveal = function(el) {
+        var content = el.nextElementSibling;
+        content.classList.toggle('visible');
+        var span = el.querySelector('span:last-child');
+        if (content.classList.contains('visible')) {
+            span.textContent = 'Tap to hide';
+        } else {
+            span.textContent = 'Tap to reveal';
+        }
+    };
+
+    // Reaction Bar
+    window.react = function(btn) {
+        var all = btn.parentElement.querySelectorAll('.gem-react-btn');
+        all.forEach(function(b) { b.classList.remove('selected'); });
+        btn.classList.add('selected');
+        var title = btn.parentElement.previousElementSibling;
+        if(title) title.textContent = 'Thanks for the feedback!';
+    };
+});
+</script>

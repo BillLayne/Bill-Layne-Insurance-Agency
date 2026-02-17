@@ -15,7 +15,9 @@ Copy and paste these instructions to Claude each time you want to add a new blog
 > Please add this blog to my site following the standard process in `blog/HOW-TO-ADD-A-BLOG.md`.
 
 **That's it!** The file path is the only thing you need to provide. Claude will:
-- Extract the hero image from the base64 embedded in the HTML
+- Extract images from base64 in the HTML and upload them to **Imgur** for fast CDN hosting
+- Replace base64 `src` attributes with Imgur direct URLs (`https://i.imgur.com/...`)
+- Add `loading="lazy"` and `width`/`height` attributes to images for performance
 - Pull the title from the blog's `<h1>` or `<title>` tag
 - Write a 1-2 sentence summary for the landing page card
 - Determine the category (Auto Insurance, Home Insurance, or General)
@@ -41,24 +43,44 @@ Copy and paste these instructions to Claude each time you want to add a new blog
   `blog/blogs/[slug-matching-the-title].html`
 - The filename should be a URL-friendly slug of the blog title
 
-### Step 3: Handle Images in the Blog HTML
-- Check the blog HTML for images. They may be in one of three forms:
-  - **Base64 embedded** (`data:image/...`) — Extract each one, save to `blog/assets/images/`, and replace the `src` with the relative path
-  - **External URLs** (e.g., Unsplash) — These can stay as-is, but still save a copy of the hero image locally for the landing page card
-  - **Already local paths** — No action needed
-- For base64 images:
-  1. Save each base64 image to `blog/assets/images/` with a descriptive name
-  2. The hero image should be named `[blog-slug]-hero.[png|jpg]`
-  3. Other inline images should be named `[blog-slug]-[description].[png|jpg]`
-  4. Replace every base64 `src` in the HTML with the relative path: `../assets/images/[filename]`
-- Verify NO `data:image` strings remain in the final HTML
-- This keeps the HTML file small and pages loading fast
+### Step 3: Handle Images — Upload to Imgur (IMPORTANT)
+All base64 images in the blog HTML must be extracted, uploaded to Imgur, and replaced with Imgur direct URLs. This keeps HTML files small and pages loading fast via Imgur's CDN.
 
-### Step 4: Ensure a Local Hero Image Exists for the Landing Page Card
-- The blog landing page (`blog/index.html`) needs a **local** hero image for the preview card
-- Check that a hero image file exists in `blog/assets/images/` matching the `imageUrl` in the blogs.json entry
-- If the blog HTML only has an external URL hero image (e.g., Unsplash), you still need a local image file for the landing page card — download or create one
-- Find the `<img>` tag with class `hero-img` in the blog HTML and note or update its `src`
+**For base64 images (`data:image/...`):**
+1. Find ALL base64 image strings in the HTML using regex: `src="(data:image/(png|jpeg|jpg|gif|webp);base64,([^"]+))"`
+2. For **each** base64 image found:
+   a. Decode the base64 string to binary
+   b. Save it temporarily as a file (e.g., `/tmp/blog-img-1.png`)
+   c. Upload it to **Imgur** using the anonymous upload API:
+      ```
+      curl -s -X POST https://api.imgur.com/3/image \
+        -H "Authorization: Client-ID YOUR_CLIENT_ID" \
+        -F "image=@/tmp/blog-img-1.png"
+      ```
+      *(Use the Imgur Client-ID stored in the environment or ask the user for one)*
+   d. Get the direct URL from the response: `https://i.imgur.com/XXXXXXX.png`
+   e. Replace the base64 `src` in the HTML with the Imgur direct URL
+3. Note which image is the **hero image** (first `<img>` or one with class `hero-img`) — you'll need its Imgur URL for the `imageUrl` field in blogs.json
+
+**For external URLs** (e.g., Unsplash):
+- These can stay as-is — no upload needed
+- Note the hero image URL for blogs.json
+
+**For already local paths:**
+- No action needed
+
+**After replacing all images, add performance attributes:**
+- Add `loading="lazy"` to **all** `<img>` tags **except** the hero image (the first/topmost image)
+- Add `width` and `height` attributes to all `<img>` tags for CLS (Cumulative Layout Shift) prevention
+  - Use reasonable defaults if exact dimensions aren't known (e.g., `width="800" height="450"` for hero, `width="700" height="400"` for inline)
+
+**Verify:** NO `data:image` base64 strings remain in the final HTML.
+
+### Step 4: Confirm Hero Image URL for Landing Page Card
+- The blog landing page (`blog/index.html`) needs a hero image URL for the preview card
+- For new blog posts, this will be an **Imgur URL** (from Step 3)
+- Note the hero image's Imgur URL — it goes in the `imageUrl` field of the blogs.json entry
+- No local hero image file is needed for new posts (existing older posts may still use local paths — that's fine)
 
 ### Step 5: Add Entry to blogs.json
 - Open `blog/data/blogs.json`
@@ -72,7 +94,7 @@ Copy and paste these instructions to Claude each time you want to add a new blog
   "url": "./blogs/[filename].html",
   "linkUrl": "./blogs/[filename].html",
   "readMoreUrl": "./blogs/[filename].html",
-  "imageUrl": "./assets/images/[hero-image-name]",
+  "imageUrl": "https://i.imgur.com/XXXXXXX.png",
   "summary": "1-2 sentence summary for the blog card preview.",
   "tags": ["Tag1", "Tag2", "Tag3", "North Carolina"],
   "author": "Bill Layne",
@@ -85,6 +107,7 @@ Copy and paste these instructions to Claude each time you want to add a new blog
 
 **Important fields:**
 - `date` — Use today's actual date (YYYY-MM-DD format). Do NOT use a future date.
+- `imageUrl` — Use the **Imgur direct URL** for the hero image (e.g., `https://i.imgur.com/XXXXXXX.png`). Older posts may still use local paths like `./assets/images/...` — that's fine, leave those as-is.
 - `title` — Extracted from the blog HTML (or user-provided override)
 - `summary` — Written from the blog content (or user-provided override)
 - `tags` — Generated from the content, always include "North Carolina" (or user-provided override)
@@ -102,9 +125,11 @@ Copy and paste these instructions to Claude each time you want to add a new blog
 
 ### Step 7: Verify (ALL must pass)
 - [ ] Blog HTML file exists in `blog/blogs/`
-- [ ] Hero image file exists in `blog/assets/images/`
 - [ ] No base64 `data:image` strings remain in the blog HTML
+- [ ] All images in the blog HTML use Imgur URLs (or existing external/local URLs)
+- [ ] Hero image and inline images have `loading="lazy"` (except hero) and `width`/`height` attributes
 - [ ] `blogs.json` has the new entry at the **top** with today's date
+- [ ] `imageUrl` in blogs.json uses the Imgur hero image URL
 - [ ] `window.__BLOG_DATA__` in `blog/index.html` line ~897 has the **same number of entries** as `blogs.json` (count `"id":` occurrences in both — they must match)
 - [ ] The new blog's `id` appears in both `blogs.json` AND the embedded data on line ~897
 
@@ -115,10 +140,11 @@ Copy and paste these instructions to Claude each time you want to add a new blog
 | What | Where |
 |------|-------|
 | Blog HTML files | `blog/blogs/[slug].html` |
-| Hero images | `blog/assets/images/[name]-hero.[png\|jpg]` |
 | Blog data (JSON) | `blog/data/blogs.json` |
 | Blog landing page | `blog/index.html` |
 | Blog app logic | `blog/app.js` |
+| Hero images (new posts) | Hosted on Imgur (`https://i.imgur.com/...`) |
+| Hero images (older posts) | `blog/assets/images/[name]-hero.[png\|jpg]` (leave as-is) |
 
 ---
 
