@@ -1,0 +1,613 @@
+<style>
+/* --- GEM v3.2 CSS ARCHITECTURE (SCOPED) --- */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+
+.gem-post {
+    /* Variables */
+    --gem-blue: #0A2540;
+    --gem-red: #D93025;
+    --gem-gold: #F4B400;
+    --gem-light: #F8F9FA;
+    --gem-green-bg: #e6fffa;
+    --gem-green-text: #047481;
+    --gem-gray: #4A5568;
+    --gem-border: #E2E8F0;
+    --gem-font-head: 'Fraunces', serif;
+    --gem-font-body: 'Plus Jakarta Sans', sans-serif;
+    --gem-pad: 1.2rem;
+    --gem-radius: 12px;
+    --gem-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    
+    font-family: var(--gem-font-body);
+    color: var(--gem-blue);
+    line-height: 1.6;
+    font-size: 18px;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+/* Scoped Reset */
+.gem-post *, .gem-post *::before, .gem-post *::after {
+    box-sizing: inherit;
+}
+
+.gem-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0;
+    position: relative;
+}
+
+/* Typography */
+.gem-post h1, .gem-post h2, .gem-post h3 { 
+    font-family: var(--gem-font-head); 
+    line-height: 1.2; 
+    color: var(--gem-blue);
+}
+.gem-post h1 { 
+    font-size: 2.4rem; 
+    font-weight: 800; 
+    margin: 1rem 0;
+    letter-spacing: -0.02em;
+}
+.gem-post h2 { 
+    font-size: 1.8rem; 
+    margin-top: 2rem; 
+    margin-bottom: 1rem;
+    border-left: 6px solid var(--gem-red); 
+    padding-left: 15px; 
+}
+.gem-post h3 { font-size: 1.4rem; margin-top: 1.5rem; }
+.gem-post p { margin-bottom: 1.2rem; color: var(--gem-gray); }
+.gem-post a { color: var(--gem-red); font-weight: 700; text-decoration: underline; text-decoration-thickness: 2px; }
+.gem-post ul { padding-left: 1.5rem; margin-bottom: 1.5rem; }
+.gem-post li { margin-bottom: 0.5rem; marker: var(--gem-red); }
+
+/* 1. Sticky Header */
+.gem-sticky-header {
+    background: var(--gem-blue);
+    color: white;
+    padding: 10px var(--gem-pad);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+.gem-sticky-header a { color: white; text-decoration: none; }
+
+/* 2. Breadcrumbs */
+.gem-breadcrumbs {
+    font-size: 0.85rem;
+    color: var(--gem-gray);
+    padding: 1rem var(--gem-pad) 0;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+/* 3. Hero Section */
+.gem-hero { padding: 0 var(--gem-pad); }
+.gem-meta { font-size: 0.9rem; color: var(--gem-gray); display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; }
+.gem-hero-img { width: 100%; height: auto; border-radius: var(--gem-radius); margin-bottom: 1.5rem; object-fit: cover; aspect-ratio: 16/9; }
+
+/* 4. Snippet Bait (Zero Click) */
+.gem-snippet-bait {
+    background: var(--gem-light);
+    border: 2px solid var(--gem-blue);
+    border-radius: var(--gem-radius);
+    padding: var(--gem-pad);
+    margin: 1.5rem var(--gem-pad);
+}
+.gem-snippet-title { font-weight: 800; text-transform: uppercase; letter-spacing: 1px; font-size: 0.8rem; color: var(--gem-red); margin-bottom: 0.5rem; display: block; }
+.gem-snippet-text { font-size: 1.1rem; font-weight: 600; color: var(--gem-blue); margin: 0; }
+
+/* 5. Key Takeaways */
+.gem-takeaways {
+    background: #fff;
+    border: 1px solid var(--gem-border);
+    border-radius: var(--gem-radius);
+    padding: var(--gem-pad);
+    margin: 0 var(--gem-pad) 2rem;
+    box-shadow: var(--gem-shadow);
+}
+.gem-takeaways-head { display: flex; align-items: center; gap: 10px; font-weight: 800; margin-bottom: 1rem; }
+
+/* 7. Data Table */
+.gem-table-wrapper { overflow-x: auto; margin: 2rem var(--gem-pad); border-radius: var(--gem-radius); border: 1px solid var(--gem-border); }
+.gem-table { width: 100%; border-collapse: collapse; min-width: 500px; }
+.gem-table th { background: var(--gem-blue); color: white; padding: 12px; text-align: left; font-family: var(--gem-font-head); }
+.gem-table td { padding: 12px; border-bottom: 1px solid var(--gem-border); font-size: 0.95rem; }
+.gem-table tr:nth-child(even) { background: var(--gem-light); }
+.gem-table-highlight { color: var(--gem-red); font-weight: 800; }
+
+/* 8. TOC */
+.gem-toc { margin: 0 var(--gem-pad) 2rem; border: 1px solid var(--gem-border); border-radius: var(--gem-radius); padding: 1rem; background: var(--gem-light); }
+.gem-toc summary { font-weight: 700; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.gem-toc summary::after { content: '⬇️'; }
+.gem-toc[open] summary::after { content: '⬆️'; }
+.gem-toc ul { margin: 10px 0 0; padding-left: 20px; }
+
+/* 12. Local Impact Box */
+.gem-local-box {
+    background: var(--gem-green-bg);
+    border-left: 5px solid var(--gem-green-text);
+    padding: var(--gem-pad);
+    margin: 2rem var(--gem-pad);
+    border-radius: 0 var(--gem-radius) var(--gem-radius) 0;
+}
+.gem-testimonial { font-style: italic; color: var(--gem-gray); margin-top: 10px; font-size: 0.9rem; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 10px; }
+
+/* 14. Calculator */
+.gem-calc { background: var(--gem-blue); color: white; padding: var(--gem-pad); margin: 2rem var(--gem-pad); border-radius: var(--gem-radius); }
+.gem-calc label { display: block; margin-bottom: 5px; font-size: 0.9rem; }
+.gem-calc input, .gem-calc select { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 6px; border: none; font-size: 1rem; }
+.gem-calc-btn { width: 100%; background: var(--gem-red); color: white; border: none; padding: 12px; font-weight: 700; border-radius: 6px; font-size: 1.1rem; cursor: pointer; }
+.gem-calc-result { margin-top: 15px; font-weight: 800; font-size: 1.2rem; text-align: center; color: var(--gem-gold); display: none; }
+
+/* 15. FAQ */
+.gem-faq-section { margin: 2rem var(--gem-pad); }
+.gem-faq-item { border-bottom: 1px solid var(--gem-border); margin-bottom: 10px; }
+.gem-faq-summary {
+    padding: 15px 0;
+    cursor: pointer;
+    font-weight: 700;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--gem-font-head);
+    font-size: 1.1rem;
+}
+/* The Arrow Fix */
+.gem-faq-summary::after {
+    content: '\2795'; /* Heavy Plus Sign */
+    font-size: 1.2rem;
+    color: var(--gem-red);
+    transition: transform 0.2s;
+}
+.gem-faq-item[open] .gem-faq-summary::after {
+    content: '\2796'; /* Heavy Minus Sign */
+    color: var(--gem-blue);
+}
+.gem-faq-item[open] .gem-faq-summary { color: var(--gem-red); }
+.gem-faq-content { padding-bottom: 15px; color: var(--gem-gray); }
+
+/* 21. Footer components */
+.gem-bio { display: flex; gap: 15px; align-items: center; margin: 2rem var(--gem-pad); padding-top: 2rem; border-top: 1px solid var(--gem-border); }
+.gem-bio img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; }
+.gem-cta-strong { text-align: center; background: var(--gem-light); padding: 2rem var(--gem-pad); margin-top: 2rem; }
+.gem-cta-button { display: inline-block; background: var(--gem-red); color: white; padding: 15px 30px; text-decoration: none; font-weight: 700; border-radius: 50px; margin-top: 10px; box-shadow: 0 4px 0 #b91c1c; }
+.gem-cta-button:active { transform: translateY(4px); box-shadow: none; }
+
+/* 22. Mobile Float */
+.gem-mobile-float {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    padding: 10px;
+    gap: 10px;
+    z-index: 999;
+}
+.gem-float-btn { flex: 1; text-align: center; padding: 12px; border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 0.9rem; }
+.gem-btn-call { background: var(--gem-blue); color: white; }
+.gem-btn-quote { background: var(--gem-red); color: white; }
+
+@media (min-width: 768px) {
+    .gem-mobile-float { display: none; }
+    .gem-toc { display: none; } /* Hide mobile TOC on desktop */
+}
+</style>
+
+<div class="gem-post">
+
+    <!-- 1. Sticky Header -->
+    <div class="gem-sticky-header">
+        <span>Bill Layne Insurance 🛡️</span>
+        <a href="tel:3368351993" class="gem-touch">📞 336-835-1993</a>
+    </div>
+
+    <!-- 2. Breadcrumbs -->
+    <div class="gem-breadcrumbs">
+        Home &gt; Blog &gt; NC Insurance &gt; <strong>Lower 2026 Premiums</strong>
+    </div>
+
+    <!-- 3. Hero Section -->
+    <div class="gem-hero">
+        <h1>How to lower North Carolina homeowners premiums in 2026?</h1>
+        <div class="gem-meta">
+            <span>👤 By Bill Layne</span>
+            <span>📅 <time datetime="2026-02-15">Updated: Feb 15, 2026</time></span>
+            <span>⏱️ 4 min read</span>
+        </div>
+        <img src="../assets/images/nc-lower-homeowners-premiums-2026-hero.png" alt="Home Insurance Savings North Carolina 2026" class="gem-hero-img" loading="eager" width="800" height="450">
+    </div>
+
+    <!-- 4. Snippet Bait (Zero-Click Answer) -->
+    <div class="gem-snippet-bait">
+        <span class="gem-snippet-title">THE SHORT ANSWER</span>
+        <p class="gem-snippet-text">
+            To lower NC homeowners premiums in 2026, check your "Consent to Rate" status (Limit it to 250%), raise your deductible to at least $2,500, bundle with auto, and install a fortified roof. In North Carolina, reviewing your policy for outdated "Coverage A" inflation can immediately save you 10-15%.
+        </p>
+    </div>
+
+    <!-- 5. Key Takeaways -->
+    <div class="gem-takeaways">
+        <div class="gem-takeaways-head">🚀 In a Hurry? Key Takeaways</div>
+        <ul>
+            <li><strong>Rate Hikes are Real:</strong> NC Rate Bureau approved new hikes for 2026.</li>
+            <li><strong>Consent to Rate (CTR):</strong> This is the #1 hidden cost. Ask us to review yours.</li>
+            <li><strong>Deductible Magic:</strong> Moving from $1,000 to $2,500 can save ~20%.</li>
+            <li><strong>Local Factor:</strong> Elkin & Surry County rates differ from Coastal NC.</li>
+        </ul>
+    </div>
+
+    <!-- 8. Mobile TOC -->
+    <details class="gem-toc">
+        <summary>Jump to Section</summary>
+        <ul>
+            <li><a href="#rates-up">Why are NC Rates Rising?</a></li>
+            <li><a href="#ctr-explained">The Secret: Consent to Rate</a></li>
+            <li><a href="#comparison">Cost Savings Table</a></li>
+            <li><a href="#elkin-local">Local Tips for Elkin/Surry</a></li>
+            <li><a href="#calculator">Savings Calculator</a></li>
+            <li><a href="#faq">Frequently Asked Questions</a></li>
+        </ul>
+    </details>
+
+    <div class="gem-container">
+        
+        <!-- 10. Intro -->
+        <div style="padding: 0 var(--gem-pad);">
+            <p class="gem-prose">
+                If you opened your renewal notice this month and gasped, you aren't alone. In 2026, North Carolina homeowners are facing a "perfect storm" of inflation and reinsurance costs. But here in Elkin and across the Yadkin Valley, you don't have to just accept the new price tag.
+            </p>
+            <p>
+                As a local agent serving this community for over 20 years, I've found that <strong>most policies are on "autopilot"</strong>—and that's costing you money.
+            </p>
+        </div>
+
+        <!-- 11. Body H2 -->
+        <div style="padding: 0 var(--gem-pad);">
+            <h2 id="rates-up">Why Did My Premium Go Up? (Again)</h2>
+            <p>
+                It’s not just you. The North Carolina Rate Bureau (NCRB) negotiated rate increases due to the rising cost of construction materials and severe weather frequency.
+            </p>
+            <img src="../assets/images/nc-lower-homeowners-premiums-2026-img1.png" alt="Chart showing rising construction costs in NC" style="width:100%; border-radius:12px; margin: 1rem 0;" loading="lazy">
+            <p>
+                However, the "base rate" isn't the whole story. The biggest factor impacting your wallet right now is something called <strong>Consent to Rate</strong>.
+            </p>
+            
+            <h2 id="ctr-explained">The "Secret" Weapon: Consent to Rate (CTR)</h2>
+            <p>
+                <strong>This is the most important paragraph you will read today.</strong> In North Carolina, insurance carriers can charge <em>more</em> than the state-approved maximum rate if you sign a "Consent to Rate" letter.
+            </p>
+            <p>
+                Many homeowners sign this in their initial application and forget about it. In 2026, some carriers are charging 250% to 400% above the bureau rate. 
+            </p>
+            <p style="background:var(--gem-gold); color:black; padding:10px; font-weight:bold; border-radius:8px;">
+                💡 PRO TIP: Call us. We can check if your current carrier is capping your CTR or letting it run wild.
+            </p>
+        </div>
+
+        <!-- 7. Comparison Data Table -->
+        <h3 id="comparison" style="padding: 0 var(--gem-pad);">Real Numbers: The Deductible Strategy</h3>
+        <p style="padding: 0 var(--gem-pad);">Most folks in Elkin still carry a $500 or $1,000 deductible. In 2026, that is an expensive habit. Look at the difference:</p>
+        
+        <div class="gem-table-wrapper">
+            <table class="gem-table">
+                <thead>
+                    <tr>
+                        <th>Strategy</th>
+                        <th>Deductible</th>
+                        <th>Annual Premium*</th>
+                        <th>You Save</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Old School</td>
+                        <td>$1,000</td>
+                        <td>$1,850</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>Modern</td>
+                        <td>$2,500</td>
+                        <td>$1,480</td>
+                        <td class="gem-table-highlight">$370/yr</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Smart Saver</strong></td>
+                        <td><strong>$5,000</strong></td>
+                        <td><strong>$1,200</strong></td>
+                        <td class="gem-table-highlight"><strong>$650/yr</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p style="font-size:0.8rem; padding: 0 var(--gem-pad); color:var(--gem-gray);">*Estimates based on a $350k frame home in Surry County (28621). Actual results vary.</p>
+
+        <!-- 12. Local Impact Box -->
+        <div class="gem-local-box" id="elkin-local">
+            <strong>📍 The Elkin/Surry Advantage</strong>
+            <p>
+                Unlike our neighbors on the coast, we don't have mandatory "Wind & Hail" pools. However, wind damage is our #1 claim in the foothills.
+            </p>
+            <p>
+                Ensure your policy covers <strong>"Ordinance or Law."</strong> Elkin and Jonesville have updated building codes. If a storm hits, you must rebuild to 2026 standards, not 1990 standards. This coverage pays the difference.
+            </p>
+            <div class="gem-testimonial">
+                "Bill reviewed my policy and realized I was paying for coastal wind deductibles I didn't need. Saved me $400 instantly." — Sarah J., Jonesville, NC
+            </div>
+        </div>
+
+        <!-- 13. How To -->
+        <div style="padding: 0 var(--gem-pad);">
+            <h2>5 Steps to Lower Premiums Today</h2>
+            <ol style="margin-left: 20px;">
+                <li><strong>Re-evaluate Replacement Cost:</strong> Market value went up, but construction costs might have stabilized. Don't over-insure the land value.</li>
+                <li><strong>Bundle Up:</strong> It sounds cliché, but moving your Auto to your Home carrier is still the biggest discount (up to 18%).</li>
+                <li><strong>Credit Check:</strong> In NC, insurance scores heavily impact rates. Improved your credit score recently? Ask for a re-score.</li>
+                <li><strong>Roof Age:</strong> If you replaced your roof in the last 5 years, make sure your agent has the permit year. It’s a huge discount factor.</li>
+                <li><strong>Review "Other Structures":</strong> Do you really need $40k coverage for a detached shed if you don't have one?</li>
+            </ol>
+            <img src="../assets/images/nc-lower-homeowners-premiums-2026-img2.png" alt="Reviewing insurance policy documents" style="width:100%; border-radius:12px; margin: 1rem 0;" loading="lazy">
+        </div>
+
+        <!-- 14. Interactive Feature (Calculator) -->
+        <div class="gem-calc" id="calculator">
+            <h3 style="color:white; margin-top:0;">💰 Quick Savings Estimator</h3>
+            <label>Current Premium ($/year):</label>
+            <input type="number" id="currentPrem" placeholder="e.g. 1800">
+            
+            <label>Current Deductible:</label>
+            <select id="currDed">
+                <option value="1000">$1,000</option>
+                <option value="500">$500</option>
+            </select>
+            
+            <label>New Deductible Goal:</label>
+            <select id="newDed">
+                <option value="2500">$2,500</option>
+                <option value="5000">$5,000</option>
+            </select>
+            
+            <button class="gem-calc-btn" onclick="calculateSavings()">Calculate Potential Savings</button>
+            <div id="result" class="gem-calc-result"></div>
+        </div>
+
+        <!-- 15. FAQ Section (Expanded) -->
+        <div class="gem-faq-section" id="faq">
+            <h2>Frequently Asked Questions</h2>
+            
+            <details class="gem-faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <summary class="gem-faq-summary" itemprop="name">Why did NC home insurance rates go up in 2026?</summary>
+                <div class="gem-faq-content" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                    <span itemprop="text">
+                        <strong>The primary drivers are inflation in building materials and increased reinsurance costs.</strong> The NC Rate Bureau adjusts rates based on the cost to repair homes and the frequency of severe weather events affecting the state.
+                    </span>
+                </div>
+            </details>
+
+            <details class="gem-faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <summary class="gem-faq-summary" itemprop="name">What is Consent to Rate in North Carolina?</summary>
+                <div class="gem-faq-content" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                    <span itemprop="text">
+                        <strong>Consent to Rate (CTR) is a form that allows insurers to charge more than the maximum rate set by the state.</strong> If you sign this, your premium can be significantly higher (often 250% of the base rate). Always ask your agent if your policy includes a CTR surcharge.
+                    </span>
+                </div>
+            </details>
+
+            <details class="gem-faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <summary class="gem-faq-summary" itemprop="name">Does credit score affect home insurance in NC?</summary>
+                <div class="gem-faq-content" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                    <span itemprop="text">
+                        <strong>Yes, North Carolina law allows insurers to use your insurance credit score to determine premiums.</strong> A higher credit score generally correlates with lower insurance rates, as statistical data suggests those with higher scores file fewer claims.
+                    </span>
+                </div>
+            </details>
+
+            <details class="gem-faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <summary class="gem-faq-summary" itemprop="name">Is a $2,500 deductible worth it?</summary>
+                <div class="gem-faq-content" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                    <span itemprop="text">
+                        <strong>For most NC homeowners, yes.</strong> Raising your deductible from $1,000 to $2,500 can reduce your premium by 15-25%. The savings usually pay for the difference in deductible cost within 3-4 years of claim-free history.
+                    </span>
+                </div>
+            </details>
+
+            <details class="gem-faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <summary class="gem-faq-summary" itemprop="name">Can I negotiate my home insurance rate?</summary>
+                <div class="gem-faq-content" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                    <span itemprop="text">
+                        <strong>You cannot negotiate the base rate, but you can adjust coverages.</strong> You can lower premiums by removing unnecessary floaters, increasing deductibles, or finding a carrier that places you in a more favorable "tier" based on your home's profile.
+                    </span>
+                </div>
+            </details>
+
+            <details class="gem-faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <summary class="gem-faq-summary" itemprop="name">Do I need flood insurance in Elkin, NC?</summary>
+                <div class="gem-faq-content" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                    <span itemprop="text">
+                        <strong>Standard homeowners policies do NOT cover flood damage.</strong> Even in the foothills, flash flooding from heavy storms is a risk. If you are near the Yadkin River or a creek, we highly recommend a separate flood policy.
+                    </span>
+                </div>
+            </details>
+        </div>
+
+        <!-- 16. Sources -->
+        <div style="padding: 0 var(--gem-pad); font-size: 0.8rem; color: var(--gem-gray); border-top: 1px solid var(--gem-border); margin-top: 2rem;">
+            <p><strong>Sources & References:</strong></p>
+            <ul>
+                <li>North Carolina Department of Insurance (NCDOI) - Consumer Guides</li>
+                <li>North Carolina Rate Bureau (NCRB) - 2025/2026 Filings</li>
+                <li>Insurance Information Institute - Resilience Data</li>
+            </ul>
+        </div>
+
+        <!-- 17. Final Strong CTA -->
+        <div class="gem-cta-strong">
+            <h3>Stop Overpaying for NC Insurance.</h3>
+            <p>Let my team at Bill Layne Insurance review your declaration page for free. We find savings 9 times out of 10.</p>
+            <a href="tel:3368351993" class="gem-cta-button">📞 Call 336-835-1993</a>
+            <br>
+            <a href="mailto:Save@BillLayneInsurance.com" style="display:inline-block; margin-top:15px; color:var(--gem-blue);">📧 Email Us for a Quote</a>
+        </div>
+
+        <!-- 19. Related Articles -->
+        <div style="padding: var(--gem-pad);">
+            <h3>Read More:</h3>
+            <ul>
+                <li><a href="/blog/nc-auto-insurance-guide">NC Auto Insurance Guide: Minimum Limits vs. Asset Protection</a></li>
+                <li><a href="/blog/umbrella-insurance-elkin">Why Every Elkin Homeowner Needs an Umbrella Policy</a></li>
+                <li><a href="/blog/flood-insurance-yadkin-valley">The Truth About Flood Maps in the Yadkin Valley</a></li>
+            </ul>
+        </div>
+
+        <!-- 20. Author Bio -->
+        <div class="gem-bio">
+            <img src="https://ui-avatars.com/api/?name=Bill+Layne&background=0A2540&color=fff" alt="Bill Layne">
+            <div>
+                <strong>About Bill Layne</strong>
+                <p style="margin:0; font-size:0.9rem;">With 20+ years serving Surry, Yadkin, and Wilkes counties, Bill is the local authority on protecting what matters most in the foothills.</p>
+            </div>
+        </div>
+
+        <!-- 21. Footer -->
+        <div style="text-align:center; padding: 2rem; background: var(--gem-light); font-size: 0.9rem;">
+            <p><strong>Bill Layne Insurance</strong><br>
+            1283 N Bridge St, Elkin NC 28621<br>
+            <a href="https://www.facebook.com" target="_blank" rel="nofollow">Facebook</a> | <a href="https://www.linkedin.com" target="_blank" rel="nofollow">LinkedIn</a></p>
+        </div>
+
+    </div>
+
+    <!-- 22. Floating Mobile CTA -->
+    <div class="gem-mobile-float">
+        <a href="tel:3368351993" class="gem-float-btn gem-btn-call">📞 Call Now</a>
+        <a href="mailto:Save@BillLayneInsurance.com" class="gem-float-btn gem-btn-quote">📝 Get Quote</a>
+    </div>
+
+</div>
+
+<!-- SCRIPTS & SCHEMA -->
+<script>
+// Simple Calculator Logic
+function calculateSavings() {
+    const premium = parseFloat(document.getElementById('currentPrem').value);
+    const currDed = parseInt(document.getElementById('currDed').value);
+    const newDed = parseInt(document.getElementById('newDed').value);
+    const resultDiv = document.getElementById('result');
+
+    if (!premium) {
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = "Please enter your premium.";
+        return;
+    }
+
+    // Rough heuristic for NC market
+    let savingsPercent = 0;
+    if (currDed === 1000 && newDed === 2500) savingsPercent = 0.18;
+    if (currDed === 1000 && newDed === 5000) savingsPercent = 0.28;
+    if (currDed === 500 && newDed === 2500) savingsPercent = 0.25;
+    if (currDed === 500 && newDed === 5000) savingsPercent = 0.35;
+
+    const savings = Math.round(premium * savingsPercent);
+    
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = "Estimated Savings: $" + savings + " / year*";
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "How to lower North Carolina homeowners premiums in 2026?",
+      "description": "Expert guide to lowering NC home insurance costs in 2026 via Consent to Rate checks, deductibles, and bundling. Local advice for Elkin, NC.",
+      "image": "../assets/images/nc-lower-homeowners-premiums-2026-hero.png",
+      "author": {
+        "@type": "Person",
+        "name": "Bill Layne"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Bill Layne Insurance",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://www.billlayneinsurance.com/logo.png"
+        }
+      },
+      "datePublished": "2026-02-15",
+      "dateModified": "2026-02-15"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Why did NC home insurance rates go up in 2026?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The primary drivers are inflation in building materials and increased reinsurance costs driven by severe weather frequency."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is Consent to Rate in North Carolina?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Consent to Rate (CTR) allows insurers to charge more than the maximum state bureau rate. Limiting this can save you money."
+          }
+        },
+        {
+            "@type": "Question",
+            "name": "Is a $2,500 deductible worth it?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Raising your deductible from $1,000 to $2,500 can reduce your premium by 15-25% in NC."
+            }
+        }
+      ]
+    },
+    {
+      "@type": "LocalBusiness",
+      "name": "Bill Layne Insurance",
+      "image": "../assets/images/nc-lower-homeowners-premiums-2026-hero.png",
+      "@id": "https://www.billlayneinsurance.com",
+      "url": "https://www.billlayneinsurance.com",
+      "telephone": "336-835-1993",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "1283 N Bridge St",
+        "addressLocality": "Elkin",
+        "addressRegion": "NC",
+        "postalCode": "28621",
+        "addressCountry": "US"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 36.2452,
+        "longitude": -80.8484
+      },
+      "priceRange": "$$"
+    },
+    {
+        "@type": "Speakable",
+        "speakable": {
+            "@type": "CssSelectorType",
+            "cssSelector": [".gem-snippet-bait", ".gem-takeaways"]
+        }
+    }
+  ]
+}
+</script>
