@@ -41,9 +41,12 @@ Copy and paste these instructions to Claude each time you want to add a new blog
   `blog/blogs/[slug-matching-the-title].html`
 - The filename should be a URL-friendly slug of the blog title
 
-### Step 3: Extract ALL Base64 Images from the Blog HTML
-- The blog HTML contains base64-encoded images (`data:image/...`) including the hero image
-- Extract **every** base64 image:
+### Step 3: Handle Images in the Blog HTML
+- Check the blog HTML for images. They may be in one of three forms:
+  - **Base64 embedded** (`data:image/...`) — Extract each one, save to `blog/assets/images/`, and replace the `src` with the relative path
+  - **External URLs** (e.g., Unsplash) — These can stay as-is, but still save a copy of the hero image locally for the landing page card
+  - **Already local paths** — No action needed
+- For base64 images:
   1. Save each base64 image to `blog/assets/images/` with a descriptive name
   2. The hero image should be named `[blog-slug]-hero.[png|jpg]`
   3. Other inline images should be named `[blog-slug]-[description].[png|jpg]`
@@ -51,9 +54,11 @@ Copy and paste these instructions to Claude each time you want to add a new blog
 - Verify NO `data:image` strings remain in the final HTML
 - This keeps the HTML file small and pages loading fast
 
-### Step 4: Confirm the Hero Image Path in the Blog HTML
-- Find the `<img>` tag with class `hero-img` in the blog HTML
-- Confirm its `src` now points to: `../assets/images/[hero-image-name]` (should already be updated from Step 3)
+### Step 4: Ensure a Local Hero Image Exists for the Landing Page Card
+- The blog landing page (`blog/index.html`) needs a **local** hero image for the preview card
+- Check that a hero image file exists in `blog/assets/images/` matching the `imageUrl` in the blogs.json entry
+- If the blog HTML only has an external URL hero image (e.g., Unsplash), you still need a local image file for the landing page card — download or create one
+- Find the `<img>` tag with class `hero-img` in the blog HTML and note or update its `src`
 
 ### Step 5: Add Entry to blogs.json
 - Open `blog/data/blogs.json`
@@ -86,18 +91,22 @@ Copy and paste these instructions to Claude each time you want to add a new blog
 - `featured: true` — Makes it show prominently
 - All three URL fields (`url`, `linkUrl`, `readMoreUrl`) should be identical
 
-### Step 6: Update the Embedded Blog Data in index.html
-- Open `blog/index.html`
-- Find the `<script>` tag containing `window.__BLOG_DATA__` (around line 897)
-- Update it to match the current contents of `blogs.json`
-- This is a bulletproof fallback so blogs load even on local file:// protocol
+### Step 6: Update the Embedded Blog Data in index.html (CRITICAL)
+- **This step is required or the blog will NOT appear on the landing page.**
+- Open `blog/index.html` — find line ~897 containing `window.__BLOG_DATA__`
+- This is a single very long line: `<script>window.__BLOG_DATA__ = [...];</script>`
+- Replace the entire JSON array on that line with the **current full contents** of `blog/data/blogs.json`, minified to a single line
+- **How to do it:** Read `blog/data/blogs.json`, minify it (remove all newlines and unnecessary whitespace), then replace line 897 with: `<script>window.__BLOG_DATA__ = MINIFIED_JSON;</script>`
+- **Verify** by checking that the number of `"id":` occurrences on line 897 matches the count in `blogs.json`
+- This embedded data is the primary data source for the blog landing page — if it's out of sync, blogs won't show
 
-### Step 7: Verify
-- Confirm the blog HTML file is in `blog/blogs/`
-- Confirm the hero image + any inline images are in `blog/assets/images/`
-- Confirm NO base64 `data:image` strings remain in the blog HTML
-- Confirm `blogs.json` has the new entry at the top with today's date
-- Confirm `blog/index.html` embedded data matches `blogs.json`
+### Step 7: Verify (ALL must pass)
+- [ ] Blog HTML file exists in `blog/blogs/`
+- [ ] Hero image file exists in `blog/assets/images/`
+- [ ] No base64 `data:image` strings remain in the blog HTML
+- [ ] `blogs.json` has the new entry at the **top** with today's date
+- [ ] `window.__BLOG_DATA__` in `blog/index.html` line ~897 has the **same number of entries** as `blogs.json` (count `"id":` occurrences in both — they must match)
+- [ ] The new blog's `id` appears in both `blogs.json` AND the embedded data on line ~897
 
 ---
 
