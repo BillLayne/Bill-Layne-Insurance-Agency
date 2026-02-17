@@ -1,0 +1,579 @@
+
+<!-- GEM v4.1 YT EDITION DEPENDENCIES -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Bricolage+Grotesque:opsz,wght@12..96,400;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+
+<style>
+/* GEM v4.1 CORE STYLES - SCOPED */
+.gem-post {
+    font-family: 'Outfit', sans-serif;
+    line-height: 1.7;
+    color: #334155;
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    overflow-x: hidden;
+}
+.gem-post h1, .gem-post h2, .gem-post h3 { font-family: 'Bricolage Grotesque', sans-serif; color: #0f172a; }
+.gem-post h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 1rem; letter-spacing: -0.02em; }
+.gem-post h2 { font-size: 1.8rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; border-left: 5px solid #FF0033; padding-left: 1rem; }
+.gem-post h3 { font-size: 1.4rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+.gem-post p { margin-bottom: 1.25rem; font-size: 1.1rem; }
+.gem-post ul, .gem-post ol { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+.gem-post li { margin-bottom: 0.5rem; }
+.gem-post a { color: #2563eb; text-decoration: underline; font-weight: 600; }
+
+/* FONT AWESOME ICON SIZING */
+.gem-post i.fa-solid, .gem-post i.fa-regular, .gem-post i.fa-brands { margin-right: 0.3rem; }
+
+/* SCROLL PROGRESS BAR */
+.gem-progress-bar { position: fixed; top: 0; left: 0; width: 0%; height: 4px; background: linear-gradient(90deg, #FF0033, #FF6B35, #FFD23F); z-index: 1100; transition: width 0.1s linear; }
+
+/* HERO IMAGE */
+.hero-img { width: 100%; height: auto; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+/* SNIPPET BAIT BOX */
+.gem-snippet-bait { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 0 8px 8px 0; margin-bottom: 2rem; font-size: 1.15rem; font-weight: 500; }
+
+/* SHARE BAR */
+.gem-share-bar { display: flex; gap: 0.5rem; margin: 1.5rem 0; padding: 1rem; background: #f8fafc; border-radius: 16px; border: 2px solid #e2e8f0; align-items: center; flex-wrap: wrap; }
+.gem-share-label { font-weight: 800; font-size: 0.85rem; color: #0F0F0F; margin-right: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+.gem-share-btn { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none !important; color: white !important; font-size: 1rem; transition: transform 0.15s; cursor: pointer; border: none; }
+.gem-share-btn:active { transform: scale(0.9); }
+.gem-share-fb { background: #1877F2; }
+.gem-share-x { background: #0F0F0F; }
+.gem-share-email { background: #EA4335; }
+.gem-share-copy { background: #64748b; }
+.gem-share-copy.copied { background: #22c55e; }
+
+/* CHAPTER PROGRESS PILLS */
+.gem-chapter-track { display: flex; gap: 4px; margin: 1rem 0; flex-wrap: wrap; position: sticky; top: 10px; z-index: 50; }
+.gem-chapter-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; background: #e2e8f0; color: #64748b; text-decoration: none !important; transition: all 0.2s; opacity: 0.9; }
+.gem-chapter-pill.active { background: #FF0033; color: white !important; opacity: 1; box-shadow: 0 4px 6px -1px rgba(255, 0, 51, 0.3); }
+.gem-chapter-pill.read { background: #0F0F0F; color: white !important; }
+
+/* PULL QUOTE */
+.gem-pull-quote { margin: 2rem 0; padding: 2rem 1.5rem; background: linear-gradient(135deg, #0F0F0F 0%, #1a1a2e 100%); border-radius: 16px; text-align: center; position: relative; overflow: hidden; }
+.gem-pull-quote::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #FF0033, #FF6B35, #FFD23F, #A8E10C, #00D4FF); }
+.gem-pull-quote-text { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.4rem; font-weight: 800; color: white; line-height: 1.3; letter-spacing: -0.02em; }
+.gem-pull-quote-text .gem-pq-highlight { color: #FFD23F; }
+.gem-pull-quote-source { margin-top: 0.75rem; font-size: 0.8rem; color: #9ca3af; font-weight: 600; }
+
+/* VS COMPARISON CARD */
+.gem-vs-card { margin: 1.5rem 0; border-radius: 16px; overflow: hidden; border: 2px solid #e2e8f0; }
+.gem-vs-header { background: #0F0F0F; color: white; text-align: center; padding: 0.75rem; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.gem-vs-body { display: flex; }
+.gem-vs-side { flex: 1; padding: 1.25rem; text-align: center; }
+.gem-vs-left { background: linear-gradient(180deg, #FEF2F2 0%, #fff 100%); }
+.gem-vs-right { background: linear-gradient(180deg, #F0FDF4 0%, #fff 100%); }
+.gem-vs-divider { width: 3px; background: linear-gradient(180deg, #FF0033, #FFD23F, #22c55e); flex-shrink: 0; }
+.gem-vs-label { font-weight: 800; font-size: 0.95rem; margin-bottom: 0.75rem; display: block; }
+.gem-vs-left .gem-vs-label { color: #DC2626; }
+.gem-vs-right .gem-vs-label { color: #16a34a; }
+.gem-vs-item { font-size: 0.85rem; color: #475569; margin-bottom: 0.4rem; line-height: 1.4; }
+.gem-vs-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+
+/* REVEAL CARD */
+.gem-reveal { margin: 1.5rem 0; border: 2px dashed #7C3AED; border-radius: 16px; overflow: hidden; background: #F5F3FF; }
+.gem-reveal-trigger { padding: 1rem 1.25rem; font-weight: 800; color: #7C3AED; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; min-height: 44px; }
+.gem-reveal-content { display: none; padding: 0 1.25rem 1.25rem; color: #374151; line-height: 1.6; font-size: 0.95rem; border-top: 1px solid #DDD6FE; }
+.gem-reveal-content.visible { display: block; }
+
+/* REACTIONS BAR */
+.gem-reactions { margin: 1.5rem 0; padding: 1.25rem; background: #f8fafc; border-radius: 16px; text-align: center; border: 2px solid #e2e8f0; }
+.gem-reactions-title { font-weight: 700; font-size: 0.9rem; color: #475569; margin-bottom: 0.75rem; }
+.gem-reactions-row { display: flex; justify-content: center; gap: 0.75rem; }
+.gem-react-btn { width: 48px; height: 48px; border-radius: 50%; border: 2px solid #e2e8f0; background: white; font-size: 1.3rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+.gem-react-btn:hover, .gem-react-btn:active { transform: scale(1.15); border-color: #FF0033; }
+.gem-react-btn.selected { background: #FF0033; border-color: #FF0033; color: white !important; transform: scale(1.15); }
+
+/* FAQ SECTION */
+.gem-faq-section { margin: 3rem 0; }
+.gem-faq-header { font-size: 1.8rem; font-weight: 700; margin-bottom: 1.5rem; font-family: 'Bricolage Grotesque', sans-serif; color: #0f172a; }
+.gem-faq-item { border: 2px solid #e2e8f0; border-radius: 12px; margin-bottom: 1rem; background: white; overflow: hidden; transition: border-color 0.2s; }
+.gem-faq-item:hover { border-color: #cbd5e1; }
+.gem-faq-item.active { border-color: #3b82f6; }
+.gem-faq-question { width: 100%; padding: 1.25rem; background: #f8fafc; text-align: left; font-weight: 700; color: #0f172a; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: none; outline: none; font-size: 1.05rem; }
+.gem-faq-question:hover { background: #f1f5f9; }
+.gem-faq-answer { display: none; padding: 1.5rem; color: #475569; line-height: 1.6; background: white; border-top: 1px solid #e2e8f0; font-size: 1rem; }
+.gem-faq-item.active .gem-faq-answer { display: block; }
+.gem-faq-icon { transition: transform 0.3s ease; color: #3b82f6; }
+.gem-faq-item.active .gem-faq-icon { transform: rotate(180deg); }
+
+/* STEP TIMELINE */
+.gem-steps { margin: 1.5rem 0; padding: 0; }
+.gem-step { display: flex; gap: 1rem; padding-bottom: 1.5rem; position: relative; }
+.gem-step:last-child { padding-bottom: 0; }
+.gem-step-line { width: 40px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.gem-step-dot { width: 36px; height: 36px; border-radius: 50%; background: #0F0F0F; color: white; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; z-index: 1; }
+.gem-step-connector { width: 3px; flex: 1; background: linear-gradient(180deg, #0F0F0F, #e2e8f0); margin-top: 4px; }
+.gem-step:last-child .gem-step-connector { display: none; }
+.gem-step-content { flex: 1; padding-top: 0.35rem; }
+.gem-step-title { font-weight: 800; font-size: 1rem; color: #0F0F0F; margin-bottom: 0.25rem; }
+.gem-step-text { font-size: 0.95rem; color: #475569; line-height: 1.5; }
+
+/* RELATED GRID */
+.gem-related { padding: 2rem 1.25rem; background: #0F0F0F; border-radius: 12px; margin-top: 3rem; }
+.gem-related-title { font-family: 'Bricolage Grotesque', sans-serif; color: white; font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; }
+.gem-related-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.gem-related-card { display: flex; gap: 0.75rem; text-decoration: none !important; background: #272727; border-radius: 12px; overflow: hidden; transition: background 0.2s; }
+.gem-related-card:active { background: #333; }
+.gem-related-thumb { width: 120px; height: 68px; object-fit: cover; flex-shrink: 0; border-radius: 8px; margin: 0.5rem 0 0.5rem 0.5rem; }
+.gem-related-info { padding: 0.5rem 0.5rem 0.5rem 0; display: flex; flex-direction: column; justify-content: center; }
+.gem-related-info-title { color: white; font-weight: 700; font-size: 0.85rem; line-height: 1.3; margin-bottom: 0.25rem; }
+.gem-related-info-meta { color: #9ca3af; font-size: 0.7rem; }
+@media (min-width: 768px) {
+    .gem-related-grid { grid-template-columns: 1fr 1fr 1fr; }
+    .gem-related-card { flex-direction: column; }
+    .gem-related-thumb { width: 100%; height: 120px; margin: 0; border-radius: 12px 12px 0 0; }
+    .gem-related-info { padding: 0.75rem; }
+}
+
+/* DATA TABLE */
+.gem-table-wrapper { overflow-x: auto; margin: 1.5rem 0; border-radius: 8px; border: 1px solid #e2e8f0; }
+.gem-table { width: 100%; border-collapse: collapse; min-width: 500px; }
+.gem-table th { background: #f1f5f9; text-align: left; padding: 1rem; font-weight: 700; border-bottom: 2px solid #e2e8f0; }
+.gem-table td { padding: 1rem; border-bottom: 1px solid #e2e8f0; }
+.gem-table tr:last-child td { border-bottom: none; }
+
+/* CTA BOX */
+.gem-cta-box { background: #eff6ff; border: 2px solid #3b82f6; border-radius: 16px; padding: 2rem; text-align: center; margin-top: 3rem; color: #000000 !important; }
+.gem-cta-title { font-size: 1.5rem; font-weight: 800; color: #000000 !important; margin-bottom: 0.5rem; }
+.gem-cta-text { margin-bottom: 1.5rem; color: #000000 !important; font-weight: 600; }
+.gem-cta-btn { display: inline-block; background: #2563eb; color: white !important; padding: 1rem 2rem; border-radius: 50px; font-weight: 700; text-decoration: none !important; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.5); transition: transform 0.2s; }
+.gem-cta-btn:hover { transform: translateY(-2px); }
+
+/* CORNER RIBBON */
+.gem-ribbon-wrap { position: relative; }
+.gem-ribbon { position: absolute; top: 12px; right: -8px; background: #FF0033; color: white; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 14px 4px 10px; border-radius: 4px 0 0 4px; z-index: 2; box-shadow: 0 2px 6px rgba(255,0,51,0.3); }
+.gem-ribbon::after { content: ''; position: absolute; top: 100%; right: 0; border: 4px solid transparent; border-top-color: #990020; border-right-color: #990020; }
+.gem-ribbon-new { background: #FF0033; }
+</style>
+
+<div class="gem-post"><div class="gem-post">
+
+    <!-- 1. Scroll Progress Bar -->
+    <div class="gem-progress-bar" id="gemProgress" style="height: 4px; background: #FF0033; width: 0%; position: fixed; top: 0; left: 0; z-index: 9999; transition: width 0.2s;"></div>
+
+    <!-- 2. H1 Title -->
+    <h1 class="text-4xl md:text-5xl mb-6">NC DMV Points vs. Insurance Points: 2026 Comparison Table</h1>
+
+    <!-- 3. Snippet Bait / TLDR Box -->
+    <div class="gem-snippet-bait bg-blue-50 border-l-8 border-blue-600 p-6 mb-8 rounded-r-xl shadow-sm">
+        <div class="flex items-start gap-4">
+            <div class="text-blue-600 text-3xl mt-1">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            <div>
+                <h3 class="mt-0 text-blue-900">The Quick Answer: They Are Not The Same</h3>
+                <p class="mb-0 text-slate-700 font-medium">
+                    <strong>NC DMV Points</strong> count toward suspending your driver's license (12 points in 3 years = suspension). <strong>Insurance Points (SDIP)</strong> determine how much extra you pay for coverage. A single ticket often creates points on <em>both</em> systems, but Insurance Points hit your wallet immediately—potentially raising rates by <strong>340%</strong> under current 2026 NC laws.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Hero Image -->
+    <img src="../assets/images/nc-dmv-vs-insurance-points-2026-hero.png" alt="Visual comparison of a speeding ticket and a rising insurance bill graph" class="hero-img w-full h-auto rounded-xl shadow-lg mb-8" />
+
+    <!-- 4b. YouTube Video Embed (Title Removed per request) -->
+    <div class="my-8">
+        <div class="relative w-full aspect-video rounded-xl overflow-hidden shadow-md bg-slate-100">
+           <iframe src="https://www.youtube.com/embed/CjvuPNiLXho" title="🤯 License Points vs Insurance Points in NC — Why That Ticket Is Costing You WAY More Than You Think" class="absolute top-0 left-0 w-full h-full" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <!-- 5. Share Bar -->
+    <div class="gem-share-bar flex flex-wrap gap-3 mb-10 pb-6 border-b border-slate-200">
+        <span class="text-sm font-bold text-slate-500 uppercase tracking-wider flex items-center mr-2">Share this guide:</span>
+        <button class="bg-[#1877F2] text-white px-4 py-2 rounded-full text-sm font-bold hover:opacity-90 transition"><i class="fa-brands fa-facebook-f mr-2"></i> Share</button>
+        <button class="bg-[#000000] text-white px-4 py-2 rounded-full text-sm font-bold hover:opacity-90 transition"><i class="fa-brands fa-x-twitter mr-2"></i> Post</button>
+        <button class="bg-slate-100 text-slate-700 px-4 py-2 rounded-full text-sm font-bold hover:bg-slate-200 transition"><i class="fa-solid fa-envelope mr-2"></i> Email</button>
+        <button class="bg-slate-100 text-slate-700 px-4 py-2 rounded-full text-sm font-bold hover:bg-slate-200 transition"><i class="fa-solid fa-link mr-2"></i> Copy Link</button>
+    </div>
+
+    <!-- 6. Chapter Tracker -->
+    <div class="gem-chapter-track bg-slate-50 p-4 rounded-lg mb-8 border border-slate-200">
+        <p class="text-xs font-bold text-slate-500 uppercase mb-2">Jump to section:</p>
+        <div class="flex flex-wrap gap-2">
+            <a href="#section1" class="text-sm font-semibold text-blue-600 bg-white border border-blue-100 px-3 py-1 rounded-md hover:shadow-sm">The Two Systems</a>
+            <a href="#section2" class="text-sm font-semibold text-blue-600 bg-white border border-blue-100 px-3 py-1 rounded-md hover:shadow-sm">The Real Cost</a>
+            <a href="#section3" class="text-sm font-semibold text-blue-600 bg-white border border-blue-100 px-3 py-1 rounded-md hover:shadow-sm">2026 Data Table</a>
+            <a href="#section4" class="text-sm font-semibold text-blue-600 bg-white border border-blue-100 px-3 py-1 rounded-md hover:shadow-sm">How To Fix It</a>
+        </div>
+    </div>
+
+    <!-- 7. Key Takeaways -->
+    <div class="bg-slate-900 text-white p-6 rounded-xl shadow-lg mb-10">
+        <h3 class="text-white mt-0 mb-4 border-b border-slate-700 pb-2">Key Takeaways for NC Drivers</h3>
+        <ul class="list-none pl-0 mb-0 space-y-3">
+            <li class="flex items-start gap-3">
+                <i class="fa-solid fa-check text-green-400 mt-1"></i>
+                <span class="text-slate-200"><strong>DMV Points</strong> affect your privilege to drive. 12 points = Suspension.</span>
+            </li>
+            <li class="flex items-start gap-3">
+                <i class="fa-solid fa-check text-green-400 mt-1"></i>
+                <span class="text-slate-200"><strong>Insurance Points (SDIP)</strong> affect your premium. Just 1 point increases your rate by 30%.</span>
+            </li>
+            <li class="flex items-start gap-3">
+                <i class="fa-solid fa-check text-green-400 mt-1"></i>
+                <span class="text-slate-200"><strong>The 3-Year Rule:</strong> Insurance points stay on your record and affect your bill for three full years.</span>
+            </li>
+            <li class="flex items-start gap-3">
+                <i class="fa-solid fa-check text-green-400 mt-1"></i>
+                <span class="text-slate-200"><strong>Rates Have Changed:</strong> With 2026 inflation and higher repair costs, the dollar amount of that increase is higher than ever.</span>
+            </li>
+        </ul>
+    </div>
+
+    <p class="text-lg">If you’ve recently seen blue lights flashing behind you on Highway 77 or got caught by a speed camera near Elkin, your first worry was probably the fine. But here at <strong>Bill Layne Insurance</strong>, we know the real pain doesn't come from the ticket itself—it comes from the renewal bill six months later.</p>
+
+    <p>Many drivers in the Yadkin Valley think a "point is a point." They assume the points that go on their license are the same ones that raise their rates. <strong>This is the #1 myth in North Carolina auto law.</strong></p>
+
+    <!-- 8. Section 1 -->
+    <h2 id="section1">1. The Two Systems: Why NC is Different</h2>
+
+    <p>North Carolina operates under a unique system called the <strong>Safe Driver Incentive Plan (SDIP)</strong>. This was created by state law to ensure that drivers with clean records pay less, and drivers who take risks pay more. It sounds fair, but it creates two totally separate scoreboards for your driving record.</p>
+
+    <p>Think of it like credit scores vs. bank balances. They are related, but they measure different things.</p>
+
+    <!-- 9. Pull Quote Card -->
+    <div class="gem-pull-quote relative bg-gradient-to-r from-slate-100 to-white p-8 my-10 border-l-8 border-red-500 rounded-r-xl">
+        <i class="fa-solid fa-quote-left text-4xl text-slate-200 absolute top-4 left-4"></i>
+        <p class="text-2xl font-bold text-slate-800 relative z-10 italic leading-snug">
+            "You can lose your license without your insurance going up, and your insurance can skyrocket without losing your license. They are separate beasts."
+        </p>
+        <p class="text-sm font-bold text-slate-500 mt-4 uppercase tracking-widest">— Bill Layne Insurance Team</p>
+    </div>
+
+    <h3 class="text-xl font-bold mb-2">The DMV Points (License Points)</h3>
+    <p>These are managed by the NC Division of Motor Vehicles. Their sole purpose is to determine if you are safe enough to keep your license. </p>
+    <ul class="space-y-2">
+        <li><i class="fa-solid fa-car-side text-slate-400 mr-2"></i> <strong>Goal:</strong> Public Safety.</li>
+        <li><i class="fa-solid fa-car-side text-slate-400 mr-2"></i> <strong>Consequence:</strong> 12 points within 3 years results in a suspended license.</li>
+        <li><i class="fa-solid fa-car-side text-slate-400 mr-2"></i> <strong>Example:</strong> Passing a stopped school bus is 5 DMV points (huge deal).</li>
+    </ul>
+
+    <h3 class="text-xl font-bold mb-2">The Insurance Points (SDIP Points)</h3>
+    <p>These are managed by the North Carolina Rate Bureau. Their sole purpose is to determine your risk factor for pricing.</p>
+    <ul class="space-y-2">
+        <li><i class="fa-solid fa-file-invoice-dollar text-slate-400 mr-2"></i> <strong>Goal:</strong> Determining Premium Cost.</li>
+        <li><i class="fa-solid fa-file-invoice-dollar text-slate-400 mr-2"></i> <strong>Consequence:</strong> Rate increases ranging from 30% to 340%.</li>
+        <li><i class="fa-solid fa-file-invoice-dollar text-slate-400 mr-2"></i> <strong>Example:</strong> That same school bus violation is 4 Insurance Points, which increases your premium by 80%.</li>
+    </ul>
+
+    <!-- 10. Section 2 -->
+    <h2 id="section2">2. The Real Cost: Do The Math</h2>
+
+    <p>In 2026, auto insurance rates across North Carolina have adjusted to account for higher vehicle repair costs and stricter liability minimums (now typically <strong>50/100/50</strong> for responsible drivers). This means the <em>base rate</em> is higher, so the <em>percentage increase</em> hurts even more.</p>
+
+    <!-- 11. VS Comparison Card -->
+    <div class="gem-vs-card grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
+        <div class="bg-white border-2 border-slate-100 p-6 rounded-xl shadow-sm relative overflow-hidden">
+            <div class="absolute top-0 right-0 bg-slate-200 text-slate-600 text-xs font-bold px-3 py-1 rounded-bl-lg">THE TICKET</div>
+            <h4 class="text-xl font-bold text-slate-800 mb-2">One-Time Fine</h4>
+            <div class="text-4xl font-black text-slate-300 mb-4">$250</div>
+            <p class="text-sm text-slate-600">You pay the court costs and the fine for speeding 76 in a 65 zone. It hurts once, and you think it's over.</p>
+        </div>
+        <div class="bg-red-50 border-2 border-red-100 p-6 rounded-xl shadow-sm relative overflow-hidden">
+            <div class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">THE SURCHARGE</div>
+            <h4 class="text-xl font-bold text-red-900 mb-2">Insurance Hike</h4>
+            <div class="text-4xl font-black text-red-600 mb-4">$1,800+</div>
+            <p class="text-sm text-red-800">Your rate goes up 45% (2 points). If your premium was $1,500/year, you pay an extra $675 per year. <strong>For 3 years.</strong></p>
+        </div>
+    </div>
+
+    <p>That is why we tell our clients in Elkin and Jonesville: <strong>Never just pay the ticket without checking the insurance impact first.</strong> The court cost is the tip of the iceberg.</p>
+
+    <!-- 12. Section 3 -->
+    <h2 id="section3">3. 2026 Comparison Table: Points vs. Price</h2>
+
+    <p>Here is the definitive guide to how common violations translate to both systems. Notice how some "minor" traffic issues result in massive insurance hikes.</p>
+
+    <!-- 13. Reveal/Spoiler Card -->
+    <div class="gem-reveal bg-slate-800 p-1 rounded-xl my-8 cursor-pointer group" onclick="this.querySelector('.content').classList.toggle('blur-md'); this.querySelector('.overlay').classList.toggle('hidden');">
+        <div class="relative bg-slate-900 rounded-lg p-6 overflow-hidden">
+            <div class="overlay absolute inset-0 flex items-center justify-center z-20 flex-col">
+                <i class="fa-solid fa-lock text-4xl text-white mb-2 group-hover:scale-110 transition"></i>
+                <span class="text-white font-bold uppercase tracking-widest text-sm">Tap to Reveal the "Safe Driver" Exception</span>
+            </div>
+            <div class="content blur-md transition duration-500">
+                <h4 class="text-yellow-400 font-bold flex items-center gap-2"><i class="fa-solid fa-star"></i> The Speeding Exception</h4>
+                <p class="text-slate-300 text-sm mt-2">
+                    North Carolina allows for a "Safe Driver" waiver on insurance points for speeding 10 mph or less over the limit, PROVIDED the speed is under 55 mph, and you have no other moving violations in 3 years. However, this does NOT apply to school zones!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 14. Data Table -->
+    <div class="gem-table-wrapper overflow-x-auto shadow-lg rounded-xl mb-10 border border-slate-200">
+        <table class="gem-table w-full text-left border-collapse bg-white">
+            <thead>
+                <tr class="bg-slate-900 text-white">
+                    <th class="p-4 font-bold text-sm uppercase tracking-wider w-1/3">Violation Type</th>
+                    <th class="p-4 font-bold text-sm uppercase tracking-wider text-center">DMV Points</th>
+                    <th class="p-4 font-bold text-sm uppercase tracking-wider text-center">Ins. Points</th>
+                    <th class="p-4 font-bold text-sm uppercase tracking-wider text-center bg-red-700">Rate Hike %</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-sm">
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="p-4 font-medium text-slate-800">Speeding (10 mph or less over limit)</td>
+                    <td class="p-4 text-center text-slate-600">2</td>
+                    <td class="p-4 text-center font-bold text-slate-900">1</td>
+                    <td class="p-4 text-center font-bold text-red-600">+30%</td>
+                </tr>
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="p-4 font-medium text-slate-800">Speeding (More than 10 mph over)</td>
+                    <td class="p-4 text-center text-slate-600">3</td>
+                    <td class="p-4 text-center font-bold text-slate-900">2</td>
+                    <td class="p-4 text-center font-bold text-red-600">+45%</td>
+                </tr>
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="p-4 font-medium text-slate-800">At-Fault Accident (Under $2,300 damage)</td>
+                    <td class="p-4 text-center text-slate-600">0</td>
+                    <td class="p-4 text-center font-bold text-slate-900">3</td>
+                    <td class="p-4 text-center font-bold text-red-600">+60%</td>
+                </tr>
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="p-4 font-medium text-slate-800">Reckless Driving</td>
+                    <td class="p-4 text-center text-slate-600">4</td>
+                    <td class="p-4 text-center font-bold text-slate-900">4</td>
+                    <td class="p-4 text-center font-bold text-red-600">+80%</td>
+                </tr>
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="p-4 font-medium text-slate-800">Passing Stopped School Bus</td>
+                    <td class="p-4 text-center text-slate-600">5</td>
+                    <td class="p-4 text-center font-bold text-slate-900">4</td>
+                    <td class="p-4 text-center font-bold text-red-600">+80%</td>
+                </tr>
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="p-4 font-medium text-slate-800">DWI / DUI</td>
+                    <td class="p-4 text-center text-slate-600">Revoked</td>
+                    <td class="p-4 text-center font-bold text-slate-900">12</td>
+                    <td class="p-4 text-center font-bold text-red-600">+340%</td>
+                </tr>
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="p-4 font-medium text-slate-800">Driving During Revocation</td>
+                    <td class="p-4 text-center text-slate-600">Revoked</td>
+                    <td class="p-4 text-center font-bold text-slate-900">8</td>
+                    <td class="p-4 text-center font-bold text-red-600">+195%</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 15. Section 4 -->
+    <h2 id="section4">4. What To Do If You Get A Ticket</h2>
+
+    <p>So, the officer handed you that slip of paper. Don't panic. You have options before the court date that can save you thousands of dollars over the next three years. Here is the timeline of how a savvy driver handles a violation in North Carolina.</p>
+
+    <!-- Optional Image -->
+    <img src="../assets/images/nc-dmv-vs-insurance-points-2026-img1.png" alt="Driver consulting with insurance agent on a tablet" class="w-full h-auto rounded-xl shadow-md mb-8" />
+
+    <!-- 16. Step-by-Step Timeline -->
+    <div class="gem-steps relative pl-8 border-l-2 border-slate-200 space-y-8 my-10">
+        <div class="relative">
+            <div class="absolute -left-[41px] bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shadow-md">1</div>
+            <h4 class="text-lg font-bold text-slate-900">Do Not Just Pay It Online</h4>
+            <p class="text-sm text-slate-600">Paying the ticket online is an automatic admission of guilt. You are pleading guilty to the charge exactly as written. This guarantees the max insurance points.</p>
+        </div>
+        <div class="relative">
+            <div class="absolute -left-[41px] bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shadow-md">2</div>
+            <h4 class="text-lg font-bold text-slate-900">Call Your Agent (Us!)</h4>
+            <p class="text-sm text-slate-600">Call Bill Layne Insurance at <strong>336-835-1993</strong>. We can look at your current policy. Do you have "accident forgiveness"? Have you used a PJC recently? We can tell you exactly what the financial damage will be.</p>
+        </div>
+        <div class="relative">
+            <div class="absolute -left-[41px] bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shadow-md">3</div>
+            <h4 class="text-lg font-bold text-slate-900">Seek a Reduction</h4>
+            <p class="text-sm text-slate-600">Often, district attorneys will reduce a speed (e.g., from 76 in a 65 down to "Improper Equipment"). Improper Equipment is a non-moving violation—meaning <strong>ZERO insurance points</strong>.</p>
+        </div>
+        <div class="relative">
+            <div class="absolute -left-[41px] bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shadow-md">4</div>
+            <h4 class="text-lg font-bold text-slate-900">Consider a PJC</h4>
+            <p class="text-sm text-slate-600">A "Prayer for Judgment Continued" is a unique NC legal tool where the court admits guilt but enters no judgment. Used correctly, it prevents insurance points. However, you can generally only use one per household every 3 years.</p>
+        </div>
+    </div>
+
+    <!-- 17. Reactions Bar -->
+    <div class="gem-reactions flex items-center justify-center gap-6 my-12 p-6 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+        <p class="font-bold text-slate-500 mb-0">Was this guide helpful?</p>
+        <button class="text-2xl hover:scale-125 transition">👍</button>
+        <button class="text-2xl hover:scale-125 transition">🔥</button>
+        <button class="text-2xl hover:scale-125 transition">🤯</button>
+    </div>
+
+    <!-- 18. FAQ Section -->
+    <div class="gem-faq-section my-12">
+        <h2 class="text-center mb-8">Frequently Asked Questions</h2>
+        
+        <div class="space-y-4">
+            <!-- Item 1 -->
+            <div class="gem-faq-item border border-slate-200 rounded-lg overflow-hidden">
+                <button class="gem-faq-question w-full text-left p-4 bg-white font-bold flex justify-between items-center hover:bg-slate-50" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180');">
+                    How long do insurance points stay on my record in NC?
+                    <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-300"></i>
+                </button>
+                <div class="gem-faq-answer hidden p-4 bg-slate-50 text-slate-700 border-t border-slate-200">
+                    Insurance points (SDIP) stay on your record for <strong>3 years</strong> from the date of conviction (or the date of the accident). This means that one ticket impacts three separate insurance renewals.
+                </div>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="gem-faq-item border border-slate-200 rounded-lg overflow-hidden">
+                <button class="gem-faq-question w-full text-left p-4 bg-white font-bold flex justify-between items-center hover:bg-slate-50" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180');">
+                    Does a Prayer for Judgment (PJC) save me from DMV points too?
+                    <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-300"></i>
+                </button>
+                <div class="gem-faq-answer hidden p-4 bg-slate-50 text-slate-700 border-t border-slate-200">
+                    Generally, yes. A PJC usually prevents both DMV license points and Insurance points. However, PJC rules are complex regarding CDL drivers (who cannot use them) and frequency of use. Always consult an attorney or your agent before relying on a PJC.
+                </div>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="gem-faq-item border border-slate-200 rounded-lg overflow-hidden">
+                <button class="gem-faq-question w-full text-left p-4 bg-white font-bold flex justify-between items-center hover:bg-slate-50" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180');">
+                    Do out-of-state tickets affect my NC insurance?
+                    <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-300"></i>
+                </button>
+                <div class="gem-faq-answer hidden p-4 bg-slate-50 text-slate-700 border-t border-slate-200">
+                    Yes. North Carolina shares data with other states. If you get a speeding ticket in Virginia or South Carolina, it will eventually be reported to the NC DMV and will likely result in SDIP points on your NC policy just as if it happened in Elkin.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 19. CTA Box -->
+    <div class="gem-cta-box bg-gradient-to-br from-blue-900 to-slate-900 rounded-2xl p-8 text-center shadow-2xl my-12 relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-32 bg-white opacity-5 rounded-full blur-3xl -mr-16 -mt-16"></div>
+        <div class="relative z-10">
+            <h3 class="text-white text-3xl font-bold mb-4">Worried About Your Rate? Let Us Look.</h3>
+            <p class="text-blue-200 mb-8 max-w-lg mx-auto">Whether you have a clean record or a few bumps in the road, Bill Layne Insurance specializes in finding the best coverage for NC drivers. Don't let a ticket define your budget.</p>
+            
+            <div class="flex flex-col md:flex-row justify-center gap-4">
+                <a href="tel:336-835-1993" class="bg-[#FF0033] hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition transform hover:-translate-y-1">
+                    <i class="fa-solid fa-phone mr-2"></i> 336-835-1993
+                </a>
+                <a href="mailto:Save@BillLayneInsurance.com" class="bg-white text-slate-900 font-bold py-3 px-8 rounded-full shadow-lg transition hover:bg-gray-100">
+                    <i class="fa-solid fa-envelope mr-2"></i> Email Us
+                </a>
+            </div>
+            
+            <div class="mt-8 text-blue-300 text-sm">
+                <p><strong>Bill Layne Insurance</strong><br>
+                1283 N Bridge St, Elkin NC 28621<br>
+                <a href="http://www.NCAutoandHome.com" class="text-white underline hover:text-blue-200">www.NCAutoandHome.com</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 20. Related Articles Grid -->
+    <div class="gem-related my-12">
+        <h3 class="font-bold text-2xl mb-6 border-l-4 border-blue-600 pl-3">Watch Next on NC Auto & Home</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Card 1 -->
+            <div class="group cursor-pointer">
+                <div class="relative overflow-hidden rounded-lg shadow-md aspect-video mb-3">
+                    <img src="../assets/images/nc-dmv-vs-insurance-points-2026-img2.png" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Home insurance wind and hail explanation">
+                    <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">4:12</div>
+                </div>
+                <h4 class="font-bold text-slate-800 leading-tight group-hover:text-blue-600 transition">NC Wind & Hail Deductibles Explained (2026 Update)</h4>
+                <p class="text-xs text-slate-500 mt-1">1.2K views • 2 weeks ago</p>
+            </div>
+            
+            <!-- Card 2 -->
+            <div class="group cursor-pointer">
+                <div class="bg-slate-200 rounded-lg shadow-md aspect-video mb-3 flex items-center justify-center">
+                    <i class="fa-solid fa-car-burst text-4xl text-slate-400"></i>
+                </div>
+                <h4 class="font-bold text-slate-800 leading-tight group-hover:text-blue-600 transition">What Happens If You Are Hit By An Uninsured Driver in Elkin?</h4>
+                <p class="text-xs text-slate-500 mt-1">850 views • 1 month ago</p>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="group cursor-pointer">
+                <div class="bg-slate-200 rounded-lg shadow-md aspect-video mb-3 flex items-center justify-center">
+                    <i class="fa-solid fa-house-chimney-crack text-4xl text-slate-400"></i>
+                </div>
+                <h4 class="font-bold text-slate-800 leading-tight group-hover:text-blue-600 transition">Why Your Home Insurance Rates Went Up This Year</h4>
+                <p class="text-xs text-slate-500 mt-1">2.4K views • 3 months ago</p>
+            </div>
+        </div>
+    </div>
+
+</div></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Scroll Progress Bar
+    window.addEventListener('scroll', function() {
+        var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var scrolled = (winScroll / height) * 100;
+        var bar = document.getElementById('gemProgress');
+        if (bar) bar.style.width = scrolled + '%';
+        
+        // Chapter Tracker
+        var sections = document.querySelectorAll('.gem-post h2');
+        var pills = document.querySelectorAll('.gem-chapter-pill');
+        var currentId = '';
+        sections.forEach(function(sec) {
+            var top = sec.getBoundingClientRect().top;
+            if (top < window.innerHeight * 0.5) {
+                currentId = sec.id;
+            }
+        });
+        pills.forEach(function(pill) {
+            var pillSection = pill.getAttribute('href').substring(1);
+            pill.classList.remove('active');
+            if (pillSection === currentId) {
+                pill.classList.add('active');
+            }
+        });
+    });
+
+    // Copy Link Button
+    window.copyLink = function(btn) {
+        navigator.clipboard.writeText(window.location.href).then(function() {
+            btn.classList.add('copied');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+            setTimeout(function() {
+                btn.classList.remove('copied');
+                btn.innerHTML = '<i class="fa-solid fa-link"></i>';
+            }, 2000);
+        });
+    };
+
+    // Reveal Card
+    window.toggleReveal = function(el) {
+        var content = el.nextElementSibling;
+        content.classList.toggle('visible');
+        var span = el.querySelector('span:last-child');
+        if (content.classList.contains('visible')) {
+            span.textContent = 'Tap to hide';
+        } else {
+            span.textContent = 'Tap to reveal';
+        }
+    };
+
+    // FAQ Toggle
+    window.toggleFaq = function(btn) {
+        var item = btn.parentElement;
+        item.classList.toggle('active');
+    };
+
+    // Reaction Bar
+    window.react = function(btn) {
+        var all = btn.parentElement.querySelectorAll('.gem-react-btn');
+        all.forEach(function(b) { b.classList.remove('selected'); });
+        btn.classList.add('selected');
+        var title = btn.parentElement.previousElementSibling;
+        if(title) title.textContent = 'Thanks for the feedback!';
+    };
+});
+</script>
