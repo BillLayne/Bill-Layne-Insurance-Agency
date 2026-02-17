@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Service Center | Bill Layne Insurance Agency</title>
-    <meta name="description" content="Manage your insurance policy online. Report a claim, pay your bill, request policy changes, or get your insurance ID card from Bill Layne Insurance Agency in Elkin, NC.">
+    <meta name="description" content="Manage your insurance policy online. Report a claim, pay your bill, request policy changes, or get your insurance ID card from Bill Layne Insurance Agency. Serving all 100 NC counties.">
     <meta name="keywords" content="insurance service center, pay insurance bill, report insurance claim, request ID card, policy change, Bill Layne Insurance, Elkin NC">
     <meta name="robots" content="index, follow">
 
@@ -22,10 +22,10 @@
     <meta name="twitter:description" content="Report claims, pay bills, request policy changes, and manage your insurance from one convenient page.">
     <meta name="twitter:image" content="https://i.imgur.com/Z5MxmKE.png">
 
-    <link rel="canonical" href="service-center.html">
+    <link rel="canonical" href="https://www.billlayneinsurance.com/service-center.html">
     <link rel="icon" href="https://fav.farm/🛡️" />
 
-<!-- Structured Data: FAQPage -->
+    <!-- Structured Data: FAQPage -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -82,7 +82,7 @@
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap&family=DM+Sans:wght@400;500;600;700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Tailwind CSS -->
@@ -109,7 +109,6 @@
                     animation: {
                         'blob': 'blob 12s infinite',
                         'float': 'float 6s ease-in-out infinite',
-                        'pulse-glow': 'pulse-glow 2s infinite',
                     },
                     keyframes: {
                         blob: {
@@ -118,7 +117,6 @@
                             '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
                         },
                         float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-15px)' } },
-                        'pulse-glow': { '0%, 100%': { boxShadow: '0 0 0 0 rgba(37, 99, 235, 0.7)' }, '70%': { boxShadow: '0 0 0 15px rgba(37, 99, 235, 0)' }, '100%': { boxShadow: '0 0 0 0 rgba(37, 99, 235, 0)' } },
                     }
                 }
             }
@@ -150,7 +148,7 @@
             inset: 0;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
             opacity: 0.4;
-            mix-blend-overlay: overlay;
+            mix-blend-mode: overlay;
             pointer-events: none;
         }
         .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -167,11 +165,45 @@
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .service-card:hover {
-            transform: translateY(-6px);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
         }
-        .service-card:active {
-            transform: scale(0.98);
+
+        /* Expandable carrier panels */
+        .carrier-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+            opacity: 0;
+        }
+        .carrier-panel.open {
+            max-height: 2000px;
+            opacity: 1;
+        }
+        .carrier-row {
+            transition: all 0.2s ease;
+        }
+        .carrier-row:hover {
+            background-color: #f8fafc;
+        }
+        .carrier-row:active {
+            transform: scale(0.99);
+        }
+        .expand-icon {
+            transition: transform 0.3s ease;
+        }
+        .expand-icon.rotated {
+            transform: rotate(180deg);
+        }
+
+        /* Partner badge */
+        .partner-dot {
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, #059669, #10b981);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+            flex-shrink: 0;
         }
     </style>
     <link rel="stylesheet" href="css/mobile-dock.css">
@@ -206,7 +238,7 @@
                 <a href="get-quote.html" class="hidden md:block bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 text-white px-7 py-3 rounded-full text-xs font-black shadow-xl shadow-primary-500/30 transition-all hover:scale-105 hover:shadow-primary-500/50 btn-shine">
                     GET FREE QUOTE
                 </a>
-                <button id="menu-btn" class="hidden md:block p-2 rounded-full transition-colors focus:outline-none hover:bg-slate-100 text-slate-600" aria-label="Open Menu">
+                <button id="menu-btn" class="p-2 rounded-full transition-colors focus:outline-none hover:bg-slate-100 text-slate-600" aria-label="Open Menu">
                     <div class="w-7 h-5 flex flex-col justify-between relative">
                         <span class="nav-hamburger-line w-full h-0.5 rounded-full bg-slate-600 transition-all origin-right"></span>
                         <span class="nav-hamburger-line w-full h-0.5 rounded-full bg-slate-600 transition-all origin-right"></span>
@@ -248,7 +280,6 @@
 
     <!-- HERO SECTION -->
     <header class="relative pt-16 pb-12 md:pt-24 md:pb-20 bg-vivid-hero text-white overflow-hidden">
-        <!-- Background blobs -->
         <div class="absolute top-[-10%] left-[-10%] w-[80%] h-[50%] bg-emerald-600/20 rounded-full blur-[120px] animate-blob"></div>
         <div class="absolute bottom-[0%] right-[-10%] w-[60%] h-[50%] bg-primary-500/20 rounded-full blur-[100px] animate-blob" style="animation-delay: 2s;"></div>
 
@@ -282,55 +313,505 @@
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
 
-                <!-- Report a Claim -->
-                <a href="claims-center/index.html" class="service-card block bg-white rounded-2xl border border-slate-200 p-8 md:p-10 group">
-                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-red-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                        <i class="fas fa-file-medical-alt text-3xl md:text-4xl text-red-500"></i>
-                    </div>
-                    <h2 class="font-display font-black text-xl md:text-2xl text-slate-900 mb-3">Report a Claim</h2>
-                    <p class="text-slate-500 text-sm md:text-base leading-relaxed mb-4">Had an accident or need to file a claim? We'll guide you through every step of the process and advocate on your behalf.</p>
-                    <div class="flex items-center gap-2 text-red-500 font-bold text-sm group-hover:gap-3 transition-all">
-                        <span>Start Claim Process</span>
-                        <i class="fas fa-arrow-right text-xs"></i>
-                    </div>
-                </a>
+                <!-- ============================================ -->
+                <!-- REPORT A CLAIM (Expandable) -->
+                <!-- ============================================ -->
+                <div class="service-card bg-white rounded-2xl border border-slate-200 overflow-hidden sm:col-span-2">
+                    <button onclick="togglePanel('claims-panel', this)" class="w-full p-8 md:p-10 flex items-start gap-6 text-left group">
+                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-red-50 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-file-medical-alt text-3xl md:text-4xl text-red-500"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h2 class="font-display font-black text-xl md:text-2xl text-slate-900 mb-2">Report a Claim</h2>
+                            <p class="text-slate-500 text-sm md:text-base leading-relaxed mb-3">Had an accident or need to file a claim? Find your carrier's claims number below or call us during business hours.</p>
+                            <div class="flex items-center gap-2 text-red-500 font-bold text-sm">
+                                <span>Find Your Carrier</span>
+                                <i class="fas fa-chevron-down text-xs expand-icon" id="claims-icon"></i>
+                            </div>
+                        </div>
+                    </button>
 
-                <!-- Pay Your Bill -->
-                <a href="tel:3368351993" class="service-card block bg-white rounded-2xl border border-slate-200 p-8 md:p-10 group">
-                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-green-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                        <i class="fas fa-credit-card text-3xl md:text-4xl text-green-500"></i>
-                    </div>
-                    <h2 class="font-display font-black text-xl md:text-2xl text-slate-900 mb-3">Pay Your Bill</h2>
-                    <p class="text-slate-500 text-sm md:text-base leading-relaxed mb-4">Make a payment on your insurance policy. Call us and we'll direct you to the right carrier payment portal for your policy.</p>
-                    <div class="flex items-center gap-2 text-green-500 font-bold text-sm group-hover:gap-3 transition-all">
-                        <span>Call to Pay</span>
-                        <i class="fas fa-arrow-right text-xs"></i>
-                    </div>
-                </a>
+                    <!-- Expandable Claims Panel -->
+                    <div id="claims-panel" class="carrier-panel">
+                        <div class="px-6 md:px-10 pb-8">
+                            <!-- Call Us First Banner -->
+                            <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+                                <div class="flex items-start gap-3">
+                                    <i class="fas fa-exclamation-triangle text-red-500 mt-0.5"></i>
+                                    <div>
+                                        <p class="text-sm font-bold text-red-800 mb-1">Step 1: Call us first during business hours</p>
+                                        <p class="text-xs text-red-600">We'll guide you through the process and advocate on your behalf. After hours, contact your carrier below, then call us the next business day.</p>
+                                        <a href="tel:3368351993" class="inline-flex items-center gap-2 mt-3 bg-red-600 text-white px-5 py-2.5 rounded-lg font-bold text-sm hover:bg-red-700 transition-colors">
+                                            <i class="fas fa-phone-alt"></i> (336) 835-1993
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
 
-                <!-- Request Policy Change -->
-                <a href="mailto:Save@BillLayneInsurance.com?subject=Policy%20Change%20Request" class="service-card block bg-white rounded-2xl border border-slate-200 p-8 md:p-10 group">
-                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-blue-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                        <i class="fas fa-edit text-3xl md:text-4xl text-blue-500"></i>
-                    </div>
-                    <h2 class="font-display font-black text-xl md:text-2xl text-slate-900 mb-3">Request Policy Change</h2>
-                    <p class="text-slate-500 text-sm md:text-base leading-relaxed mb-4">Need to add a vehicle, update your address, change coverage, or add a driver? Email us and we'll handle the rest.</p>
-                    <div class="flex items-center gap-2 text-blue-500 font-bold text-sm group-hover:gap-3 transition-all">
-                        <span>Email Your Changes</span>
-                        <i class="fas fa-arrow-right text-xs"></i>
-                    </div>
-                </a>
+                            <!-- Our Partners Label -->
+                            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3"><i class="fas fa-handshake mr-1 text-emerald-500"></i> Our Partner Carriers</p>
 
-                <!-- Request ID Card -->
-                <a href="mailto:Save@BillLayneInsurance.com?subject=ID%20Card%20Request" class="service-card block bg-white rounded-2xl border border-slate-200 p-8 md:p-10 group">
-                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-purple-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                        <i class="fas fa-id-card text-3xl md:text-4xl text-purple-500"></i>
+                            <div class="space-y-2">
+                                <!-- Progressive -->
+                                <div class="carrier-row flex items-center justify-between p-3 md:p-4 rounded-xl border border-slate-100">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <span class="partner-dot"></span>
+                                        <span class="font-bold text-slate-800 text-sm md:text-base">Progressive</span>
+                                    </div>
+                                    <a href="tel:1-800-776-4737" class="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-red-100 transition-colors flex-shrink-0">
+                                        <i class="fas fa-phone-alt"></i> <span class="hidden sm:inline">1-</span>800-776-4737
+                                    </a>
+                                </div>
+
+                                <!-- Nationwide -->
+                                <div class="carrier-row flex items-center justify-between p-3 md:p-4 rounded-xl border border-slate-100">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <span class="partner-dot"></span>
+                                        <span class="font-bold text-slate-800 text-sm md:text-base">Nationwide</span>
+                                    </div>
+                                    <a href="tel:1-800-421-3535" class="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-red-100 transition-colors flex-shrink-0">
+                                        <i class="fas fa-phone-alt"></i> <span class="hidden sm:inline">1-</span>800-421-3535
+                                    </a>
+                                </div>
+
+                                <!-- Travelers -->
+                                <div class="carrier-row flex items-center justify-between p-3 md:p-4 rounded-xl border border-slate-100">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <span class="partner-dot"></span>
+                                        <span class="font-bold text-slate-800 text-sm md:text-base">Travelers</span>
+                                    </div>
+                                    <a href="tel:1-800-252-4633" class="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-red-100 transition-colors flex-shrink-0">
+                                        <i class="fas fa-phone-alt"></i> <span class="hidden sm:inline">1-</span>800-252-4633
+                                    </a>
+                                </div>
+
+                                <!-- National General -->
+                                <div class="carrier-row flex items-center justify-between p-3 md:p-4 rounded-xl border border-slate-100">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <span class="partner-dot"></span>
+                                        <span class="font-bold text-slate-800 text-sm md:text-base">National General</span>
+                                    </div>
+                                    <a href="tel:1-800-468-3466" class="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-red-100 transition-colors flex-shrink-0">
+                                        <i class="fas fa-phone-alt"></i> <span class="hidden sm:inline">1-</span>800-468-3466
+                                    </a>
+                                </div>
+
+                                <!-- Dairyland -->
+                                <div class="carrier-row flex items-center justify-between p-3 md:p-4 rounded-xl border border-slate-100">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <span class="partner-dot"></span>
+                                        <span class="font-bold text-slate-800 text-sm md:text-base">Dairyland</span>
+                                    </div>
+                                    <a href="tel:1-800-334-0090" class="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-red-100 transition-colors flex-shrink-0">
+                                        <i class="fas fa-phone-alt"></i> <span class="hidden sm:inline">1-</span>800-334-0090
+                                    </a>
+                                </div>
+
+                                <!-- Foremost -->
+                                <div class="carrier-row flex items-center justify-between p-3 md:p-4 rounded-xl border border-slate-100">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <span class="partner-dot"></span>
+                                        <span class="font-bold text-slate-800 text-sm md:text-base">Foremost</span>
+                                    </div>
+                                    <a href="tel:1-800-527-3907" class="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-red-100 transition-colors flex-shrink-0">
+                                        <i class="fas fa-phone-alt"></i> <span class="hidden sm:inline">1-</span>800-527-3907
+                                    </a>
+                                </div>
+
+                                <!-- Alamance Farmers -->
+                                <div class="carrier-row flex items-center justify-between p-3 md:p-4 rounded-xl border border-slate-100">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <span class="partner-dot"></span>
+                                        <span class="font-bold text-slate-800 text-sm md:text-base">Alamance Farmers</span>
+                                    </div>
+                                    <a href="tel:1-336-226-7872" class="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-red-100 transition-colors flex-shrink-0">
+                                        <i class="fas fa-phone-alt"></i> 336-226-7872
+                                    </a>
+                                </div>
+
+                                <!-- NC Grange -->
+                                <div class="carrier-row flex items-center justify-between p-3 md:p-4 rounded-xl border border-slate-100">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <span class="partner-dot"></span>
+                                        <span class="font-bold text-slate-800 text-sm md:text-base">NC Grange Mutual</span>
+                                    </div>
+                                    <a href="tel:1-800-394-1236" class="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-red-100 transition-colors flex-shrink-0">
+                                        <i class="fas fa-phone-alt"></i> <span class="hidden sm:inline">1-</span>800-394-1236
+                                    </a>
+                                </div>
+
+                                <!-- Universal Property -->
+                                <div class="carrier-row flex items-center justify-between p-3 md:p-4 rounded-xl border border-slate-100">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <span class="partner-dot"></span>
+                                        <span class="font-bold text-slate-800 text-sm md:text-base">Universal Property</span>
+                                    </div>
+                                    <a href="tel:1-800-470-0599" class="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-red-100 transition-colors flex-shrink-0">
+                                        <i class="fas fa-phone-alt"></i> <span class="hidden sm:inline">1-</span>800-470-0599
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Not our customer note -->
+                            <p class="text-xs text-slate-400 mt-4 text-center">Don't see your carrier? <a href="tel:3368351993" class="text-primary-600 font-bold hover:underline">Call us</a> and we'll help you find the right number.</p>
+                        </div>
                     </div>
-                    <h2 class="font-display font-black text-xl md:text-2xl text-slate-900 mb-3">Request ID Card</h2>
-                    <p class="text-slate-500 text-sm md:text-base leading-relaxed mb-4">Need a copy of your insurance ID card? We'll email or text you a digital copy right away. Keep it on your phone!</p>
-                    <div class="flex items-center gap-2 text-purple-500 font-bold text-sm group-hover:gap-3 transition-all">
-                        <span>Request ID Card</span>
-                        <i class="fas fa-arrow-right text-xs"></i>
+                </div>
+
+                <!-- ============================================ -->
+                <!-- PAY YOUR BILL (Expandable) -->
+                <!-- ============================================ -->
+                <div class="service-card bg-white rounded-2xl border border-slate-200 overflow-hidden sm:col-span-2">
+                    <button onclick="togglePanel('payment-panel', this)" class="w-full p-8 md:p-10 flex items-start gap-6 text-left group">
+                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-green-50 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-credit-card text-3xl md:text-4xl text-green-500"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h2 class="font-display font-black text-xl md:text-2xl text-slate-900 mb-2">Pay Your Bill</h2>
+                            <p class="text-slate-500 text-sm md:text-base leading-relaxed mb-3">Make a payment on your insurance policy. Find your carrier's payment link or phone number below.</p>
+                            <div class="flex items-center gap-2 text-green-500 font-bold text-sm">
+                                <span>Find Your Carrier</span>
+                                <i class="fas fa-chevron-down text-xs expand-icon" id="payment-icon"></i>
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- Expandable Payment Panel -->
+                    <div id="payment-panel" class="carrier-panel">
+                        <div class="px-6 md:px-10 pb-8">
+                            <!-- Our Partners Label -->
+                            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3"><i class="fas fa-handshake mr-1 text-emerald-500"></i> Our Partner Carriers</p>
+
+                            <div class="space-y-2">
+                                <!-- Progressive -->
+                                <div class="carrier-row flex items-center justify-between p-3 md:p-4 rounded-xl border border-slate-100 gap-3">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <span class="partner-dot"></span>
+                                        <span class="font-bold text-slate-800 text-sm md:text-base">Progressive</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 flex-shrink-0">
+                                        <a href="https://account.apps.progressive.com/access/ez-payment/policy-info" target="_blank" class="flex items-center gap-2 bg-green-50 text-green-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-green-100 transition-colors">
+                                            <i class="fas fa-external-link-alt"></i> Pay Online
+                                        </a>
+                                        <a href="tel:1-888-671-4405" class="flex items-center gap-2 bg-slate-50 text-slate-600 px-3 py-2 rounded-lg font-bold text-xs hover:bg-slate-100 transition-colors hidden md:flex">
+                                            <i class="fas fa-phone-alt"></i> 888-671-4405
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Nationwide -->
+                                <div class="carrier-row flex items-center justify-between p-3 md:p-4 rounded-xl border border-slate-100 gap-3">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <span class="partner-dot"></span>
+                                        <span class="font-bold text-slate-800 text-sm md:text-base">Nationwide</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 flex-shrink-0">
+                                        <a href="https://www.nationwide.com/personal/contact/pay-bill-details" target="_blank" class="flex items-center gap-2 bg-green-50 text-green-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-green-100 transition-colors">
+                                            <i class="fas fa-external-link-alt"></i> Pay Online
+                                        </a>
+                                        <a href="tel:1-877-669-6877" class="flex items-center gap-2 bg-slate-50 text-slate-600 px-3 py-2 rounded-lg font-bold text-xs hover:bg-slate-100 transition-colors hidden md:flex">
+                                            <i class="fas fa-phone-alt"></i> 877-669-6877
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Travelers -->
+                                <div class="carrier-row flex items-center justify-between p-3 md:p-4 rounded-xl border border-slate-100 gap-3">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <span class="partner-dot"></span>
+                                        <span class="font-bold text-slate-800 text-sm md:text-base">Travelers</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 flex-shrink-0">
+                                        <a href="https://www.travelers.com/pay-your-bill" target="_blank" class="flex items-center gap-2 bg-green-50 text-green-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-green-100 transition-colors">
+                                            <i class="fas fa-external-link-alt"></i> Pay Online
+                                        </a>
+                                        <a href="tel:1-800-842-5075" class="flex items-center gap-2 bg-slate-50 text-slate-600 px-3 py-2 rounded-lg font-bold text-xs hover:bg-slate-100 transition-colors hidden md:flex">
+                                            <i class="fas fa-phone-alt"></i> 800-842-5075
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- National General -->
+                                <div class="carrier-row flex items-center justify-between p-3 md:p-4 rounded-xl border border-slate-100 gap-3">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <span class="partner-dot"></span>
+                                        <span class="font-bold text-slate-800 text-sm md:text-base">National General</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 flex-shrink-0">
+                                        <a href="https://service.nationalgeneral.com/QuickPay/" target="_blank" class="flex items-center gap-2 bg-green-50 text-green-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-green-100 transition-colors">
+                                            <i class="fas fa-external-link-alt"></i> Quick Pay
+                                        </a>
+                                        <a href="tel:1-888-293-5108" class="flex items-center gap-2 bg-slate-50 text-slate-600 px-3 py-2 rounded-lg font-bold text-xs hover:bg-slate-100 transition-colors hidden md:flex">
+                                            <i class="fas fa-phone-alt"></i> 888-293-5108
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Dairyland -->
+                                <div class="carrier-row flex items-center justify-between p-3 md:p-4 rounded-xl border border-slate-100 gap-3">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <span class="partner-dot"></span>
+                                        <span class="font-bold text-slate-800 text-sm md:text-base">Dairyland</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 flex-shrink-0">
+                                        <a href="https://www.dairylandinsurance.com/make-a-payment" target="_blank" class="flex items-center gap-2 bg-green-50 text-green-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-green-100 transition-colors">
+                                            <i class="fas fa-external-link-alt"></i> Pay Online
+                                        </a>
+                                        <a href="tel:1-800-334-0090" class="flex items-center gap-2 bg-slate-50 text-slate-600 px-3 py-2 rounded-lg font-bold text-xs hover:bg-slate-100 transition-colors hidden md:flex">
+                                            <i class="fas fa-phone-alt"></i> 800-334-0090
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Foremost -->
+                                <div class="carrier-row flex items-center justify-between p-3 md:p-4 rounded-xl border border-slate-100 gap-3">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <span class="partner-dot"></span>
+                                        <span class="font-bold text-slate-800 text-sm md:text-base">Foremost</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 flex-shrink-0">
+                                        <a href="https://www.foremost.com/payonline/" target="_blank" class="flex items-center gap-2 bg-green-50 text-green-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-green-100 transition-colors">
+                                            <i class="fas fa-external-link-alt"></i> Pay Online
+                                        </a>
+                                        <a href="tel:1-800-527-3905" class="flex items-center gap-2 bg-slate-50 text-slate-600 px-3 py-2 rounded-lg font-bold text-xs hover:bg-slate-100 transition-colors hidden md:flex">
+                                            <i class="fas fa-phone-alt"></i> 800-527-3905
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Alamance Farmers -->
+                                <div class="carrier-row flex items-center justify-between p-3 md:p-4 rounded-xl border border-slate-100 gap-3">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <span class="partner-dot"></span>
+                                        <span class="font-bold text-slate-800 text-sm md:text-base">Alamance Farmers</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 flex-shrink-0">
+                                        <a href="https://alamancefarmers.com/policyholders/" target="_blank" class="flex items-center gap-2 bg-green-50 text-green-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-green-100 transition-colors">
+                                            <i class="fas fa-external-link-alt"></i> Pay Online
+                                        </a>
+                                        <a href="tel:1-336-226-7872" class="flex items-center gap-2 bg-slate-50 text-slate-600 px-3 py-2 rounded-lg font-bold text-xs hover:bg-slate-100 transition-colors hidden md:flex">
+                                            <i class="fas fa-phone-alt"></i> 336-226-7872
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- NC Grange -->
+                                <div class="carrier-row flex items-center justify-between p-3 md:p-4 rounded-xl border border-slate-100 gap-3">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <span class="partner-dot"></span>
+                                        <span class="font-bold text-slate-800 text-sm md:text-base">NC Grange Mutual</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 flex-shrink-0">
+                                        <a href="tel:3368351993" class="flex items-center gap-2 bg-amber-50 text-amber-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-amber-100 transition-colors">
+                                            <i class="fas fa-phone-alt"></i> Call Agent
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Universal Property -->
+                                <div class="carrier-row flex items-center justify-between p-3 md:p-4 rounded-xl border border-slate-100 gap-3">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <span class="partner-dot"></span>
+                                        <span class="font-bold text-slate-800 text-sm md:text-base">Universal Property</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 flex-shrink-0">
+                                        <a href="https://customer.universalproperty.com/" target="_blank" class="flex items-center gap-2 bg-green-50 text-green-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-green-100 transition-colors">
+                                            <i class="fas fa-external-link-alt"></i> Pay Online
+                                        </a>
+                                        <a href="tel:1-800-425-9113" class="flex items-center gap-2 bg-slate-50 text-slate-600 px-3 py-2 rounded-lg font-bold text-xs hover:bg-slate-100 transition-colors hidden md:flex">
+                                            <i class="fas fa-phone-alt"></i> 800-425-9113
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p class="text-xs text-slate-400 mt-4 text-center">Don't see your carrier? <a href="tel:3368351993" class="text-primary-600 font-bold hover:underline">Call us</a> and we'll direct you to the right payment portal.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================ -->
+                <!-- REQUEST POLICY CHANGE (Expandable Form) -->
+                <!-- ============================================ -->
+                <div class="service-card bg-white rounded-2xl border border-slate-200 overflow-hidden sm:col-span-2">
+                    <button onclick="togglePanel('policy-panel', this)" class="w-full p-8 md:p-10 flex items-start gap-6 text-left group">
+                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-blue-50 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-edit text-3xl md:text-4xl text-blue-500"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h2 class="font-display font-black text-xl md:text-2xl text-slate-900 mb-2">Request Policy Change</h2>
+                            <p class="text-slate-500 text-sm md:text-base leading-relaxed mb-3">Need to add a vehicle, update your address, change coverage, or add a driver? Submit your request and we'll handle the rest.</p>
+                            <div class="flex items-center gap-2 text-blue-500 font-bold text-sm">
+                                <span>Open Request Form</span>
+                                <i class="fas fa-chevron-down text-xs expand-icon" id="policy-icon"></i>
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- Expandable Policy Change Form -->
+                    <div id="policy-panel" class="carrier-panel">
+                        <div class="px-6 md:px-10 pb-8">
+                            <form id="policyChangeForm" onsubmit="submitPolicyChange(event)" class="space-y-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Full Name <span class="text-red-400">*</span></label>
+                                        <input type="text" name="name" required placeholder="John Smith" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none transition-colors text-sm font-medium">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Phone Number <span class="text-red-400">*</span></label>
+                                        <input type="tel" name="phone" required placeholder="(336) 555-1234" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none transition-colors text-sm font-medium">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Email <span class="text-slate-300">(optional)</span></label>
+                                        <input type="email" name="email" placeholder="john@email.com" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none transition-colors text-sm font-medium">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Policy Number <span class="text-slate-300">(if known)</span></label>
+                                        <input type="text" name="policyNumber" placeholder="e.g. 12345678" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none transition-colors text-sm font-medium">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Type of Change <span class="text-red-400">*</span></label>
+                                    <select name="changeType" required class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none transition-colors text-sm font-medium bg-white">
+                                        <option value="" disabled selected>Select change type...</option>
+                                        <option value="Add Vehicle">Add a Vehicle</option>
+                                        <option value="Remove Vehicle">Remove a Vehicle</option>
+                                        <option value="Replace Vehicle">Replace a Vehicle</option>
+                                        <option value="Add Driver">Add a Driver</option>
+                                        <option value="Remove Driver">Remove a Driver</option>
+                                        <option value="Address Change">Address Change</option>
+                                        <option value="Coverage Change">Change Coverage Limits</option>
+                                        <option value="Add Lender/Lienholder">Add Lender / Lienholder</option>
+                                        <option value="Remove Lender/Lienholder">Remove Lender / Lienholder</option>
+                                        <option value="Cancel Policy">Cancel Policy</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Details <span class="text-red-400">*</span></label>
+                                    <textarea name="details" required rows="3" placeholder="Please describe the changes you need. Include VIN numbers, new addresses, driver info, etc." class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none transition-colors text-sm font-medium resize-none"></textarea>
+                                </div>
+                                <button type="submit" id="policySubmitBtn" class="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black rounded-xl shadow-lg shadow-blue-500/20 transition-all hover:scale-[1.01] active:scale-[0.99] text-sm flex items-center justify-center gap-2">
+                                    <i class="fas fa-paper-plane"></i> Submit Policy Change Request
+                                </button>
+                            </form>
+                            <!-- Success State -->
+                            <div id="policySuccess" class="hidden text-center py-8">
+                                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-check text-green-600 text-2xl"></i>
+                                </div>
+                                <h3 class="font-display font-black text-xl text-slate-900 mb-2">Request Submitted!</h3>
+                                <p class="text-slate-500 text-sm">We'll review your request and get back to you within 1 business day.</p>
+                                <a href="tel:3368351993" class="inline-flex items-center gap-2 mt-4 text-primary-600 font-bold text-sm hover:underline">
+                                    <i class="fas fa-phone-alt"></i> Need it faster? Call us
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================ -->
+                <!-- REQUEST ID CARD (Expandable Form) -->
+                <!-- ============================================ -->
+                <div class="service-card bg-white rounded-2xl border border-slate-200 overflow-hidden sm:col-span-2">
+                    <button onclick="togglePanel('idcard-panel', this)" class="w-full p-8 md:p-10 flex items-start gap-6 text-left group">
+                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-purple-50 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-id-card text-3xl md:text-4xl text-purple-500"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h2 class="font-display font-black text-xl md:text-2xl text-slate-900 mb-2">Request ID Card</h2>
+                            <p class="text-slate-500 text-sm md:text-base leading-relaxed mb-3">Need a copy of your insurance ID card? We'll email or text you a digital copy right away. Keep it on your phone!</p>
+                            <div class="flex items-center gap-2 text-purple-500 font-bold text-sm">
+                                <span>Open Request Form</span>
+                                <i class="fas fa-chevron-down text-xs expand-icon" id="idcard-icon"></i>
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- Expandable ID Card Form -->
+                    <div id="idcard-panel" class="carrier-panel">
+                        <div class="px-6 md:px-10 pb-8">
+                            <form id="idCardForm" onsubmit="submitIdCard(event)" class="space-y-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Full Name <span class="text-red-400">*</span></label>
+                                        <input type="text" name="name" required placeholder="John Smith" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-purple-500 focus:outline-none transition-colors text-sm font-medium">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Phone Number <span class="text-red-400">*</span></label>
+                                        <input type="tel" name="phone" required placeholder="(336) 555-1234" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-purple-500 focus:outline-none transition-colors text-sm font-medium">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Email <span class="text-slate-300">(for email delivery)</span></label>
+                                        <input type="email" name="email" placeholder="john@email.com" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-purple-500 focus:outline-none transition-colors text-sm font-medium">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Policy Number <span class="text-slate-300">(if known)</span></label>
+                                        <input type="text" name="policyNumber" placeholder="e.g. 12345678" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-purple-500 focus:outline-none transition-colors text-sm font-medium">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">How should we send your ID card? <span class="text-red-400">*</span></label>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <label class="delivery-option relative cursor-pointer">
+                                            <input type="radio" name="deliveryMethod" value="Email" class="sr-only peer" required>
+                                            <div class="p-4 rounded-xl border-2 border-slate-200 text-center peer-checked:border-purple-500 peer-checked:bg-purple-50 transition-all hover:border-purple-300">
+                                                <i class="fas fa-envelope text-xl text-slate-400 peer-checked:text-purple-600 mb-2 block"></i>
+                                                <span class="font-bold text-sm text-slate-700">Email</span>
+                                            </div>
+                                        </label>
+                                        <label class="delivery-option relative cursor-pointer">
+                                            <input type="radio" name="deliveryMethod" value="Text Message" class="sr-only peer">
+                                            <div class="p-4 rounded-xl border-2 border-slate-200 text-center peer-checked:border-purple-500 peer-checked:bg-purple-50 transition-all hover:border-purple-300">
+                                                <i class="fas fa-comment-sms text-xl text-slate-400 peer-checked:text-purple-600 mb-2 block"></i>
+                                                <span class="font-bold text-sm text-slate-700">Text</span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Additional Notes <span class="text-slate-300">(optional)</span></label>
+                                    <input type="text" name="notes" placeholder="e.g. Need cards for both vehicles" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-purple-500 focus:outline-none transition-colors text-sm font-medium">
+                                </div>
+                                <button type="submit" id="idcardSubmitBtn" class="w-full py-4 bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-black rounded-xl shadow-lg shadow-purple-500/20 transition-all hover:scale-[1.01] active:scale-[0.99] text-sm flex items-center justify-center gap-2">
+                                    <i class="fas fa-paper-plane"></i> Request My ID Card
+                                </button>
+                            </form>
+                            <!-- Success State -->
+                            <div id="idcardSuccess" class="hidden text-center py-8">
+                                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-check text-green-600 text-2xl"></i>
+                                </div>
+                                <h3 class="font-display font-black text-xl text-slate-900 mb-2">Request Submitted!</h3>
+                                <p class="text-slate-500 text-sm">We'll send your ID card shortly. Most requests are fulfilled same day.</p>
+                                <a href="tel:3368351993" class="inline-flex items-center gap-2 mt-4 text-primary-600 font-bold text-sm hover:underline">
+                                    <i class="fas fa-phone-alt"></i> Need it now? Call us
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================ -->
+                <!-- UPLOAD DOCUMENTS -->
+                <!-- ============================================ -->
+                <a href="https://sendbilldocs.com" target="_blank" class="service-card block bg-white rounded-2xl border border-slate-200 p-8 md:p-10 group hover:border-teal-200 sm:col-span-2">
+                    <div class="flex items-start gap-6">
+                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-teal-50 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-cloud-upload-alt text-3xl md:text-4xl text-teal-500"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-display font-black text-xl md:text-2xl text-slate-900 mb-3">Upload Documents</h2>
+                            <p class="text-slate-500 text-sm md:text-base leading-relaxed mb-4">Need to send us your driver's license, registration, or other documents? Upload securely through our portal.</p>
+                            <div class="flex items-center gap-2 text-teal-500 font-bold text-sm group-hover:gap-3 transition-all">
+                                <span>SendBillDocs.com</span>
+                                <i class="fas fa-external-link-alt text-xs"></i>
+                            </div>
+                        </div>
                     </div>
                 </a>
 
@@ -365,7 +846,7 @@
                         <i class="fas fa-chevron-down text-slate-400 transition-transform text-sm flex-shrink-0"></i>
                     </button>
                     <div class="faq-content px-6 pb-6 hidden">
-                        <p class="text-slate-500 text-sm leading-relaxed">Call us at <strong class="text-slate-700">(336) 835-1993</strong> during business hours and we'll help you file your claim. After hours, contact your carrier's 24/7 claims line found on your insurance ID card, then call us the next business day. You can also visit our <a href="claims-center/index.html" class="text-primary-600 font-bold hover:underline">Claims Center</a> for carrier-specific contact numbers.</p>
+                        <p class="text-slate-500 text-sm leading-relaxed">Call us at <strong class="text-slate-700">(336) 835-1993</strong> during business hours and we'll help you file your claim. After hours, contact your carrier's 24/7 claims line found on your insurance ID card or use the "Report a Claim" section above, then call us the next business day.</p>
                     </div>
                 </div>
                 <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
@@ -374,7 +855,7 @@
                         <i class="fas fa-chevron-down text-slate-400 transition-transform text-sm flex-shrink-0"></i>
                     </button>
                     <div class="faq-content px-6 pb-6 hidden">
-                        <p class="text-slate-500 text-sm leading-relaxed">You can pay your insurance bill directly through your carrier's online portal. Each carrier has their own payment system. Contact our office at <strong class="text-slate-700">(336) 835-1993</strong> and we'll help you find the right payment link for your specific carrier.</p>
+                        <p class="text-slate-500 text-sm leading-relaxed">You can pay your insurance bill directly through your carrier's online portal. Use the "Pay Your Bill" section above to find your carrier's payment link. You can also contact our office at <strong class="text-slate-700">(336) 835-1993</strong> and we'll help you find the right payment option.</p>
                     </div>
                 </div>
                 <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
@@ -404,7 +885,7 @@
         <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-12">
             <div>
                 <h4 class="text-white font-bold text-lg mb-6 tracking-wide uppercase">Bill Layne Insurance</h4>
-                <p class="text-sm leading-loose opacity-60">Protecting North Carolina families and businesses since 2004. As an independent agency, we work for you, not the insurance companies.</p>
+                <p class="text-sm leading-loose opacity-60">Protecting North Carolina families and businesses since 2005. As an independent agency, we work for you, not the insurance companies.</p>
             </div>
             <div>
                 <h5 class="text-white font-bold mb-6 text-sm uppercase tracking-widest">Connect</h5>
@@ -427,10 +908,14 @@
                     <a href="https://www.youtube.com/@ncautoandhome" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-red-600 transition-all text-white"><i class="fab fa-youtube"></i></a>
                     <a href="https://x.com/shopsavecompare" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-slate-700 transition-all text-white"><i class="fab fa-x-twitter"></i></a>
                 </div>
+                <!-- Footer Logo -->
+                <div class="mt-8">
+                    <img src="https://i.imgur.com/Z5MxmKE.png" alt="Bill Layne Insurance Agency Logo" class="h-12 opacity-50 hover:opacity-80 transition-opacity">
+                </div>
             </div>
         </div>
         <div class="text-center text-[10px] font-black uppercase tracking-[0.4em] mt-16 opacity-30">
-            &copy; 2025 Bill Layne Insurance Agency &bull; Elkin, NC
+            &copy; 2026 Bill Layne Insurance Agency &bull; Elkin, NC
         </div>
     </footer>
 
@@ -439,15 +924,44 @@
         <a href="tel:3368351993" class="flex-1 h-12 rounded-xl bg-slate-100 text-slate-700 font-bold flex items-center justify-center gap-2 active:scale-95 transition-transform">
             <i class="fas fa-phone-alt"></i> Call
         </a>
-        <a href="claims-center/index.html" class="flex-[2] h-12 rounded-xl bg-emerald-600 text-white font-bold flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/30 btn-shine active:scale-95 transition-transform">
-            <i class="fas fa-concierge-bell"></i> Service Center
+        <a href="get-quote.html" class="flex-[2] h-12 rounded-xl bg-emerald-600 text-white font-bold flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/30 btn-shine active:scale-95 transition-transform">
+            <i class="fas fa-bolt"></i> Compare Rates
         </a>
     </div>
 
 </main>
 
 <script>
-    // Menu Drawer
+    // ========================
+    // EXPANDABLE CARRIER PANELS
+    // ========================
+    function togglePanel(panelId, btn) {
+        const panel = document.getElementById(panelId);
+        const icon = panel.parentElement.querySelector('.expand-icon');
+
+        // Close other open panels
+        document.querySelectorAll('.carrier-panel.open').forEach(p => {
+            if (p.id !== panelId) {
+                p.classList.remove('open');
+                const otherIcon = p.parentElement.querySelector('.expand-icon');
+                if (otherIcon) otherIcon.classList.remove('rotated');
+            }
+        });
+
+        panel.classList.toggle('open');
+        if (icon) icon.classList.toggle('rotated');
+
+        // Scroll into view on mobile if opening
+        if (panel.classList.contains('open')) {
+            setTimeout(() => {
+                panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+    }
+
+    // ========================
+    // MENU DRAWER
+    // ========================
     const menuBtn = document.getElementById('menu-btn');
     const menuClose = document.getElementById('menu-close');
     const menuDrawer = document.getElementById('menu-drawer');
@@ -466,20 +980,19 @@
     menuBtn.addEventListener('click', openMenu);
     menuClose.addEventListener('click', closeMenu);
     menuOverlay.addEventListener('click', closeMenu);
-
-    // Auto-close menu when any link inside drawer is clicked
     menuDrawer.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', closeMenu);
     });
 
-    // FAQ Toggles
+    // ========================
+    // FAQ TOGGLES
+    // ========================
     document.querySelectorAll('.faq-toggle').forEach(btn => {
         btn.addEventListener('click', () => {
             const content = btn.nextElementSibling;
             const icon = btn.querySelector('i');
             const isOpen = !content.classList.contains('hidden');
 
-            // Close all others
             document.querySelectorAll('.faq-content').forEach(c => c.classList.add('hidden'));
             document.querySelectorAll('.faq-toggle i').forEach(i => i.style.transform = '');
             document.querySelectorAll('.faq-toggle').forEach(b => b.setAttribute('aria-expanded', 'false'));
@@ -492,7 +1005,112 @@
         });
     });
 
-    // Reveal animations on scroll
+    // ========================
+    // FORM SUBMISSIONS
+    // ========================
+    // ⚠️ IMPORTANT: Replace this URL with your deployed Google Apps Script URL
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxexesFpD5yZqIEtscFdB3wfAWboA4B9U3TGjO7pgFEjv8KZZfqudna6Yhj5WU7VE1g/exec";
+
+    async function submitPolicyChange(e) {
+        e.preventDefault();
+        const form = document.getElementById('policyChangeForm');
+        const btn = document.getElementById('policySubmitBtn');
+        const formData = new FormData(form);
+
+        // Disable button & show loading
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
+
+        const payload = {
+            formType: "policy-change",
+            name: formData.get('name'),
+            phone: formData.get('phone'),
+            email: formData.get('email') || '',
+            policyNumber: formData.get('policyNumber') || '',
+            changeType: formData.get('changeType'),
+            details: formData.get('details')
+        };
+
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            // no-cors means we can't read the response, but if no error thrown it worked
+            form.classList.add('hidden');
+            document.getElementById('policySuccess').classList.remove('hidden');
+
+        } catch (error) {
+            console.error('Submission error:', error);
+            btn.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i> Error - Please Call Us';
+            btn.classList.remove('from-blue-600', 'to-indigo-600');
+            btn.classList.add('from-red-500', 'to-red-600');
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Policy Change Request';
+                btn.classList.remove('from-red-500', 'to-red-600');
+                btn.classList.add('from-blue-600', 'to-indigo-600');
+            }, 3000);
+        }
+    }
+
+    async function submitIdCard(e) {
+        e.preventDefault();
+        const form = document.getElementById('idCardForm');
+        const btn = document.getElementById('idcardSubmitBtn');
+        const formData = new FormData(form);
+
+        // Validate delivery method selected
+        if (!formData.get('deliveryMethod')) {
+            alert('Please select how you want your ID card sent (Email or Text).');
+            return;
+        }
+
+        // Disable button & show loading
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
+
+        const payload = {
+            formType: "id-card",
+            name: formData.get('name'),
+            phone: formData.get('phone'),
+            email: formData.get('email') || '',
+            policyNumber: formData.get('policyNumber') || '',
+            deliveryMethod: formData.get('deliveryMethod'),
+            notes: formData.get('notes') || ''
+        };
+
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            form.classList.add('hidden');
+            document.getElementById('idcardSuccess').classList.remove('hidden');
+
+        } catch (error) {
+            console.error('Submission error:', error);
+            btn.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i> Error - Please Call Us';
+            btn.classList.remove('from-purple-600', 'to-violet-600');
+            btn.classList.add('from-red-500', 'to-red-600');
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> Request My ID Card';
+                btn.classList.remove('from-red-500', 'to-red-600');
+                btn.classList.add('from-purple-600', 'to-violet-600');
+            }, 3000);
+        }
+    }
+
+    // ========================
+    // REVEAL ANIMATIONS
+    // ========================
     const revealElements = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -504,47 +1122,5 @@
     revealElements.forEach(el => observer.observe(el));
 </script>
 
-
-    <!-- DOCK SPACER (prevents content from hiding behind dock) -->
-    <div class="dock-spacer md:hidden" style="height: 72px;"></div>
-
-    <!-- MOBILE DOCK -->
-    <div class="mobile-dock">
-        <a href="tel:3368351993" class="dock-btn dock-call">
-            <i class="fas fa-phone-alt"></i> Call
-        </a>
-        <a href="https://billlayneinsurance.com/get-quote" class="dock-btn dock-quote">
-            <i class="fas fa-bolt"></i> Compare Rates
-        </a>
-        <button class="dock-btn dock-menu" onclick="toggleMobileDockMenu()">
-            <i class="fas fa-bars"></i> Menu
-        </button>
-    </div>
-
-    <!-- MENU OVERLAY -->
-    <div class="menu-overlay" id="mobileDockOverlay" onclick="toggleMobileDockMenu()"></div>
-
-    <!-- SLIDE-UP MENU PANEL -->
-    <div class="menu-panel" id="mobileDockPanel">
-        <div class="menu-handle"></div>
-        <div class="menu-panel-header">
-            <span class="menu-panel-title">Bill Layne Insurance</span>
-            <button class="menu-close" onclick="toggleMobileDockMenu()"><i class="fas fa-times"></i></button>
-        </div>
-        <ul class="menu-links">
-            <li><a href="https://www.billlayneinsurance.com"><span class="menu-icon blue"><i class="fas fa-home"></i></span> Home <i class="fas fa-chevron-right menu-arrow"></i></a></li>
-            <li><a href="https://www.billlayneinsurance.com/areas-we-serve.html"><span class="menu-icon purple"><i class="fas fa-map-marked-alt"></i></span> Areas We Serve <i class="fas fa-chevron-right menu-arrow"></i></a></li>
-            <li><a href="https://www.billlayneinsurance.com/auto-center/"><span class="menu-icon blue"><i class="fas fa-car"></i></span> Auto Insurance <i class="fas fa-chevron-right menu-arrow"></i></a></li>
-            <li><a href="https://www.billlayneinsurance.com/home-insurance/"><span class="menu-icon green"><i class="fas fa-house"></i></span> Home Insurance <i class="fas fa-chevron-right menu-arrow"></i></a></li>
-            <li><a href="https://www.billlayneinsurance.com/claims-center/"><span class="menu-icon red"><i class="fas fa-file-medical-alt"></i></span> Claims Center <i class="fas fa-chevron-right menu-arrow"></i></a></li>
-            <li><a href="https://www.billlayneinsurance.com/resources/"><span class="menu-icon amber"><i class="fas fa-book"></i></span> Resources <i class="fas fa-chevron-right menu-arrow"></i></a></li>
-            <li><a href="https://www.billlayneinsurance.com/blog/"><span class="menu-icon purple"><i class="fas fa-blog"></i></span> Blog <i class="fas fa-chevron-right menu-arrow"></i></a></li>
-            <li><a href="https://www.billlayneinsurance.com/videos/"><span class="menu-icon red"><i class="fas fa-video"></i></span> Videos <i class="fas fa-chevron-right menu-arrow"></i></a></li>
-            <li><a href="https://www.billlayneinsurance.com/service-center.html"><span class="menu-icon green"><i class="fas fa-concierge-bell"></i></span> Service Center <i class="fas fa-chevron-right menu-arrow"></i></a></li>
-            <li><a href="https://www.billlayneinsurance.com/contact-us.html"><span class="menu-icon blue"><i class="fas fa-envelope"></i></span> Contact Us <i class="fas fa-chevron-right menu-arrow"></i></a></li>
-        </ul>
-    </div>
-
-    <script src="js/mobile-dock.js"></script>
 </body>
 </html>
