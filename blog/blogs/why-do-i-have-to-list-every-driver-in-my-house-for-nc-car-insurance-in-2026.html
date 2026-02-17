@@ -1,0 +1,531 @@
+<div class="gem-post">
+
+<!-- GEM v4.1 YT EDITION DEPENDENCIES -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Bricolage+Grotesque:opsz,wght@12..96,400;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+
+<style>
+/* GEM v4.1 CORE STYLES - SCOPED */
+.gem-post {
+    font-family: 'Outfit', sans-serif;
+    line-height: 1.7;
+    color: #334155;
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    overflow-x: hidden;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.gem-post h1, .gem-post h2, .gem-post h3 { font-family: 'Bricolage Grotesque', sans-serif; color: #0f172a; }
+.gem-post h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 1rem; letter-spacing: -0.02em; }
+.gem-post h2 { font-size: 1.8rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; border-left: 5px solid #FF0033; padding-left: 1rem; }
+.gem-post h3 { font-size: 1.4rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+.gem-post p { margin-bottom: 1.25rem; font-size: 1.1rem; }
+.gem-post ul, .gem-post ol { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+.gem-post li { margin-bottom: 0.5rem; position: relative; padding-left: 0.5rem; }
+.gem-post a { color: #2563eb; text-decoration: underline; font-weight: 600; transition: all 0.2s; }
+.gem-post a:hover { color: #1e40af; background: #eff6ff; }
+
+/* FONT AWESOME ICON SIZING */
+.gem-post i.fa-solid, .gem-post i.fa-regular, .gem-post i.fa-brands { margin-right: 0.3rem; }
+
+/* SCROLL PROGRESS BAR */
+.gem-progress-bar { position: fixed; top: 0; left: 0; width: 0%; height: 4px; background: linear-gradient(90deg, #FF0033, #FF6B35, #FFD23F); z-index: 1100; transition: width 0.1s linear; }
+
+/* HERO IMAGE */
+.hero-img { width: 100%; height: auto; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+/* SNIPPET BAIT BOX */
+.gem-snippet-bait { background: #eff6ff; border-left: 6px solid #3b82f6; padding: 1.5rem; border-radius: 0 8px 8px 0; margin-bottom: 2rem; font-size: 1.15rem; font-weight: 500; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1); }
+
+/* SHARE BAR */
+.gem-share-bar { display: flex; gap: 0.5rem; margin: 1.5rem 0; padding: 1rem; background: #f8fafc; border-radius: 16px; border: 2px solid #e2e8f0; align-items: center; flex-wrap: wrap; }
+.gem-share-label { font-weight: 800; font-size: 0.85rem; color: #0F0F0F; margin-right: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+.gem-share-btn { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none !important; color: white !important; font-size: 1rem; transition: transform 0.15s; cursor: pointer; border: none; }
+.gem-share-btn:active { transform: scale(0.9); }
+.gem-share-fb { background: #1877F2; }
+.gem-share-x { background: #000000; }
+.gem-share-email { background: #EA4335; }
+.gem-share-copy { background: #64748b; }
+.gem-share-copy.copied { background: #22c55e; }
+
+/* CHAPTER PROGRESS PILLS */
+.gem-chapter-track { display: flex; gap: 4px; margin: 1rem 0; flex-wrap: wrap; position: sticky; top: 10px; z-index: 50; }
+.gem-chapter-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; background: #e2e8f0; color: #64748b; text-decoration: none !important; transition: all 0.2s; opacity: 0.9; }
+.gem-chapter-pill:hover { background: #cbd5e1; }
+.gem-chapter-pill.active { background: #FF0033; color: white !important; opacity: 1; box-shadow: 0 4px 6px -1px rgba(255, 0, 51, 0.3); }
+.gem-chapter-pill.read { background: #0F0F0F; color: white !important; }
+
+/* PULL QUOTE */
+.gem-pull-quote { margin: 2rem 0; padding: 2rem 1.5rem; background: #1e293b; border-radius: 16px; text-align: center; position: relative; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); border: 1px solid #334155; }
+.gem-pull-quote::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #FF0033, #FF6B35, #FFD23F, #A8E10C, #00D4FF); }
+.gem-pull-quote-text { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.4rem; font-weight: 800; color: white; line-height: 1.3; letter-spacing: -0.02em; }
+.gem-pull-quote-text .gem-pq-highlight { color: #FFD23F; }
+.gem-pull-quote-source { margin-top: 0.75rem; font-size: 0.8rem; color: #94a3b8; font-weight: 600; }
+
+/* VS COMPARISON CARD */
+.gem-vs-card { margin: 1.5rem 0; border-radius: 16px; overflow: hidden; border: 2px solid #e2e8f0; }
+.gem-vs-header { background: #0F0F0F; color: white; text-align: center; padding: 0.75rem; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.gem-vs-body { display: flex; }
+.gem-vs-side { flex: 1; padding: 1.25rem; text-align: center; }
+.gem-vs-left { background: linear-gradient(180deg, #FEF2F2 0%, #fff 100%); border-top: 4px solid #DC2626; }
+.gem-vs-right { background: linear-gradient(180deg, #F0FDF4 0%, #fff 100%); border-top: 4px solid #16a34a; }
+.gem-vs-divider { width: 3px; background: linear-gradient(180deg, #FF0033, #FFD23F, #22c55e); flex-shrink: 0; }
+.gem-vs-label { font-weight: 800; font-size: 0.95rem; margin-bottom: 0.75rem; display: block; }
+.gem-vs-left .gem-vs-label { color: #DC2626; }
+.gem-vs-right .gem-vs-label { color: #16a34a; }
+.gem-vs-item { font-size: 0.85rem; color: #475569; margin-bottom: 0.4rem; line-height: 1.4; }
+.gem-vs-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+
+/* REVEAL CARD */
+.gem-reveal { margin: 1.5rem 0; border: 2px dashed #7C3AED; border-radius: 16px; overflow: hidden; background: #F5F3FF; position: relative; }
+.gem-reveal-trigger { padding: 1rem 1.25rem; font-weight: 800; color: #7C3AED; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; min-height: 44px; background: white; z-index: 10; position: relative; }
+.gem-reveal-content { display: none; padding: 1.25rem; color: #374151; line-height: 1.6; font-size: 0.95rem; background: white; border-top: 1px solid #DDD6FE; }
+.gem-reveal-content.visible { display: block; animation: gemFadeIn 0.5s ease; }
+@keyframes gemFadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* REACTIONS BAR */
+.gem-reactions { margin: 1.5rem 0; padding: 1.25rem; background: #f8fafc; border-radius: 16px; text-align: center; border: 2px solid #e2e8f0; }
+.gem-reactions-title { font-weight: 700; font-size: 0.9rem; color: #475569; margin-bottom: 0.75rem; }
+.gem-reactions-row { display: flex; justify-content: center; gap: 0.75rem; }
+.gem-react-btn { width: 48px; height: 48px; border-radius: 50%; border: 2px solid #e2e8f0; background: white; font-size: 1.3rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+.gem-react-btn:hover, .gem-react-btn:active { transform: scale(1.15); border-color: #FF0033; }
+.gem-react-btn.selected { background: #FF0033; border-color: #FF0033; color: white !important; transform: scale(1.15); }
+
+/* FAQ SECTION */
+.gem-faq-section { margin: 3rem 0; }
+.gem-faq-header { font-size: 1.8rem; font-weight: 700; margin-bottom: 1.5rem; font-family: 'Bricolage Grotesque', sans-serif; color: #0f172a; }
+.gem-faq-item { border: 2px solid #e2e8f0; border-radius: 12px; margin-bottom: 1rem; background: white; overflow: hidden; transition: border-color 0.2s; }
+.gem-faq-item:hover { border-color: #cbd5e1; }
+.gem-faq-item.active { border-color: #3b82f6; }
+.gem-faq-question { width: 100%; padding: 1.25rem; background: #f8fafc; text-align: left; font-weight: 700; color: #0f172a; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: none; outline: none; font-size: 1.05rem; }
+.gem-faq-question:hover { background: #f1f5f9; }
+.gem-faq-answer { display: none; padding: 1.5rem; color: #475569; line-height: 1.6; background: white; border-top: 1px solid #e2e8f0; font-size: 1rem; }
+.gem-faq-item.active .gem-faq-answer { display: block; animation: gemSlideDown 0.3s ease; }
+.gem-faq-icon { transition: transform 0.3s ease; color: #3b82f6; }
+.gem-faq-item.active .gem-faq-icon { transform: rotate(180deg); }
+@keyframes gemSlideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+/* STEP TIMELINE */
+.gem-steps { margin: 1.5rem 0; padding: 0; }
+.gem-step { display: flex; gap: 1rem; padding-bottom: 1.5rem; position: relative; }
+.gem-step:last-child { padding-bottom: 0; }
+.gem-step-line { width: 40px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.gem-step-dot { width: 36px; height: 36px; border-radius: 50%; background: #0F0F0F; color: white; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; z-index: 1; }
+.gem-step-connector { width: 3px; flex: 1; background: linear-gradient(180deg, #0F0F0F, #e2e8f0); margin-top: 4px; }
+.gem-step:last-child .gem-step-connector { display: none; }
+.gem-step-content { flex: 1; padding-top: 0.35rem; }
+.gem-step-title { font-weight: 800; font-size: 1rem; color: #0F0F0F; margin-bottom: 0.25rem; }
+.gem-step-text { font-size: 0.95rem; color: #475569; line-height: 1.5; }
+
+/* RELATED GRID */
+.gem-related { padding: 2rem 1.25rem; background: #0F0F0F; border-radius: 12px; margin-top: 3rem; }
+.gem-related-title { font-family: 'Bricolage Grotesque', sans-serif; color: white; font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; }
+.gem-related-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.gem-related-card { display: flex; gap: 0.75rem; text-decoration: none !important; background: #272727; border-radius: 12px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; border: 1px solid #404040; }
+.gem-related-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); background: #333; }
+.gem-related-thumb { width: 120px; height: 68px; object-fit: cover; flex-shrink: 0; border-radius: 8px; margin: 0.5rem 0 0.5rem 0.5rem; }
+.gem-related-info { padding: 0.5rem 0.5rem 0.5rem 0; display: flex; flex-direction: column; justify-content: center; }
+.gem-related-info-title { color: white; font-weight: 700; font-size: 0.85rem; line-height: 1.3; margin-bottom: 0.25rem; }
+.gem-related-info-meta { color: #9ca3af; font-size: 0.7rem; }
+@media (min-width: 768px) {
+    .gem-related-grid { grid-template-columns: 1fr 1fr 1fr; }
+    .gem-related-card { flex-direction: column; }
+    .gem-related-thumb { width: 100%; height: 120px; margin: 0; border-radius: 12px 12px 0 0; }
+    .gem-related-info { padding: 0.75rem; }
+}
+
+/* DATA TABLE */
+.gem-table-wrapper { overflow-x: auto; margin: 1.5rem 0; border-radius: 8px; border: 1px solid #e2e8f0; }
+.gem-table { width: 100%; border-collapse: collapse; min-width: 500px; }
+.gem-table th { background: #f1f5f9; text-align: left; padding: 1rem; font-weight: 700; border-bottom: 2px solid #e2e8f0; color: #1e293b; }
+.gem-table td { padding: 1rem; border-bottom: 1px solid #e2e8f0; color: #475569; }
+.gem-table tr:nth-child(even) { background-color: #f8fafc; }
+.gem-table tr:last-child td { border-bottom: none; }
+
+/* CTA BOX */
+.gem-cta-box { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid #334155; border-radius: 16px; padding: 2.5rem; text-align: center; margin-top: 3rem; color: white !important; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+.gem-cta-title { font-size: 1.75rem; font-weight: 800; color: white !important; margin-bottom: 0.75rem; }
+.gem-cta-text { margin-bottom: 2rem; color: #cbd5e1 !important; font-weight: 500; font-size: 1.1rem; }
+.gem-cta-btn { display: inline-block; background: #ef4444; color: white !important; padding: 1rem 2.5rem; border-radius: 50px; font-weight: 700; text-decoration: none !important; box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.5); transition: transform 0.2s, box-shadow 0.2s; border: 2px solid #f87171; }
+.gem-cta-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.6); }
+
+/* CORNER RIBBON */
+.gem-ribbon-wrap { position: relative; }
+.gem-ribbon { position: absolute; top: 12px; right: -8px; background: #FF0033; color: white; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 14px 4px 10px; border-radius: 4px 0 0 4px; z-index: 2; box-shadow: 0 2px 6px rgba(255,0,51,0.3); }
+.gem-ribbon::after { content: ''; position: absolute; top: 100%; right: 0; border: 4px solid transparent; border-top-color: #990020; border-right-color: #990020; }
+.gem-ribbon-new { background: #FF0033; }
+</style>
+
+<!-- Start Content -->
+<div class="gem-progress-bar" id="gemProgress"></div>
+
+<h1 class="text-4xl font-bold mb-6">Why Do I Have to List Every Driver in My House for NC Car Insurance in 2026?</h1>
+
+<div class="gem-snippet-bait p-6 bg-slate-100 border-l-4 border-blue-600 mb-8">
+    <p class="text-lg leading-relaxed">
+        <i class="fa-solid fa-bolt text-yellow-500"></i> <strong>The Direct Answer:</strong> In 2026, North Carolina law requires you to list all household residents of driving age because insurance companies assess risk based on <strong>regular access</strong> to vehicles. Under NC’s updated 50/100/50 liability mandates, failing to disclose a resident driver constitutes "material misrepresentation," which can lead to denied claims, policy cancellation, and personal financial liability for damages.
+    </p>
+</div>
+
+<img src="../assets/images/nc-list-every-driver-car-insurance-2026-hero.png" alt="Car Insurance Paperwork with Elkin NC Backdrop" class="hero-img w-full h-auto rounded-xl shadow-lg mb-8" />
+
+<div class="gem-share-bar flex gap-4 mb-8">
+    <button class="gem-share-btn gem-share-fb px-4 py-2 bg-blue-700 text-white rounded-md"><i class="fa-brands fa-facebook-f"></i> Share</button>
+    <button class="gem-share-btn gem-share-x px-4 py-2 bg-black text-white rounded-md"><i class="fa-brands fa-x-twitter"></i> Post</button>
+    <button class="gem-share-btn gem-share-email px-4 py-2 bg-gray-600 text-white rounded-md"><i class="fa-solid fa-envelope"></i> Email</button>
+    <button class="gem-share-btn gem-share-copy px-4 py-2 bg-gray-200 text-gray-800 rounded-md"><i class="fa-solid fa-link"></i> Copy</button>
+</div>
+
+<div class="gem-chapter-track p-4 bg-gray-50 rounded-lg mb-8">
+    <h3 class="font-bold mb-2">In This Guide:</h3>
+    <ul class="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <li><a href="#section1" class="text-blue-600 hover:underline">1. The "Household Resident" Rule Explained</a></li>
+        <li><a href="#section2" class="text-blue-600 hover:underline">2. NC’s 50/100/50 Mandate & Your Risk</a></li>
+        <li><a href="#section3" class="text-blue-600 hover:underline">3. Permissive Use vs. Regular Access</a></li>
+        <li><a href="#section4" class="text-blue-600 hover:underline">4. How to Correctly List Drivers in 2026</a></li>
+    </ul>
+</div>
+
+<div class="gem-key-takeaways p-6 bg-green-50 rounded-xl mb-8">
+    <h3 class="text-xl font-bold mb-4">Key Takeaways</h3>
+    <ul class="space-y-2">
+        <li><i class="fa-solid fa-check text-green-600"></i> <strong>Legal Requirement:</strong> All licensed residents must be disclosed.</li>
+        <li><i class="fa-solid fa-check text-green-600"></i> <strong>Claim Protection:</strong> Disclosure prevents "Material Misrepresentation" denials.</li>
+        <li><i class="fa-solid fa-check text-green-600"></i> <strong>State Minimums:</strong> NC minimums are now $50k/$100k/$50k.</li>
+        <li><i class="fa-solid fa-check text-green-600"></i> <strong>Financial Safety:</strong> Listing drivers protects your personal assets in Elkin.</li>
+    </ul>
+</div>
+
+<h2 id="section1" class="text-3xl font-bold mb-4">1. The Definition of a "Household Resident" in 2026</h2>
+<p class="mb-4 text-lg">
+    If you’ve lived in Elkin or the surrounding Surry County area for a while, you know that North Carolina insurance regulations are some of the most specific in the country. As of 2026, the term "Household Resident" has become the cornerstone of how policies are rated. It’s not just about who *owns* the car anymore; it’s about who has the *potential* to drive it.
+</p>
+<p class="mb-4 text-lg">
+    In the eyes of an insurance underwriter, if someone lives under your roof and holds a valid driver’s license, they are a statistical probability. Whether it’s a teenager who just got their permit at Elkin High or a cousin crashing on your couch for three months, their driving record impacts the risk profile of your household.
+</p>
+
+<div class="gem-pull-quote p-8 my-8 bg-blue-900 text-white rounded-2xl italic text-2xl text-center relative">
+    <i class="fa-solid fa-quote-left absolute top-4 left-4 opacity-20 text-4xl"></i>
+    "Insurance isn't just about who is driving today; it's about who has the keys to your financial future tonight."
+    <i class="fa-solid fa-quote-right absolute bottom-4 right-4 opacity-20 text-4xl"></i>
+</div>
+
+<h2 id="section2" class="text-3xl font-bold mb-4">2. The 2025 Limit Shift: Why Accuracy Matters More Now</h2>
+<p class="mb-4 text-lg">
+    Back in 2025, North Carolina saw a massive legislative shift in insurance minimums. For decades, the 30/60/25 limits were the standard. But as vehicle repair costs skyrocketed and medical inflation surged, the state moved to <strong>50/100/50</strong> ($50,000 for bodily injury per person, $100,000 per accident, and $50,000 for property damage).
+</p>
+<p class="mb-4 text-lg">
+    Because the "stakes" are higher, insurance companies are more vigilant than ever about who is behind the wheel. If an unlisted resident driver is involved in a collision on Bridge St or Highway 21, the insurance carrier may investigate why that person wasn't on the policy. If they determine the person lives there, they could argue that you withheld information to get a lower rate—this is called <strong>Rate Evasion</strong>.
+</p>
+
+<div class="gem-vs-card grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
+    <div class="p-6 bg-red-100 rounded-lg border-2 border-red-300">
+        <h4 class="font-bold text-red-700 uppercase tracking-widest mb-2 text-center">The Risk (Hiding Drivers)</h4>
+        <ul class="text-sm space-y-2">
+            <li><i class="fa-solid fa-circle-xmark text-red-600"></i> Claims denied for "Misrepresentation"</li>
+            <li><i class="fa-solid fa-circle-xmark text-red-600"></i> Policy cancelled mid-term</li>
+            <li><i class="fa-solid fa-circle-xmark text-red-600"></i> Personal lawsuits for damages exceeding $100k</li>
+        </ul>
+    </div>
+    <div class="p-6 bg-blue-100 rounded-lg border-2 border-blue-300">
+        <h4 class="font-bold text-blue-700 uppercase tracking-widest mb-2 text-center">The Coverage (Disclosing Drivers)</h4>
+        <ul class="text-sm space-y-2">
+            <li><i class="fa-solid fa-circle-check text-blue-600"></i> Full protection under NC 50/100/50 limits</li>
+            <li><i class="fa-solid fa-circle-check text-blue-600"></i> Peace of mind for all household members</li>
+            <li><i class="fa-solid fa-circle-check text-blue-600"></i> Ability to use "Excluded Driver" forms if needed</li>
+        </ul>
+    </div>
+</div>
+
+<h2 id="section3" class="text-3xl font-bold mb-4">3. Permissive Use vs. Regular Access</h2>
+<p class="mb-4 text-lg">
+    Many Elkin residents ask us: "But Bill, what if my roommate only borrows my truck once a month to go to the grocery store?" 
+</p>
+<p class="mb-4 text-lg">
+    There is a big difference between <strong>Permissive Use</strong> and <strong>Regular Access</strong>. 
+    Permissive use covers someone who <em>doesn't</em> live with you (like a friend visiting from out of town) borrowing your car with your permission. Regular access applies to anyone living in your home. In the eyes of the law, a resident always has the potential for "regular access." 
+</p>
+
+<div class="gem-reveal p-6 bg-slate-800 text-white rounded-xl mb-8 text-center cursor-pointer" onclick="this.querySelector('.hidden-text').classList.toggle('hidden')">
+    <p class="mb-2"><i class="fa-solid fa-eye"></i> <strong>SURPRISING FACT:</strong> Does a licensed teen who doesn't even have a car need to be listed?</p>
+    <span class="hidden-text hidden text-yellow-400 font-bold">YES. In North Carolina, insurers require all licensed household members to be listed, even if they have their own separate policy elsewhere, to ensure there are no gaps in coverage!</span>
+</div>
+
+<div class="gem-table-wrapper overflow-x-auto mb-8">
+    <table class="gem-table w-full border-collapse border border-gray-300">
+        <thead>
+            <tr class="bg-gray-200">
+                <th class="p-3 border border-gray-300 text-left">Driver Type</th>
+                <th class="p-3 border border-gray-300 text-left">Must Be Listed?</th>
+                <th class="p-3 border border-gray-300 text-left">Impact on Premium</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="p-3 border border-gray-300 font-bold">Licensed Teenager</td>
+                <td class="p-3 border border-gray-300">Always</td>
+                <td class="p-3 border border-gray-300">High (Risk-based)</td>
+            </tr>
+            <tr>
+                <td class="p-3 border border-gray-300 font-bold">Spouse/Partner</td>
+                <td class="p-3 border border-gray-300">Always</td>
+                <td class="p-3 border border-gray-300">Variable (Usually Lowers)</td>
+            </tr>
+            <tr>
+                <td class="p-3 border border-gray-300 font-bold">Roommate</td>
+                <td class="p-3 border border-gray-300">Required</td>
+                <td class="p-3 border border-gray-300">Medium (Based on MVR)</td>
+            </tr>
+            <tr>
+                <td class="p-3 border border-gray-300 font-bold">Live-in Nanny/Helper</td>
+                <td class="p-3 border border-gray-300">Required</td>
+                <td class="p-3 border border-gray-300">Based on History</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<h2 id="section4" class="text-3xl font-bold mb-4">4. The "Unlisted Driver" Claim Nightmare</h2>
+<img src="../assets/images/nc-list-every-driver-car-insurance-2026-img1.png" alt="Accident Investigation Scene" class="w-full h-64 object-cover rounded-lg mb-6" />
+<p class="mb-4 text-lg">
+    Imagine this scenario: Your roommate takes your car to the Elkin Farmer’s Market. They get into a fender bender that totals a late-model electric vehicle and causes minor injuries to the other driver. Total damages: $65,000. 
+</p>
+<p class="mb-4 text-lg">
+    Because your roommate lives with you but isn't on the policy, your insurance company denies the claim. Now, you are personally responsible for that $65,000. Under NC law, they can garnish wages or place liens on property to satisfy that debt. Listing them on your policy at <strong>Bill Layne Insurance</strong> might have only cost an extra $15 a month—a small price to pay for $65,000 in protection.
+</p>
+
+<div class="gem-steps my-10 relative">
+    <h3 class="text-2xl font-bold mb-6 text-center">How to Add a Driver Correctlly</h3>
+    <div class="flex flex-col md:flex-row gap-4">
+        <div class="flex-1 p-4 bg-white shadow-md border-t-4 border-blue-500 rounded-lg text-center">
+            <div class="text-3xl font-bold text-blue-500 mb-2">01</div>
+            <p class="font-semibold">Gather Info</p>
+            <p class="text-sm">Get their full name, DOB, and License #.</p>
+        </div>
+        <div class="flex-1 p-4 bg-white shadow-md border-t-4 border-blue-500 rounded-lg text-center">
+            <div class="text-3xl font-bold text-blue-500 mb-2">02</div>
+            <p class="font-semibold">Contact Bill Layne</p>
+            <p class="text-sm">Call 336-835-1993 to update your file.</p>
+        </div>
+        <div class="flex-1 p-4 bg-white shadow-md border-t-4 border-blue-500 rounded-lg text-center">
+            <div class="text-3xl font-bold text-blue-500 mb-2">03</div>
+            <p class="font-semibold">Review Rates</p>
+            <p class="text-sm">We'll find the best carrier for the new household mix.</p>
+        </div>
+        <div class="flex-1 p-4 bg-white shadow-md border-t-4 border-blue-500 rounded-lg text-center">
+            <div class="text-3xl font-bold text-blue-500 mb-2">04</div>
+            <p class="font-semibold">Get Confirmed</p>
+            <p class="text-sm">Receive your new ID cards with total protection.</p>
+        </div>
+    </div>
+</div>
+
+<div class="gem-reactions flex flex-col items-center justify-center p-6 bg-gray-100 rounded-xl mb-8">
+    <p class="font-bold mb-4">Was this article helpful?</p>
+    <div class="flex gap-4">
+        <button class="text-3xl hover:scale-125 transition-transform"><i class="fa-solid fa-thumbs-up text-blue-600"></i></button>
+        <button class="text-3xl hover:scale-125 transition-transform"><i class="fa-solid fa-thumbs-down text-red-600"></i></button>
+    </div>
+</div>
+
+<div class="gem-faq-section mb-12">
+    <h2 class="text-3xl font-bold mb-6">Frequently Asked Questions</h2>
+    
+    <div class="gem-faq-item border-b border-gray-200 py-4">
+        <button class="gem-faq-question w-full flex justify-between items-center text-left font-bold text-xl" onclick="window.toggleFaq(this)">
+            Can I exclude a driver with a bad record in NC?
+            <i class="fa-solid fa-chevron-down gem-faq-icon transition-transform"></i>
+        </button>
+        <div class="gem-faq-answer hidden mt-4 text-gray-700">
+            Yes, North Carolina allows "Named Driver Exclusions." This means you list them, but sign a form saying they are NOT covered. If they drive and crash, there is zero coverage. This is a common way to keep your rates low if a roommate has a DUI or many points.
+        </div>
+    </div>
+
+    <div class="gem-faq-item border-b border-gray-200 py-4">
+        <button class="gem-faq-question w-full flex justify-between items-center text-left font-bold text-xl" onclick="window.toggleFaq(this)">
+            Does a college student away at school need to be listed?
+            <i class="fa-solid fa-chevron-down gem-faq-icon transition-transform"></i>
+        </button>
+        <div class="gem-faq-answer hidden mt-4 text-gray-700">
+            Generally, yes. Most NC carriers consider college students "residents" because they return home for breaks. Many companies offer a "Student Away at School" discount if the campus is more than 100 miles from Elkin.
+        </div>
+    </div>
+
+    <div class="gem-faq-item border-b border-gray-200 py-4">
+        <button class="gem-faq-question w-full flex justify-between items-center text-left font-bold text-xl" onclick="window.toggleFaq(this)">
+            What happens if I forget to add a new roommate?
+            <i class="fa-solid fa-chevron-down gem-faq-icon transition-transform"></i>
+        </button>
+        <div class="gem-faq-answer hidden mt-4 text-gray-700">
+            If they are involved in an accident, your carrier may deny the claim for "Material Misrepresentation." It is best to notify Bill Layne Insurance as soon as someone moves in to ensure you remain compliant with NC law.
+        </div>
+    </div>
+</div>
+
+<div class="gem-cta-box bg-gradient-to-r from-blue-700 to-blue-900 text-white p-10 rounded-3xl shadow-2xl text-center mb-12">
+    <h2 class="text-3xl font-bold mb-4">Protect Your NC Home & Auto Today</h2>
+    <p class="text-xl mb-6">Don't leave your assets at risk with unlisted drivers. Let the local experts at Bill Layne Insurance verify your coverage.</p>
+    <div class="text-lg mb-6 leading-relaxed">
+        <p><strong>Bill Layne Insurance</strong></p>
+        <p>1283 N Bridge St, Elkin NC 28621</p>
+        <p><i class="fa-solid fa-phone"></i> 336-835-1993</p>
+        <p><i class="fa-solid fa-envelope"></i> Save@BillLayneInsurance.com</p>
+    </div>
+    <a href="https://www.NCAutoandHome.com" class="inline-block bg-yellow-500 hover:bg-yellow-400 text-blue-900 font-bold py-4 px-8 rounded-full transition-colors text-xl uppercase tracking-widest">Get a Free Quote</a>
+</div>
+
+<div class="gem-related grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+        <img src="../assets/images/nc-list-every-driver-car-insurance-2026-img2.png" alt="NC Auto Laws" class="w-full h-40 object-cover" />
+        <div class="p-4">
+            <h4 class="font-bold text-lg mb-2">NC Auto Law 2026: What's New?</h4>
+            <p class="text-sm text-gray-600">The shift to 50/100/50 and how it affects your wallet.</p>
+        </div>
+    </div>
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+        <div class="w-full h-40 bg-gray-300 flex items-center justify-center"><i class="fa-solid fa-house-crack text-5xl text-gray-400"></i></div>
+        <div class="p-4">
+            <h4 class="font-bold text-lg mb-2">Wind, Hail & NC Homes</h4>
+            <p class="text-sm text-gray-600">Understanding "Named Storm" deductibles in the Foothills.</p>
+        </div>
+    </div>
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+        <div class="w-full h-40 bg-gray-300 flex items-center justify-center"><i class="fa-solid fa-car-burst text-5xl text-gray-400"></i></div>
+        <div class="p-4">
+            <h4 class="font-bold text-lg mb-2">Uninsured Motorist Coverage</h4>
+            <p class="text-sm text-gray-600">Why the 2026 mandates make UM coverage more critical than ever.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Scroll Progress
+    window.onscroll = function() {
+        var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var scrolled = (winScroll / height) * 100;
+        document.getElementById("gemProgress").style.width = scrolled + "%";
+    };
+
+    // FAQ Toggle
+    window.toggleFaq = function(btn) {
+        const answer = btn.nextElementSibling;
+        const icon = btn.querySelector('.gem-faq-icon');
+        answer.classList.toggle('hidden');
+        icon.style.transform = answer.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+    };
+</script>
+
+<style>
+    .gem-progress-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 5px;
+        background: #3b82f6;
+        z-index: 1000;
+        width: 0%;
+        transition: width 0.1s;
+    }
+    .gem-faq-icon {
+        transition: transform 0.3s ease;
+    }
+    .gem-vs-card h4 {
+        letter-spacing: 0.1em;
+    }
+    .gem-steps::before {
+        content: '';
+        position: absolute;
+        top: 60%;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #e2e8f0;
+        z-index: -1;
+        display: none;
+    }
+    @media (min-width: 768px) {
+        .gem-steps::before {
+            display: block;
+        }
+    }
+    .gem-table th, .gem-table td {
+        padding: 1rem;
+    }
+</style></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Scroll Progress Bar
+    window.addEventListener('scroll', function() {
+        var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var scrolled = (winScroll / height) * 100;
+        var bar = document.getElementById('gemProgress');
+        if (bar) bar.style.width = scrolled + '%';
+        
+        // Chapter Tracker
+        var sections = document.querySelectorAll('.gem-post h2');
+        var pills = document.querySelectorAll('.gem-chapter-pill');
+        var currentId = '';
+        sections.forEach(function(sec) {
+            var top = sec.getBoundingClientRect().top;
+            if (top < window.innerHeight * 0.5) {
+                currentId = sec.id;
+            }
+        });
+        pills.forEach(function(pill) {
+            var pillSection = pill.getAttribute('href').substring(1);
+            pill.classList.remove('active');
+            if (pillSection === currentId) {
+                pill.classList.add('active');
+            }
+        });
+    });
+
+    // Copy Link Button
+    window.copyLink = function(btn) {
+        navigator.clipboard.writeText(window.location.href).then(function() {
+            btn.classList.add('copied');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+            setTimeout(function() {
+                btn.classList.remove('copied');
+                btn.innerHTML = '<i class="fa-solid fa-link"></i>';
+            }, 2000);
+        });
+    };
+
+    // Reveal Card
+    window.toggleReveal = function(el) {
+        var content = el.nextElementSibling;
+        content.classList.toggle('visible');
+        var span = el.querySelector('span:last-child');
+        if (content.classList.contains('visible')) {
+            span.textContent = 'Tap to hide';
+        } else {
+            span.textContent = 'Tap to reveal';
+        }
+    };
+
+    // FAQ Toggle
+    window.toggleFaq = function(btn) {
+        var item = btn.parentElement;
+        item.classList.toggle('active');
+    };
+
+    // Reaction Bar
+    window.react = function(btn) {
+        var all = btn.parentElement.querySelectorAll('.gem-react-btn');
+        all.forEach(function(b) { b.classList.remove('selected'); });
+        btn.classList.add('selected');
+        var title = btn.parentElement.previousElementSibling;
+        if(title) title.textContent = 'Thanks for the feedback!';
+    };
+});
+</script>
