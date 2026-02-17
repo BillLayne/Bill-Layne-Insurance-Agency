@@ -1,0 +1,574 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap');
+
+:root {
+    --gem-primary: #003366;
+    --gem-secondary: #c8102e;
+    --gem-accent: #f4f7f9;
+    --gem-text: #1a1a1b;
+    --gem-white: #ffffff;
+    --gem-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --gem-radius: 8px;
+}
+
+.gem-post {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    line-height: 1.6;
+    color: var(--gem-text);
+    background: var(--gem-white);
+    max-width: 100%;
+    margin: 0 auto;
+    overflow-x: hidden;
+}
+
+.gem-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Sticky Header */
+.gem-sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--gem-primary);
+    color: white;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--gem-shadow);
+}
+
+.gem-sticky-header a {
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+/* Breadcrumbs */
+.gem-breadcrumbs {
+    padding: 15px 0;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.gem-breadcrumbs a {
+    color: var(--gem-primary);
+    text-decoration: none;
+}
+
+/* Hero Section */
+.gem-hero {
+    text-align: left;
+    padding: 20px 0;
+}
+
+.gem-hero h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 2.5rem;
+    line-height: 1.1;
+    color: var(--gem-primary);
+    margin-bottom: 15px;
+}
+
+.gem-meta {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+}
+
+.gem-badge {
+    background: var(--gem-secondary);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.gem-hero-img {
+    width: 100%;
+    border-radius: var(--gem-radius);
+    height: auto;
+    object-fit: cover;
+    margin: 20px 0;
+}
+
+/* Snippet Bait */
+.gem-snippet-bait {
+    background: var(--gem-accent);
+    border-left: 5px solid var(--gem-primary);
+    padding: 25px;
+    margin: 30px 0;
+    font-size: 1.2rem;
+}
+
+.gem-snippet-bait strong {
+    color: var(--gem-primary);
+}
+
+/* Key Takeaways */
+.gem-takeaways {
+    background: #fff9e6;
+    border: 1px solid #ffeeba;
+    padding: 20px;
+    border-radius: var(--gem-radius);
+    margin: 20px 0;
+}
+
+.gem-takeaways h3 {
+    margin-top: 0;
+    color: #856404;
+}
+
+/* Prose */
+.gem-prose {
+    max-width: 70ch;
+    font-size: 1.1rem;
+}
+
+/* Comparison Table */
+.gem-table-wrapper {
+    overflow-x: auto;
+    margin: 30px 0;
+}
+
+.gem-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+}
+
+.gem-table th {
+    background: var(--gem-primary);
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+.gem-table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+}
+
+.gem-table tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+/* Calculator */
+.gem-calculator {
+    background: var(--gem-primary);
+    color: white;
+    padding: 30px;
+    border-radius: var(--gem-radius);
+    margin: 40px 0;
+}
+
+.gem-calc-input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 4px;
+    border: none;
+}
+
+.gem-calc-btn {
+    background: var(--gem-secondary);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    border-radius: 4px;
+}
+
+/* FAQ Accordion */
+.gem-faq-item {
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+}
+
+.gem-faq-question {
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+}
+
+.gem-faq-answer {
+    display: none;
+    padding-top: 10px;
+    color: #444;
+}
+
+/* Floating CTA */
+.gem-floating-cta {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--gem-white);
+    display: flex;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    z-index: 9999;
+}
+
+.gem-floating-cta a {
+    flex: 1;
+    text-align: center;
+    padding: 15px;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 0.9rem;
+}
+
+.gem-cta-phone { background: var(--gem-primary); color: white; }
+.gem-cta-quote { background: var(--gem-secondary); color: white; }
+
+/* Mobile vs Desktop */
+@media (min-width: 800px) {
+    .gem-floating-cta { display: none; }
+    .gem-mobile-toc { display: none; }
+}
+
+@media (max-width: 800px) {
+    .gem-hero h1 { font-size: 1.8rem; }
+}
+
+.gem-author-bio {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: var(--gem-accent);
+    padding: 20px;
+    border-radius: var(--gem-radius);
+    margin: 40px 0;
+}
+
+.gem-social-bar {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.gem-social-bar a {
+    background: #eee;
+    padding: 8px 15px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.8rem;
+    color: var(--gem-text);
+}
+
+</style>
+
+<div class="gem-post">
+    <!-- 1. Sticky Header -->
+    <header class="gem-sticky-header">
+        <span>🛡️ Bill Layne Insurance</span>
+        <a href="tel:3368351993">📞 336-835-1993</a>
+    </header>
+
+    <div class="gem-container">
+        <!-- 2. Breadcrumbs -->
+        <nav class="gem-breadcrumbs">
+            Home &gt; Blog &gt; NC Auto Insurance &gt; 75% Total Loss Rule
+        </nav>
+
+        <!-- 3. Hero Section -->
+        <section class="gem-hero">
+            <span class="gem-badge">NC Insurance Law</span>
+            <h1>What is the 75% Total Loss Threshold in NC for 2026?</h1>
+            <div class="gem-meta">
+                <span>By <strong>Bill Layne</strong></span>
+                <time datetime="2026-05-15">📅 May 15, 2026</time>
+                <span>⏱️ 4 min read</span>
+            </div>
+            <img src="../assets/images/nc-75-total-loss-threshold-2026-hero.png" alt="Totaled car in Elkin NC" class="gem-hero-img" loading="eager">
+        </section>
+
+        <!-- 4. Snippet Bait -->
+        <div class="gem-snippet-bait">
+            <strong>In North Carolina, the 75% Total Loss Threshold is a legal mandate (NCGS § 20-71.3) stating that if the cost to repair a vehicle equals or exceeds 75% of its pre-accident Actual Cash Value (ACV), the insurer must declare it a "Total Loss" and issue a salvage title.</strong> This protects drivers from structurally unsafe vehicles.
+        </div>
+
+        <!-- 5. Key Takeaways -->
+        <div class="gem-takeaways">
+            <h3>⚡ In a Hurry? Key Facts:</h3>
+            <ul>
+                <li><strong>The Rule:</strong> Repair Costs ≥ 75% of Market Value = Total Loss.</li>
+                <li><strong>The Goal:</strong> Safety first—no "Frankenstein" cars on NC roads.</li>
+                <li><strong>Local Impact:</strong> Surry, Wilkes, and Yadkin counties follow state-wide mandates.</li>
+                <li><strong>2026 Update:</strong> With rising sensor costs (ADAS), cars hit 75% faster than ever.</li>
+            </ul>
+        </div>
+
+        <!-- 6. Social Share -->
+        <div class="gem-social-bar">
+            <span>Share:</span>
+            <a href="#">FB</a>
+            <a href="#">LI</a>
+            <a href="#">X</a>
+        </div>
+
+        <!-- 8. Mobile TOC -->
+        <div class="gem-mobile-toc" style="background:#f4f4f4; padding:10px; border-radius:5px; margin-bottom:20px;">
+            <strong>Jump to:</strong>
+            <ul style="font-size:0.9rem;">
+                <li><a href="#how-it-works">How the 75% Math Works</a></li>
+                <li><a href="#calculator">Total Loss Calculator</a></li>
+                <li><a href="#nc-impact">NC Local Impact</a></li>
+            </ul>
+        </div>
+
+        <!-- 10. Intro -->
+        <div class="gem-prose">
+            <p>You’re driving down Bridge St in Elkin or maybe cruising near Pilot Mountain when—<em>bam</em>—a fender bender turns into a headache. Your adjuster says the car might be "totaled," but it looks fixable to you. Why? In 2026, North Carolina's <strong>75% Total Loss Threshold</strong> is the invisible line in the sand that determines if your car gets a second life or a one-way ticket to the salvage yard.</p>
+            
+            <h2 id="how-it-works">The Math: How NC Decides Your Car's Fate</h2>
+            <p>Unlike some states that use a "Total Loss Formula" (Repair + Salvage Value > ACV), North Carolina keeps it simple but strict. If the estimate from the shop hits 75% of what the car was worth five minutes before the crash, it's done.</p>
+
+            <!-- 7. Comparison Data Table -->
+            <div class="gem-table-wrapper">
+                <table class="gem-table">
+                    <thead>
+                        <tr>
+                            <th>Car Value (ACV)</th>
+                            <th>Repair Estimate</th>
+                            <th>Result in NC</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>$20,000</td>
+                            <td>$14,000 (70%)</td>
+                            <td>✅ Repairable</td>
+                        </tr>
+                        <tr>
+                            <td>$20,000</td>
+                            <td>$15,100 (75.5%)</td>
+                            <td>❌ Total Loss</td>
+                        </tr>
+                        <tr>
+                            <td>$40,000</td>
+                            <td>$29,000 (72.5%)</td>
+                            <td>✅ Repairable</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <img src="../assets/images/nc-75-total-loss-threshold-2026-img1.png" alt="Auto Body Shop in Surry County" class="gem-hero-img" loading="lazy">
+
+            <h2 id="nc-impact">Local Impact: Why 2026 is Different</h2>
+            <p>In our area—from the foothills of Wilkes to the vineyards of Yadkin—we are seeing repair costs skyrocket. A modern bumper in 2026 isn't just plastic; it's packed with LIDAR and proximity sensors. A small tap that cost $800 in 2010 now costs $4,500. This means more vehicles are hitting that 75% wall faster than ever.</p>
+            
+            <div style="background:var(--gem-accent); padding:20px; border-left:4px solid var(--gem-secondary); margin:20px 0;">
+                <p><em>"Bill Layne and his team made the total loss process so easy when my truck was hit in Jonesville. They explained the 75% rule so I knew exactly what to expect."</em><br><strong>— Sarah T., Elkin Resident</strong></p>
+            </div>
+
+            <h2 id="calculator">Interactive: 2026 NC Total Loss Estimator</h2>
+            <!-- 14. Interactive Feature -->
+            <div class="gem-calculator">
+                <h3>Is My Vehicle Totaled?</h3>
+                <label>Estimated Vehicle Value (ACV) $</label>
+                <input type="number" id="acv" class="gem-calc-input" placeholder="e.g. 15000">
+                <label>Repair Estimate $</label>
+                <input type="number" id="repairs" class="gem-calc-input" placeholder="e.g. 12000">
+                <button class="gem-calc-btn" onclick="calculateLoss()">Check Threshold</button>
+                <p id="calc-result" style="margin-top:15px; font-weight:bold; font-size:1.2rem;"></p>
+            </div>
+
+            <h2>What Happens if Your Car is Totaled?</h2>
+            <ol>
+                <li><strong>The Payout:</strong> You receive the ACV (minus your deductible).</li>
+                <li><strong>The Title:</strong> The NCDMV issues a "Salvage Title."</li>
+                <li><strong>Keeping the Car:</strong> If you keep it, the insurer subtracts the salvage value from your payout.</li>
+            </ol>
+            
+            <img src="../assets/images/nc-75-total-loss-threshold-2026-img2.png" alt="Bill Layne Insurance Office Elkin" class="gem-hero-img" loading="lazy">
+
+            <!-- 15. FAQ Section -->
+            <h2>Common Questions About NC Total Loss</h2>
+            <div class="gem-faq">
+                <div class="gem-faq-item">
+                    <div class="gem-faq-question" onclick="toggleFaq(0)">Can I negotiate my car's value? <span>+</span></div>
+                    <div class="gem-faq-answer"><strong>Yes, you can provide recent sales data of similar vehicles in NC to challenge an ACV.</strong> Insurance companies use third-party software, but local market conditions in Surry or Wilkes can sometimes differ.</div>
+                </div>
+                <div class="gem-faq-item">
+                    <div class="gem-faq-question" onclick="toggleFaq(1)">Does the 75% rule apply to hail damage? <span>+</span></div>
+                    <div class="gem-faq-answer"><strong>Yes, cosmetic damage from NC storms is subject to the same 75% math.</strong> If repair costs for "paintless dent repair" exceed the threshold, the car is totaled.</div>
+                </div>
+                <div class="gem-faq-item">
+                    <div class="gem-faq-question" onclick="toggleFaq(2)">What is "Consent to Rate" in NC? <span>+</span></div>
+                    <div class="gem-faq-answer"><strong>Consent to Rate allows insurers to charge a higher premium than the state-mandated cap.</strong> This is common in high-risk areas or for specialized vehicles.</div>
+                </div>
+                <div class="gem-faq-item">
+                    <div class="gem-faq-question" onclick="toggleFaq(3)">How do 50/100/50 limits affect this? <span>+</span></div>
+                    <div class="gem-faq-answer"><strong>These are the minimum liability limits in NC for 2026.</strong> If you total someone else's car, your Property Damage limit (the last 50) must cover their ACV up to $50,000.</div>
+                </div>
+                <div class="gem-faq-item">
+                    <div class="gem-faq-question" onclick="toggleFaq(4)">Is the salvage value included in the 75%? <span>+</span></div>
+                    <div class="gem-faq-answer"><strong>No, North Carolina law specifically looks at repair costs alone versus the ACV.</strong> Some other states add the salvage scrap value to the repair cost, but NC does not.</div>
+                </div>
+                <div class="gem-faq-item">
+                    <div class="gem-faq-question" onclick="toggleFaq(5)">Can I fix a totaled car? <span>+</span></div>
+                    <div class="gem-faq-answer"><strong>Yes, but it must pass a safety inspection and will always have a "Rebuilt" brand on the title.</strong> This significantly lowers the resale value in the North Carolina market.</div>
+                </div>
+            </div>
+
+            <!-- 16. Sources -->
+            <div style="font-size:0.8rem; color:#888; margin-top:40px; border-top:1px solid #eee; padding-top:20px;">
+                <strong>Sources:</strong> 1. <a href="#">North Carolina General Assembly (NCGS § 20-71.3)</a> | 2. <a href="#">NCDOI Consumer Guides</a> | 3. <a href="#">NC Rate Bureau 2026 Filing</a>
+            </div>
+
+            <!-- 17. CTA -->
+            <div style="background:var(--gem-accent); padding:30px; border-radius:var(--gem-radius); text-align:center; margin:40px 0;">
+                <h2>Don't Navigate This Alone</h2>
+                <p>With 20+ years of experience in Elkin, we help you understand the fine print.</p>
+                <a href="tel:3368351993" style="display:block; background:var(--gem-primary); color:white; padding:15px; margin:10px 0; text-decoration:none; font-weight:bold; border-radius:5px;">📞 Call 336-835-1993</a>
+                <a href="mailto:Save@BillLayneInsurance.com" style="display:block; background:var(--gem-secondary); color:white; padding:15px; margin:10px 0; text-decoration:none; font-weight:bold; border-radius:5px;">📧 Get a Quote</a>
+            </div>
+
+            <!-- 18. Newsletter -->
+            <div style="padding:20px; background:#eee; border-radius:var(--gem-radius);">
+                <strong>Elkin Insurance Insights:</strong> Join 500+ local families getting monthly safety tips.
+                <input type="email" placeholder="Your Email" style="width:100%; padding:10px; margin-top:10px;">
+            </div>
+
+            <!-- 19. Related Articles -->
+            <div style="margin:40px 0;">
+                <h3>Related NC Insurance Guides:</h3>
+                <ul>
+                    <li><a href="/blog/nc-home-insurance">Protecting Your Home in the Yadkin Valley</a></li>
+                    <li><a href="/blog/named-storm-deductibles">What is a Named Storm Deductible in NC?</a></li>
+                    <li><a href="/blog/elkin-car-insurance-rates">Why Elkin Insurance Rates are Changing in 2026</a></li>
+                </ul>
+            </div>
+
+            <!-- 20. Author Bio -->
+            <div class="gem-author-bio">
+                <div style="font-size:3rem;">🛡️</div>
+                <div>
+                    <strong>Bill Layne</strong>
+                    <p>Bill has over 20 years of experience serving the insurance needs of Surry, Yadkin, Wilkes, and Stokes counties. He specializes in local NC regulations and personal service.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 21. Footer -->
+    <footer style="background:var(--gem-primary); color:white; padding:40px 20px; text-align:center;">
+        <p><strong>Bill Layne Insurance</strong><br>
+        1283 N Bridge St, Elkin NC 28621<br>
+        336-835-1993 | <a href="www.BillLayneInsurance.com" style="color:white;">Website</a></p>
+        <div style="margin-top:20px;">
+            <a href="#" style="color:white; margin:0 10px;">Facebook</a>
+            <a href="#" style="color:white; margin:0 10px;">LinkedIn</a>
+        </div>
+    </footer>
+
+    <!-- 22. Mobile Floating CTA -->
+    <div class="gem-floating-cta">
+        <a href="tel:3368351993" class="gem-cta-phone">CALL NOW</a>
+        <a href="https://www.BillLayneInsurance.com" class="gem-cta-quote">GET QUOTE</a>
+    </div>
+</div>
+
+<script>
+function toggleFaq(index) {
+    const answers = document.querySelectorAll('.gem-faq-answer');
+    const current = answers[index].style.display;
+    answers[index].style.display = current === 'block' ? 'none' : 'block';
+}
+
+function calculateLoss() {
+    const acv = document.getElementById('acv').value;
+    const repairs = document.getElementById('repairs').value;
+    const result = document.getElementById('calc-result');
+    
+    if (acv && repairs) {
+        const ratio = (repairs / acv) * 100;
+        if (ratio >= 75) {
+            result.innerHTML = "❌ TOTAL LOSS: " + ratio.toFixed(1) + "% - This exceeds the NC 75% threshold.";
+            result.style.color = "#c8102e";
+        } else {
+            result.innerHTML = "✅ REPAIRABLE: " + ratio.toFixed(1) + "% - This is below the NC 75% threshold.";
+            result.style.color = "#003366";
+        }
+    } else {
+        result.innerHTML = "Please enter both values.";
+    }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "What is the 75% Total Loss Threshold in NC for 2026?",
+  "image": "../assets/images/nc-75-total-loss-threshold-2026-hero.png",
+  "author": {
+    "@type": "Person",
+    "name": "Bill Layne"
+  },
+  "publisher": {
+    "@type": "LocalBusiness",
+    "name": "Bill Layne Insurance",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1283 N Bridge St",
+      "addressLocality": "Elkin",
+      "addressRegion": "NC",
+      "postalCode": "28621",
+      "addressCountry": "US"
+    },
+    "telephone": "336-835-1993"
+  },
+  "datePublished": "2026-05-15",
+  "description": "Learn about North Carolina's 75% total loss threshold law for 2026. How it affects car insurance claims in Elkin, Surry, and Wilkes counties."
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [{
+    "@type": "Question",
+    "name": "Can I negotiate my car's value?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes, you can provide recent sales data of similar vehicles in NC to challenge an ACV."
+    }
+  }, {
+    "@type": "Question",
+    "name": "Does the 75% rule apply to hail damage?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes, cosmetic damage from NC storms is subject to the same 75% math."
+    }
+  }]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "speakable": {
+    "@type": "SpeakableSpecification",
+    "xpath": [
+      "/html/body/div/div/div[4]",
+      "/html/body/div/div/div[5]"
+    ]
+  }
+}
+</script>
