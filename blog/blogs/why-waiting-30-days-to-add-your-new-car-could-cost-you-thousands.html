@@ -1,0 +1,608 @@
+
+<!-- GEM v4.1 YT EDITION DEPENDENCIES -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Bricolage+Grotesque:opsz,wght@12..96,400;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+
+<style>
+/* GEM v4.1 CORE STYLES - SCOPED */
+.gem-post {
+    font-family: 'Outfit', sans-serif;
+    line-height: 1.7;
+    color: #334155;
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    overflow-x: hidden;
+}
+.gem-post h1, .gem-post h2, .gem-post h3 { font-family: 'Bricolage Grotesque', sans-serif; color: #0f172a; }
+.gem-post h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 1rem; letter-spacing: -0.02em; }
+.gem-post h2 { font-size: 1.8rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; border-left: 5px solid #FF0033; padding-left: 1rem; }
+.gem-post h3 { font-size: 1.4rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+.gem-post p { margin-bottom: 1.25rem; font-size: 1.1rem; }
+.gem-post ul, .gem-post ol { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+.gem-post li { margin-bottom: 0.5rem; }
+.gem-post a { color: #2563eb; text-decoration: underline; font-weight: 600; }
+
+/* FONT AWESOME ICON SIZING */
+.gem-post i.fa-solid, .gem-post i.fa-regular, .gem-post i.fa-brands { margin-right: 0.3rem; }
+
+/* SCROLL PROGRESS BAR */
+.gem-progress-bar { position: fixed; top: 0; left: 0; width: 0%; height: 4px; background: linear-gradient(90deg, #FF0033, #FF6B35, #FFD23F); z-index: 1100; transition: width 0.1s linear; }
+
+/* HERO IMAGE */
+.hero-img { width: 100%; height: auto; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+/* SNIPPET BAIT BOX */
+.gem-snippet-bait { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 0 8px 8px 0; margin-bottom: 2rem; font-size: 1.15rem; font-weight: 500; }
+
+/* SHARE BAR */
+.gem-share-bar { display: flex; gap: 0.5rem; margin: 1.5rem 0; padding: 1rem; background: #f8fafc; border-radius: 16px; border: 2px solid #e2e8f0; align-items: center; flex-wrap: wrap; }
+.gem-share-label { font-weight: 800; font-size: 0.85rem; color: #0F0F0F; margin-right: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+.gem-share-btn { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none !important; color: white !important; font-size: 1rem; transition: transform 0.15s; cursor: pointer; border: none; }
+.gem-share-btn:active { transform: scale(0.9); }
+.gem-share-fb { background: #1877F2; }
+.gem-share-x { background: #0F0F0F; }
+.gem-share-email { background: #EA4335; }
+.gem-share-copy { background: #64748b; }
+.gem-share-copy.copied { background: #22c55e; }
+
+/* CHAPTER PROGRESS PILLS */
+.gem-chapter-track { display: flex; gap: 4px; margin: 1rem 0; flex-wrap: wrap; position: sticky; top: 10px; z-index: 50; }
+.gem-chapter-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; background: #e2e8f0; color: #64748b; text-decoration: none !important; transition: all 0.2s; opacity: 0.9; }
+.gem-chapter-pill.active { background: #FF0033; color: white !important; opacity: 1; box-shadow: 0 4px 6px -1px rgba(255, 0, 51, 0.3); }
+.gem-chapter-pill.read { background: #0F0F0F; color: white !important; }
+
+/* PULL QUOTE */
+.gem-pull-quote { margin: 2rem 0; padding: 2rem 1.5rem; background: linear-gradient(135deg, #0F0F0F 0%, #1a1a2e 100%); border-radius: 16px; text-align: center; position: relative; overflow: hidden; }
+.gem-pull-quote::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #FF0033, #FF6B35, #FFD23F, #A8E10C, #00D4FF); }
+.gem-pull-quote-text { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.4rem; font-weight: 800; color: white; line-height: 1.3; letter-spacing: -0.02em; }
+.gem-pull-quote-text .gem-pq-highlight { color: #FFD23F; }
+.gem-pull-quote-source { margin-top: 0.75rem; font-size: 0.8rem; color: #9ca3af; font-weight: 600; }
+
+/* VS COMPARISON CARD */
+.gem-vs-card { margin: 1.5rem 0; border-radius: 16px; overflow: hidden; border: 2px solid #e2e8f0; }
+.gem-vs-header { background: #0F0F0F; color: white; text-align: center; padding: 0.75rem; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.gem-vs-body { display: flex; }
+.gem-vs-side { flex: 1; padding: 1.25rem; text-align: center; }
+.gem-vs-left { background: linear-gradient(180deg, #FEF2F2 0%, #fff 100%); }
+.gem-vs-right { background: linear-gradient(180deg, #F0FDF4 0%, #fff 100%); }
+.gem-vs-divider { width: 3px; background: linear-gradient(180deg, #FF0033, #FFD23F, #22c55e); flex-shrink: 0; }
+.gem-vs-label { font-weight: 800; font-size: 0.95rem; margin-bottom: 0.75rem; display: block; }
+.gem-vs-left .gem-vs-label { color: #DC2626; }
+.gem-vs-right .gem-vs-label { color: #16a34a; }
+.gem-vs-item { font-size: 0.85rem; color: #475569; margin-bottom: 0.4rem; line-height: 1.4; }
+.gem-vs-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+
+/* REVEAL CARD */
+.gem-reveal { margin: 1.5rem 0; border: 2px dashed #7C3AED; border-radius: 16px; overflow: hidden; background: #F5F3FF; }
+.gem-reveal-trigger { padding: 1rem 1.25rem; font-weight: 800; color: #7C3AED; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; min-height: 44px; }
+.gem-reveal-content { display: none; padding: 0 1.25rem 1.25rem; color: #374151; line-height: 1.6; font-size: 0.95rem; border-top: 1px solid #DDD6FE; }
+.gem-reveal-content.visible { display: block; }
+
+/* REACTIONS BAR */
+.gem-reactions { margin: 1.5rem 0; padding: 1.25rem; background: #f8fafc; border-radius: 16px; text-align: center; border: 2px solid #e2e8f0; }
+.gem-reactions-title { font-weight: 700; font-size: 0.9rem; color: #475569; margin-bottom: 0.75rem; }
+.gem-reactions-row { display: flex; justify-content: center; gap: 0.75rem; }
+.gem-react-btn { width: 48px; height: 48px; border-radius: 50%; border: 2px solid #e2e8f0; background: white; font-size: 1.3rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+.gem-react-btn:hover, .gem-react-btn:active { transform: scale(1.15); border-color: #FF0033; }
+.gem-react-btn.selected { background: #FF0033; border-color: #FF0033; color: white !important; transform: scale(1.15); }
+
+/* FAQ SECTION */
+.gem-faq-section { margin: 3rem 0; }
+.gem-faq-header { font-size: 1.8rem; font-weight: 700; margin-bottom: 1.5rem; font-family: 'Bricolage Grotesque', sans-serif; color: #0f172a; }
+.gem-faq-item { border: 2px solid #e2e8f0; border-radius: 12px; margin-bottom: 1rem; background: white; overflow: hidden; transition: border-color 0.2s; }
+.gem-faq-item:hover { border-color: #cbd5e1; }
+.gem-faq-item.active { border-color: #3b82f6; }
+.gem-faq-question { width: 100%; padding: 1.25rem; background: #f8fafc; text-align: left; font-weight: 700; color: #0f172a; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: none; outline: none; font-size: 1.05rem; }
+.gem-faq-question:hover { background: #f1f5f9; }
+.gem-faq-answer { display: none; padding: 1.5rem; color: #475569; line-height: 1.6; background: white; border-top: 1px solid #e2e8f0; font-size: 1rem; }
+.gem-faq-item.active .gem-faq-answer { display: block; }
+.gem-faq-icon { transition: transform 0.3s ease; color: #3b82f6; }
+.gem-faq-item.active .gem-faq-icon { transform: rotate(180deg); }
+
+/* STEP TIMELINE */
+.gem-steps { margin: 1.5rem 0; padding: 0; }
+.gem-step { display: flex; gap: 1rem; padding-bottom: 1.5rem; position: relative; }
+.gem-step:last-child { padding-bottom: 0; }
+.gem-step-line { width: 40px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.gem-step-dot { width: 36px; height: 36px; border-radius: 50%; background: #0F0F0F; color: white; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; z-index: 1; }
+.gem-step-connector { width: 3px; flex: 1; background: linear-gradient(180deg, #0F0F0F, #e2e8f0); margin-top: 4px; }
+.gem-step:last-child .gem-step-connector { display: none; }
+.gem-step-content { flex: 1; padding-top: 0.35rem; }
+.gem-step-title { font-weight: 800; font-size: 1rem; color: #0F0F0F; margin-bottom: 0.25rem; }
+.gem-step-text { font-size: 0.95rem; color: #475569; line-height: 1.5; }
+
+/* RELATED GRID */
+.gem-related { padding: 2rem 1.25rem; background: #0F0F0F; border-radius: 12px; margin-top: 3rem; }
+.gem-related-title { font-family: 'Bricolage Grotesque', sans-serif; color: white; font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; }
+.gem-related-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.gem-related-card { display: flex; gap: 0.75rem; text-decoration: none !important; background: #272727; border-radius: 12px; overflow: hidden; transition: background 0.2s; }
+.gem-related-card:active { background: #333; }
+.gem-related-thumb { width: 120px; height: 68px; object-fit: cover; flex-shrink: 0; border-radius: 8px; margin: 0.5rem 0 0.5rem 0.5rem; }
+.gem-related-info { padding: 0.5rem 0.5rem 0.5rem 0; display: flex; flex-direction: column; justify-content: center; }
+.gem-related-info-title { color: white; font-weight: 700; font-size: 0.85rem; line-height: 1.3; margin-bottom: 0.25rem; }
+.gem-related-info-meta { color: #9ca3af; font-size: 0.7rem; }
+@media (min-width: 768px) {
+    .gem-related-grid { grid-template-columns: 1fr 1fr 1fr; }
+    .gem-related-card { flex-direction: column; }
+    .gem-related-thumb { width: 100%; height: 120px; margin: 0; border-radius: 12px 12px 0 0; }
+    .gem-related-info { padding: 0.75rem; }
+}
+
+/* DATA TABLE */
+.gem-table-wrapper { overflow-x: auto; margin: 1.5rem 0; border-radius: 8px; border: 1px solid #e2e8f0; }
+.gem-table { width: 100%; border-collapse: collapse; min-width: 500px; }
+.gem-table th { background: #f1f5f9; text-align: left; padding: 1rem; font-weight: 700; border-bottom: 2px solid #e2e8f0; }
+.gem-table td { padding: 1rem; border-bottom: 1px solid #e2e8f0; }
+.gem-table tr:last-child td { border-bottom: none; }
+
+/* CTA BOX */
+.gem-cta-box { background: #eff6ff; border: 2px solid #3b82f6; border-radius: 16px; padding: 2rem; text-align: center; margin-top: 3rem; color: #000000 !important; }
+.gem-cta-title { font-size: 1.5rem; font-weight: 800; color: #000000 !important; margin-bottom: 0.5rem; }
+.gem-cta-text { margin-bottom: 1.5rem; color: #000000 !important; font-weight: 600; }
+.gem-cta-btn { display: inline-block; background: #2563eb; color: white !important; padding: 1rem 2rem; border-radius: 50px; font-weight: 700; text-decoration: none !important; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.5); transition: transform 0.2s; }
+.gem-cta-btn:hover { transform: translateY(-2px); }
+
+/* CORNER RIBBON */
+.gem-ribbon-wrap { position: relative; }
+.gem-ribbon { position: absolute; top: 12px; right: -8px; background: #FF0033; color: white; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 14px 4px 10px; border-radius: 4px 0 0 4px; z-index: 2; box-shadow: 0 2px 6px rgba(255,0,51,0.3); }
+.gem-ribbon::after { content: ''; position: absolute; top: 100%; right: 0; border: 4px solid transparent; border-top-color: #990020; border-right-color: #990020; }
+.gem-ribbon-new { background: #FF0033; }
+</style>
+
+<div class="gem-post"><div class="gem-blog-container font-sans text-slate-800 leading-relaxed">
+
+    <!-- 1. Scroll Progress Bar -->
+    <div class="gem-progress-bar h-1.5 bg-blue-600 fixed top-0 left-0 z-50 transition-all duration-300" id="gemProgress" style="width: 0%"></div>
+
+    <!-- 2. H1 Title -->
+    <h1 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">
+        Why Waiting 30 Days to Add Your New Car Could Cost You Thousands: The Complete Checklist
+    </h1>
+
+    <!-- 3. Snippet Bait / TLDR Box -->
+    <div class="gem-snippet-bait bg-blue-50 border-l-4 border-blue-600 p-6 mb-8 rounded-r-lg shadow-sm">
+        <div class="flex items-start gap-4">
+            <div class="mt-1 text-blue-600 text-2xl">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg mb-2 text-blue-900">Do You Really Have 30 Days? (The Short Answer)</h3>
+                <p class="font-medium text-slate-700">
+                    <strong>Yes, but it's dangerous.</strong> In North Carolina, automatic coverage for a new vehicle matches the <em>coverage you currently have</em>, not necessarily the coverage you need. If you trade a car with "Liability Only" for a brand new SUV, that new SUV has <strong>zero</strong> Collision or Comprehensive coverage during the grace period (typically 4–30 days). If you wreck it driving home, the payout is $0.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Hero Image -->
+    <div class="mb-6">
+        <img height="768" width="1344" src="https://i.imgur.com/gvIQnIQ.jpeg" alt="New car keys with insurance policy paperwork on a desk in Elkin NC" class="hero-img w-full h-auto rounded-xl shadow-lg object-cover" />
+    </div>
+
+    <!-- 4b. YouTube Video Embed (MANDATORY PLACEMENT) -->
+    <div class="my-8">
+        <p class="text-sm font-bold text-slate-800 mb-2 font-sans"><i class="fa-brands fa-youtube text-red-600 mr-2"></i>Watch the Video Version</p>
+        <div class="relative w-full aspect-video rounded-xl overflow-hidden shadow-md bg-slate-100">
+           <iframe src="https://www.youtube.com/embed/Vz1tDVpZb18" title="Video version" class="absolute top-0 left-0 w-full h-full" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </div>
+
+    <!-- 5. Share Bar -->
+    <div class="gem-share-bar flex flex-wrap gap-3 mb-10 py-4 border-y border-slate-200">
+        <span class="text-slate-500 font-semibold text-sm self-center mr-2">Share this warning:</span>
+        <button class="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-bold hover:bg-blue-700 transition"><i class="fa-brands fa-facebook-f mr-2"></i>Share</button>
+        <button class="bg-black text-white px-4 py-2 rounded-full text-sm font-bold hover:bg-gray-800 transition"><i class="fa-brands fa-x-twitter mr-2"></i>Post</button>
+        <button class="bg-green-600 text-white px-4 py-2 rounded-full text-sm font-bold hover:bg-green-700 transition"><i class="fa-solid fa-envelope mr-2"></i>Email</button>
+        <button class="bg-slate-200 text-slate-700 px-4 py-2 rounded-full text-sm font-bold hover:bg-slate-300 transition"><i class="fa-solid fa-link mr-2"></i>Copy</button>
+    </div>
+
+    <!-- 6. Chapter Tracker -->
+    <div class="gem-chapter-track bg-slate-50 p-4 rounded-lg mb-10 border border-slate-200">
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Table of Contents</p>
+        <div class="flex flex-col md:flex-row gap-4 text-sm font-semibold text-blue-600">
+            <a href="#section1" class="hover:underline hover:text-blue-800"><i class="fa-solid fa-1 mr-1"></i> The "Automatic" Myth</a>
+            <a href="#section2" class="hover:underline hover:text-blue-800"><i class="fa-solid fa-2 mr-1"></i> The Liability Trap</a>
+            <a href="#section3" class="hover:underline hover:text-blue-800"><i class="fa-solid fa-3 mr-1"></i> The NC Gap</a>
+            <a href="#section4" class="hover:underline hover:text-blue-800"><i class="fa-solid fa-4 mr-1"></i> The Safe Timeline</a>
+        </div>
+    </div>
+
+    <p class="text-lg mb-6">
+        The year is 2026. Cars are smarter, faster, and unfortunately, more expensive to repair than ever before. You just signed the papers for that new ride in Elkin. The dealer tossed you the keys and said, "Don't worry, you've got 30 days to let your insurance agent know."
+    </p>
+    <p class="text-lg mb-8">
+        They aren't technically lying. But they are leaving out a detail so critical that missing it could bankrupt you before you even get your new car home to the driveway. At <strong>Bill Layne Insurance</strong>, we see this confusion all the time, and we want to make sure you're protected <em>before</em> the rubber hits the road.
+    </p>
+
+    <!-- 7. Key Takeaways -->
+    <div class="bg-green-50 p-6 rounded-xl mb-10 border border-green-200 shadow-sm">
+        <h3 class="font-bold text-green-900 text-xl mb-4"><i class="fa-solid fa-list-check mr-2"></i> Key Takeaways</h3>
+        <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+                <i class="fa-solid fa-check text-green-600 mt-1"></i>
+                <span class="text-slate-700"><strong>The Coverage Mirror:</strong> Automatic coverage usually mirrors what you <em>already have</em>, not what the new car needs.</span>
+            </li>
+            <li class="flex items-start gap-3">
+                <i class="fa-solid fa-check text-green-600 mt-1"></i>
+                <span class="text-slate-700"><strong>Liability Only Risk:</strong> If your old car didn't have collision coverage, your new car doesn't either during the grace period.</span>
+            </li>
+            <li class="flex items-start gap-3">
+                <i class="fa-solid fa-check text-green-600 mt-1"></i>
+                <span class="text-slate-700"><strong>NC Limits:</strong> As of 2025, NC requires 50/100/50 liability, but that doesn't fix your car if you hit a deer on I-77.</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 8. Section 1 -->
+    <h2 id="section1" class="text-2xl md:text-3xl font-bold text-slate-900 mb-6">1. The "Automatic Coverage" Myth Explained</h2>
+    
+    <p class="mb-6">
+        Let's clear the air. Most personal auto policies (especially the standard NC ISO forms) do include a clause for "Newly Acquired Vehicles." This clause is designed for convenience. It acknowledges that people buy cars on weekends or evenings when their agent's office might be closed.
+    </p>
+    <p class="mb-6">
+        However, "Automatic Coverage" does not mean "Full Coverage." It is a temporary bridge. The insurance company agrees to extend your <strong>existing contract</strong> to the new metal sitting in your garage.
+    </p>
+
+    <!-- 9. Pull Quote Card -->
+    <div class="gem-pull-quote relative bg-slate-900 p-8 my-10 rounded-xl text-center shadow-xl overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+        <i class="fa-solid fa-quote-left text-4xl text-blue-500 mb-4 block"></i>
+        <p class="text-2xl md:text-3xl font-black text-white italic relative z-10">
+            "You don't get 'Full Coverage' automatically. You get 'Current Coverage' automatically. And that is a massive difference."
+        </p>
+        <p class="text-slate-400 mt-4 font-bold uppercase tracking-wider text-sm relative z-10">— Bill Layne Insurance Team</p>
+    </div>
+
+    <p class="mb-8">
+        This is where the nightmare scenario begins. If your policy is set up for an old 2015 sedan, that policy is what gets applied to your brand new 2026 truck.
+    </p>
+
+    <!-- 10. Section 2 -->
+    <h2 id="section2" class="text-2xl md:text-3xl font-bold text-slate-900 mb-6">2. The Liability Trap: Old Car vs. New Car</h2>
+
+    <p class="mb-6">
+        Here is the most common scenario we see in Elkin and Jonesville. You have an older "commuter car." It's paid off. To save money, you dropped Comprehensive and Collision coverage years ago. You only carry Liability (protection if you hit someone else).
+    </p>
+    <p class="mb-6">
+        You trade that car in for a $45,000 new vehicle. You drive off the lot thinking, "I have 30 days to call Bill."
+    </p>
+    <p class="mb-6">
+        <strong>Stop right there.</strong> Because your policy only carries Liability, your automatic coverage for the new car is... Liability Only.
+    </p>
+
+    <!-- 11. VS Comparison Card -->
+    <div class="gem-vs-card grid md:grid-cols-2 gap-0 border border-slate-300 rounded-xl overflow-hidden mb-12 shadow-md">
+        <div class="bg-red-50 p-6 border-b md:border-b-0 md:border-r border-slate-300">
+            <h4 class="font-black text-red-700 text-lg uppercase mb-2"><i class="fa-solid fa-car-burst mr-2"></i> The Risk (Old Policy)</h4>
+            <p class="text-sm font-bold text-slate-600 mb-4">Trading in a "Beater" with Liability Only</p>
+            <ul class="text-sm space-y-2 text-slate-700">
+                <li><i class="fa-solid fa-xmark text-red-500 mr-2"></i> No Collision Coverage</li>
+                <li><i class="fa-solid fa-xmark text-red-500 mr-2"></i> No Theft/Fire Coverage</li>
+                <li><i class="fa-solid fa-xmark text-red-500 mr-2"></i> No Deer Hit Coverage</li>
+                <li class="font-bold pt-2">Result: If you total the new car, you owe the bank $45k and get $0 from insurance.</li>
+            </ul>
+        </div>
+        <div class="bg-green-50 p-6">
+            <h4 class="font-black text-green-700 text-lg uppercase mb-2"><i class="fa-solid fa-shield-halved mr-2"></i> The Fix (New Policy)</h4>
+            <p class="text-sm font-bold text-slate-600 mb-4">Adding the Car BEFORE Leaving the Lot</p>
+            <ul class="text-sm space-y-2 text-slate-700">
+                <li><i class="fa-solid fa-check text-green-600 mr-2"></i> Full Collision Coverage</li>
+                <li><i class="fa-solid fa-check text-green-600 mr-2"></i> Comprehensive (Wind/Hail/Deer)</li>
+                <li><i class="fa-solid fa-check text-green-600 mr-2"></i> Gap Insurance (Optional)</li>
+                <li class="font-bold pt-2">Result: Car is replaced or repaired, minus deductible.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 12. Section 3 -->
+    <h2 id="section3" class="text-2xl md:text-3xl font-bold text-slate-900 mb-6">3. North Carolina Specifics & The "Gap"</h2>
+
+    <p class="mb-6">
+        Living in the foothills of NC, we have specific risks. Since the insurance laws updated in 2025, the minimum liability limits in NC are now <strong>$50,000/$100,000/$50,000</strong>. That covers the <em>other</em> person if you hit them.
+    </p>
+    <p class="mb-6">
+        But what about physical damage? In Surry, Wilkes, and Yadkin counties, deer strikes are a massive claim category. If you are relying on the "Grace Period" from a Liability-Only policy, hitting a deer is an out-of-pocket expense.
+    </p>
+
+    <!-- 13. Reveal/Spoiler Card -->
+    <div class="gem-reveal my-10 group cursor-pointer" onclick="this.classList.toggle('active')">
+        <div class="relative bg-slate-800 rounded-xl p-8 text-center transition-all duration-300 hover:bg-slate-700">
+            <div class="content-hidden group-[.active]:hidden">
+                <i class="fa-solid fa-hand-pointer text-yellow-400 text-3xl mb-4 animate-bounce"></i>
+                <h3 class="text-white font-bold text-xl">Tap to Reveal: The "Dealer Call" Myth</h3>
+                <p class="text-slate-400 text-sm mt-2">Does the car dealer automatically call your insurance for you?</p>
+            </div>
+            <div class="content-visible hidden group-[.active]:block animate-fadeIn">
+                <i class="fa-solid fa-triangle-exclamation text-red-500 text-3xl mb-4"></i>
+                <h3 class="text-white font-bold text-xl mb-2">ABSOLUTELY NOT.</h3>
+                <p class="text-slate-200">
+                    Dealers verify you <em>have</em> insurance, but they generally <strong>do not</strong> have the authority to modify your policy or add vehicles. We have had clients drive for weeks thinking the dealer "handled it," only to find out the car was never added.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 14. Data Table -->
+    <div class="gem-table-wrapper overflow-x-auto mb-12">
+        <table class="gem-table w-full text-left border-collapse bg-white shadow-lg rounded-lg overflow-hidden">
+            <thead class="bg-blue-900 text-white">
+                <tr>
+                    <th class="p-4 text-sm font-bold uppercase tracking-wider">Scenario</th>
+                    <th class="p-4 text-sm font-bold uppercase tracking-wider">Current Policy</th>
+                    <th class="p-4 text-sm font-bold uppercase tracking-wider">New Car Status (First 30 Days)</th>
+                    <th class="p-4 text-sm font-bold uppercase tracking-wider">Risk Level</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="p-4 font-semibold text-slate-800">Replacement Vehicle</td>
+                    <td class="p-4 text-slate-600">Full Coverage</td>
+                    <td class="p-4 text-green-600 font-bold">Full Coverage (Transfers)</td>
+                    <td class="p-4"><span class="bg-green-100 text-green-800 py-1 px-3 rounded-full text-xs font-bold">LOW</span></td>
+                </tr>
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="p-4 font-semibold text-slate-800">Replacement Vehicle</td>
+                    <td class="p-4 text-slate-600">Liability Only</td>
+                    <td class="p-4 text-red-600 font-bold">Liability Only (NO physical damage)</td>
+                    <td class="p-4"><span class="bg-red-100 text-red-800 py-1 px-3 rounded-full text-xs font-bold">CRITICAL</span></td>
+                </tr>
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="p-4 font-semibold text-slate-800">Additional Vehicle</td>
+                    <td class="p-4 text-slate-600">Mixed Coverage</td>
+                    <td class="p-4 text-orange-600 font-bold">Usually "Broadest" Coverage on Policy</td>
+                    <td class="p-4"><span class="bg-orange-100 text-orange-800 py-1 px-3 rounded-full text-xs font-bold">MEDIUM</span></td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="text-xs text-slate-400 mt-2 italic">*Based on standard NC ISO policy forms. Specific carrier rules may vary.</p>
+    </div>
+
+    <!-- 15. Section 4 -->
+    <h2 id="section4" class="text-2xl md:text-3xl font-bold text-slate-900 mb-6">4. How to Do It Right (The Safe Timeline)</h2>
+    
+    <div class="mb-8">
+        <img loading="lazy" height="768" width="1344" src="https://i.imgur.com/N6kXkMe.jpeg" alt="Happy couple driving new car on Blue Ridge Parkway" class="w-full h-auto rounded-xl shadow-lg object-cover" />
+    </div>
+
+    <p class="mb-8">
+        Don't leave your $30,000+ asset to chance. The "Zero-Click" answer to this problem is simple: <strong>Call us before you sign.</strong> Here is the timeline you should follow for every vehicle purchase.
+    </p>
+
+    <!-- 16. Step-by-Step Timeline -->
+    <div class="gem-steps space-y-6 relative border-l-2 border-slate-200 ml-4 pl-8 mb-12">
+        <div class="relative">
+            <span class="absolute -left-[41px] top-0 bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">1</span>
+            <h4 class="font-bold text-lg text-slate-900">Get the VIN</h4>
+            <p class="text-slate-600 text-sm">Before you go into the finance office, snap a picture of the VIN (Vehicle Identification Number).</p>
+        </div>
+        <div class="relative">
+            <span class="absolute -left-[41px] top-0 bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">2</span>
+            <h4 class="font-bold text-lg text-slate-900">Call/Text Bill Layne Insurance</h4>
+            <p class="text-slate-600 text-sm">Call us at 336-835-1993. We can pull up the quote instantly. We will tell you exactly how much the insurance change will cost.</p>
+        </div>
+        <div class="relative">
+            <span class="absolute -left-[41px] top-0 bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">3</span>
+            <h4 class="font-bold text-lg text-slate-900">Bind Coverage</h4>
+            <p class="text-slate-600 text-sm">We add the vehicle to your policy effective <em>immediately</em>. We can email the ID card directly to your phone or the dealer.</p>
+        </div>
+        <div class="relative">
+            <span class="absolute -left-[41px] top-0 bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm"><i class="fa-solid fa-flag-checkered"></i></span>
+            <h4 class="font-bold text-lg text-slate-900">Drive Away Protected</h4>
+            <p class="text-slate-600 text-sm">Now you have Full Coverage, confirmed. No gaps, no guessing, no risk.</p>
+        </div>
+    </div>
+
+    <!-- 17. Reactions Bar -->
+    <div class="gem-reactions bg-slate-50 p-6 rounded-lg text-center mb-10">
+        <p class="font-bold text-slate-700 mb-4">Was this guide helpful?</p>
+        <div class="flex justify-center gap-6 text-2xl">
+            <button class="hover:scale-110 transition transform text-slate-400 hover:text-green-500"><i class="fa-solid fa-thumbs-up"></i></button>
+            <button class="hover:scale-110 transition transform text-slate-400 hover:text-red-500"><i class="fa-solid fa-thumbs-down"></i></button>
+            <button class="hover:scale-110 transition transform text-slate-400 hover:text-yellow-500"><i class="fa-solid fa-face-surprise"></i></button>
+        </div>
+    </div>
+
+    <!-- 18. FAQ Section -->
+    <div class="gem-faq-section mb-12">
+        <h2 class="text-2xl font-bold text-slate-900 mb-6">Frequently Asked Questions</h2>
+        
+        <div class="space-y-4">
+            <!-- FAQ Item 1 -->
+            <div class="gem-faq-item border border-slate-200 rounded-lg overflow-hidden">
+                <button class="gem-faq-question w-full text-left p-4 bg-white font-bold text-slate-800 flex justify-between items-center hover:bg-slate-50 transition" onclick="
+                    const answer = this.nextElementSibling;
+                    const icon = this.querySelector('.gem-faq-icon');
+                    answer.classList.toggle('hidden');
+                    icon.classList.toggle('rotate-180');
+                ">
+                    What if I buy a car on Saturday and your office is closed?
+                    <i class="fa-solid fa-chevron-down gem-faq-icon transition-transform duration-300"></i>
+                </button>
+                <div class="gem-faq-answer hidden p-4 bg-slate-50 text-slate-600 text-sm border-t border-slate-200">
+                    If you have an existing policy with us, the automatic grace period usually protects you through the weekend—<strong>provided you understand the coverage limits discussed above.</strong> Call us first thing Monday morning to formalize it.
+                </div>
+            </div>
+
+            <!-- FAQ Item 2 -->
+            <div class="gem-faq-item border border-slate-200 rounded-lg overflow-hidden">
+                <button class="gem-faq-question w-full text-left p-4 bg-white font-bold text-slate-800 flex justify-between items-center hover:bg-slate-50 transition" onclick="
+                    const answer = this.nextElementSibling;
+                    const icon = this.querySelector('.gem-faq-icon');
+                    answer.classList.toggle('hidden');
+                    icon.classList.toggle('rotate-180');
+                ">
+                    Does "Full Coverage" cover the whole loan amount?
+                    <i class="fa-solid fa-chevron-down gem-faq-icon transition-transform duration-300"></i>
+                </button>
+                <div class="gem-faq-answer hidden p-4 bg-slate-50 text-slate-600 text-sm border-t border-slate-200">
+                    Not always. Insurance pays the "Actual Cash Value" of the car at the time of the loss. If you owe more than the car is worth (depreciation), you need <strong>Gap Insurance</strong>. Ask us about adding this; it's often cheaper through your agent than the dealer.
+                </div>
+            </div>
+
+            <!-- FAQ Item 3 -->
+            <div class="gem-faq-item border border-slate-200 rounded-lg overflow-hidden">
+                <button class="gem-faq-question w-full text-left p-4 bg-white font-bold text-slate-800 flex justify-between items-center hover:bg-slate-50 transition" onclick="
+                    const answer = this.nextElementSibling;
+                    const icon = this.querySelector('.gem-faq-icon');
+                    answer.classList.toggle('hidden');
+                    icon.classList.toggle('rotate-180');
+                ">
+                    I don't have a car currently. Do I have 30 days?
+                    <i class="fa-solid fa-chevron-down gem-faq-icon transition-transform duration-300"></i>
+                </button>
+                <div class="gem-faq-answer hidden p-4 bg-slate-50 text-slate-600 text-sm border-t border-slate-200">
+                    <strong>No.</strong> If you do not have an active auto policy, you have zero grace period. You must purchase a policy before driving the vehicle off the lot.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 19. CTA Box -->
+    <div class="gem-cta-box bg-blue-900 text-white rounded-2xl p-8 text-center shadow-2xl relative overflow-hidden mb-12">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-blue-500 rounded-full opacity-20 blur-xl"></div>
+        <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-32 h-32 bg-indigo-500 rounded-full opacity-20 blur-xl"></div>
+        
+        <h3 class="text-2xl md:text-3xl font-extrabold mb-4 relative z-10">Don't Drive Without Certainty.</h3>
+        <p class="text-blue-200 mb-6 text-lg relative z-10">Buying a new car in Elkin, Jonesville, or Yadkinville? Call the local experts who actually answer the phone.</p>
+        
+        <div class="bg-white/10 p-4 rounded-lg inline-block mb-6 backdrop-blur-sm border border-white/20">
+            <p class="font-bold text-xl">Bill Layne Insurance</p>
+            <p class="text-sm text-blue-100">1283 N Bridge St, Elkin NC 28621</p>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-4 justify-center relative z-10">
+            <a href="tel:336-835-1993" class="bg-yellow-400 text-blue-900 px-6 py-3 rounded-full font-bold text-lg hover:bg-yellow-300 transition shadow-lg flex items-center justify-center">
+                <i class="fa-solid fa-phone mr-2"></i> 336-835-1993
+            </a>
+            <a href="mailto:Save@BillLayneInsurance.com" class="bg-transparent border-2 border-white text-white px-6 py-3 rounded-full font-bold text-lg hover:bg-white hover:text-blue-900 transition flex items-center justify-center">
+                <i class="fa-solid fa-envelope mr-2"></i> Email Us
+            </a>
+        </div>
+        <p class="mt-4 text-xs text-blue-300 opacity-80">www.NCAutoandHome.com</p>
+    </div>
+
+    <!-- 20. Related Articles Grid -->
+    <div class="gem-related">
+        <h3 class="font-bold text-slate-900 text-xl mb-6">Watch & Read Next</h3>
+        <div class="grid md:grid-cols-3 gap-6">
+            <!-- Card 1 -->
+            <div class="group cursor-pointer">
+                <div class="aspect-video bg-slate-200 rounded-lg overflow-hidden mb-3 relative">
+                    <img loading="lazy" height="768" width="1344" src="https://i.imgur.com/iOY4k2V.jpeg" class="w-full h-full object-cover transition duration-300 group-hover:scale-105" alt="Hail damage on car hood" />
+                    <div class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">5:42</div>
+                </div>
+                <h4 class="font-bold text-slate-800 leading-tight group-hover:text-blue-600 transition">NC Hail Season: Is Your Deductible Too High?</h4>
+                <p class="text-xs text-slate-500 mt-1">1.2k views • 2 days ago</p>
+            </div>
+            <!-- Card 2 -->
+            <div class="group cursor-pointer">
+                <div class="aspect-video bg-slate-200 rounded-lg overflow-hidden mb-3 relative">
+                    <div class="w-full h-full flex items-center justify-center bg-slate-800 text-white">
+                        <i class="fa-solid fa-house-chimney-crack text-4xl"></i>
+                    </div>
+                    <div class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">Article</div>
+                </div>
+                <h4 class="font-bold text-slate-800 leading-tight group-hover:text-blue-600 transition">Homeowners Insurance: Replacement Cost vs. Market Value</h4>
+                <p class="text-xs text-slate-500 mt-1">Bill Layne Insurance</p>
+            </div>
+            <!-- Card 3 -->
+            <div class="group cursor-pointer">
+                <div class="aspect-video bg-slate-200 rounded-lg overflow-hidden mb-3 relative">
+                    <div class="w-full h-full flex items-center justify-center bg-blue-600 text-white">
+                        <i class="fa-solid fa-users text-4xl"></i>
+                    </div>
+                    <div class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">3:15</div>
+                </div>
+                <h4 class="font-bold text-slate-800 leading-tight group-hover:text-blue-600 transition">Adding a Teen Driver in 2026? Read This First.</h4>
+                <p class="text-xs text-slate-500 mt-1">Bill Layne Insurance</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- JavaScript for Interactive Elements -->
+<script>
+    // Scroll Progress Bar Logic
+    window.onscroll = function() {
+        let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        let scrolled = (winScroll / height) * 100;
+        document.getElementById("gemProgress").style.width = scrolled + "%";
+    };
+</script></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Scroll Progress Bar
+    window.addEventListener('scroll', function() {
+        var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var scrolled = (winScroll / height) * 100;
+        var bar = document.getElementById('gemProgress');
+        if (bar) bar.style.width = scrolled + '%';
+        
+        // Chapter Tracker
+        var sections = document.querySelectorAll('.gem-post h2');
+        var pills = document.querySelectorAll('.gem-chapter-pill');
+        var currentId = '';
+        sections.forEach(function(sec) {
+            var top = sec.getBoundingClientRect().top;
+            if (top < window.innerHeight * 0.5) {
+                currentId = sec.id;
+            }
+        });
+        pills.forEach(function(pill) {
+            var pillSection = pill.getAttribute('href').substring(1);
+            pill.classList.remove('active');
+            if (pillSection === currentId) {
+                pill.classList.add('active');
+            }
+        });
+    });
+
+    // Copy Link Button
+    window.copyLink = function(btn) {
+        navigator.clipboard.writeText(window.location.href).then(function() {
+            btn.classList.add('copied');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+            setTimeout(function() {
+                btn.classList.remove('copied');
+                btn.innerHTML = '<i class="fa-solid fa-link"></i>';
+            }, 2000);
+        });
+    };
+
+    // Reveal Card
+    window.toggleReveal = function(el) {
+        var content = el.nextElementSibling;
+        content.classList.toggle('visible');
+        var span = el.querySelector('span:last-child');
+        if (content.classList.contains('visible')) {
+            span.textContent = 'Tap to hide';
+        } else {
+            span.textContent = 'Tap to reveal';
+        }
+    };
+
+    // FAQ Toggle
+    window.toggleFaq = function(btn) {
+        var item = btn.parentElement;
+        item.classList.toggle('active');
+    };
+
+    // Reaction Bar
+    window.react = function(btn) {
+        var all = btn.parentElement.querySelectorAll('.gem-react-btn');
+        all.forEach(function(b) { b.classList.remove('selected'); });
+        btn.classList.add('selected');
+        var title = btn.parentElement.previousElementSibling;
+        if(title) title.textContent = 'Thanks for the feedback!';
+    };
+});
+</script>
