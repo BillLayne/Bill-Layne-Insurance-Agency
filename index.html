@@ -2159,7 +2159,7 @@
                     cards.forEach(card => cardObserver.observe(card));
 
                     const scrollToCard = (idx) => {
-                        if (cards[idx]) cards[idx].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                        if (cards[idx]) carousel.scrollTo({ left: cards[idx].offsetLeft - carousel.offsetLeft, behavior: 'smooth' });
                     };
                     const startAuto = () => { stopAuto(); autoTimer = setInterval(() => { currentIndex = (currentIndex + 1) % cards.length; scrollToCard(currentIndex); }, 5000); };
                     const stopAuto = () => { if (autoTimer) { clearInterval(autoTimer); autoTimer = null; } };
