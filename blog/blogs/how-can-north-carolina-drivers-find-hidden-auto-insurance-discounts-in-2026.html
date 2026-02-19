@@ -1,0 +1,735 @@
+﻿
+<!-- GEM v4.1 YT EDITION DEPENDENCIES -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Bricolage+Grotesque:opsz,wght@12..96,400;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+
+<style>
+/* GEM v4.1 CORE STYLES - SCOPED */
+.gem-post {
+    font-family: 'Outfit', sans-serif;
+    line-height: 1.7;
+    color: #334155;
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    overflow-x: hidden;
+}
+.gem-post h1, .gem-post h2, .gem-post h3 { font-family: 'Bricolage Grotesque', sans-serif; color: #0f172a; }
+.gem-post h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 1rem; letter-spacing: -0.02em; }
+.gem-post h2 { font-size: 1.8rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; border-left: 5px solid #FF0033; padding-left: 1rem; }
+.gem-post h3 { font-size: 1.4rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+.gem-post p { margin-bottom: 1.25rem; font-size: 1.1rem; }
+.gem-post ul, .gem-post ol { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+.gem-post li { margin-bottom: 0.5rem; }
+.gem-post a { color: #2563eb; text-decoration: underline; font-weight: 600; }
+
+/* FONT AWESOME ICON SIZING */
+.gem-post i.fa-solid, .gem-post i.fa-regular, .gem-post i.fa-brands { margin-right: 0.3rem; }
+
+/* SCROLL PROGRESS BAR */
+.gem-progress-bar { position: fixed; top: 0; left: 0; width: 0%; height: 4px; background: linear-gradient(90deg, #FF0033, #FF6B35, #FFD23F); z-index: 1100; transition: width 0.1s linear; }
+
+/* HERO IMAGE */
+.hero-img { width: 100%; height: auto; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+/* SNIPPET BAIT BOX */
+.gem-snippet-bait { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 0 8px 8px 0; margin-bottom: 2rem; font-size: 1.15rem; font-weight: 500; }
+
+/* SHARE BAR */
+.gem-share-bar { display: flex; gap: 0.5rem; margin: 1.5rem 0; padding: 1rem; background: #f8fafc; border-radius: 16px; border: 2px solid #e2e8f0; align-items: center; flex-wrap: wrap; }
+.gem-share-label { font-weight: 800; font-size: 0.85rem; color: #0F0F0F; margin-right: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+.gem-share-btn { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none !important; color: white !important; font-size: 1rem; transition: transform 0.15s; cursor: pointer; border: none; }
+.gem-share-btn:active { transform: scale(0.9); }
+.gem-share-fb { background: #1877F2; }
+.gem-share-x { background: #0F0F0F; }
+.gem-share-email { background: #EA4335; }
+.gem-share-copy { background: #64748b; }
+.gem-share-copy.copied { background: #22c55e; }
+
+/* CHAPTER PROGRESS PILLS */
+.gem-chapter-track { display: flex; gap: 4px; margin: 1rem 0; flex-wrap: wrap; position: sticky; top: 10px; z-index: 50; }
+.gem-chapter-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; background: #e2e8f0; color: #64748b; text-decoration: none !important; transition: all 0.2s; opacity: 0.9; }
+.gem-chapter-pill.active { background: #FF0033; color: white !important; opacity: 1; box-shadow: 0 4px 6px -1px rgba(255, 0, 51, 0.3); }
+.gem-chapter-pill.read { background: #0F0F0F; color: white !important; }
+
+/* PULL QUOTE */
+.gem-pull-quote { margin: 2rem 0; padding: 2rem 1.5rem; background: linear-gradient(135deg, #0F0F0F 0%, #1a1a2e 100%); border-radius: 16px; text-align: center; position: relative; overflow: hidden; }
+.gem-pull-quote::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #FF0033, #FF6B35, #FFD23F, #A8E10C, #00D4FF); }
+.gem-pull-quote-text { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.4rem; font-weight: 800; color: white; line-height: 1.3; letter-spacing: -0.02em; }
+.gem-pull-quote-text .gem-pq-highlight { color: #FFD23F; }
+.gem-pull-quote-source { margin-top: 0.75rem; font-size: 0.8rem; color: #9ca3af; font-weight: 600; }
+
+/* VS COMPARISON CARD */
+.gem-vs-card { margin: 1.5rem 0; border-radius: 16px; overflow: hidden; border: 2px solid #e2e8f0; }
+.gem-vs-header { background: #0F0F0F; color: white; text-align: center; padding: 0.75rem; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.gem-vs-body { display: flex; }
+.gem-vs-side { flex: 1; padding: 1.25rem; text-align: center; }
+.gem-vs-left { background: linear-gradient(180deg, #FEF2F2 0%, #fff 100%); }
+.gem-vs-right { background: linear-gradient(180deg, #F0FDF4 0%, #fff 100%); }
+.gem-vs-divider { width: 3px; background: linear-gradient(180deg, #FF0033, #FFD23F, #22c55e); flex-shrink: 0; }
+.gem-vs-label { font-weight: 800; font-size: 0.95rem; margin-bottom: 0.75rem; display: block; }
+.gem-vs-left .gem-vs-label { color: #DC2626; }
+.gem-vs-right .gem-vs-label { color: #16a34a; }
+.gem-vs-item { font-size: 0.85rem; color: #475569; margin-bottom: 0.4rem; line-height: 1.4; }
+.gem-vs-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+
+/* REVEAL CARD */
+.gem-reveal { margin: 1.5rem 0; border: 2px dashed #7C3AED; border-radius: 16px; overflow: hidden; background: #F5F3FF; }
+.gem-reveal-trigger { padding: 1rem 1.25rem; font-weight: 800; color: #7C3AED; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; min-height: 44px; }
+.gem-reveal-content { display: none; padding: 0 1.25rem 1.25rem; color: #374151; line-height: 1.6; font-size: 0.95rem; border-top: 1px solid #DDD6FE; }
+.gem-reveal-content.visible { display: block; }
+
+/* REACTIONS BAR */
+.gem-reactions { margin: 1.5rem 0; padding: 1.25rem; background: #f8fafc; border-radius: 16px; text-align: center; border: 2px solid #e2e8f0; }
+.gem-reactions-title { font-weight: 700; font-size: 0.9rem; color: #475569; margin-bottom: 0.75rem; }
+.gem-reactions-row { display: flex; justify-content: center; gap: 0.75rem; }
+.gem-react-btn { width: 48px; height: 48px; border-radius: 50%; border: 2px solid #e2e8f0; background: white; font-size: 1.3rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+.gem-react-btn:hover, .gem-react-btn:active { transform: scale(1.15); border-color: #FF0033; }
+.gem-react-btn.selected { background: #FF0033; border-color: #FF0033; color: white !important; transform: scale(1.15); }
+
+/* FAQ SECTION */
+.gem-faq-section { margin: 3rem 0; }
+.gem-faq-header { font-size: 1.8rem; font-weight: 700; margin-bottom: 1.5rem; font-family: 'Bricolage Grotesque', sans-serif; color: #0f172a; }
+.gem-faq-item { border: 2px solid #e2e8f0; border-radius: 12px; margin-bottom: 1rem; background: white; overflow: hidden; transition: border-color 0.2s; }
+.gem-faq-item:hover { border-color: #cbd5e1; }
+.gem-faq-item.active { border-color: #3b82f6; }
+.gem-faq-question { width: 100%; padding: 1.25rem; background: #f8fafc; text-align: left; font-weight: 700; color: #0f172a; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: none; outline: none; font-size: 1.05rem; }
+.gem-faq-question:hover { background: #f1f5f9; }
+.gem-faq-answer { display: none; padding: 1.5rem; color: #475569; line-height: 1.6; background: white; border-top: 1px solid #e2e8f0; font-size: 1rem; }
+.gem-faq-item.active .gem-faq-answer { display: block; }
+.gem-faq-icon { transition: transform 0.3s ease; color: #3b82f6; }
+.gem-faq-item.active .gem-faq-icon { transform: rotate(180deg); }
+
+/* STEP TIMELINE */
+.gem-steps { margin: 1.5rem 0; padding: 0; }
+.gem-step { display: flex; gap: 1rem; padding-bottom: 1.5rem; position: relative; }
+.gem-step:last-child { padding-bottom: 0; }
+.gem-step-line { width: 40px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.gem-step-dot { width: 36px; height: 36px; border-radius: 50%; background: #0F0F0F; color: white; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; z-index: 1; }
+.gem-step-connector { width: 3px; flex: 1; background: linear-gradient(180deg, #0F0F0F, #e2e8f0); margin-top: 4px; }
+.gem-step:last-child .gem-step-connector { display: none; }
+.gem-step-content { flex: 1; padding-top: 0.35rem; }
+.gem-step-title { font-weight: 800; font-size: 1rem; color: #0F0F0F; margin-bottom: 0.25rem; }
+.gem-step-text { font-size: 0.95rem; color: #475569; line-height: 1.5; }
+
+/* RELATED GRID */
+.gem-related { padding: 2rem 1.25rem; background: #0F0F0F; border-radius: 12px; margin-top: 3rem; }
+.gem-related-title { font-family: 'Bricolage Grotesque', sans-serif; color: white; font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; }
+.gem-related-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.gem-related-card { display: flex; gap: 0.75rem; text-decoration: none !important; background: #272727; border-radius: 12px; overflow: hidden; transition: background 0.2s; }
+.gem-related-card:active { background: #333; }
+.gem-related-thumb { width: 120px; height: 68px; object-fit: cover; flex-shrink: 0; border-radius: 8px; margin: 0.5rem 0 0.5rem 0.5rem; }
+.gem-related-info { padding: 0.5rem 0.5rem 0.5rem 0; display: flex; flex-direction: column; justify-content: center; }
+.gem-related-info-title { color: white; font-weight: 700; font-size: 0.85rem; line-height: 1.3; margin-bottom: 0.25rem; }
+.gem-related-info-meta { color: #9ca3af; font-size: 0.7rem; }
+@media (min-width: 768px) {
+    .gem-related-grid { grid-template-columns: 1fr 1fr 1fr; }
+    .gem-related-card { flex-direction: column; }
+    .gem-related-thumb { width: 100%; height: 120px; margin: 0; border-radius: 12px 12px 0 0; }
+    .gem-related-info { padding: 0.75rem; }
+}
+
+/* DATA TABLE */
+.gem-table-wrapper { overflow-x: auto; margin: 1.5rem 0; border-radius: 8px; border: 1px solid #e2e8f0; }
+.gem-table { width: 100%; border-collapse: collapse; min-width: 500px; }
+.gem-table th { background: #f1f5f9; text-align: left; padding: 1rem; font-weight: 700; border-bottom: 2px solid #e2e8f0; }
+.gem-table td { padding: 1rem; border-bottom: 1px solid #e2e8f0; }
+.gem-table tr:last-child td { border-bottom: none; }
+
+/* CTA BOX */
+.gem-cta-box { background: #eff6ff; border: 2px solid #3b82f6; border-radius: 16px; padding: 2rem; text-align: center; margin-top: 3rem; color: #000000 !important; }
+.gem-cta-title { font-size: 1.5rem; font-weight: 800; color: #000000 !important; margin-bottom: 0.5rem; }
+.gem-cta-text { margin-bottom: 1.5rem; color: #000000 !important; font-weight: 600; }
+.gem-cta-btn { display: inline-block; background: #2563eb; color: white !important; padding: 1rem 2rem; border-radius: 50px; font-weight: 700; text-decoration: none !important; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.5); transition: transform 0.2s; }
+.gem-cta-btn:hover { transform: translateY(-2px); }
+
+/* CORNER RIBBON */
+.gem-ribbon-wrap { position: relative; }
+.gem-ribbon { position: absolute; top: 12px; right: -8px; background: #FF0033; color: white; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 14px 4px 10px; border-radius: 4px 0 0 4px; z-index: 2; box-shadow: 0 2px 6px rgba(255,0,51,0.3); }
+.gem-ribbon::after { content: ''; position: absolute; top: 100%; right: 0; border: 4px solid transparent; border-top-color: #990020; border-right-color: #990020; }
+.gem-ribbon-new { background: #FF0033; }
+</style>
+
+<div class="gem-post"><!-- GEM v4.1 YT EDITION DEPENDENCIES -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Bricolage+Grotesque:opsz,wght@12..96,400;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+<style>
+/* GEM v4.1 CORE STYLES - SCOPED */
+.gem-post {
+    font-family: 'Outfit', sans-serif;
+    line-height: 1.7;
+    color: #334155;
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    overflow-x: hidden;
+    padding-bottom: 4rem;
+}
+.gem-post h1, .gem-post h2, .gem-post h3 { font-family: 'Bricolage Grotesque', sans-serif; color: #0f172a; }
+.gem-post h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -0.02em; margin-top: 1rem; }
+.gem-post h2 { font-size: 1.8rem; font-weight: 700; margin-top: 3rem; margin-bottom: 1.5rem; border-left: 6px solid #FF0033; padding-left: 1.25rem; }
+.gem-post h3 { font-size: 1.4rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+.gem-post p { margin-bottom: 1.25rem; font-size: 1.125rem; }
+.gem-post ul, .gem-post ol { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+.gem-post li { margin-bottom: 0.75rem; position: relative; padding-left: 0.5rem; }
+.gem-post a { color: #FF0033; text-decoration: none; font-weight: 700; border-bottom: 2px solid #ffccd5; transition: all 0.2s; }
+.gem-post a:hover { background: #FF0033; color: white; }
+
+/* COMPONENT: Progress Bar */
+.gem-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 6px;
+    background: #FF0033;
+    width: 0%;
+    z-index: 9999;
+    transition: width 0.1s;
+}
+
+/* COMPONENT: Snippet Bait */
+.gem-snippet-bait {
+    background: #F8FAFC;
+    border: 2px solid #E2E8F0;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+}
+.gem-snippet-bait strong { color: #FF0033; }
+.gem-bait-icon {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    background: #FF0033;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 6px -1px rgba(255, 0, 51, 0.3);
+}
+
+/* COMPONENT: Hero Image */
+.hero-img {
+    width: 100%;
+    height: auto;
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* COMPONENT: Share Bar */
+.gem-share-bar {
+    display: flex;
+    gap: 0.75rem;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+}
+.gem-share-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+.gem-share-btn:hover { transform: translateY(-2px); }
+.gs-fb { background: #E7F0FF; color: #1877F2; }
+.gs-x { background: #f1f5f9; color: #000; }
+.gs-em { background: #fff0f3; color: #FF0033; }
+
+/* COMPONENT: Chapter Tracker */
+.gem-chapter-track {
+    background: #1e293b;
+    padding: 1rem 1.5rem;
+    border-radius: 0.75rem;
+    margin-bottom: 2rem;
+    color: white;
+    font-size: 0.95rem;
+}
+.gem-chapter-track span { display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; letter-spacing: 0.05em; margin-bottom: 0.5rem; font-weight: 700; }
+.gem-chapter-links { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 0.25rem; }
+.gem-chapter-links a { color: #fff; border: none; white-space: nowrap; font-weight: 500; font-size: 0.9rem; }
+.gem-chapter-links a:hover { color: #FF0033; background: transparent; }
+
+/* COMPONENT: Pull Quote */
+.gem-pull-quote {
+    background: #0f172a;
+    color: white;
+    padding: 2.5rem;
+    border-radius: 1rem;
+    text-align: center;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 1.8rem;
+    line-height: 1.3;
+    font-weight: 700;
+    margin: 3rem 0;
+    position: relative;
+    transform: rotate(-1deg);
+}
+.gem-pull-quote::before { content: '\f10d'; font-family: "Font Awesome 6 Free"; position: absolute; top: -1.5rem; left: 2rem; font-size: 3rem; color: #FF0033; background: white; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; transform: rotate(1deg); border: 4px solid #0f172a; }
+
+/* COMPONENT: VS Card */
+.gem-vs-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-radius: 1rem;
+    overflow: hidden;
+    margin: 2rem 0;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+.gem-vs-side { padding: 2rem; }
+.vs-old { background: #fee2e2; color: #991b1b; }
+.vs-new { background: #dcfce7; color: #166534; }
+.vs-title { font-weight: 800; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.05em; margin-bottom: 1rem; display: block; }
+
+/* COMPONENT: Reveal */
+.gem-reveal {
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    border-radius: 1rem;
+    padding: 2rem;
+    margin: 2rem 0;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.gem-reveal[open] { border-style: solid; border-color: #FF0033; background: #fff0f3; }
+.gem-reveal summary { list-style: none; font-weight: 700; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; color: #334155; }
+.gem-reveal[open] summary { margin-bottom: 1rem; border-bottom: 1px solid rgba(255, 0, 51, 0.2); padding-bottom: 1rem; }
+.gem-reveal-content { text-align: left; animation: fadeIn 0.5s ease; }
+
+/* COMPONENT: Table */
+.gem-table-wrapper { overflow-x: auto; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin: 2rem 0; }
+.gem-table { width: 100%; border-collapse: collapse; background: white; }
+.gem-table th { background: #1e293b; color: white; padding: 1rem; text-align: left; font-family: 'Bricolage Grotesque', sans-serif; }
+.gem-table td { padding: 1rem; border-bottom: 1px solid #e2e8f0; font-size: 1rem; }
+.gem-table tr:last-child td { border-bottom: none; }
+.gem-table tr:nth-child(even) { background: #f8fafc; }
+
+/* COMPONENT: Steps */
+.gem-steps {
+    padding-left: 2rem;
+    border-left: 4px solid #e2e8f0;
+    margin: 2rem 0 2rem 1rem;
+}
+.gem-step-item { position: relative; margin-bottom: 2rem; }
+.gem-step-item::before {
+    content: '';
+    position: absolute;
+    left: -2.6rem;
+    top: 0.25rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    background: #FF0033;
+    border-radius: 50%;
+    border: 4px solid white;
+    box-shadow: 0 0 0 2px #e2e8f0;
+}
+.gem-step-title { font-weight: 700; font-size: 1.2rem; margin-bottom: 0.5rem; display: block; color: #0f172a; }
+
+/* COMPONENT: FAQ */
+.gem-faq-section { margin: 3rem 0; }
+.gem-faq-item { margin-bottom: 1rem; border: 1px solid #e2e8f0; border-radius: 0.75rem; overflow: hidden; }
+.gem-faq-question { width: 100%; text-align: left; padding: 1.25rem; background: #fff; border: none; font-weight: 700; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: background 0.2s; }
+.gem-faq-question:hover { background: #f8fafc; }
+.gem-faq-answer { padding: 0 1.25rem; height: 0; overflow: hidden; transition: all 0.3s ease; background: #f8fafc; color: #475569; }
+.gem-faq-item.active .gem-faq-answer { padding: 1.25rem; height: auto; border-top: 1px solid #e2e8f0; }
+.gem-faq-icon { transition: transform 0.3s; }
+.gem-faq-item.active .gem-faq-icon { transform: rotate(180deg); }
+
+/* COMPONENT: CTA Box */
+.gem-cta-box {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border-radius: 1.5rem;
+    padding: 3rem 2rem;
+    text-align: center;
+    color: white;
+    margin: 4rem 0 2rem;
+    box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.3);
+}
+.gem-cta-btn {
+    display: inline-block;
+    background: #FF0033;
+    color: white;
+    padding: 1rem 2.5rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 1.2rem;
+    text-decoration: none;
+    margin-top: 1.5rem;
+    box-shadow: 0 10px 15px -3px rgba(255, 0, 51, 0.4);
+    transition: transform 0.2s;
+    border: none;
+}
+.gem-cta-btn:hover { transform: translateY(-3px) scale(1.05); background: #e6002e; color: white; }
+
+/* COMPONENT: Related */
+.gem-related { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+.gem-card { border-radius: 0.75rem; overflow: hidden; border: 1px solid #e2e8f0; transition: transform 0.2s; }
+.gem-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+.gem-card-img { width: 100%; height: 160px; object-fit: cover; background: #cbd5e1; }
+.gem-card-body { padding: 1.25rem; }
+.gem-card-title { font-weight: 700; line-height: 1.3; margin-bottom: 0.5rem; display: block; color: #0f172a; border: none; }
+.gem-card-meta { font-size: 0.85rem; color: #64748b; }
+
+@media (max-width: 640px) {
+    .gem-vs-card { grid-template-columns: 1fr; }
+    .gem-post h1 { font-size: 1.8rem; }
+}
+</style>
+
+<div class="gem-post">
+    <!-- 1. Scroll Progress Bar -->
+    <div class="gem-progress-bar" id="gemProgress"></div>
+
+    <!-- 2. H1 Title -->
+    <h1 class="px-4 md:px-0">How can North Carolina drivers find hidden auto insurance discounts in 2026?</h1>
+
+    <!-- 3. Snippet Bait / TLDR -->
+    <div class="gem-snippet-bait mx-4 md:mx-0">
+        <div class="gem-bait-icon"><i class="fa-solid fa-bolt"></i></div>
+        <p class="m-0 text-slate-700">
+            <strong>The Short Answer:</strong> NC drivers can find hidden discounts by auditing their <strong>SDIP points</strong> (ensure 0 points for 45% savings), bundling obscure policies (like life or boat), and enabling 2026-era <strong>Telematics</strong> (usage-based tracking) which now accounts for speed and braking rather than just mileage. Always ask for the "Group Affinity" list and verify your "Years of Experience" credit is accurate.
+        </p>
+    </div>
+
+    <!-- 4. Hero Image -->
+    <img width="800" height="450" src="https://i.imgur.com/16Zb6GT.jpeg" class="hero-img" alt="NC driver saving money on auto insurance in 2026" />
+
+    <!-- 4b. YouTube Video Embed -->
+    <div class="my-8 mx-4 md:mx-0">
+        <p class="text-sm font-bold text-slate-800 mb-2 font-sans"><i class="fa-brands fa-youtube text-red-600 mr-2"></i>Watch the Video Version</p>
+        <div class="relative w-full aspect-video rounded-xl overflow-hidden shadow-md bg-slate-100">
+           <iframe src="https://www.youtube.com/embed/QjIyQ3bZE70" title="Video version" class="absolute top-0 left-0 w-full h-full" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <!-- 5. Share Bar -->
+    <div class="gem-share-bar px-4 md:px-0">
+        <div class="gem-share-btn gs-fb"><i class="fa-brands fa-facebook"></i> Share</div>
+        <div class="gem-share-btn gs-x"><i class="fa-brands fa-x-twitter"></i> Post</div>
+        <div class="gem-share-btn gs-em"><i class="fa-solid fa-envelope"></i> Email</div>
+        <div class="gem-share-btn" style="border: 1px solid #cbd5e1; margin-left: auto;"><i class="fa-solid fa-link"></i> Copy Link</div>
+    </div>
+
+    <!-- 6. Chapter Tracker -->
+    <div class="gem-chapter-track mx-4 md:mx-0">
+        <span>Skip Ahead To:</span>
+        <div class="gem-chapter-links">
+            <a href="#section1">1. The Bundle Myth</a>
+            <a href="#section2">2. Telematics 2.0</a>
+            <a href="#section3">3. NC Secrets</a>
+            <a href="#section4">4. Credit Factor</a>
+        </div>
+    </div>
+
+    <!-- 7. Key Takeaways -->
+    <div class="bg-slate-50 p-6 rounded-2xl mb-8 mx-4 md:mx-0 border border-slate-200">
+        <h3 class="mt-0 text-slate-800"><i class="fa-solid fa-list-check text-green-600 mr-2"></i> Key Takeaways</h3>
+        <ul class="list-none p-0 m-0">
+            <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Your <strong>SDIP score</strong> is the single biggest factor in NC rates.</li>
+            <li><i class="fa-solid fa-check text-green-500 mr-2"></i> "Paperless" and "Pay-in-Full" discounts have doubled in value since 2024.</li>
+            <li><i class="fa-solid fa-check text-green-500 mr-2"></i> <strong>Liability limits</strong> of 50/100/50 are now the minimum—don't get caught underinsured.</li>
+        </ul>
+    </div>
+
+    <!-- 8. Section 1 -->
+    <h2 id="section1" class="mx-4 md:mx-0">1. The "Bundle" Myth vs. Reality</h2>
+    <div class="px-4 md:px-0">
+        <p>Most people in Elkin think "bundling" just means combining your home and auto insurance. While that works, you're leaving money on the table if you stop there.</p>
+        <p>In 2026, carriers are aggressively discounting for <strong>"Lifestyle Bundles."</strong> Do you have a boat for the Yadkin River? A camper for Stone Mountain? Even a small Term Life policy can trigger a "Multi-Line Discount" on your auto that is actually <em>larger</em> than the cost of the life insurance itself.</p>
+        
+        <!-- 9. Pull Quote Card -->
+        <div class="gem-pull-quote">
+            "Sometimes buying a $15/mo renter's policy saves you $40/mo on your car insurance. Do the math."
+        </div>
+
+        <p>At <strong>Bill Layne Insurance</strong>, we see this constantly. Drivers ignore the small policies, not realizing they are the key to unlocking the "Preferred Tier" pricing on their vehicles.</p>
+    </div>
+
+    <!-- 10. Section 2 -->
+    <h2 id="section2" class="mx-4 md:mx-0">2. Telematics 2.0: Fear vs. Wallet</h2>
+    <div class="px-4 md:px-0">
+        <p>Years ago, putting a tracking device in your car felt invasive. But today, with insurance rates climbing across North Carolina, usage-based insurance (UBI) is the fastest way to drop your rate by 30%.</p>
+        
+        <!-- 11. VS Comparison Card -->
+        <div class="gem-vs-card">
+            <div class="gem-vs-side vs-old">
+                <span class="vs-title">OLD WAY (2020)</span>
+                <p class="text-sm font-bold m-0"><i class="fa-solid fa-xmark mr-2"></i> Ignore the apps.</p>
+                <p class="text-sm m-0 mt-2">Pay based on "average" drivers in your zip code (including the bad ones).</p>
+            </div>
+            <div class="gem-vs-side vs-new">
+                <span class="vs-title">NEW WAY (2026)</span>
+                <p class="text-sm font-bold m-0"><i class="fa-solid fa-check mr-2"></i> Use the App.</p>
+                <p class="text-sm m-0 mt-2">Prove you don't text and drive. Save up to 40% immediately upon renewal.</p>
+            </div>
+        </div>
+
+        <p>Modern telematics apps don't just track hard braking. They track <strong>distracted driving</strong> (phone usage). If you can keep your hands off the phone while driving down North Bridge Street, you will pay significantly less than your neighbor who texts at red lights.</p>
+    </div>
+
+    <!-- 12. Section 3 -->
+    <h2 id="section3" class="mx-4 md:mx-0">3. The NC-Specific Secrets (SDIP)</h2>
+    <div class="px-4 md:px-0">
+        <p>North Carolina is unique. We have the <strong>Safe Driver Incentive Plan (SDIP)</strong>. This is state law, not a company policy. Points are expensive. One speeding ticket (75 in a 65 zone) creates 4 insurance points, which increases your premium by <strong>80%</strong> for three years.</p>
+
+        <!-- 13. Reveal/Spoiler Card -->
+        <details class="gem-reveal">
+            <summary>
+                <i class="fa-solid fa-eye"></i> Tap to Reveal: The "PJC" Loophole
+            </summary>
+            <div class="gem-reveal-content mt-4">
+                <p class="font-bold text-slate-800">Prayer for Judgment Continued (PJC)</p>
+                <p>In NC, you can use a PJC to stop a ticket from hitting your insurance points. BUT, you can only use it once per household every three years. If you use it for a minor ticket and then your teenager gets a reckless driving charge, you've wasted your "Get Out of Jail Free" card. <strong>Consult Bill Layne before paying off any ticket!</strong></p>
+            </div>
+        </details>
+
+        <!-- 14. Data Table -->
+        <div class="gem-table-wrapper">
+            <table class="gem-table">
+                <thead>
+                    <tr>
+                        <th>Driving Event</th>
+                        <th>SDIP Points</th>
+                        <th>Rate Increase</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Speeding (10mph over)</td>
+                        <td>2 Points</td>
+                        <td>+45%</td>
+                    </tr>
+                    <tr>
+                        <td>At-Fault Accident ($2k+)</td>
+                        <td>3 Points</td>
+                        <td>+60%</td>
+                    </tr>
+                    <tr>
+                        <td>Reckless Driving</td>
+                        <td>4 Points</td>
+                        <td>+80%</td>
+                    </tr>
+                    <tr class="font-bold bg-green-50">
+                        <td>Clean Record (3 Yrs)</td>
+                        <td>0 Points</td>
+                        <td>0% (Base Rate)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="text-sm text-slate-500 italic mt-2">*Rates based on standard NC Department of Insurance guidelines.</p>
+    </div>
+
+    <!-- 15. Section 4 -->
+    <h2 id="section4" class="mx-4 md:mx-0">4. The Credit Score Factor</h2>
+    <div class="px-4 md:px-0">
+        <p>Did you know improving your credit score from "Fair" to "Excellent" can lower your auto insurance more than having a clean driving record? In NC, carriers use an "Insurance Score."</p>
+        <img width="700" height="400" loading="lazy" src="https://i.imgur.com/EWtqXZk.jpeg" class="w-full rounded-xl shadow-sm mb-6" alt="Credit score impact on insurance rates chart" />
+
+        <!-- 16. Step-by-Step Timeline -->
+        <div class="gem-steps">
+            <div class="gem-step-item">
+                <span class="gem-step-title">Step 1: The Audit</span>
+                <p class="text-sm">Call 336-835-1993. Ask us to review your "Insurance Score" tier.</p>
+            </div>
+            <div class="gem-step-item">
+                <span class="gem-step-title">Step 2: The Cleanup</span>
+                <p class="text-sm">If your credit has improved in the last 12 months, we can request a "re-tiering" immediately.</p>
+            </div>
+            <div class="gem-step-item">
+                <span class="gem-step-title">Step 3: The Structure</span>
+                <p class="text-sm">Ensure your liability limits meet the 2026 standard (50/100/50). Being underinsured puts your assets at risk.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 17. Reactions Bar -->
+    <div class="gem-reactions text-center my-8 bg-slate-50 py-6 mx-4 rounded-xl">
+        <p class="font-bold text-slate-700 mb-4">Was this guide helpful?</p>
+        <div class="flex justify-center gap-6 text-2xl">
+            <button class="hover:scale-125 transition"><i class="fa-solid fa-fire text-orange-500"></i></button>
+            <button class="hover:scale-125 transition"><i class="fa-solid fa-thumbs-up text-blue-500"></i></button>
+            <button class="hover:scale-125 transition"><i class="fa-solid fa-lightbulb text-yellow-500"></i></button>
+        </div>
+    </div>
+
+    <!-- 18. FAQ Section -->
+    <div class="gem-faq-section mx-4 md:mx-0">
+        <h2>Frequently Asked Questions</h2>
+        
+        <div class="gem-faq-item">
+            <button class="gem-faq-question" onclick="window.toggleFaq(this)">
+                Does bundling actually save money? <i class="fa-solid fa-chevron-down gem-faq-icon"></i>
+            </button>
+            <div class="gem-faq-answer">
+                Yes. In North Carolina, bundling auto with home or renters insurance typically yields a discount of 15% to 25% on both policies. It is often the single easiest way to lower premiums.
+            </div>
+        </div>
+
+        <div class="gem-faq-item">
+            <button class="gem-faq-question" onclick="window.toggleFaq(this)">
+                What is the "Named Storm" deductible? <i class="fa-solid fa-chevron-down gem-faq-icon"></i>
+            </button>
+            <div class="gem-faq-answer">
+                This applies more to homeowners, but it affects your budget. In NC, standard deductibles apply for most things, but if a named hurricane causes damage, a special (often higher) percentage deductible kicks in. We explain this clearly at Bill Layne Insurance.
+            </div>
+        </div>
+
+        <div class="gem-faq-item">
+            <button class="gem-faq-question" onclick="window.toggleFaq(this)">
+                How do I fix my SDIP points? <i class="fa-solid fa-chevron-down gem-faq-icon"></i>
+            </button>
+            <div class="gem-faq-answer">
+                Time is the only cure for points (they last 3 years), but we can help you navigate "Prayer for Judgment" options or shop your rate with carriers that are more forgiving of minor violations.
+            </div>
+        </div>
+    </div>
+
+    <!-- 19. CTA Box -->
+    <div class="gem-cta-box mx-4 md:mx-0">
+        <h2 class="text-white border-0 m-0 text-3xl mb-2">Stop Overpaying for Insurance.</h2>
+        <p class="text-slate-300 mb-6">Let Bill Layne verify your discounts in 5 minutes.</p>
+        
+        <div class="text-lg font-bold mb-2">Bill Layne Insurance</div>
+        <div class="text-slate-300 text-sm mb-6">1283 N Bridge St, Elkin NC 28621</div>
+        
+        <a href="tel:336-835-1993" class="gem-cta-btn"><i class="fa-solid fa-phone mr-2"></i> 336-835-1993</a>
+        <p class="mt-4 text-xs text-slate-400">Save@BillLayneInsurance.com | www.NCAutoandHome.com</p>
+    </div>
+
+    <!-- 20. Related Articles Grid -->
+    <div class="mx-4 md:mx-0">
+        <h3 class="font-bold text-xl mb-4">Up Next</h3>
+        <div class="gem-related">
+            <div class="gem-card">
+                <img width="700" height="400" loading="lazy" src="https://i.imgur.com/7WGEdV7.jpeg" class="gem-card-img" alt="Video thumbnail" />
+                <div class="gem-card-body">
+                    <span class="gem-card-title">Homeowners Insurance in Elkin: What's Covered?</span>
+                    <span class="gem-card-meta">5 min read • Bill Layne</span>
+                </div>
+            </div>
+            <div class="gem-card">
+                <div class="gem-card-img bg-slate-200 flex items-center justify-center">
+                    <i class="fa-solid fa-car-burst text-4xl text-slate-400"></i>
+                </div>
+                <div class="gem-card-body">
+                    <span class="gem-card-title">What to do IMMEDIATELY after an accident in NC</span>
+                    <span class="gem-card-meta">3 min read • Guide</span>
+                </div>
+            </div>
+            <div class="gem-card">
+                <div class="gem-card-img bg-slate-200 flex items-center justify-center">
+                    <i class="fa-solid fa-house-flood-water text-4xl text-slate-400"></i>
+                </div>
+                <div class="gem-card-body">
+                    <span class="gem-card-title">Flood Insurance: Do you need it in the Foothills?</span>
+                    <span class="gem-card-meta">4 min read • Critical Info</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Scroll Progress Bar Logic
+    window.onscroll = function() {
+        let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        let scrolled = (winScroll / height) * 100;
+        document.getElementById("gemProgress").style.width = scrolled + "%";
+    };
+
+    // FAQ Toggle Logic
+    window.toggleFaq = function(element) {
+        element.parentElement.classList.toggle("active");
+    };
+</script></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Scroll Progress Bar
+    window.addEventListener('scroll', function() {
+        var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var scrolled = (winScroll / height) * 100;
+        var bar = document.getElementById('gemProgress');
+        if (bar) bar.style.width = scrolled + '%';
+        
+        // Chapter Tracker
+        var sections = document.querySelectorAll('.gem-post h2');
+        var pills = document.querySelectorAll('.gem-chapter-pill');
+        var currentId = '';
+        sections.forEach(function(sec) {
+            var top = sec.getBoundingClientRect().top;
+            if (top < window.innerHeight * 0.5) {
+                currentId = sec.id;
+            }
+        });
+        pills.forEach(function(pill) {
+            var pillSection = pill.getAttribute('href').substring(1);
+            pill.classList.remove('active');
+            if (pillSection === currentId) {
+                pill.classList.add('active');
+            }
+        });
+    });
+
+    // Copy Link Button
+    window.copyLink = function(btn) {
+        navigator.clipboard.writeText(window.location.href).then(function() {
+            btn.classList.add('copied');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+            setTimeout(function() {
+                btn.classList.remove('copied');
+                btn.innerHTML = '<i class="fa-solid fa-link"></i>';
+            }, 2000);
+        });
+    };
+
+    // Reveal Card
+    window.toggleReveal = function(el) {
+        var content = el.nextElementSibling;
+        content.classList.toggle('visible');
+        var span = el.querySelector('span:last-child');
+        if (content.classList.contains('visible')) {
+            span.textContent = 'Tap to hide';
+        } else {
+            span.textContent = 'Tap to reveal';
+        }
+    };
+
+    // FAQ Toggle
+    window.toggleFaq = function(btn) {
+        var item = btn.parentElement;
+        item.classList.toggle('active');
+    };
+
+    // Reaction Bar
+    window.react = function(btn) {
+        var all = btn.parentElement.querySelectorAll('.gem-react-btn');
+        all.forEach(function(b) { b.classList.remove('selected'); });
+        btn.classList.add('selected');
+        var title = btn.parentElement.previousElementSibling;
+        if(title) title.textContent = 'Thanks for the feedback!';
+    };
+});
+</script>
