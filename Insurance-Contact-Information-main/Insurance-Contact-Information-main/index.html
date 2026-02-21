@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive Insurance Company Directory - North Carolina</title>    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/tailwind-output.css">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .company-card {
+            transition: box-shadow 0.3s ease-in-out, transform 0.2s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .company-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .copy-btn {
+            transition: background-color 0.3s ease;
+        }
+        .card-content {
+            flex-grow: 1;
+        }
+
+        /* Logo styling */
+        .company-logo {
+            height: 60px;
+            width: auto;
+            max-width: 180px;
+            object-fit: contain;
+            margin-bottom: 16px;
+        }
+
+        .company-logo-placeholder {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border: 2px dashed #cbd5e1;
+        }
+
+        /* Color-coded information hierarchy */
+        .claims-info {
+            color: #dc2626 !important;
+            font-weight: 600;
+        }
+        .payment-info {
+            color: #059669 !important;
+            font-weight: 600;
+        }
+        .general-info {
+            color: #2563eb !important;
+            font-weight: 600;
+        }
+        .app-info {
+            color: #7c3aed !important;
+            font-weight: 600;
+        }
+
+        /* Enhanced search and filter */
+        .search-container {
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-btn {
+            transition: all 0.3s ease;
+            border: 2px solid #e2e8f0;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            border-color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .filter-btn:hover:not(.active) {
+            border-color: #2563eb;
+            color: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        /* Quick Actions Bar */
+        .quick-actions {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 30;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .quick-action-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .quick-action-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .quick-action-emergency {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: white;
+        }
+
+        .quick-action-call {
+            background: linear-gradient(135deg, #059669, #047857);
+            color: white;
+        }
+
+        .quick-action-email {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+        }
+
+        /* Tooltip for quick actions */
+        .tooltip {
+            position: relative;
+        }
+
+        .tooltip::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            right: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            right: 62px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 5px solid transparent;
+            border-left-color: rgba(0, 0, 0, 0.8);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .tooltip:hover::before,
+        .tooltip:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Favorite star styling */
+        .favorite-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .favorite-btn:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.1);
+        }
+
+        .favorite-btn.favorited {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white;
+        }
+
+        /* Partner badge for your carriers */
+        .partner-badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: linear-gradient(135deg, #059669, #047857);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== UNIFIED HEADER STYLES ===== */
+        
+        /* Header scroll effect */
+        .header-scrolled {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        /* Default header background */
+        #main-header {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* ===== MOBILE MENU STYLES ===== */
+        .mobile-menu-toggle {
+            display: flex;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .mobile-menu-toggle span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background-color: #333333;
+            margin: 3px 0;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        /* Hamburger Animation */
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+            background-color: #0066ff;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+            background-color: #0066ff;
+        }
+
+        /* Mobile Menu Container */
+        .navbar-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 320px;
+            height: 100vh;
+            background: #ffffff;
+            box-shadow: -4px 0 30px rgba(0, 0, 0, 0.15);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar-menu.active {
+            right: 0;
+        }
+
+        /* Menu Overlay */
+        .navbar-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .navbar-menu.active + .navbar-menu-overlay {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Menu Content */
+        .navbar-menu-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            z-index: 1001;
+            overflow-y: auto;
+        }
+
+        /* Close Button */
+        .navbar-menu-close {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            transition: all 0.3s ease;
+            z-index: 1002;
+        }
+
+        .navbar-menu-close:hover {
+            transform: rotate(90deg);
+        }
+
+        .navbar-menu-close svg {
+            width: 24px;
+            height: 24px;
+            stroke: #333333;
+        }
+
+        /* Navigation Links */
+        .navbar-menu-nav {
+            padding: 80px 30px 30px;
+            flex: 1;
+        }
+
+        .navbar-menu-nav .nav-link {
+            display: block;
+            padding: 18px 0;
+            color: #333333;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 500;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .navbar-menu-nav .nav-link:hover {
+            color: #0066ff;
+            padding-left: 10px;
+        }
+
+        .navbar-menu-nav .nav-link:hover::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 20px;
+            background: #0066ff;
+        }
+
+        /* CTA Section */
+        .navbar-menu-cta {
+            padding: 30px;
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .navbar-menu-cta .phone-cta {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+        }
+
+        .navbar-menu-cta .phone-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+        }
+
+        .navbar-menu-cta .phone-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .navbar-menu-cta .btn--primary {
+            display: block;
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #0066ff, #0052cc);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 102, 255, 0.3);
+        }
+
+        .navbar-menu-cta .btn--primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 102, 255, 0.4);
+        }
+
+        /* Body scroll lock */
+        body.menu-open {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+        }
+
+        /* Enhanced Button Styles */
+        .btn-primary-enhanced {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+            color: #ffffff !important;
+            padding: 14px 28px !important;
+            border: none !important;
+            border-radius: 12px !important;
+            font-size: 16px !important;
+            font-weight: 600 !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3) !important;
+            text-decoration: none !important;
+        }
+
+        .btn-primary-enhanced:hover {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4) !important;
+        }
+
+        /* Hidden cards */
+        .company-card.hidden {
+            display: none;
+        }
+
+        /* Mobile responsive adjustments */
+        @media (max-width: 768px) {
+            .quick-actions {
+                bottom: 10px;
+                right: 10px;
+            }
+            
+            .quick-action-btn {
+                width: 48px;
+                height: 48px;
+            }
+            
+            .search-container {
+                padding: 16px;
+                margin-bottom: 24px;
+            }
+            
+            .company-logo {
+                height: 50px;
+                max-width: 150px;
+            }
+        }
+
+        /* Adjust menu width on smaller screens */
+        @media (max-width: 480px) {
+            .navbar-menu {
+                width: 100%;
+                right: -100%;
+            }
+            .navbar-menu.active {
+                right: 0;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Header -->
+    <header id="main-header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white shadow-sm unified-header" style="background-color: rgba(255, 255, 255, 0.98) !important; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo (Left) -->
+                <div class="flex-shrink-0">
+                    <a href="https://billlayneinsurance.com/" class="text-2xl font-bold text-amber-800">Bill Layne Insurance</a>
+                </div>
+
+                <!-- Spacer for center alignment -->
+                <div class="flex-1"></div>
+
+                <!-- Desktop Only: Phone & Quote (Right side) -->
+                <div class="hidden md:flex items-center space-x-4 mr-4">
+                    <a href="tel:3368351993" class="text-gray-700 font-semibold hover:text-blue-600 transition-colors" style="color: #374151 !important; opacity: 1 !important;">(336) 835-1993</a>
+                    <a href="https://billlayneinsurance.com/auto-quote.html" class="btn-primary-enhanced transition-all">Get a Quote</a>
+                </div>
+
+                <!-- Unified Menu Button (Shows on all screen sizes) -->
+                <button id="mobileMenuToggle" class="mobile-menu-toggle" aria-label="Open menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="navbar-menu">
+        <div class="navbar-menu-content">
+            <button class="navbar-menu-close" aria-label="Close menu">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <nav class="navbar-menu-nav">
+                <a href="https://billlayneinsurance.com/" class="nav-link">Home</a>
+                <a href="https://billlayneinsurance.com/areas-we-serve.html" class="nav-link">Services</a>
+                <a href="https://billlayne.github.io/Auto-Insurance-Center/" class="nav-link">Auto Insurance</a>
+                <a href="https://billlayne.github.io/NC-Home-Insurance.github.io/" class="nav-link">Home Insurance</a>
+                <a href="https://billlayne.github.io/NC-Insurance-Claims-Center.github.io/" class="nav-link">Claims</a>
+                <a href="https://billlayne.github.io/Resources/" class="nav-link">Resources</a>
+                <a href="https://billlayne.github.io/ethereal-blog-landing/" class="nav-link">Blog</a>
+                <a href="https://billlayneinsurance.com/contact-us.html" class="nav-link">Contact</a>
+                <a href="tel:3368351993" class="nav-link">Call 336-835-1993</a>
+            </nav>
+            <div class="navbar-menu-cta">
+                <a href="tel:3368351993" class="phone-cta">
+                    <svg class="phone-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"></path></svg>
+                    <span>Call (336) 835-1993</span>
+                </a>
+                <a href="https://billlayneinsurance.com/auto-quote.html" class="btn--primary">Get a Free Quote</a>
+            </div>
+        </div>
+    </div>
+    <div class="navbar-menu-overlay"></div>
+
+    <!-- Quick Actions Bar -->
+    <div class="quick-actions">
+        <div class="quick-action-btn quick-action-emergency tooltip" data-tooltip="Emergency Claims" onclick="emergencyAction()">
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+        </div>
+        <div class="quick-action-btn quick-action-call tooltip" data-tooltip="Call Bill Layne" onclick="quickCall()">
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+            </svg>
+        </div>
+        <div class="quick-action-btn quick-action-email tooltip" data-tooltip="Email Carrier Info" onclick="emailCarrierInfo()">
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="pt-24">
+        <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+            <header class="text-center mb-8">
+                <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">Comprehensive Insurance Directory</h1>
+                <p class="text-md text-gray-600 mt-2">Key contact, payment, and mobile app information for carriers in North Carolina.</p>
+            </header>
+
+            <!-- Search and Filter Section -->
+            <div class="search-container">
+                <div class="flex flex-col lg:flex-row gap-4 items-center">
+                    <!-- Search Bar -->
+                    <div class="flex-1 w-full">
+                        <div class="relative">
+                            <input 
+                                type="text" 
+                                id="searchInput" 
+                                placeholder="Search insurance companies..." 
+                                class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
+                            >
+                            <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <!-- Filter Buttons -->
+                    <div class="flex flex-wrap gap-2">
+                        <button class="filter-btn active px-4 py-2 rounded-lg font-medium" data-filter="all">All Carriers</button>
+                        <button class="filter-btn px-4 py-2 rounded-lg font-medium" data-filter="partner">Our Partners</button>
+                        <button class="filter-btn px-4 py-2 rounded-lg font-medium" data-filter="auto">Auto Insurance</button>
+                        <button class="filter-btn px-4 py-2 rounded-lg font-medium" data-filter="home">Home Insurance</button>
+                        <button class="filter-btn px-4 py-2 rounded-lg font-medium" data-filter="favorites">⭐ Favorites</button>
+                    </div>
+                </div>
+                
+                <!-- Results Counter -->
+                <div class="mt-4 text-sm text-gray-600">
+                    <span id="resultsCounter">Showing all companies</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="companyGrid">
+                
+                <!-- Alamance Farmers Mutual Insurance -->
+                <div class="company-card bg-white p-6 rounded-lg border border-gray-200 relative" id="alamance-info" data-categories="home auto partner">
+                    <div class="partner-badge">Partner</div>
+                    <button class="favorite-btn" onclick="toggleFavorite('alamance-info')" title="Add to favorites">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                    </button>
+                    <div class="card-content">
+                        <img src="https://i.imgur.com/KhV6zop.png" alt="Alamance Farmers Mutual Insurance" class="company-logo">
+                        <div class="space-y-3 text-gray-700">
+                            <p><strong>Website:</strong> <a href="https://i.imgur.com/KhV6zop.png">alamancefarmers.com</a></p>
+                            <p><strong>Make a Payment:</strong> <a href="https://alamancefarmers.com/policyholders/" target="_blank" class="payment-info hover:underline">Pay via Portal</a></p>
+                            <p><strong>General Inquiries:</strong> <a href="tel:1-336-226-7872" class="general-info hover:underline">1-336-226-7872</a></p>
+                            <p><strong>Claims Filing:</strong> <span class="claims-info">Online Form</span></p>
+                            <div>
+                                <strong>Mobile App:</strong>
+                                 <div class="flex space-x-4 mt-1">
+                                    <a href="https://apps.apple.com/us/app/afmic-policyholder-portal/id1537256584" target="_blank" class="app-info hover:underline">App Store</a>
+                                    <a href="https://play.google.com/store/apps/details?id=com.afmic.policyholder" target="_blank" class="app-info hover:underline">Google Play</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="copyInfo('alamance-info')" class="copy-btn mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Copy Info</button>
+                </div>
+
+                <!-- Allstate -->
+                <div class="company-card bg-white p-6 rounded-lg border border-gray-200 relative" id="allstate-info" data-categories="auto home">
+                    <button class="favorite-btn" onclick="toggleFavorite('allstate-info')" title="Add to favorites">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                    </button>
+                    <div class="card-content">
+                        <div class="company-logo-placeholder">
+                            <h2 class="text-xl font-bold text-gray-700">Allstate</h2>
+                        </div>
+                        <div class="space-y-3 text-gray-700">
+                            <p><strong>Website:</strong> <a href="https://www.allstate.com" target="_blank" class="general-info hover:underline">allstate.com</a></p>
+                            <p><strong>Make a Payment:</strong> <a href="https://www.allstate.com/myaccount" target="_blank" class="payment-info hover:underline">Pay Online</a></p>
+                            <p><strong>General Inquiries:</strong> <a href="tel:1-800-255-7828" class="general-info hover:underline">1-800-255-7828</a></p>
+                            <p><strong>Claims Number:</strong> <a href="tel:1-800-669-2214" class="claims-info hover:underline">1-800-669-2214</a></p>
+                            <div>
+                                <strong>Mobile App:</strong>
+                                <div class="flex space-x-4 mt-1">
+                                    <a href="https://apps.apple.com/us/app/allstate-mobile/id376476389" target="_blank" class="app-info hover:underline">App Store</a>
+                                    <a href="https://play.google.com/store/apps/details?id=com.allstate.view" target="_blank" class="app-info hover:underline">Google Play</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="copyInfo('allstate-info')" class="copy-btn mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Copy Info</button>
+                </div>
+
+                <!-- American Modern -->
+                <div class="company-card bg-white p-6 rounded-lg border border-gray-200 relative" id="amig-info" data-categories="home">
+                    <button class="favorite-btn" onclick="toggleFavorite('amig-info')" title="Add to favorites">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                    </button>
+                    <div class="card-content">
+                        <div class="company-logo-placeholder">
+                            <h2 class="text-xl font-bold text-gray-700">American Modern</h2>
+                        </div>
+                        <div class="space-y-3 text-gray-700">
+                            <p><strong>Website:</strong> <a href="https://www.amig.com" target="_blank" class="general-info hover:underline">amig.com</a></p>
+                            <p><strong>Make a Payment:</strong> <a href="https://policyholders.amig.com/content/munichre/amiggrp/policy-holder/storefront/en/landing-page/make-a-payment.html" target="_blank" class="payment-info hover:underline">Pay Online</a></p>
+                            <p><strong>General Inquiries:</strong> <a href="tel:1-800-543-2644" class="general-info hover:underline">1-800-543-2644</a></p>
+                            <p><strong>Claims Number:</strong> <a href="tel:1-800-375-2075" class="claims-info hover:underline">1-800-375-2075</a></p>
+                            <div>
+                                <strong>Mobile App:</strong>
+                                <p class="text-gray-600">Web portal available.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="copyInfo('amig-info')" class="copy-btn mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Copy Info</button>
+                </div>
+
+                <!-- Chubb -->
+                <div class="company-card bg-white p-6 rounded-lg border border-gray-200 relative" id="chubb-info" data-categories="home auto">
+                    <button class="favorite-btn" onclick="toggleFavorite('chubb-info')" title="Add to favorites">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                    </button>
+                    <div class="card-content">
+                        <div class="company-logo-placeholder">
+                            <h2 class="text-xl font-bold text-gray-700">Chubb</h2>
+                        </div>
+                        <div class="space-y-3 text-gray-700">
+                            <p><strong>Website:</strong> <a href="https://www.chubb.com" target="_blank" class="general-info hover:underline">chubb.com</a></p>
+                            <p><strong>Make a Payment:</strong> <a href="https://www.chubb.com/securePersonal/login?redirect=true" target="_blank" class="payment-info hover:underline">Pay via Portal</a></p>
+                            <p><strong>General Inquiries:</strong> Contact via local agent.</p>
+                            <p><strong>Claims Number:</strong> <a href="tel:1-800-252-4670" class="claims-info hover:underline">1-800-252-4670</a></p>
+                            <div>
+                                <strong>Mobile App:</strong>
+                                <div class="flex space-x-4 mt-1">
+                                    <a href="https://apps.apple.com/us/app/chubb-mobile/id1348381518" target="_blank" class="app-info hover:underline">App Store</a>
+                                    <a href="https://play.google.com/store/apps/details?id=com.chubb.na.prsautocard" target="_blank" class="app-info hover:underline">Google Play</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="copyInfo('chubb-info')" class="copy-btn mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Copy Info</button>
+                </div>
+
+                <!-- Dairyland -->
+                <div class="company-card bg-white p-6 rounded-lg border border-gray-200 relative" id="dairyland-info" data-categories="auto partner">
+                    <div class="partner-badge">Partner</div>
+                    <button class="favorite-btn" onclick="toggleFavorite('dairyland-info')" title="Add to favorites">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                    </button>
+                    <div class="card-content">
+                        <img src="https://i.imgur.com/1VkIvxv.png" alt="Dairyland Insurance" class="company-logo">
+                        <div class="space-y-3 text-gray-700">
+                            <p><strong>Website:</strong> <a href="https://www.dairylandinsurance.com" target="_blank" class="general-info hover:underline">dairylandinsurance.com</a></p>
+                            <p><strong>Make a Payment:</strong> <a href="https://www.dairylandinsurance.com/make-a-payment" target="_blank" class="payment-info hover:underline">Pay Online</a></p>
+                            <p><strong>General Inquiries:</strong> <a href="tel:1-800-334-0090" class="general-info hover:underline">1-800-334-0090</a></p>
+                            <p><strong>Claims Number:</strong> <a href="tel:1-800-334-0090" class="claims-info hover:underline">1-800-334-0090</a></p>
+                             <div>
+                                <strong>Mobile App:</strong>
+                                <div class="flex space-x-4 mt-1">
+                                    <a href="https://apps.apple.com/us/app/dairyland/id1499324843" target="_blank" class="app-info hover:underline">App Store</a>
+                                    <a href="https://play.google.com/store/apps/details?id=com.dairyland.mobile" target="_blank" class="app-info hover:underline">Google Play</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="copyInfo('dairyland-info')" class="copy-btn mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Copy Info</button>
+                </div>
+
+                <!-- Erie Insurance -->
+                <div class="company-card bg-white p-6 rounded-lg border border-gray-200 relative" id="erie-info" data-categories="auto home">
+                    <button class="favorite-btn" onclick="toggleFavorite('erie-info')" title="Add to favorites">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                    </button>
+                    <div class="card-content">
+                        <div class="company-logo-placeholder">
+                            <h2 class="text-xl font-bold text-gray-700">Erie Insurance</h2>
+                        </div>
+                        <div class="space-y-3 text-gray-700">
+                            <p><strong>Website:</strong> <a href="https://www.erieinsurance.com" target="_blank" class="general-info hover:underline">erieinsurance.com</a></p>
+                            <p><strong>Make a Payment:</strong> <a href="https://www.erieinsurance.com/support-center/billing-and-payments" target="_blank" class="payment-info hover:underline">Pay Online</a></p>
+                            <p><strong>General Inquiries:</strong> <a href="tel:1-800-458-0811" class="general-info hover:underline">1-800-458-0811</a></p>
+                            <p><strong>Claims Number:</strong> <a href="tel:1-800-367-3743" class="claims-info hover:underline">1-800-367-3743</a></p>
+                            <div>
+                                <strong>Mobile App:</strong>
+                                <div class="flex space-x-4 mt-1">
+                                    <a href="https://apps.apple.com/us/app/erie-insurance-mobile/id1447206059" target="_blank" class="app-info hover:underline">App Store</a>
+                                    <a href="https://play.google.com/store/apps/details?id=com.erieinsurance.customermobile" target="_blank" class="app-info hover:underline">Google Play</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="copyInfo('erie-info')" class="copy-btn mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Copy Info</button>
+                </div>
+
+                <!-- Foremost Insurance -->
+                <div class="company-card bg-white p-6 rounded-lg border border-gray-200 relative" id="foremost-info" data-categories="home auto partner">
+                    <div class="partner-badge">Partner</div>
+                    <button class="favorite-btn" onclick="toggleFavorite('foremost-info')" title="Add to favorites">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                    </button>
+                    <div class="card-content">
+                        <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Foremost%20Insurance.jpg?raw=true" alt="Foremost Insurance" class="company-logo">
+                        <div class="space-y-3 text-gray-700">
+                            <p><strong>Website:</strong> <a href="https://www.foremost.com" target="_blank" class="general-info hover:underline">foremost.com</a></p>
+                            <p><strong>Make a Payment:</strong> <a href="https://www.foremost.com/payonline/" target="_blank" class="payment-info hover:underline">Pay Online</a></p>
+                            <p><strong>General Inquiries:</strong> <a href="tel:1-800-527-3905" class="general-info hover:underline">1-800-527-3905</a></p>
+                            <p><strong>Claims Number:</strong> <a href="tel:1-800-527-3907" class="claims-info hover:underline">1-800-527-3907</a></p>
+                             <div>
+                                <strong>Mobile App:</strong>
+                                 <div class="flex space-x-4 mt-1">
+                                    <a href="https://apps.apple.com/us/app/foremost-insurance-mobile/id1455533198" target="_blank" class="app-info hover:underline">App Store</a>
+                                    <a href="https://play.google.com/store/apps/details?id=com.foremost.app" target="_blank" class="app-info hover:underline">Google Play</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="copyInfo('foremost-info')" class="copy-btn mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Copy Info</button>
+                </div>
+
+                <!-- GEICO -->
+                <div class="company-card bg-white p-6 rounded-lg border border-gray-200 relative" id="geico-info" data-categories="auto home">
+                    <button class="favorite-btn" onclick="toggleFavorite('geico-info')" title="Add to favorites">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                    </button>
+                    <div class="card-content">
+                        <div class="company-logo-placeholder">
+                            <h2 class="text-xl font-bold text-gray-700">GEICO</h2>
+                        </div>
+                        <div class="space-y-3 text-gray-700">
+                            <p><strong>Website:</strong> <a href="https://www.geico.com" target="_blank" class="general-info hover:underline">geico.com</a></p>
+                            <p><strong>Make a Payment:</strong> <a href="https://www.geico.com/information/make-a-payment/" target="_blank" class="payment-info hover:underline">Pay Online</a></p>
+                            <p><strong>General Inquiries:</strong> <a href="tel:1-800-861-8380" class="general-info hover:underline">1-800-861-8380</a></p>
+                            <p><strong>Claims Number:</strong> <a href="tel:1-800-861-8380" class="claims-info hover:underline">1-800-861-8380</a></p>
+                            <div>
+                                <strong>Mobile App:</strong>
+                                <div class="flex space-x-4 mt-1">
+                                    <a href="https://apps.apple.com/us/app/geico-mobile-car-insurance/id331763306" target="_blank" class="app-info hover:underline">App Store</a>
+                                    <a href="https://play.google.com/store/apps/details?id=com.geico.mobile" target="_blank" class="app-info hover:underline">Google Play</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="copyInfo('geico-info')" class="copy-btn mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Copy Info</button>
+                </div>
+
+                <!-- The Hartford -->
+                <div class="company-card bg-white p-6 rounded-lg border border-gray-200 relative" id="hartford-info" data-categories="auto home">
+                    <button class="favorite-btn" onclick="toggleFavorite('hartford-info')" title="Add to favorites">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                    </button>
+                    <div class="card-content">
+                        <div class="company-logo-placeholder">
+                            <h2 class="text-xl font-bold text-gray-700">The Hartford</h2>
+                        </div>
+                        <div class="space-y-3 text-gray-700">
+                            <p><strong>Website:</strong> <a href="https://www.thehartford.com" target="_blank" class="general-info hover:underline">thehartford.com</a></p>
+                            <p><strong>Make a Payment:</strong> <a href="https://account.thehartford.com/customer/" target="_blank" class="payment-info hover:underline">Pay via Portal</a></p>
+                            <p><strong>General Inquiries:</strong> <a href="tel:1-800-423-6789" class="general-info hover:underline">1-800-423-6789</a></p>
+                            <p><strong>Claims Number:</strong> <a href="tel:1-800-243-5860" class="claims-info hover:underline">1-800-243-5860</a></p>
+                            <div>
+                                <strong>Mobile App:</strong>
+                                <div class="flex space-x-4 mt-1">
+                                    <a href="https://apps.apple.com/us/app/the-hartford-mobile/id1435233346" target="_blank" class="app-info hover:underline">App Store</a>
+                                    <a href="https://play.google.com/store/apps/details?id=com.thehartford.mobile" target="_blank" class="app-info hover:underline">Google Play</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="copyInfo('hartford-info')" class="copy-btn mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Copy Info</button>
+                </div>
+
+                <!-- Liberty Mutual -->
+                <div class="company-card bg-white p-6 rounded-lg border border-gray-200 relative" id="liberty-info" data-categories="auto home">
+                    <button class="favorite-btn" onclick="toggleFavorite('liberty-info')" title="Add to favorites">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                    </button>
+                    <div class="card-content">
+                        <div class="company-logo-placeholder">
+                            <h2 class="text-xl font-bold text-gray-700">Liberty Mutual</h2>
+                        </div>
+                        <div class="space-y-3 text-gray-700">
+                            <p><strong>Website:</strong> <a href="https://www.libertymutual.com" target="_blank" class="general-info hover:underline">libertymutual.com</a></p>
+                            <p><strong>Make a Payment:</strong> <a href="https://www.libertymutual.com/customer-support/billing-and-payment-options" target="_blank" class="payment-info hover:underline">Pay Online</a></p>
+                            <p><strong>General Inquiries:</strong> <a href="tel:1-800-290-7933" class="general-info hover:underline">1-800-290-7933</a></p>
+                            <p><strong>Claims Number:</strong> <a href="tel:1-800-225-2467" class="claims-info hover:underline">1-800-225-2467</a></p>
+                            <div>
+                                <strong>Mobile App:</strong>
+                                <div class="flex space-x-4 mt-1">
+                                    <a href="https://apps.apple.com/us/app/liberty-mutual-mobile/id453676947" target="_blank" class="app-info hover:underline">App Store</a>
+                                    <a href="https://play.google.com/store/apps/details?id=com.libertymutual.lm_android" target="_blank" class="app-info hover:underline">Google Play</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="copyInfo('liberty-info')" class="copy-btn mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Copy Info</button>
+                </div>
+
+                <!-- National General - YOUR PARTNER -->
+                <div class="company-card bg-white p-6 rounded-lg border border-gray-200 relative" id="natgen-info" data-categories="auto partner">
+                    <div class="partner-badge">Partner</div>
+                    <button class="favorite-btn" onclick="toggleFavorite('natgen-info')" title="Add to favorites">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                    </button>
+                    <div class="card-content">
+                        <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/National%20General%20Insurance%20Logo.png?raw=true" alt="National General Insurance" class="company-logo">
+                        <div class="space-y-3 text-gray-700">
+                            <p><strong>Website:</strong> <a href="https://nationalgeneral.com" target="_blank" class="general-info hover:underline">nationalgeneral.com</a></p>
+                            <p><strong>Make a Payment:</strong> <a href="https://service.nationalgeneral.com/QuickPay/" target="_blank" class="payment-info hover:underline">Quick Pay</a></p>
+                            <p><strong>General Inquiries:</strong> <a href="tel:1-888-293-5108" class="general-info hover:underline">1-888-293-5108</a></p>
+                            <p><strong>Claims Number:</strong> <a href="tel:1-800-468-3466" class="claims-info hover:underline">1-800-468-3466</a></p>
+                            <div>
+                                <strong>Mobile App:</strong>
+                                <div class="flex space-x-4 mt-1">
+                                    <a href="https://apps.apple.com/us/app/natgen-mobile/id1495393910" target="_blank" class="app-info hover:underline">App Store</a>
+                                    <a href="https://play.google.com/store/apps/details?id=com.nationalgeneral.natgenmobile" target="_blank" class="app-info hover:underline">Google Play</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="copyInfo('natgen-info')" class="copy-btn mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Copy Info</button>
+                </div>
+
+                <!-- Nationwide - YOUR PARTNER -->
+                <div class="company-card bg-white p-6 rounded-lg border border-gray-200 relative" id="nationwide-info" data-categories="auto home partner">
+                    <div class="partner-badge">Partner</div>
+                    <button class="favorite-btn" onclick="toggleFavorite('nationwide-info')" title="Add to favorites">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                    </button>
+                    <div class="card-content">
+                        <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Nationwide%20Insurance.png?raw=true" alt="Nationwide Insurance" class="company-logo">
+                        <div class="space-y-3 text-gray-700">
+                            <p><strong>Website:</strong> <a href="https://www.nationwide.com" target="_blank" class="general-info hover:underline">nationwide.com</a></p>
+                            <p><strong>Make a Payment:</strong> <a href="https://www.nationwide.com/personal/contact/pay-bill-details" target="_blank" class="payment-info hover:underline">Pay Online</a></p>
+                            <p><strong>General Inquiries:</strong> <a href="tel:1-877-669-6877" class="general-info hover:underline">1-877-669-6877</a></p>
+                            <p><strong>Claims Number:</strong> <a href="tel:1-800-421-3535" class="claims-info hover:underline">1-800-421-3535</a></p>
+                            <div>
+                                <strong>Mobile App:</strong>
+                                <div class="flex space-x-4 mt-1">
+                                    <a href="https://apps.apple.com/us/app/nationwide-mobile/id311627534" target="_blank" class="app-info hover:underline">App Store</a>
+                                    <a href="https://play.google.com/store/apps/details?id=com.nationwide.mobile.android.nwmobile" target="_blank" class="app-info hover:underline">Google Play</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="copyInfo('nationwide-info')" class="copy-btn mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Copy Info</button>
+                </div>
+
+                <!-- NC Grange Mutual Insurance -->
+                <div class="company-card bg-white p-6 rounded-lg border border-gray-200 relative" id="ncgrange-info" data-categories="home auto partner">
+                    <div class="partner-badge">Partner</div>
+                    <button class="favorite-btn" onclick="toggleFavorite('ncgrange-info')" title="Add to favorites">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                    </button>
+                    <div class="card-content">
+                        <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/NC%20Grange%20Logo.png?raw=true" alt="NC Grange Mutual Insurance" class="company-logo">
+                        <div class="space-y-3 text-gray-700">
+                            <p><strong>Website:</strong> <a href="https://www.ncgrangemutual.com" target="_blank" class="general-info hover:underline">ncgrangemutual.com</a></p>
+                            <p><strong>Make a Payment:</strong> Contact Agent</p>
+                            <p><strong>General Inquiries:</strong> <a href="tel:1-800-394-1236" class="general-info hover:underline">1-800-394-1236</a></p>
+                            <p><strong>Claims Number:</strong> <a href="tel:1-800-394-1236" class="claims-info hover:underline">1-800-394-1236</a> (then press 3)</p>
+                             <div>
+                                <strong>Mobile App:</strong>
+                                <p class="text-gray-600">Not available.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="copyInfo('ncgrange-info')" class="copy-btn mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Copy Info</button>
+                </div>
+
+                <!-- Progressive - YOUR PARTNER -->
+                <div class="company-card bg-white p-6 rounded-lg border border-gray-200 relative" id="progressive-info" data-categories="auto partner">
+                    <div class="partner-badge">Partner</div>
+                    <button class="favorite-btn" onclick="toggleFavorite('progressive-info')" title="Add to favorites">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                    </button>
+                    <div class="card-content">
+                        <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Progressive%20Logo.png?raw=true" alt="Progressive Insurance" class="company-logo">
+                        <div class="space-y-3 text-gray-700">
+                            <p><strong>Website:</strong> <a href="https://www.progressive.com" target="_blank" class="general-info hover:underline">progressive.com</a></p>
+                            <p><strong>Make a Payment:</strong> <a href="https://account.apps.progressive.com/access/ez-payment/policy-info" target="_blank" class="payment-info hover:underline">Pay Online</a></p>
+                            <p><strong>General Inquiries:</strong> <a href="tel:1-888-671-4405" class="general-info hover:underline">1-888-671-4405</a></p>
+                            <p><strong>Claims Number:</strong> <a href="tel:1-800-776-4737" class="claims-info hover:underline">1-800-776-4737</a></p>
+                            <div>
+                                <strong>Mobile App:</strong>
+                                <div class="flex space-x-4 mt-1">
+                                    <a href="https://apps.apple.com/us/app/progressive/id357563236" target="_blank" class="app-info hover:underline">App Store</a>
+                                    <a href="https://play.google.com/store/apps/details?id=com.phonevalley.progressive" target="_blank" class="app-info hover:underline">Google Play</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="copyInfo('progressive-info')" class="copy-btn mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Copy Info</button>
+                </div>
+
+                <!-- Safeco -->
+                <div class="company-card bg-white p-6 rounded-lg border border-gray-200 relative" id="safeco-info" data-categories="auto home">
+                    <button class="favorite-btn" onclick="toggleFavorite('safeco-info')" title="Add to favorites">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                    </button>
+                    <div class="card-content">
+                        <div class="company-logo-placeholder">
+                            <h2 class="text-xl font-bold text-gray-700">Safeco</h2>
+                        </div>
+                        <div class="space-y-3 text-gray-700">
+                            <p><strong>Website:</strong> <a href="https://www.safeco.com" target="_blank" class="general-info hover:underline">safeco.com</a></p>
+                            <p><strong>Make a Payment:</strong> <a href="https://www.safeco.com/customer-resources/customer-support/billing-payment" target="_blank" class="payment-info hover:underline">Pay Online</a></p>
+                            <p><strong>General Inquiries:</strong> <a href="tel:1-800-332-3226" class="general-info hover:underline">1-800-332-3226</a></p>
+                            <p><strong>Claims Number:</strong> <a href="tel:1-800-332-3226" class="claims-info hover:underline">1-800-332-3226</a></p>
+                            <div>
+                                <strong>Mobile App:</strong>
+                                <div class="flex space-x-4 mt-1">
+                                    <a href="https://apps.apple.com/us/app/safeco-mobile/id1162648539" target="_blank" class="app-info hover:underline">App Store</a>
+                                    <a href="https://play.google.com/store/apps/details?id=com.safecoinsurance.consumer" target="_blank" class="app-info hover:underline">Google Play</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="copyInfo('safeco-info')" class="copy-btn mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Copy Info</button>
+                </div>
+
+                <!-- State Farm -->
+                <div class="company-card bg-white p-6 rounded-lg border border-gray-200 relative" id="statefarm-info" data-categories="auto home">
+                    <button class="favorite-btn" onclick="toggleFavorite('statefarm-info')" title="Add to favorites">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                    </button>
+                    <div class="card-content">
+                        <div class="company-logo-placeholder">
+                            <h2 class="text-xl font-bold text-gray-700">State Farm</h2>
+                        </div>
+                        <div class="space-y-3 text-gray-700">
+                            <p><strong>Website:</strong> <a href="https://www.statefarm.com" target="_blank" class="general-info hover:underline">statefarm.com</a></p>
+                            <p><strong>Make a Payment:</strong> <a href="https://www.statefarm.com/customer-care/insurance-bill-pay" target="_blank" class="payment-info hover:underline">Pay Online</a></p>
+                            <p><strong>General Inquiries:</strong> <a href="tel:1-800-782-8332" class="general-info hover:underline">1-800-782-8332</a></p>
+                            <p><strong>Claims Number:</strong> <a href="tel:1-800-732-5246" class="claims-info hover:underline">1-800-732-5246</a></p>
+                            <div>
+                                <strong>Mobile App:</strong>
+                                <div class="flex space-x-4 mt-1">
+                                    <a href="https://apps.apple.com/us/app/state-farm/id318211812" target="_blank" class="app-info hover:underline">App Store</a>
+                                    <a href="https://play.google.com/store/apps/details?id=com.statefarm.pocketagent" target="_blank" class="app-info hover:underline">Google Play</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="copyInfo('statefarm-info')" class="copy-btn mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Copy Info</button>
+                </div>
+
+                <!-- Travelers - YOUR PARTNER -->
+                <div class="company-card bg-white p-6 rounded-lg border border-gray-200 relative" id="travelers-info" data-categories="auto home partner">
+                    <div class="partner-badge">Partner</div>
+                    <button class="favorite-btn" onclick="toggleFavorite('travelers-info')" title="Add to favorites">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                    </button>
+                    <div class="card-content">
+                        <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Travelers%20Logo.png?raw=true" alt="Travelers Insurance" class="company-logo">
+                        <div class="space-y-3 text-gray-700">
+                            <p><strong>Website:</strong> <a href="https://www.travelers.com" target="_blank" class="general-info hover:underline">travelers.com</a></p>
+                            <p><strong>Make a Payment:</strong> <a href="https://www.travelers.com/pay-your-bill" target="_blank" class="payment-info hover:underline">Pay Online</a></p>
+                            <p><strong>General Inquiries:</strong> <a href="tel:1-800-842-5075" class="general-info hover:underline">1-800-842-5075</a></p>
+                            <p><strong>Claims Number:</strong> <a href="tel:1-800-252-4633" class="claims-info hover:underline">1-800-252-4633</a></p>
+                            <div>
+                                <strong>Mobile App:</strong>
+                                <div class="flex space-x-4 mt-1">
+                                    <a href="https://apps.apple.com/us/app/travelers-mobile/id447956414" target="_blank" class="app-info hover:underline">App Store</a>
+                                    <a href="https://play.google.com/store/apps/details?id=com.travelers.digitalservice" target="_blank" class="app-info hover:underline">Google Play</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="copyInfo('travelers-info')" class="copy-btn mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Copy Info</button>
+                </div>
+
+                <!-- Universal Property -->
+                <div class="company-card bg-white p-6 rounded-lg border border-gray-200 relative" id="universal-info" data-categories="home partner">
+                    <div class="partner-badge">Partner</div>
+                    <button class="favorite-btn" onclick="toggleFavorite('universal-info')" title="Add to favorites">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                    </button>
+                    <div class="card-content">
+                        <img src="https://github.com/BillLayne/bill-layne-images/blob/main/logos/Universal%20Insurance.png?raw=true" alt="Universal Property Insurance" class="company-logo">
+                        <div class="space-y-3 text-gray-700">
+                            <p><strong>Website:</strong> <a href="https://universalproperty.com" target="_blank" class="general-info hover:underline">universalproperty.com</a></p>
+                            <p><strong>Make a Payment:</strong> <a href="https://customer.universalproperty.com/" target="_blank" class="payment-info hover:underline">Pay via Portal</a></p>
+                            <p><strong>General Inquiries:</strong> <a href="tel:1-800-425-9113" class="general-info hover:underline">1-800-425-9113</a></p>
+                            <p><strong>Claims Number:</strong> <a href="tel:1-800-470-0599" class="claims-info hover:underline">1-800-470-0599</a></p>
+                            <div>
+                                <strong>Mobile App:</strong>
+                                <div class="flex space-x-4 mt-1">
+                                    <a href="https://apps.apple.com/us/app/upcic-mobile/id972768393" target="_blank" class="app-info hover:underline">App Store</a>
+                                    <a href="https://play.google.com/store/apps/details?id=com.universalproperty.android" target="_blank" class="app-info hover:underline">Google Play</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="copyInfo('universal-info')" class="copy-btn mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Copy Info</button>
+                </div>
+
+                <!-- USAA -->
+                <div class="company-card bg-white p-6 rounded-lg border border-gray-200 relative" id="usaa-info" data-categories="auto home">
+                    <button class="favorite-btn" onclick="toggleFavorite('usaa-info')" title="Add to favorites">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                        </svg>
+                    </button>
+                    <div class="card-content">
+                        <div class="company-logo-placeholder">
+                            <h2 class="text-xl font-bold text-gray-700">USAA</h2>
+                        </div>
+                        <div class="space-y-3 text-gray-700">
+                            <p><strong>Website:</strong> <a href="https://www.usaa.com" target="_blank" class="general-info hover:underline">usaa.com</a></p>
+                            <p><strong>Make a Payment:</strong> <a href="https://www.usaa.com/my/logon" target="_blank" class="payment-info hover:underline">Pay via Portal</a></p>
+                            <p><strong>General Inquiries:</strong> <a href="tel:1-210-531-8722" class="general-info hover:underline">1-210-531-8722</a></p>
+                            <p><strong>Claims Number:</strong> <a href="tel:1-800-531-8722" class="claims-info hover:underline">1-800-531-8722</a></p>
+                            <div>
+                                <strong>Mobile App:</strong>
+                                <div class="flex space-x-4 mt-1">
+                                    <a href="https://apps.apple.com/us/app/usaa-mobile/id322383343" target="_blank" class="app-info hover:underline">App Store</a>
+                                    <a href="https://play.google.com/store/apps/details?id=com.usaa.mobile.android.usaa" target="_blank" class="app-info hover:underline">Google Play</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="copyInfo('usaa-info')" class="copy-btn mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Copy Info</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== UNIFIED MOBILE MENU JAVASCRIPT =====
+        
+        // Mobile Menu Toggle
+        document.addEventListener('DOMContentLoaded', function () {
+            const mobileMenuButton = document.getElementById('mobileMenuToggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuClose = document.querySelector('.navbar-menu-close');
+            const mobileMenuOverlay = document.querySelector('.navbar-menu-overlay');
+            
+            if (mobileMenuButton && mobileMenu && mobileMenuClose && mobileMenuOverlay) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('active');
+                    mobileMenuOverlay.classList.toggle('active');
+                    document.body.classList.toggle('menu-open');
+                    mobileMenuButton.classList.toggle('active');
+                });
+
+                const closeMenu = () => {
+                    mobileMenu.classList.remove('active');
+                    mobileMenuOverlay.classList.remove('active');
+                    document.body.classList.remove('menu-open');
+                    mobileMenuButton.classList.remove('active');
+                }
+
+                mobileMenuClose.addEventListener('click', closeMenu);
+                mobileMenuOverlay.addEventListener('click', closeMenu);
+
+                // Close menu when clicking on a link
+                const menuLinks = mobileMenu.querySelectorAll('.nav-link');
+                menuLinks.forEach(link => {
+                    link.addEventListener('click', closeMenu);
+                });
+            }
+
+            // Initialize search and filter functionality
+            initializeSearchAndFilter();
+        });
+
+        // ===== SEARCH AND FILTER FUNCTIONALITY =====
+        function initializeSearchAndFilter() {
+            const searchInput = document.getElementById('searchInput');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const companyCards = document.querySelectorAll('.company-card');
+            const resultsCounter = document.getElementById('resultsCounter');
+
+            let currentFilter = 'all';
+            let currentSearch = '';
+
+            // Search functionality
+            searchInput.addEventListener('input', (e) => {
+                currentSearch = e.target.value.toLowerCase();
+                filterAndDisplay();
+            });
+
+            // Filter functionality
+            filterButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    // Update active button
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    
+                    currentFilter = e.target.getAttribute('data-filter');
+                    filterAndDisplay();
+                });
+            });
+
+            function filterAndDisplay() {
+                let visibleCount = 0;
+
+                companyCards.forEach(card => {
+                    const cardText = card.textContent.toLowerCase();
+                    const categories = card.getAttribute('data-categories') || '';
+                    const isFavorited = card.classList.contains('favorited');
+
+                    // Check search match
+                    const matchesSearch = currentSearch === '' || cardText.includes(currentSearch);
+
+                    // Check filter match
+                    let matchesFilter = false;
+                    switch (currentFilter) {
+                        case 'all':
+                            matchesFilter = true;
+                            break;
+                        case 'partner':
+                            matchesFilter = categories.includes('partner');
+                            break;
+                        case 'auto':
+                            matchesFilter = categories.includes('auto');
+                            break;
+                        case 'home':
+                            matchesFilter = categories.includes('home');
+                            break;
+                        case 'favorites':
+                            matchesFilter = isFavorited;
+                            break;
+                    }
+
+                    // Show/hide card
+                    if (matchesSearch && matchesFilter) {
+                        card.classList.remove('hidden');
+                        visibleCount++;
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+
+                // Update results counter
+                updateResultsCounter(visibleCount, currentFilter, currentSearch);
+            }
+
+            function updateResultsCounter(count, filter, search) {
+                let message = `Showing ${count} ${count === 1 ? 'company' : 'companies'}`;
+                
+                if (search) {
+                    message += ` matching "${search}"`;
+                }
+                
+                if (filter !== 'all') {
+                    const filterLabels = {
+                        'partner': 'Our Partners',
+                        'auto': 'Auto Insurance',
+                        'home': 'Home Insurance',
+                        'favorites': 'Favorites'
+                    };
+                    message += ` in ${filterLabels[filter]}`;
+                }
+
+                resultsCounter.textContent = message;
+            }
+        }
+
+        // ===== FAVORITES FUNCTIONALITY =====
+        function toggleFavorite(cardId) {
+            const card = document.getElementById(cardId);
+            const button = card.querySelector('.favorite-btn');
+            const icon = button.querySelector('svg');
+            
+            card.classList.toggle('favorited');
+            button.classList.toggle('favorited');
+            
+            // Save to localStorage
+            const favorites = JSON.parse(localStorage.getItem('favoriteCarriers') || '[]');
+            if (card.classList.contains('favorited')) {
+                if (!favorites.includes(cardId)) {
+                    favorites.push(cardId);
+                }
+            } else {
+                const index = favorites.indexOf(cardId);
+                if (index > -1) {
+                    favorites.splice(index, 1);
+                }
+            }
+            localStorage.setItem('favoriteCarriers', JSON.stringify(favorites));
+            
+            // Update display if currently filtering favorites
+            const activeFilter = document.querySelector('.filter-btn.active').getAttribute('data-filter');
+            if (activeFilter === 'favorites') {
+                // Re-run filter to update display
+                const event = new Event('input');
+                document.getElementById('searchInput').dispatchEvent(event);
+            }
+        }
+
+        // Load favorites on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const favorites = JSON.parse(localStorage.getItem('favoriteCarriers') || '[]');
+            favorites.forEach(cardId => {
+                const card = document.getElementById(cardId);
+                if (card) {
+                    card.classList.add('favorited');
+                    card.querySelector('.favorite-btn').classList.add('favorited');
+                }
+            });
+        });
+
+        // ===== QUICK ACTIONS FUNCTIONALITY =====
+        function emergencyAction() {
+            const emergencyModal = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center;" onclick="this.remove()">
+                    <div style="background: white; padding: 30px; border-radius: 15px; max-width: 450px; margin: 20px; max-height: 80vh; overflow-y: auto;" onclick="event.stopPropagation()">
+                        <h3 style="color: #dc2626; font-size: 24px; font-weight: bold; margin-bottom: 20px; text-align: center;">🚨 Emergency Claims - Our Partners</h3>
+                        <p style="margin-bottom: 20px; text-align: center; font-size: 14px;">For immediate claims assistance, call your carrier directly:</p>
+                        <div style="display: grid; gap: 8px;">
+                            <a href="tel:1-800-776-4737" style="background: #dc2626; color: white; padding: 10px; border-radius: 6px; text-decoration: none; text-align: center; font-weight: bold; font-size: 14px;">Progressive: 1-800-776-4737</a>
+                            <a href="tel:1-800-421-3535" style="background: #dc2626; color: white; padding: 10px; border-radius: 6px; text-decoration: none; text-align: center; font-weight: bold; font-size: 14px;">Nationwide: 1-800-421-3535</a>
+                            <a href="tel:1-800-468-3466" style="background: #dc2626; color: white; padding: 10px; border-radius: 6px; text-decoration: none; text-align: center; font-weight: bold; font-size: 14px;">National General: 1-800-468-3466</a>
+                            <a href="tel:1-800-252-4633" style="background: #dc2626; color: white; padding: 10px; border-radius: 6px; text-decoration: none; text-align: center; font-weight: bold; font-size: 14px;">Travelers: 1-800-252-4633</a>
+                            <a href="tel:1-800-527-3907" style="background: #dc2626; color: white; padding: 10px; border-radius: 6px; text-decoration: none; text-align: center; font-weight: bold; font-size: 14px;">Foremost: 1-800-527-3907</a>
+                            <a href="tel:1-800-334-0090" style="background: #dc2626; color: white; padding: 10px; border-radius: 6px; text-decoration: none; text-align: center; font-weight: bold; font-size: 14px;">Dairyland: 1-800-334-0090</a>
+                            <a href="tel:1-336-226-7872" style="background: #dc2626; color: white; padding: 10px; border-radius: 6px; text-decoration: none; text-align: center; font-weight: bold; font-size: 14px;">Alamance Farmers: 1-336-226-7872</a>
+                            <a href="tel:1-800-394-1236" style="background: #dc2626; color: white; padding: 10px; border-radius: 6px; text-decoration: none; text-align: center; font-weight: bold; font-size: 14px;">NC Grange: 1-800-394-1236</a>
+                            <a href="tel:1-800-470-0599" style="background: #dc2626; color: white; padding: 10px; border-radius: 6px; text-decoration: none; text-align: center; font-weight: bold; font-size: 14px;">Universal Property: 1-800-470-0599</a>
+                        </div>
+                        <p style="margin-top: 20px; text-align: center; font-size: 12px; color: #666;">Click outside to close</p>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', emergencyModal);
+        }
+
+        function quickCall() {
+            window.location.href = 'tel:3368351993';
+        }
+
+        function emailCarrierInfo() {
+            const subject = encodeURIComponent('Insurance Carrier Information Request');
+            const body = encodeURIComponent(`Hi Bill,
+
+I need information about insurance carriers. Could you help me with:
+
+[ ] Quote comparison
+[ ] Claims assistance  
+[ ] Policy questions
+[ ] Coverage options
+
+Current situation:
+[Please describe your needs]
+
+Thanks!`);
+            
+            window.location.href = `mailto:Save@BillLayneInsurance.com?subject=${subject}&body=${body}`;
+        }
+
+        // Copy Info Function
+        function copyInfo(elementId) {
+            const infoElement = document.getElementById(elementId);
+            const button = infoElement.querySelector('button');
+            const header = infoElement.querySelector('h2')?.innerText || infoElement.querySelector('.company-logo-placeholder h2')?.innerText || 'Insurance Company';
+            let textToCopy = header + '\n\n';
+
+            infoElement.querySelectorAll('p, div > strong').forEach(el => {
+                const tempEl = document.createElement('div');
+                tempEl.innerHTML = el.innerHTML.replace(/<br\s*\/?>/gi, ' ');
+                let text = tempEl.innerText || tempEl.textContent;
+                textToCopy += text.trim().replace(/\s+/g, ' ') + '\n';
+            });
+            
+            textToCopy = textToCopy.replace(/\n\n/g, '\n').replace(/Mobile App:\n/g, 'Mobile App: ').trim();
+
+            const textArea = document.createElement('textarea');
+            textArea.style.position = 'absolute';
+            textArea.style.left = '-9999px';
+            textArea.value = textToCopy;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                button.innerText = 'Copied!';
+                setTimeout(() => {
+                    button.innerText = 'Copy Info';
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                button.innerText = 'Error';
+                 setTimeout(() => {
+                    button.innerText = 'Copy Info';
+                }, 2000);
+            }
+            document.body.removeChild(textArea);
+        }
+    </script>
+
+</body>
+</html>
