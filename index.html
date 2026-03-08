@@ -730,35 +730,6 @@ footer{background:#0a1422;padding:56px 24px 32px}
 .sticky-bar-phone i{color:#60a5fa}
 @media(max-width:960px){.sticky-bar{display:none!important}}
 
-/* ── EXIT-INTENT POPUP ── */
-.exit-overlay{position:fixed;inset:0;z-index:99999;background:rgba(15,31,51,.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .35s}
-.exit-overlay.show{display:flex;opacity:1}
-.exit-popup{background:white;border-radius:24px;max-width:480px;width:100%;padding:40px 36px;text-align:center;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.35);transform:scale(.9);transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
-.exit-overlay.show .exit-popup{transform:scale(1)}
-.exit-popup-close{position:absolute;top:14px;right:18px;background:none;border:none;font-size:22px;color:var(--gray-400);cursor:pointer;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .2s}
-.exit-popup-close:hover{background:var(--gray-100)}
-.exit-popup-icon{font-size:48px;margin-bottom:16px}
-.exit-popup h3{font-family:var(--font-display);font-size:24px;font-weight:900;color:var(--navy);margin-bottom:8px;line-height:1.2}
-.exit-popup .exit-geo-line{font-size:15px;color:var(--gray-500);margin-bottom:20px;line-height:1.6}
-.exit-popup .exit-geo-line strong{color:var(--navy)}
-.exit-popup .exit-stats{display:flex;gap:16px;justify-content:center;margin-bottom:24px}
-.exit-popup .exit-stat{text-align:center;padding:12px 16px;background:var(--gray-50);border-radius:12px;flex:1}
-.exit-popup .exit-stat-num{font-family:var(--font-display);font-size:22px;font-weight:900;color:var(--blue)}
-.exit-popup .exit-stat-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gray-400);margin-top:2px}
-.exit-popup .btn-exit{display:inline-flex;align-items:center;gap:8px;background:var(--amber);color:var(--navy);padding:14px 32px;border-radius:12px;font-size:16px;font-weight:800;text-decoration:none;transition:transform .2s,box-shadow .2s;border:none;cursor:pointer}
-.exit-popup .btn-exit:hover{transform:scale(1.04);box-shadow:0 8px 24px rgba(251,191,36,.4)}
-.exit-popup .exit-no{display:block;margin-top:12px;font-size:12px;color:var(--gray-400);cursor:pointer;background:none;border:none}
-.exit-popup .exit-no:hover{color:var(--gray-600)}
-
-/* ── SOCIAL PROOF TOAST ── */
-.proof-toast{position:fixed;bottom:24px;left:24px;z-index:9998;background:white;border-radius:16px;padding:16px 20px;box-shadow:0 12px 40px rgba(0,0,0,.18);display:flex;align-items:center;gap:14px;max-width:360px;transform:translateX(-120%);transition:transform .5s cubic-bezier(.34,1.56,.64,1);border-left:4px solid var(--amber)}
-.proof-toast.show{transform:translateX(0)}
-.proof-toast-icon{width:40px;height:40px;border-radius:50%;background:var(--amber-light);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.proof-toast-text{font-size:13px;color:var(--navy);font-weight:600;line-height:1.5}
-.proof-toast-text .proof-city{color:var(--blue);font-weight:800}
-.proof-toast-time{font-size:10px;color:var(--gray-400);font-weight:600;margin-top:2px}
-.proof-toast-close{position:absolute;top:8px;right:10px;background:none;border:none;font-size:14px;color:var(--gray-300);cursor:pointer}
-@media(max-width:960px){.proof-toast{bottom:90px;left:12px;right:12px;max-width:none}}
 </style>
 </head>
 <body>
@@ -1523,33 +1494,6 @@ footer{background:#0a1422;padding:56px 24px 32px}
   </a>
 </div>
 
-<!-- EXIT-INTENT POPUP -->
-<div class="exit-overlay" id="exit-overlay">
-  <div class="exit-popup">
-    <button class="exit-popup-close" onclick="closeExitPopup()">&times;</button>
-    <div class="exit-popup-icon">🛡️</div>
-    <h3>Wait — Don't Overpay!</h3>
-    <p class="exit-geo-line">Families in <strong id="exit-geo-city">North Carolina</strong> save an average of <strong>$847/year</strong> when they compare rates through us.</p>
-    <div class="exit-stats">
-      <div class="exit-stat"><div class="exit-stat-num">10+</div><div class="exit-stat-label">Carriers</div></div>
-      <div class="exit-stat"><div class="exit-stat-num">60s</div><div class="exit-stat-label">Free Quote</div></div>
-      <div class="exit-stat"><div class="exit-stat-num">$0</div><div class="exit-stat-label">Cost</div></div>
-    </div>
-    <a href="get-quote.html" class="btn-exit"><i class="fas fa-search-dollar"></i> Compare My Rates — Free</a>
-    <button class="exit-no" onclick="closeExitPopup()">No thanks, I'll keep overpaying</button>
-  </div>
-</div>
-
-<!-- SOCIAL PROOF TOAST -->
-<div class="proof-toast" id="proof-toast">
-  <button class="proof-toast-close" onclick="dismissToast()">&times;</button>
-  <div class="proof-toast-icon" id="proof-toast-icon">🎉</div>
-  <div>
-    <div class="proof-toast-text" id="proof-toast-text"></div>
-    <div class="proof-toast-time" id="proof-toast-time"></div>
-  </div>
-</div>
-
 <script>
 // FAQ accordion
 function toggleFaq(el) {
@@ -1591,9 +1535,6 @@ var geoCity = '';
               el.style.opacity = '1';
             }, 300);
           }
-          // Update exit popup city too
-          var exitGeo = document.getElementById('exit-geo-city');
-          if (exitGeo) exitGeo.textContent = geoCity + ', NC';
         }
       })
       .catch(function() {});
@@ -1681,81 +1622,6 @@ var geoCity = '';
   updateCTA();
 })();
 
-// ── EXIT-INTENT POPUP ──
-var exitShown = false;
-function closeExitPopup() {
-  var o = document.getElementById('exit-overlay');
-  if (o) { o.classList.remove('show'); }
-  sessionStorage.setItem('bll_exit_closed', '1');
-}
-function showExitPopup() {
-  if (exitShown || sessionStorage.getItem('bll_exit_closed')) return;
-  exitShown = true;
-  var o = document.getElementById('exit-overlay');
-  if (o) {
-    o.style.display = 'flex';
-    setTimeout(function() { o.classList.add('show'); }, 10);
-  }
-}
-// Desktop: mouse leaves viewport at top
-document.addEventListener('mouseout', function(e) {
-  if (e.clientY < 5 && e.relatedTarget === null) showExitPopup();
-});
-// Mobile: back button / visibility change (fallback — show after 45s)
-var exitTimer = setTimeout(function() {
-  if (!exitShown && !sessionStorage.getItem('bll_exit_closed')) {
-    // Only on mobile
-    if (window.innerWidth <= 960) showExitPopup();
-  }
-}, 45000);
-// Close on overlay click
-document.getElementById('exit-overlay').addEventListener('click', function(e) {
-  if (e.target === this) closeExitPopup();
-});
-
-// ── SOCIAL PROOF TOASTS ──
-var toastDismissed = false;
-function dismissToast() {
-  var t = document.getElementById('proof-toast');
-  if (t) t.classList.remove('show');
-  toastDismissed = true;
-}
-(function() {
-  var ncTowns = ['Elkin','Mount Airy','Dobson','Jonesville','Pilot Mountain','Yadkinville','Wilkesboro','King','Winston-Salem','North Wilkesboro'];
-  var messages = [
-    {icon:'🎉', text:'A family in <span class="proof-city">CITY</span> just saved <strong>$612</strong> on auto insurance'},
-    {icon:'✅', text:'Someone in <span class="proof-city">CITY</span> bundled home + auto — <strong>saved $940/yr</strong>'},
-    {icon:'🏠', text:'A homeowner in <span class="proof-city">CITY</span> switched carriers and <strong>saved $380</strong>'},
-    {icon:'🚗', text:'A driver in <span class="proof-city">CITY</span> compared 7 quotes — <strong>saved $520</strong>'},
-    {icon:'⭐', text:'New 5-star review from <span class="proof-city">CITY</span>: <em>"Best rates in Surry County!"</em>'},
-    {icon:'📋', text:'A family in <span class="proof-city">CITY</span> just completed their <strong>free quote</strong> in 3 minutes'},
-    {icon:'🛡️', text:'Someone in <span class="proof-city">CITY</span> just added <strong>umbrella coverage</strong> for $18/mo'},
-    {icon:'💰', text:'A customer in <span class="proof-city">CITY</span> found <strong>$847 in savings</strong> across 3 policies'}
-  ];
-  var timeLabels = ['2 minutes ago','5 minutes ago','8 minutes ago','12 minutes ago','17 minutes ago','Just now','3 minutes ago','6 minutes ago'];
-  var idx = 0;
-  function showToast() {
-    if (toastDismissed) return;
-    var toast = document.getElementById('proof-toast');
-    var textEl = document.getElementById('proof-toast-text');
-    var timeEl = document.getElementById('proof-toast-time');
-    var iconEl = document.getElementById('proof-toast-icon');
-    if (!toast || !textEl) return;
-    var msg = messages[idx % messages.length];
-    var city = ncTowns[Math.floor(Math.random() * ncTowns.length)];
-    iconEl.textContent = msg.icon;
-    textEl.innerHTML = msg.text.replace('CITY', city);
-    timeEl.textContent = timeLabels[idx % timeLabels.length];
-    toast.classList.add('show');
-    setTimeout(function() { toast.classList.remove('show'); }, 5000);
-    idx++;
-  }
-  // First toast after 15 seconds, then every 35 seconds
-  setTimeout(function() {
-    showToast();
-    setInterval(showToast, 35000);
-  }, 15000);
-})();
 </script>
 </body>
 </html>
