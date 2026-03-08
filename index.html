@@ -753,7 +753,7 @@ footer{background:#0a1422;padding:56px 24px 32px}
       <div class="hero-eyebrow">
         <i class="fas fa-map-marker-alt"></i> Independent Agency · Elkin, NC Since 2005
       </div>
-      <h1>North Carolina<br><span class="accent">Independent</span><br>Insurance Agency</h1>
+      <h1><span id="geo-location">North Carolina</span><br><span class="accent">Independent</span><br>Insurance Agency</h1>
       <p class="hero-sub-headline">One Call. Multiple Quotes.</p>
       <p class="hero-body">We make top carriers <strong>compete for your rate.</strong> You pick the winner.</p>
       <p class="hero-carriers">Progressive · Travelers · Nationwide · National General & more</p>
@@ -1483,6 +1483,29 @@ function loadYoutubeVideo(el) {
   el.dataset.loaded = '1';
   el.innerHTML = '<iframe src="https://www.youtube.com/embed/4hJT_wMCcCg?autoplay=1&rel=0" title="Meet Bill Layne" frameborder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%"></iframe>';
 }
+
+// Geo-personalization: show visitor's city in the hero
+(function() {
+  try {
+    fetch('https://ipapi.co/json/')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data && data.region === 'North Carolina' && data.city) {
+          var el = document.getElementById('geo-location');
+          if (el) {
+            var display = data.city + ', NC';
+            el.style.transition = 'opacity .4s';
+            el.style.opacity = '0';
+            setTimeout(function() {
+              el.textContent = display;
+              el.style.opacity = '1';
+            }, 300);
+          }
+        }
+      })
+      .catch(function() { /* silent fail — keeps "North Carolina" */ });
+  } catch(e) { /* silent fail */ }
+})();
 </script>
 </body>
 </html>
