@@ -810,6 +810,44 @@
         .modal-btn-home:hover { opacity: .9; }
         .email-sent { font-size: 12px; color: var(--gray-400); margin-bottom: 14px; }
 
+        /* --- Upgraded modal elements --- */
+        .step-num {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 22px; height: 22px; border-radius: 50%;
+            background: var(--blue); color: white;
+            font-size: 11px; font-weight: 800; flex-shrink: 0;
+        }
+        .modal-cross-sell {
+            display: flex; align-items: center; gap: 12px;
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border: 2px solid #93c5fd;
+            border-radius: 12px; padding: 14px 16px;
+            margin-bottom: 16px; text-decoration: none;
+            transition: all .25s ease;
+        }
+        .modal-cross-sell:hover { border-color: var(--blue); background: linear-gradient(135deg, #dbeafe, #bfdbfe); transform: translateY(-1px); }
+        .cross-sell-icon {
+            width: 42px; height: 42px; border-radius: 10px;
+            background: var(--blue); color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; flex-shrink: 0;
+        }
+        .cross-sell-text { text-align: left; flex: 1; }
+        .cross-sell-text strong { display: block; font-size: 14px; color: var(--navy); }
+        .cross-sell-text span { font-size: 12px; color: var(--gray-500); }
+        .cross-sell-arrow { color: var(--blue); font-size: 16px; flex-shrink: 0; }
+        .modal-review-ask {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 10px 16px; margin-bottom: 12px;
+            background: #fef9c3; border: 1px solid #fde68a;
+            border-radius: 8px; text-decoration: none;
+            font-size: 13px; font-weight: 600; color: #92400e;
+            transition: all .2s;
+        }
+        .modal-review-ask:hover { background: #fde68a; }
+        .google-g-icon { width: 18px; height: 18px; }
+        .modal-review-ask .fa-star { color: #f59e0b; font-size: 12px; }
+
         .hidden { display: none !important; }
     </style>
 </head>
@@ -830,26 +868,37 @@
         <div class="success-modal-content">
             <div class="modal-header">
                 <div class="checkmark-wrap"><i class="fas fa-check"></i></div>
-                <div class="modal-title">Quote Request Received!</div>
-                <div class="modal-subtitle">We're shopping your home coverage right now</div>
+                <div class="modal-title">Thanks, <span id="modal-customer-name">there</span>!</div>
+                <div class="modal-subtitle">Your home quote request has been received</div>
             </div>
             <div class="modal-body">
                 <div class="confirm-box">
                     <div class="confirm-label">Your Confirmation Number</div>
                     <div class="confirm-number" id="modal-confirmation-number">HOME-20250307-0001</div>
                 </div>
+
                 <div class="next-steps">
-                    <div class="next-steps-title">What happens next?</div>
-                    <div class="next-step-item"><i class="fas fa-search-dollar"></i> Shopping Nationwide, Travelers, National General & more</div>
-                    <div class="next-step-item"><i class="fas fa-balance-scale"></i> We compare coverage and price across all available carriers</div>
-                    <div class="next-step-item"><i class="fas fa-clock"></i> You'll hear from us within 24 hours</div>
-                    <div class="next-step-item"><i class="fas fa-phone-alt"></i> We'll contact you by email or phone with your options</div>
+                    <div class="next-steps-title"><i class="fas fa-route"></i> What happens next?</div>
+                    <div class="next-step-item"><span class="step-num">1</span> We're shopping Nationwide, Travelers, National General &amp; more now</div>
+                    <div class="next-step-item"><span class="step-num">2</span> Bill will personally compare your best coverage options</div>
+                    <div class="next-step-item"><span class="step-num">3</span> Expect a call or email <strong>today or by 10am tomorrow</strong></div>
                 </div>
+
+                <!-- Bundle Cross-Sell -->
+                <a href="auto-quote.html" class="modal-cross-sell">
+                    <div class="cross-sell-icon"><i class="fas fa-car"></i></div>
+                    <div class="cross-sell-text">
+                        <strong>Bundle &amp; save up to 25%</strong>
+                        <span>Add an auto quote too — takes just a few more minutes</span>
+                    </div>
+                    <i class="fas fa-arrow-right cross-sell-arrow"></i>
+                </a>
+
                 <div class="modal-contacts">
                     <a href="tel:3368351993" class="modal-contact-btn phone">
                         <i class="fas fa-phone-alt"></i>
-                        <span>336-835-1993</span>
-                        <small>Call anytime</small>
+                        <span>(336) 835-1993</span>
+                        <small>Call or text anytime</small>
                     </a>
                     <a href="mailto:Save@BillLayneInsurance.com" class="modal-contact-btn email">
                         <i class="fas fa-envelope"></i>
@@ -857,10 +906,51 @@
                         <small>Save@BillLayneInsurance.com</small>
                     </a>
                 </div>
-                <p class="email-sent">Confirmation sent to <strong id="customer-email"></strong></p>
+
+                <!-- Google Review Ask -->
+                <a href="https://www.google.com/search?q=Bill+Layne+Insurance+Agency+Elkin+NC+reviews" target="_blank" rel="noopener noreferrer" class="modal-review-ask">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" class="google-g-icon">
+                    <span>Love our service? Leave us a Google review <i class="fas fa-star"></i></span>
+                </a>
+
+                <p class="email-sent">We'll follow up at <strong id="customer-email"></strong></p>
+
                 <div class="modal-actions">
-                    <button onclick="closeSuccessModal()" class="modal-btn-close">Close</button>
                     <a href="index.html" class="modal-btn-home"><i class="fas fa-home"></i> Return Home</a>
+                    <button onclick="closeSuccessModal()" class="modal-btn-close">Done</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div id="errorModal" class="success-modal">
+        <div class="success-modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">
+                <div class="checkmark-wrap" style="background: #fbbf24;"><i class="fas fa-exclamation" style="color: #92400e;"></i></div>
+                <div class="modal-title">Submission Issue</div>
+                <div class="modal-subtitle">Don't worry — we can still get your quote</div>
+            </div>
+            <div class="modal-body">
+                <div class="next-steps">
+                    <div class="next-steps-title">Try one of these options:</div>
+                    <div class="next-step-item"><i class="fas fa-envelope"></i> We can email your quote details directly to Bill</div>
+                    <div class="next-step-item"><i class="fas fa-phone-alt"></i> Or call us and we'll take your info over the phone</div>
+                </div>
+                <div class="modal-contacts">
+                    <a href="#" id="error-email-fallback" class="modal-contact-btn email">
+                        <i class="fas fa-envelope"></i>
+                        <span>Send via Email</span>
+                        <small>Opens your email app</small>
+                    </a>
+                    <a href="tel:3368351993" class="modal-contact-btn phone">
+                        <i class="fas fa-phone-alt"></i>
+                        <span>(336) 835-1993</span>
+                        <small>Call us now</small>
+                    </a>
+                </div>
+                <div class="modal-actions">
+                    <button onclick="closeErrorModal()" class="modal-btn-close">Close</button>
                 </div>
             </div>
         </div>
@@ -1564,9 +1654,23 @@
             currentStep = 1;
             showStep(1);
         }
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSuccessModal(); });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') { closeSuccessModal(); closeErrorModal(); }
+        });
         document.getElementById('successModal').addEventListener('click', function(e) {
             if (e.target === this) closeSuccessModal();
+        });
+
+        // ─── ERROR MODAL ──────────────────────────────────────────────
+        function closeErrorModal() {
+            const errModal = document.getElementById('errorModal');
+            if (errModal) {
+                errModal.classList.remove('active');
+                errModal.style.display = 'none';
+            }
+        }
+        document.getElementById('errorModal').addEventListener('click', function(e) {
+            if (e.target === this) closeErrorModal();
         });
 
         // ─── METADATA ─────────────────────────────────────────────────
@@ -1647,6 +1751,8 @@
                     loadingOverlay.classList.remove('active');
                     loadingOverlay.style.display = 'none';
 
+                    document.getElementById('modal-customer-name').textContent = data.firstname || 'there';
+
                     const modal = document.getElementById('successModal');
                     modal.style.display = 'flex';
                     modal.classList.add('active');
@@ -1662,11 +1768,13 @@
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Get My Free Quote';
 
-                if (confirm('There was an issue submitting online. Would you like to send via email instead?')) {
-                    const subject = encodeURIComponent('Home Insurance Quote Request');
-                    const body = encodeURIComponent(generateEmailBody(data));
-                    window.location.href = `mailto:Save@BillLayneInsurance.com?subject=${subject}&body=${body}`;
-                }
+                const subject = encodeURIComponent('Home Insurance Quote Request');
+                const body = encodeURIComponent(generateEmailBody(data));
+                const emailLink = document.getElementById('error-email-fallback');
+                if (emailLink) emailLink.href = `mailto:Save@BillLayneInsurance.com?subject=${subject}&body=${body}`;
+                const errModal = document.getElementById('errorModal');
+                errModal.style.display = 'flex';
+                errModal.classList.add('active');
             }
         });
 
