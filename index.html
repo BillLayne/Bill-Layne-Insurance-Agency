@@ -353,20 +353,17 @@ nav{background:rgba(255,255,255,.97);backdrop-filter:blur(16px);-webkit-backdrop
 .trust-item{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;color:rgba(255,255,255,.55)}
 .trust-item i{color:#4ade80;font-size:11px}
 
-/* Hero right card */
-.hero-right{display:flex;flex-direction:column;gap:16px}
-.hero-stat-card{background:rgba(255,255,255,.08);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);border-radius:var(--radius);padding:20px 22px}
-.hsc-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:6px}
-.hsc-amount{font-family:var(--font-display);font-size:38px;font-weight:800;color:#fbbf24;line-height:1;margin-bottom:4px}
-.hsc-sub{font-size:13px;color:rgba(255,255,255,.6);font-weight:600}
-.hero-google-card{background:white;border-radius:var(--radius);padding:16px 20px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-lg)}
-.hgc-stars{color:#FBBC04;font-size:17px;letter-spacing:2px;margin-bottom:2px}
-.hgc-label{font-size:14px;font-weight:800;color:var(--navy)}
-.hgc-sub{font-size:11px;color:var(--gray-500);font-weight:600}
-.hero-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.hero-mini-stat{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:14px;text-align:center}
-.hms-num{font-family:var(--font-display);font-size:22px;font-weight:800;color:white;line-height:1}
-.hms-label{font-size:10px;color:rgba(255,255,255,.45);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-top:3px}
+/* Hero right — Bill's large photo */
+.hero-right{display:flex;align-items:center;justify-content:center}
+.hero-photo-wrap{position:relative;width:100%;max-width:400px}
+.hero-photo-glow{position:absolute;inset:-8px;background:linear-gradient(135deg,var(--amber),var(--blue));border-radius:2.2rem;transform:rotate(4deg);opacity:.25;filter:blur(24px)}
+.hero-photo{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:top;border-radius:2rem;box-shadow:0 25px 60px rgba(0,0,0,.45);border:3px solid rgba(255,255,255,.1);position:relative;z-index:1}
+.hero-float-badge{position:absolute;z-index:2;top:36px;right:-24px;display:flex;align-items:center;gap:10px;background:rgba(15,23,42,.7);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.12);border-left:3px solid var(--amber);border-radius:14px;padding:10px 16px;box-shadow:0 8px 32px rgba(0,0,0,.35);animation:heroFloat 3s ease-in-out infinite}
+.hero-float-badge .g-icon{width:34px;height:34px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.15);flex-shrink:0}
+.hero-float-badge .g-icon img{width:18px;height:18px}
+.hfb-stars{color:#FBBC04;font-size:10px;display:flex;gap:1px}
+.hfb-label{font-size:13px;font-weight:800;color:white}
+@keyframes heroFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 
 /* ── HERO MOBILE BADGE (hidden desktop, shown ≤960) ── */
 .hero-mobile-badge{display:none;align-items:center;gap:14px;background:rgba(255,255,255,.12);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:14px 18px;margin-top:22px;margin-bottom:4px}
@@ -374,6 +371,31 @@ nav{background:rgba(255,255,255,.97);backdrop-filter:blur(16px);-webkit-backdrop
 .hmb-stars{color:#FBBC04;font-size:15px;letter-spacing:2px;margin-bottom:2px}
 .hmb-label{font-size:14px;font-weight:800;color:white}
 .hmb-sub{font-size:11px;color:rgba(255,255,255,.55);font-weight:600}
+
+/* ── HERO MOBILE PROOF ROW ── */
+.hero-mobile-proof{display:none;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12)}
+.hmp-item{text-align:center}
+.hmp-num{font-family:var(--font-display);font-size:22px;font-weight:800;line-height:1}
+.hmp-num.gold{color:#fbbf24}
+.hmp-num.blue{color:#60a5fa}
+.hmp-num.green{color:#4ade80}
+.hmp-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-top:4px}
+
+/* ── MEET BILL VIDEO ── */
+.meet-video-wrap{position:relative;width:100%;border-radius:24px;overflow:hidden;box-shadow:var(--shadow-lg);cursor:pointer;aspect-ratio:16/9}
+.meet-video-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .7s}
+.meet-video-wrap:hover img{transform:scale(1.05)}
+.meet-video-overlay{position:absolute;inset:0;background:rgba(15,31,51,.3);transition:background .3s}
+.meet-video-wrap:hover .meet-video-overlay{background:rgba(15,31,51,.15)}
+.meet-play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(0,0,0,.3);transition:transform .3s}
+.meet-video-wrap:hover .meet-play-btn{transform:translate(-50%,-50%) scale(1.1)}
+.meet-play-btn::after{content:'';width:0;height:0;border-top:14px solid transparent;border-bottom:14px solid transparent;border-left:22px solid var(--navy);margin-left:4px}
+.meet-video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+/* ── GOOGLE VERIFIED BADGE (testimonials) ── */
+.testi-stars-row{display:flex;align-items:center;justify-content:space-between}
+.testi-g-badge{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:var(--gray-400)}
+.testi-g-badge img{width:14px;height:14px}
 
 /* ── MARQUEE ── */
 .marquee-band{
@@ -659,12 +681,12 @@ footer{background:#0a1422;padding:56px 24px 32px}
   .hero-inner{grid-template-columns:1fr}
   .hero-right{display:none}
   .hero-mobile-badge{display:flex}
+  .hero-mobile-proof{display:grid}
   .why-layout{grid-template-columns:1fr}
   .why-photo-wrap{display:none}
   .coverage-grid{grid-template-columns:1fr}
   .meet-layout{grid-template-columns:1fr}
-  .meet-photo-wrap{display:block;max-width:340px;margin:0 auto 24px}
-  .meet-photo{aspect-ratio:1/1;object-position:top}
+  .meet-video-wrap{margin-bottom:24px}
   .testi-grid{grid-template-columns:1fr}
   .claims-grid{grid-template-columns:1fr}
   .tools-grid{grid-template-columns:1fr}
@@ -749,44 +771,39 @@ footer{background:#0a1422;padding:56px 24px 32px}
         <div class="trust-item"><i class="fas fa-check-circle"></i> NC Licensed</div>
         <div class="trust-item"><i class="fas fa-check-circle"></i> 20+ Yrs Local</div>
       </div>
-      <!-- Mobile-only Google badge (hidden on desktop) -->
+      <!-- Mobile-only: Google badge + proof row (hidden on desktop) -->
       <div class="hero-mobile-badge">
         <img src="https://i.imgur.com/ayxaUyZ.jpeg" alt="Bill Layne">
         <div>
-          <div class="hmb-stars">★★★★★</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" style="width:16px;height:16px">
+            <span class="hmb-stars">★★★★★</span>
+          </div>
           <div class="hmb-label">4.9 Google Rating</div>
           <div class="hmb-sub">Bill Layne · Elkin, NC</div>
         </div>
       </div>
+      <div class="hero-mobile-proof">
+        <div class="hmp-item"><div class="hmp-num gold">7+</div><div class="hmp-label">Carriers</div></div>
+        <div class="hmp-item"><div class="hmp-num blue">2,000+</div><div class="hmp-label">NC Families</div></div>
+        <div class="hmp-item"><div class="hmp-num green">20+</div><div class="hmp-label">Years Local</div></div>
+      </div>
     </div>
 
-    <!-- RIGHT -->
+    <!-- RIGHT — Bill's Photo -->
     <div class="hero-right">
-      <div class="hero-google-card">
-        <img src="https://i.imgur.com/ayxaUyZ.jpeg" alt="Bill Layne" style="width:56px;height:56px;border-radius:50%;object-fit:cover;object-position:top;flex-shrink:0">
-        <div>
-          <div class="hgc-stars">★★★★★</div>
-          <div class="hgc-label">4.9 Google Rating</div>
-          <div class="hgc-sub">Verified · Elkin, NC</div>
-        </div>
-      </div>
-      <div class="hero-stat-card">
-        <div class="hsc-label">Average Customer Saves</div>
-        <div class="hsc-amount">$847</div>
-        <div class="hsc-sub">per year on home &amp; auto bundle</div>
-      </div>
-      <div class="hero-stats-row">
-        <div class="hero-mini-stat">
-          <div class="hms-num">7+</div>
-          <div class="hms-label">Carriers</div>
-        </div>
-        <div class="hero-mini-stat">
-          <div class="hms-num">2,000+</div>
-          <div class="hms-label">NC Families</div>
-        </div>
-        <div class="hero-mini-stat">
-          <div class="hms-num">20+</div>
-          <div class="hms-label">Yrs Local</div>
+      <div class="hero-photo-wrap">
+        <div class="hero-photo-glow"></div>
+        <img src="https://i.imgur.com/ayxaUyZ.jpeg" alt="Bill Layne Insurance Agent" class="hero-photo" loading="eager">
+        <!-- Floating Google badge -->
+        <div class="hero-float-badge">
+          <div class="g-icon">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google">
+          </div>
+          <div>
+            <div class="hfb-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+            <div class="hfb-label">4.9 Rating</div>
+          </div>
         </div>
       </div>
     </div>
@@ -1105,12 +1122,10 @@ footer{background:#0a1422;padding:56px 24px 32px}
   <div style="position:absolute;bottom:-60px;left:-60px;width:300px;height:300px;background:rgba(251,191,36,.08);border-radius:50%"></div>
   <div class="wrap" style="position:relative;z-index:2">
     <div class="meet-layout">
-      <div class="meet-photo-wrap reveal">
-        <img src="https://i.imgur.com/ayxaUyZ.jpeg" alt="Bill Layne — Your Independent Insurance Agent in Elkin NC" class="meet-photo">
-        <div class="meet-quote-badge">
-          <p class="mqb-quote">"State Farm has Jake. We have actual Bill."</p>
-          <p class="mqb-author">— Real client feedback</p>
-        </div>
+      <div class="meet-video-wrap reveal" id="video-wrapper" onclick="loadYoutubeVideo(this)">
+        <img src="https://img.youtube.com/vi/4hJT_wMCcCg/maxresdefault.jpg" alt="Meet Bill Layne — Your Local Insurance Agent">
+        <div class="meet-video-overlay"></div>
+        <div class="meet-play-btn"></div>
       </div>
       <div class="meet-right reveal reveal-d1">
         <span style="display:block;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:12px">Real People, Not Robots</span>
@@ -1194,7 +1209,10 @@ footer{background:#0a1422;padding:56px 24px 32px}
     <div class="testi-grid">
       <div class="testi-card reveal">
         <div class="testi-pill savings"><i class="fas fa-check-circle"></i> Savings Story</div>
-        <div class="testi-stars">★★★★★</div>
+        <div class="testi-stars-row">
+          <div class="testi-stars">★★★★★</div>
+          <div class="testi-g-badge"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google"> Verified</div>
+        </div>
         <p class="testi-quote">"Bill found us <strong>better coverage for less money.</strong> He took the time to explain everything clearly. Wish I'd switched sooner."</p>
         <div class="testi-author">
           <div class="testi-avatar">S</div>
@@ -1207,7 +1225,10 @@ footer{background:#0a1422;padding:56px 24px 32px}
       </div>
       <div class="testi-card reveal reveal-d1">
         <div class="testi-pill claims"><i class="fas fa-shield-alt"></i> Claims Story</div>
-        <div class="testi-stars">★★★★★</div>
+        <div class="testi-stars-row">
+          <div class="testi-stars">★★★★★</div>
+          <div class="testi-g-badge"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google"> Verified</div>
+        </div>
         <p class="testi-quote">"A tree fell on our house during a storm. Bill answered his phone on a Saturday and walked me through everything. <strong>He even met the adjuster at our house.</strong> That's real service."</p>
         <div class="testi-author">
           <div class="testi-avatar">M</div>
@@ -1220,7 +1241,10 @@ footer{background:#0a1422;padding:56px 24px 32px}
       </div>
       <div class="testi-card reveal reveal-d2">
         <div class="testi-pill switch"><i class="fas fa-exchange-alt"></i> Easy Switch</div>
-        <div class="testi-stars">★★★★★</div>
+        <div class="testi-stars-row">
+          <div class="testi-stars">★★★★★</div>
+          <div class="testi-g-badge"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google"> Verified</div>
+        </div>
         <p class="testi-quote">"I was nervous about switching but Bill handled everything. <strong>Canceled my old policy, notified my lender, set up my new plan.</strong> All I did was e-sign on my phone. Done in 10 minutes."</p>
         <div class="testi-author">
           <div class="testi-avatar">J</div>
@@ -1455,6 +1479,13 @@ const obs = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.1 });
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// YouTube lazy-load
+function loadYoutubeVideo(el) {
+  if (el.dataset.loaded) return;
+  el.dataset.loaded = '1';
+  el.innerHTML = '<iframe src="https://www.youtube.com/embed/4hJT_wMCcCg?autoplay=1&rel=0" title="Meet Bill Layne" frameborder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%"></iframe>';
+}
 </script>
 </body>
 </html>
