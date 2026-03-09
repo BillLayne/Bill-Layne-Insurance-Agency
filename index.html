@@ -488,6 +488,30 @@
         }
         .glass-dark { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
         
+        /* Desktop Nav Link Styles */
+        .nav-link-item {
+            position: relative;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .nav-link-item::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%) scaleX(0);
+            width: 60%;
+            height: 2px;
+            border-radius: 2px;
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            transition: transform 0.3s ease;
+        }
+        .nav-link-item:hover::after {
+            transform: translateX(-50%) scaleX(1);
+        }
+        .nav-link-item.scrolled::after {
+            background: linear-gradient(90deg, #2563eb, #4f46e5);
+        }
         .btn-shine { position: relative; overflow: hidden; }
         .btn-shine::after {
             content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
@@ -543,13 +567,13 @@
 
             <!-- Desktop Navigation Links (hidden on mobile, shows at md 768px+) -->
             <div id="nav-links" class="hidden md:flex items-center gap-0.5 lg:gap-1 xl:gap-2">
-                <a href="auto-center/index.html" class="nav-link-item px-2 lg:px-3 xl:px-4 py-2 rounded-lg text-xs lg:text-[13px] font-bold text-white/85 hover:text-white hover:bg-white/10 transition-all">Auto</a>
-                <a href="home-insurance/index.html" class="nav-link-item px-2 lg:px-3 xl:px-4 py-2 rounded-lg text-xs lg:text-[13px] font-bold text-white/85 hover:text-white hover:bg-white/10 transition-all">Home</a>
-                <a href="claims-center/index.html" class="nav-link-item px-2 lg:px-3 xl:px-4 py-2 rounded-lg text-xs lg:text-[13px] font-bold text-white/85 hover:text-white hover:bg-white/10 transition-all">Claims</a>
-                <a href="service-center.html" class="nav-link-item px-2 lg:px-3 xl:px-4 py-2 rounded-lg text-xs lg:text-[13px] font-bold text-white/85 hover:text-white hover:bg-white/10 transition-all">Service</a>
-                <a href="areas-we-serve.html" class="nav-link-item hidden lg:block px-3 xl:px-4 py-2 rounded-lg text-[13px] font-bold text-white/85 hover:text-white hover:bg-white/10 transition-all">Areas</a>
-                <a href="blog/index.html" class="nav-link-item hidden lg:block px-3 xl:px-4 py-2 rounded-lg text-[13px] font-bold text-white/85 hover:text-white hover:bg-white/10 transition-all">Blog</a>
-                <a href="espanol/" class="nav-link-item hidden lg:block px-3 xl:px-4 py-2 rounded-lg text-[13px] font-bold text-white/85 hover:text-white hover:bg-white/10 transition-all">Espa&ntilde;ol</a>
+                <a href="auto-center/index.html" class="nav-link-item px-2.5 lg:px-3 xl:px-4 py-2 text-[10px] lg:text-[11px] font-extrabold text-white hover:text-accent-300 transition-all duration-200">Auto</a>
+                <a href="home-insurance/index.html" class="nav-link-item px-2.5 lg:px-3 xl:px-4 py-2 text-[10px] lg:text-[11px] font-extrabold text-white hover:text-accent-300 transition-all duration-200">Home</a>
+                <a href="claims-center/index.html" class="nav-link-item px-2.5 lg:px-3 xl:px-4 py-2 text-[10px] lg:text-[11px] font-extrabold text-white hover:text-accent-300 transition-all duration-200">Claims</a>
+                <a href="service-center.html" class="nav-link-item px-2.5 lg:px-3 xl:px-4 py-2 text-[10px] lg:text-[11px] font-extrabold text-white hover:text-accent-300 transition-all duration-200">Service</a>
+                <a href="areas-we-serve.html" class="nav-link-item hidden lg:block px-3 xl:px-4 py-2 text-[11px] font-extrabold text-white hover:text-accent-300 transition-all duration-200">Areas</a>
+                <a href="blog/index.html" class="nav-link-item hidden lg:block px-3 xl:px-4 py-2 text-[11px] font-extrabold text-white hover:text-accent-300 transition-all duration-200">Blog</a>
+                <a href="espanol/" class="nav-link-item hidden lg:block px-3 xl:px-4 py-2 text-[11px] font-extrabold text-white hover:text-accent-300 transition-all duration-200">Espa&ntilde;ol</a>
             </div>
 
             <div class="flex items-center gap-3 md:gap-4">
@@ -2232,12 +2256,11 @@
                 // Desktop nav links color
                 const navLinks = document.querySelectorAll('.nav-link-item');
                 navLinks.forEach(link => {
-                    link.classList.toggle('text-white/85', !scrolled);
-                    link.classList.toggle('hover:text-white', !scrolled);
-                    link.classList.toggle('hover:bg-white/10', !scrolled);
-                    link.classList.toggle('text-slate-600', scrolled);
+                    link.classList.toggle('text-white', !scrolled);
+                    link.classList.toggle('hover:text-accent-300', !scrolled);
+                    link.classList.toggle('text-slate-700', scrolled);
                     link.classList.toggle('hover:text-primary-600', scrolled);
-                    link.classList.toggle('hover:bg-slate-100', scrolled);
+                    link.classList.toggle('scrolled', scrolled);
                 });
             });
 
