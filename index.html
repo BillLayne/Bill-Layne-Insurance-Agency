@@ -903,6 +903,7 @@
         color: rgba(255,255,255,0.5);
       }
       #hero-mini-form select option { color: #1e293b; background: #fff; }
+      #dhf-coverage option { color: #1e293b; background: #fff; }
     </style>
     <section class="md:hidden px-5" style="background:linear-gradient(to bottom right, #1e40af, #1e3a8a);padding-top:2.75rem;padding-bottom:2rem;">
       <h2 class="font-display font-black text-2xl text-white mb-1 leading-tight">
@@ -931,7 +932,6 @@
           <option value="home">&#x1f3e1; Home Insurance</option>
           <option value="bundle">&#x1f4e6; Auto + Home Bundle</option>
           <option value="renters">&#x1f3e0; Renters Insurance</option>
-          <option value="sr22">&#x1f4cb; SR-22 / High Risk</option>
           <option value="business">&#x1f3e2; Business Insurance</option>
           <option value="other">&#x1f4ac; Not Sure — Just Compare</option>
         </select>
@@ -1039,46 +1039,50 @@
 
                 <!-- Desktop-only: Hero Image + Quote Form -->
                 <div class="relative hidden lg:block reveal active" style="transition-delay: 0.2s;">
-                    <div class="bg-white rounded-2xl shadow-2xl p-6 mb-6 border border-slate-100">
-                      <div class="flex items-center gap-2 mb-4 bg-slate-50 rounded-xl p-3 border border-slate-100">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" 
-                             class="w-5 h-5" alt="Google">
+                    <div class="bg-white rounded-2xl shadow-2xl p-8 border border-slate-100">
+                      <!-- Google social proof -->
+                      <div class="flex items-center gap-2 mb-5 bg-slate-50 rounded-xl p-3 border border-slate-100">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" class="w-5 h-5" alt="Google">
                         <span class="text-yellow-400 text-sm">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-                        <span class="text-sm font-bold text-slate-900">4.9 <span class="text-slate-400 font-normal">· 127 reviews</span></span>
+                        <span class="text-sm font-bold text-slate-900">4.9 <span class="text-slate-400 font-normal">&middot; 127 reviews</span></span>
                       </div>
-                      <h3 class="font-display font-black text-xl text-slate-900 mb-1">Get Your Free Quote</h3>
-                      <p class="text-xs text-slate-500 mb-4">Compare 7 carriers in about 5 minutes.</p>
-                      <div class="grid grid-cols-2 gap-2 mb-2">
-                        <input id="dhf-name" type="text" placeholder="Your Name"
-                          class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-sm outline-none focus:border-primary-500">
-                        <input id="dhf-zip" type="text" placeholder="ZIP Code" maxlength="5"
-                          class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-sm outline-none focus:border-primary-500">
-                      </div>
-                      <input id="dhf-phone" type="tel" placeholder="Phone Number"
-                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-sm outline-none mb-2 focus:border-primary-500">
-                      <select id="dhf-coverage"
-                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-sm outline-none mb-3">
-                        <option value="" disabled selected>Coverage Type &#x1f53d;</option>
-                        <option value="auto">&#x1f697; Auto Insurance</option>
-                        <option value="home">&#x1f3e1; Home Insurance</option>
-                        <option value="bundle">&#x1f4e6; Auto + Home Bundle</option>
-                        <option value="renters">&#x1f3e0; Renters Insurance</option>
-                        <option value="sr22">&#x1f4cb; SR-22 / High Risk</option>
-                        <option value="business">&#x1f3e2; Business Insurance</option>
-                        <option value="other">&#x1f4ac; Not Sure — Just Compare</option>
-                      </select>
-                      <button onclick="submitDesktopHeroForm()"
+
+                      <h3 class="font-display font-black text-2xl text-slate-900 mb-2">Get Your Free Quote</h3>
+                      <p class="text-sm text-slate-500 mb-5">Auto &amp; Home &mdash; compare 7 carriers in about 5 minutes.</p>
+
+                      <!-- Benefits list -->
+                      <ul class="space-y-3 mb-6">
+                        <li class="flex items-center gap-3 text-sm text-slate-700">
+                          <span class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0"><i class="fas fa-check text-green-500 text-xs"></i></span>
+                          <span><strong>7 carriers</strong> compete for your rate</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-sm text-slate-700">
+                          <span class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0"><i class="fas fa-check text-green-500 text-xs"></i></span>
+                          <span><strong>5 minutes</strong> &mdash; fast &amp; easy online form</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-sm text-slate-700">
+                          <span class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0"><i class="fas fa-check text-green-500 text-xs"></i></span>
+                          <span><strong>No obligation</strong> &mdash; no credit card needed</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-sm text-slate-700">
+                          <span class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0"><i class="fas fa-check text-green-500 text-xs"></i></span>
+                          <span><strong>Real local agent</strong> reviews your quote</span>
+                        </li>
+                      </ul>
+
+                      <!-- Primary CTA -->
+                      <a href="get-quote.html"
                         class="w-full py-4 bg-gradient-to-r from-primary-600 to-indigo-600 text-white
-                               font-display font-black text-base rounded-xl shadow-lg hover:scale-[1.02] transition-transform">
-                        <i class="fas fa-search-dollar mr-2"></i> Compare My Rates — Free
-                      </button>
-                      <p class="text-center text-[10px] text-slate-400 mt-2">No obligation · No credit card · ~5 min</p>
-                    </div>
-                    <div id="desktop-hero-form-success" class="hidden bg-white rounded-2xl shadow-2xl p-6 mb-6 border border-slate-100 text-center">
-                      <i class="fas fa-check-circle text-4xl text-green-500 mb-3 block"></i>
-                      <h3 class="font-display font-black text-xl text-slate-900 mb-1">Got it! We'll be in touch.</h3>
-                      <p class="text-sm text-slate-500">Expect a call within 1 business day.<br>
-                        Or call now: <a href="tel:3368351993" class="text-primary-600 font-bold">(336) 835-1993</a></p>
+                               font-display font-black text-lg rounded-xl shadow-lg hover:scale-[1.02] transition-transform flex items-center justify-center">
+                        <i class="fas fa-search-dollar mr-2"></i> Compare My Rates &mdash; Free
+                      </a>
+
+                      <!-- Secondary CTA -->
+                      <a href="tel:3368351993"
+                        class="w-full mt-3 py-3 bg-slate-50 border border-slate-200 text-slate-700
+                               font-bold text-sm rounded-xl hover:bg-slate-100 transition-colors flex items-center justify-center">
+                        <i class="fas fa-phone-alt mr-2 text-primary-600"></i> Or Call (336) 835-1993
+                      </a>
                     </div>
                     <div class="relative w-full aspect-[4/5] max-w-lg mx-auto hidden">
                         <div class="absolute inset-0 bg-gradient-to-tr from-accent-400 to-primary-600 rounded-[2.5rem] rotate-6 opacity-30 blur-lg"></div>
