@@ -1,0 +1,412 @@
+
+<!-- GEM v4.1 YT EDITION DEPENDENCIES -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Bricolage+Grotesque:opsz,wght@12..96,400;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+
+<style>
+/* GEM v4.1 CORE STYLES - SCOPED */
+.gem-post {
+    font-family: 'Outfit', sans-serif;
+    line-height: 1.7;
+    color: #334155;
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    overflow-x: hidden;
+}
+.gem-post h1, .gem-post h2, .gem-post h3 { font-family: 'Bricolage Grotesque', sans-serif; color: #0f172a; }
+.gem-post h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 1rem; letter-spacing: -0.02em; }
+.gem-post h2 { font-size: 1.8rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; border-left: 5px solid #FF0033; padding-left: 1rem; }
+.gem-post h3 { font-size: 1.4rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+.gem-post p { margin-bottom: 1.25rem; font-size: 1.1rem; }
+.gem-post ul, .gem-post ol { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+.gem-post li { margin-bottom: 0.5rem; }
+.gem-post a { color: #2563eb; text-decoration: underline; font-weight: 600; }
+
+/* FONT AWESOME ICON SIZING */
+.gem-post i.fa-solid, .gem-post i.fa-regular, .gem-post i.fa-brands { margin-right: 0.3rem; }
+
+/* SCROLL PROGRESS BAR */
+.gem-progress-bar { position: fixed; top: 0; left: 0; width: 0%; height: 4px; background: linear-gradient(90deg, #FF0033, #FF6B35, #FFD23F); z-index: 1100; transition: width 0.1s linear; }
+
+/* HERO IMAGE */
+.hero-img { width: 100%; height: auto; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+/* SNIPPET BAIT BOX */
+.gem-snippet-bait { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 0 8px 8px 0; margin-bottom: 2rem; font-size: 1.15rem; font-weight: 500; }
+
+/* SHARE BAR */
+.gem-share-bar { display: flex; gap: 0.5rem; margin: 1.5rem 0; padding: 1rem; background: #f8fafc; border-radius: 16px; border: 2px solid #e2e8f0; align-items: center; flex-wrap: wrap; }
+.gem-share-label { font-weight: 800; font-size: 0.85rem; color: #0F0F0F; margin-right: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+.gem-share-btn { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none !important; color: white !important; font-size: 1rem; transition: transform 0.15s; cursor: pointer; border: none; }
+.gem-share-btn:active { transform: scale(0.9); }
+.gem-share-fb { background: #1877F2; }
+.gem-share-x { background: #0F0F0F; }
+.gem-share-email { background: #EA4335; }
+.gem-share-copy { background: #64748b; }
+.gem-share-copy.copied { background: #22c55e; }
+
+/* CHAPTER PROGRESS PILLS */
+.gem-chapter-track { display: flex; gap: 4px; margin: 1rem 0; flex-wrap: wrap; position: sticky; top: 10px; z-index: 50; }
+.gem-chapter-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; background: #e2e8f0; color: #64748b; text-decoration: none !important; transition: all 0.2s; opacity: 0.9; }
+.gem-chapter-pill.active { background: #FF0033; color: white !important; opacity: 1; box-shadow: 0 4px 6px -1px rgba(255, 0, 51, 0.3); }
+.gem-chapter-pill.read { background: #0F0F0F; color: white !important; }
+
+/* PULL QUOTE */
+.gem-pull-quote { margin: 2rem 0; padding: 2rem 1.5rem; background: linear-gradient(135deg, #0F0F0F 0%, #1a1a2e 100%); border-radius: 16px; text-align: center; position: relative; overflow: hidden; }
+.gem-pull-quote::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #FF0033, #FF6B35, #FFD23F, #A8E10C, #00D4FF); }
+.gem-pull-quote-text { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.4rem; font-weight: 800; color: white; line-height: 1.3; letter-spacing: -0.02em; }
+.gem-pull-quote-text .gem-pq-highlight { color: #FFD23F; }
+.gem-pull-quote-source { margin-top: 0.75rem; font-size: 0.8rem; color: #9ca3af; font-weight: 600; }
+
+/* VS COMPARISON CARD */
+.gem-vs-card { margin: 1.5rem 0; border-radius: 16px; overflow: hidden; border: 2px solid #e2e8f0; }
+.gem-vs-header { background: #0F0F0F; color: white; text-align: center; padding: 0.75rem; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.gem-vs-body { display: flex; }
+.gem-vs-side { flex: 1; padding: 1.25rem; text-align: center; }
+.gem-vs-left { background: linear-gradient(180deg, #FEF2F2 0%, #fff 100%); }
+.gem-vs-right { background: linear-gradient(180deg, #F0FDF4 0%, #fff 100%); }
+.gem-vs-divider { width: 3px; background: linear-gradient(180deg, #FF0033, #FFD23F, #22c55e); flex-shrink: 0; }
+.gem-vs-label { font-weight: 800; font-size: 0.95rem; margin-bottom: 0.75rem; display: block; }
+.gem-vs-left .gem-vs-label { color: #DC2626; }
+.gem-vs-right .gem-vs-label { color: #16a34a; }
+.gem-vs-item { font-size: 0.85rem; color: #475569; margin-bottom: 0.4rem; line-height: 1.4; }
+.gem-vs-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+
+/* REVEAL CARD */
+.gem-reveal { margin: 1.5rem 0; border: 2px dashed #7C3AED; border-radius: 16px; overflow: hidden; background: #F5F3FF; }
+.gem-reveal-trigger { padding: 1rem 1.25rem; font-weight: 800; color: #7C3AED; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; min-height: 44px; }
+.gem-reveal-content { display: none; padding: 0 1.25rem 1.25rem; color: #374151; line-height: 1.6; font-size: 0.95rem; border-top: 1px solid #DDD6FE; }
+.gem-reveal-content.visible { display: block; }
+
+/* REACTIONS BAR */
+.gem-reactions { margin: 1.5rem 0; padding: 1.25rem; background: #f8fafc; border-radius: 16px; text-align: center; border: 2px solid #e2e8f0; }
+.gem-reactions-title { font-weight: 700; font-size: 0.9rem; color: #475569; margin-bottom: 0.75rem; }
+.gem-reactions-row { display: flex; justify-content: center; gap: 0.75rem; }
+.gem-react-btn { width: 48px; height: 48px; border-radius: 50%; border: 2px solid #e2e8f0; background: white; font-size: 1.3rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+.gem-react-btn:hover, .gem-react-btn:active { transform: scale(1.15); border-color: #FF0033; }
+.gem-react-btn.selected { background: #FF0033; border-color: #FF0033; color: white !important; transform: scale(1.15); }
+
+/* FAQ SECTION */
+.gem-faq-section { margin: 3rem 0; }
+.gem-faq-header { font-size: 1.8rem; font-weight: 700; margin-bottom: 1.5rem; font-family: 'Bricolage Grotesque', sans-serif; color: #0f172a; }
+.gem-faq-item { border: 2px solid #e2e8f0; border-radius: 12px; margin-bottom: 1rem; background: white; overflow: hidden; transition: border-color 0.2s; }
+.gem-faq-item:hover { border-color: #cbd5e1; }
+.gem-faq-item.active { border-color: #3b82f6; }
+.gem-faq-question { width: 100%; padding: 1.25rem; background: #f8fafc; text-align: left; font-weight: 700; color: #0f172a; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: none; outline: none; font-size: 1.05rem; }
+.gem-faq-question:hover { background: #f1f5f9; }
+.gem-faq-answer { display: none; padding: 1.5rem; color: #475569; line-height: 1.6; background: white; border-top: 1px solid #e2e8f0; font-size: 1rem; }
+.gem-faq-item.active .gem-faq-answer { display: block; }
+.gem-faq-icon { transition: transform 0.3s ease; color: #3b82f6; }
+.gem-faq-item.active .gem-faq-icon { transform: rotate(180deg); }
+
+/* STEP TIMELINE */
+.gem-steps { margin: 1.5rem 0; padding: 0; }
+.gem-step { display: flex; gap: 1rem; padding-bottom: 1.5rem; position: relative; }
+.gem-step:last-child { padding-bottom: 0; }
+.gem-step-line { width: 40px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.gem-step-dot { width: 36px; height: 36px; border-radius: 50%; background: #0F0F0F; color: white; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; z-index: 1; }
+.gem-step-connector { width: 3px; flex: 1; background: linear-gradient(180deg, #0F0F0F, #e2e8f0); margin-top: 4px; }
+.gem-step:last-child .gem-step-connector { display: none; }
+.gem-step-content { flex: 1; padding-top: 0.35rem; }
+.gem-step-title { font-weight: 800; font-size: 1rem; color: #0F0F0F; margin-bottom: 0.25rem; }
+.gem-step-text { font-size: 0.95rem; color: #475569; line-height: 1.5; }
+
+/* RELATED GRID */
+.gem-related { padding: 2rem 1.25rem; background: #0F0F0F; border-radius: 12px; margin-top: 3rem; }
+.gem-related-title { font-family: 'Bricolage Grotesque', sans-serif; color: white; font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; }
+.gem-related-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.gem-related-card { display: flex; gap: 0.75rem; text-decoration: none !important; background: #272727; border-radius: 12px; overflow: hidden; transition: background 0.2s; }
+.gem-related-card:active { background: #333; }
+.gem-related-thumb { width: 120px; height: 68px; object-fit: cover; flex-shrink: 0; border-radius: 8px; margin: 0.5rem 0 0.5rem 0.5rem; }
+.gem-related-info { padding: 0.5rem 0.5rem 0.5rem 0; display: flex; flex-direction: column; justify-content: center; }
+.gem-related-info-title { color: white; font-weight: 700; font-size: 0.85rem; line-height: 1.3; margin-bottom: 0.25rem; }
+.gem-related-info-meta { color: #9ca3af; font-size: 0.7rem; }
+@media (min-width: 768px) {
+    .gem-related-grid { grid-template-columns: 1fr 1fr 1fr; }
+    .gem-related-card { flex-direction: column; }
+    .gem-related-thumb { width: 100%; height: 120px; margin: 0; border-radius: 12px 12px 0 0; }
+    .gem-related-info { padding: 0.75rem; }
+}
+
+/* DATA TABLE */
+.gem-table-wrapper { overflow-x: auto; margin: 1.5rem 0; border-radius: 8px; border: 1px solid #e2e8f0; }
+.gem-table { width: 100%; border-collapse: collapse; min-width: 500px; }
+.gem-table th { background: #f1f5f9; text-align: left; padding: 1rem; font-weight: 700; border-bottom: 2px solid #e2e8f0; }
+.gem-table td { padding: 1rem; border-bottom: 1px solid #e2e8f0; }
+.gem-table tr:last-child td { border-bottom: none; }
+
+/* CTA BOX */
+.gem-cta-box { background: #eff6ff; border: 2px solid #3b82f6; border-radius: 16px; padding: 2rem; text-align: center; margin-top: 3rem; color: #000000 !important; }
+.gem-cta-title { font-size: 1.5rem; font-weight: 800; color: #000000 !important; margin-bottom: 0.5rem; }
+.gem-cta-text { margin-bottom: 1.5rem; color: #000000 !important; font-weight: 600; }
+.gem-cta-btn { display: inline-block; background: #2563eb; color: white !important; padding: 1rem 2rem; border-radius: 50px; font-weight: 700; text-decoration: none !important; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.5); transition: transform 0.2s; }
+.gem-cta-btn:hover { transform: translateY(-2px); }
+
+/* CORNER RIBBON */
+.gem-ribbon-wrap { position: relative; }
+.gem-ribbon { position: absolute; top: 12px; right: -8px; background: #FF0033; color: white; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 14px 4px 10px; border-radius: 4px 0 0 4px; z-index: 2; box-shadow: 0 2px 6px rgba(255,0,51,0.3); }
+.gem-ribbon::after { content: ''; position: absolute; top: 100%; right: 0; border: 4px solid transparent; border-top-color: #990020; border-right-color: #990020; }
+.gem-ribbon-new { background: #FF0033; }
+</style>
+
+<div class="gem-post"><div class="gem-post">
+
+    <h1>7 Surry County Spring Events in 2026 (And The Best Local Parking Spots)</h1>
+
+    <p>Did you know that Surry County experiences a 20% increase in minor vehicle collisions during the peak festival season? While the blossoms in the Yadkin Valley are beautiful, the crowded streets of Elkin and Mount Airy can be a nightmare for your car’s bumper. Whether you are heading to the Yadkin Valley Wine Festival or taking a hike at Pilot Mountain, knowing where to park—and how to protect your vehicle—is the key to a stress-free spring.</p>
+
+    <img src="https://i.imgur.com/d9CQ6ci.jpeg" class="hero-img" alt="Spring blossoms and festival crowds in Surry County NC"  width="1344" height="768"/>
+
+    <p><strong>Surry County Spring Events</strong> are local community gatherings, festivals, and outdoor celebrations held between March and June in North Carolina’s Yadkin Valley region. These events, ranging from the Budbreak Festival in Mount Airy to Elkin’s music heritage celebrations, showcase the area's rich culture, agriculture, and hospitality while attracting thousands of visitors to the Piedmont Triad area.</p>
+
+    <h2>Why Local Events Matter for NC Residents and Their Insurance</h2>
+    <p>Attending <strong>7 Surry County Spring Events in 2026</strong> means navigating narrow historic streets and packed gravel lots that weren't designed for modern traffic volume. In North Carolina, the NC Rate Bureau (the organization that helps set insurance rules and rates in our state) notes that high-traffic events often correlate with an uptick in minor property damage claims. If you are squeezed into a tight spot in downtown Elkin, the risk of a "door ding" or a "fender bender" (a minor car accident) increases significantly.</p>
+
+    <p>Furthermore, North Carolina is an "At-Fault" state, meaning the person who causes the accident is responsible for the damages. If someone hits your parked car at a festival and leaves without a note, you may have to rely on your "uninsured motorist property damage" coverage or your "collision coverage" (the part of your policy that pays to fix your car regardless of who is at fault). Staying informed about where to park helps you avoid these insurance headaches altogether.</p>
+
+    <p>As the weather warms up, it’s also important to remember that spring in the Piedmont can bring sudden hail or falling branches. Making sure your "comprehensive coverage" (the insurance that covers "acts of God" like hail, fire, or falling trees) is up to date before you head out to the mountains is a smart move for every Surry County driver. Speaking of moving, let’s look at the top events coming your way in 2026.</p>
+
+    <h2>1. The Yadkin Valley Wine Festival (Elkin, NC)</h2>
+    <p>The Yadkin Valley Wine Festival is the premier celebration of local viticulture, held annually in Elkin’s beautiful Municipal Park. <strong>The 2026 festival is scheduled for Saturday, May 16, 2026</strong>, from 11:00 AM to 6:00 PM, featuring dozens of local wineries, craft vendors, and live music.</p>
+
+    <p><strong>The Best Local Parking Spots:</strong> Parking at the park fills up almost instantly. Your best bet is to use the satellite parking lot at the <strong>Elkin High School</strong> and take the free shuttle. This is much safer than trying to parallel park on the narrow residential streets nearby. Imagine you’re trying to squeeze your SUV into a tight spot on a hill near the park; one slip of the foot, and you’ve got a liability claim (when you are responsible for damage to someone else’s property) on your hands. Use the shuttle—it's easier on your nerves and your car.</p>
+
+    <h2>2. Mount Airy Budbreak Festival</h2>
+    <p>The Budbreak Festival celebrates the start of the growing season with wine, craft beer, and street food in the heart of "Mayberry." <strong>In 2026, the Budbreak Festival will take place on Saturday, May 2, 2026</strong>, on Main Street in Mount Airy.</p>
+
+    <p><strong>The Best Local Parking Spots:</strong> Avoid Main Street entirely, as it will be closed to traffic. Instead, head to the <strong>municipal parking lots located on Market Street or Willow Street</strong>. These lots are monitored and offer more space than street parking. If you park too close to the event entrance, you risk pedestrians accidentally scratching your paint with bags or strollers. A five-minute walk from a wider lot is a small price to pay to keep your "deductible" (the amount you pay out of pocket before insurance kicks in) in your wallet.</p>
+
+    <h2>3. Pilot Mountain Outdoor Heritage Expo</h2>
+    <p>This event highlights the natural beauty of the "Knob" and offers everything from fly-fishing demos to hiking clinics. <strong>The Pilot Mountain Outdoor Heritage Expo is set for Saturday, April 18, 2026</strong>, primarily centered around the downtown area and the state park access points.</p>
+
+    <p><strong>The Best Local Parking Spots:</strong> For the downtown portion of the expo, use the <strong>public lot behind the Pilot Mountain Town Hall</strong>. If you are heading to the State Park, arrive before 9:00 AM to secure a spot in the main lot. If that’s full, look for designated overflow areas. Never park on the soft shoulder of the road; NC mountain soil can be unstable after spring rains, and you don’t want to call a tow truck for a stuck vehicle—especially since most basic insurance policies require an extra "Roadside Assistance" add-on to cover that cost.</p>
+
+    <img src="https://i.imgur.com/l5opWSg.jpeg" class="content-img" alt="Crowded parking lot at a North Carolina festival"  width="1344" height="768" loading="lazy"/>
+
+    <h2>4. Shelton Vineyards Spring Concert Series</h2>
+    <p>Shelton Vineyards, one of the largest wineries in the East, hosts major outdoor concerts as the vines begin to leaf out. <strong>The first major Spring Concert of 2026 is expected to be held on Saturday, April 25, 2026.</strong></p>
+
+    <p><strong>The Best Local Parking Spots:</strong> Shelton Vineyards has massive grass parking fields. While there is plenty of room, these fields can become muddy. <strong>Park on the higher ground of the gravel lots</strong> if you can. Imagine it pours rain during the concert; by the time you leave, that grass field is a mud pit. If you slide into another car while trying to get out, your "collision coverage" would likely handle your repairs, but your "premiums" (the monthly or six-month price you pay for insurance) might go up at your next renewal.</p>
+
+    <h2>5. Elkin Roots Music Festival</h2>
+    <p>Held at the historic Reeves Theater and surrounding downtown areas, this festival celebrates the bluegrass and old-time music of the Foothills. <strong>The Elkin Roots Music Festival is scheduled for the weekend of April 10-11, 2026.</strong></p>
+
+    <p><strong>The Best Local Parking Spots:</strong> The <strong>Standard Street parking lot</strong> and the <strong>public spaces behind Main Street</strong> are your best options. Elkin is a walking-friendly town, so parking a block or two away near the Foothills Arts Council is often safer than trying to find a spot directly in front of the theater where foot traffic is highest. High foot traffic means a higher chance of someone’s belt buckle or bag scraping your door—a claim that often falls below your deductible, meaning you pay for it yourself.</p>
+
+    <h2>6. Dobson Spring Community Market</h2>
+    <p>The county seat comes alive with local farmers, artisans, and plant nurseries. <strong>The Dobson Spring Community Market will be held on Saturday, April 4, 2026</strong>, at the Surry County Government Center complex.</p>
+
+    <p><strong>The Best Local Parking Spots:</strong> Use the <strong>large paved lots at the Surry Community College</strong> if the Government Center lots are full. They are just a short walk away and offer much wider stalls. In North Carolina, many parking lot accidents happen because of "blind spots." When you're backing out of a tight space at a busy market, it’s hard to see that small car zipping behind you. Wider stalls at the college lot give you a better "line of sight" (the ability to see clearly around you) to avoid an at-fault accident.</p>
+
+    <h2>7. The Surry Old Time Fiddlers Convention (Early Sessions)</h2>
+    <p>While the big convention is in the summer, spring often hosts "warm-up" jams and youth competitions. <strong>The 2026 Spring Youth Fiddlers Jam is tentatively set for Saturday, May 30, 2026</strong>, in Mount Airy.</p>
+
+    <p><strong>The Best Local Parking Spots:</strong> The <strong>Veterans Park parking area</strong> is the hub for this event. Because many attendees bring large instrument cases or even trailers, the parking can get chaotic. <strong>Park in the back of the lot</strong>, furthest from the entrance. It's a bit more walking, but you're less likely to have a cello case or a rogue trailer tongue ding your bumper. Remember, in NC, "contributory negligence" rules are strict; if you park illegally and someone hits you, it can complicate the "claims process" (the steps you take to get the insurance company to pay for damage).</p>
+
+    <p>Now that you know where to go and where to park, it’s vital to understand how to handle the "what-ifs" of festival travel in North Carolina.</p>
+
+    <h2>Essential Steps to Take If Your Car is Damaged While Parked</h2>
+    <ol>
+        <li><strong>Take Photos Immediately:</strong> Before you move your car, take pictures of the damage and the surrounding area. This serves as "proof of loss" for your insurance company.</li>
+        <li><strong>Look for a Note or Witnesses:</strong> If someone hit you, check the windshield. In North Carolina, leaving the scene of an accident that causes property damage is a hit-and-run, which is a serious offense.</li>
+        <li><strong>File a Police Report:</strong> For any damage over a few hundred dollars, call the local Elkin or Mount Airy police. A formal report is an "authoritative document" that makes your insurance claim much smoother.</li>
+        <li><strong>Contact Bill Layne Insurance:</strong> Call your local agent before filing a claim online. We can help you determine if the damage is worth a claim based on your "deductible" (your out-of-pocket cost).</li>
+        <li><strong>Check for Nearby Cameras:</strong> Many businesses in downtown Elkin and Mount Airy have security cameras. The footage can identify the "tortfeasor" (the person at fault) so their insurance pays instead of yours.</li>
+    </ol>
+
+    <h2>NC Liability Limits: Are You Protected During the Spring Rush?</h2>
+    <p>North Carolina law requires every driver to carry a minimum amount of "Liability Insurance" (coverage that pays for the other person’s injuries or property damage if you cause an accident). The state minimum is currently **50/100/50**. This means $50,000 for bodily injury per person, $100,000 total per accident, and $50,000 for property damage.</p>
+
+    <p>However, imagine you’re driving to the Wine Festival and accidentally hit a brand-new electric truck or a luxury SUV. With modern car prices, $50,000 in property damage coverage might not be enough to cover the total cost of their repairs. If the damage exceeds $50,000, you could be personally responsible for the "deficiency" (the remaining balance). We often recommend higher limits, like 100/300/100, to give you peace of mind while navigating those busy 2026 festival crowds.</p>
+
+    <h2>Common Mistakes to Avoid at Surry County Festivals</h2>
+    <p>One of the biggest mistakes NC residents make is assuming their "Liability-only" policy covers them if their car is keyed or damaged by a falling branch in a parking lot. <strong>Liability insurance only pays for damage you cause to others.</strong> To protect your own car from "vandals" (people who intentionally damage property) or "environmental hazards" (like a spring hailstorm), you need "Comprehensive Coverage."</p>
+
+    <p>Another mistake is failing to update your insurance agent when you get a new vehicle. If you trade in your old sedan for a new SUV just in time for the 2026 spring season, make sure it's added to your policy. While most policies have a "newly acquired auto" grace period (usually 14-30 days), it’s much safer to have the "ID card" (the paper that proves you have insurance) in your glovebox before you hit the road.</p>
+
+    <img src="undefined" class="content-img" alt="Insurance agent explaining coverage to a client in Elkin NC"  width="1344" height="768" loading="lazy"/>
+
+    <h2>Real-World Example: The "Budbreak Bump"</h2>
+    <p>Say you’re attending the Budbreak Festival in Mount Airy. You find a "perfect" spot on a side street. While you’re enjoying a local craft beer (responsibly!), a delivery truck tries to navigate the narrow street and clips your side mirror. The driver doesn't stop. You return to find your mirror hanging by a wire.</p>
+
+    <p>Because you have "Uninsured Motorist Property Damage" (a standard part of NC policies), your insurance can help cover the repair. However, if you only had the state-mandated minimums and a high deductible, you might find yourself paying $500 out of pocket for a $600 repair. This is why we sit down with our neighbors in Elkin to discuss "policy limits" (the maximum amount the insurance will pay)—so a fun day at a festival doesn't turn into a financial burden.</p>
+
+    <h2>Expert Tips from Bill Layne</h2>
+    <ul>
+        <li><strong>Check Your "MedPay":</strong> "Medical Payments" coverage is an optional add-on in NC that covers small medical bills for you or your passengers regardless of fault. It’s great for minor injuries like a twisted ankle in a parking lot.</li>
+        <li><strong>Dash Cams are Your Friend:</strong> A dash cam that records while parked can be the difference between paying your deductible and having the other person's insurance cover everything.</li>
+        <li><strong>Use the "Elkin Walk":</strong> Parking further away in a well-lit, open lot is always better than a cramped "close" spot. The extra steps are good for your heart and your car’s finish.</li>
+        <li><strong>Verify Your "Rental Reimbursement":</strong> If a parking lot accident puts your car in the shop, "rental reimbursement" coverage pays for a temporary car so you aren't stranded in Surry County.</li>
+    </ul>
+
+    <div class="faq-section">
+        <div class="faq-item">
+            <h3>Q: Does my insurance cover hit-and-run damage in a parking lot in North Carolina?</h3>
+            <p>A: Yes, if you have collision coverage or uninsured motorist property damage coverage. You must file a police report to use the uninsured motorist portion of your policy for a hit-and-run in NC.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Q: What are the minimum car insurance requirements in North Carolina for 2026?</h3>
+            <p>A: The current NC minimums are 50/100/50, which covers bodily injury and property damage to others. These limits are required by the North Carolina Department of Insurance to legally operate a vehicle.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Q: If a tree falls on my car at a Surry County park, who pays for the damage?</h3>
+            <p>A: Your "comprehensive coverage" would pay for this damage, minus your deductible. This is considered an "Act of Nature," and the park is generally not held liable unless they were grossly negligent.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Q: Does my insurance premium go up if someone hits my parked car at a festival?</h3>
+            <p>A: Generally, no. In North Carolina, insurance companies typically cannot raise your rates for "not-at-fault" accidents, though you should always verify the specific details with your licensed agent.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Q: Do I need special insurance if I am carpooling friends to the Yadkin Valley Wine Festival?</h3>
+            <p>A: Your standard personal auto policy covers passengers, but you should ensure your "liability limits" are high enough to protect your assets if an accident occurs with a full vehicle.</p>
+        </div>
+    </div>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Does my insurance cover hit-and-run damage in a parking lot in North Carolina?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, if you have collision coverage or uninsured motorist property damage coverage. You must file a police report to use the uninsured motorist portion of your policy for a hit-and-run in NC."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What are the minimum car insurance requirements in North Carolina for 2026?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The current NC minimums are 50/100/50, which covers bodily injury and property damage to others. These limits are required by the North Carolina Department of Insurance to legally operate a vehicle."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "If a tree falls on my car at a Surry County park, who pays for the damage?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Your comprehensive coverage would pay for this damage, minus your deductible. This is considered an Act of Nature, and the park is generally not held liable unless they were grossly negligent."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does my insurance premium go up if someone hits my parked car at a festival?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Generally, no. In North Carolina, insurance companies typically cannot raise your rates for not-at-fault accidents, though you should always verify the specific details with your licensed agent."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need special insurance if I am carpooling friends to the Yadkin Valley Wine Festival?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Your standard personal auto policy covers passengers, but you should ensure your liability limits are high enough to protect your assets if an accident occurs with a full vehicle."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <h2>Key Takeaways for Surry County Spring Events</h2>
+    <ul>
+        <li><strong>Mark Your Calendars:</strong> Major 2026 events like the Wine Festival (May 16) and Budbreak (May 2) will draw large crowds to Elkin and Mount Airy.</li>
+        <li><strong>Prioritize Safe Parking:</strong> Use satellite lots and shuttles (like the one at Elkin High School) to avoid tight street parking risks.</li>
+        <li><strong>Understand Your Policy:</strong> Ensure you have "Comprehensive" and "Collision" coverage to protect your own vehicle from festival-related mishaps.</li>
+        <li><strong>Check NC Minimums:</strong> Verify that your 50/100/50 limits are sufficient for your current vehicle's value.</li>
+        <li><strong>Document Everything:</strong> In the event of damage, take photos and file a police report to satisfy NCDOI requirements.</li>
+        <li><strong>Local Expertise:</strong> Trust a local Elkin agent who knows the streets and the specific risks of the Yadkin Valley.</li>
+    </ul>
+
+    <div class="cta-box" style="background: #f8fafc; padding: 2rem; border-radius: 10px; border: 2px solid #e2e8f0; margin-top: 2rem;">
+        <h3>Don't Let a Fender Bender Spoil Your Spring!</h3>
+        <p>At <strong>Bill Layne Insurance</strong>, we’re more than just your agents; we’re your neighbors in Elkin, NC. Whether you're heading to Pilot Mountain or downtown Mount Airy, we want to make sure you have the right coverage at the best price. Let us review your policy today to ensure you're fully protected for all your 2026 adventures.</p>
+        <p><strong>Call us at 336-835-2277</strong> or visit <a href="https://ncinsuranceexperts.com">ncinsuranceexperts.com</a> for a friendly, no-pressure quote!</p>
+    </div>
+
+    <div class="internal-links" style="margin-top: 2rem; font-size: 0.9rem; color: #64748b;">
+        <p>Learn more about local protection: 
+            <a href="/search/label/Auto-Insurance">Understanding NC Auto Coverage</a> | 
+            <a href="/search/label/Local-Events">Safe Driving in the Yadkin Valley</a> | 
+            <a href="/search/label/Home-Insurance">Liability Protection for Event Hosts</a>
+        </p>
+    </div>
+</div></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Scroll Progress Bar
+    window.addEventListener('scroll', function() {
+        var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var scrolled = (winScroll / height) * 100;
+        var bar = document.getElementById('gemProgress');
+        if (bar) bar.style.width = scrolled + '%';
+        
+        // Chapter Tracker
+        var sections = document.querySelectorAll('.gem-post h2');
+        var pills = document.querySelectorAll('.gem-chapter-pill');
+        var currentId = '';
+        sections.forEach(function(sec) {
+            var top = sec.getBoundingClientRect().top;
+            if (top < window.innerHeight * 0.5) {
+                currentId = sec.id;
+            }
+        });
+        pills.forEach(function(pill) {
+            var pillSection = pill.getAttribute('href').substring(1);
+            pill.classList.remove('active');
+            if (pillSection === currentId) {
+                pill.classList.add('active');
+            }
+        });
+    });
+
+    // Copy Link Button
+    window.copyLink = function(btn) {
+        navigator.clipboard.writeText(window.location.href).then(function() {
+            btn.classList.add('copied');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+            setTimeout(function() {
+                btn.classList.remove('copied');
+                btn.innerHTML = '<i class="fa-solid fa-link"></i>';
+            }, 2000);
+        });
+    };
+
+    // Reveal Card
+    window.toggleReveal = function(el) {
+        var content = el.nextElementSibling;
+        content.classList.toggle('visible');
+        var span = el.querySelector('span:last-child');
+        if (content.classList.contains('visible')) {
+            span.textContent = 'Tap to hide';
+        } else {
+            span.textContent = 'Tap to reveal';
+        }
+    };
+
+    // FAQ Toggle
+    window.toggleFaq = function(btn) {
+        var item = btn.parentElement;
+        item.classList.toggle('active');
+    };
+
+    // Reaction Bar
+    window.react = function(btn) {
+        var all = btn.parentElement.querySelectorAll('.gem-react-btn');
+        all.forEach(function(b) { b.classList.remove('selected'); });
+        btn.classList.add('selected');
+        var title = btn.parentElement.previousElementSibling;
+        if(title) title.textContent = 'Thanks for the feedback!';
+    };
+});
+</script>
