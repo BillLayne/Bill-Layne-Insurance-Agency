@@ -2010,13 +2010,7 @@
     </section>
 
     <!-- LATEST BLOG POSTS -->
-    <script>
-    window.__BLOG_PREVIEW__ = [
-        {"title":"How Can North Carolina Drivers Find Hidden Auto Insurance Discounts in 2026?","slug":"how-can-north-carolina-drivers-find-hidden-auto-insurance-discounts-in-2026","imageUrl":"https://i.imgur.com/16Zb6GT.jpeg","summary":"NC drivers can save up to 40% on auto insurance through lifestyle bundles, telematics apps, SDIP point management, and insurance score re-tiering.","date":"Feb 19, 2026","readTime":"6 min read"},
-        {"title":"Why Did My NC Car Insurance Increase After Moving Just 10 Miles?","slug":"why-did-my-nc-car-insurance-increase-after-moving-just-10-miles","imageUrl":"https://i.imgur.com/e5uvNNq.jpeg","summary":"Moving even 10 miles in North Carolina can raise your car insurance because the NCRB territory map changed.","date":"Feb 19, 2026","readTime":"7 min read"},
-        {"title":"Why Waiting 30 Days to Add Your New Car Could Cost You Thousands","slug":"why-waiting-30-days-to-add-your-new-car-could-cost-you-thousands","imageUrl":"https://i.imgur.com/gvIQnIQ.jpeg","summary":"Your auto policy\u2019s 30-day grace period only mirrors existing coverage \u2014 if your old car had liability only, your new car has zero collision protection.","date":"Feb 18, 2026","readTime":"5 min read"}
-    ];
-    </script>
+    <!-- Blog data fetched dynamically from blogs.json -->
     <section class="py-10 sm:py-12 md:py-16 bg-white border-t border-slate-100">
         <div class="max-w-7xl mx-auto px-4">
             <div class="text-center mb-8 sm:mb-10 reveal">
@@ -2028,7 +2022,7 @@
                 <!-- Cards rendered by JS -->
             </div>
             <div class="text-center mt-10 reveal">
-                <a href="blog/index.html" class="inline-flex items-center gap-2 text-primary-600 font-bold border-b-2 border-primary-200 hover:border-primary-600 transition-colors pb-1">View All 201 Articles <i class="fas fa-arrow-right text-sm"></i></a>
+                <a id="blog-view-all" href="blog/index.html" class="inline-flex items-center gap-2 text-primary-600 font-bold border-b-2 border-primary-200 hover:border-primary-600 transition-colors pb-1">View All Articles <i class="fas fa-arrow-right text-sm"></i></a>
             </div>
         </div>
     </section>
@@ -2492,26 +2486,38 @@
                 }
             }
 
-            // Blog Preview Cards
+            // Blog Preview Cards — fetches latest 3 from blogs.json automatically
             const blogGrid = document.getElementById('blog-preview-grid');
-            if (blogGrid && window.__BLOG_PREVIEW__) {
-                blogGrid.innerHTML = window.__BLOG_PREVIEW__.map(post => `
-                    <a href="blog/blogs/${post.slug}.html" class="group block bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all reveal">
-                        <div class="h-48 overflow-hidden bg-slate-100">
-                            <img src="${post.imageUrl}" alt="${post.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" width="400" height="200">
-                        </div>
-                        <div class="p-5">
-                            <div class="flex items-center gap-2 text-xs text-slate-400 mb-2">
-                                <span>${post.date}</span>
-                                <span>&bull;</span>
-                                <span>${post.readTime}</span>
-                            </div>
-                            <h3 class="font-bold text-slate-900 mb-2 group-hover:text-primary-600 transition-colors line-clamp-2">${post.title}</h3>
-                            <p class="text-sm text-slate-500 line-clamp-2">${post.summary}</p>
-                        </div>
-                    </a>
-                `).join('');
-                blogGrid.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+            if (blogGrid) {
+                fetch('blog/data/blogs.json')
+                    .then(r => r.json())
+                    .then(posts => {
+                        const latest = posts.slice(0, 3);
+                        blogGrid.innerHTML = latest.map(post => {
+                            const d = new Date(post.date + 'T12:00:00');
+                            const dateStr = d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+                            const href = post.url.replace('./', 'blog/');
+                            return `<a href="${href}" class="group block bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all reveal">
+                                <div class="h-48 overflow-hidden bg-slate-100">
+                                    <img src="${post.imageUrl}" alt="${post.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" width="400" height="200">
+                                </div>
+                                <div class="p-5">
+                                    <div class="flex items-center gap-2 text-xs text-slate-400 mb-2">
+                                        <span>${dateStr}</span>
+                                        <span>&bull;</span>
+                                        <span>${post.readTime}</span>
+                                    </div>
+                                    <h3 class="font-bold text-slate-900 mb-2 group-hover:text-primary-600 transition-colors line-clamp-2">${post.title}</h3>
+                                    <p class="text-sm text-slate-500 line-clamp-2">${post.summary}</p>
+                                </div>
+                            </a>`;
+                        }).join('');
+                        blogGrid.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+                        // Update article count
+                        const viewAll = document.getElementById('blog-view-all');
+                        if (viewAll) viewAll.innerHTML = 'View All ' + posts.length + ' Articles <i class="fas fa-arrow-right text-sm"></i>';
+                    })
+                    .catch(() => {});
             }
 
             // Business Hours Indicator
