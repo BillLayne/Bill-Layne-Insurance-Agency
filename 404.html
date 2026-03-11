@@ -255,18 +255,26 @@
     </div>
     
     <script>
-        // Smart redirect for old/moved URLs
+        // Smart redirect for old/moved URLs — comprehensive coverage
         (function() {
             var path = window.location.pathname.replace(/\/+$/, '').replace(/\.html$/, '');
+            var lowerPath = path.toLowerCase();
+
             var redirectMap = {
-                // Old blog URLs at /blog/slug → correct /blog/blogs/slug.html
+                // ===== Old blog URLs at /blog/slug → correct /blog/blogs/slug.html =====
                 '/blog/nc-thanksgiving-foods-ranked': '/blog/blogs/nc-thanksgiving-foods-ranked-ultimate.html',
                 '/blog/elkin-nc-car-insurance-costs': '/blog/blogs/elkin-nc-car-insurance-costs-2026.html',
                 '/blog/nationwide-insurance-north-carolina-history': '/blog/blogs/nationwide-insurance-nc-history-ultimate-blog.html',
                 '/blog/nc-auto-insurance-law-changes-2025': '/blog/blogs/nc-auto-insurance-law-changes-2025-with-images.html',
                 '/blog/bootlegger-car-insurance-nc': '/blog/blogs/nc-bootlegger-car-insurance-guide.html',
                 '/blog/nc-dwelling-insurance-increase': '/blog/blogs/nc-dwelling-insurance-increase-2026.html',
-                // Old Wix-era pages
+                '/blog/nc-dwelling-fire-insurance': '/blog/blogs/nc-dwelling-fire-insurance-68-percent-increase-2026.html',
+                '/blog/nc-auto-insurance-increase': '/blog/blogs/nc-auto-insurance-increase-2025.html',
+                '/blog/nc-teen-driver-insurance': '/blog/blogs/nc-teen-driver-insurance-v2.html',
+                '/blog/nc-homeowners-rebuild-costs': '/blog/blogs/nc-homeowners-rebuild-costs-ultimate-gem.html',
+                '/blog/nc-group-project-rate-increase': '/blog/blogs/nc-group-project-rate-increase.html',
+
+                // ===== Old Wix-era system pages =====
                 '/general-4': '/',
                 '/insurance-1': '/',
                 '/services': '/service-center.html',
@@ -275,13 +283,13 @@
                 '/carter-foster': '/',
                 '/nc-auto-insurance-points': '/auto-center/',
                 '/nc-auto-insurance-points-1': '/auto-center/',
-                '/quote': '/get-quote',
-                '/quotes': '/get-quote',
+                '/quote': '/get-quote.html',
+                '/quotes': '/get-quote.html',
                 '/file-share': '/',
                 '/image-hosting': '/',
                 '/home-inspection-app': '/home-insurance/',
-                '/alamance-farmers-mutual-insurance': '/auto-center/carriers/',
-                '/nc-grange-mutual-insurance': '/auto-center/carriers/',
+                '/alamance-farmers-mutual-insurance': '/auto-center/carriers/alamance-north-carolina.html',
+                '/nc-grange-mutual-insurance': '/auto-center/carriers/nc-grange-north-carolina.html',
                 '/home-insurance': '/home-insurance/',
                 '/important-links': '/important-links/',
                 '/privacy-policy': '/privacy-policy/',
@@ -290,59 +298,187 @@
                 '/terms': '/terms/',
                 '/privacy': '/privacy-policy/',
                 '/claims': '/claims-center/',
-                '/claims/': '/claims-center/',
                 '/bolt-performance': '/',
                 '/_frog': '/',
-                // Old carrier pages → new locations
+                '/_ul': '/',
+                '/nul': '/',
+                '/espanol': '/',
+                '/tools': '/',
+                '/contact': '/contact-us.html',
+                '/contact-us': '/contact-us.html',
+                '/auto-insurance': '/auto-center/',
+                '/homeowners-insurance': '/home-insurance/',
+                '/blog': '/blog/',
+
+                // ===== Old carrier pages → new locations =====
                 '/carriers': '/auto-center/carriers/',
-                '/carriers/nationwide-north-carolina': '/auto-center/carriers/nationwide-north-carolina',
-                '/carriers/hagerty-north-carolina': '/auto-center/carriers/hagerty-north-carolina',
-                '/carriers/nc-grange-north-carolina': '/auto-center/carriers/nc-grange-north-carolina',
-                '/carriers/foremost-north-carolina': '/auto-center/carriers/foremost-north-carolina',
-                '/carriers/national-general-north-carolina': '/auto-center/carriers/national-general-north-carolina',
-                '/carriers/travelers-north-carolina': '/auto-center/carriers/travelers-north-carolina',
-                '/carriers/progressive-north-carolina': '/auto-center/carriers/progressive-north-carolina',
-                '/carriers/alamance-north-carolina': '/auto-center/carriers/alamance-north-carolina',
-                '/carriers/nc-grange-mutual': '/auto-center/carriers/nc-grange-north-carolina',
-                '/carriers/travelers-insurance': '/auto-center/carriers/travelers-north-carolina',
-                '/carriers/nc-grange-landing': '/auto-center/carriers/nc-grange-north-carolina',
-                // Old town pages
-                '/sandy-ridge': '/areas-we-serve.html',
-                '/pinnacle': '/areas-we-serve.html',
-                '/danbury': '/areas-we-serve.html',
-                '/millers-creek': '/areas-we-serve.html',
-                '/east-bend': '/areas-we-serve.html',
-                '/boonville': '/areas-we-serve.html',
-                '/union-grove': '/areas-we-serve.html',
-                '/white-plains': '/areas-we-serve.html',
-                '/germanton': '/areas-we-serve.html',
-                '/hamptonville': '/areas-we-serve.html',
-                '/walnut-cove': '/areas-we-serve.html',
-                '/pilot-mountain': '/areas-we-serve.html',
-                '/ronda': '/areas-we-serve.html',
-                '/toast': '/areas-we-serve.html',
-                '/traphill': '/areas-we-serve.html',
-                '/king': '/areas-we-serve.html',
-                '/roaring-river': '/areas-we-serve.html',
-                '/north-wilkesboro': '/areas-we-serve.html',
-                // Old standalone pages
-                '/nc-grange': '/auto-center/carriers/nc-grange-north-carolina',
-                '/alamance-farmers': '/auto-center/carriers/alamance-north-carolina',
-                '/home-quote': '/get-quote'
+                '/carriers/nationwide-north-carolina': '/auto-center/carriers/nationwide-north-carolina.html',
+                '/carriers/hagerty-north-carolina': '/auto-center/carriers/hagerty-north-carolina.html',
+                '/carriers/nc-grange-north-carolina': '/auto-center/carriers/nc-grange-north-carolina.html',
+                '/carriers/foremost-north-carolina': '/auto-center/carriers/foremost-north-carolina.html',
+                '/carriers/national-general-north-carolina': '/auto-center/carriers/national-general-north-carolina.html',
+                '/carriers/travelers-north-carolina': '/auto-center/carriers/travelers-north-carolina.html',
+                '/carriers/progressive-north-carolina': '/auto-center/carriers/progressive-north-carolina.html',
+                '/carriers/alamance-north-carolina': '/auto-center/carriers/alamance-north-carolina.html',
+                '/carriers/dairyland-north-carolina': '/auto-center/carriers/dairyland-north-carolina.html',
+                '/carriers/nc-grange-mutual': '/auto-center/carriers/nc-grange-north-carolina.html',
+                '/carriers/travelers-insurance': '/auto-center/carriers/travelers-north-carolina.html',
+                '/carriers/nc-grange-landing': '/auto-center/carriers/nc-grange-north-carolina.html',
+                '/carriers/nc-grange': '/auto-center/carriers/nc-grange-north-carolina.html',
+                '/carriers/nationwide': '/auto-center/carriers/nationwide-north-carolina.html',
+                '/carriers/progressive': '/auto-center/carriers/progressive-north-carolina.html',
+                '/carriers/travelers': '/auto-center/carriers/travelers-north-carolina.html',
+                '/carriers/foremost': '/auto-center/carriers/foremost-north-carolina.html',
+                '/carriers/hagerty': '/auto-center/carriers/hagerty-north-carolina.html',
+                '/carriers/alamance': '/auto-center/carriers/alamance-north-carolina.html',
+                '/carriers/national-general': '/auto-center/carriers/national-general-north-carolina.html',
+                '/carriers/dairyland': '/auto-center/carriers/dairyland-north-carolina.html',
+
+                // ===== Standalone carrier shortcut pages =====
+                '/nc-grange': '/auto-center/carriers/nc-grange-north-carolina.html',
+                '/alamance-farmers': '/auto-center/carriers/alamance-north-carolina.html',
+                '/nationwide': '/auto-center/carriers/nationwide-north-carolina.html',
+                '/progressive': '/auto-center/carriers/progressive-north-carolina.html',
+                '/travelers': '/auto-center/carriers/travelers-north-carolina.html',
+                '/foremost': '/auto-center/carriers/foremost-north-carolina.html',
+                '/hagerty': '/auto-center/carriers/hagerty-north-carolina.html',
+                '/national-general': '/auto-center/carriers/national-general-north-carolina.html',
+                '/dairyland': '/auto-center/carriers/dairyland-north-carolina.html',
+
+                // ===== Old town / area pages =====
+                '/sandy-ridge': '/sandy-ridge.html',
+                '/pinnacle': '/pinnacle.html',
+                '/danbury': '/danbury.html',
+                '/millers-creek': '/millers-creek.html',
+                '/east-bend': '/east-bend.html',
+                '/boonville': '/boonville.html',
+                '/union-grove': '/union-grove.html',
+                '/white-plains': '/white-plains.html',
+                '/germanton': '/germanton.html',
+                '/hamptonville': '/hamptonville.html',
+                '/walnut-cove': '/walnut-cove.html',
+                '/pilot-mountain': '/pilot-mountain.html',
+                '/ronda': '/ronda.html',
+                '/toast': '/toast.html',
+                '/traphill': '/traphill.html',
+                '/king': '/king.html',
+                '/roaring-river': '/roaring-river.html',
+                '/north-wilkesboro': '/north-wilkesboro.html',
+                '/elkin': '/insurance-elkin-nc.html',
+                '/mount-airy': '/insurance-mount-airy-nc.html',
+                '/dobson': '/save-in-dobson-nc/',
+                '/jonesville': '/insurance-jonesville-nc.html',
+                '/wilkesboro': '/save-in-wilkesboro-nc/',
+                '/yadkinville': '/save-in-yadkinville-nc/',
+
+                // ===== Save-in city pages (alternate URL formats) =====
+                '/save-in-dobson': '/save-in-dobson-nc/',
+                '/save-in-elkin': '/save-in-elkin-nc/',
+                '/save-in-jonesville': '/save-in-jonesville-nc/',
+                '/save-in-mount-airy': '/save-in-mount-airy-nc/',
+                '/save-in-wilkesboro': '/save-in-wilkesboro-nc/',
+                '/save-in-yadkinville': '/save-in-yadkinville-nc/',
+
+                // ===== Insurance city pages (alternate URL formats) =====
+                '/insurance-elkin': '/insurance-elkin-nc.html',
+                '/insurance-mount-airy': '/insurance-mount-airy-nc.html',
+                '/insurance-jonesville': '/insurance-jonesville-nc.html',
+                '/insurance-charlotte': '/insurance-charlotte-nc.html',
+                '/insurance-concord': '/insurance-concord-nc.html',
+
+                // ===== Quote / service pages =====
+                '/home-quote': '/get-quote.html',
+                '/auto-quote': '/auto-quote.html',
+                '/get-quote': '/get-quote.html',
+                '/get-a-quote': '/get-quote.html',
+                '/free-quote': '/get-quote.html',
+                '/make-a-payment': '/make-a-payment/',
+                '/payment': '/make-a-payment/',
+                '/pay': '/make-a-payment/',
+                '/service-center': '/service-center.html'
             };
-            // Check exact match (with and without .html)
+
+            // === Step 1: Exact match (path already stripped of trailing / and .html) ===
             var dest = redirectMap[path];
-            if (!dest) dest = redirectMap[path + '.html'];
-            // Check pattern matches
-            if (!dest && path.startsWith('/post/')) {
+            if (!dest) dest = redirectMap[lowerPath];
+
+            // === Step 2: Pattern-based redirects ===
+
+            // Old Wix blog posts /post/slug → blog index
+            if (!dest && (path.startsWith('/post/') || lowerPath.startsWith('/post/'))) {
                 dest = '/blog/';
             }
-            if (!dest && path.startsWith('/carriers/')) {
+
+            // Old carrier paths → carrier hub
+            if (!dest && (path.startsWith('/carriers/') || lowerPath.startsWith('/carriers/'))) {
                 dest = '/auto-center/carriers/';
             }
-            if (!dest && path.startsWith('/blog/tag/')) {
+
+            // Blog tag/category pages → blog index
+            if (!dest && (path.startsWith('/blog/tag/') || path.startsWith('/blog/category/') || path.startsWith('/blog/categories/'))) {
                 dest = '/blog/';
             }
+
+            // Blog slug that doesn't match known → blog index
+            if (!dest && path.startsWith('/blog/') && path !== '/blog') {
+                dest = '/blog/';
+            }
+
+            // Save-in pages with various patterns
+            if (!dest && path.startsWith('/save-in-')) {
+                var cityMatch = path.match(/\/save-in-([a-z-]+)/i);
+                if (cityMatch) {
+                    var city = cityMatch[1].replace(/-nc$/, '');
+                    dest = '/save-in-' + city + '-nc/';
+                }
+            }
+
+            // Auto-center sub-pages → auto center
+            if (!dest && path.startsWith('/auto-center/')) {
+                dest = '/auto-center/';
+            }
+
+            // Home insurance sub-pages → home insurance
+            if (!dest && path.startsWith('/home-insurance/')) {
+                dest = '/home-insurance/';
+            }
+
+            // Claims sub-pages → claims center
+            if (!dest && (path.startsWith('/claims-center/') || path.startsWith('/claims/'))) {
+                dest = '/claims-center/';
+            }
+
+            // Resources sub-pages → resources
+            if (!dest && path.startsWith('/resources/')) {
+                dest = '/resources/';
+            }
+
+            // Community sub-pages → community
+            if (!dest && path.startsWith('/community/')) {
+                dest = '/community/';
+            }
+
+            // Videos sub-pages → videos
+            if (!dest && path.startsWith('/videos/')) {
+                dest = '/videos/';
+            }
+
+            // === Step 3: Keyword-based fallback matching ===
+            if (!dest) {
+                var kw = lowerPath.replace(/[^a-z]/g, ' ');
+                if (kw.indexOf('insurance') > -1 && kw.indexOf('auto') > -1) dest = '/auto-center/';
+                else if (kw.indexOf('insurance') > -1 && kw.indexOf('home') > -1) dest = '/home-insurance/';
+                else if (kw.indexOf('insurance') > -1 && kw.indexOf('business') > -1) dest = '/business-insurance/';
+                else if (kw.indexOf('claim') > -1) dest = '/claims-center/';
+                else if (kw.indexOf('quote') > -1 || kw.indexOf('rate') > -1) dest = '/get-quote.html';
+                else if (kw.indexOf('carrier') > -1 || kw.indexOf('company') > -1) dest = '/auto-center/carriers/';
+                else if (kw.indexOf('blog') > -1 || kw.indexOf('article') > -1) dest = '/blog/';
+                else if (kw.indexOf('payment') > -1 || kw.indexOf('pay') > -1) dest = '/make-a-payment/';
+                else if (kw.indexOf('contact') > -1) dest = '/contact-us.html';
+                else if (kw.indexOf('service') > -1) dest = '/service-center.html';
+            }
+
+            // === Step 4: Redirect if match found ===
             if (dest) {
                 window.location.replace(dest);
                 return;
