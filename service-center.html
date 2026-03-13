@@ -634,8 +634,11 @@
                                         <span class="font-bold text-slate-800 text-sm md:text-base">NC Grange Mutual</span>
                                     </div>
                                     <div class="flex items-center gap-2 flex-shrink-0">
-                                        <a href="tel:3368351993" class="flex items-center gap-2 bg-amber-50 text-amber-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-amber-100 transition-colors">
-                                            <i class="fas fa-phone-alt"></i> Call Agent
+                                        <a href="https://ncgm.com/billing" target="_blank" class="flex items-center gap-2 bg-green-50 text-green-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-green-100 transition-colors">
+                                            <i class="fas fa-external-link-alt"></i> Pay Online
+                                        </a>
+                                        <a href="tel:1-800-722-8766" class="flex items-center gap-2 bg-slate-50 text-slate-600 px-3 py-2 rounded-lg font-bold text-xs hover:bg-slate-100 transition-colors hidden md:flex">
+                                            <i class="fas fa-phone-alt"></i> 800-722-8766
                                         </a>
                                     </div>
                                 </div>
@@ -1203,6 +1206,19 @@
         });
     }, { threshold: 0.1 });
     revealElements.forEach(el => observer.observe(el));
+
+    // Auto-open payment panel when linked from #payment-panel
+    if (window.location.hash === '#payment-panel') {
+        const payBtn = document.querySelector('[onclick*="payment-panel"]');
+        if (payBtn) {
+            setTimeout(() => {
+                togglePanel('payment-panel', payBtn);
+                setTimeout(() => {
+                    payBtn.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 150);
+            }, 300);
+        }
+    }
 </script>
 
 <script defer src="js/mobile-dock.js"></script>
