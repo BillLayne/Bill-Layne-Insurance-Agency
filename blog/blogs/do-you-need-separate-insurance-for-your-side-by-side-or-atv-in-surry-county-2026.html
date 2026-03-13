@@ -1,0 +1,466 @@
+
+<!-- GEM v4.1 YT EDITION DEPENDENCIES -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Bricolage+Grotesque:opsz,wght@12..96,400;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+
+<style>
+/* GEM v4.1 CORE STYLES - SCOPED */
+.gem-post {
+    font-family: 'Outfit', sans-serif;
+    line-height: 1.7;
+    color: #334155;
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    overflow-x: hidden;
+}
+.gem-post h1, .gem-post h2, .gem-post h3 { font-family: 'Bricolage Grotesque', sans-serif; color: #0f172a; }
+.gem-post h1 { font-size: clamp(2rem, 6vw, 2.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1rem; letter-spacing: -0.02em; }
+.gem-post h2 { font-size: clamp(1.5rem, 5vw, 1.8rem); font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; border-left: 5px solid #FF0033; padding-left: 1rem; }
+.gem-post h3 { font-size: clamp(1.25rem, 4vw, 1.4rem); font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+.gem-post p { margin-bottom: 1.25rem; font-size: clamp(1.05rem, 3vw, 1.15rem); }
+.gem-post ul, .gem-post ol { margin-bottom: 1.5rem; padding-left: 1.5rem; font-size: clamp(1.05rem, 3vw, 1.15rem); }
+.gem-post li { margin-bottom: 0.5rem; }
+.gem-post a { color: #2563eb; text-decoration: underline; font-weight: 600; }
+
+/* FONT AWESOME ICON SIZING */
+.gem-post i.fa-solid, .gem-post i.fa-regular, .gem-post i.fa-brands { margin-right: 0.3rem; }
+
+/* SCROLL PROGRESS BAR */
+.gem-progress-bar { position: fixed; top: 0; left: 0; width: 0%; height: 4px; background: linear-gradient(90deg, #FF0033, #FF6B35, #FFD23F); z-index: 1100; transition: width 0.1s linear; }
+
+/* HERO IMAGE */
+.hero-img { width: 100%; height: auto; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+/* SNIPPET BAIT BOX */
+.gem-snippet-bait { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 0 8px 8px 0; margin-bottom: 2rem; font-size: clamp(1.1rem, 3.5vw, 1.25rem); font-weight: 500; }
+
+/* SHARE BAR */
+.gem-share-bar { display: flex; gap: 0.5rem; margin: 1.5rem 0; padding: 1rem; background: #f8fafc; border-radius: 16px; border: 2px solid #e2e8f0; align-items: center; flex-wrap: wrap; }
+.gem-share-label { font-weight: 800; font-size: 0.85rem; color: #0F0F0F; margin-right: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+.gem-share-btn { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none !important; color: white !important; font-size: 1rem; transition: transform 0.15s; cursor: pointer; border: none; }
+.gem-share-btn:active { transform: scale(0.9); }
+.gem-share-fb { background: #1877F2; }
+.gem-share-x { background: #0F0F0F; }
+.gem-share-email { background: #EA4335; }
+.gem-share-copy { background: #64748b; }
+.gem-share-copy.copied { background: #22c55e; }
+
+/* CHAPTER PROGRESS PILLS */
+.gem-chapter-track { display: flex; gap: 4px; margin: 1rem 0; flex-wrap: wrap; position: sticky; top: 10px; z-index: 50; }
+.gem-chapter-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; background: #e2e8f0; color: #64748b; text-decoration: none !important; transition: all 0.2s; opacity: 0.9; }
+.gem-chapter-pill.active { background: #FF0033; color: white !important; opacity: 1; box-shadow: 0 4px 6px -1px rgba(255, 0, 51, 0.3); }
+.gem-chapter-pill.read { background: #0F0F0F; color: white !important; }
+
+/* PULL QUOTE */
+.gem-pull-quote { margin: 2rem 0; padding: 2rem 1.5rem; background: linear-gradient(135deg, #0F0F0F 0%, #1a1a2e 100%); border-radius: 16px; text-align: center; position: relative; overflow: hidden; }
+.gem-pull-quote::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #FF0033, #FF6B35, #FFD23F, #A8E10C, #00D4FF); }
+.gem-pull-quote-text { font-family: 'Bricolage Grotesque', sans-serif; font-size: clamp(1.2rem, 4vw, 1.5rem); font-weight: 800; color: white; line-height: 1.3; letter-spacing: -0.02em; }
+.gem-pull-quote-text .gem-pq-highlight { color: #FFD23F; }
+.gem-pull-quote-source { margin-top: 0.75rem; font-size: 0.8rem; color: #9ca3af; font-weight: 600; }
+
+/* VS COMPARISON CARD */
+.gem-vs-card { margin: 1.5rem 0; border-radius: 16px; overflow: hidden; border: 2px solid #e2e8f0; }
+.gem-vs-header { background: #0F0F0F; color: white; text-align: center; padding: 0.75rem; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.gem-vs-body { display: flex; }
+.gem-vs-side { flex: 1; padding: 1.25rem; text-align: center; }
+.gem-vs-left { background: linear-gradient(180deg, #FEF2F2 0%, #fff 100%); }
+.gem-vs-right { background: linear-gradient(180deg, #F0FDF4 0%, #fff 100%); }
+.gem-vs-divider { width: 3px; background: linear-gradient(180deg, #FF0033, #FFD23F, #22c55e); flex-shrink: 0; }
+.gem-vs-label { font-weight: 800; font-size: 0.95rem; margin-bottom: 0.75rem; display: block; }
+.gem-vs-left .gem-vs-label { color: #DC2626; }
+.gem-vs-right .gem-vs-label { color: #16a34a; }
+.gem-vs-item { font-size: 0.85rem; color: #475569; margin-bottom: 0.4rem; line-height: 1.4; }
+.gem-vs-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+
+/* REVEAL CARD */
+.gem-reveal { margin: 1.5rem 0; border: 2px dashed #7C3AED; border-radius: 16px; overflow: hidden; background: #F5F3FF; }
+.gem-reveal-trigger { padding: 1rem 1.25rem; font-weight: 800; color: #7C3AED; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; min-height: 44px; }
+.gem-reveal-content { display: none; padding: 0 1.25rem 1.25rem; color: #374151; line-height: 1.6; font-size: 0.95rem; border-top: 1px solid #DDD6FE; }
+.gem-reveal-content.visible { display: block; }
+
+/* REACTIONS BAR */
+.gem-reactions { margin: 1.5rem 0; padding: 1.25rem; background: #f8fafc; border-radius: 16px; text-align: center; border: 2px solid #e2e8f0; }
+.gem-reactions-title { font-weight: 700; font-size: 0.9rem; color: #475569; margin-bottom: 0.75rem; }
+.gem-reactions-row { display: flex; justify-content: center; gap: 0.75rem; }
+.gem-react-btn { width: 48px; height: 48px; border-radius: 50%; border: 2px solid #e2e8f0; background: white; font-size: 1.3rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+.gem-react-btn:hover, .gem-react-btn:active { transform: scale(1.15); border-color: #FF0033; }
+.gem-react-btn.selected { background: #FF0033; border-color: #FF0033; color: white !important; transform: scale(1.15); }
+
+/* FAQ SECTION */
+.gem-faq-section { margin: 3rem 0; }
+.gem-faq-header { font-size: clamp(1.5rem, 5vw, 1.8rem); font-weight: 700; margin-bottom: 1.5rem; font-family: 'Bricolage Grotesque', sans-serif; color: #0f172a; }
+.gem-faq-item { border: 2px solid #e2e8f0; border-radius: 12px; margin-bottom: 1rem; background: white; overflow: hidden; transition: border-color 0.2s; }
+.gem-faq-item:hover { border-color: #cbd5e1; }
+.gem-faq-item.active { border-color: #3b82f6; }
+.gem-faq-question { width: 100%; padding: 1.25rem; background: #f8fafc; text-align: left; font-weight: 700; color: #0f172a; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: none; outline: none; font-size: clamp(1.05rem, 3vw, 1.15rem); }
+.gem-faq-question:hover { background: #f1f5f9; }
+.gem-faq-answer { display: none; padding: 1.5rem; color: #475569; line-height: 1.6; background: white; border-top: 1px solid #e2e8f0; font-size: clamp(1rem, 2.5vw, 1.05rem); }
+.gem-faq-item.active .gem-faq-answer { display: block; }
+.gem-faq-icon { transition: transform 0.3s ease; color: #3b82f6; }
+.gem-faq-item.active .gem-faq-icon { transform: rotate(180deg); }
+
+/* STEP TIMELINE */
+.gem-steps { margin: 1.5rem 0; padding: 0; }
+.gem-step { display: flex; gap: 1rem; padding-bottom: 1.5rem; position: relative; }
+.gem-step:last-child { padding-bottom: 0; }
+.gem-step-line { width: 40px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.gem-step-dot { width: 36px; height: 36px; border-radius: 50%; background: #0F0F0F; color: white; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; z-index: 1; }
+.gem-step-connector { width: 3px; flex: 1; background: linear-gradient(180deg, #0F0F0F, #e2e8f0); margin-top: 4px; }
+.gem-step:last-child .gem-step-connector { display: none; }
+.gem-step-content { flex: 1; padding-top: 0.35rem; }
+.gem-step-title { font-weight: 800; font-size: clamp(1.05rem, 3vw, 1.15rem); color: #0F0F0F; margin-bottom: 0.25rem; }
+.gem-step-text { font-size: clamp(1rem, 2.5vw, 1.05rem); color: #475569; line-height: 1.5; }
+
+/* RELATED GRID */
+.gem-related { padding: 2rem 1.25rem; background: #0F0F0F; border-radius: 12px; margin-top: 3rem; }
+.gem-related-title { font-family: 'Bricolage Grotesque', sans-serif; color: white; font-size: clamp(1.15rem, 4vw, 1.25rem); font-weight: 800; margin-bottom: 1rem; }
+.gem-related-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.gem-related-card { display: flex; gap: 0.75rem; text-decoration: none !important; background: #272727; border-radius: 12px; overflow: hidden; transition: background 0.2s; }
+.gem-related-card:active { background: #333; }
+.gem-related-thumb { width: 120px; height: 68px; object-fit: cover; flex-shrink: 0; border-radius: 8px; margin: 0.5rem 0 0.5rem 0.5rem; }
+.gem-related-info { padding: 0.5rem 0.5rem 0.5rem 0; display: flex; flex-direction: column; justify-content: center; }
+.gem-related-info-title { color: white; font-weight: 700; font-size: 0.85rem; line-height: 1.3; margin-bottom: 0.25rem; }
+.gem-related-info-meta { color: #9ca3af; font-size: 0.7rem; }
+@media (min-width: 768px) {
+    .gem-related-grid { grid-template-columns: 1fr 1fr 1fr; }
+    .gem-related-card { flex-direction: column; }
+    .gem-related-thumb { width: 100%; height: 120px; margin: 0; border-radius: 12px 12px 0 0; }
+    .gem-related-info { padding: 0.75rem; }
+}
+
+/* DATA TABLE */
+.gem-table-wrapper { overflow-x: auto; margin: 1.5rem 0; border-radius: 8px; border: 1px solid #e2e8f0; }
+.gem-table { width: 100%; border-collapse: collapse; min-width: 500px; }
+.gem-table th { background: #f1f5f9; text-align: left; padding: 1rem; font-weight: 700; border-bottom: 2px solid #e2e8f0; }
+.gem-table td { padding: 1rem; border-bottom: 1px solid #e2e8f0; }
+.gem-table tr:last-child td { border-bottom: none; }
+
+/* CTA BOX */
+.gem-cta-box { background: #eff6ff; border: 2px solid #3b82f6; border-radius: 16px; padding: 2rem; text-align: center; margin-top: 3rem; color: #000000 !important; }
+.gem-cta-title { font-size: clamp(1.35rem, 4vw, 1.6rem); font-weight: 800; color: #000000 !important; margin-bottom: 0.5rem; }
+.gem-cta-text { margin-bottom: 1.5rem; color: #000000 !important; font-weight: 600; font-size: clamp(1.05rem, 3vw, 1.15rem); }
+.gem-cta-btn { display: inline-block; background: #2563eb; color: white !important; padding: 1rem 2rem; border-radius: 50px; font-weight: 700; text-decoration: none !important; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.5); transition: transform 0.2s; }
+.gem-cta-btn:hover { transform: translateY(-2px); }
+
+/* CORNER RIBBON */
+.gem-ribbon-wrap { position: relative; }
+.gem-ribbon { position: absolute; top: 12px; right: -8px; background: #FF0033; color: white; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 14px 4px 10px; border-radius: 4px 0 0 4px; z-index: 2; box-shadow: 0 2px 6px rgba(255,0,51,0.3); }
+.gem-ribbon::after { content: ''; position: absolute; top: 100%; right: 0; border: 4px solid transparent; border-top-color: #990020; border-right-color: #990020; }
+.gem-ribbon-new { background: #FF0033; }
+
+/* RESPONSIVE TYPOGRAPHY & MOBILE ADJUSTMENTS */
+@media (max-width: 768px) {
+    .gem-post { padding: 0 15px; }
+    .gem-post h2 { margin-top: 2rem; }
+    .gem-vs-label { font-size: 1.05rem; }
+    .gem-vs-item { font-size: 1rem; }
+    .gem-reveal-trigger { font-size: 1.05rem; }
+    .gem-reveal-content { font-size: 1rem; }
+    .gem-related-info-title { font-size: 1rem; }
+    .gem-share-label { font-size: 0.95rem; }
+}
+</style>
+
+<div class="gem-post"><div class="gem-post">
+    <header class="mb-12">
+        <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 leading-tight tracking-tight mb-6">
+            Do You Need Separate Insurance for Your Side-by-Side or ATV in Surry County? 2026
+        </h1>
+        <p class="text-xl text-slate-600 mb-8 italic">
+            Whether you're cruising through the foothills of the Blue Ridge or working the back forty in Elkin, understanding your off-road coverage is the difference between a fun Saturday and a financial disaster.
+        </p>
+        <img src="https://i.imgur.com/sXVxdEV.jpeg" class="hero-img w-full rounded-2xl shadow-2xl mb-10 object-cover aspect-video" alt="Side-by-side vehicle parked in a North Carolina mountain trail" width="800" height="450" />
+    </header>
+
+    <section class="mb-12">
+        <p class="font-semibold text-slate-800 text-lg">
+            <strong>Side-by-side or ATV insurance</strong> is a specialized insurance policy designed to provide liability, comprehensive, and collision coverage for off-road vehicles that are typically excluded from standard homeowners or auto insurance policies. In Surry County, North Carolina, separate insurance is necessary to protect your assets if you cause an accident, cover your medical bills, or replace your vehicle if it is stolen or damaged on trails or public land.
+        </p>
+        <p>
+            Think about the last time you took your UTV (Utility Terrain Vehicle) out. Maybe you were heading up toward Lowgap or just helping a neighbor haul some firewood near State Road. You’ve invested a lot of money into that machine—sometimes as much as a small car! Many folks in our area assume that because the vehicle is parked in their barn or garage, their homeowners insurance will automatically cover it. Unfortunately, that is one of the most expensive mistakes a North Carolina rider can make.
+        </p>
+        <p>
+            As we head into 2026, the North Carolina Department of Insurance (NCDOI) and local law enforcement are seeing more off-road vehicles on the move than ever before. With that growth comes more risk. Whether you call it a side-by-side, a UTV, or an ATV, having a dedicated policy ensures that your "fun" doesn't turn into a lawsuit that threatens your home or your savings.
+        </p>
+        <p>
+            In this guide, we’re going to break down exactly why a separate policy is the gold standard for protection in the Piedmont Triad and beyond.
+        </p>
+    </section>
+
+    <h2 id="why-homeowners-fails">Why Your Homeowners Policy Likely Isn't Enough</h2>
+    <section class="mb-12">
+        <p><strong>Most homeowners insurance policies only provide extremely limited coverage for ATVs or side-by-sides, typically restricting protection to accidents that happen solely on your own deeded property while the vehicle is being used for "service" tasks like mowing or hauling.</strong> Once you cross your property line onto a neighbor's land, a public road, or a designated trail system, your homeowners liability usually disappears completely.</p>
+        
+        <p>Imagine you’re riding your ATV on a trail near the Yadkin River. You take a turn a little too fast and accidentally clip another rider. If you don't have a separate off-road vehicle policy, you could be personally responsible for their medical bills and the cost to fix their machine. We aren't talking about a few hundred dollars; we're talking about tens of thousands of dollars in potential legal and medical costs.</p>
+
+        <p>Furthermore, homeowners insurance almost never covers "physical damage" for your ATV. This means if a tree falls on your side-by-side in the woods, or if it gets stolen while you're parked at a trailhead, your home insurance company will likely say, "Sorry, that’s not covered." A specialized policy fills these gaps, providing "comprehensive" coverage (protection against things like fire, theft, or falling objects) and "collision" coverage (protection if you hit something else).</p>
+
+        <p>Are you using your side-by-side for your farm? While some "farm-use" endorsements exist, they are often very specific. If you’re using that same "farm" UTV to go visit a friend down the road or head into town for a parade, you might be stepping outside of your coverage zone without even knowing it.</p>
+    </section>
+
+    <h2 id="nc-regulations-2026">North Carolina Regulations and Your Off-Road Vehicle</h2>
+    <section class="mb-12">
+        <p><strong>North Carolina state law does not require insurance for off-road vehicles used strictly on private property, but you must have a liability policy if you plan to operate the vehicle on public lands, forest service roads, or if the vehicle is "street legal" and registered with the NC DMV.</strong> Even if it isn't legally mandated for your specific backyard use, the NC Rate Bureau and local agents strongly recommend a 50/100/50 liability limit to protect your financial future.</p>
+
+        <p>In the last few years, we’ve seen more Surry County residents seeking to make their UTVs "street legal." Under NC General Statute 20-121.1, certain "modified utility vehicles" can be operated on roads with speed limits of 35 or 55 mph (depending on local ordinances). However, to do this, you must have a title, a license plate, and insurance that meets the North Carolina minimum liability requirements (currently 30/60/25, though we recommend higher).</p>
+
+        <p>Even if you never plan to touch pavement, consider the "Beach Plan" or "FAIR Plan" areas of NC. While Surry County is inland, many of our neighbors haul their ATVs to the coast or the mountains. Different regions have different risks, like flooding or specialized trail requirements. A separate policy travels with you. Whether you're at Uwharrie National Forest or just riding around Elkin, your protection follows the vehicle, not just your address.</p>
+
+        <p>How does this impact your wallet? By having a separate policy, any claims you make for your ATV won't typically cause your homeowners insurance rates to spike. It keeps your risks separate, which is a smart way to manage your overall insurance costs in the long run.</p>
+    </section>
+
+    <img src="https://i.imgur.com/PEuqxvF.jpeg" class="content-img w-full rounded-xl shadow-lg mb-10 object-cover aspect-video" alt="A family preparing their ATVs for a weekend trip in Surry County" width="700" height="400" loading="lazy" />
+
+    <h2 id="essential-coverages">The 4 Parts of a Great Side-by-Side Policy</h2>
+    <section class="mb-12">
+        <p><strong>A comprehensive side-by-side policy should include four key components: Bodily Injury and Property Damage Liability, Medical Payments, Comprehensive coverage, and Collision coverage.</strong> Together, these four parts ensure that both your bank account and your physical machine are protected regardless of who is at fault in an accident.</p>
+
+        <h3 class="text-xl font-bold mt-6">1. Liability Coverage (Your Shield)</h3>
+        <p>This is the most important part. Liability coverage (the part that pays if you cause an accident) handles the costs if you hurt someone else or damage their property. Say you’re backing out of a crowded parking area at a local trail and you bump into a $40,000 custom Jeep. Without liability, that's coming out of your pocket. We recommend a minimum of $50,000 for property damage to cover the high cost of modern vehicles.</p>
+
+        <h3 class="text-xl font-bold mt-6">2. Medical Payments (MedPay)</h3>
+        <p>Insurance can be confusing, but MedPay is simple: it pays for medical bills for you and your passengers if you're hurt while riding, regardless of who caused the wreck. Even if you have great health insurance, your deductible (the amount you pay before insurance kicks in) could be $5,000 or more. MedPay can help cover that gap immediately.</p>
+
+        <h3 class="text-xl font-bold mt-6">3. Comprehensive Coverage</h3>
+        <p>This protects your vehicle from "acts of God" or "non-collision" events. If a freak hailstorm hits Surry County and dents your plastics, or if someone steals your ATV off your trailer at a gas station, comprehensive coverage is what pays to replace it. In 2026, with UTV prices rising, this is a must-have.</p>
+
+        <h3 class="text-xl font-bold mt-6">4. Collision Coverage</h3>
+        <p>This is exactly what it sounds like. If you hit a tree, a fence, or another rider, collision coverage pays to repair your vehicle. Think about it: a small mistake on a slippery North Carolina clay trail could lead to thousands in frame or suspension damage. Would you rather pay a $500 deductible or $8,000 for a new front end?</p>
+    </section>
+
+    <h2 id="cost-factors">How Much Does ATV Insurance Cost in Elkin, NC?</h2>
+    <section class="mb-12">
+        <p><strong>On average, a separate ATV or side-by-side insurance policy in Surry County costs between $150 and $500 per year, depending on the vehicle's value, the rider's experience, and the chosen coverage limits.</strong> For most riders, this breaks down to less than $30 a month—roughly the cost of one tank of high-octane fuel for your machine.</p>
+
+        <p>Several factors will influence your final bill (premium):</p>
+        <ul class="list-disc pl-6 mb-6">
+            <li><strong>Engine Size (CCs):</strong> A high-performance 1000cc racing UTV will cost more to insure than a 400cc utility quad used for gardening.</li>
+            <li><strong>Safety Features:</strong> Does your side-by-side have a roll cage, GPS tracking, or specialized lighting? These can sometimes lead to discounts.</li>
+            <li><strong>Driving Record:</strong> Just like your car insurance, your history on the road matters. A clean record means lower rates.</li>
+            <li><strong>Usage:</strong> Are you using it for work on the farm, or are you a weekend warrior hitting the technical trails?</li>
+        </ul>
+        <p>By bundling your ATV policy with your existing auto or home insurance at Bill Layne Insurance, we can often find multi-policy discounts that make the cost even lower. It’s a small price to pay for the peace of mind that your assets are safe while you're enjoying the outdoors.</p>
+    </section>
+
+    <h2 id="mistakes-to-avoid">Common Mistakes Surry County Riders Make</h2>
+    <section class="mb-12">
+        <p><strong>The most common mistake NC riders make is assuming their "umbrella policy" will cover an ATV accident without a primary off-road policy already in place.</strong> Umbrella policies (extra liability protection) usually require you to have a base layer of specialized insurance first; without that base, the umbrella won't "open" to protect you if a major lawsuit occurs.</p>
+
+        <p>Another pitfall is failing to list "custom parts and equipment." Did you add a $2,000 winch, custom wheels, or a high-end sound system? Standard policies might only cover the vehicle as it came from the factory. You need to tell your agent about these upgrades so they can be added to the policy. If you don't, and the vehicle is totaled, you'll only get the "stock" value back.</p>
+
+        <p>Lastly, don't forget about "Uninsured Motorist" coverage. Just because <em>you</em> are responsible doesn't mean the person who hits you on the trail will be. If an uninsured rider crashes into you and leaves you with medical bills, your own policy's Uninsured Motorist coverage can step in to pay for your damages. It’s a vital safety net in a state where off-road insurance isn't always mandatory.</p>
+    </section>
+
+    <img src="https://i.imgur.com/xJ6YusP.jpeg" class="content-img w-full rounded-xl shadow-lg mb-10 object-cover aspect-video" alt="A close up of an insurance policy document and ATV keys" width="700" height="400" loading="lazy" />
+
+    <h2 id="case-study">Real-World Scenario: The "Short Cut" That Cost $12,000</h2>
+    <section class="mb-12">
+        <p><strong>Consider the case of "John," a resident near Pilot Mountain who used his side-by-side to check his fences.</strong> John didn't have separate insurance because he "only stayed on his land." One afternoon, John decided to take a short cut across a secondary road to help a neighbor whose calf had gotten loose.</p>
+        
+        <p>While crossing the road, a car coming over the hill had to swerve to avoid John’s UTV. The car ended up in a ditch, causing significant body damage and a minor neck injury to the driver. Because John was on a public road and using his UTV for a non-farm task at that moment, his homeowners insurance denied the claim. John was stuck paying $12,000 for the car repairs and legal fees out of his own pocket.</p>
+        
+        <p>Had John spent the $200 a year for a dedicated ATV policy, his insurance company would have handled the repairs, the legal defense, and the medical settlement. This scenario happens more often than people think, especially in rural areas where the line between "private property" and "public use" gets blurry.</p>
+    </section>
+
+    <h2 id="expert-tips">Expert Tips from Bill Layne</h2>
+    <section class="mb-12">
+        <div class="bg-slate-50 p-8 rounded-2xl border-l-8 border-red-600">
+            <p><strong>"I’ve spent years helping folks in Elkin and the surrounding areas protect what they work hard for. Here’s my 'insider' advice for every ATV owner:"</strong></p>
+            <ul class="space-y-4 mt-4">
+                <li class="flex items-start">
+                    <i class="fas fa-check-circle text-red-600 mt-1 mr-3"></i>
+                    <span><strong>Take a Safety Course:</strong> Many insurance companies offer a discount if you complete a certified ATV safety course. It makes you a better rider and saves you money!</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-check-circle text-red-600 mt-1 mr-3"></i>
+                    <span><strong>Document Your Upgrades:</strong> Keep receipts and take photos of every modification you make to your side-by-side. It’s the only way to ensure you get paid for them in a claim.</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-check-circle text-red-600 mt-1 mr-3"></i>
+                    <span><strong>Check the 'Guest Rider' Clause:</strong> If you let friends or family drive your machine, make sure your policy covers "permissive use." Not all policies are created equal here.</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-check-circle text-red-600 mt-1 mr-3"></i>
+                    <span><strong>Ask About 'Total Loss Replacement':</strong> If your machine is brand new, ask for coverage that replaces it with a new model rather than just giving you the "depreciated" (used) value.</span>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <h2 id="faq">Frequently Asked Questions</h2>
+    <section class="mb-12">
+        <div class="faq-item border-b border-slate-200 py-4">
+            <h3>Q: Does my NC auto insurance cover my ATV if it’s on a trailer?</h3>
+            <p>A: Your auto insurance will typically cover the liability if the trailer hits someone while attached to your truck, but it will not cover the physical damage to the ATV itself. If the ATV falls off or is damaged in a wreck, you need a separate off-road policy with collision coverage to pay for the repairs.</p>
+        </div>
+        <div class="faq-item border-b border-slate-200 py-4">
+            <h3>Q: Is ATV insurance required by law in North Carolina?</h3>
+            <p>A: Insurance is not legally required for ATVs used strictly on private land; however, it is required for any vehicle registered for street use or operated on certain public lands and trails. Regardless of the law, liability insurance is highly recommended to protect your personal assets from lawsuits.</p>
+        </div>
+        <div class="faq-item border-b border-slate-200 py-4">
+            <h3>Q: Can I get a discount if I only use my side-by-side for farming?</h3>
+            <p>A: Yes, many carriers offer specialized rates or endorsements for "utility" use versus "recreational" use. If your vehicle is primarily a tool for your Surry County farm, let your agent know so they can apply the correct classification and potentially lower your rate.</p>
+        </div>
+        <div class="faq-item border-b border-slate-200 py-4">
+            <h3>Q: What happens if someone else is driving my ATV and gets in an accident?</h3>
+            <p>A: In most cases, insurance follows the vehicle, meaning your policy would still provide coverage if you gave the person permission to ride. However, some "budget" policies exclude guest riders, so it is vital to review your specific policy language with an expert agent.</p>
+        </div>
+        <div class="faq-item border-b border-slate-200 py-4">
+            <h3>Q: Does side-by-side insurance cover theft from my backyard?</h3>
+            <p>A: Yes, if you have "comprehensive" coverage on your policy, it will pay to replace your vehicle if it is stolen from your property, a trailer, or a trailhead. Homeowners insurance often limits or denies coverage for motorized vehicles, making this specific coverage essential.</p>
+        </div>
+    </section>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Does my NC auto insurance cover my ATV if it’s on a trailer?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Your auto insurance will typically cover the liability if the trailer hits someone while attached to your truck, but it will not cover the physical damage to the ATV itself. You need a separate off-road policy for the vehicle's protection."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is ATV insurance required by law in North Carolina?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Insurance is not required for private land use but is mandated for street-legal UTVs and certain public trail systems. Liability coverage is strongly recommended for all owners to protect against lawsuits."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I get a discount if I only use my side-by-side for farming?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, utility-focused use often qualifies for different rating structures. Carriers frequently offer lower premiums for vehicles used for farm work rather than high-speed recreation."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens if someone else is driving my ATV and gets in an accident?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Generally, your insurance policy covers 'permissive users.' However, you must ensure your policy doesn't have a restrictive driver exclusion that would bar coverage for guests."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does side-by-side insurance cover theft from my backyard?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, provided you have comprehensive coverage. This part of your policy protects against theft, fire, and vandalism regardless of where the vehicle is stored."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <div class="bg-slate-900 text-white p-8 rounded-2xl mb-12">
+        <h2 class="text-white text-2xl font-bold mb-4 border-none p-0">Key Takeaways</h2>
+        <ul class="space-y-3">
+            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i> Homeowners insurance rarely covers accidents that happen off your property.</li>
+            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i> Separate policies protect your "custom parts" like winches and cabs.</li>
+            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i> NC law requires insurance for street-legal modified utility vehicles.</li>
+            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i> Liability limits of 50/100/50 are recommended for total asset protection.</li>
+            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i> Medical Payments coverage can pay your health insurance deductibles.</li>
+            <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i> Policies are affordable, often costing less than $30 per month.</li>
+        </ul>
+    </div>
+
+    <section class="cta-box bg-red-50 border-2 border-red-600 p-8 rounded-2xl text-center">
+        <h2 class="text-red-600 border-none p-0 mb-4">Don't Leave Your Ride (or Your Home) at Risk!</h2>
+        <p class="text-lg mb-6">At Bill Layne Insurance, we're more than just agents—we're your neighbors in Elkin, NC. We know the trails, we know the farms, and we know how to get you the best coverage for your side-by-side or ATV at a price that fits your budget.</p>
+        <p class="text-2xl font-bold text-slate-900 mb-6">Call us today at <a href="tel:336-835-2277" class="text-red-600 hover:underline">336-835-2277</a></p>
+        <a href="https://ncinsuranceexperts.com" class="inline-block bg-red-600 text-white font-bold py-4 px-8 rounded-full hover:bg-red-700 transition-colors">Get Your Free Off-Road Quote Now</a>
+    </section>
+
+    <footer class="mt-12 pt-8 border-t border-slate-200 text-sm text-slate-500">
+        <p>Related Resources:</p>
+        <div class="flex space-x-4">
+            <a href="/search/label/Auto-Insurance" class="text-blue-600 hover:underline">North Carolina Auto Insurance Guide</a>
+            <a href="/search/label/Home-Insurance" class="text-blue-600 hover:underline">Protecting Your NC Home and Property</a>
+            <a href="/search/label/Liability" class="text-blue-600 hover:underline">Understanding Liability Limits in NC</a>
+        </div>
+    </footer>
+</div></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Scroll Progress Bar
+    window.addEventListener('scroll', function() {
+        var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var scrolled = (winScroll / height) * 100;
+        var bar = document.getElementById('gemProgress');
+        if (bar) bar.style.width = scrolled + '%';
+        
+        // Chapter Tracker
+        var sections = document.querySelectorAll('.gem-post h2');
+        var pills = document.querySelectorAll('.gem-chapter-pill');
+        var currentId = '';
+        sections.forEach(function(sec) {
+            var top = sec.getBoundingClientRect().top;
+            if (top < window.innerHeight * 0.5) {
+                currentId = sec.id;
+            }
+        });
+        pills.forEach(function(pill) {
+            var pillSection = pill.getAttribute('href').substring(1);
+            pill.classList.remove('active');
+            if (pillSection === currentId) {
+                pill.classList.add('active');
+            }
+        });
+    });
+
+    // Copy Link Button
+    window.copyLink = function(btn) {
+        navigator.clipboard.writeText(window.location.href).then(function() {
+            btn.classList.add('copied');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+            setTimeout(function() {
+                btn.classList.remove('copied');
+                btn.innerHTML = '<i class="fa-solid fa-link"></i>';
+            }, 2000);
+        });
+    };
+
+    // Reveal Card
+    window.toggleReveal = function(el) {
+        var content = el.nextElementSibling;
+        content.classList.toggle('visible');
+        var span = el.querySelector('span:last-child');
+        if (content.classList.contains('visible')) {
+            span.textContent = 'Tap to hide';
+        } else {
+            span.textContent = 'Tap to reveal';
+        }
+    };
+
+    // FAQ Toggle
+    window.toggleFaq = function(btn) {
+        var item = btn.parentElement;
+        item.classList.toggle('active');
+    };
+
+    // Reaction Bar
+    window.react = function(btn) {
+        var all = btn.parentElement.querySelectorAll('.gem-react-btn');
+        all.forEach(function(b) { b.classList.remove('selected'); });
+        btn.classList.add('selected');
+        var title = btn.parentElement.previousElementSibling;
+        if(title) title.textContent = 'Thanks for the feedback!';
+    };
+});
+</script>
