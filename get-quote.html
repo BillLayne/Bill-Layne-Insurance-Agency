@@ -833,17 +833,128 @@ button { cursor: pointer; font-family: 'DM Sans', sans-serif; }
 .delay-3 { animation-delay: 0.3s; }
 .delay-4 { animation-delay: 0.4s; }
 
-/* ── MOBILE: hide carrier strip, tighten hero ── */
+/* ── MOBILE COMPACT CARDS ── */
+.mobile-quote-section { display: none; }
+
 @media(max-width: 768px) {
+    .hero { display: none; }
     .carrier-strip { display: none; }
-    .hero { padding: 24px 20px 20px; }
-    .hero h1 { font-size: 1.5rem; margin-bottom: 8px; }
-    .hero-sub { font-size: 13px; margin-bottom: 12px; }
-    .hero-pills { gap: 6px; }
-    .hero-pill { font-size: 11px; padding: 4px 10px; }
-    .review-badge-strip { padding: 8px 16px; }
-    .page-wrap { padding: 20px 16px 24px; }
-    .section-title { margin-bottom: 16px; }
+    .review-badge-strip { display: none; }
+    .cards-grid { display: none; }
+    .section-title { display: none; }
+    .page-wrap { padding: 0 16px 24px; }
+    .mobile-quote-section {
+        display: block;
+        background: linear-gradient(135deg, var(--navy) 0%, #1e3a6e 60%, #1a2e4a 100%);
+        padding: 24px 20px 20px;
+        text-align: center;
+    }
+    .mobile-quote-section h1 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.4rem;
+        font-weight: 900;
+        color: white;
+        line-height: 1.15;
+        margin-bottom: 6px;
+    }
+    .mobile-quote-section h1 span { color: var(--amber); }
+    .mobile-quote-sub {
+        font-size: 13px;
+        color: rgba(255,255,255,0.6);
+        margin-bottom: 20px;
+        font-weight: 500;
+    }
+    .mobile-cards-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    .m-card {
+        display: block;
+        border-radius: 16px;
+        padding: 22px 12px 18px;
+        text-align: center;
+        text-decoration: none;
+        background: rgba(255,255,255,0.12);
+        border: 1.5px solid rgba(255,255,255,0.2);
+        backdrop-filter: blur(8px);
+        transition: transform 0.15s;
+        position: relative;
+    }
+    .m-card:active { transform: scale(0.96); }
+    .m-card-icon {
+        width: 56px; height: 56px;
+        border-radius: 14px;
+        margin: 0 auto 12px;
+        display: flex; align-items: center; justify-content: center;
+        background: rgba(255,255,255,0.15);
+        font-size: 26px;
+    }
+    .m-card-title {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 900;
+        font-size: 1rem;
+        color: white;
+        margin-bottom: 2px;
+    }
+    .m-card-type {
+        font-size: 11px;
+        color: rgba(255,255,255,0.55);
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+    .m-card-time {
+        font-size: 10px;
+        color: rgba(255,255,255,0.4);
+        margin-bottom: 12px;
+    }
+    .m-card-cta {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--amber);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+    .m-card-cta i { font-size: 9px; }
+    .m-card-badge {
+        position: absolute;
+        top: -8px; left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, var(--green2), var(--green));
+        color: white;
+        font-size: 9px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        padding: 3px 10px;
+        border-radius: 100px;
+        white-space: nowrap;
+    }
+    .mobile-trust {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        margin-bottom: 10px;
+    }
+    .mobile-trust-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        font-weight: 600;
+        color: rgba(255,255,255,0.55);
+    }
+    .mobile-trust-item i { color: var(--green2); font-size: 10px; }
+    .mobile-fine {
+        font-size: 10px;
+        color: rgba(255,255,255,0.3);
+        font-weight: 500;
+    }
 }
 
 /* ── DESKTOP: compact layout so quote cards are visible above the fold ── */
@@ -914,6 +1025,35 @@ button { cursor: pointer; font-family: 'DM Sans', sans-serif; }
             <span>4.9 stars · 127 reviews on Google</span>
         </a>
     </div>
+</div>
+
+<!-- ── MOBILE COMPACT QUOTE PICKER ── -->
+<div class="mobile-quote-section">
+    <h1>Get Your <span>Free</span> Quote</h1>
+    <p class="mobile-quote-sub">Pick your coverage — we handle the rest</p>
+    <div class="mobile-cards-row">
+        <a href="auto-quote.html" class="m-card">
+            <span class="m-card-badge">Most Popular</span>
+            <div class="m-card-icon"><i class="fas fa-car" style="color:white;"></i></div>
+            <div class="m-card-title">Auto</div>
+            <div class="m-card-type">Insurance</div>
+            <div class="m-card-time"><i class="fas fa-clock"></i> ~5 min</div>
+            <div class="m-card-cta">Get Quote <i class="fas fa-arrow-right"></i></div>
+        </a>
+        <a href="home-quote.html" class="m-card">
+            <div class="m-card-icon"><i class="fas fa-home" style="color:white;"></i></div>
+            <div class="m-card-title">Home</div>
+            <div class="m-card-type">Insurance</div>
+            <div class="m-card-time"><i class="fas fa-clock"></i> ~8 min</div>
+            <div class="m-card-cta">Get Quote <i class="fas fa-arrow-right"></i></div>
+        </a>
+    </div>
+    <div class="mobile-trust">
+        <span class="mobile-trust-item"><i class="fas fa-check-circle"></i> 100% Free</span>
+        <span class="mobile-trust-item"><i class="fas fa-star"></i> 4.9 Rating</span>
+        <span class="mobile-trust-item"><i class="fas fa-shield-alt"></i> 10+ Carriers</span>
+    </div>
+    <p class="mobile-fine">No obligation · No credit card required</p>
 </div>
 
 <!-- ── MAIN ── -->
