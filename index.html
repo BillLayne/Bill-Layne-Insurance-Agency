@@ -703,8 +703,12 @@
         }
         @keyframes shine { 0%, 50% { left: -100%; } 100% { left: 200%; } }
         
-        .chat-open { transform: scale(1) translateY(0); opacity: 1; pointer-events: auto; }
-        .chat-closed { transform: scale(0.9) translateY(40px); opacity: 0; pointer-events: none; }
+        .messenger-float{position:fixed;bottom:24px;right:20px;z-index:60;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#0078FF,#00C6FF);color:#fff;display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 4px 20px rgba(0,120,255,0.4);text-decoration:none;transition:all 0.25s;cursor:pointer}
+        .messenger-float:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(0,120,255,0.5)}
+        .messenger-float:active{transform:scale(0.95)}
+        .messenger-float .pulse-ring{position:absolute;width:100%;height:100%;border-radius:50%;border:2px solid rgba(0,120,255,0.4);animation:msgPulse 2.5s ease-out infinite}
+        @keyframes msgPulse{0%{transform:scale(1);opacity:0.6}100%{transform:scale(1.6);opacity:0}}
+        @media(max-width:768px){.messenger-float{bottom:80px;right:14px;width:54px;height:54px;font-size:24px}}
         .accordion-content { transition: max-height 0.3s ease, opacity 0.3s ease; max-height: 0; opacity: 0; overflow: hidden; }
         .accordion-content.open { opacity: 1; }
         .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
@@ -714,14 +718,6 @@
         }
     </style>
     
-    <!-- Google GenAI SDK Import -->
-    <script type="importmap">
-{
-  "imports": {
-    "@google/genai": "https://esm.sh/@google/genai@1.33.0"
-  }
-}
-</script>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans selection:bg-primary-100 selection:text-primary-900 overflow-x-hidden">
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[9999] focus:bg-blue-700 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:text-sm focus:font-semibold focus:shadow-lg">Skip to main content</a>
@@ -2293,35 +2289,11 @@
         </ul>
     </div>
 
-    <!-- AI CHAT WIDGET -->
-    <div id="ai-chat-container" class="fixed bottom-24 md:bottom-6 right-6 z-[60] flex flex-col items-end pointer-events-none">
-        <!-- Optimized width for small mobile screens (w-[90vw]) -->
-        <div id="chat-window" class="chat-closed bg-white w-[90vw] sm:w-96 h-[500px] rounded-[2rem] shadow-2xl border border-slate-200 flex flex-col mb-4 overflow-hidden origin-bottom-right transition-all duration-300">
-            <div class="bg-primary-600 p-4 flex justify-between items-center text-white shadow-md z-10">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm"><i class="fas fa-robot text-sm"></i></div>
-                    <div><span class="font-bold text-sm block tracking-wide">Bill's AI Assistant</span><span class="text-[10px] opacity-90 uppercase tracking-widest font-black flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-400"></span> Online</span></div>
-                </div>
-                <button id="close-chat" class="w-8 h-8 flex items-center justify-center hover:bg-white/10 rounded-full transition-colors"><i class="fas fa-times"></i></button>
-            </div>
-            <div id="chat-messages" class="flex-1 p-6 bg-slate-50 overflow-y-auto space-y-4 text-sm font-medium">
-                <div class="flex gap-3">
-                    <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0 text-primary-600 mt-1"><i class="fas fa-robot text-xs"></i></div>
-                    <div class="bg-white p-4 rounded-2xl border border-slate-100 rounded-tl-none shadow-sm leading-relaxed text-slate-600">
-                        👋 Hi! I can help you compare rates or answer insurance questions. Try asking: <br><br>
-                        <button class="chat-suggestion text-primary-600 text-xs font-bold border border-primary-200 px-2 py-1 rounded-lg mt-1 hover:bg-primary-50 bg-white">How much can I save?</button>
-                    </div>
-                </div>
-            </div>
-            <form id="chat-form" class="p-3 bg-white border-t flex gap-2 pointer-events-auto">
-                <input id="chat-input" placeholder="Type a message..." class="flex-1 bg-slate-100 border-transparent focus:bg-white border focus:border-primary-500 rounded-xl px-4 py-3 text-base md:text-sm focus:outline-none transition-all" required>
-                <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white w-12 h-12 rounded-xl flex items-center justify-center shadow-md transition-colors"><i class="fas fa-paper-plane"></i></button>
-            </form>
-        </div>
-        <button id="desktop-chat-toggle" class="hidden md:flex items-center justify-center w-16 h-16 bg-primary-600 text-white rounded-full shadow-2xl z-50 hover:scale-110 transition-transform pointer-events-auto hover:rotate-12 group">
-            <i class="fas fa-robot text-2xl group-hover:animate-pulse"></i>
-        </button>
-    </div>
+    <!-- MESSENGER CHAT FLOAT -->
+    <a href="https://m.me/dollarbillagency" target="_blank" class="messenger-float" aria-label="Chat with us on Messenger">
+        <span class="pulse-ring"></span>
+        <i class="fab fa-facebook-messenger"></i>
+    </a>
 
     <!-- UI SCRIPTS (Must run even if AI fails) -->
     <script data-cfasync="false" src="cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
@@ -2340,12 +2312,6 @@
             const menuClose = document.getElementById('menu-close');
             const menuDrawer = document.getElementById('menu-drawer');
             const menuOverlay = document.getElementById('menu-overlay');
-            const chatWindow = document.getElementById('chat-window');
-            const chatToggle = document.getElementById('desktop-chat-toggle');
-            const mobileChatBtn = document.getElementById('mobile-chat-btn');
-            const closeChat = document.getElementById('close-chat');
-            const chatInput = document.getElementById('chat-input');
-            const chatForm = document.getElementById('chat-form');
 
             // Scroll Effects - Handle Sticky Header Appearance
             window.addEventListener('scroll', () => {
@@ -2526,30 +2492,6 @@
             };
             checkHours(); setInterval(checkHours, 60000);
 
-            // Chat UI Logic
-            const toggleChat = () => {
-                const isOpen = chatWindow.classList.contains('chat-open');
-                chatWindow.classList.toggle('chat-open', !isOpen);
-                chatWindow.classList.toggle('chat-closed', isOpen);
-                
-                // Toggle pointer events on window
-                if (!isOpen) {
-                    // Opening
-                    setTimeout(() => chatInput.focus(), 300);
-                }
-            };
-            
-            if(chatToggle) chatToggle.addEventListener('click', toggleChat);
-            if(mobileChatBtn) mobileChatBtn.addEventListener('click', toggleChat);
-            if(closeChat) closeChat.addEventListener('click', toggleChat);
-
-            // Chat Quick Suggestion Click
-            document.addEventListener('click', (e) => {
-                if(e.target.classList.contains('chat-suggestion')) {
-                    chatInput.value = e.target.textContent;
-                    if(chatForm) chatForm.dispatchEvent(new Event('submit'));
-                }
-            });
         });
 
         // Zero-Weight Video Loader
@@ -2570,75 +2512,6 @@
         };
     </script>
 
-    <!-- AI MODULE SCRIPT (Isolated) — Proxied through Cloudflare Worker -->
-    <script type="module">
-        import { GoogleGenAI } from "@google/genai";
-
-        // Dummy key — the Cloudflare Worker swaps in the real key server-side
-        const API_KEY = "PROXY_KEY_PLACEHOLDER";
-
-        // Point SDK at your Cloudflare Worker instead of Google directly
-        const ai = new GoogleGenAI({
-            apiKey: API_KEY,
-            httpOptions: { baseUrl: "https://insurance-chat-proxy.bill-7e3.workers.dev" }
-        });
-
-        const chatForm = document.getElementById('chat-form');
-        const chatInput = document.getElementById('chat-input');
-        const chatMessages = document.getElementById('chat-messages');
-
-        if(chatForm) {
-            chatForm.onsubmit = async (e) => {
-                e.preventDefault();
-                const prompt = chatInput.value.trim();
-                if (!prompt) return;
-                chatInput.value = '';
-
-                // User Message
-                const userMsg = document.createElement('div');
-                userMsg.className = 'flex justify-end reveal-msg';
-                userMsg.innerHTML = `<div class="bg-primary-600 text-white p-3 rounded-2xl rounded-tr-none shadow-md max-w-[85%] text-sm">${prompt}</div>`;
-                chatMessages.appendChild(userMsg);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-
-                // Typing Indicator
-                const typing = document.createElement('div');
-                typing.className = 'flex gap-3 animate-pulse';
-                typing.innerHTML = `<div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0 text-primary-600 mt-1"><i class="fas fa-robot text-xs"></i></div><div class="bg-white p-3 rounded-2xl border border-slate-100 rounded-tl-none shadow-sm text-slate-400 italic text-xs">Thinking...</div>`;
-                chatMessages.appendChild(typing);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-
-                try {
-                    const response = await ai.models.generateContent({
-                        model: 'gemini-2.0-flash',
-                        contents: prompt,
-                        config: {
-                            systemInstruction: "You are the AI Assistant for Bill Layne Insurance in Elkin, NC. Phone: (336) 835-1993. Independent agency since 2005. Licensed in all 100 NC counties. We shop multiple carriers like Travelers, Progressive, and Nationwide. Main goal: Get them to call the office or click 'Get Quote'. Keep answers under 40 words. Tone: Helpful, neighborly."
-                        }
-                    });
-
-                    const text = response.text || "I'm sorry, I couldn't find an answer. Please call us!";
-
-                    typing.remove();
-                    const botMsg = document.createElement('div');
-                    botMsg.className = 'flex gap-3 reveal-msg';
-                    botMsg.innerHTML = `<div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0 text-primary-600 mt-1"><i class="fas fa-robot text-xs"></i></div><div class="bg-white p-4 rounded-2xl border border-slate-100 rounded-tl-none shadow-sm leading-relaxed max-w-[85%] text-slate-700">${text}</div>`;
-                    chatMessages.appendChild(botMsg);
-                } catch (err) {
-                    typing.remove();
-                    const errBubble = document.createElement('div');
-                    errBubble.className = 'flex justify-center my-2 flex-col items-center gap-1';
-                    errBubble.innerHTML = `
-                        <span class="bg-red-50 text-red-500 text-[10px] font-bold px-3 py-1 rounded-full border border-red-100 uppercase tracking-wide">Connection Error</span>
-                        <span class="text-[9px] text-red-400 max-w-[200px] text-center">${err.message || 'Unknown Error'}</span>
-                    `;
-                    chatMessages.appendChild(errBubble);
-                    console.error("Chat Error:", err);
-                }
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            };
-        }
-    </script>
     <script defer src="js/mobile-dock.js"></script>
     <!-- GEO-PERSONALIZATION -->
     <script>
