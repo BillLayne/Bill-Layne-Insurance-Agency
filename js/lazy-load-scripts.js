@@ -24,7 +24,7 @@ function initializeNonCriticalFeatures() {
     const quizContainer = document.getElementById('quiz-container');
     if (quizContainer) {
         // Quiz code will be initialized here when needed
-        console.log('Quiz ready for interaction');
+
     }
     
     // Tool evaluators
@@ -32,6 +32,6 @@ function initializeNonCriticalFeatures() {
     const homeForm = document.getElementById('home-coverage-form');
     
     if (autoForm || homeForm) {
-        console.log('Coverage evaluators ready');
+
     }
 }

@@ -16,12 +16,11 @@ const STATIC_ASSETS = [
 
 // Install event - cache critical resources with error handling
 self.addEventListener('install', function(event) {
-  console.log('📦 Service Worker: Installing version', CACHE_NAME);
-  
+
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(function(cache) {
-        console.log('📦 Service Worker: Caching static assets');
+
         // Use Promise.allSettled to handle individual file failures gracefully
         return Promise.allSettled(
           STATIC_ASSETS.map(url =>
@@ -34,7 +33,7 @@ self.addEventListener('install', function(event) {
         );
       })
       .then(function() {
-        console.log('📦 Service Worker: Installation complete');
+
         // Force the waiting service worker to become the active service worker
         return self.skipWaiting();
       })
@@ -48,20 +47,19 @@ self.addEventListener('install', function(event) {
 
 // Activate event - clean up old caches
 self.addEventListener('activate', function(event) {
-  console.log('🔄 Service Worker: Activating version', CACHE_NAME);
-  
+
   event.waitUntil(
     caches.keys().then(function(cacheNames) {
       return Promise.all(
         cacheNames.map(function(cacheName) {
           if (cacheName !== CACHE_NAME) {
-            console.log('🗑️ Service Worker: Deleting old cache', cacheName);
+
             return caches.delete(cacheName);
           }
         })
       );
     }).then(function() {
-      console.log('🔄 Service Worker: Activation complete');
+
       // Ensure the new service worker takes control immediately
       return self.clients.claim();
     })
@@ -118,7 +116,7 @@ self.addEventListener('fetch', function(event) {
 // Handle messages from the main thread
 self.addEventListener('message', function(event) {
   if (event.data && event.data.type === 'SKIP_WAITING') {
-    console.log('📦 Service Worker: Received SKIP_WAITING message');
+
     self.skipWaiting();
   }
 });

@@ -3219,4 +3219,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 */
 
-console.log('Interactive Learning Center loaded successfully!');
+// console.log('Interactive Learning Center loaded successfully!');
