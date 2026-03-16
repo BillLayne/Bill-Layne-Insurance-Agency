@@ -624,7 +624,9 @@
         btn.innerHTML = '<i class="fas fa-robot"></i> <span class="hidden sm:inline">AI Lookup</span>';
     }
 
-    // ===== AI PRICE ALL UNPRICED (Batch via Cloudflare Worker) =====
+    // ===== AI PRICE ALL UNPRICED (Batches of 5 via Cloudflare Worker) =====
+    const BATCH_SIZE = 5;
+
     async function aiPriceAll() {
         const unpriced = inventory.filter(i => !i.replacementCost || i.replacementCost === 0);
         if (unpriced.length === 0) {
@@ -634,48 +636,67 @@
 
         const btn = document.getElementById('ai-all-btn');
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Pricing ' + unpriced.length + ' items...';
+        let totalSuccess = 0;
+        const totalItems = unpriced.length;
+        const totalBatches = Math.ceil(totalItems / BATCH_SIZE);
 
-        try {
-            const apiItems = unpriced.map(item => ({
-                id: String(item.id),
-                description: item.description,
-                brand: '',
-                model: '',
-                ageYears: item.age || 2,
-                condition: item.condition || 'Good'
-            }));
+        for (let b = 0; b < totalBatches; b++) {
+            const batchStart = b * BATCH_SIZE;
+            const batch = unpriced.slice(batchStart, batchStart + BATCH_SIZE);
+            const batchNum = b + 1;
 
-            const response = await fetch(`${AI_API_BASE}/api/estimate-values`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ items: apiItems })
-            });
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Batch ${batchNum}/${totalBatches} (${totalSuccess}/${totalItems} priced)`;
 
-            if (!response.ok) {
-                const errData = await response.json().catch(() => ({}));
-                throw new Error(errData.error || `API error ${response.status}`);
+            try {
+                const apiItems = batch.map(item => ({
+                    id: String(item.id),
+                    description: item.description,
+                    brand: '',
+                    model: '',
+                    ageYears: item.age || 2,
+                    condition: item.condition || 'Good'
+                }));
+
+                const response = await fetch(`${AI_API_BASE}/api/estimate-values`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ items: apiItems })
+                });
+
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({}));
+                    throw new Error(errData.error || `API error ${response.status}`);
+                }
+
+                const results = await response.json();
+
+                results.forEach(result => {
+                    const item = inventory.find(i => String(i.id) === result.id);
+                    if (item && result.currentPrice && typeof result.currentPrice === 'number') {
+                        item.replacementCost = result.currentPrice;
+                        item.acv = calculateACV(result.currentPrice, item.age, item.category, item.condition);
+                        item.status = 'priced';
+                        totalSuccess++;
+                    }
+                });
+
+                // Update UI after each batch so user sees progress
+                renderInventory();
+
+            } catch (err) {
+                // Mark failed batch items
+                batch.forEach(item => { item.status = 'error'; });
+                renderInventory();
+                showToast(`Batch ${batchNum} failed: ${err.message}`, 'error');
             }
 
-            const results = await response.json();
-            let successCount = 0;
-
-            results.forEach(result => {
-                const item = inventory.find(i => String(i.id) === result.id);
-                if (item && result.currentPrice && typeof result.currentPrice === 'number') {
-                    item.replacementCost = result.currentPrice;
-                    item.acv = calculateACV(result.currentPrice, item.age, item.category, item.condition);
-                    item.status = 'priced';
-                    successCount++;
-                }
-            });
-
-            renderInventory();
-            showToast(`Priced ${successCount} of ${unpriced.length} items`, 'success');
-        } catch (err) {
-            showToast('AI pricing failed: ' + err.message, 'error');
+            // Brief pause between batches to avoid rate limits
+            if (b < totalBatches - 1) {
+                await new Promise(r => setTimeout(r, 1000));
+            }
         }
 
+        showToast(`Priced ${totalSuccess} of ${totalItems} items`, 'success');
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-robot"></i> Price All';
     }
