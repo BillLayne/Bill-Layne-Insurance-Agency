@@ -168,7 +168,7 @@
                     <h1 class="font-display font-extrabold text-2xl sm:text-3xl md:text-4xl">Claims Inventory Tool</h1>
                 </div>
             </div>
-            <p class="text-indigo-200 text-sm sm:text-base max-w-2xl leading-relaxed mb-4">Document your lost or damaged items, get AI-powered replacement values, and generate a professional PDF inventory for your insurance adjuster.</p>
+            <p class="text-indigo-200 text-sm sm:text-base max-w-2xl leading-relaxed mb-4">Make a list of everything you lost or that was damaged. Our AI looks up current prices for you, and you can download a professional report to give your insurance company.</p>
             <div class="flex flex-wrap gap-3 text-xs">
                 <span class="bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10"><i class="fas fa-robot mr-1.5 text-amber-400"></i> AI-Powered Pricing</span>
                 <span class="bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10"><i class="fas fa-file-pdf mr-1.5 text-red-400"></i> PDF Export</span>
@@ -189,7 +189,7 @@
                 </div>
                 <div class="flex-1 min-w-0">
                     <p class="font-bold text-green-900 text-sm">AI Price Lookup — Active</p>
-                    <p id="ai-mode-desc" class="text-[11px] text-green-700">Add all items first, then click <strong>Price All</strong> to batch price — saves AI tokens.</p>
+                    <p id="ai-mode-desc" class="text-[11px] text-green-700">Add all your items first, then click <strong>"Look Up Prices"</strong> and AI will find prices for everything at once.</p>
                 </div>
                 <div class="ml-auto flex items-center gap-2 shrink-0">
                     <label class="flex items-center gap-2 cursor-pointer select-none" title="Toggle between pricing each item individually or batching all at once">
@@ -207,38 +207,41 @@
 
         <!-- ===== CLAIM INFO SECTION ===== -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6">
-            <div class="flex items-center gap-3 mb-5">
+            <div class="flex items-center gap-3 mb-2">
                 <div class="w-9 h-9 rounded-xl bg-indigo-100 flex items-center justify-center">
                     <i class="fas fa-user-shield text-indigo-600 text-sm"></i>
                 </div>
-                <h2 class="font-display font-bold text-lg text-slate-900">Claim Information</h2>
+                <div>
+                    <h2 class="font-display font-bold text-lg text-slate-900">Your Information</h2>
+                    <p class="text-[11px] text-slate-400">Tell us about yourself and what happened</p>
+                </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Policyholder Name <span class="text-red-400">*</span></label>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Your Name <span class="text-red-400">*</span></label>
                     <input type="text" id="cl-name" placeholder="John & Jane Smith" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-slate-50">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Policy Number</label>
-                    <input type="text" id="cl-policy" placeholder="e.g. HO-12345678" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-slate-50">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Policy Number (if you have it)</label>
+                    <input type="text" id="cl-policy" placeholder="Check your insurance card" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-slate-50">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Insurance Company</label>
-                    <input type="text" id="cl-company" placeholder="e.g. Nationwide, Progressive" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-slate-50">
+                    <input type="text" id="cl-company" placeholder="e.g. Nationwide, Progressive, State Farm" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-slate-50">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Claim Number</label>
-                    <input type="text" id="cl-claim" placeholder="e.g. CLM-2026-001234" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-slate-50">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Claim Number (if you have one)</label>
+                    <input type="text" id="cl-claim" placeholder="Your insurance company gives you this" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-slate-50">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Date of Loss <span class="text-red-400">*</span></label>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">When did the loss happen? <span class="text-red-400">*</span></label>
                     <input type="date" id="cl-date" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-slate-50">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Type of Loss</label>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">What happened?</label>
                     <select id="cl-loss-type" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-slate-50 cursor-pointer">
-                        <option value="">Select type...</option>
+                        <option value="">Pick the closest match...</option>
                         <option value="Fire">🔥 Fire</option>
                         <option value="Theft / Burglary">🔓 Theft / Burglary</option>
                         <option value="Water Damage">💧 Water Damage</option>
@@ -253,32 +256,45 @@
                     </select>
                 </div>
                 <div class="sm:col-span-2">
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Adjuster Name &amp; Contact</label>
-                    <input type="text" id="cl-adjuster" placeholder="e.g. Mike Johnson — (800) 555-0199 — mike.j@carrier.com" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-slate-50">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Adjuster's Name & Contact (if assigned)</label>
+                    <input type="text" id="cl-adjuster" placeholder="The person your insurance company assigned to your claim" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-slate-50">
                 </div>
             </div>
         </div>
 
         <!-- ===== ADD ITEM SECTION ===== -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6">
-            <div class="flex items-center justify-between mb-5">
+        <div id="add-item-section" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6">
+            <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center">
+                    <div id="form-icon" class="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center">
                         <i class="fas fa-plus-circle text-emerald-600 text-sm"></i>
                     </div>
-                    <h2 class="font-display font-bold text-lg text-slate-900">Add Item</h2>
+                    <div>
+                        <h2 id="form-title" class="font-display font-bold text-lg text-slate-900">Add Item</h2>
+                        <p id="form-subtitle" class="text-[11px] text-slate-400">Describe what was lost or damaged</p>
+                    </div>
                 </div>
+                <button id="cancel-edit-btn" onclick="cancelEdit()" class="hidden text-xs font-bold text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-all">
+                    <i class="fas fa-times mr-1"></i> Cancel Edit
+                </button>
+            </div>
+
+            <!-- Editing banner -->
+            <div id="editing-banner" class="hidden mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 font-medium flex items-center gap-2">
+                <i class="fas fa-pen-to-square text-amber-500"></i>
+                <span id="editing-banner-text">Editing item — make changes and click "Update Item"</span>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div class="sm:col-span-2">
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Item Description <span class="text-red-400">*</span></label>
-                    <input type="text" id="item-desc" placeholder='e.g. Samsung 65" 4K Smart TV, Model QN65Q80C' class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-slate-50">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">What is the item? <span class="text-red-400">*</span></label>
+                    <p class="text-[10px] text-slate-400 mb-1.5">Include the brand and model if you know it</p>
+                    <input type="text" id="item-desc" placeholder='e.g. Samsung 65" 4K Smart TV, Nike Air Max shoes, KitchenAid stand mixer' class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm bg-slate-50">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Room / Location</label>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Which room was it in?</label>
                     <select id="item-room" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-slate-50 cursor-pointer">
-                        <option value="">Select room...</option>
+                        <option value="">Pick a room...</option>
                         <option value="Living Room">Living Room</option>
                         <option value="Master Bedroom">Master Bedroom</option>
                         <option value="Bedroom 2">Bedroom 2</option>
@@ -297,46 +313,48 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Category</label>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">What type of item?</label>
                     <select id="item-category" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-slate-50 cursor-pointer">
-                        <option value="">Select category...</option>
-                        <option value="Electronics">📺 Electronics</option>
-                        <option value="Furniture">🛋️ Furniture</option>
-                        <option value="Appliances">🍳 Appliances</option>
-                        <option value="Clothing">👔 Clothing</option>
-                        <option value="Jewelry / Watches">💍 Jewelry / Watches</option>
-                        <option value="Tools / Equipment">🔧 Tools / Equipment</option>
-                        <option value="Sports / Outdoor">⚾ Sports / Outdoor</option>
-                        <option value="Books / Media">📚 Books / Media</option>
-                        <option value="Kitchenware">🍽️ Kitchenware</option>
-                        <option value="Bedding / Linens">🛏️ Bedding / Linens</option>
-                        <option value="Art / Decor">🖼️ Art / Decor</option>
-                        <option value="Musical Instruments">🎸 Musical Instruments</option>
-                        <option value="Toys / Games">🎮 Toys / Games</option>
-                        <option value="Personal Care">💊 Personal Care</option>
-                        <option value="Other">📦 Other</option>
+                        <option value="">Pick a type...</option>
+                        <option value="Electronics">Electronics (TV, phone, computer)</option>
+                        <option value="Furniture">Furniture (sofa, table, bed)</option>
+                        <option value="Appliances">Appliances (fridge, washer, microwave)</option>
+                        <option value="Clothing">Clothing & Shoes</option>
+                        <option value="Jewelry / Watches">Jewelry & Watches</option>
+                        <option value="Tools / Equipment">Tools & Equipment</option>
+                        <option value="Sports / Outdoor">Sports & Outdoor Gear</option>
+                        <option value="Books / Media">Books, Movies & Music</option>
+                        <option value="Kitchenware">Kitchenware (pots, pans, dishes)</option>
+                        <option value="Bedding / Linens">Bedding, Towels & Linens</option>
+                        <option value="Art / Decor">Art, Lamps & Decor</option>
+                        <option value="Musical Instruments">Musical Instruments</option>
+                        <option value="Toys / Games">Toys, Games & Video Games</option>
+                        <option value="Personal Care">Personal Care & Health</option>
+                        <option value="Other">Other</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Age of Item <span class="text-red-400">*</span></label>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">How old is it? <span class="text-red-400">*</span></label>
+                    <p class="text-[10px] text-slate-400 mb-1.5">Roughly how many years you've had it</p>
                     <div class="flex gap-2">
                         <input type="number" id="item-age" min="0" max="50" step="0.5" placeholder="Years" class="flex-1 border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-slate-50">
                         <select id="item-condition" class="border border-slate-200 rounded-xl px-3 py-2.5 text-sm bg-slate-50 cursor-pointer">
-                            <option value="Good">Good</option>
-                            <option value="Fair">Fair</option>
-                            <option value="Poor">Poor</option>
                             <option value="New">Like New</option>
+                            <option value="Good" selected>Good</option>
+                            <option value="Fair">Fair</option>
+                            <option value="Poor">Poor / Worn</option>
                         </select>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Quantity</label>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">How many?</label>
                     <input type="number" id="item-qty" min="1" value="1" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-slate-50">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Replacement Cost ($)</label>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">What would it cost to buy new today? ($)</label>
+                    <p class="text-[10px] text-slate-400 mb-1.5">Leave blank — AI can look this up for you!</p>
                     <div class="flex gap-2">
-                        <input type="number" id="item-price" min="0" step="0.01" placeholder="0.00" class="flex-1 border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-slate-50">
+                        <input type="number" id="item-price" min="0" step="0.01" placeholder="0.00 (AI fills this)" class="flex-1 border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-slate-50">
                         <button onclick="aiPriceLookup()" id="ai-btn" title="AI Price Lookup" class="hidden bg-gradient-to-r from-violet-500 to-indigo-500 hover:from-violet-600 hover:to-indigo-600 text-white font-bold text-xs px-3 py-2.5 rounded-xl transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed">
                             <i class="fas fa-robot"></i>
                             <span class="hidden sm:inline">AI Lookup</span>
@@ -344,19 +362,20 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Original Price Paid ($)</label>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">What did you pay originally? ($)</label>
+                    <p class="text-[10px] text-slate-400 mb-1.5">Optional — helps if you remember</p>
                     <input type="number" id="item-original" min="0" step="0.01" placeholder="Optional" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-slate-50">
                 </div>
                 <div class="sm:col-span-2">
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Notes / Details</label>
-                    <textarea id="item-notes" rows="2" placeholder="Serial number, purchase location, special features, etc." class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-slate-50 resize-none"></textarea>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Extra details (optional)</label>
+                    <textarea id="item-notes" rows="2" placeholder="Serial number, where you bought it, color, size, special features..." class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-slate-50 resize-none"></textarea>
                 </div>
                 <div class="sm:col-span-2">
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5"><i class="fas fa-camera mr-1 text-violet-400"></i> Photo (Optional)</label>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5"><i class="fas fa-camera mr-1 text-violet-400"></i> Photo (optional)</label>
                     <div class="flex items-center gap-3">
                         <label class="cursor-pointer bg-gradient-to-r from-violet-50 to-indigo-50 border-2 border-dashed border-violet-200 hover:border-violet-400 rounded-xl px-4 py-3 flex items-center gap-2 transition-all flex-1">
-                            <i class="fas fa-cloud-arrow-up text-violet-400"></i>
-                            <span class="text-xs text-violet-600 font-medium">Upload photo or receipt — AI auto-detects item details</span>
+                            <i class="fas fa-cloud-arrow-up text-violet-400 text-lg"></i>
+                            <span class="text-xs text-violet-600 font-medium">Take a photo or upload one — AI will try to identify the item for you</span>
                             <input type="file" id="item-photo" accept="image/*" capture="environment" onchange="handlePhotoUpload(event)" class="hidden">
                         </label>
                     </div>
@@ -372,22 +391,25 @@
             <!-- AI Status -->
             <div id="ai-status" class="hidden mb-4 p-3 rounded-xl text-xs font-medium flex items-center gap-2"></div>
 
-            <button onclick="addItem()" class="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm py-3 px-6 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
-                <i class="fas fa-plus"></i> Add to Inventory
-            </button>
+            <div class="flex gap-3">
+                <button onclick="addOrUpdateItem()" id="add-item-btn" class="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm py-3 px-6 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                    <i class="fas fa-plus" id="add-btn-icon"></i> <span id="add-btn-text">Add to Inventory</span>
+                </button>
+            </div>
         </div>
 
         <!-- ===== QUICK-ADD TEMPLATES ===== -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6 no-print">
-            <div class="flex items-center gap-3 mb-4">
+            <div class="flex items-center gap-3 mb-2">
                 <div class="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center">
                     <i class="fas fa-bolt text-amber-600 text-sm"></i>
                 </div>
                 <div>
-                    <h2 class="font-display font-bold text-lg text-slate-900">Quick-Add Templates</h2>
-                    <p class="text-[11px] text-slate-400">Add common room items in one click</p>
+                    <h2 class="font-display font-bold text-lg text-slate-900">Quick Start</h2>
+                    <p class="text-[11px] text-slate-400">Don't want to type everything? Pick a room and we'll add common items for you</p>
                 </div>
             </div>
+            <p class="text-[11px] text-amber-700 bg-amber-50 rounded-lg px-3 py-2 mb-3 border border-amber-100"><i class="fas fa-lightbulb mr-1"></i> <strong>Tip:</strong> After adding, tap the <i class="fas fa-pen text-indigo-500"></i> pencil icon on any item to change the name to your exact brand &amp; model (e.g. "Refrigerator" &rarr; "Samsung French Door Refrigerator")</p>
             <div class="flex flex-wrap gap-2">
                 <button onclick="quickAddTemplate('kitchen')" class="bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold px-3 py-2 rounded-lg border border-amber-200 transition-all flex items-center gap-1.5">
                     <i class="fas fa-utensils"></i> Standard Kitchen
@@ -426,8 +448,8 @@
                     </div>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="aiPriceAll()" id="ai-all-btn" class="no-print bg-gradient-to-r from-violet-500 to-indigo-500 hover:from-violet-600 hover:to-indigo-600 text-white font-bold text-[11px] px-3 py-2 rounded-lg transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50" title="AI price lookup for all unpriced items">
-                        <i class="fas fa-robot"></i> Price All
+                    <button onclick="aiPriceAll()" id="ai-all-btn" class="no-print bg-gradient-to-r from-violet-500 to-indigo-500 hover:from-violet-600 hover:to-indigo-600 text-white font-bold text-[11px] px-3 py-2 rounded-lg transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50" title="Let AI look up current prices for all items">
+                        <i class="fas fa-robot"></i> Look Up Prices
                     </button>
                     <button onclick="clearAll()" class="no-print text-xs text-slate-400 hover:text-red-500 transition-colors px-2 py-1" title="Clear all items">
                         <i class="fas fa-trash-alt"></i>
@@ -440,8 +462,8 @@
                 <div class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
                     <i class="fas fa-box-open text-slate-300 text-2xl"></i>
                 </div>
-                <p class="font-bold text-slate-400 text-sm mb-1">No items yet</p>
-                <p class="text-xs text-slate-300">Add items above to start building your inventory</p>
+                <p class="font-bold text-slate-400 text-sm mb-1">Your list is empty</p>
+                <p class="text-xs text-slate-300">Add items above, or use Quick Start to add a whole room at once</p>
             </div>
 
             <!-- Items container -->
@@ -451,15 +473,18 @@
             <div id="totals-bar" class="hidden mt-6 pt-5 border-t border-slate-200">
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
                     <div class="bg-blue-50 rounded-xl p-4 text-center">
-                        <p class="text-[10px] font-bold text-blue-500 uppercase tracking-wide mb-1">Replacement Value</p>
+                        <p class="text-[10px] font-bold text-blue-500 uppercase tracking-wide mb-1">Cost to Replace</p>
+                        <p class="text-[9px] text-blue-400 mb-1">Buy everything new today</p>
                         <p class="text-xl sm:text-2xl font-extrabold text-blue-700">$<span id="total-rcv">0.00</span></p>
                     </div>
                     <div class="bg-emerald-50 rounded-xl p-4 text-center">
-                        <p class="text-[10px] font-bold text-emerald-500 uppercase tracking-wide mb-1">ACV (Depreciated)</p>
+                        <p class="text-[10px] font-bold text-emerald-500 uppercase tracking-wide mb-1">Current Value</p>
+                        <p class="text-[9px] text-emerald-400 mb-1">What items were worth used</p>
                         <p class="text-xl sm:text-2xl font-extrabold text-emerald-700">$<span id="total-acv">0.00</span></p>
                     </div>
                     <div class="bg-amber-50 rounded-xl p-4 text-center col-span-2 sm:col-span-1">
-                        <p class="text-[10px] font-bold text-amber-500 uppercase tracking-wide mb-1">Depreciation</p>
+                        <p class="text-[10px] font-bold text-amber-500 uppercase tracking-wide mb-1">Value Lost to Age</p>
+                        <p class="text-[9px] text-amber-400 mb-1">Wear &amp; tear over time</p>
                         <p class="text-xl sm:text-2xl font-extrabold text-amber-700">$<span id="total-dep">0.00</span></p>
                     </div>
                 </div>
@@ -484,23 +509,23 @@
 
         <!-- ===== HOW IT WORKS ===== -->
         <div class="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl border border-indigo-100 p-5 sm:p-6 mb-6">
-            <h3 class="font-display font-bold text-base text-indigo-900 mb-4"><i class="fas fa-lightbulb text-amber-400 mr-2"></i>How This Tool Works</h3>
+            <h3 class="font-display font-bold text-base text-indigo-900 mb-4"><i class="fas fa-lightbulb text-amber-400 mr-2"></i>How to Use This Tool (4 Easy Steps)</h3>
             <div class="grid sm:grid-cols-2 gap-3 text-xs text-indigo-800">
                 <div class="flex items-start gap-3">
                     <div class="w-7 h-7 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm text-indigo-600 font-extrabold text-sm">1</div>
-                    <p><strong>Enter claim details</strong> — your name, policy number, claim number, and loss type above.</p>
+                    <p><strong>Fill in your info</strong> — your name, insurance company, and what happened (fire, theft, storm, etc.)</p>
                 </div>
                 <div class="flex items-start gap-3">
                     <div class="w-7 h-7 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm text-indigo-600 font-extrabold text-sm">2</div>
-                    <p><strong>Add each item</strong> — describe it, select the room and category, and enter its age.</p>
+                    <p><strong>List your items</strong> — go room by room and add everything that was lost or damaged. Use Quick Start buttons for common items!</p>
                 </div>
                 <div class="flex items-start gap-3">
                     <div class="w-7 h-7 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm text-indigo-600 font-extrabold text-sm">3</div>
-                    <p><strong>AI Lookup</strong> — click the AI button to search current replacement prices, or enter manually.</p>
+                    <p><strong>Get prices</strong> — click "<strong>Look Up Prices</strong>" and our AI finds what each item costs to buy new today.</p>
                 </div>
                 <div class="flex items-start gap-3">
                     <div class="w-7 h-7 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm text-indigo-600 font-extrabold text-sm">4</div>
-                    <p><strong>Export</strong> — download a professional PDF or CSV to give your adjuster.</p>
+                    <p><strong>Download your report</strong> — get a professional PDF to give your insurance adjuster (the person handling your claim).</p>
                 </div>
             </div>
             <div class="mt-4 p-3 bg-white/60 rounded-xl border border-indigo-100">
@@ -510,13 +535,13 @@
 
         <!-- ===== ACV EXPLANATION ===== -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6">
-            <h3 class="font-display font-bold text-base text-slate-900 mb-3"><i class="fas fa-chart-line text-emerald-500 mr-2"></i>Understanding ACV (Actual Cash Value)</h3>
-            <p class="text-sm text-slate-600 mb-3">Insurance companies often settle claims based on <strong>Actual Cash Value (ACV)</strong> — which is the replacement cost minus depreciation for the item's age and condition.</p>
+            <h3 class="font-display font-bold text-base text-slate-900 mb-3"><i class="fas fa-chart-line text-emerald-500 mr-2"></i>Why Are There Two Dollar Amounts?</h3>
+            <p class="text-sm text-slate-600 mb-3">Insurance companies usually pay based on what your items were <strong>actually worth</strong> at the time of the loss — not what they'd cost brand new. This is called <strong>"Actual Cash Value" (ACV)</strong>. Think of it like selling a used car — a 5-year-old car is worth less than a new one, even if it works fine.</p>
             <div class="bg-slate-50 rounded-xl p-4 text-sm text-slate-700">
-                <p class="font-bold mb-2">Example:</p>
-                <p>A 3-year-old TV that costs $800 new today with a 7-year useful life:</p>
-                <p class="mt-1 font-mono text-xs bg-white px-3 py-2 rounded-lg border border-slate-200">ACV = $800 × (1 − 3/7) = $800 × 0.571 = <strong class="text-emerald-600">$457.14</strong></p>
-                <p class="text-xs text-slate-500 mt-2"><i class="fas fa-info-circle mr-1"></i> If you have <strong>Replacement Cost coverage</strong>, your policy may pay the full $800 after you replace the item. This tool shows both values.</p>
+                <p class="font-bold mb-2">Simple example:</p>
+                <p>Your TV costs <strong>$800 brand new</strong> today, but it's 3 years old. Since TVs typically last about 7 years, your TV has used up about half its life.</p>
+                <p class="mt-2 font-mono text-xs bg-white px-3 py-2 rounded-lg border border-slate-200">$800 new price - $343 wear &amp; tear = <strong class="text-emerald-600">$457 current value</strong></p>
+                <p class="text-xs text-slate-500 mt-2"><i class="fas fa-info-circle mr-1"></i> <strong>Good news:</strong> If your policy includes "Replacement Cost" coverage, your insurance may pay the full $800 to buy a new one after you replace it. This tool calculates both amounts so you're prepared.</p>
             </div>
         </div>
 
@@ -588,6 +613,7 @@
 
     let inventory = [];
     let itemIdCounter = 0;
+    let editingItemId = null; // Track which item is being edited
 
     // Expected useful life by category (years) for depreciation
     const USEFUL_LIFE = {
@@ -628,10 +654,10 @@
         const desc = document.getElementById('ai-mode-desc');
         if (aiPerItemMode) {
             btn.classList.remove('hidden');
-            desc.innerHTML = 'Click <strong>AI Lookup</strong> on each item, or <strong>Price All</strong> to batch price.';
+            desc.innerHTML = 'Click <strong>AI Lookup</strong> on each item, or <strong>Look Up Prices</strong> to do all at once.';
         } else {
             btn.classList.add('hidden');
-            desc.innerHTML = 'Add all items first, then click <strong>Price All</strong> to batch price — saves AI tokens.';
+            desc.innerHTML = 'Add all your items first, then click <strong>"Look Up Prices"</strong> and AI will find prices for everything at once.';
         }
         localStorage.setItem('bli_ai_mode', aiPerItemMode ? 'per-item' : 'batch');
     }
@@ -783,8 +809,8 @@
         autoSave();
     }
 
-    // ===== ADD ITEM =====
-    function addItem() {
+    // ===== ADD OR UPDATE ITEM =====
+    function addOrUpdateItem() {
         const desc = document.getElementById('item-desc').value.trim();
         const age = parseFloat(document.getElementById('item-age').value);
         const price = parseFloat(document.getElementById('item-price').value) || 0;
@@ -795,33 +821,58 @@
         const condition = document.getElementById('item-condition').value;
         const notes = document.getElementById('item-notes').value.trim();
 
-        if (!desc) { showToast('Please enter an item description', 'error'); return; }
-        if (isNaN(age) || age < 0) { showToast('Please enter the age of the item', 'error'); return; }
+        if (!desc) { showToast('Please tell us what the item is', 'error'); return; }
+        if (isNaN(age) || age < 0) { showToast('Please enter how old the item is (in years)', 'error'); return; }
 
         const acv = price > 0 ? calculateACV(price, age, category, condition) : 0;
 
-        const item = {
-            id: ++itemIdCounter,
-            description: desc,
-            room: room,
-            category: category,
-            age: age,
-            condition: condition,
-            quantity: qty,
-            replacementCost: price,
-            originalPrice: originalPrice,
-            acv: acv,
-            notes: notes,
-            status: price > 0 ? 'priced' : 'pending'
-        };
+        if (editingItemId !== null) {
+            // UPDATE existing item
+            const item = inventory.find(i => i.id === editingItemId);
+            if (item) {
+                item.description = desc;
+                item.room = room;
+                item.category = category;
+                item.age = age;
+                item.condition = condition;
+                item.quantity = qty;
+                item.replacementCost = price;
+                item.originalPrice = originalPrice;
+                item.acv = acv;
+                item.notes = notes;
+                item.status = price > 0 ? 'priced' : 'pending';
+                showToast(`Updated: ${desc}`, 'success');
+            }
+            editingItemId = null;
+            exitEditMode();
+        } else {
+            // ADD new item
+            const item = {
+                id: ++itemIdCounter,
+                description: desc,
+                room: room,
+                category: category,
+                age: age,
+                condition: condition,
+                quantity: qty,
+                replacementCost: price,
+                originalPrice: originalPrice,
+                acv: acv,
+                notes: notes,
+                status: price > 0 ? 'priced' : 'pending'
+            };
+            inventory.push(item);
+            showToast(`Added: ${desc}`, 'success');
+        }
 
-        inventory.push(item);
         renderInventory();
         autoSave();
         clearForm();
-        showToast(`Added: ${desc}`, 'success');
         document.getElementById('item-desc').focus();
     }
+
+    // Legacy alias
+    function addItem() { addOrUpdateItem(); }
 
     // ===== REMOVE ITEM =====
     function removeItem(id) {
@@ -841,20 +892,72 @@
         showToast(`Duplicated: ${original.description}`, 'success');
     }
 
-    // ===== EDIT ITEM PRICE =====
-    function editPrice(id) {
+    // ===== EDIT ITEM (Full Edit — loads into form) =====
+    function editItem(id) {
         const item = inventory.find(i => i.id === id);
         if (!item) return;
-        const newPrice = prompt(`Enter replacement cost for "${item.description}":`, item.replacementCost || '');
-        if (newPrice === null) return;
-        const price = parseFloat(newPrice);
-        if (isNaN(price) || price < 0) { showToast('Invalid price', 'error'); return; }
-        item.replacementCost = price;
-        item.acv = calculateACV(price, item.age, item.category, item.condition);
-        item.status = 'priced';
-        renderInventory();
-        autoSave();
+
+        editingItemId = id;
+
+        // Fill form with item data
+        document.getElementById('item-desc').value = item.description;
+        document.getElementById('item-room').value = item.room || '';
+        document.getElementById('item-category').value = item.category || '';
+        document.getElementById('item-age').value = item.age;
+        document.getElementById('item-condition').value = item.condition || 'Good';
+        document.getElementById('item-qty').value = item.quantity || 1;
+        document.getElementById('item-price').value = item.replacementCost || '';
+        document.getElementById('item-original').value = item.originalPrice || '';
+        document.getElementById('item-notes').value = item.notes || '';
+
+        // Switch UI to edit mode
+        enterEditMode(item.description);
+
+        // Scroll to form
+        document.getElementById('add-item-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        // Focus description field
+        setTimeout(() => document.getElementById('item-desc').focus(), 400);
     }
+
+    function enterEditMode(itemName) {
+        document.getElementById('form-title').textContent = 'Edit Item';
+        document.getElementById('form-subtitle').textContent = 'Change any details below and click Update';
+        document.getElementById('form-icon').className = 'w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center';
+        document.getElementById('form-icon').innerHTML = '<i class="fas fa-pen-to-square text-amber-600 text-sm"></i>';
+        document.getElementById('add-btn-text').textContent = 'Update Item';
+        document.getElementById('add-btn-icon').className = 'fas fa-check';
+        const btn = document.getElementById('add-item-btn');
+        btn.classList.remove('bg-emerald-500', 'hover:bg-emerald-600');
+        btn.classList.add('bg-amber-500', 'hover:bg-amber-600');
+        document.getElementById('cancel-edit-btn').classList.remove('hidden');
+        document.getElementById('editing-banner').classList.remove('hidden');
+        document.getElementById('editing-banner-text').textContent = `Editing "${itemName}" — make your changes and click Update Item`;
+    }
+
+    function exitEditMode() {
+        editingItemId = null;
+        document.getElementById('form-title').textContent = 'Add Item';
+        document.getElementById('form-subtitle').textContent = 'Describe what was lost or damaged';
+        document.getElementById('form-icon').className = 'w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center';
+        document.getElementById('form-icon').innerHTML = '<i class="fas fa-plus-circle text-emerald-600 text-sm"></i>';
+        document.getElementById('add-btn-text').textContent = 'Add to Inventory';
+        document.getElementById('add-btn-icon').className = 'fas fa-plus';
+        const btn = document.getElementById('add-item-btn');
+        btn.classList.remove('bg-amber-500', 'hover:bg-amber-600');
+        btn.classList.add('bg-emerald-500', 'hover:bg-emerald-600');
+        document.getElementById('cancel-edit-btn').classList.add('hidden');
+        document.getElementById('editing-banner').classList.add('hidden');
+    }
+
+    function cancelEdit() {
+        exitEditMode();
+        clearForm();
+        showToast('Edit cancelled', 'success');
+    }
+
+    // Legacy alias for backward compat
+    function editPrice(id) { editItem(id); }
 
     // ===== RENDER INVENTORY =====
     function renderInventory() {
@@ -904,30 +1007,30 @@
                     </div>
                     <div class="flex items-center gap-1 flex-shrink-0">
                         <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${statusClass}">${statusLabel}</span>
-                        <button onclick="duplicateItem(${item.id})" class="w-7 h-7 rounded-lg text-slate-400 hover:text-violet-600 hover:bg-violet-50 flex items-center justify-center transition-colors" title="Duplicate item">
-                            <i class="fas fa-copy text-[10px]"></i>
+                        <button onclick="editItem(${item.id})" class="w-8 h-8 rounded-lg text-indigo-500 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 flex items-center justify-center transition-colors" title="Edit this item (change name, brand, details)">
+                            <i class="fas fa-pen text-xs"></i>
                         </button>
-                        <button onclick="editPrice(${item.id})" class="w-7 h-7 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 flex items-center justify-center transition-colors" title="Edit price">
-                            <i class="fas fa-pen text-[10px]"></i>
+                        <button onclick="duplicateItem(${item.id})" class="w-8 h-8 rounded-lg text-slate-400 hover:text-violet-600 hover:bg-violet-50 flex items-center justify-center transition-colors" title="Make a copy of this item">
+                            <i class="fas fa-copy text-xs"></i>
                         </button>
-                        <button onclick="removeItem(${item.id})" class="w-7 h-7 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors" title="Remove item">
-                            <i class="fas fa-times text-xs"></i>
+                        <button onclick="removeItem(${item.id})" class="w-8 h-8 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors" title="Delete this item">
+                            <i class="fas fa-times text-sm"></i>
                         </button>
                     </div>
                 </div>
                 <div class="flex items-center justify-between bg-white rounded-lg px-3 py-2 border border-slate-100">
                     <div class="text-center flex-1">
-                        <p class="text-[9px] font-bold text-slate-400 uppercase">Replacement</p>
+                        <p class="text-[9px] font-bold text-slate-400 uppercase">New Price</p>
                         <p class="text-sm font-extrabold text-blue-600">${rcv > 0 ? '$' + rcv.toFixed(2) : '—'}</p>
                     </div>
                     <div class="w-px h-8 bg-slate-200"></div>
                     <div class="text-center flex-1">
-                        <p class="text-[9px] font-bold text-slate-400 uppercase">ACV</p>
+                        <p class="text-[9px] font-bold text-slate-400 uppercase">Used Value</p>
                         <p class="text-sm font-extrabold text-emerald-600">${acvTotal > 0 ? '$' + acvTotal.toFixed(2) : '—'}</p>
                     </div>
                     <div class="w-px h-8 bg-slate-200"></div>
                     <div class="text-center flex-1">
-                        <p class="text-[9px] font-bold text-slate-400 uppercase">Depreciation</p>
+                        <p class="text-[9px] font-bold text-slate-400 uppercase">Wear & Tear</p>
                         <p class="text-sm font-extrabold text-amber-600">${rcv > 0 ? '$' + (rcv - acvTotal).toFixed(2) : '—'}</p>
                     </div>
                 </div>
@@ -964,6 +1067,8 @@
         if (preview) preview.classList.add('hidden');
         const fileInput = document.getElementById('item-photo');
         if (fileInput) fileInput.value = '';
+        // Exit edit mode if active
+        if (editingItemId !== null) exitEditMode();
     }
 
     // ===== CLEAR ALL =====
@@ -1436,7 +1541,7 @@
 
         renderInventory();
         autoSave();
-        showToast(`Added ${count} ${tmpl.room} items — click "Price All" for AI pricing`, 'success');
+        showToast(`Added ${count} ${tmpl.room} items! Tap the pencil to add brand names, then click "Look Up Prices"`, 'success');
     }
 
     // ===== TOAST NOTIFICATION =====
