@@ -184,14 +184,22 @@
         <!-- API Key Setup (collapsible) -->
         <div id="api-setup" class="mb-6 bg-green-50 border border-green-200 rounded-2xl p-4 sm:p-5 no-print">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center">
+                <div class="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center shrink-0">
                     <i class="fas fa-robot text-green-600 text-sm"></i>
                 </div>
-                <div>
+                <div class="flex-1 min-w-0">
                     <p class="font-bold text-green-900 text-sm">AI Price Lookup — Active</p>
-                    <p class="text-[11px] text-green-700">AI-powered replacement pricing is enabled. Click <strong>AI Lookup</strong> on any item or <strong>Price All</strong> to batch price.</p>
+                    <p id="ai-mode-desc" class="text-[11px] text-green-700">Add all items first, then click <strong>Price All</strong> to batch price — saves AI tokens.</p>
                 </div>
-                <div class="ml-auto">
+                <div class="ml-auto flex items-center gap-2 shrink-0">
+                    <label class="flex items-center gap-2 cursor-pointer select-none" title="Toggle between pricing each item individually or batching all at once">
+                        <span class="text-[10px] font-bold text-green-800 hidden sm:inline">Per-item</span>
+                        <div class="relative">
+                            <input type="checkbox" id="ai-mode-toggle" onchange="toggleAiMode()" class="sr-only peer">
+                            <div class="w-9 h-5 bg-green-300 rounded-full peer-checked:bg-violet-500 transition-colors"></div>
+                            <div class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow peer-checked:translate-x-4 transition-transform"></div>
+                        </div>
+                    </label>
                     <span class="inline-flex items-center gap-1.5 bg-green-500 text-white text-[10px] font-black px-2.5 py-1 rounded-full"><i class="fas fa-check-circle"></i> Ready</span>
                 </div>
             </div>
@@ -329,7 +337,7 @@
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Replacement Cost ($)</label>
                     <div class="flex gap-2">
                         <input type="number" id="item-price" min="0" step="0.01" placeholder="0.00" class="flex-1 border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-slate-50">
-                        <button onclick="aiPriceLookup()" id="ai-btn" title="AI Price Lookup" class="bg-gradient-to-r from-violet-500 to-indigo-500 hover:from-violet-600 hover:to-indigo-600 text-white font-bold text-xs px-3 py-2.5 rounded-xl transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button onclick="aiPriceLookup()" id="ai-btn" title="AI Price Lookup" class="hidden bg-gradient-to-r from-violet-500 to-indigo-500 hover:from-violet-600 hover:to-indigo-600 text-white font-bold text-xs px-3 py-2.5 rounded-xl transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed">
                             <i class="fas fa-robot"></i>
                             <span class="hidden sm:inline">AI Lookup</span>
                         </button>
@@ -554,6 +562,23 @@
 
     // ===== AI API (Cloudflare Worker Proxy) =====
     const AI_API_BASE = 'https://claims-assistant-api.bill-7e3.workers.dev';
+
+    // AI mode: false = batch only (default, saves tokens), true = per-item lookup enabled
+    let aiPerItemMode = false;
+
+    function toggleAiMode() {
+        aiPerItemMode = document.getElementById('ai-mode-toggle').checked;
+        const btn = document.getElementById('ai-btn');
+        const desc = document.getElementById('ai-mode-desc');
+        if (aiPerItemMode) {
+            btn.classList.remove('hidden');
+            desc.innerHTML = 'Click <strong>AI Lookup</strong> on each item, or <strong>Price All</strong> to batch price.';
+        } else {
+            btn.classList.add('hidden');
+            desc.innerHTML = 'Add all items first, then click <strong>Price All</strong> to batch price — saves AI tokens.';
+        }
+        localStorage.setItem('bli_ai_mode', aiPerItemMode ? 'per-item' : 'batch');
+    }
 
     // ===== CALCULATE ACV =====
     function calculateACV(replacementCost, ageYears, category, condition) {
@@ -1175,6 +1200,13 @@
 
     // ===== INIT =====
     document.addEventListener('DOMContentLoaded', function() {
+        // Restore AI mode preference
+        const savedMode = localStorage.getItem('bli_ai_mode');
+        if (savedMode === 'per-item') {
+            document.getElementById('ai-mode-toggle').checked = true;
+            toggleAiMode();
+        }
+
         // Load saved progress
         loadFromLocal();
 
