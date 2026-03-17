@@ -580,11 +580,72 @@
 
             </div>
             
-            <!-- KBB Link -->
-            <div id="car-value" class="mt-8 text-center reveal">
-                <a href="https://www.kbb.com/whats-my-car-worth/" target="_blank" class="inline-flex items-center gap-2 text-indigo-600 font-bold hover:underline">
-                    Find Official Car Value on Kelley Blue Book <i class="fas fa-external-link-alt text-sm"></i>
-                </a>
+            <!-- CAR VALUE FINDER -->
+            <div id="car-value" class="mt-10 md:mt-16 reveal">
+                <div class="glass-card rounded-3xl p-6 md:p-10 max-w-2xl mx-auto">
+                    <div class="text-center mb-6">
+                        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-green-100 mb-3">
+                            <i class="fas fa-car text-2xl text-green-600"></i>
+                        </div>
+                        <h3 class="text-xl md:text-2xl font-display font-extrabold text-slate-900">What's My Car Worth?</h3>
+                        <p class="text-slate-500 text-sm mt-1">Enter your vehicle details to get a Kelley Blue Book value estimate</p>
+                    </div>
+                    <form id="kbbForm" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs font-bold text-slate-500 uppercase ml-3">Year</label>
+                                <select id="kbbYear" class="modern-input" required>
+                                    <option value="">Select Year</option>
+                                    <script>for(let y=2026;y>=2000;y--){document.write(`<option value="${y}">${y}</option>`)}</script>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-slate-500 uppercase ml-3">Make</label>
+                                <select id="kbbMake" class="modern-input" required>
+                                    <option value="">Select Make</option>
+                                    <option value="acura">Acura</option>
+                                    <option value="audi">Audi</option>
+                                    <option value="bmw">BMW</option>
+                                    <option value="buick">Buick</option>
+                                    <option value="cadillac">Cadillac</option>
+                                    <option value="chevrolet">Chevrolet</option>
+                                    <option value="chrysler">Chrysler</option>
+                                    <option value="dodge">Dodge</option>
+                                    <option value="ford">Ford</option>
+                                    <option value="gmc">GMC</option>
+                                    <option value="honda">Honda</option>
+                                    <option value="hyundai">Hyundai</option>
+                                    <option value="infiniti">Infiniti</option>
+                                    <option value="jeep">Jeep</option>
+                                    <option value="kia">Kia</option>
+                                    <option value="lexus">Lexus</option>
+                                    <option value="lincoln">Lincoln</option>
+                                    <option value="mazda">Mazda</option>
+                                    <option value="mercedes-benz">Mercedes-Benz</option>
+                                    <option value="nissan">Nissan</option>
+                                    <option value="ram">Ram</option>
+                                    <option value="subaru">Subaru</option>
+                                    <option value="tesla">Tesla</option>
+                                    <option value="toyota">Toyota</option>
+                                    <option value="volkswagen">Volkswagen</option>
+                                    <option value="volvo">Volvo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase ml-3">Model</label>
+                            <input type="text" id="kbbModel" class="modern-input" placeholder="e.g. Camry, F-150, Civic" required>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase ml-3">Mileage</label>
+                            <input type="number" id="kbbMileage" class="modern-input" placeholder="e.g. 45000" required>
+                        </div>
+                        <button type="submit" class="w-full py-4 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold text-lg shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+                            <i class="fas fa-search-dollar"></i> Get My Car Value
+                        </button>
+                    </form>
+                    <p class="text-center text-xs text-slate-400 mt-3">Powered by Kelley Blue Book — opens in new tab</p>
+                </div>
             </div>
         </div>
     </section>
@@ -1078,6 +1139,21 @@
                     }
                     
                     document.getElementById('repairResults').classList.remove('hidden');
+                });
+            }
+
+            /* --- KBB CAR VALUE FINDER --- */
+            const kbbForm = document.getElementById('kbbForm');
+            if(kbbForm) {
+                kbbForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const year = document.getElementById('kbbYear').value;
+                    const make = document.getElementById('kbbMake').value;
+                    const model = document.getElementById('kbbModel').value.trim().toLowerCase().replace(/\s+/g, '-');
+                    const mileage = document.getElementById('kbbMileage').value;
+                    if(!year || !make || !model || !mileage) return;
+                    const kbbUrl = `https://www.kbb.com/${make}/${model}/${year}/?mileage=${mileage}`;
+                    window.open(kbbUrl, '_blank', 'noopener,noreferrer');
                 });
             }
         });
