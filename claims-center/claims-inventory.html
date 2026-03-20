@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-N37THY37CR"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-N37THY37CR');</script>
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y)})(window,document,"clarity","script","vo5s3jhhub");</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://i.imgur.com" crossorigin>
+    <title>Claims Inventory Tool | Document Your Loss | Bill Layne Insurance</title>
+    <meta name="description" content="Free AI-powered claims inventory tool. Document lost or damaged items, get current replacement values, calculate ACV, and generate PDF reports for your insurance adjuster.">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Bill Layne Insurance Agency">
+    <meta property="og:url" content="https://www.billlayneinsurance.com/claims-center/claims-inventory.html">
+    <meta property="og:title" content="Claims Inventory Tool - Document Your Loss">
+    <meta property="og:description" content="Free AI-powered claims inventory tool. Document items, get replacement values, and generate PDF reports for your adjuster.">
+    <meta property="og:image" content="https://i.imgur.com/Z5MxmKE.png">
+    <meta property="og:locale" content="en_US">
+
+    <link rel="canonical" href="https://www.billlayneinsurance.com/claims-center/claims-inventory.html">
+    <meta name="robots" content="index, follow">
+    <meta name="geo.region" content="US-NC">
+    <meta name="geo.placename" content="Elkin, North Carolina">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap&family=DM+Sans:wght@400;500;600;700" rel="stylesheet">
+
+    <!-- Icons & CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/tailwind-output.css">
+    <link rel="stylesheet" href="../css/mobile-dock.css">
+
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- JSON-LD Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Claims Inventory Tool",
+        "description": "AI-powered claims inventory tool to document lost or damaged items, estimate replacement values, and generate PDF reports for insurance adjusters.",
+        "url": "https://www.billlayneinsurance.com/claims-center/claims-inventory.html",
+        "applicationCategory": "InsuranceTool",
+        "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "provider": {
+            "@type": "InsuranceAgency",
+            "name": "Bill Layne Insurance Agency",
+            "telephone": "(336) 835-1993",
+            "url": "https://www.billlayneinsurance.com"
+        }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.billlayneinsurance.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Claims Center", "item": "https://www.billlayneinsurance.com/claims-center/" },
+            { "@type": "ListItem", "position": 3, "name": "Claims Inventory Tool", "item": "https://www.billlayneinsurance.com/claims-center/claims-inventory.html" }
+        ]
+    }
+    </script>
+
+    <style>
+        .font-display { font-family: 'Outfit', sans-serif; }
+        .font-body { font-family: 'DM Sans', 'Inter', sans-serif; }
+        body { font-family: 'DM Sans', 'Inter', sans-serif; }
+
+        /* Smooth transitions */
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Item row hover */
+        .item-row { transition: all 0.2s ease; }
+        .item-row:hover { background-color: #f8fafc; }
+
+        /* Pulse for AI searching */
+        .ai-pulse { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        /* Custom scrollbar */
+        .inventory-list::-webkit-scrollbar { width: 6px; }
+        .inventory-list::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 3px; }
+        .inventory-list::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 3px; }
+
+        /* Print styles */
+        @media print {
+            nav, .mobile-dock, .no-print, footer { display: none !important; }
+            body { font-size: 12px; }
+        }
+
+        /* Status badge colors */
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-priced { background: #d1fae5; color: #065f46; }
+        .status-error { background: #fee2e2; color: #991b1b; }
+
+        /* Input focus ring */
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+            border-color: #6366f1 !important;
+        }
+
+        /* Navbar */
+        .navbar { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar fixed top-0 left-0 right-0 h-20 md:h-24 bg-white/95 border-b border-slate-200 z-50 flex items-center">
+        <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center gap-3">
+                <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <span class="text-white font-display font-extrabold text-lg md:text-xl">BL</span>
+                </div>
+                <div class="hidden sm:block">
+                    <p class="font-display font-bold text-slate-900 text-sm md:text-base leading-tight">Bill Layne Insurance</p>
+                    <p class="text-xs text-slate-400 font-medium">Since 2005 &bull; Elkin &amp; Dobson, NC</p>
+                </div>
+            </a>
+            <div class="flex items-center gap-2 sm:gap-3">
+                <a href="../claims-center/" class="text-xs sm:text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors flex items-center gap-1.5">
+                    <i class="fas fa-arrow-left text-[10px]"></i>
+                    <span class="hidden sm:inline">Claims Center</span>
+                    <span class="sm:hidden">Back</span>
+                </a>
+                <a href="tel:3368351993" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold py-2 px-3 sm:px-4 rounded-full transition-all shadow-md hover:shadow-lg flex items-center gap-1.5">
+                    <i class="fas fa-phone-alt"></i>
+                    <span class="hidden sm:inline">(336) 835-1993</span>
+                    <span class="sm:hidden">Call</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========== HERO ========== -->
+    <section class="pt-24 md:pt-32 pb-10 md:pb-14 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-10 left-10 w-72 h-72 bg-indigo-500 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-10 right-10 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
+        </div>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center gap-2 text-xs text-indigo-300/70 mb-6">
+                <a href="../index.html" class="hover:text-white transition-colors">Home</a>
+                <i class="fas fa-chevron-right text-[10px]"></i>
+                <a href="../claims-center/" class="hover:text-white transition-colors">Claims Center</a>
+                <i class="fas fa-chevron-right text-[10px]"></i>
+                <span class="text-indigo-200">Inventory Tool</span>
+            </nav>
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg">
+                    <i class="fas fa-clipboard-list text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-display font-extrabold text-2xl sm:text-3xl md:text-4xl">Claims Inventory Tool</h1>
+                </div>
+            </div>
+            <p class="text-indigo-200 text-sm sm:text-base max-w-2xl leading-relaxed mb-4">Make a list of everything you lost or that was damaged. Our AI looks up current prices for you, and you can download a professional report to give your insurance company.</p>
+            <div class="flex flex-wrap gap-3 text-xs">
+                <span class="bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10"><i class="fas fa-robot mr-1.5 text-amber-400"></i> AI-Powered Pricing</span>
+                <span class="bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10"><i class="fas fa-file-pdf mr-1.5 text-red-400"></i> PDF Export</span>
+                <span class="bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10"><i class="fas fa-calculator mr-1.5 text-green-400"></i> ACV Calculator</span>
+                <span class="bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10"><i class="fas fa-lock mr-1.5 text-blue-400"></i> 100% Private</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== MAIN APP ========== -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 py-8 md:py-12">
+
+        <!-- API Key Setup (collapsible) -->
+        <div id="api-setup" class="mb-6 bg-green-50 border border-green-200 rounded-2xl p-4 sm:p-5 no-print">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center shrink-0">
+                    <i class="fas fa-robot text-green-600 text-sm"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="font-bold text-green-900 text-sm">AI Price Lookup — Active</p>
+                    <p id="ai-mode-desc" class="text-xs text-green-700">Add all your items first, then click <strong>"Look Up Prices"</strong> and AI will find prices for everything at once.</p>
+                </div>
+                <div class="ml-auto flex items-center gap-2 shrink-0">
+                    <label class="flex items-center gap-2 cursor-pointer select-none min-h-[44px] px-2" title="Toggle between pricing each item individually or batching all at once">
+                        <span class="text-[10px] font-bold text-green-800 hidden sm:inline">Per-item</span>
+                        <div class="relative">
+                            <input type="checkbox" id="ai-mode-toggle" onchange="toggleAiMode()" class="sr-only peer">
+                            <div class="w-11 h-6 bg-green-300 rounded-full peer-checked:bg-violet-500 transition-colors"></div>
+                            <div class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow peer-checked:translate-x-5 transition-transform"></div>
+                        </div>
+                    </label>
+                    <span class="inline-flex items-center gap-1.5 bg-green-500 text-white text-[10px] font-black px-2.5 py-1.5 rounded-full"><i class="fas fa-check-circle"></i> Ready</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== CLAIM INFO SECTION ===== -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-9 h-9 rounded-xl bg-indigo-100 flex items-center justify-center">
+                    <i class="fas fa-user-shield text-indigo-600 text-sm"></i>
+                </div>
+                <div>
+                    <h2 class="font-display font-bold text-lg text-slate-900">Your Information</h2>
+                    <p class="text-xs text-slate-400">Tell us about yourself and what happened</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Your Name <span class="text-red-400">*</span></label>
+                    <input type="text" id="cl-name" placeholder="John & Jane Smith" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Policy Number (if you have it)</label>
+                    <input type="text" id="cl-policy" placeholder="Check your insurance card" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Insurance Company</label>
+                    <input type="text" id="cl-company" placeholder="e.g. Nationwide, Progressive, State Farm" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Claim Number (if you have one)</label>
+                    <input type="text" id="cl-claim" placeholder="Your insurance company gives you this" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">When did the loss happen? <span class="text-red-400">*</span></label>
+                    <input type="date" id="cl-date" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">What happened?</label>
+                    <select id="cl-loss-type" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50 cursor-pointer">
+                        <option value="">Pick the closest match...</option>
+                        <option value="Fire">🔥 Fire</option>
+                        <option value="Theft / Burglary">🔓 Theft / Burglary</option>
+                        <option value="Water Damage">💧 Water Damage</option>
+                        <option value="Wind / Hail">🌪️ Wind / Hail</option>
+                        <option value="Lightning">⚡ Lightning</option>
+                        <option value="Vandalism">🚨 Vandalism</option>
+                        <option value="Flood">🌊 Flood</option>
+                        <option value="Smoke Damage">💨 Smoke Damage</option>
+                        <option value="Fallen Tree / Object">🌳 Fallen Tree / Object</option>
+                        <option value="Freezing / Ice">❄️ Freezing / Ice</option>
+                        <option value="Other">📋 Other</option>
+                    </select>
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Adjuster's Name & Contact (if assigned)</label>
+                    <input type="text" id="cl-adjuster" placeholder="The person your insurance company assigned to your claim" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50">
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== ADD ITEM SECTION ===== -->
+        <div id="add-item-section" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6">
+            <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-3">
+                    <div id="form-icon" class="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center">
+                        <i class="fas fa-plus-circle text-emerald-600 text-sm"></i>
+                    </div>
+                    <div>
+                        <h2 id="form-title" class="font-display font-bold text-lg text-slate-900">Add Item</h2>
+                        <p id="form-subtitle" class="text-xs text-slate-400">Describe what was lost or damaged</p>
+                    </div>
+                </div>
+                <button id="cancel-edit-btn" onclick="cancelEdit()" class="hidden text-sm font-bold text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-4 py-2.5 rounded-xl transition-all min-h-[44px]">
+                    <i class="fas fa-times mr-1"></i> Cancel
+                </button>
+            </div>
+
+            <!-- Editing banner -->
+            <div id="editing-banner" class="hidden mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 font-medium flex items-center gap-2">
+                <i class="fas fa-pen-to-square text-amber-500"></i>
+                <span id="editing-banner-text">Editing item — make changes and click "Update Item"</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">What is the item? <span class="text-red-400">*</span></label>
+                    <p class="text-xs text-slate-400 mb-1.5">Include the brand and model if you know it</p>
+                    <input type="text" id="item-desc" placeholder='e.g. Samsung 65" 4K Smart TV, Nike Air Max shoes, KitchenAid stand mixer' class="w-full border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Which room was it in?</label>
+                    <select id="item-room" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50 cursor-pointer">
+                        <option value="">Pick a room...</option>
+                        <option value="Living Room">Living Room</option>
+                        <option value="Master Bedroom">Master Bedroom</option>
+                        <option value="Bedroom 2">Bedroom 2</option>
+                        <option value="Bedroom 3">Bedroom 3</option>
+                        <option value="Kitchen">Kitchen</option>
+                        <option value="Dining Room">Dining Room</option>
+                        <option value="Bathroom">Bathroom</option>
+                        <option value="Garage">Garage</option>
+                        <option value="Basement">Basement</option>
+                        <option value="Attic">Attic</option>
+                        <option value="Home Office">Home Office</option>
+                        <option value="Laundry Room">Laundry Room</option>
+                        <option value="Porch / Patio">Porch / Patio</option>
+                        <option value="Shed / Outbuilding">Shed / Outbuilding</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">What type of item?</label>
+                    <select id="item-category" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50 cursor-pointer">
+                        <option value="">Pick a type...</option>
+                        <option value="Electronics">Electronics (TV, phone, computer)</option>
+                        <option value="Furniture">Furniture (sofa, table, bed)</option>
+                        <option value="Appliances">Appliances (fridge, washer, microwave)</option>
+                        <option value="Clothing">Clothing & Shoes</option>
+                        <option value="Jewelry / Watches">Jewelry & Watches</option>
+                        <option value="Tools / Equipment">Tools & Equipment</option>
+                        <option value="Sports / Outdoor">Sports & Outdoor Gear</option>
+                        <option value="Books / Media">Books, Movies & Music</option>
+                        <option value="Kitchenware">Kitchenware (pots, pans, dishes)</option>
+                        <option value="Bedding / Linens">Bedding, Towels & Linens</option>
+                        <option value="Art / Decor">Art, Lamps & Decor</option>
+                        <option value="Musical Instruments">Musical Instruments</option>
+                        <option value="Toys / Games">Toys, Games & Video Games</option>
+                        <option value="Personal Care">Personal Care & Health</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">How old is it? <span class="text-red-400">*</span></label>
+                    <p class="text-xs text-slate-400 mb-1.5">Roughly how many years you've had it</p>
+                    <div class="flex gap-2">
+                        <input type="number" id="item-age" min="0" max="50" step="0.5" placeholder="Years" class="flex-1 border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50">
+                        <select id="item-condition" class="border border-slate-200 rounded-xl px-3 py-3 text-base bg-slate-50 cursor-pointer">
+                            <option value="New">Like New</option>
+                            <option value="Good" selected>Good</option>
+                            <option value="Fair">Fair</option>
+                            <option value="Poor">Poor / Worn</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">How many?</label>
+                    <input type="number" id="item-qty" min="1" value="1" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">What would it cost to buy new today? ($)</label>
+                    <p class="text-xs text-slate-400 mb-1.5">Leave blank — AI can look this up for you!</p>
+                    <div class="flex gap-2">
+                        <input type="number" id="item-price" min="0" step="0.01" placeholder="0.00 (AI fills this)" class="flex-1 border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50">
+                        <button onclick="aiPriceLookup()" id="ai-btn" title="AI Price Lookup" class="hidden bg-gradient-to-r from-violet-500 to-indigo-500 hover:from-violet-600 hover:to-indigo-600 text-white font-bold text-xs px-4 py-3 rounded-xl transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]">
+                            <i class="fas fa-robot"></i>
+                            <span class="hidden sm:inline">AI Lookup</span>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">What did you pay originally? ($)</label>
+                    <p class="text-xs text-slate-400 mb-1.5">Optional — helps if you remember</p>
+                    <input type="number" id="item-original" min="0" step="0.01" placeholder="Optional" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50">
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Extra details (optional)</label>
+                    <textarea id="item-notes" rows="2" placeholder="Serial number, where you bought it, color, size, special features..." class="w-full border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50 resize-none"></textarea>
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5"><i class="fas fa-camera mr-1 text-violet-400"></i> Photo (optional)</label>
+                    <div class="flex items-center gap-3">
+                        <label class="cursor-pointer bg-gradient-to-r from-violet-50 to-indigo-50 border-2 border-dashed border-violet-200 hover:border-violet-400 rounded-xl px-4 py-4 flex items-center gap-3 transition-all flex-1 min-h-[56px]">
+                            <i class="fas fa-cloud-arrow-up text-violet-400 text-lg"></i>
+                            <span class="text-xs text-violet-600 font-medium">Take a photo or upload one — AI will try to identify the item for you</span>
+                            <input type="file" id="item-photo" accept="image/*" capture="environment" onchange="handlePhotoUpload(event)" class="hidden">
+                        </label>
+                    </div>
+                    <div id="photo-preview" class="hidden mt-2 p-3 bg-violet-50 rounded-xl border border-violet-100">
+                        <div class="flex items-center gap-3">
+                            <img id="photo-thumb" class="w-16 h-16 object-cover rounded-lg border border-violet-200" alt="Uploaded photo">
+                            <div id="photo-ai-result" class="flex-1 text-xs text-violet-700"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Status -->
+            <div id="ai-status" class="hidden mb-4 p-3 rounded-xl text-xs font-medium flex items-center gap-2"></div>
+
+            <div class="flex gap-3">
+                <button onclick="addOrUpdateItem()" id="add-item-btn" class="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm py-3 px-6 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                    <i class="fas fa-plus" id="add-btn-icon"></i> <span id="add-btn-text">Add to Inventory</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== QUICK-ADD TEMPLATES ===== -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6 no-print">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center">
+                    <i class="fas fa-bolt text-amber-600 text-sm"></i>
+                </div>
+                <div>
+                    <h2 class="font-display font-bold text-lg text-slate-900">Quick Start</h2>
+                    <p class="text-xs text-slate-400">Don't want to type everything? Pick a room and we'll add common items for you</p>
+                </div>
+            </div>
+            <p class="text-xs text-amber-700 bg-amber-50 rounded-lg px-3 py-2 mb-3 border border-amber-100"><i class="fas fa-lightbulb mr-1"></i> <strong>Tip:</strong> After adding, tap the <i class="fas fa-pen text-indigo-500"></i> pencil icon on any item to change the name to your exact brand &amp; model (e.g. "Refrigerator" &rarr; "Samsung French Door Refrigerator")</p>
+            <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
+                <button onclick="quickAddTemplate('kitchen')" class="bg-amber-50 hover:bg-amber-100 text-amber-800 text-sm font-bold px-4 py-3 rounded-xl border border-amber-200 transition-all flex items-center justify-center gap-2 min-h-[48px]">
+                    <i class="fas fa-utensils"></i> Kitchen
+                </button>
+                <button onclick="quickAddTemplate('living')" class="bg-blue-50 hover:bg-blue-100 text-blue-800 text-sm font-bold px-4 py-3 rounded-xl border border-blue-200 transition-all flex items-center justify-center gap-2 min-h-[48px]">
+                    <i class="fas fa-couch"></i> Living Room
+                </button>
+                <button onclick="quickAddTemplate('bedroom')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-800 text-sm font-bold px-4 py-3 rounded-xl border border-indigo-200 transition-all flex items-center justify-center gap-2 min-h-[48px]">
+                    <i class="fas fa-bed"></i> Bedroom
+                </button>
+                <button onclick="quickAddTemplate('bathroom')" class="bg-cyan-50 hover:bg-cyan-100 text-cyan-800 text-sm font-bold px-4 py-3 rounded-xl border border-cyan-200 transition-all flex items-center justify-center gap-2 min-h-[48px]">
+                    <i class="fas fa-bath"></i> Bathroom
+                </button>
+                <button onclick="quickAddTemplate('office')" class="bg-slate-50 hover:bg-slate-100 text-slate-800 text-sm font-bold px-4 py-3 rounded-xl border border-slate-200 transition-all flex items-center justify-center gap-2 min-h-[48px]">
+                    <i class="fas fa-laptop"></i> Office
+                </button>
+                <button onclick="quickAddTemplate('garage')" class="bg-stone-50 hover:bg-stone-100 text-stone-800 text-sm font-bold px-4 py-3 rounded-xl border border-stone-200 transition-all flex items-center justify-center gap-2 min-h-[48px]">
+                    <i class="fas fa-warehouse"></i> Garage
+                </button>
+                <button onclick="quickAddTemplate('laundry')" class="col-span-2 bg-violet-50 hover:bg-violet-100 text-violet-800 text-sm font-bold px-4 py-3 rounded-xl border border-violet-200 transition-all flex items-center justify-center gap-2 min-h-[48px]">
+                    <i class="fas fa-shirt"></i> Laundry Room
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== INVENTORY LIST ===== -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6">
+            <div class="flex items-center justify-between mb-5">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center">
+                        <i class="fas fa-list-check text-blue-600 text-sm"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-display font-bold text-lg text-slate-900">Inventory</h2>
+                        <p class="text-xs text-slate-400"><span id="item-count">0</span> items</p>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="aiPriceAll()" id="ai-all-btn" class="no-print bg-gradient-to-r from-violet-500 to-indigo-500 hover:from-violet-600 hover:to-indigo-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50 min-h-[44px]" title="Let AI look up current prices for all items">
+                        <i class="fas fa-robot"></i> Look Up Prices
+                    </button>
+                    <button onclick="clearAll()" class="no-print text-xs text-slate-400 hover:text-red-500 transition-colors w-11 h-11 flex items-center justify-center rounded-xl hover:bg-red-50" title="Clear all items">
+                        <i class="fas fa-trash-alt text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Empty state -->
+            <div id="empty-state" class="text-center py-12">
+                <div class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-box-open text-slate-300 text-2xl"></i>
+                </div>
+                <p class="font-bold text-slate-400 text-sm mb-1">Your list is empty</p>
+                <p class="text-xs text-slate-300">Add items above, or use Quick Start to add a whole room at once</p>
+            </div>
+
+            <!-- Items container -->
+            <div id="inventory-items" class="inventory-list space-y-3 max-h-[600px] overflow-y-auto hidden"></div>
+
+            <!-- Totals -->
+            <div id="totals-bar" class="hidden mt-6 pt-5 border-t border-slate-200">
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    <div class="bg-blue-50 rounded-xl p-4 text-center">
+                        <p class="text-xs font-bold text-blue-500 uppercase tracking-wide mb-1">Cost to Replace</p>
+                        <p class="text-[10px] text-blue-400 mb-1">Buy everything new today</p>
+                        <p class="text-xl sm:text-2xl font-extrabold text-blue-700">$<span id="total-rcv">0.00</span></p>
+                    </div>
+                    <div class="bg-emerald-50 rounded-xl p-4 text-center">
+                        <p class="text-xs font-bold text-emerald-500 uppercase tracking-wide mb-1">Current Value</p>
+                        <p class="text-[10px] text-emerald-400 mb-1">What items were worth used</p>
+                        <p class="text-xl sm:text-2xl font-extrabold text-emerald-700">$<span id="total-acv">0.00</span></p>
+                    </div>
+                    <div class="bg-amber-50 rounded-xl p-4 text-center col-span-2 sm:col-span-1">
+                        <p class="text-xs font-bold text-amber-500 uppercase tracking-wide mb-1">Value Lost to Age</p>
+                        <p class="text-[10px] text-amber-400 mb-1">Wear &amp; tear over time</p>
+                        <p class="text-xl sm:text-2xl font-extrabold text-amber-700">$<span id="total-dep">0.00</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== EXPORT BUTTONS ===== -->
+        <div id="export-bar" class="hidden no-print flex flex-wrap gap-3 mb-8">
+            <button onclick="generatePDF()" class="flex-1 sm:flex-none bg-red-500 hover:bg-red-600 text-white font-bold text-sm py-3 px-6 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                <i class="fas fa-file-pdf"></i> Download PDF
+            </button>
+            <button onclick="exportCSV()" class="flex-1 sm:flex-none bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm py-3 px-6 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                <i class="fas fa-file-csv"></i> Export CSV
+            </button>
+            <button onclick="saveToLocal()" class="flex-1 sm:flex-none bg-indigo-500 hover:bg-indigo-600 text-white font-bold text-sm py-3 px-6 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                <i class="fas fa-save"></i> Save Progress
+            </button>
+            <button onclick="emailAdjuster()" class="flex-1 sm:flex-none bg-slate-600 hover:bg-slate-700 text-white font-bold text-sm py-3 px-6 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                <i class="fas fa-envelope"></i> Email Summary
+            </button>
+        </div>
+
+        <!-- ===== HOW IT WORKS ===== -->
+        <div class="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl border border-indigo-100 p-5 sm:p-6 mb-6">
+            <h3 class="font-display font-bold text-base text-indigo-900 mb-4"><i class="fas fa-lightbulb text-amber-400 mr-2"></i>How to Use This Tool (4 Easy Steps)</h3>
+            <div class="grid sm:grid-cols-2 gap-3 text-xs text-indigo-800">
+                <div class="flex items-start gap-3">
+                    <div class="w-7 h-7 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm text-indigo-600 font-extrabold text-sm">1</div>
+                    <p><strong>Fill in your info</strong> — your name, insurance company, and what happened (fire, theft, storm, etc.)</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <div class="w-7 h-7 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm text-indigo-600 font-extrabold text-sm">2</div>
+                    <p><strong>List your items</strong> — go room by room and add everything that was lost or damaged. Use Quick Start buttons for common items!</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <div class="w-7 h-7 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm text-indigo-600 font-extrabold text-sm">3</div>
+                    <p><strong>Get prices</strong> — click "<strong>Look Up Prices</strong>" and our AI finds what each item costs to buy new today.</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <div class="w-7 h-7 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm text-indigo-600 font-extrabold text-sm">4</div>
+                    <p><strong>Download your report</strong> — get a professional PDF to give your insurance adjuster (the person handling your claim).</p>
+                </div>
+            </div>
+            <div class="mt-4 p-3 bg-white/60 rounded-xl border border-indigo-100">
+                <p class="text-xs text-indigo-600"><i class="fas fa-shield-halved mr-1.5"></i> <strong>Privacy:</strong> All data stays in your browser and is never stored on our servers. AI lookups are routed through our secure proxy — your information is never saved or logged.</p>
+            </div>
+        </div>
+
+        <!-- ===== ACV EXPLANATION ===== -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6">
+            <h3 class="font-display font-bold text-base text-slate-900 mb-3"><i class="fas fa-chart-line text-emerald-500 mr-2"></i>Why Are There Two Dollar Amounts?</h3>
+            <p class="text-sm text-slate-600 mb-3">Insurance companies usually pay based on what your items were <strong>actually worth</strong> at the time of the loss — not what they'd cost brand new. This is called <strong>"Actual Cash Value" (ACV)</strong>. Think of it like selling a used car — a 5-year-old car is worth less than a new one, even if it works fine.</p>
+            <div class="bg-slate-50 rounded-xl p-4 text-sm text-slate-700">
+                <p class="font-bold mb-2">Simple example:</p>
+                <p>Your TV costs <strong>$800 brand new</strong> today, but it's 3 years old. Since TVs typically last about 7 years, your TV has used up about half its life.</p>
+                <p class="mt-2 font-mono text-xs bg-white px-3 py-2 rounded-lg border border-slate-200">$800 new price - $343 wear &amp; tear = <strong class="text-emerald-600">$457 current value</strong></p>
+                <p class="text-xs text-slate-500 mt-2"><i class="fas fa-info-circle mr-1"></i> <strong>Good news:</strong> If your policy includes "Replacement Cost" coverage, your insurance may pay the full $800 to buy a new one after you replace it. This tool calculates both amounts so you're prepared.</p>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl p-6 sm:p-8 text-center text-white mb-8 shadow-xl">
+            <h3 class="font-display font-bold text-xl sm:text-2xl mb-2">Need Help With Your Claim?</h3>
+            <p class="text-indigo-100 text-sm mb-5 max-w-lg mx-auto">Our team can help you navigate the claims process, review your inventory, and advocate with your adjuster.</p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <a href="tel:3368351993" class="bg-white text-indigo-700 font-bold text-sm py-3 px-6 rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2">
+                    <i class="fas fa-phone-alt"></i> (336) 835-1993
+                </a>
+                <a href="../contact-us/" class="bg-indigo-500 hover:bg-indigo-400 text-white font-bold text-sm py-3 px-6 rounded-full border border-indigo-400 transition-all flex items-center justify-center gap-2">
+                    <i class="fas fa-envelope"></i> Contact Us
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="bg-slate-900 border-t border-slate-800 text-slate-400 py-16 pb-32 md:pb-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 grid md:grid-cols-4 gap-6 md:gap-12 mb-12">
+            <div>
+                <h4 class="text-white font-display font-bold text-xl mb-6">Bill Layne Insurance</h4>
+                <p class="text-sm leading-relaxed mb-4">Protecting NC families and businesses since 2005. Independent agency — we shop multiple carriers for your best rate.</p>
+                <a href="tel:3368351993" class="text-white font-bold hover:text-indigo-400 transition-colors"><i class="fas fa-phone-alt text-indigo-500 mr-2"></i>(336) 835-1993</a>
+            </div>
+            <div>
+                <h5 class="text-white font-bold mb-6 tracking-wide">Contact</h5>
+                <ul class="space-y-4 text-sm">
+                    <li><a href="tel:3368351993" class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-phone-alt text-indigo-500"></i> (336) 835-1993</a></li>
+                    <li class="flex items-start gap-2"><i class="fas fa-map-marker-alt text-indigo-500 mt-1"></i><span>1283 N Bridge St<br>Elkin, NC 28621</span></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="text-white font-bold mb-6 tracking-wide">Quick Links</h5>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="../index.html" class="hover:text-indigo-400 transition-colors">Home Page</a></li>
+                    <li><a href="../claims-center/" class="hover:text-indigo-400 transition-colors">Claims Center</a></li>
+                    <li><a href="../get-quote.html" class="hover:text-indigo-400 transition-colors">Get a Quote</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="text-white font-bold mb-4 sm:mb-6 tracking-wide">Dobson Office <span class="text-xs normal-case">🇺🇸🇲🇽</span></h5>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="../espanol/" class="hover:text-emerald-400 transition-colors font-bold">Se Habla Español</a></li>
+                    <li><a href="tel:3363562200" class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-phone-alt text-emerald-500"></i> (336) 356-2200</a></li>
+                    <li class="flex items-start gap-2"><i class="fas fa-map-marker-alt text-emerald-500 mt-1"></i><span>209 S Main St<br>Dobson, NC 27017</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-8 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p class="text-xs text-slate-500">&copy; 2026 Bill Layne Insurance Agency. All rights reserved.</p>
+            <div class="flex items-center gap-3">
+                <img src="https://i.imgur.com/lxu9nfT.png" alt="Bill Layne Insurance" class="h-8 opacity-50">
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Dock -->
+    <script src="../js/mobile-dock.js" defer></script>
+
+    <!-- ========== APPLICATION JAVASCRIPT ========== -->
+    <script>
+    // ==========================================
+    //  CLAIMS INVENTORY TOOL — Bill Layne Insurance
+    //  AI-Powered with Gemini + PDF Export
+    // ==========================================
+
+    let inventory = [];
+    let itemIdCounter = 0;
+    let editingItemId = null; // Track which item is being edited
+
+    // Expected useful life by category (years) for depreciation
+    const USEFUL_LIFE = {
+        'Electronics': 5,
+        'Furniture': 10,
+        'Appliances': 10,
+        'Clothing': 3,
+        'Jewelry / Watches': 20,
+        'Tools / Equipment': 10,
+        'Sports / Outdoor': 7,
+        'Books / Media': 10,
+        'Kitchenware': 8,
+        'Bedding / Linens': 5,
+        'Art / Decor': 15,
+        'Musical Instruments': 15,
+        'Toys / Games': 4,
+        'Personal Care': 3,
+        'Other': 7
+    };
+
+    // Condition multiplier (affects depreciation speed)
+    const CONDITION_MULT = {
+        'New': 0.5,    // depreciates slower
+        'Good': 1.0,
+        'Fair': 1.3,
+        'Poor': 1.6
+    };
+
+    // ===== AI API (Cloudflare Worker Proxy) =====
+    const AI_API_BASE = 'https://claims-assistant-api.bill-7e3.workers.dev';
+
+    // AI mode: false = batch only (default, saves tokens), true = per-item lookup enabled
+    let aiPerItemMode = false;
+
+    function toggleAiMode() {
+        aiPerItemMode = document.getElementById('ai-mode-toggle').checked;
+        const btn = document.getElementById('ai-btn');
+        const desc = document.getElementById('ai-mode-desc');
+        if (aiPerItemMode) {
+            btn.classList.remove('hidden');
+            desc.innerHTML = 'Click <strong>AI Lookup</strong> on each item, or <strong>Look Up Prices</strong> to do all at once.';
+        } else {
+            btn.classList.add('hidden');
+            desc.innerHTML = 'Add all your items first, then click <strong>"Look Up Prices"</strong> and AI will find prices for everything at once.';
+        }
+        localStorage.setItem('bli_ai_mode', aiPerItemMode ? 'per-item' : 'batch');
+    }
+
+    // ===== CALCULATE ACV =====
+    function calculateACV(replacementCost, ageYears, category, condition) {
+        const usefulLife = USEFUL_LIFE[category] || 7;
+        const condMult = CONDITION_MULT[condition] || 1.0;
+        const effectiveAge = ageYears * condMult;
+        const depreciationRatio = Math.min(effectiveAge / usefulLife, 0.85); // Max 85% depreciation
+        const acv = replacementCost * (1 - depreciationRatio);
+        return Math.max(acv, replacementCost * 0.15); // Minimum 15% of replacement
+    }
+
+    // ===== AI PRICE LOOKUP (Single Item) =====
+    async function aiPriceLookup() {
+        const desc = document.getElementById('item-desc').value.trim();
+        if (!desc) {
+            showToast('Please enter an item description first', 'error');
+            return;
+        }
+
+        const btn = document.getElementById('ai-btn');
+        const statusDiv = document.getElementById('ai-status');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span class="hidden sm:inline">Searching...</span>';
+        statusDiv.classList.remove('hidden');
+        statusDiv.className = 'mb-4 p-3 rounded-xl text-xs font-medium flex items-center gap-2 bg-violet-50 text-violet-700 ai-pulse';
+        statusDiv.innerHTML = '<i class="fas fa-robot"></i> Searching current prices for "' + escapeHtml(desc) + '"...';
+
+        try {
+            const condition = document.getElementById('item-condition').value || 'Good';
+            const age = parseFloat(document.getElementById('item-age').value) || 2;
+
+            const response = await fetch(`${AI_API_BASE}/api/estimate-values`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    items: [{
+                        id: 'single-lookup',
+                        description: desc,
+                        brand: '',
+                        model: '',
+                        ageYears: age,
+                        condition: condition
+                    }]
+                })
+            });
+
+            if (!response.ok) {
+                const errData = await response.json().catch(() => ({}));
+                throw new Error(errData.error || `API error ${response.status}`);
+            }
+
+            const results = await response.json();
+            const result = results[0];
+
+            if (result && result.currentPrice && typeof result.currentPrice === 'number') {
+                document.getElementById('item-price').value = result.currentPrice.toFixed(2);
+                statusDiv.className = 'mb-4 p-3 rounded-xl text-xs font-medium flex items-center gap-2 bg-green-50 text-green-700';
+                statusDiv.innerHTML = `<i class="fas fa-check-circle"></i> Found: <strong>${escapeHtml(desc)}</strong> — $${result.currentPrice.toFixed(2)} replacement cost<br><span class="text-[10px] opacity-70">${escapeHtml(result.explanation || '')}</span>`;
+            } else {
+                throw new Error('Invalid price data returned');
+            }
+        } catch (err) {
+            statusDiv.className = 'mb-4 p-3 rounded-xl text-xs font-medium flex items-center gap-2 bg-red-50 text-red-700';
+            statusDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> Could not find price: ${escapeHtml(err.message)}. You can enter the price manually.`;
+        }
+
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-robot"></i> <span class="hidden sm:inline">AI Lookup</span>';
+    }
+
+    // ===== AI PRICE ALL UNPRICED (Batches of 5 via Cloudflare Worker) =====
+    const BATCH_SIZE = 5;
+
+    async function aiPriceAll() {
+        const unpriced = inventory.filter(i => !i.replacementCost || i.replacementCost === 0);
+        if (unpriced.length === 0) {
+            showToast('All items already have prices!', 'success');
+            return;
+        }
+
+        const btn = document.getElementById('ai-all-btn');
+        btn.disabled = true;
+        let totalSuccess = 0;
+        const totalItems = unpriced.length;
+        const totalBatches = Math.ceil(totalItems / BATCH_SIZE);
+
+        for (let b = 0; b < totalBatches; b++) {
+            const batchStart = b * BATCH_SIZE;
+            const batch = unpriced.slice(batchStart, batchStart + BATCH_SIZE);
+            const batchNum = b + 1;
+
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Batch ${batchNum}/${totalBatches} (${totalSuccess}/${totalItems} priced)`;
+
+            try {
+                const apiItems = batch.map(item => ({
+                    id: String(item.id),
+                    description: item.description,
+                    brand: '',
+                    model: '',
+                    ageYears: item.age || 2,
+                    condition: item.condition || 'Good'
+                }));
+
+                const response = await fetch(`${AI_API_BASE}/api/estimate-values`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ items: apiItems })
+                });
+
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({}));
+                    throw new Error(errData.error || `API error ${response.status}`);
+                }
+
+                const results = await response.json();
+
+                results.forEach(result => {
+                    const item = inventory.find(i => String(i.id) === result.id);
+                    if (item && result.currentPrice && typeof result.currentPrice === 'number') {
+                        item.replacementCost = result.currentPrice;
+                        item.acv = calculateACV(result.currentPrice, item.age, item.category, item.condition);
+                        item.status = 'priced';
+                        totalSuccess++;
+                    }
+                });
+
+                // Update UI after each batch so user sees progress
+                renderInventory();
+
+            } catch (err) {
+                // Mark failed batch items
+                batch.forEach(item => { item.status = 'error'; });
+                renderInventory();
+                showToast(`Batch ${batchNum} failed: ${err.message}`, 'error');
+            }
+
+            // Brief pause between batches to avoid rate limits
+            if (b < totalBatches - 1) {
+                await new Promise(r => setTimeout(r, 1000));
+            }
+        }
+
+        showToast(`Priced ${totalSuccess} of ${totalItems} items`, 'success');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-robot"></i> Price All';
+        autoSave();
+    }
+
+    // ===== ADD OR UPDATE ITEM =====
+    function addOrUpdateItem() {
+        const desc = document.getElementById('item-desc').value.trim();
+        const age = parseFloat(document.getElementById('item-age').value);
+        const price = parseFloat(document.getElementById('item-price').value) || 0;
+        const originalPrice = parseFloat(document.getElementById('item-original').value) || 0;
+        const qty = parseInt(document.getElementById('item-qty').value) || 1;
+        const room = document.getElementById('item-room').value;
+        const category = document.getElementById('item-category').value || 'Other';
+        const condition = document.getElementById('item-condition').value;
+        const notes = document.getElementById('item-notes').value.trim();
+
+        if (!desc) { showToast('Please tell us what the item is', 'error'); return; }
+        if (isNaN(age) || age < 0) { showToast('Please enter how old the item is (in years)', 'error'); return; }
+
+        const acv = price > 0 ? calculateACV(price, age, category, condition) : 0;
+
+        if (editingItemId !== null) {
+            // UPDATE existing item
+            const item = inventory.find(i => i.id === editingItemId);
+            if (item) {
+                item.description = desc;
+                item.room = room;
+                item.category = category;
+                item.age = age;
+                item.condition = condition;
+                item.quantity = qty;
+                item.replacementCost = price;
+                item.originalPrice = originalPrice;
+                item.acv = acv;
+                item.notes = notes;
+                item.status = price > 0 ? 'priced' : 'pending';
+                showToast(`Updated: ${desc}`, 'success');
+            }
+            editingItemId = null;
+            exitEditMode();
+        } else {
+            // ADD new item
+            const item = {
+                id: ++itemIdCounter,
+                description: desc,
+                room: room,
+                category: category,
+                age: age,
+                condition: condition,
+                quantity: qty,
+                replacementCost: price,
+                originalPrice: originalPrice,
+                acv: acv,
+                notes: notes,
+                status: price > 0 ? 'priced' : 'pending'
+            };
+            inventory.push(item);
+            showToast(`Added: ${desc}`, 'success');
+        }
+
+        renderInventory();
+        autoSave();
+        clearForm();
+        document.getElementById('item-desc').focus();
+    }
+
+    // Legacy alias
+    function addItem() { addOrUpdateItem(); }
+
+    // ===== REMOVE ITEM =====
+    function removeItem(id) {
+        inventory = inventory.filter(i => i.id !== id);
+        renderInventory();
+        autoSave();
+    }
+
+    // ===== DUPLICATE ITEM =====
+    function duplicateItem(id) {
+        const original = inventory.find(i => i.id === id);
+        if (!original) return;
+        const dupe = { ...original, id: ++itemIdCounter, status: original.replacementCost > 0 ? 'priced' : 'pending' };
+        inventory.push(dupe);
+        renderInventory();
+        autoSave();
+        showToast(`Duplicated: ${original.description}`, 'success');
+    }
+
+    // ===== EDIT ITEM (Full Edit — loads into form) =====
+    function editItem(id) {
+        const item = inventory.find(i => i.id === id);
+        if (!item) return;
+
+        editingItemId = id;
+
+        // Fill form with item data
+        document.getElementById('item-desc').value = item.description;
+        document.getElementById('item-room').value = item.room || '';
+        document.getElementById('item-category').value = item.category || '';
+        document.getElementById('item-age').value = item.age;
+        document.getElementById('item-condition').value = item.condition || 'Good';
+        document.getElementById('item-qty').value = item.quantity || 1;
+        document.getElementById('item-price').value = item.replacementCost || '';
+        document.getElementById('item-original').value = item.originalPrice || '';
+        document.getElementById('item-notes').value = item.notes || '';
+
+        // Switch UI to edit mode
+        enterEditMode(item.description);
+
+        // Scroll to form
+        document.getElementById('add-item-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        // Focus description field
+        setTimeout(() => document.getElementById('item-desc').focus(), 400);
+    }
+
+    function enterEditMode(itemName) {
+        document.getElementById('form-title').textContent = 'Edit Item';
+        document.getElementById('form-subtitle').textContent = 'Change any details below and click Update';
+        document.getElementById('form-icon').className = 'w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center';
+        document.getElementById('form-icon').innerHTML = '<i class="fas fa-pen-to-square text-amber-600 text-sm"></i>';
+        document.getElementById('add-btn-text').textContent = 'Update Item';
+        document.getElementById('add-btn-icon').className = 'fas fa-check';
+        const btn = document.getElementById('add-item-btn');
+        btn.classList.remove('bg-emerald-500', 'hover:bg-emerald-600');
+        btn.classList.add('bg-amber-500', 'hover:bg-amber-600');
+        document.getElementById('cancel-edit-btn').classList.remove('hidden');
+        document.getElementById('editing-banner').classList.remove('hidden');
+        document.getElementById('editing-banner-text').textContent = `Editing "${itemName}" — make your changes and click Update Item`;
+    }
+
+    function exitEditMode() {
+        editingItemId = null;
+        document.getElementById('form-title').textContent = 'Add Item';
+        document.getElementById('form-subtitle').textContent = 'Describe what was lost or damaged';
+        document.getElementById('form-icon').className = 'w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center';
+        document.getElementById('form-icon').innerHTML = '<i class="fas fa-plus-circle text-emerald-600 text-sm"></i>';
+        document.getElementById('add-btn-text').textContent = 'Add to Inventory';
+        document.getElementById('add-btn-icon').className = 'fas fa-plus';
+        const btn = document.getElementById('add-item-btn');
+        btn.classList.remove('bg-amber-500', 'hover:bg-amber-600');
+        btn.classList.add('bg-emerald-500', 'hover:bg-emerald-600');
+        document.getElementById('cancel-edit-btn').classList.add('hidden');
+        document.getElementById('editing-banner').classList.add('hidden');
+    }
+
+    function cancelEdit() {
+        exitEditMode();
+        clearForm();
+        showToast('Edit cancelled', 'success');
+    }
+
+    // Legacy alias for backward compat
+    function editPrice(id) { editItem(id); }
+
+    // ===== RENDER INVENTORY =====
+    function renderInventory() {
+        const container = document.getElementById('inventory-items');
+        const empty = document.getElementById('empty-state');
+        const totals = document.getElementById('totals-bar');
+        const exportBar = document.getElementById('export-bar');
+
+        if (inventory.length === 0) {
+            container.classList.add('hidden');
+            empty.classList.remove('hidden');
+            totals.classList.add('hidden');
+            exportBar.classList.add('hidden');
+            document.getElementById('item-count').textContent = '0';
+            return;
+        }
+
+        empty.classList.add('hidden');
+        container.classList.remove('hidden');
+        totals.classList.remove('hidden');
+        exportBar.classList.remove('hidden');
+        document.getElementById('item-count').textContent = inventory.length;
+
+        let html = '';
+        inventory.forEach((item, idx) => {
+            const rcv = item.replacementCost * item.quantity;
+            const acvTotal = item.acv * item.quantity;
+            const statusClass = item.status === 'priced' ? 'status-priced' : item.status === 'error' ? 'status-error' : 'status-pending';
+            const statusLabel = item.status === 'priced' ? 'Priced' : item.status === 'error' ? 'Error' : 'Pending';
+
+            html += `
+            <div class="item-row bg-slate-50 rounded-xl p-4 border border-slate-100 fade-in" data-id="${item.id}">
+                <div class="flex items-start justify-between gap-3 mb-2">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="text-xs font-bold text-slate-300">#${idx + 1}</span>
+                            <p class="font-bold text-sm text-slate-800 truncate">${escapeHtml(item.description)}</p>
+                            ${item.quantity > 1 ? `<span class="text-[10px] font-bold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">×${item.quantity}</span>` : ''}
+                        </div>
+                        <div class="flex flex-wrap gap-x-3 gap-y-1 mt-1 text-xs text-slate-400">
+                            ${item.room ? `<span><i class="fas fa-door-open mr-1"></i>${item.room}</span>` : ''}
+                            ${item.category ? `<span><i class="fas fa-tag mr-1"></i>${item.category}</span>` : ''}
+                            <span><i class="fas fa-clock mr-1"></i>${item.age} yr${item.age !== 1 ? 's' : ''} old</span>
+                            <span><i class="fas fa-star mr-1"></i>${item.condition}</span>
+                        </div>
+                        ${item.notes ? `<p class="mt-1.5 text-xs text-slate-500 italic"><i class="fas fa-sticky-note mr-1 text-amber-400"></i>${escapeHtml(item.notes)}</p>` : ''}
+                    </div>
+                    <div class="flex items-center gap-1.5 flex-shrink-0">
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${statusClass}">${statusLabel}</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                    <button onclick="editItem(${item.id})" class="flex-1 h-11 rounded-xl text-indigo-600 bg-indigo-50 hover:bg-indigo-100 flex items-center justify-center gap-1.5 transition-colors text-xs font-bold border border-indigo-100">
+                        <i class="fas fa-pen text-xs"></i> Edit
+                    </button>
+                    <button onclick="duplicateItem(${item.id})" class="flex-1 h-11 rounded-xl text-slate-500 bg-slate-50 hover:bg-slate-100 flex items-center justify-center gap-1.5 transition-colors text-xs font-bold border border-slate-100">
+                        <i class="fas fa-copy text-xs"></i> Copy
+                    </button>
+                    <button onclick="removeItem(${item.id})" class="h-11 w-11 rounded-xl text-slate-400 hover:text-red-600 bg-slate-50 hover:bg-red-50 flex items-center justify-center transition-colors border border-slate-100">
+                        <i class="fas fa-trash-alt text-xs"></i>
+                    </button>
+                </div>
+                <div class="flex items-center justify-between bg-white rounded-lg px-3 py-2 border border-slate-100 mt-2">
+                    <div class="text-center flex-1">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">New Price</p>
+                        <p class="text-sm font-extrabold text-blue-600">${rcv > 0 ? '$' + rcv.toFixed(2) : '—'}</p>
+                    </div>
+                    <div class="w-px h-8 bg-slate-200"></div>
+                    <div class="text-center flex-1">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Used Value</p>
+                        <p class="text-sm font-extrabold text-emerald-600">${acvTotal > 0 ? '$' + acvTotal.toFixed(2) : '—'}</p>
+                    </div>
+                    <div class="w-px h-8 bg-slate-200"></div>
+                    <div class="text-center flex-1">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Wear & Tear</p>
+                        <p class="text-sm font-extrabold text-amber-600">${rcv > 0 ? '$' + (rcv - acvTotal).toFixed(2) : '—'}</p>
+                    </div>
+                </div>
+            </div>`;
+        });
+
+        container.innerHTML = html;
+
+        // Calculate totals
+        let totalRCV = 0, totalACV = 0;
+        inventory.forEach(item => {
+            totalRCV += item.replacementCost * item.quantity;
+            totalACV += item.acv * item.quantity;
+        });
+        document.getElementById('total-rcv').textContent = totalRCV.toFixed(2);
+        document.getElementById('total-acv').textContent = totalACV.toFixed(2);
+        document.getElementById('total-dep').textContent = (totalRCV - totalACV).toFixed(2);
+    }
+
+    // ===== CLEAR FORM =====
+    function clearForm() {
+        document.getElementById('item-desc').value = '';
+        document.getElementById('item-age').value = '';
+        document.getElementById('item-price').value = '';
+        document.getElementById('item-original').value = '';
+        document.getElementById('item-qty').value = '1';
+        document.getElementById('item-notes').value = '';
+        // Room stays sticky (walkthrough mode) — category resets
+        document.getElementById('item-category').selectedIndex = 0;
+        document.getElementById('item-condition').value = 'Good';
+        document.getElementById('ai-status').classList.add('hidden');
+        // Clear photo preview
+        const preview = document.getElementById('photo-preview');
+        if (preview) preview.classList.add('hidden');
+        const fileInput = document.getElementById('item-photo');
+        if (fileInput) fileInput.value = '';
+        // Exit edit mode if active
+        if (editingItemId !== null) exitEditMode();
+    }
+
+    // ===== CLEAR ALL =====
+    function clearAll() {
+        if (inventory.length === 0) return;
+        if (!confirm(`Delete all ${inventory.length} items? This cannot be undone.`)) return;
+        inventory = [];
+        itemIdCounter = 0;
+        renderInventory();
+        autoSave();
+        showToast('Inventory cleared', 'success');
+    }
+
+    // ===== AUTO-SAVE (debounced) =====
+    let _autoSaveTimer = null;
+    function autoSave() {
+        clearTimeout(_autoSaveTimer);
+        _autoSaveTimer = setTimeout(() => {
+            const data = {
+                claimInfo: getClaimInfo(),
+                inventory: inventory,
+                savedAt: new Date().toISOString()
+            };
+            localStorage.setItem('bli_claims_inventory', JSON.stringify(data));
+        }, 500);
+    }
+
+    // ===== SAVE / LOAD LOCAL STORAGE =====
+    function saveToLocal() {
+        const data = {
+            claimInfo: getClaimInfo(),
+            inventory: inventory,
+            savedAt: new Date().toISOString()
+        };
+        localStorage.setItem('bli_claims_inventory', JSON.stringify(data));
+        showToast('Progress saved to browser!', 'success');
+    }
+
+    function loadFromLocal() {
+        const raw = localStorage.getItem('bli_claims_inventory');
+        if (!raw) return;
+        try {
+            const data = JSON.parse(raw);
+            if (data.claimInfo) {
+                document.getElementById('cl-name').value = data.claimInfo.name || '';
+                document.getElementById('cl-policy').value = data.claimInfo.policyNumber || '';
+                document.getElementById('cl-company').value = data.claimInfo.company || '';
+                document.getElementById('cl-claim').value = data.claimInfo.claimNumber || '';
+                document.getElementById('cl-date').value = data.claimInfo.dateOfLoss || '';
+                document.getElementById('cl-loss-type').value = data.claimInfo.lossType || '';
+                document.getElementById('cl-adjuster').value = data.claimInfo.adjuster || '';
+            }
+            if (data.inventory && data.inventory.length > 0) {
+                inventory = data.inventory;
+                itemIdCounter = Math.max(...inventory.map(i => i.id), 0);
+                renderInventory();
+                showToast(`Restored ${inventory.length} items from saved progress`, 'success');
+            }
+        } catch (e) {
+            console.error('Error loading saved data:', e);
+        }
+    }
+
+    // ===== GET CLAIM INFO =====
+    function getClaimInfo() {
+        return {
+            name: document.getElementById('cl-name').value.trim(),
+            policyNumber: document.getElementById('cl-policy').value.trim(),
+            company: document.getElementById('cl-company').value.trim(),
+            claimNumber: document.getElementById('cl-claim').value.trim(),
+            dateOfLoss: document.getElementById('cl-date').value,
+            lossType: document.getElementById('cl-loss-type').value,
+            adjuster: document.getElementById('cl-adjuster').value.trim()
+        };
+    }
+
+    // ===== GENERATE PDF =====
+    function generatePDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'mm', 'letter');
+        const claim = getClaimInfo();
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const margin = 15;
+        let y = 15;
+
+        // Header
+        doc.setFillColor(0, 63, 135);
+        doc.rect(0, 0, pageWidth, 32, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(18);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Claims Inventory Report', margin, 14);
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.text('Prepared by Bill Layne Insurance Agency — (336) 835-1993', margin, 21);
+        doc.text('www.billlayneinsurance.com', margin, 27);
+        doc.setFontSize(8);
+        doc.text('Generated: ' + new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), pageWidth - margin, 27, { align: 'right' });
+
+        y = 40;
+        doc.setTextColor(0, 0, 0);
+
+        // Claim Info Box
+        doc.setFillColor(248, 250, 252);
+        doc.setDrawColor(226, 232, 240);
+        doc.roundedRect(margin, y, pageWidth - 2 * margin, 42, 3, 3, 'FD');
+
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Claim Information', margin + 5, y + 7);
+
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'normal');
+        const col1 = margin + 5;
+        const col2 = pageWidth / 2 + 5;
+        let iy = y + 14;
+
+        const infoLeft = [
+            ['Policyholder:', claim.name || 'N/A'],
+            ['Policy #:', claim.policyNumber || 'N/A'],
+            ['Insurance Co:', claim.company || 'N/A']
+        ];
+        const infoRight = [
+            ['Claim #:', claim.claimNumber || 'N/A'],
+            ['Date of Loss:', claim.dateOfLoss ? new Date(claim.dateOfLoss + 'T00:00:00').toLocaleDateString() : 'N/A'],
+            ['Type of Loss:', claim.lossType || 'N/A']
+        ];
+
+        infoLeft.forEach((row, i) => {
+            doc.setFont('helvetica', 'bold');
+            doc.text(row[0], col1, iy + i * 7);
+            doc.setFont('helvetica', 'normal');
+            doc.text(row[1], col1 + 28, iy + i * 7);
+        });
+        infoRight.forEach((row, i) => {
+            doc.setFont('helvetica', 'bold');
+            doc.text(row[0], col2, iy + i * 7);
+            doc.setFont('helvetica', 'normal');
+            doc.text(row[1], col2 + 28, iy + i * 7);
+        });
+
+        if (claim.adjuster) {
+            doc.setFont('helvetica', 'bold');
+            doc.text('Adjuster:', col1, iy + 21);
+            doc.setFont('helvetica', 'normal');
+            doc.text(claim.adjuster, col1 + 28, iy + 21);
+        }
+
+        y += 50;
+
+        // Items Table
+        const tableData = inventory.map((item, idx) => {
+            const rcv = item.replacementCost * item.quantity;
+            const acvT = item.acv * item.quantity;
+            const descLine = item.description + (item.quantity > 1 ? ` (×${item.quantity})` : '') + (item.notes ? `\n${item.notes}` : '');
+            return [
+                idx + 1,
+                descLine,
+                item.room || '—',
+                item.category || '—',
+                item.age + ' yr',
+                item.condition,
+                rcv > 0 ? '$' + rcv.toFixed(2) : '—',
+                acvT > 0 ? '$' + acvT.toFixed(2) : '—'
+            ];
+        });
+
+        // Totals
+        let totalRCV = 0, totalACV = 0;
+        inventory.forEach(item => {
+            totalRCV += item.replacementCost * item.quantity;
+            totalACV += item.acv * item.quantity;
+        });
+
+        doc.autoTable({
+            startY: y,
+            head: [['#', 'Description', 'Room', 'Category', 'Age', 'Cond.', 'Replacement', 'ACV']],
+            body: tableData,
+            foot: [['', `${inventory.length} Items`, '', '', '', '', '$' + totalRCV.toFixed(2), '$' + totalACV.toFixed(2)]],
+            styles: { fontSize: 7, cellPadding: 2 },
+            headStyles: { fillColor: [0, 63, 135], textColor: 255, fontStyle: 'bold', fontSize: 7 },
+            footStyles: { fillColor: [240, 253, 244], textColor: [6, 95, 70], fontStyle: 'bold', fontSize: 8 },
+            columnStyles: {
+                0: { cellWidth: 8, halign: 'center' },
+                1: { cellWidth: 52 },
+                2: { cellWidth: 22 },
+                3: { cellWidth: 22 },
+                4: { cellWidth: 14, halign: 'center' },
+                5: { cellWidth: 14, halign: 'center' },
+                6: { cellWidth: 22, halign: 'right' },
+                7: { cellWidth: 22, halign: 'right' }
+            },
+            alternateRowStyles: { fillColor: [248, 250, 252] },
+            margin: { left: margin, right: margin },
+            didDrawPage: function(data) {
+                // Page number
+                doc.setFontSize(7);
+                doc.setTextColor(150, 150, 150);
+                doc.text(`Page ${doc.internal.getNumberOfPages()}`, pageWidth - margin, doc.internal.pageSize.getHeight() - 10, { align: 'right' });
+            }
+        });
+
+        // Summary Box after table
+        const finalY = doc.lastAutoTable.finalY + 8;
+        if (finalY < doc.internal.pageSize.getHeight() - 50) {
+            doc.setFillColor(239, 246, 255);
+            doc.setDrawColor(191, 219, 254);
+            doc.roundedRect(margin, finalY, pageWidth - 2 * margin, 20, 3, 3, 'FD');
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(30, 58, 138);
+            doc.text('Summary', margin + 5, finalY + 7);
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Total Replacement Cost Value (RCV): $${totalRCV.toFixed(2)}`, margin + 5, finalY + 13);
+            doc.text(`Total Actual Cash Value (ACV): $${totalACV.toFixed(2)}     |     Total Depreciation: $${(totalRCV - totalACV).toFixed(2)}`, margin + 5, finalY + 17.5);
+        }
+
+        // Disclaimer
+        const disclaimerY = Math.min(finalY + 30, doc.internal.pageSize.getHeight() - 25);
+        doc.setFontSize(6);
+        doc.setTextColor(150, 150, 150);
+        doc.text('DISCLAIMER: This inventory was prepared as a reference tool only. Replacement values are estimates based on AI-assisted research of current retail prices.', margin, disclaimerY);
+        doc.text('Actual Cash Values (ACV) are calculated using standard straight-line depreciation and may differ from your insurance company\'s methodology.', margin, disclaimerY + 3.5);
+        doc.text('This document is not an official claim form. Please work with your insurance adjuster for final claim settlement. Bill Layne Insurance Agency — billlayneinsurance.com', margin, disclaimerY + 7);
+
+        // Generate filename
+        const nameSlug = claim.name ? claim.name.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 30) : 'inventory';
+        const dateStr = new Date().toISOString().split('T')[0];
+        doc.save(`Claims-Inventory-${nameSlug}-${dateStr}.pdf`);
+        showToast('PDF downloaded!', 'success');
+    }
+
+    // ===== EXPORT CSV =====
+    function exportCSV() {
+        const claim = getClaimInfo();
+        let csv = 'Claims Inventory Report\n';
+        csv += `Policyholder,${claim.name}\n`;
+        csv += `Policy Number,${claim.policyNumber}\n`;
+        csv += `Insurance Company,${claim.company}\n`;
+        csv += `Claim Number,${claim.claimNumber}\n`;
+        csv += `Date of Loss,${claim.dateOfLoss}\n`;
+        csv += `Type of Loss,${claim.lossType}\n`;
+        csv += `Adjuster,${claim.adjuster}\n\n`;
+        csv += '#,Description,Room,Category,Age (Years),Condition,Qty,Replacement Cost,ACV,Depreciation,Original Price,Notes\n';
+
+        inventory.forEach((item, idx) => {
+            const rcv = item.replacementCost * item.quantity;
+            const acvT = item.acv * item.quantity;
+            csv += `${idx + 1},"${item.description}",${item.room || ''},${item.category || ''},${item.age},${item.condition},${item.quantity},${rcv.toFixed(2)},${acvT.toFixed(2)},${(rcv - acvT).toFixed(2)},${item.originalPrice || ''},"${(item.notes || '').replace(/"/g, '""')}"\n`;
+        });
+
+        let totalRCV = 0, totalACV = 0;
+        inventory.forEach(item => {
+            totalRCV += item.replacementCost * item.quantity;
+            totalACV += item.acv * item.quantity;
+        });
+        csv += `\nTOTALS,,,,,,,$${totalRCV.toFixed(2)},$${totalACV.toFixed(2)},$${(totalRCV - totalACV).toFixed(2)}\n`;
+
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        const nameSlug = claim.name ? claim.name.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 30) : 'inventory';
+        a.download = `Claims-Inventory-${nameSlug}-${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+        showToast('CSV downloaded!', 'success');
+    }
+
+    // ===== EMAIL ADJUSTER =====
+    function emailAdjuster() {
+        const claim = getClaimInfo();
+        let totalRCV = 0, totalACV = 0;
+        inventory.forEach(item => {
+            totalRCV += item.replacementCost * item.quantity;
+            totalACV += item.acv * item.quantity;
+        });
+
+        const subject = encodeURIComponent(`Claims Inventory — ${claim.claimNumber || 'Claim'} — ${claim.name || 'Policyholder'}`);
+        let body = `Claims Inventory Summary\n\n`;
+        body += `Policyholder: ${claim.name || 'N/A'}\n`;
+        body += `Policy #: ${claim.policyNumber || 'N/A'}\n`;
+        body += `Claim #: ${claim.claimNumber || 'N/A'}\n`;
+        body += `Date of Loss: ${claim.dateOfLoss || 'N/A'}\n`;
+        body += `Type of Loss: ${claim.lossType || 'N/A'}\n\n`;
+        body += `Total Items: ${inventory.length}\n`;
+        body += `Total Replacement Value: $${totalRCV.toFixed(2)}\n`;
+        body += `Total ACV: $${totalACV.toFixed(2)}\n`;
+        body += `Total Depreciation: $${(totalRCV - totalACV).toFixed(2)}\n\n`;
+        body += `--- Item List ---\n\n`;
+
+        inventory.forEach((item, idx) => {
+            body += `${idx + 1}. ${item.description}`;
+            if (item.quantity > 1) body += ` (×${item.quantity})`;
+            body += `\n   Room: ${item.room || 'N/A'} | Age: ${item.age} yrs | Condition: ${item.condition}\n`;
+            body += `   Replacement: $${(item.replacementCost * item.quantity).toFixed(2)} | ACV: $${(item.acv * item.quantity).toFixed(2)}\n`;
+            if (item.notes) body += `   Notes: ${item.notes}\n`;
+            body += '\n';
+        });
+
+        body += `\nPrepared using Bill Layne Insurance Claims Inventory Tool\n(336) 835-1993 — billlayneinsurance.com\n`;
+
+        window.open(`mailto:?subject=${subject}&body=${encodeURIComponent(body)}`);
+    }
+
+    // ===== PHOTO UPLOAD & AI DETECT =====
+    async function handlePhotoUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const preview = document.getElementById('photo-preview');
+        const thumb = document.getElementById('photo-thumb');
+        const resultDiv = document.getElementById('photo-ai-result');
+
+        // Show thumbnail
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            const dataUrl = e.target.result;
+            thumb.src = dataUrl;
+            preview.classList.remove('hidden');
+            resultDiv.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> AI is analyzing your photo...';
+
+            try {
+                // Extract base64 data (strip the data:image/...;base64, prefix)
+                const base64 = dataUrl.split(',')[1];
+                const mimeType = file.type || 'image/jpeg';
+
+                const response = await fetch(`${AI_API_BASE}/api/analyze-image`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ imageData: base64, mimeType: mimeType })
+                });
+
+                if (!response.ok) throw new Error(`API error ${response.status}`);
+                const result = await response.json();
+
+                // Auto-fill form fields
+                if (result.description) {
+                    const descField = document.getElementById('item-desc');
+                    const brand = result.brand && result.brand !== 'Unknown' ? result.brand + ' ' : '';
+                    const model = result.model && result.model !== 'Unknown' ? result.model + ' ' : '';
+                    descField.value = `${brand}${model}${result.description}`.trim();
+                }
+                if (result.ageYears !== undefined) {
+                    document.getElementById('item-age').value = result.ageYears;
+                }
+                if (result.condition) {
+                    const condSelect = document.getElementById('item-condition');
+                    // Map AI condition to our values
+                    const condMap = { 'Excellent': 'New', 'Like New': 'New', 'Good': 'Good', 'Fair': 'Fair', 'Poor': 'Poor' };
+                    condSelect.value = condMap[result.condition] || 'Good';
+                }
+
+                resultDiv.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-1"></i> Detected: <strong>${escapeHtml(result.description || 'Item')}</strong>${result.brand ? ' by ' + escapeHtml(result.brand) : ''} — ${result.ageYears || '?'} yrs, ${result.condition || 'Good'} condition`;
+
+            } catch (err) {
+                resultDiv.innerHTML = `<i class="fas fa-exclamation-triangle text-amber-500 mr-1"></i> Could not auto-detect: ${escapeHtml(err.message)}. Enter details manually.`;
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // ===== QUICK-ADD TEMPLATES =====
+    const TEMPLATES = {
+        kitchen: {
+            room: 'Kitchen',
+            items: [
+                { description: 'Refrigerator', category: 'Appliances', age: 5, condition: 'Good' },
+                { description: 'Microwave Oven', category: 'Appliances', age: 3, condition: 'Good' },
+                { description: 'Coffee Maker', category: 'Appliances', age: 2, condition: 'Good' },
+                { description: 'Toaster', category: 'Appliances', age: 3, condition: 'Good' },
+                { description: 'Dish Set (service for 8)', category: 'Kitchenware', age: 4, condition: 'Good' },
+                { description: 'Silverware Set', category: 'Kitchenware', age: 4, condition: 'Good' },
+                { description: 'Pots & Pans Set', category: 'Kitchenware', age: 3, condition: 'Good' },
+                { description: 'Kitchen Knife Set', category: 'Kitchenware', age: 3, condition: 'Good' }
+            ]
+        },
+        living: {
+            room: 'Living Room',
+            items: [
+                { description: 'Sofa / Couch (3-seat)', category: 'Furniture', age: 4, condition: 'Good' },
+                { description: '55" Smart TV', category: 'Electronics', age: 3, condition: 'Good' },
+                { description: 'Coffee Table', category: 'Furniture', age: 4, condition: 'Good' },
+                { description: 'End Table (×2)', category: 'Furniture', age: 4, condition: 'Good', qty: 2 },
+                { description: 'Table Lamp', category: 'Art / Decor', age: 3, condition: 'Good', qty: 2 },
+                { description: 'Area Rug (8×10)', category: 'Art / Decor', age: 3, condition: 'Good' },
+                { description: 'Bookshelf', category: 'Furniture', age: 5, condition: 'Good' }
+            ]
+        },
+        bedroom: {
+            room: 'Master Bedroom',
+            items: [
+                { description: 'Queen/King Mattress & Box Spring', category: 'Furniture', age: 5, condition: 'Good' },
+                { description: 'Bed Frame / Headboard', category: 'Furniture', age: 5, condition: 'Good' },
+                { description: 'Dresser', category: 'Furniture', age: 5, condition: 'Good' },
+                { description: 'Nightstand', category: 'Furniture', age: 5, condition: 'Good', qty: 2 },
+                { description: 'Bedding Set (comforter, sheets, pillows)', category: 'Bedding / Linens', age: 2, condition: 'Good' },
+                { description: 'Bedroom Lamp', category: 'Art / Decor', age: 3, condition: 'Good' },
+                { description: 'Alarm Clock', category: 'Electronics', age: 3, condition: 'Good' }
+            ]
+        },
+        bathroom: {
+            room: 'Bathroom',
+            items: [
+                { description: 'Bath Towel Set (6-piece)', category: 'Bedding / Linens', age: 2, condition: 'Good' },
+                { description: 'Bathroom Mirror/Cabinet', category: 'Art / Decor', age: 5, condition: 'Good' },
+                { description: 'Hair Dryer', category: 'Personal Care', age: 2, condition: 'Good' },
+                { description: 'Electric Toothbrush', category: 'Personal Care', age: 1, condition: 'Good' },
+                { description: 'Shower Curtain & Rod', category: 'Bedding / Linens', age: 2, condition: 'Good' },
+                { description: 'Bathroom Scale', category: 'Personal Care', age: 3, condition: 'Good' }
+            ]
+        },
+        office: {
+            room: 'Home Office',
+            items: [
+                { description: 'Laptop Computer', category: 'Electronics', age: 2, condition: 'Good' },
+                { description: 'Computer Monitor', category: 'Electronics', age: 3, condition: 'Good' },
+                { description: 'Office Desk', category: 'Furniture', age: 4, condition: 'Good' },
+                { description: 'Office Chair', category: 'Furniture', age: 3, condition: 'Good' },
+                { description: 'Printer', category: 'Electronics', age: 3, condition: 'Good' },
+                { description: 'Desk Lamp', category: 'Art / Decor', age: 3, condition: 'Good' }
+            ]
+        },
+        garage: {
+            room: 'Garage',
+            items: [
+                { description: 'Power Drill (cordless)', category: 'Tools / Equipment', age: 3, condition: 'Good' },
+                { description: 'Lawn Mower', category: 'Tools / Equipment', age: 4, condition: 'Good' },
+                { description: 'Tool Set (mechanic/general)', category: 'Tools / Equipment', age: 5, condition: 'Good' },
+                { description: 'Ladder (extension)', category: 'Tools / Equipment', age: 5, condition: 'Good' },
+                { description: 'Weed Trimmer', category: 'Tools / Equipment', age: 3, condition: 'Good' },
+                { description: 'Shop Vacuum', category: 'Tools / Equipment', age: 4, condition: 'Good' }
+            ]
+        },
+        laundry: {
+            room: 'Laundry Room',
+            items: [
+                { description: 'Washing Machine', category: 'Appliances', age: 5, condition: 'Good' },
+                { description: 'Clothes Dryer', category: 'Appliances', age: 5, condition: 'Good' },
+                { description: 'Iron & Ironing Board', category: 'Appliances', age: 4, condition: 'Good' },
+                { description: 'Laundry Hamper', category: 'Other', age: 2, condition: 'Good' }
+            ]
+        }
+    };
+
+    function quickAddTemplate(templateKey) {
+        const tmpl = TEMPLATES[templateKey];
+        if (!tmpl) return;
+
+        const count = tmpl.items.length;
+        if (!confirm(`Add ${count} common ${tmpl.room} items to your inventory?`)) return;
+
+        tmpl.items.forEach(t => {
+            const item = {
+                id: ++itemIdCounter,
+                description: t.description,
+                room: tmpl.room,
+                category: t.category || 'Other',
+                age: t.age || 2,
+                condition: t.condition || 'Good',
+                quantity: t.qty || 1,
+                replacementCost: 0,
+                originalPrice: 0,
+                acv: 0,
+                notes: '',
+                status: 'pending'
+            };
+            inventory.push(item);
+        });
+
+        renderInventory();
+        autoSave();
+        showToast(`Added ${count} ${tmpl.room} items! Tap the pencil to add brand names, then click "Look Up Prices"`, 'success');
+    }
+
+    // ===== TOAST NOTIFICATION =====
+    function showToast(message, type) {
+        const existing = document.querySelector('.toast-notification');
+        if (existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.className = 'toast-notification fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-[9999] px-5 py-3 rounded-xl shadow-2xl text-sm font-bold flex items-center gap-2 fade-in';
+
+        if (type === 'success') {
+            toast.classList.add('bg-emerald-600', 'text-white');
+            toast.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+        } else if (type === 'error') {
+            toast.classList.add('bg-red-600', 'text-white');
+            toast.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+        } else {
+            toast.classList.add('bg-slate-800', 'text-white');
+            toast.innerHTML = message;
+        }
+
+        document.body.appendChild(toast);
+        setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 3000);
+    }
+
+    // ===== UTILITY =====
+    function escapeHtml(text) {
+        const d = document.createElement('div');
+        d.textContent = text;
+        return d.innerHTML;
+    }
+
+    // ===== INIT =====
+    document.addEventListener('DOMContentLoaded', function() {
+        // Restore AI mode preference
+        const savedMode = localStorage.getItem('bli_ai_mode');
+        if (savedMode === 'per-item') {
+            document.getElementById('ai-mode-toggle').checked = true;
+            toggleAiMode();
+        }
+
+        // Load saved progress
+        loadFromLocal();
+
+        // Set default date to today
+        if (!document.getElementById('cl-date').value) {
+            document.getElementById('cl-date').value = new Date().toISOString().split('T')[0];
+        }
+
+        // Enter key on description focuses age
+        document.getElementById('item-desc').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') { e.preventDefault(); document.getElementById('item-age').focus(); }
+        });
+
+        // Enter key on price adds item
+        document.getElementById('item-price').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') { e.preventDefault(); addItem(); }
+        });
+
+        // Auto-save claim info fields on change
+        ['cl-name','cl-policy','cl-company','cl-claim','cl-date','cl-loss-type','cl-adjuster'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('change', autoSave);
+            if (el && el.tagName === 'INPUT') el.addEventListener('input', autoSave);
+        });
+    });
+    </script>
+
+</body>
+</html>

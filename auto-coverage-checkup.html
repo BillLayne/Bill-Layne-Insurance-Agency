@@ -607,5 +607,41 @@
     </div>
 
     <script src="js/mobile-dock.js"></script>
+
+    <!-- Sticky CTA - appears after scrolling past hero -->
+    <div id="sticky-quote-cta" class="fixed bottom-24 md:bottom-6 right-4 md:right-6 z-50 opacity-0 translate-y-4 pointer-events-none transition-all duration-300" style="transition: opacity 0.3s, transform 0.3s;">
+        <a href="get-quote.html" class="flex items-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-3.5 rounded-2xl shadow-2xl shadow-blue-600/30 hover:shadow-blue-600/50 hover:scale-105 transition-all font-bold text-sm border border-white/20">
+            <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                <i class="fas fa-comments text-lg"></i>
+            </div>
+            <div>
+                <div class="font-black text-sm">Finish My Quote</div>
+                <div class="text-[10px] text-blue-200 font-medium">Talk to a real NC agent</div>
+            </div>
+            <i class="fas fa-arrow-right text-xs ml-1"></i>
+        </a>
+    </div>
+
+    <script>
+    // Show sticky CTA after scrolling 400px
+    (function() {
+        const stickyCta = document.getElementById('sticky-quote-cta');
+        if (!stickyCta) return;
+        let shown = false;
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 400 && !shown) {
+                stickyCta.style.opacity = '1';
+                stickyCta.style.transform = 'translateY(0)';
+                stickyCta.style.pointerEvents = 'auto';
+                shown = true;
+            } else if (window.scrollY <= 400 && shown) {
+                stickyCta.style.opacity = '0';
+                stickyCta.style.transform = 'translateY(1rem)';
+                stickyCta.style.pointerEvents = 'none';
+                shown = false;
+            }
+        });
+    })();
+    </script>
 </body>
 </html>
