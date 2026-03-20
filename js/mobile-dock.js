@@ -5,5 +5,8 @@ function toggleMobileDockMenu() {
     if (overlay && panel) {
         overlay.classList.toggle('open');
         panel.classList.toggle('open');
+        if (panel.classList.contains('open')) {
+            panel.scrollTop = 0;
+        }
     }
 }
