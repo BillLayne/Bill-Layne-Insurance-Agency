@@ -376,7 +376,7 @@
                         <label class="cursor-pointer bg-gradient-to-r from-violet-50 to-indigo-50 border-2 border-dashed border-violet-200 hover:border-violet-400 rounded-xl px-4 py-4 flex items-center gap-3 transition-all flex-1 min-h-[56px]">
                             <i class="fas fa-cloud-arrow-up text-violet-400 text-lg"></i>
                             <span class="text-xs text-violet-600 font-medium">Take a photo or upload one — AI will try to identify the item for you</span>
-                            <input type="file" id="item-photo" accept="image/*" capture="environment" onchange="handlePhotoUpload(event)" class="hidden">
+                            <input type="file" id="item-photo" accept="image/*,.heic,.heif,image/heic,image/heif" capture="environment" onchange="handlePhotoUpload(event)" class="hidden">
                         </label>
                     </div>
                     <div id="photo-preview" class="hidden mt-2 p-3 bg-violet-50 rounded-xl border border-violet-100">
@@ -1385,18 +1385,44 @@
         const thumb = document.getElementById('photo-thumb');
         const resultDiv = document.getElementById('photo-ai-result');
 
-        // Show thumbnail
-        const reader = new FileReader();
-        reader.onload = async function(e) {
-            const dataUrl = e.target.result;
-            thumb.src = dataUrl;
-            preview.classList.remove('hidden');
-            resultDiv.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> AI is analyzing your photo...';
+        // Convert image to JPEG via canvas (handles HEIC/HEIF from iPhones)
+        let dataUrl, base64, mimeType;
+        try {
+            const bitmap = await createImageBitmap(file);
+            const MAX = 4096;
+            let w = bitmap.width, h = bitmap.height;
+            if (w > MAX || h > MAX) {
+              const s = MAX / Math.max(w, h);
+              w = Math.round(w * s);
+              h = Math.round(h * s);
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(bitmap, 0, 0, w, h);
+            bitmap.close();
+            dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+            base64 = dataUrl.split(',')[1];
+            mimeType = 'image/jpeg';
+        } catch (convErr) {
+            // Fallback to FileReader for standard formats
+            dataUrl = await new Promise((res, rej) => {
+                const r = new FileReader();
+                r.onload = () => res(r.result);
+                r.onerror = rej;
+                r.readAsDataURL(file);
+            });
+            base64 = dataUrl.split(',')[1];
+            mimeType = file.type || 'image/jpeg';
+        }
 
+        thumb.src = dataUrl;
+        preview.classList.remove('hidden');
+        resultDiv.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> AI is analyzing your photo...';
+
+        {
             try {
-                // Extract base64 data (strip the data:image/...;base64, prefix)
-                const base64 = dataUrl.split(',')[1];
-                const mimeType = file.type || 'image/jpeg';
 
                 const response = await fetch(`${AI_API_BASE}/api/analyze-image`, {
                     method: 'POST',
@@ -1429,8 +1455,7 @@
             } catch (err) {
                 resultDiv.innerHTML = `<i class="fas fa-exclamation-triangle text-amber-500 mr-1"></i> Could not auto-detect: ${escapeHtml(err.message)}. Enter details manually.`;
             }
-        };
-        reader.readAsDataURL(file);
+        }
     }
 
     // ===== QUICK-ADD TEMPLATES =====

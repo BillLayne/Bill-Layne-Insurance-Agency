@@ -17,7 +17,7 @@
 
   const MAX_FILES = 10;
   const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-  const VALID_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+  const VALID_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
 
   // ============================================================
   // STATE
@@ -91,7 +91,7 @@
     const validFiles = [];
     filesToAdd.forEach(function(file) {
       if (!VALID_TYPES.includes(file.type)) {
-        errorMsg = 'Some files were skipped. Please upload only JPG, PNG, or WebP images.';
+        errorMsg = 'Some files were skipped. Please upload JPG, PNG, WebP, or HEIC images.';
       } else if (file.size > MAX_FILE_SIZE) {
         errorMsg = 'Some files were too large. Max size is 10MB per image.';
       } else {
@@ -144,16 +144,37 @@
     updateUI();
 
     try {
-      // Convert all files to base64
+      // Convert all files to base64 (HEIC/HEIF converted to JPEG via canvas)
       const images = await Promise.all(files.map(function(file) {
-        return new Promise(function(resolve, reject) {
-          var reader = new FileReader();
-          reader.onload = function() {
-            var base64Data = reader.result.split(',')[1];
-            resolve({ data: base64Data, mimeType: file.type });
-          };
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
+        return new Promise(async function(resolve, reject) {
+          try {
+            // Use canvas to convert any format (including HEIC) to JPEG
+            var bitmap = await createImageBitmap(file);
+            var MAX = 4096;
+            var w = bitmap.width, h = bitmap.height;
+            if (w > MAX || h > MAX) {
+              var s = MAX / Math.max(w, h);
+              w = Math.round(w * s);
+              h = Math.round(h * s);
+            }
+            var canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(bitmap, 0, 0, w, h);
+            bitmap.close();
+            var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+            resolve({ data: dataUrl.split(',')[1], mimeType: 'image/jpeg' });
+          } catch (e) {
+            // Fallback to FileReader for formats canvas can handle natively
+            var reader = new FileReader();
+            reader.onload = function() {
+              var base64Data = reader.result.split(',')[1];
+              resolve({ data: base64Data, mimeType: file.type || 'image/jpeg' });
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          }
         });
       }));
 
