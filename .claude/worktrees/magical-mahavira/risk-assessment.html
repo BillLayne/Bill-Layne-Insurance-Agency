@@ -1,0 +1,210 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-N37THY37CR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-N37THY37CR');
+    </script>
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+      (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "vo5s3jhhub");
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Free personal risk assessment tool for NC residents. Evaluate your insurance coverage gaps across auto, home, life, and umbrella policies. Get personalized recommendations from Bill Layne Insurance.">
+    <link rel="canonical" href="https://www.billlayneinsurance.com/risk-assessment">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Bill Layne Insurance Agency">
+    <meta property="og:url" content="https://www.billlayneinsurance.com/risk-assessment">
+    <meta property="og:title" content="Personal Risk Assessment - Bill Layne Insurance">
+    <meta property="og:description" content="Risk Assessment - Bill Layne Insurance Agency, Elkin NC. Compare insurance rates from multiple carriers. Call (336) 835-1993.">
+    <meta property="og:image" content="https://i.imgur.com/Z5MxmKE.png">
+    <meta property="og:locale" content="en_US">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Personal Risk Assessment - Bill Layne Insurance">
+    <meta name="twitter:description" content="Risk Assessment - Bill Layne Insurance Agency, Elkin NC. Compare insurance rates from multiple carriers. Call (336) 835-1993.">
+    <meta name="twitter:image" content="https://i.imgur.com/Z5MxmKE.png">
+
+    <title>Personal Risk Assessment - Bill Layne Insurance</title>
+    <link rel="stylesheet" href="css/risk-assessment.css">
+    <link rel="stylesheet" href="css/mobile-dock.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[9999] focus:bg-blue-700 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:text-sm focus:font-semibold focus:shadow-lg">Skip to main content</a>
+    <div class="assessment-container">
+        <div id="start-screen" class="assessment-screen active">
+            <h1>Personal Risk Assessment</h1>
+            <p class="assessment-intro">Get a comprehensive analysis of your personal risk factors and receive customized recommendations for your insurance needs.</p>
+            <div class="assessment-features">
+                <div class="feature-item">
+                    <span class="feature-icon">🏃</span>
+                    <h3>Lifestyle Analysis</h3>
+                    <p>Evaluate your daily activities and hobbies</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🏠</span>
+                    <h3>Property Evaluation</h3>
+                    <p>Assess your home and valuable assets</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">💰</span>
+                    <h3>Financial Assessment</h3>
+                    <p>Review your financial situation and goals</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📊</span>
+                    <h3>Risk Profile</h3>
+                    <p>Get your personalized risk analysis</p>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="startAssessment()">Start Assessment</button>
+        </div>
+
+        <div id="assessment-screen" class="assessment-screen">
+            <div class="assessment-header">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div class="section-indicator">
+                    <span id="current-section">Lifestyle</span> Assessment
+                </div>
+            </div>
+
+            <div class="question-container">
+                <h2 id="question-text"></h2>
+                <div id="answer-container" class="answer-container"></div>
+            </div>
+
+            <div class="navigation-buttons">
+                <button class="btn btn-secondary" id="prev-btn" onclick="previousQuestion()" style="display: none;">Previous</button>
+                <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()" style="display: none;">Next</button>
+            </div>
+        </div>
+
+        <div id="results-screen" class="assessment-screen">
+            <h1>Your Personal Risk Profile</h1>
+            
+            <div class="risk-score-container">
+                <div class="risk-meter">
+                    <div class="risk-meter-fill" id="risk-meter-fill"></div>
+                    <div class="risk-meter-label" id="risk-level">Calculating...</div>
+                </div>
+            </div>
+
+            <div class="risk-breakdown">
+                <h2>Risk Factor Analysis</h2>
+                <div class="risk-categories">
+                    <div class="risk-category">
+                        <h3>🏃 Lifestyle Risk</h3>
+                        <div class="risk-bar">
+                            <div class="risk-bar-fill" id="lifestyle-risk-bar"></div>
+                        </div>
+                        <p id="lifestyle-risk-text"></p>
+                    </div>
+                    <div class="risk-category">
+                        <h3>🏠 Property Risk</h3>
+                        <div class="risk-bar">
+                            <div class="risk-bar-fill" id="property-risk-bar"></div>
+                        </div>
+                        <p id="property-risk-text"></p>
+                    </div>
+                    <div class="risk-category">
+                        <h3>💰 Financial Risk</h3>
+                        <div class="risk-bar">
+                            <div class="risk-bar-fill" id="financial-risk-bar"></div>
+                        </div>
+                        <p id="financial-risk-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recommendations-section">
+                <h2>Personalized Insurance Recommendations</h2>
+                <div id="recommendations-list" class="recommendations-list"></div>
+            </div>
+
+            <div class="coverage-gaps">
+                <h2>Potential Coverage Gaps</h2>
+                <ul id="coverage-gaps-list"></ul>
+            </div>
+
+            <div class="action-plan">
+                <h2>Your Action Plan</h2>
+                <ol id="action-plan-list"></ol>
+            </div>
+
+            <div class="cta-section">
+                <h3>Ready to protect what matters most?</h3>
+                <p>Let's discuss your personalized insurance solutions.</p>
+                <div class="cta-buttons">
+                    <a href="tel:3368351993" class="btn btn-primary">Call (336) 835-1993</a>
+                    <button class="btn btn-secondary" onclick="downloadReport()">Download Report</button>
+                    <button class="btn btn-secondary" onclick="retakeAssessment()">Retake Assessment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/risk-assessment.js"></script>
+
+    <!-- DOCK SPACER (prevents content from hiding behind dock) -->
+    <div class="dock-spacer md:hidden" style="height: 72px;"></div>
+
+    <!-- MOBILE DOCK -->
+    <div class="mobile-dock">
+        <a href="tel:3368351993" class="dock-btn dock-call">
+            <i class="fas fa-phone-alt"></i> Call
+        </a>
+        <a href="https://billlayneinsurance.com/get-quote" class="dock-btn dock-quote">
+            <i class="fas fa-bolt"></i> Compare Rates
+        </a>
+        <button class="dock-btn dock-menu" onclick="toggleMobileDockMenu()">
+            <i class="fas fa-bars"></i> Menu
+        </button>
+    </div>
+
+    <!-- MENU OVERLAY -->
+    <div class="menu-overlay" id="mobileDockOverlay" onclick="toggleMobileDockMenu()"></div>
+
+    <!-- SLIDE-UP MENU PANEL -->
+    <div class="menu-panel" id="mobileDockPanel">
+        <div class="menu-handle"></div>
+        <div class="menu-panel-header">
+            <span class="menu-panel-title">Bill Layne Insurance</span>
+            <button class="menu-close" onclick="toggleMobileDockMenu()"><i class="fas fa-times"></i></button>
+        </div>
+        <ul class="menu-links">
+            <li><a href="https://www.billlayneinsurance.com"><span class="menu-icon blue"><i class="fas fa-home"></i></span> Home <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/areas-we-serve.html"><span class="menu-icon purple"><i class="fas fa-map-marked-alt"></i></span> Areas We Serve <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/auto-center/"><span class="menu-icon blue"><i class="fas fa-car"></i></span> Auto Insurance <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/home-insurance/"><span class="menu-icon green"><i class="fas fa-house"></i></span> Home Insurance <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/claims-center/"><span class="menu-icon red"><i class="fas fa-file-medical-alt"></i></span> Claims Center <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/resources/"><span class="menu-icon amber"><i class="fas fa-book"></i></span> Resources <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/blog/"><span class="menu-icon purple"><i class="fas fa-blog"></i></span> Blog <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/videos/"><span class="menu-icon red"><i class="fas fa-video"></i></span> Videos <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/community/"><span class="menu-icon amber"><i class="fas fa-mountain-sun"></i></span> Community <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/service-center.html"><span class="menu-icon green"><i class="fas fa-concierge-bell"></i></span> Service Center <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/contact-us.html"><span class="menu-icon blue"><i class="fas fa-envelope"></i></span> Contact Us <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+        </ul>
+    </div>
+
+    <script src="js/mobile-dock.js"></script>
+    </main>
+</body>
+</html>

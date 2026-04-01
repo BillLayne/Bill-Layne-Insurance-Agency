@@ -1,0 +1,526 @@
+
+<!-- GEM v4.1 YT EDITION DEPENDENCIES -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Bricolage+Grotesque:opsz,wght@12..96,400;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+
+<style>
+/* GEM v4.1 CORE STYLES - SCOPED */
+.gem-post {
+    font-family: 'Outfit', sans-serif;
+    line-height: 1.7;
+    color: #334155;
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    overflow-x: hidden;
+}
+.gem-post h1, .gem-post h2, .gem-post h3 { font-family: 'Bricolage Grotesque', sans-serif; color: #0f172a; }
+.gem-post h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 1rem; letter-spacing: -0.02em; }
+.gem-post h2 { font-size: 1.8rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; border-left: 5px solid #FF0033; padding-left: 1rem; }
+.gem-post h3 { font-size: 1.4rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+.gem-post p { margin-bottom: 1.25rem; font-size: 1.1rem; }
+.gem-post ul, .gem-post ol { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+.gem-post li { margin-bottom: 0.5rem; }
+.gem-post a { color: #2563eb; text-decoration: underline; font-weight: 600; }
+
+/* FONT AWESOME ICON SIZING */
+.gem-post i.fa-solid, .gem-post i.fa-regular, .gem-post i.fa-brands { margin-right: 0.3rem; }
+
+/* SCROLL PROGRESS BAR */
+.gem-progress-bar { position: fixed; top: 0; left: 0; width: 0%; height: 4px; background: linear-gradient(90deg, #FF0033, #FF6B35, #FFD23F); z-index: 1100; transition: width 0.1s linear; }
+
+/* HERO IMAGE */
+.hero-img { width: 100%; height: auto; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+/* SNIPPET BAIT BOX */
+.gem-snippet-bait { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 0 8px 8px 0; margin-bottom: 2rem; font-size: 1.15rem; font-weight: 500; }
+
+/* SHARE BAR */
+.gem-share-bar { display: flex; gap: 0.5rem; margin: 1.5rem 0; padding: 1rem; background: #f8fafc; border-radius: 16px; border: 2px solid #e2e8f0; align-items: center; flex-wrap: wrap; }
+.gem-share-label { font-weight: 800; font-size: 0.85rem; color: #0F0F0F; margin-right: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+.gem-share-btn { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none !important; color: white !important; font-size: 1rem; transition: transform 0.15s; cursor: pointer; border: none; }
+.gem-share-btn:active { transform: scale(0.9); }
+.gem-share-fb { background: #1877F2; }
+.gem-share-x { background: #0F0F0F; }
+.gem-share-email { background: #EA4335; }
+.gem-share-copy { background: #64748b; }
+.gem-share-copy.copied { background: #22c55e; }
+
+/* CHAPTER PROGRESS PILLS */
+.gem-chapter-track { display: flex; gap: 4px; margin: 1rem 0; flex-wrap: wrap; position: sticky; top: 10px; z-index: 50; }
+.gem-chapter-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; background: #e2e8f0; color: #64748b; text-decoration: none !important; transition: all 0.2s; opacity: 0.9; }
+.gem-chapter-pill.active { background: #FF0033; color: white !important; opacity: 1; box-shadow: 0 4px 6px -1px rgba(255, 0, 51, 0.3); }
+.gem-chapter-pill.read { background: #0F0F0F; color: white !important; }
+
+/* PULL QUOTE */
+.gem-pull-quote { margin: 2rem 0; padding: 2rem 1.5rem; background: linear-gradient(135deg, #0F0F0F 0%, #1a1a2e 100%); border-radius: 16px; text-align: center; position: relative; overflow: hidden; }
+.gem-pull-quote::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #FF0033, #FF6B35, #FFD23F, #A8E10C, #00D4FF); }
+.gem-pull-quote-text { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.4rem; font-weight: 800; color: white; line-height: 1.3; letter-spacing: -0.02em; }
+.gem-pull-quote-text .gem-pq-highlight { color: #FFD23F; }
+.gem-pull-quote-source { margin-top: 0.75rem; font-size: 0.8rem; color: #9ca3af; font-weight: 600; }
+
+/* VS COMPARISON CARD */
+.gem-vs-card { margin: 1.5rem 0; border-radius: 16px; overflow: hidden; border: 2px solid #e2e8f0; }
+.gem-vs-header { background: #0F0F0F; color: white; text-align: center; padding: 0.75rem; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.gem-vs-body { display: flex; }
+.gem-vs-side { flex: 1; padding: 1.25rem; text-align: center; }
+.gem-vs-left { background: linear-gradient(180deg, #FEF2F2 0%, #fff 100%); }
+.gem-vs-right { background: linear-gradient(180deg, #F0FDF4 0%, #fff 100%); }
+.gem-vs-divider { width: 3px; background: linear-gradient(180deg, #FF0033, #FFD23F, #22c55e); flex-shrink: 0; }
+.gem-vs-label { font-weight: 800; font-size: 0.95rem; margin-bottom: 0.75rem; display: block; }
+.gem-vs-left .gem-vs-label { color: #DC2626; }
+.gem-vs-right .gem-vs-label { color: #16a34a; }
+.gem-vs-item { font-size: 0.85rem; color: #475569; margin-bottom: 0.4rem; line-height: 1.4; }
+.gem-vs-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+
+/* REVEAL CARD */
+.gem-reveal { margin: 1.5rem 0; border: 2px dashed #7C3AED; border-radius: 16px; overflow: hidden; background: #F5F3FF; }
+.gem-reveal-trigger { padding: 1rem 1.25rem; font-weight: 800; color: #7C3AED; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; min-height: 44px; }
+.gem-reveal-content { display: none; padding: 0 1.25rem 1.25rem; color: #374151; line-height: 1.6; font-size: 0.95rem; border-top: 1px solid #DDD6FE; }
+.gem-reveal-content.visible { display: block; }
+
+/* REACTIONS BAR */
+.gem-reactions { margin: 1.5rem 0; padding: 1.25rem; background: #f8fafc; border-radius: 16px; text-align: center; border: 2px solid #e2e8f0; }
+.gem-reactions-title { font-weight: 700; font-size: 0.9rem; color: #475569; margin-bottom: 0.75rem; }
+.gem-reactions-row { display: flex; justify-content: center; gap: 0.75rem; }
+.gem-react-btn { width: 48px; height: 48px; border-radius: 50%; border: 2px solid #e2e8f0; background: white; font-size: 1.3rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+.gem-react-btn:hover, .gem-react-btn:active { transform: scale(1.15); border-color: #FF0033; }
+.gem-react-btn.selected { background: #FF0033; border-color: #FF0033; color: white !important; transform: scale(1.15); }
+
+/* FAQ SECTION */
+.gem-faq-section { margin: 3rem 0; }
+.gem-faq-header { font-size: 1.8rem; font-weight: 700; margin-bottom: 1.5rem; font-family: 'Bricolage Grotesque', sans-serif; color: #0f172a; }
+.gem-faq-item { border: 2px solid #e2e8f0; border-radius: 12px; margin-bottom: 1rem; background: white; overflow: hidden; transition: border-color 0.2s; }
+.gem-faq-item:hover { border-color: #cbd5e1; }
+.gem-faq-item.active { border-color: #3b82f6; }
+.gem-faq-question { width: 100%; padding: 1.25rem; background: #f8fafc; text-align: left; font-weight: 700; color: #0f172a; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: none; outline: none; font-size: 1.05rem; }
+.gem-faq-question:hover { background: #f1f5f9; }
+.gem-faq-answer { display: none; padding: 1.5rem; color: #475569; line-height: 1.6; background: white; border-top: 1px solid #e2e8f0; font-size: 1rem; }
+.gem-faq-item.active .gem-faq-answer { display: block; }
+.gem-faq-icon { transition: transform 0.3s ease; color: #3b82f6; }
+.gem-faq-item.active .gem-faq-icon { transform: rotate(180deg); }
+
+/* STEP TIMELINE */
+.gem-steps { margin: 1.5rem 0; padding: 0; }
+.gem-step { display: flex; gap: 1rem; padding-bottom: 1.5rem; position: relative; }
+.gem-step:last-child { padding-bottom: 0; }
+.gem-step-line { width: 40px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.gem-step-dot { width: 36px; height: 36px; border-radius: 50%; background: #0F0F0F; color: white; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; z-index: 1; }
+.gem-step-connector { width: 3px; flex: 1; background: linear-gradient(180deg, #0F0F0F, #e2e8f0); margin-top: 4px; }
+.gem-step:last-child .gem-step-connector { display: none; }
+.gem-step-content { flex: 1; padding-top: 0.35rem; }
+.gem-step-title { font-weight: 800; font-size: 1rem; color: #0F0F0F; margin-bottom: 0.25rem; }
+.gem-step-text { font-size: 0.95rem; color: #475569; line-height: 1.5; }
+
+/* RELATED GRID */
+.gem-related { padding: 2rem 1.25rem; background: #0F0F0F; border-radius: 12px; margin-top: 3rem; }
+.gem-related-title { font-family: 'Bricolage Grotesque', sans-serif; color: white; font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; }
+.gem-related-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.gem-related-card { display: flex; gap: 0.75rem; text-decoration: none !important; background: #272727; border-radius: 12px; overflow: hidden; transition: background 0.2s; }
+.gem-related-card:active { background: #333; }
+.gem-related-thumb { width: 120px; height: 68px; object-fit: cover; flex-shrink: 0; border-radius: 8px; margin: 0.5rem 0 0.5rem 0.5rem; }
+.gem-related-info { padding: 0.5rem 0.5rem 0.5rem 0; display: flex; flex-direction: column; justify-content: center; }
+.gem-related-info-title { color: white; font-weight: 700; font-size: 0.85rem; line-height: 1.3; margin-bottom: 0.25rem; }
+.gem-related-info-meta { color: #9ca3af; font-size: 0.7rem; }
+@media (min-width: 768px) {
+    .gem-related-grid { grid-template-columns: 1fr 1fr 1fr; }
+    .gem-related-card { flex-direction: column; }
+    .gem-related-thumb { width: 100%; height: 120px; margin: 0; border-radius: 12px 12px 0 0; }
+    .gem-related-info { padding: 0.75rem; }
+}
+
+/* DATA TABLE */
+.gem-table-wrapper { overflow-x: auto; margin: 1.5rem 0; border-radius: 8px; border: 1px solid #e2e8f0; }
+.gem-table { width: 100%; border-collapse: collapse; min-width: 500px; }
+.gem-table th { background: #f1f5f9; text-align: left; padding: 1rem; font-weight: 700; border-bottom: 2px solid #e2e8f0; }
+.gem-table td { padding: 1rem; border-bottom: 1px solid #e2e8f0; }
+.gem-table tr:last-child td { border-bottom: none; }
+
+/* CTA BOX */
+.gem-cta-box { background: #eff6ff; border: 2px solid #3b82f6; border-radius: 16px; padding: 2rem; text-align: center; margin-top: 3rem; color: #000000 !important; }
+.gem-cta-title { font-size: 1.5rem; font-weight: 800; color: #000000 !important; margin-bottom: 0.5rem; }
+.gem-cta-text { margin-bottom: 1.5rem; color: #000000 !important; font-weight: 600; }
+.gem-cta-btn { display: inline-block; background: #2563eb; color: white !important; padding: 1rem 2rem; border-radius: 50px; font-weight: 700; text-decoration: none !important; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.5); transition: transform 0.2s; }
+.gem-cta-btn:hover { transform: translateY(-2px); }
+
+/* CORNER RIBBON */
+.gem-ribbon-wrap { position: relative; }
+.gem-ribbon { position: absolute; top: 12px; right: -8px; background: #FF0033; color: white; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 14px 4px 10px; border-radius: 4px 0 0 4px; z-index: 2; box-shadow: 0 2px 6px rgba(255,0,51,0.3); }
+.gem-ribbon::after { content: ''; position: absolute; top: 100%; right: 0; border: 4px solid transparent; border-top-color: #990020; border-right-color: #990020; }
+.gem-ribbon-new { background: #FF0033; }
+</style>
+
+<div class="gem-post"><div class="gem-post">
+    <!-- 1. Scroll Progress Bar -->
+    <div class="gem-progress-bar" id="gemProgress" style="position: fixed; top: 0; left: 0; width: 0%; height: 5px; background: #FF0033; z-index: 1000; transition: width 0.1s ease;"></div>
+
+    <!-- 2. H1 Title -->
+    <h1 class="text-4xl md:text-6xl font-black mb-6 leading-tight">
+        Does My NC Car Insurance Policy Cover Theft? Everything You Need to Know
+    </h1>
+
+    <!-- 3. Snippet Bait / TLDR Box -->
+    <div class="gem-snippet-bait bg-slate-50 border-2 border-dashed border-red-500 p-6 rounded-2xl mb-8 relative">
+        <div class="absolute -top-4 left-6 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold">
+            <i class="fa-solid fa-bolt"></i> TL;DR: THE ANSWER
+        </div>
+        <p class="text-lg font-medium text-slate-900 mb-0">
+            Yes, your NC car insurance covers theft <strong>ONLY if you have Comprehensive Coverage</strong>. Standard NC Liability insurance (the 50/100/50 minimum) does <strong>not</strong> pay for a stolen vehicle. If you have Comprehensive, your insurer pays the "Actual Cash Value" (ACV) of the car minus your deductible. This includes total theft and stolen parts like catalytic converters.
+        </p>
+    </div>
+
+    <!-- 4. Hero Image -->
+    <img height="768" width="1344" src="https://i.imgur.com/vQVfB0T.jpeg" class="hero-img w-full rounded-3xl mb-8 shadow-2xl object-cover h-[400px]" alt="Stolen car awareness in North Carolina" />
+
+    <!-- 4b. YouTube Video Embed -->
+    <div class="my-8">
+        <p class="text-sm font-bold text-slate-800 mb-2 font-sans uppercase tracking-widest">
+            <i class="fa-solid fa-play-circle text-red-600"></i> Watch the Video Version
+        </p>
+        <div class="relative w-full aspect-video rounded-xl overflow-hidden shadow-md bg-slate-100 border-4 border-slate-900">
+            <iframe src="https://www.youtube.com/embed/sHTy3H1qGR4" title="Video version" class="absolute top-0 left-0 w-full h-full" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <!-- 5. Share Bar -->
+    <div class="gem-share-bar flex gap-4 mb-10 py-4 border-y border-slate-100 justify-center md:justify-start">
+        <a href="#" class="bg-blue-600 text-white p-3 rounded-full hover:scale-110 transition flex items-center gap-2 px-6"><i class="fa-brands fa-facebook"></i> Share</a>
+        <a href="#" class="bg-black text-white p-3 rounded-full hover:scale-110 transition flex items-center gap-2 px-6"><i class="fa-brands fa-x-twitter"></i> Post</a>
+        <a href="mailto:?subject=NC Car Theft Coverage Guide" class="bg-slate-700 text-white p-3 rounded-full hover:scale-110 transition flex items-center gap-2 px-6"><i class="fa-solid fa-envelope"></i> Email</a>
+        <button class="bg-slate-200 text-slate-800 p-3 rounded-full hover:scale-110 transition flex items-center gap-2 px-6"><i class="fa-solid fa-link"></i> Copy</button>
+    </div>
+
+    <!-- 6. Chapter Tracker -->
+    <div class="gem-chapter-track bg-slate-900 text-white p-8 rounded-3xl mb-12">
+        <h3 class="text-white mt-0 mb-4 text-xl"><i class="fa-solid fa-list-ul text-red-500"></i> In This Guide</h3>
+        <ul class="grid md:grid-cols-2 gap-3 list-none p-0 m-0">
+            <li><a href="#section1" class="text-slate-300 hover:text-white no-underline flex items-center gap-2"><i class="fa-solid fa-chevron-right text-xs"></i> NC's 2026 Theft Crisis</a></li>
+            <li><a href="#section2" class="text-slate-300 hover:text-white no-underline flex items-center gap-2"><i class="fa-solid fa-chevron-right text-xs"></i> Coverage: The Fine Print</a></li>
+            <li><a href="#section3" class="text-slate-300 hover:text-white no-underline flex items-center gap-2"><i class="fa-solid fa-chevron-right text-xs"></i> Targets: Kias, Hyundais & EVs</a></li>
+            <li><a href="#section4" class="text-slate-300 hover:text-white no-underline flex items-center gap-2"><i class="fa-solid fa-chevron-right text-xs"></i> The 4-Step Claim Timeline</a></li>
+        </ul>
+    </div>
+
+    <!-- 7. Key Takeaways -->
+    <div class="bg-green-50 p-8 rounded-3xl mb-12 border-l-8 border-green-500">
+        <h3 class="mt-0 text-green-900"><i class="fa-solid fa-check-double"></i> Fast Facts</h3>
+        <ul class="list-none p-0 space-y-3">
+            <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green-600 mt-1"></i> <strong>Liability Is Not Enough:</strong> NC's 50/100/50 law only covers the *other* person.</li>
+            <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green-600 mt-1"></i> <strong>Replacement Cost vs ACV:</strong> Most policies pay market value, not what you paid for the car.</li>
+            <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green-600 mt-1"></i> <strong>Personal Items:</strong> Stolen laptops or tools are usually covered by Home/Renters, not Auto.</li>
+        </ul>
+    </div>
+
+    <!-- 8. Section 1 -->
+    <h2 id="section1">🚨 NC RANKS #7: The Car Theft Crisis Hitting North Carolina</h2>
+    <p>
+        It’s 2:00 AM in Elkin, NC. You’re sound asleep, but in your driveway, a sophisticated thief is using a signal repeater to mimic your key fob. In less than 45 seconds, your SUV is being driven toward I-77. 
+    </p>
+    <p>
+        In 2026, car theft in North Carolina has reached a boiling point. We are now the 7th most targeted state in the country for auto theft. From the foothills of Surry County to the busy streets of Charlotte, professional theft rings and viral social media "challenges" have turned our driveways into hunting grounds.
+    </p>
+
+    <!-- 9. Pull Quote Card -->
+    <div class="gem-pull-quote bg-gradient-to-r from-red-600 to-red-800 p-10 rounded-3xl my-12 text-center text-white shadow-xl">
+        <i class="fa-solid fa-quote-left text-4xl mb-4 opacity-50"></i>
+        <p class="text-2xl font-bold italic leading-snug">
+            "Insurance isn't just a monthly bill; it's the only thing standing between you and a $30,000 loss when your driveway suddenly becomes empty."
+        </p>
+        <div class="mt-4 font-bold uppercase tracking-widest text-sm">— Bill Layne, Elkin's Coverage Expert</div>
+    </div>
+
+    <p>
+        The landscape of North Carolina insurance shifted significantly in 2025. With the implementation of the new 50/100/50 minimum liability limits, many drivers saw their premiums rise and assumed they were "fully covered." However, liability—even at higher limits—does absolutely nothing for your own vehicle if it's stolen or vandalized.
+    </p>
+
+    <!-- 10. Section 2 -->
+    <h2 id="section2">Coverage Breakdown: What Actually Protects You?</h2>
+    <p>
+        Understanding the difference between what the law *requires* and what you *need* is where most NC drivers get tripped up. In Elkin, we see it all the time: a client thinks they have "full coverage," but they're missing the one specific line item that covers theft.
+    </p>
+
+    <!-- 11. VS Comparison Card -->
+    <div class="gem-vs-card grid md:grid-cols-2 gap-6 my-12">
+        <div class="bg-slate-100 p-8 rounded-3xl border-2 border-slate-200">
+            <h4 class="text-red-600 font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-xmark"></i> Liability Only</h4>
+            <ul class="list-none p-0 text-sm">
+                <li class="mb-2"><i class="fa-solid fa-ban text-red-500 mr-2"></i> No coverage for stolen cars</li>
+                <li class="mb-2"><i class="fa-solid fa-ban text-red-500 mr-2"></i> No coverage for smashed windows</li>
+                <li class="mb-2"><i class="fa-solid fa-ban text-red-500 mr-2"></i> No coverage for catalytic converters</li>
+            </ul>
+        </div>
+        <div class="bg-blue-50 p-8 rounded-3xl border-2 border-blue-500">
+            <h4 class="text-blue-700 font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-shield-halved"></i> Comprehensive</h4>
+            <ul class="list-none p-0 text-sm">
+                <li class="mb-2"><i class="fa-solid fa-check text-blue-500 mr-2"></i> Total replacement (ACV)</li>
+                <li class="mb-2"><i class="fa-solid fa-check text-blue-500 mr-2"></i> Vandalism & Glass Repair</li>
+                <li class="mb-2"><i class="fa-solid fa-check text-blue-500 mr-2"></i> Theft of parts (Rims/Converters)</li>
+            </ul>
+        </div>
+    </div>
+
+    <p>
+        <strong>Comprehensive Coverage</strong> is the hero here. It covers "acts of God" and "acts of criminals." This includes theft, fire, hail (very common here in the Yadkin Valley), and animal collisions (looking at you, NC deer population). If you are financing or leasing your car, your bank almost certainly requires this. If your car is paid off, the decision is yours—but at Bill Layne Insurance, we recommend it for any vehicle worth more than $3,000.
+    </p>
+
+    <!-- 12. Section 3 -->
+    <h2 id="section3">Targeted Tech: Why Some Cars Disappear Faster</h2>
+    <p>
+        The "Kia Boyz" trend might have started on social media years ago, but in 2026, the methods have evolved. Professional thieves are now using OBD-II port bypasses and relay attacks. If you drive a modern push-to-start vehicle, you are at risk.
+    </p>
+
+    <!-- 13. Reveal/Spoiler Card -->
+    <div class="gem-reveal bg-slate-900 text-white p-8 rounded-3xl my-10 text-center cursor-pointer hover:bg-slate-800 transition shadow-xl" onclick="this.querySelector('.reveal-content').classList.toggle('hidden'); this.querySelector('.reveal-placeholder').classList.toggle('hidden');">
+        <div class="reveal-placeholder">
+            <p class="text-xl font-bold mb-2">SHOCKING NC STATISTIC</p>
+            <p class="text-red-500 font-bold uppercase tracking-widest animate-pulse">Tap to Reveal the #1 Targeted Car in NC</p>
+        </div>
+        <div class="reveal-content hidden">
+            <p class="text-3xl font-black text-red-500 mb-2">The Ford F-Series</p>
+            <p class="text-lg">In North Carolina, full-sized pickups are stolen more than any other vehicle type, followed closely by Hyundai Elantras.</p>
+        </div>
+    </div>
+
+    <!-- 14. Data Table -->
+    <div class="gem-table-wrapper overflow-x-auto my-12 border rounded-2xl shadow-sm">
+        <table class="gem-table w-full text-left border-collapse">
+            <thead class="bg-slate-50 border-b">
+                <tr>
+                    <th class="p-4 font-bold text-slate-900">Vehicle Type</th>
+                    <th class="p-4 font-bold text-slate-900">Theft Risk Level</th>
+                    <th class="p-4 font-bold text-slate-900">Avg. Claim Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border-b">
+                    <td class="p-4">Full-Size Pickups (Ford/Chevy)</td>
+                    <td class="p-4 font-bold text-red-600">CRITICAL</td>
+                    <td class="p-4">$42,000+</td>
+                </tr>
+                <tr class="border-b">
+                    <td class="p-4">Hyundai/Kia (Older Models)</td>
+                    <td class="p-4 font-bold text-orange-600">HIGH</td>
+                    <td class="p-4">$8,500 (Recovery/Repair)</td>
+                </tr>
+                <tr class="border-b">
+                    <td class="p-4">Luxury SUVs (BMW/Lexus)</td>
+                    <td class="p-4 font-bold text-yellow-600">MODERATE</td>
+                    <td class="p-4">$65,000+</td>
+                </tr>
+                <tr>
+                    <td class="p-4">EVs (Tesla/Rivian)</td>
+                    <td class="p-4 font-bold text-green-600">LOW</td>
+                    <td class="p-4">$50,000+</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 15. Section 4 -->
+    <h2 id="section4">The 4-Step Claim Timeline: What to Do Next</h2>
+    <img src="__IMAGE_PLACE_PLACEHOLDER_2__" class="w-full rounded-3xl mb-8 shadow-lg" alt="Police report and insurance claim paperwork" />
+    <p>
+        Discovering your car is gone is a traumatic experience. In the heat of the moment, it's easy to forget the necessary steps to ensure your insurance claim is approved. Here is the exact protocol we recommend to our Elkin neighbors.
+    </p>
+
+    <!-- 16. Step-by-Step Timeline -->
+    <div class="gem-steps relative space-y-8 my-16 before:content-[''] before:absolute before:left-[19px] before:top-0 before:h-full before:w-[2px] before:bg-slate-200">
+        <div class="relative pl-12">
+            <div class="absolute left-0 top-0 w-10 h-10 bg-red-600 text-white rounded-full flex items-center justify-center font-bold z-10 shadow-lg shadow-red-200">1</div>
+            <h4 class="font-bold text-xl mb-1">Verify & Call 911</h4>
+            <p class="text-slate-600">Ensure it wasn't towed or repossessed. File a formal police report immediately. In Elkin, you'll need this report number before your insurance company will even open the file.</p>
+        </div>
+        <div class="relative pl-12">
+            <div class="absolute left-0 top-0 w-10 h-10 bg-slate-900 text-white rounded-full flex items-center justify-center font-bold z-10 shadow-lg shadow-slate-200">2</div>
+            <h4 class="font-bold text-xl mb-1">Alert Bill Layne Insurance</h4>
+            <p class="text-slate-600">Call us at 336-835-1993. We’ll help you navigate the NC specific forms and start the "30-day wait period" (most companies wait to see if the car is recovered).</p>
+        </div>
+        <div class="relative pl-12">
+            <div class="absolute left-0 top-0 w-10 h-10 bg-slate-900 text-white rounded-full flex items-center justify-center font-bold z-10 shadow-lg shadow-slate-200">3</div>
+            <h4 class="font-bold text-xl mb-1">Inventory Personal Items</h4>
+            <p class="text-slate-600">List everything inside the car. Note: Your NC Auto policy usually doesn't cover the $1,200 MacBook in the backseat—we'll help you see if your Homeowners policy can cover that.</p>
+        </div>
+        <div class="relative pl-12">
+            <div class="absolute left-0 top-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold z-10 shadow-lg shadow-green-200">4</div>
+            <h4 class="font-bold text-xl mb-1">Valuation & Settlement</h4>
+            <p class="text-slate-600">If the car isn't found, the insurer will offer a settlement based on current market value. We’ll review that offer with you to ensure it’s fair based on the local Elkin/Surry County market.</p>
+        </div>
+    </div>
+
+    <!-- 17. Reactions Bar -->
+    <div class="gem-reactions bg-slate-50 p-6 rounded-2xl flex flex-col items-center gap-4 my-12 border border-slate-200">
+        <p class="font-bold text-slate-800 m-0">Was this guide helpful?</p>
+        <div class="flex gap-4">
+            <button class="bg-white border p-3 px-6 rounded-xl hover:bg-red-50 hover:border-red-500 transition"><i class="fa-solid fa-thumbs-up text-blue-600"></i> Yes</button>
+            <button class="bg-white border p-3 px-6 rounded-xl hover:bg-slate-100 transition"><i class="fa-solid fa-thumbs-down"></i> No</button>
+        </div>
+    </div>
+
+    <!-- 18. FAQ Section -->
+    <div class="gem-faq-section mb-16">
+        <h2 class="mb-8 text-3xl">Frequently Asked Questions</h2>
+        
+        <div class="gem-faq-item mb-4 border rounded-2xl overflow-hidden">
+            <button class="gem-faq-question w-full p-6 text-left font-bold flex justify-between items-center bg-white hover:bg-slate-50 transition" onclick="const ans = this.nextElementSibling; ans.style.display = ans.style.display === 'block' ? 'none' : 'block'; this.querySelector('i').classList.toggle('rotate-180');">
+                What if my car is found but it's trashed inside? <i class="fa-solid fa-chevron-down text-slate-400 transition-transform"></i>
+            </button>
+            <div class="gem-faq-answer hidden p-6 pt-0 bg-white text-slate-600">
+                If the car is recovered, your Comprehensive coverage will pay for the repairs (minus your deductible) or declare it a "Total Loss" if the repair costs exceed a certain percentage of the car's value.
+            </div>
+        </div>
+
+        <div class="gem-faq-item mb-4 border rounded-2xl overflow-hidden">
+            <button class="gem-faq-question w-full p-6 text-left font-bold flex justify-between items-center bg-white hover:bg-slate-50 transition" onclick="const ans = this.nextElementSibling; ans.style.display = ans.style.display === 'block' ? 'none' : 'block'; this.querySelector('i').classList.toggle('rotate-180');">
+                Does insurance pay for a rental while my car is missing? <i class="fa-solid fa-chevron-down text-slate-400 transition-transform"></i>
+            </button>
+            <div class="gem-faq-answer hidden p-6 pt-0 bg-white text-slate-600">
+                Only if you have "Rental Reimbursement" coverage on your policy. Comprehensive covers the theft, but the rental is a separate add-on. At Bill Layne Insurance, we highly recommend this given the current 30-day claim wait times.
+            </div>
+        </div>
+
+        <div class="gem-faq-item mb-4 border rounded-2xl overflow-hidden">
+            <button class="gem-faq-question w-full p-6 text-left font-bold flex justify-between items-center bg-white hover:bg-slate-50 transition" onclick="const ans = this.nextElementSibling; ans.style.display = ans.style.display === 'block' ? 'none' : 'block'; this.querySelector('i').classList.toggle('rotate-180');">
+                Will my rates go up if I file a theft claim? <i class="fa-solid fa-chevron-down text-slate-400 transition-transform"></i>
+            </button>
+            <div class="gem-faq-answer hidden p-6 pt-0 bg-white text-slate-600">
+                In North Carolina, a Comprehensive claim is usually considered "Not-At-Fault." While a single claim shouldn't cause a massive spike, multiple claims in a short window can affect your overall risk profile and future premiums.
+            </div>
+        </div>
+    </div>
+
+    <!-- 19. CTA Box -->
+    <div class="gem-cta-box bg-slate-900 rounded-[2rem] p-10 text-white text-center relative overflow-hidden">
+        <div class="relative z-10">
+            <h2 class="text-white border-0 p-0 text-3xl mb-4">Don't Leave Your Driveway Unprotected</h2>
+            <p class="text-slate-300 text-lg mb-8 max-w-2xl mx-auto">
+                Is your policy updated for 2026? Let Bill Layne Insurance review your coverage to ensure you’re protected from NC’s car theft crisis. 
+            </p>
+            <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
+                <a href="tel:3368351993" class="bg-red-600 hover:bg-red-700 text-white font-black py-4 px-10 rounded-full text-xl no-underline transition transform hover:scale-105">
+                    <i class="fa-solid fa-phone"></i> Call 336-835-1993
+                </a>
+                <a href="mailto:Save@BillLayneInsurance.com" class="bg-white text-slate-900 font-bold py-4 px-10 rounded-full text-xl no-underline hover:bg-slate-100 transition transform hover:scale-105">
+                    Get a Quote
+                </a>
+            </div>
+            <div class="mt-8 text-sm text-slate-400 font-medium">
+                <p>Bill Layne Insurance | 1283 N Bridge St, Elkin NC 28621</p>
+                <p class="underline">www.NCAutoandHome.com</p>
+            </div>
+        </div>
+        <!-- Decorative Background Element -->
+        <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-red-600 rounded-full opacity-10 blur-3xl"></div>
+    </div>
+
+    <!-- 20. Related Articles Grid -->
+    <div class="gem-related mt-20">
+        <h3 class="text-2xl font-bold mb-8">Related for You</h3>
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="group cursor-pointer">
+                <div class="rounded-2xl overflow-hidden mb-3 shadow-md border-2 border-transparent group-hover:border-red-500 transition">
+                    <img loading="lazy" height="768" width="1344" src="https://i.imgur.com/h0Tueag.jpeg" class="w-full aspect-video object-cover" alt="Car Insurance Secrets" />
+                </div>
+                <h4 class="text-sm font-bold leading-tight group-hover:text-red-600 transition">5 Hidden Discounts for Elkin Drivers in 2026</h4>
+                <p class="text-xs text-slate-500 mt-1">12K views • 2 days ago</p>
+            </div>
+            <div class="group cursor-pointer">
+                <div class="rounded-2xl overflow-hidden mb-3 shadow-md border-2 border-transparent group-hover:border-red-500 transition">
+                    <img src="https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&q=80&w=400" class="w-full aspect-video object-cover" alt="Home Insurance" />
+                </div>
+                <h4 class="text-sm font-bold leading-tight group-hover:text-red-600 transition">Does Homeowners Cover My Stolen Catalytic Converter?</h4>
+                <p class="text-xs text-slate-500 mt-1">8.4K views • 1 week ago</p>
+            </div>
+            <div class="group cursor-pointer">
+                <div class="rounded-2xl overflow-hidden mb-3 shadow-md border-2 border-transparent group-hover:border-red-500 transition">
+                    <img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&q=80&w=400" class="w-full aspect-video object-cover" alt="Driving Laws" />
+                </div>
+                <h4 class="text-sm font-bold leading-tight group-hover:text-red-600 transition">New NC 2025 Liability Laws: Are You Illegal?</h4>
+                <p class="text-xs text-slate-500 mt-1">21K views • 1 month ago</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Scroll Progress Logic
+    window.onscroll = function() {
+        var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var scrolled = (winScroll / height) * 100;
+        document.getElementById("gemProgress").style.width = scrolled + "%";
+    };
+</script></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Scroll Progress Bar
+    window.addEventListener('scroll', function() {
+        var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var scrolled = (winScroll / height) * 100;
+        var bar = document.getElementById('gemProgress');
+        if (bar) bar.style.width = scrolled + '%';
+        
+        // Chapter Tracker
+        var sections = document.querySelectorAll('.gem-post h2');
+        var pills = document.querySelectorAll('.gem-chapter-pill');
+        var currentId = '';
+        sections.forEach(function(sec) {
+            var top = sec.getBoundingClientRect().top;
+            if (top < window.innerHeight * 0.5) {
+                currentId = sec.id;
+            }
+        });
+        pills.forEach(function(pill) {
+            var pillSection = pill.getAttribute('href').substring(1);
+            pill.classList.remove('active');
+            if (pillSection === currentId) {
+                pill.classList.add('active');
+            }
+        });
+    });
+
+    // Copy Link Button
+    window.copyLink = function(btn) {
+        navigator.clipboard.writeText(window.location.href).then(function() {
+            btn.classList.add('copied');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+            setTimeout(function() {
+                btn.classList.remove('copied');
+                btn.innerHTML = '<i class="fa-solid fa-link"></i>';
+            }, 2000);
+        });
+    };
+
+    // Reveal Card
+    window.toggleReveal = function(el) {
+        var content = el.nextElementSibling;
+        content.classList.toggle('visible');
+        var span = el.querySelector('span:last-child');
+        if (content.classList.contains('visible')) {
+            span.textContent = 'Tap to hide';
+        } else {
+            span.textContent = 'Tap to reveal';
+        }
+    };
+
+    // FAQ Toggle
+    window.toggleFaq = function(btn) {
+        var item = btn.parentElement;
+        item.classList.toggle('active');
+    };
+
+    // Reaction Bar
+    window.react = function(btn) {
+        var all = btn.parentElement.querySelectorAll('.gem-react-btn');
+        all.forEach(function(b) { b.classList.remove('selected'); });
+        btn.classList.add('selected');
+        var title = btn.parentElement.previousElementSibling;
+        if(title) title.textContent = 'Thanks for the feedback!';
+    };
+});
+</script>

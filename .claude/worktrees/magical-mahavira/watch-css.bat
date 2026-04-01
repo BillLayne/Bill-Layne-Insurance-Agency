@@ -1,0 +1,3 @@
+@echo off
+echo Watching Tailwind CSS for changes (Ctrl+C to stop)...
+tools\tailwindcss.exe -i css\tailwind-input.css -o css\tailwind-output.css --minify -c js\tailwind.config.js --watch

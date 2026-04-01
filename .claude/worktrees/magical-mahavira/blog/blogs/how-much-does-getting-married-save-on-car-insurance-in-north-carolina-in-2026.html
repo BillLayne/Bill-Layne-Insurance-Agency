@@ -1,0 +1,517 @@
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
+
+    /* GEM v3.2 CSS ARCHITECTURE - SCOPED */
+    .gem-container {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        line-height: 1.6;
+        color: #1f2937;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0;
+        background: #fff;
+        overflow-x: hidden;
+    }
+
+    .gem-container * {
+        box-sizing: border-box;
+    }
+
+    /* TYPOGRAPHY */
+    .gem-h1, .gem-h2, .gem-h3 {
+        font-family: 'Fraunces', serif;
+        color: #111827;
+        line-height: 1.2;
+    }
+    
+    .gem-h1 { font-size: 2.2rem; margin-bottom: 1rem; letter-spacing: -0.02em; }
+    .gem-h2 { font-size: 1.75rem; margin-top: 2rem; margin-bottom: 1rem; border-left: 5px solid #d97706; padding-left: 1rem; }
+    .gem-h3 { font-size: 1.4rem; margin-top: 1.5rem; }
+    .gem-p { margin-bottom: 1.25rem; font-size: 1.05rem; }
+    .gem-bold { font-weight: 700; color: #000; }
+    .gem-link { color: #2563eb; text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
+
+    /* LAYOUT UTILS */
+    .gem-section { padding: 1.5rem; }
+    .gem-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .gem-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+    .gem-center { text-align: center; }
+    .gem-flex { display: flex; align-items: center; justify-content: space-between; }
+    
+    /* 1. STICKY HEADER */
+    .gem-sticky-header {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: #fff;
+        border-bottom: 2px solid #2563eb;
+        padding: 0.75rem 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .gem-brand { font-weight: 800; color: #1e3a8a; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .gem-header-phone { font-weight: 700; color: #d97706; text-decoration: none; font-size: 0.9rem; }
+
+    /* 2. BREADCRUMBS */
+    .gem-breadcrumbs { font-size: 0.85rem; color: #6b7280; padding: 1rem 1.5rem 0; }
+    .gem-breadcrumbs span { margin: 0 5px; }
+
+    /* 3. HERO */
+    .gem-hero { padding: 1.5rem; text-align: left; }
+    .gem-trust-badges { display: flex; gap: 10px; font-size: 0.8rem; color: #059669; font-weight: 700; margin-bottom: 0.5rem; }
+    .gem-meta { font-size: 0.9rem; color: #6b7280; margin-bottom: 1rem; display: block; }
+    .gem-hero-img { width: 100%; height: auto; border-radius: 12px; margin-bottom: 1rem; aspect-ratio: 16/9; object-fit: cover; }
+
+    /* 4. SNIPPET BAIT (ZERO CLICK TARGET) */
+    .gem-snippet-box {
+        background: #eff6ff;
+        border: 2px solid #2563eb;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 1.5rem;
+        position: relative;
+    }
+    .gem-snippet-label {
+        background: #2563eb;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        position: absolute;
+        top: -12px;
+        left: 20px;
+        text-transform: uppercase;
+    }
+    .gem-snippet-text { font-size: 1.25rem; line-height: 1.4; color: #1e3a8a; margin: 0; }
+
+    /* 5. KEY TAKEAWAYS */
+    .gem-takeaways { background: #fffbeb; border-left: 6px solid #d97706; padding: 1.5rem; margin: 1.5rem; }
+    .gem-takeaways h3 { margin-top: 0; font-size: 1.1rem; color: #92400e; }
+    .gem-list-check { list-style: none; padding: 0; margin: 0; }
+    .gem-list-check li { position: relative; padding-left: 1.5rem; margin-bottom: 0.5rem; font-size: 0.95rem; }
+    .gem-list-check li::before { content: '✅'; position: absolute; left: 0; top: 2px; font-size: 0.8rem; }
+
+    /* 7. DATA TABLE */
+    .gem-table-wrapper { overflow-x: auto; margin: 1.5rem; border-radius: 8px; border: 1px solid #e5e7eb; }
+    .gem-table { width: 100%; border-collapse: collapse; min-width: 500px; }
+    .gem-table th { background: #1e3a8a; color: white; padding: 12px; text-align: left; font-size: 0.9rem; }
+    .gem-table td { padding: 12px; border-bottom: 1px solid #e5e7eb; color: #374151; font-size: 0.9rem; }
+    .gem-table tr:nth-child(even) { background: #f9fafb; }
+    .gem-table tr:last-child td { border-bottom: none; font-weight: 700; background: #ecfdf5; color: #065f46; }
+
+    /* 8. MOBILE TOC */
+    .gem-toc-mobile { margin: 1.5rem; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+    .gem-toc-header { background: #f3f4f6; padding: 1rem; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; }
+    .gem-toc-content { display: none; padding: 1rem; background: #fff; }
+    .gem-toc-content.active { display: block; }
+    .gem-toc-link { display: block; padding: 0.5rem 0; color: #4b5563; text-decoration: none; border-bottom: 1px dashed #e5e7eb; }
+
+    /* 12. LOCAL IMPACT BOX */
+    .gem-local-box { background: #f0fdf4; border: 1px solid #16a34a; padding: 1.5rem; border-radius: 12px; margin: 2rem 1.5rem; }
+    .gem-testimonial { font-style: italic; color: #4b5563; border-left: 3px solid #d1d5db; padding-left: 1rem; margin-top: 1rem; font-size: 0.95rem; }
+
+    /* 14. CALCULATOR */
+    .gem-calc-box { background: #1e3a8a; color: white; padding: 2rem 1.5rem; text-align: center; margin: 2rem 0; }
+    .gem-input { width: 100%; padding: 12px; border-radius: 6px; border: none; margin: 10px 0; font-size: 1rem; }
+    .gem-btn-calc { background: #d97706; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 700; cursor: pointer; width: 100%; font-size: 1rem; }
+    .gem-result { margin-top: 1rem; font-size: 1.2rem; font-weight: 700; display: none; color: #fbbf24; }
+
+    /* 15. FAQ */
+    .gem-faq-item { border-bottom: 1px solid #e5e7eb; padding: 1.5rem; }
+    .gem-faq-q { font-weight: 700; font-size: 1.1rem; color: #111827; margin-bottom: 0.5rem; display: block; }
+
+    /* 17. CTA SECTION */
+    .gem-cta-block { text-align: center; padding: 3rem 1.5rem; background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); color: white; }
+    .gem-btn-primary { display: block; background: #d97706; color: white; text-decoration: none; padding: 1rem; border-radius: 8px; font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: transform 0.2s; }
+    .gem-btn-secondary { display: block; background: transparent; border: 2px solid white; color: white; text-decoration: none; padding: 1rem; border-radius: 8px; font-weight: 700; }
+
+    /* 22. FLOATING BAR */
+    .gem-float-bar {
+        position: fixed; bottom: 0; left: 0; right: 0;
+        background: #fff; border-top: 1px solid #e5e7eb;
+        padding: 10px; display: flex; gap: 10px; z-index: 9999;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    }
+    .gem-float-btn { flex: 1; text-align: center; padding: 12px; border-radius: 6px; font-weight: 700; text-decoration: none; font-size: 0.9rem; }
+    .gem-float-call { background: #eff6ff; color: #1e3a8a; border: 1px solid #1e3a8a; }
+    .gem-float-quote { background: #d97706; color: white; }
+
+    /* RESPONSIVE */
+    @media (min-width: 768px) {
+        .gem-snippet-text { font-size: 1.5rem; }
+        .gem-hero-img { aspect-ratio: 21/9; }
+        .gem-cta-block { padding: 4rem 2rem; }
+        .gem-float-bar { display: none; } /* Hide mobile bar on desktop */
+        .gem-toc-mobile { display: none; } /* Hide mobile TOC on desktop */
+    }
+</style>
+
+<div class="gem-post gem-container">
+
+    <!-- 1. STICKY HEADER -->
+    <div class="gem-sticky-header">
+        <div class="gem-brand">Bill Layne Insurance</div>
+        <a href="tel:336-835-1993" class="gem-header-phone">📞 336-835-1993</a>
+    </div>
+
+    <!-- 2. BREADCRUMBS -->
+    <nav class="gem-breadcrumbs">
+        Home <span>></span> Blog <span>></span> NC Car Insurance <span>></span> Marriage Savings
+    </nav>
+
+    <!-- 3. HERO SECTION -->
+    <header class="gem-hero">
+    <title>How Much Does Getting Married Save on Car Insurance in North Carolina? (2026 Guide) | Bill Layne Insurance</title>
+    <meta name="description" content="How Much Does Getting Married Save on Car Insurance in North Carolina? (2026 Guide) -- NC insurance tips from Bill Layne Insurance in Elkin. Learn more and.">
+
+        <div class="gem-trust-badges">
+            <span>🛡️ NC Local Expert</span>
+            <span>📍 Elkin, NC</span>
+        </div>
+        <h1 class="gem-h1">How Much Does Getting Married Save on Car Insurance in North Carolina? (2026 Guide)</h1>
+        <div class="gem-meta">
+            By <span class="gem-bold">Bill Layne</span> • Updated <time datetime="2026-05-15">May 15, 2026</time>
+        </div>
+        <img src="../assets/images/nc-married-car-insurance-2026-hero.png" alt="Married couple driving in North Carolina mountains" class="gem-hero-img" loading="eager" width="800" height="450">
+    </header>
+
+    <!-- 4. SNIPPET-BAIT (ZERO CLICK TARGET) -->
+    <!-- speakable-schema-target -->
+    <div class="gem-snippet-box" id="gem-answer">
+        <div class="gem-snippet-label">The Quick Answer</div>
+        <p class="gem-snippet-text">
+            In North Carolina, getting married typically lowers car insurance premiums by <strong>8% to 14%</strong> in 2026. For an average driver in Surry or Wilkes County, this equals an annual savings of roughly <strong>$120 to $200</strong> when combining policies, due to lower statistical risk and multi-car discounts.
+        </p>
+    </div>
+
+    <!-- 5. KEY TAKEAWAYS -->
+    <div class="gem-takeaways">
+        <h3>⚡ In a Hurry? Key Savings Factors:</h3>
+        <ul class="gem-list-check">
+            <li><strong>Risk Profile:</strong> Statistics show married couples file fewer claims.</li>
+            <li><strong>Multi-Car Discount:</strong> Stacking two cars on one policy saves up to 25%.</li>
+            <li><strong>Home & Auto Bundle:</strong> Combining your new home and auto can double your discount.</li>
+            <li><strong>NC Specifics:</strong> Clean driving records are essential to maximize "Consent to Rate" savings.</li>
+        </ul>
+    </div>
+
+    <!-- 6. SOCIAL SHARE (Mobile Inline) -->
+    <div class="gem-section gem-center">
+        <p style="font-size: 0.8rem; color: #6b7280;">Share this NC guide: 🟦 Facebook | 🔗 Copy Link</p>
+    </div>
+
+    <!-- 7. COMPARISON DATA TABLE -->
+    <div class="gem-section">
+        <h2 class="gem-h2" style="margin-top:0;">Single vs. Married Rates in NC (2026 Estimate)</h2>
+        <p class="gem-p">Here is a realistic breakdown of monthly premiums for a standard policy (50/100/50 liability) in the Elkin/Mount Airy area:</p>
+        <div class="gem-table-wrapper">
+            <table class="gem-table">
+                <thead>
+                    <tr>
+                        <th>Driver Profile</th>
+                        <th>Avg. Monthly Premium</th>
+                        <th>Annual Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Single Male (30)</td>
+                        <td>$115</td>
+                        <td>$1,380</td>
+                    </tr>
+                    <tr>
+                        <td>Single Female (30)</td>
+                        <td>$110</td>
+                        <td>$1,320</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Married Couple (Combined)</strong></td>
+                        <td><strong>$198</strong></td>
+                        <td><strong>$2,376</strong></td>
+                    </tr>
+                    <tr>
+                        <td>SAVINGS (Per Person)</td>
+                        <td>⬇️ ~$14/mo</td>
+                        <td>⬇️ ~$162/yr</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p style="font-size: 0.8rem; color: #6b7280; font-style: italic;">*Estimates based on clean driving records in Zip Code 28621. Rates vary by carrier.</p>
+    </div>
+
+    <!-- 8. MOBILE TOC -->
+    <div class="gem-toc-mobile">
+        <div class="gem-toc-header" onclick="toggleToc()">
+            Jump to Section <span>⬇️</span>
+        </div>
+        <div class="gem-toc-content" id="gem-toc-list">
+            <a href="#why-savings" class="gem-toc-link">Why Rates Drop After Marriage</a>
+            <a href="#nc-impact" class="gem-toc-link">The "North Carolina" Factor</a>
+            <a href="#how-to-combine" class="gem-toc-link">How to Combine Policies</a>
+            <a href="#calculator" class="gem-toc-link">Savings Calculator</a>
+            <a href="#faq" class="gem-toc-link">Common Questions</a>
+        </div>
+    </div>
+
+    <!-- 10. INTRO -->
+    <div class="gem-section gem-prose">
+        <p class="gem-p">Weddings in 2026 are expensive. Between the venue, the catering, and the honeymoon, your bank account might be feeling the heat. But here’s the good news: <strong>The "Wedding Tax" doesn't apply to your car insurance.</strong> In fact, getting hitched is one of the few life events that almost guarantees a price drop.</p>
+        <p class="gem-p">At Bill Layne Insurance here in Elkin, we help newlyweds navigate this merge every week. It’s not just about changing a last name; it’s about strategically combining assets to unlock discounts that single drivers simply can't get.</p>
+    </div>
+
+    <!-- 11. BODY (Why) -->
+    <div class="gem-section gem-prose" id="why-savings">
+        <h2 class="gem-h2">Why Does Marriage Lower Insurance Rates?</h2>
+        <p class="gem-p">It comes down to cold, hard data. Insurance companies love predictability.</p>
+        <p class="gem-p"><strong>1. Stability = Safety:</strong><br>Actuarial data (the math behind insurance) consistently shows that married drivers are less likely to get into accidents, less likely to get speeding tickets, and more likely to wear seatbelts compared to their single counterparts.</p>
+        <p class="gem-p"><strong>2. The "Bundling" Effect:</strong><br>Most savings don't come from the status change alone, but from the <strong>Multi-Car Discount</strong>. In North Carolina, when you insure two vehicles on the same policy, carriers often knock 15-25% off the total bill.</p>
+        <img src="../assets/images/nc-married-car-insurance-2026-img1.png" alt="Car keys and wedding rings on a table" style="width:100%; border-radius:8px; margin: 1rem 0;" loading="lazy">
+    </div>
+
+    <!-- 12. LOCAL IMPACT (NC SPECIFIC) -->
+    <div class="gem-local-box" id="nc-impact">
+        <h3 class="gem-h3" style="margin-top:0;">📍 The North Carolina Twist</h3>
+        <p class="gem-p">NC insurance laws are unique. Here is what newlyweds in Surry, Yadkin, and Wilkes counties need to know:</p>
+        <ul class="gem-list-check">
+            <li><strong>Consent to Rate (CTR):</strong> Most carriers in NC charge above the "Bureau Rate." Being married improves your "insurance score," which helps keep your pricing in the lower tier of that CTR range.</li>
+            <li><strong>Clean Risk vs. Dirty Risk:</strong> If your spouse has a bad driving record (SDIP points), combining policies might actually <em>increase</em> your rate. In NC, points follow the driver, but they impact the household policy.</li>
+        </ul>
+        <div class="gem-testimonial">
+            "When we got married, Bill helped us combine our policies. We saved over $300 a year, which went straight into our house fund!" <br>— <strong>Sarah & Mike T., Jonesville, NC</strong>
+        </div>
+    </div>
+
+    <!-- 13. HOW-TO GUIDE -->
+    <div class="gem-section gem-prose" id="how-to-combine">
+        <h2 class="gem-h2">How to Merge Policies Without the Headache</h2>
+        <p class="gem-p">Don't just auto-renew. Follow these steps to maximize your marital savings:</p>
+        <ol style="margin-left: 1rem; padding-left: 1rem;">
+            <li style="margin-bottom: 1rem;"><strong>Pick the Best Carrier:</strong> Compare your current provider against your spouse's. Who has better loyalty rewards? Who has better claims service in NC?</li>
+            <li style="margin-bottom: 1rem;"><strong>Align Dates:</strong> Try to cancel the old policy and start the new combined policy on the same day to avoid a lapse (which leads to fines in NC).</li>
+            <li style="margin-bottom: 1rem;"><strong>Check Coverage Limits:</strong> Now that you have dual assets, state minimums (30/60/25) aren't enough. We recommend at least <strong>50/100/50</strong> or <strong>100/300/100</strong> to protect your combined income.</li>
+        </ol>
+        <img src="../assets/images/nc-married-car-insurance-2026-img2.png" alt="Couple reviewing insurance documents" style="width:100%; border-radius:8px; margin: 1rem 0;" loading="lazy">
+    </div>
+
+    <!-- 14. INTERACTIVE CALCULATOR -->
+    <div class="gem-calc-box" id="calculator">
+        <h3 style="margin:0 0 1rem 0;">🧮 Marriage Savings Estimator</h3>
+        <p style="font-size:0.9rem;">Enter your current combined monthly premiums (separate) to estimate your bundled savings.</p>
+        <input type="number" id="currentPrem" class="gem-input" placeholder="Current Total Monthly Cost (e.g. 250)">
+        <button class="gem-btn-calc" onclick="calculateSavings()">Calculate Savings</button>
+        <div id="calcResult" class="gem-result">
+            Estimated Savings: <span id="savingsVal"></span> / Year!
+        </div>
+    </div>
+
+    <!-- 15. FAQ SECTION (Schema-Ready) -->
+    <div class="gem-section" id="faq">
+        <h2 class="gem-h2">FAQs: Marriage & Auto Insurance in NC</h2>
+        
+        <div class="gem-faq-item">
+            <span class="gem-faq-q">Does North Carolina recognize common-law marriage for insurance discounts?</span>
+            <p><strong>No, North Carolina does not recognize common-law marriage.</strong> To legally qualify for the "married" rating factor and specific spousal discounts, you must be legally married. However, some carriers allow domestic partners to share a policy if they live at the same address.</p>
+        </div>
+
+        <div class="gem-faq-item">
+            <span class="gem-faq-q">What if my spouse has a DUI or speeding tickets?</span>
+            <p><strong>You might want to keep policies separate.</strong> In NC, Safe Driver Incentive Plan (SDIP) points can drastically increase premiums. If your spouse has significant points, adding them to your policy could ruin your "clean risk" status. Call us to run the numbers both ways.</p>
+        </div>
+
+        <div class="gem-faq-item">
+            <span class="gem-faq-q">Do I have to change my name on my license first?</span>
+            <p><strong>It is recommended, but not immediately required.</strong> However, the name on your insurance policy should match the name on your NCDMV registration and driver's license to avoid confusion during a claim or traffic stop.</p>
+        </div>
+
+        <div class="gem-faq-item">
+            <span class="gem-faq-q">Can we stack Uninsured Motorist coverage in NC?</span>
+            <p><strong>Yes, North Carolina allows "stacking" of Uninsured/Underinsured Motorist (UM/UIM) coverage.</strong> When you combine policies onto a multi-car plan, this inter-policy stacking can provide significantly higher protection limits if you are injured by an uninsured driver.</p>
+        </div>
+    </div>
+
+    <!-- 16. SOURCES & REFERENCES -->
+    <div class="gem-section" style="background:#f9fafb; font-size: 0.8rem; border-top: 1px solid #e5e7eb;">
+        <strong>Sources & Authority:</strong>
+        <ul style="margin: 0; padding-left: 1.5rem; color: #6b7280;">
+            <li>North Carolina Rate Bureau (NCRB) - Personal Auto Manual 2026.</li>
+            <li>North Carolina Department of Insurance (NCDOI) - Consumer Guide to Auto Insurance.</li>
+            <li>Insurance Information Institute (III) - Demographics and Driving Behavior.</li>
+        </ul>
+    </div>
+
+    <!-- 17. FINAL CTA -->
+    <div class="gem-cta-block">
+        <h2 style="margin-top:0; line-height:1.2;">Just Married? Let's Review Your Rates.</h2>
+        <p>Don't leave savings on the table. Bill Layne Insurance has served the Yadkin Valley for over 20 years.</p>
+        <a href="tel:336-835-1993" class="gem-btn-primary">📞 Call 336-835-1993</a>
+        <a href="mailto:Save@BillLayneInsurance.com" class="gem-btn-secondary">✉️ Email for a Quote</a>
+    </div>
+
+    <!-- 18. NEWSLETTER -->
+    <div class="gem-section gem-center" style="background: #fffbeb;">
+        <h4 style="margin:0;">Join the Local Loop</h4>
+        <p style="font-size: 0.9rem;">Get seasonal safety tips and local updates from Elkin's insurance team.</p>
+        <input type="email" placeholder="Your Email" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+        <button style="padding: 8px 16px; background: #1e3a8a; color: white; border: none; border-radius: 4px;">Subscribe</button>
+    </div>
+
+    <!-- 19. RELATED ARTICLES -->
+    <div class="gem-section">
+        <h3 class="gem-h3">Read More</h3>
+        <ul style="list-style: none; padding: 0;">
+            <li style="margin-bottom: 0.5rem;">➡️ <a href="/blog/nc-home-insurance-tips" class="gem-link">First Time Homebuyer Insurance Guide NC</a></li>
+            <li style="margin-bottom: 0.5rem;">➡️ <a href="/blog/adding-teen-driver-nc" class="gem-link">Cost of Adding a Teen Driver in NC (2026)</a></li>
+            <li style="margin-bottom: 0.5rem;">➡️ <a href="/blog/nc-liability-limits" class="gem-link">Why 30/60/25 Limits Are Not Enough</a></li>
+        </ul>
+    </div>
+
+    <!-- 20. AUTHOR BIO -->
+    <div class="gem-section" style="display:flex; gap:1rem; align-items:center; border-top:1px solid #e5e7eb;">
+        <div style="width: 60px; height: 60px; background: #ddd; border-radius: 50%; overflow:hidden;">
+            <!-- Placeholder for Bill's Headshot -->
+            <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#1e3a8a; color:white; font-weight:bold;">BL</div>
+        </div>
+        <div>
+            <div style="font-weight:700;">Bill Layne</div>
+            <div style="font-size: 0.85rem; color: #6b7280;">Owner & Principal Agent | 20+ Years Experience</div>
+            <div style="font-size: 0.85rem;">Serving Elkin, Mount Airy, and the Yadkin Valley since 2003.</div>
+        </div>
+    </div>
+
+    <!-- 21. FOOTER -->
+    <footer class="gem-section gem-center" style="font-size: 0.8rem; color: #9ca3af; padding-bottom: 80px;">
+        <p><strong>Bill Layne Insurance</strong><br>
+        1283 N Bridge St, Elkin, NC 28621<br>
+        <a href="https://www.facebook.com" style="color:#6b7280; text-decoration:none;">Facebook</a> | <a href="https://www.linkedin.com" style="color:#6b7280; text-decoration:none;">LinkedIn</a></p>
+        <p>© 2026 Bill Layne Insurance. All rights reserved.</p>
+    </footer>
+
+    <!-- 22. FLOATING MOBILE CTA -->
+    <div class="gem-float-bar">
+        <a href="tel:336-835-1993" class="gem-float-btn gem-float-call">📞 Call Now</a>
+        <a href="mailto:Save@BillLayneInsurance.com" class="gem-float-btn gem-float-quote">📋 Get Quote</a>
+    </div>
+
+</div>
+
+<!-- JSON-LD SCHEMA BLOCKS -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How Much Does Getting Married Save on Car Insurance in North Carolina? (2026)",
+  "image": [
+    "../assets/images/nc-married-car-insurance-2026-hero.png"
+  ],
+  "datePublished": "2026-05-15T08:00:00+08:00",
+  "dateModified": "2026-05-15T09:20:00+08:00",
+  "author": [{
+      "@type": "Person",
+      "name": "Bill Layne",
+      "url": "http://www.billlayneinsurance.com"
+    }],
+  "publisher": {
+      "@type": "Organization",
+      "name": "Bill Layne Insurance",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "http://www.billlayneinsurance.com/logo.jpg"
+      }
+  },
+  "description": "Getting married in NC can save you 8-14% on car insurance in 2026. Learn how the NC Rate Bureau factors marriage and how to maximize your multi-car discount.",
+  "speakable": {
+    "@type": "SpeakableSpecification",
+    "cssSelector": ["#gem-answer", ".gem-takeaways"]
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [{
+    "@type": "Question",
+    "name": "Does North Carolina recognize common-law marriage for insurance discounts?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "No, North Carolina does not recognize common-law marriage. You must be legally married to qualify for specific spousal rating factors."
+    }
+  }, {
+    "@type": "Question",
+    "name": "Can we stack Uninsured Motorist coverage in NC?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes, North Carolina allows stacking of Uninsured/Underinsured Motorist (UM/UIM) coverage limits across vehicles on a policy."
+    }
+  }, {
+    "@type": "Question",
+    "name": "What if my spouse has a bad driving record in NC?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "In NC, SDIP points follow the driver but impact the household policy. It may be cheaper to keep policies separate if one spouse is a high-risk driver."
+    }
+  }]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Bill Layne Insurance",
+  "image": "../assets/images/nc-married-car-insurance-2026-hero.png",
+  "@id": "http://www.billlayneinsurance.com",
+  "url": "http://www.billlayneinsurance.com",
+  "telephone": "336-835-1993",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "1283 N Bridge St",
+    "addressLocality": "Elkin",
+    "addressRegion": "NC",
+    "postalCode": "28621",
+    "addressCountry": "US"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 36.2452,
+    "longitude": -80.8484
+  },
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday"
+    ],
+    "opens": "09:00",
+    "closes": "17:00"
+  },
+  "priceRange": "$$"
+}
+</script>
+
+<script>
+    // Simple Toggle for Mobile TOC
+    function toggleToc() {
+        var content = document.getElementById('gem-toc-list');
+        content.classList.toggle('active');
+    }
+
+    // Savings Calculator Logic
+    function calculateSavings() {
+        var inputVal = document.getElementById('currentPrem').value;
+        if(inputVal) {
+            // Assume 12% savings avg
+            var savings = Math.round(inputVal * 12 * 0.12);
+            document.getElementById('savingsVal').innerText = '$' + savings;
+            document.getElementById('calcResult').style.display = 'block';
+        }
+    }
+</script>

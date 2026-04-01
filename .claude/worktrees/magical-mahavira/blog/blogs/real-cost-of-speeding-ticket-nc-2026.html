@@ -1,0 +1,468 @@
+<meta charset="UTF-8">
+<!-- GEM v4.1 YT EDITION DEPENDENCIES -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"></link>
+<link crossorigin="crossorigin" href="https://fonts.gstatic.com" rel="preconnect"></link>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&amp;family=Bricolage+Grotesque:opsz,wght@12..96,400;600;700;800&amp;display=swap" rel="stylesheet"></link>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"></link>
+
+
+<style>
+/* GEM v4.1 CORE STYLES - SCOPED */
+.gem-post {
+    font-family: 'Outfit', sans-serif;
+    line-height: 1.7;
+    color: #334155;
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    overflow-x: hidden;
+}
+.gem-post h1, .gem-post h2, .gem-post h3 { font-family: 'Bricolage Grotesque', sans-serif; color: #0f172a; }
+.gem-post h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 1rem; letter-spacing: -0.02em; }
+.gem-post h2 { font-size: 1.8rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; border-left: 5px solid #FF0033; padding-left: 1rem; }
+.gem-post h3 { font-size: 1.4rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+.gem-post p { margin-bottom: 1.25rem; font-size: 1.1rem; }
+.gem-post ul, .gem-post ol { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+.gem-post li { margin-bottom: 0.5rem; }
+.gem-post a { color: #2563eb; text-decoration: underline; font-weight: 600; }
+
+/* FONT AWESOME ICON SIZING */
+.gem-post i.fa-solid, .gem-post i.fa-regular, .gem-post i.fa-brands { margin-right: 0.3rem; }
+
+/* SCROLL PROGRESS BAR */
+.gem-progress-bar { position: fixed; top: 0; left: 0; width: 0%; height: 4px; background: linear-gradient(90deg, #FF0033, #FF6B35, #FFD23F); z-index: 1100; transition: width 0.1s linear; }
+
+/* HERO IMAGE */
+.hero-img { width: 100%; height: auto; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+/* SNIPPET BAIT BOX */
+.gem-snippet-bait { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 1.25rem; border-radius: 0 8px 8px 0; margin-bottom: 2rem; font-size: 1.15rem; font-weight: 500; }
+
+/* SHARE BAR */
+.gem-share-bar { display: flex; gap: 0.5rem; margin: 1.5rem 0; padding: 1rem; background: #f8fafc; border-radius: 16px; border: 2px solid #e2e8f0; align-items: center; flex-wrap: wrap; }
+.gem-share-label { font-weight: 800; font-size: 0.85rem; color: #0F0F0F; margin-right: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+.gem-share-btn { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none !important; color: white !important; font-size: 1rem; transition: transform 0.15s; cursor: pointer; border: none; }
+.gem-share-btn:active { transform: scale(0.9); }
+.gem-share-fb { background: #1877F2; }
+.gem-share-x { background: #0F0F0F; }
+.gem-share-email { background: #EA4335; }
+.gem-share-copy { background: #64748b; }
+.gem-share-copy.copied { background: #22c55e; }
+
+/* CHAPTER PROGRESS PILLS */
+.gem-chapter-track { display: flex; gap: 4px; margin: 1rem 0; flex-wrap: wrap; position: sticky; top: 10px; z-index: 50; }
+.gem-chapter-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; background: #e2e8f0; color: #64748b; text-decoration: none !important; transition: all 0.2s; opacity: 0.9; }
+.gem-chapter-pill.active { background: #FF0033; color: white !important; opacity: 1; box-shadow: 0 4px 6px -1px rgba(255, 0, 51, 0.3); }
+.gem-chapter-pill.read { background: #0F0F0F; color: white !important; }
+
+/* PULL QUOTE */
+.gem-pull-quote { margin: 2rem 0; padding: 2rem 1.5rem; background: linear-gradient(135deg, #0F0F0F 0%, #1a1a2e 100%); border-radius: 16px; text-align: center; position: relative; overflow: hidden; }
+.gem-pull-quote::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #FF0033, #FF6B35, #FFD23F, #A8E10C, #00D4FF); }
+.gem-pull-quote-text { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.4rem; font-weight: 800; color: white; line-height: 1.3; letter-spacing: -0.02em; }
+.gem-pull-quote-text .gem-pq-highlight { color: #FFD23F; }
+.gem-pull-quote-source { margin-top: 0.75rem; font-size: 0.8rem; color: #9ca3af; font-weight: 600; }
+
+/* VS COMPARISON CARD */
+.gem-vs-card { margin: 1.5rem 0; border-radius: 16px; overflow: hidden; border: 2px solid #e2e8f0; }
+.gem-vs-header { background: #0F0F0F; color: white; text-align: center; padding: 0.75rem; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.gem-vs-body { display: flex; }
+.gem-vs-side { flex: 1; padding: 1.25rem; text-align: center; }
+.gem-vs-left { background: linear-gradient(180deg, #FEF2F2 0%, #fff 100%); }
+.gem-vs-right { background: linear-gradient(180deg, #F0FDF4 0%, #fff 100%); }
+.gem-vs-divider { width: 3px; background: linear-gradient(180deg, #FF0033, #FFD23F, #22c55e); flex-shrink: 0; }
+.gem-vs-label { font-weight: 800; font-size: 0.95rem; margin-bottom: 0.75rem; display: block; }
+.gem-vs-left .gem-vs-label { color: #DC2626; }
+.gem-vs-right .gem-vs-label { color: #16a34a; }
+.gem-vs-item { font-size: 0.85rem; color: #475569; margin-bottom: 0.4rem; line-height: 1.4; }
+.gem-vs-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+
+/* REVEAL CARD */
+.gem-reveal { margin: 1.5rem 0; border: 2px dashed #7C3AED; border-radius: 16px; overflow: hidden; background: #F5F3FF; }
+.gem-reveal-trigger { padding: 1rem 1.25rem; font-weight: 800; color: #7C3AED; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; min-height: 44px; }
+.gem-reveal-content { display: none; padding: 0 1.25rem 1.25rem; color: #374151; line-height: 1.6; font-size: 0.95rem; border-top: 1px solid #DDD6FE; }
+.gem-reveal-content.visible { display: block; }
+
+/* REACTIONS BAR */
+.gem-reactions { margin: 1.5rem 0; padding: 1.25rem; background: #f8fafc; border-radius: 16px; text-align: center; border: 2px solid #e2e8f0; }
+.gem-reactions-title { font-weight: 700; font-size: 0.9rem; color: #475569; margin-bottom: 0.75rem; }
+.gem-reactions-row { display: flex; justify-content: center; gap: 0.75rem; }
+.gem-react-btn { width: 48px; height: 48px; border-radius: 50%; border: 2px solid #e2e8f0; background: white; font-size: 1.3rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+.gem-react-btn:hover, .gem-react-btn:active { transform: scale(1.15); border-color: #FF0033; }
+.gem-react-btn.selected { background: #FF0033; border-color: #FF0033; color: white !important; transform: scale(1.15); }
+
+/* FAQ SECTION */
+.gem-faq-section { margin: 3rem 0; }
+.gem-faq-header { font-size: 1.8rem; font-weight: 700; margin-bottom: 1.5rem; font-family: 'Bricolage Grotesque', sans-serif; color: #0f172a; }
+.gem-faq-item { border: 2px solid #e2e8f0; border-radius: 12px; margin-bottom: 1rem; background: white; overflow: hidden; transition: border-color 0.2s; }
+.gem-faq-item:hover { border-color: #cbd5e1; }
+.gem-faq-item.active { border-color: #3b82f6; }
+.gem-faq-question { width: 100%; padding: 1.25rem; background: #f8fafc; text-align: left; font-weight: 700; color: #0f172a; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: none; outline: none; font-size: 1.05rem; }
+.gem-faq-question:hover { background: #f1f5f9; }
+.gem-faq-answer { display: none; padding: 1.5rem; color: #475569; line-height: 1.6; background: white; border-top: 1px solid #e2e8f0; font-size: 1rem; }
+.gem-faq-item.active .gem-faq-answer { display: block; }
+.gem-faq-icon { transition: transform 0.3s ease; color: #3b82f6; }
+.gem-faq-item.active .gem-faq-icon { transform: rotate(180deg); }
+
+/* STEP TIMELINE */
+.gem-steps { margin: 1.5rem 0; padding: 0; }
+.gem-step { display: flex; gap: 1rem; padding-bottom: 1.5rem; position: relative; }
+.gem-step:last-child { padding-bottom: 0; }
+.gem-step-line { width: 40px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.gem-step-dot { width: 36px; height: 36px; border-radius: 50%; background: #0F0F0F; color: white; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; z-index: 1; }
+.gem-step-connector { width: 3px; flex: 1; background: linear-gradient(180deg, #0F0F0F, #e2e8f0); margin-top: 4px; }
+.gem-step:last-child .gem-step-connector { display: none; }
+.gem-step-content { flex: 1; padding-top: 0.35rem; }
+.gem-step-title { font-weight: 800; font-size: 1rem; color: #0F0F0F; margin-bottom: 0.25rem; }
+.gem-step-text { font-size: 0.95rem; color: #475569; line-height: 1.5; }
+
+/* RELATED GRID */
+.gem-related { padding: 2rem 1.25rem; background: #0F0F0F; border-radius: 12px; margin-top: 3rem; }
+.gem-related-title { font-family: 'Bricolage Grotesque', sans-serif; color: white; font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; }
+.gem-related-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.gem-related-card { display: flex; gap: 0.75rem; text-decoration: none !important; background: #272727; border-radius: 12px; overflow: hidden; transition: background 0.2s; }
+.gem-related-card:active { background: #333; }
+.gem-related-thumb { width: 120px; height: 68px; object-fit: cover; flex-shrink: 0; border-radius: 8px; margin: 0.5rem 0 0.5rem 0.5rem; }
+.gem-related-info { padding: 0.5rem 0.5rem 0.5rem 0; display: flex; flex-direction: column; justify-content: center; }
+.gem-related-info-title { color: white; font-weight: 700; font-size: 0.85rem; line-height: 1.3; margin-bottom: 0.25rem; }
+.gem-related-info-meta { color: #9ca3af; font-size: 0.7rem; }
+@media (min-width: 768px) {
+    .gem-related-grid { grid-template-columns: 1fr 1fr 1fr; }
+    .gem-related-card { flex-direction: column; }
+    .gem-related-thumb { width: 100%; height: 120px; margin: 0; border-radius: 12px 12px 0 0; }
+    .gem-related-info { padding: 0.75rem; }
+}
+
+/* DATA TABLE */
+.gem-table-wrapper { overflow-x: auto; margin: 1.5rem 0; border-radius: 8px; border: 1px solid #e2e8f0; }
+.gem-table { width: 100%; border-collapse: collapse; min-width: 500px; }
+.gem-table th { background: #f1f5f9; text-align: left; padding: 1rem; font-weight: 700; border-bottom: 2px solid #e2e8f0; }
+.gem-table td { padding: 1rem; border-bottom: 1px solid #e2e8f0; }
+.gem-table tr:last-child td { border-bottom: none; }
+
+/* CTA BOX */
+.gem-cta-box { background: #eff6ff; border: 2px solid #3b82f6; border-radius: 16px; padding: 2rem; text-align: center; margin-top: 3rem; color: #000000 !important; }
+.gem-cta-title { font-size: 1.5rem; font-weight: 800; color: #000000 !important; margin-bottom: 0.5rem; }
+.gem-cta-text { margin-bottom: 1.5rem; color: #000000 !important; font-weight: 600; }
+.gem-cta-btn { display: inline-block; background: #2563eb; color: white !important; padding: 1rem 2rem; border-radius: 50px; font-weight: 700; text-decoration: none !important; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.5); transition: transform 0.2s; }
+.gem-cta-btn:hover { transform: translateY(-2px); }
+
+/* CORNER RIBBON */
+.gem-ribbon-wrap { position: relative; }
+.gem-ribbon { position: absolute; top: 12px; right: -8px; background: #FF0033; color: white; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 14px 4px 10px; border-radius: 4px 0 0 4px; z-index: 2; box-shadow: 0 2px 6px rgba(255,0,51,0.3); }
+.gem-ribbon::after { content: ''; position: absolute; top: 100%; right: 0; border: 4px solid transparent; border-top-color: #990020; border-right-color: #990020; }
+.gem-ribbon-new { background: #FF0033; }
+</style>
+
+<div class="gem-post"><!-- GEM v4.1 YT EDITION CONTENT START -->
+<div class="gem-progress-bar" id="gemProgress" style="background: #FF0033; height: 5px; left: 0; position: fixed; top: 0; transition: width 0.2s ease; width: 0%; z-index: 9999;"></div>
+
+<div class="gem-post p-4 md:p-8">
+    <h1 class="mb-6">Complete Guide: Calculating the Total Cost of an NC Speeding Ticket in 2026</h1>
+
+    <div class="gem-snippet-bait bg-slate-50 border-l-8 border-red-600 p-6 rounded-r-xl mb-8 shadow-sm">
+        <p class="text-xl font-bold mb-2"><i class="fa-solid fa-bolt text-red-600"></i> The Short Answer:</p>
+        <p class="text-slate-700">In 2026, a standard North Carolina speeding ticket (15+ mph over) costs an average of <strong>$6,450 to $8,200</strong> over five years. While the ticket itself is roughly $250, the real "trap" is the <strong>45% to 80% insurance surcharge</strong> applied to your premium. With NC’s 2025 increase to 50/100/50 minimum limits, your base premium is higher, making those percentage-based penalties more expensive than ever.</p>
+    </div>
+
+    <img alt="NC Highway Patrol Car in Elkin NC" class="hero-img w-full rounded-2xl mb-8 shadow-lg object-cover" src="https://blogger.googleusercontent.com/img/a/AVvXsEibaUYZQUyj_NszlgAdeUT9ZM8QxMwOuClE5bo3xjwxytfEG8KPCrhshK7n9RvUhsEMlKY72NodI2GmPQyUiqfxPousD0oaU3m7PIv-33EpOFrPhsPX3S4EzejZCTETcLkPSzyi8EOUYXwF9xEww7y3CGGMAgfgpe-SGX-OkZXL6P4jP6C1BjSr_ByWWxk" style="aspect-ratio: 16/9;" />
+
+    <div class="gem-share-bar flex gap-4 mb-8 items-center border-y py-4">
+        <span class="font-bold text-sm uppercase tracking-wider text-slate-500">Share This:</span>
+        <button class="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-bold hover:bg-blue-700 transition"><i class="fa-brands fa-facebook"></i> FB</button>
+        <button class="bg-black text-white px-4 py-2 rounded-full text-sm font-bold hover:bg-gray-800 transition"><i class="fa-brands fa-x-twitter"></i> X</button>
+        <button class="bg-slate-200 text-slate-700 px-4 py-2 rounded-full text-sm font-bold hover:bg-slate-300 transition"><i class="fa-solid fa-envelope"></i> Email</button>
+        <button class="bg-slate-200 text-slate-700 px-4 py-2 rounded-full text-sm font-bold hover:bg-slate-300 transition"><i class="fa-solid fa-link"></i> Copy</button>
+    </div>
+
+    <div class="gem-chapter-track bg-slate-100 p-6 rounded-xl mb-8">
+        <p class="font-bold mb-3 text-lg">In This Guide:</p>
+        <ul class="grid grid-cols-1 md:grid-cols-2 gap-2 list-none p-0">
+            <li><a class="no-underline hover:underline" href="#section1"><i class="fa-solid fa-calculator mr-2 text-red-600"></i> The SDIP Point Math</a></li>
+            <li><a class="no-underline hover:underline" href="#section2"><i class="fa-solid fa-shield-halved mr-2 text-red-600"></i> The 50/100/50 Limit Impact</a></li>
+            <li><a class="no-underline hover:underline" href="#section3"><i class="fa-solid fa-road mr-2 text-red-600"></i> The "5-Year Financial Trap"</a></li>
+            <li><a class="no-underline hover:underline" href="#section4"><i class="fa-solid fa-gavel mr-2 text-red-600"></i> PJC &amp; Local NC Strategies</a></li>
+        </ul>
+    </div>
+
+    <div class="gem-takeaways bg-green-50 border border-green-200 p-6 rounded-xl mb-10">
+        <h3 class="mt-0 text-green-800">Key Takeaways</h3>
+        <ul class="list-none p-0 mb-0">
+            <li class="flex items-start mb-2"><i class="fa-solid fa-check text-green-600 mt-1 mr-3"></i> <span><strong>Insurance Points ≠ DMV Points:</strong> You can have zero DMV points and still face a massive insurance hike.</span></li>
+            <li class="flex items-start mb-2"><i class="fa-solid fa-check text-green-600 mt-1 mr-3"></i> <span><strong>The 3-Year Surcharge:</strong> Insurance companies in NC legally surcharge your policy for 36 months following the conviction.</span></li>
+            <li class="flex items-start mb-2"><i class="fa-solid fa-check text-green-600 mt-1 mr-3"></i> <span><strong>The 5-Year Loss:</strong> It takes 5 years to regain "Standard Tier" pricing after a major infraction.</span></li>
+            <li class="flex items-start"><i class="fa-solid fa-check text-green-600 mt-1 mr-3"></i> <span><strong>Elkin Specifics:</strong> Surry County courts have specific rules regarding PJC (Prayer for Judgment Continued).</span></li>
+        </ul>
+    </div>
+
+    <h2 id="section1">The Hidden Math: How NC SDIP Points Work in 2026</h2>
+    <p>Most drivers in Elkin think a speeding ticket is just a fine and a bad afternoon. But North Carolina uses a unique system called the <strong>Safe Driver Incentive Plan (SDIP)</strong>. Unlike other states where insurance companies guess how much to charge you, NC law mandates specific percentage increases based on the points you earn.</p>
+    <p>In 2026, the baseline cost of insurance has risen due to vehicle technology and repair costs. When you add a 45% surcharge on top of an already high premium, the numbers become staggering. For example, a driver in Elkin paying $1,500 a year for full coverage will see that jump to $2,175 instantly after a 2-point speeding violation. Over three years, that’s $2,025 in "invisible" taxes paid to your insurance carrier.</p>
+    
+    <div class="gem-pull-quote bg-slate-900 text-white p-10 rounded-3xl my-10 relative overflow-hidden">
+        <i class="fa-solid fa-quote-left text-5xl opacity-20 absolute top-4 left-4"></i>
+        <p class="text-2xl font-bold italic relative z-10 text-center">"In North Carolina, the court takes your money once, but your insurance company takes it 36 times."</p>
+        <p class="text-right mt-4 text-red-400 font-bold">— Bill Layne, Local Insurance Expert</p>
+    </div>
+
+    <h2 id="section2">Why 2026 is Different: The 50/100/50 Minimum Factor</h2>
+    <p>If you haven't checked your policy since the law changed in 2025, you might be surprised. North Carolina raised the minimum liability requirements to <strong>$50,000 for bodily injury per person, $100,000 per accident, and $50,000 for property damage</strong>. </p>
+    <p>While this provides better protection on the roads around Hwy 21 and I-77, it also means your <em>starting premium</em> is higher than it was a few years ago. Since SDIP surcharges are calculated as a percentage of your premium, a 2-point ticket today costs significantly more in raw dollars than it did in 2023. You aren't just paying for the mistake; you're paying a percentage of the state's new, higher protection standards.</p>
+
+    <div class="gem-vs-card flex flex-col md:flex-row gap-4 my-10">
+        <div class="flex-1 bg-slate-100 p-6 rounded-2xl border-b-4 border-slate-400">
+            <h4 class="text-center font-bold text-slate-500 uppercase tracking-widest text-sm mb-4">The Old NC Reality (Pre-2025)</h4>
+            <p class="text-center text-3xl font-black mb-2">$3,200</p>
+            <p class="text-center text-sm text-slate-600">Total 3-Year Cost of 15mph+ Ticket</p>
+        </div>
+        <div class="flex-none flex items-center justify-center font-black text-2xl text-red-600">VS</div>
+        <div class="flex-1 bg-red-50 p-6 rounded-2xl border-b-4 border-red-600 shadow-md">
+            <h4 class="text-center font-bold text-red-600 uppercase tracking-widest text-sm mb-4">The 2026 Reality</h4>
+            <p class="text-center text-3xl font-black mb-2 text-red-700">$6,840+</p>
+            <p class="text-center text-sm text-slate-600">Total 5-Year Cost (Points + Lost Discounts)</p>
+        </div>
+    </div>
+
+    <h2 id="section3">The "5-Year Financial Trap" Revealed</h2>
+    <p>Why do we call it a 5-year trap if points only last for 3 years? Because of <strong>Tiered Rating and "Good Driver" discounts</strong>. At Bill Layne Insurance, we see this every day: a driver gets a ticket, pays the surcharge for 3 years, but then discovers they are still "disqualified" from the best-preferred rates for another 2 years because their 5-year driving record isn't "clean."</p>
+    <p>This means even after the state-mandated surcharge disappears, you are likely still paying 10-15% more than someone who hasn't had a ticket in half a decade. When you combine the surcharge, the court costs, the lawyer fees, and the 2 years of lost preferred status, the ticket becomes a financial anchor.</p>
+
+    <div class="gem-reveal bg-slate-800 text-white p-8 rounded-2xl my-8 text-center cursor-pointer hover:bg-slate-700 transition" onclick="this.querySelector('.hidden-text').classList.toggle('hidden')">
+        <p class="font-bold text-lg mb-2"><i class="fa-solid fa-eye mr-2"></i> SURPRISING FACT: Tap to Reveal</p>
+        <p class="hidden-text hidden text-red-400 font-black text-2xl">One speeding ticket (over 75mph in a 65mph zone) can result in an automatic 1-year license suspension in NC if handled incorrectly.</p>
+    </div>
+
+    <div class="gem-table-wrapper overflow-x-auto my-10 shadow-xl rounded-xl">
+        <table class="gem-table w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-slate-900 text-white">
+                    <th class="p-4 border">Offense Type</th>
+                    <th class="p-4 border">SDIP Points</th>
+                    <th class="p-4 border">Insurance Hike</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="bg-white">
+                    <td class="p-4 border font-bold">Speeding (10mph or less / under 55 zone)</td>
+                    <td class="p-4 border text-center">1</td>
+                    <td class="p-4 border text-red-600 font-bold">+30%</td>
+                </tr>
+                <tr class="bg-slate-50">
+                    <td class="p-4 border font-bold">Speeding (15mph+ over / over 55 total)</td>
+                    <td class="p-4 border text-center">2</td>
+                    <td class="p-4 border text-red-600 font-bold">+45%</td>
+                </tr>
+                <tr class="bg-white">
+                    <td class="p-4 border font-bold">Reckless Driving</td>
+                    <td class="p-4 border text-center">4</td>
+                    <td class="p-4 border text-red-600 font-bold">+80%</td>
+                </tr>
+                <tr class="bg-slate-50">
+                    <td class="p-4 border font-bold">DWI (First Offense)</td>
+                    <td class="p-4 border text-center">12</td>
+                    <td class="p-4 border text-red-600 font-bold">+340%</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 id="section4">Navigating the Fallout: PJC and Local Elkin Strategies</h2>
+    <img alt="Elkin NC Bridge Street Office" class="w-full rounded-2xl mb-8 shadow-md" src="https://blogger.googleusercontent.com/img/a/AVvXsEh0nuGC93I8w0f8WBQFjCaSEijYSRzjajb4bUNZ8r6ZhQpKGLuv6_PbIjc3FlIuNN1K5RTyzWx0sjbAPvIRUP0SvNPNu1ajBiBZU7Die9GxOvQxDekFczM4ZjFuxWJ7Ssa9VMRGnMNu4FKwHLBg0IO6xzzrfFB29axsrkOLWukuhVVDC9rCpOlPFlMSKhw" />
+    <p>If you’ve already received a citation on Bridge Street or while heading toward Mount Airy, don't panic. North Carolina offers a "Prayer for Judgment Continued" (PJC). Think of this as a "Get Out of Jail Free" card, but for your insurance premiums. In NC, each household can typically use one PJC every three years to prevent a conviction from triggering insurance points.</p>
+    <p>However, PJCs are complex. If you have multiple drivers on one policy, using a PJC for a minor ticket might be a waste if someone else gets a major ticket six months later. This is where having a local expert at Bill Layne Insurance makes the difference. We don't just sell policies; we help you manage the long-term risk and cost of driving in North Carolina.</p>
+
+    <div class="gem-steps my-12">
+        <h3 class="text-center mb-8">The 5-Year Financial Recovery Timeline</h3>
+        <div class="space-y-6">
+            <div class="flex items-center gap-4">
+                <div class="flex-none w-12 h-12 bg-red-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
+                <div class="flex-1 bg-white border p-4 rounded-xl shadow-sm">
+                    <p class="font-bold">Month 1: The Initial Hit</p>
+                    <p class="text-sm text-slate-600">You pay the $250+ fine and court costs. Your insurance company is notified of the conviction.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="flex-none w-12 h-12 bg-red-500 text-white rounded-full flex items-center justify-center font-bold">2</div>
+                <div class="flex-1 bg-white border p-4 rounded-xl shadow-sm">
+                    <p class="font-bold">Year 1-3: The Surcharge Phase</p>
+                    <p class="text-sm text-slate-600">Your premium increases by 45% (for most speeding tickets). Every renewal bill reminds you of that one heavy-foot day.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="flex-none w-12 h-12 bg-orange-400 text-white rounded-full flex items-center justify-center font-bold">3</div>
+                <div class="flex-1 bg-white border p-4 rounded-xl shadow-sm">
+                    <p class="font-bold">Year 4: The "Shadow" Period</p>
+                    <p class="text-sm text-slate-600">State surcharges drop off, but you are still in a "Standard" or "Non-Standard" rating tier. You miss out on the 15-20% Preferred Driver discounts.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="flex-none w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center font-bold">4</div>
+                <div class="flex-1 bg-white border p-4 rounded-xl shadow-sm">
+                    <p class="font-bold">Year 5: Full Recovery</p>
+                    <p class="text-sm text-slate-600">Your 5-year record is clear. You can now shop for the lowest possible rates in Elkin once again.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="gem-reactions bg-slate-50 border p-6 rounded-xl text-center my-10">
+        <p class="font-bold mb-4">Was this guide helpful?</p>
+        <div class="flex justify-center gap-4">
+            <button class="px-6 py-2 bg-white border rounded-full hover:bg-green-50 transition"><i class="fa-solid fa-thumbs-up text-green-600"></i> Yes</button>
+            <button class="px-6 py-2 bg-white border rounded-full hover:bg-red-50 transition"><i class="fa-solid fa-thumbs-down text-red-600"></i> No</button>
+        </div>
+    </div>
+
+    <div class="gem-faq-section my-12">
+        <h2 class="text-center mb-8 border-none p-0">Frequently Asked Questions</h2>
+        
+        <div class="gem-faq-item mb-4 border rounded-xl overflow-hidden">
+            <button class="gem-faq-question w-full flex justify-between items-center p-4 font-bold bg-white hover:bg-slate-50 transition text-left" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('.gem-faq-icon').classList.toggle('rotate-180')">
+                Can I get an NC ticket reduced to an "Improper Equipment" in 2026? 
+                <i class="fa-solid fa-chevron-down gem-faq-icon transition"></i>
+            </button>
+            <div class="gem-faq-answer hidden p-4 bg-slate-50 text-slate-700 border-t">
+                Yes, in many NC counties, including Surry, you can often plea a speeding ticket down to "Improper Equipment" (IE). An IE is a non-moving violation that carries zero SDIP points and zero DMV points, effectively saving you thousands in insurance hikes.
+            </div>
+        </div>
+
+        <div class="gem-faq-item mb-4 border rounded-xl overflow-hidden">
+            <button class="gem-faq-question w-full flex justify-between items-center p-4 font-bold bg-white hover:bg-slate-50 transition text-left" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('.gem-faq-icon').classList.toggle('rotate-180')">
+                Do out-of-state tickets count on my NC insurance?
+                <i class="fa-solid fa-chevron-down gem-faq-icon transition"></i>
+            </button>
+            <div class="gem-faq-answer hidden p-4 bg-slate-50 text-slate-700 border-t">
+                Absolutely. NC is part of the Driver License Compact. If you get a ticket in Virginia or South Carolina, it will be reported back to the NC DMV and will trigger the same SDIP insurance surcharges as if it happened in Elkin.
+            </div>
+        </div>
+
+        <div class="gem-faq-item mb-4 border rounded-xl overflow-hidden">
+            <button class="gem-faq-question w-full flex justify-between items-center p-4 font-bold bg-white hover:bg-slate-50 transition text-left" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('.gem-faq-icon').classList.toggle('rotate-180')">
+                What is the "Named Storm Deductible" I see on my policy?
+                <i class="fa-solid fa-chevron-down gem-faq-icon transition"></i>
+            </button>
+            <div class="gem-faq-answer hidden p-4 bg-slate-50 text-slate-700 border-t">
+                While not related to speeding, this is vital for NC residents. A Named Storm Deductible is a percentage-based deductible (often 1-5% of your home's value) that applies only during tropical storms or hurricanes. It's separate from your standard $500 or $1,000 deductible.
+            </div>
+        </div>
+    </div>
+
+    <div class="gem-cta-box bg-red-600 text-white p-8 md:p-12 rounded-3xl text-center shadow-2xl my-16">
+        <h2 class="text-white border-none p-0 mt-0 text-3xl mb-4">Don't Let One Ticket Break the Bank</h2>
+        <p class="text-xl mb-8 opacity-90">Got a ticket? Need to re-shop your rates after a surcharge? Bill Layne Insurance is your local Elkin authority for navigating the 2026 insurance landscape.</p>
+        <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
+            <a class="bg-white text-red-600 px-8 py-4 rounded-full font-black text-xl hover:bg-slate-100 transition no-underline" href="tel:336-835-1993">336-835-1993</a>
+            <a class="bg-slate-900 text-white px-8 py-4 rounded-full font-black text-xl hover:bg-black transition no-underline" href="mailto:Save@BillLayneInsurance.com">Email Our Team</a>
+        </div>
+        <p class="mt-8 text-sm opacity-80">
+            Bill Layne Insurance | 1283 N Bridge St, Elkin NC 28621<br />
+            <a class="text-white underline" href="https://www.NCAutoandHome.com">www.NCAutoandHome.com</a>
+        </p>
+    </div>
+
+    <div class="gem-related">
+        <h3 class="text-2xl font-bold mb-6">Master Your NC Insurance</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="gem-card group cursor-pointer">
+                <img class="rounded-xl mb-3 group-hover:opacity-80 transition" src="https://blogger.googleusercontent.com/img/a/AVvXsEhqAPImEXWc2bvJSuDbONEOBL_33ntHzSScKJHb-KKdAATtbtq0Wonr-TUzJg0v311XbIHRva5EhXHGI3m4agByAEPVnEKbXQ4z_JszyN-FynC5Bon7brUp6ynxUtuOtPL2NMHUrfWL_wMJNj_qkcpu4NPuOYdYIuCgSApmbn9VA8WDoRjsoNpAphBuGSw" />
+                <p class="font-bold leading-tight group-hover:text-red-600">The 2026 Guide to Home Insurance in the Yadkin Valley</p>
+                <p class="text-sm text-slate-500 mt-2">12 min read • <i class="fa-solid fa-play"></i> Watch Now</p>
+            </div>
+            <div class="gem-card group cursor-pointer">
+                <div class="bg-slate-200 aspect-video rounded-xl mb-3 flex items-center justify-center">
+                    <i class="fa-solid fa-car-burst text-4xl text-slate-400"></i>
+                </div>
+                <p class="font-bold leading-tight group-hover:text-red-600">NC Auto Minimums: Why 50/100/50 Still Isn't Enough</p>
+                <p class="text-sm text-slate-500 mt-2">8 min read • <i class="fa-solid fa-play"></i> Watch Now</p>
+            </div>
+            <div class="gem-card group cursor-pointer">
+                <div class="bg-slate-200 aspect-video rounded-xl mb-3 flex items-center justify-center">
+                    <i class="fa-solid fa-house-chimney-crack text-4xl text-slate-400"></i>
+                </div>
+                <p class="font-bold leading-tight group-hover:text-red-600">Wind, Hail, and Hurricanes: Protecting your Elkin Home</p>
+                <p class="text-sm text-slate-500 mt-2">15 min read • <i class="fa-solid fa-play"></i> Watch Now</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Scroll Progress Bar Logic
+    window.onscroll = function() {
+        var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var scrolled = (winScroll / height) * 100;
+        document.getElementById("gemProgress").style.width = scrolled + "%";
+    };
+</script>
+<!-- GEM v4.1 YT EDITION CONTENT END --></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Scroll Progress Bar
+    window.addEventListener('scroll', function() {
+        var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var scrolled = (winScroll / height) * 100;
+        var bar = document.getElementById('gemProgress');
+        if (bar) bar.style.width = scrolled + '%';
+        
+        // Chapter Tracker
+        var sections = document.querySelectorAll('.gem-post h2');
+        var pills = document.querySelectorAll('.gem-chapter-pill');
+        var currentId = '';
+        sections.forEach(function(sec) {
+            var top = sec.getBoundingClientRect().top;
+            if (top < window.innerHeight * 0.5) {
+                currentId = sec.id;
+            }
+        });
+        pills.forEach(function(pill) {
+            var pillSection = pill.getAttribute('href').substring(1);
+            pill.classList.remove('active');
+            if (pillSection === currentId) {
+                pill.classList.add('active');
+            }
+        });
+    });
+
+    // Copy Link Button
+    window.copyLink = function(btn) {
+        navigator.clipboard.writeText(window.location.href).then(function() {
+            btn.classList.add('copied');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+            setTimeout(function() {
+                btn.classList.remove('copied');
+                btn.innerHTML = '<i class="fa-solid fa-link"></i>';
+            }, 2000);
+        });
+    };
+
+    // Reveal Card
+    window.toggleReveal = function(el) {
+        var content = el.nextElementSibling;
+        content.classList.toggle('visible');
+        var span = el.querySelector('span:last-child');
+        if (content.classList.contains('visible')) {
+            span.textContent = 'Tap to hide';
+        } else {
+            span.textContent = 'Tap to reveal';
+        }
+    };
+
+    // FAQ Toggle
+    window.toggleFaq = function(btn) {
+        var item = btn.parentElement;
+        item.classList.toggle('active');
+    };
+
+    // Reaction Bar
+    window.react = function(btn) {
+        var all = btn.parentElement.querySelectorAll('.gem-react-btn');
+        all.forEach(function(b) { b.classList.remove('selected'); });
+        btn.classList.add('selected');
+        var title = btn.parentElement.previousElementSibling;
+        if(title) title.textContent = 'Thanks for the feedback!';
+    };
+});
+</script>
