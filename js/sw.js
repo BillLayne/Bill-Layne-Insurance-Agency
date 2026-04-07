@@ -1,5 +1,5 @@
 // Enhanced Service Worker with Version-based Caching
-const CACHE_NAME = 'bill-layne-v2026.03.28.1'; // Update this version when deploying
+const CACHE_NAME = 'bill-layne-v2026.04.07.1'; // Update this version when deploying
 const STATIC_ASSETS = [
   '/',
   '/index.html',
