@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-N37THY37CR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-N37THY37CR');
+    </script>
+    <title>Insurance IQ Challenge | Test Your Insurance Knowledge | Bill Layne Insurance</title>
+    <meta name="description" content="How much do you really know about insurance? Take our free Insurance IQ Challenge and find out! 10 questions about auto, home, and NC insurance basics.">
+    <meta name="robots" content="index, follow">
+    <link rel="icon" href="https://fav.farm/🛡️">
+    <link rel="canonical" href="https://www.billlayneinsurance.com/insurance-iq/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Insurance IQ Challenge | How Smart Are You About Insurance?">
+    <meta property="og:description" content="10 questions. 60 seconds each. How well do you really know insurance? Take the challenge and find out your Insurance IQ!">
+    <meta property="og:image" content="https://i.imgur.com/Z5MxmKE.png">
+    <meta property="og:url" content="https://www.billlayneinsurance.com/insurance-iq/">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --primary: #1e40af;
+            --primary-dark: #1e3a8a;
+            --primary-light: #3b82f6;
+            --accent: #f59e0b;
+            --accent-hover: #d97706;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg: #f0f4ff;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --radius: 16px;
+        }
+
+        body {
+            font-family: 'Outfit', Arial, 'Helvetica Neue', Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── HERO HEADER ── */
+        .quiz-hero {
+            background: linear-gradient(135deg, #003f87 0%, #0076d3 50%, #1e40af 100%);
+            padding: 40px 20px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .quiz-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            animation: drift 20s linear infinite;
+        }
+        @keyframes drift {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(30px, 30px); }
+        }
+        .quiz-hero * { position: relative; z-index: 1; }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.25);
+            padding: 8px 20px;
+            border-radius: 50px;
+            color: #fbbf24;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 20px;
+        }
+        .quiz-hero h1 {
+            font-size: clamp(2rem, 6vw, 3.2rem);
+            font-weight: 900;
+            color: white;
+            line-height: 1.1;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .quiz-hero h1 span {
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .quiz-hero p {
+            color: rgba(255,255,255,0.85);
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* ── QUIZ CONTAINER ── */
+        .quiz-wrapper {
+            max-width: 680px;
+            margin: -30px auto 40px;
+            padding: 0 16px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ── PROGRESS BAR ── */
+        .progress-container {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .progress-label {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+        .progress-count {
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: var(--primary);
+        }
+        .progress-track {
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 99px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 99px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0%;
+        }
+
+        /* ── QUESTION CARD ── */
+        .question-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 32px 28px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            animation: slideUp 0.4s ease-out;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .question-emoji {
+            font-size: 3.5rem;
+            text-align: center;
+            margin-bottom: 16px;
+            line-height: 1;
+            animation: emojiPop 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes emojiPop {
+            0% { transform: scale(0) rotate(-20deg); opacity: 0; }
+            60% { transform: scale(1.2) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        .question-number {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            background: #eff6ff;
+            padding: 6px 14px;
+            border-radius: 50px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 800;
+            line-height: 1.35;
+            color: var(--text);
+            margin-bottom: 24px;
+        }
+
+        /* ── ANSWER OPTIONS ── */
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option-btn {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: #fafbff;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            width: 100%;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .option-btn:hover:not(.disabled) {
+            border-color: var(--primary-light);
+            background: #eff6ff;
+            transform: translateX(4px);
+        }
+        .option-letter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #e2e8f0;
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        .option-btn:hover:not(.disabled) .option-letter {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* States */
+        .option-btn.correct {
+            border-color: var(--success);
+            background: #ecfdf5;
+            animation: correctPop 0.4s ease-out;
+        }
+        .option-btn.correct .option-letter {
+            background: var(--success);
+            color: white;
+        }
+        .option-btn.wrong {
+            border-color: var(--danger);
+            background: #fef2f2;
+            animation: shake 0.5s ease-out;
+        }
+        .option-btn.wrong .option-letter {
+            background: var(--danger);
+            color: white;
+        }
+        .option-btn.disabled {
+            cursor: default;
+            opacity: 0.6;
+        }
+        .option-btn.disabled.correct { opacity: 1; }
+        .option-btn.disabled.wrong { opacity: 1; }
+
+        @keyframes correctPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+
+        /* ── EXPLANATION ── */
+        .explanation {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+            border-left: 4px solid var(--primary);
+            animation: fadeIn 0.3s ease-out;
+        }
+        .explanation-title {
+            font-weight: 800;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+        .explanation p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── NEXT BUTTON ── */
+        .next-btn {
+            display: none;
+            width: 100%;
+            margin-top: 20px;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
+        }
+        .next-btn.visible { display: block; animation: fadeIn 0.3s ease-out; }
+
+        /* ── START SCREEN ── */
+        .start-screen {
+            text-align: center;
+            padding: 40px 28px;
+        }
+        .start-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .start-screen h2 {
+            font-size: 1.6rem;
+            font-weight: 900;
+            margin-bottom: 12px;
+        }
+        .start-screen p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        .start-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 24px 0;
+            text-align: left;
+        }
+        .start-feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            background: #f8fafc;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .start-feature i {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+        .start-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 18px 48px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-family: inherit;
+            font-size: 1.15rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+            margin-top: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .start-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.5);
+        }
+
+        /* ── RESULTS SCREEN ── */
+        .results-screen {
+            text-align: center;
+            padding: 40px 28px;
+        }
+        .results-score-ring {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 24px;
+        }
+        .results-score-ring svg {
+            transform: rotate(-90deg);
+            width: 180px;
+            height: 180px;
+        }
+        .results-score-ring .track {
+            fill: none;
+            stroke: #e2e8f0;
+            stroke-width: 12;
+        }
+        .results-score-ring .fill-ring {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 12;
+            stroke-linecap: round;
+            stroke-dasharray: 440;
+            stroke-dashoffset: 440;
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .results-score-ring .score-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        .score-number {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--primary);
+            line-height: 1;
+        }
+        .score-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .results-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+        .results-rank {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 16px;
+        }
+        .results-desc {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+            max-width: 440px;
+            margin: 0 auto 28px;
+        }
+        .results-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+        .stat-box {
+            padding: 16px 8px;
+            background: #f8fafc;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-box .stat-num {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--primary);
+        }
+        .stat-box .stat-lbl {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 2px;
+        }
+        .cta-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .cta-primary {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1.05rem;
+            font-weight: 800;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+        .cta-primary:hover { transform: translateY(-2px); }
+        .cta-secondary {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px;
+            background: white;
+            color: var(--primary);
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .cta-secondary:hover { border-color: var(--primary); background: #eff6ff; }
+
+        /* ── FOOTER ── */
+        .quiz-footer {
+            background: #0f172a;
+            padding: 32px 20px;
+            text-align: center;
+        }
+        .quiz-footer img { height: 40px; margin-bottom: 12px; }
+        .quiz-footer p {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+        .quiz-footer a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+        }
+        .quiz-footer a:hover { color: white; }
+
+        /* ── CONFETTI ── */
+        .confetti-piece {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            z-index: 999;
+            border-radius: 2px;
+            animation: confettiFall linear forwards;
+        }
+        @keyframes confettiFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 600px) {
+            .quiz-hero { padding: 28px 16px 50px; }
+            .question-card { padding: 24px 20px; }
+            .start-features { grid-template-columns: 1fr; }
+            .results-stats { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+            .stat-box { padding: 12px 4px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<div class="quiz-hero">
+    <div class="hero-badge"><i class="fas fa-brain"></i> Challenge Yourself</div>
+    <h1>Insurance <span>IQ</span> Challenge</h1>
+    <p>10 questions. How much do you really know about auto &amp; home insurance in North Carolina?</p>
+</div>
+
+<!-- ── QUIZ BODY ── -->
+<div class="quiz-wrapper">
+
+    <!-- Progress -->
+    <div class="progress-container" id="progressBar" style="display:none;">
+        <div class="progress-header">
+            <span class="progress-label"><i class="fas fa-bolt"></i> Progress</span>
+            <span class="progress-count" id="progressText">1 of 10</span>
+        </div>
+        <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+    </div>
+
+    <!-- Question Card -->
+    <div class="question-card" id="questionCard">
+        <!-- START SCREEN -->
+        <div class="start-screen" id="startScreen">
+            <div class="start-icon">🛡️</div>
+            <h2>Are You Insurance-Savvy?</h2>
+            <p>Most people don't know the difference between comprehensive and collision &mdash; do you? Test your knowledge with 10 real-world insurance questions.</p>
+            <div class="start-features">
+                <div class="start-feature"><i class="fas fa-clock"></i> 2 Minutes</div>
+                <div class="start-feature"><i class="fas fa-question-circle"></i> 10 Questions</div>
+                <div class="start-feature"><i class="fas fa-trophy"></i> Get Ranked</div>
+                <div class="start-feature"><i class="fas fa-graduation-cap"></i> Learn Tips</div>
+            </div>
+            <button class="start-btn" onclick="startQuiz()"><i class="fas fa-play"></i> Start the Challenge</button>
+        </div>
+
+        <!-- QUIZ AREA (hidden until start) -->
+        <div id="quizArea" style="display:none;">
+            <div class="question-emoji" id="qEmoji"></div>
+            <div class="question-number" id="qNumber"><i class="fas fa-question-circle"></i> Question 1</div>
+            <div class="question-text" id="qText"></div>
+            <div class="options-grid" id="optionsGrid"></div>
+            <div class="explanation" id="explanation" style="display:none;">
+                <div class="explanation-title"><i class="fas fa-lightbulb"></i> Did You Know?</div>
+                <p id="explanationText"></p>
+            </div>
+            <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question <i class="fas fa-arrow-right"></i></button>
+        </div>
+
+        <!-- RESULTS (hidden until end) -->
+        <div class="results-screen" id="resultsScreen" style="display:none;"></div>
+    </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<div class="quiz-footer">
+    <img src="https://i.imgur.com/lxu9nfT.png" alt="Bill Layne Insurance">
+    <p>&copy; 2026 Bill Layne Insurance Agency &middot; Elkin &amp; Dobson, NC<br>
+    <a href="/">Home</a> &middot; <a href="/contact-us.html">Contact Us</a> &middot; <a href="tel:3368351993">(336) 835-1993</a></p>
+</div>
+
+<script>
+// ── QUESTIONS ──
+const questions = [
+    {
+        emoji: "🌳",
+        question: "A tree falls on your parked car during a storm. Which coverage pays for the damage?",
+        options: ["Collision", "Comprehensive", "Liability", "Uninsured Motorist"],
+        correct: 1,
+        explanation: "Comprehensive covers damage from things OTHER than a collision — falling trees, hail, theft, fire, animal strikes, and vandalism. Think of it as 'everything except crashing into something.'"
+    },
+    {
+        emoji: "🅿️",
+        question: "You back into a pole in a parking lot. Which coverage pays to fix YOUR car?",
+        options: ["Liability", "Comprehensive", "Collision", "Medical Payments"],
+        correct: 2,
+        explanation: "Collision covers damage to YOUR vehicle when you hit (or are hit by) another object — poles, guardrails, other cars — regardless of fault. Liability only pays for the OTHER person's damage."
+    },
+    {
+        emoji: "⚖️",
+        question: "What is the minimum liability coverage required by North Carolina law?",
+        options: ["25/50/25", "30/60/25", "50/100/50", "100/300/100"],
+        correct: 2,
+        explanation: "NC requires 50/100/50 — that's $50K per person / $100K per accident for bodily injury, and $50K for property damage. It's actually higher than most states!"
+    },
+    {
+        emoji: "🦌",
+        question: "A deer runs into the side of your truck. Which coverage applies?",
+        options: ["Collision", "Comprehensive", "Liability", "None — it's the deer's fault"],
+        correct: 1,
+        explanation: "Animal strikes (deer, birds, etc.) are covered under Comprehensive, not Collision. NC is in the top 20 states for deer collisions, so this coverage really matters here."
+    },
+    {
+        emoji: "⚾",
+        question: "Your neighbor's kid throws a baseball through your window. What does YOUR homeowner's insurance cover?",
+        options: ["Nothing — the neighbor pays", "The window only", "The window and any damaged property inside", "Only if you have an endorsement"],
+        correct: 2,
+        explanation: "Your homeowner's policy covers the broken window AND any property damaged inside (curtains, TV, etc.) under your dwelling and personal property coverage. You could also file against the neighbor's liability, but your own policy protects you either way."
+    },
+    {
+        emoji: "💰",
+        question: "What does a 'deductible' mean?",
+        options: ["Your monthly payment amount", "What the insurance company pays", "The amount YOU pay before insurance kicks in", "A tax deduction for having insurance"],
+        correct: 2,
+        explanation: "Your deductible is your out-of-pocket amount before your insurance starts paying. For example, with a $500 deductible on a $3,000 claim, you pay $500 and insurance pays $2,500. Higher deductible = lower premium."
+    },
+    {
+        emoji: "📋",
+        question: "In NC, what form do you need to file after a DUI instead of an SR-22?",
+        options: ["FR-44", "SR-22", "DL-123", "NC-201"],
+        correct: 2,
+        explanation: "North Carolina doesn't use the SR-22 form. Instead, NC uses the DL-123 (also called a Financial Responsibility filing). Your insurance company files it electronically with the NC DMV on your behalf."
+    },
+    {
+        emoji: "🛡️",
+        question: "What does 'liability coverage' protect?",
+        options: ["Your car", "Your medical bills", "Other people's injuries and property you damage", "Your car from theft"],
+        correct: 2,
+        explanation: "Liability pays for OTHER people — their injuries (bodily injury liability) and their property (property damage liability) when YOU cause an accident. It does NOT cover your own vehicle or injuries."
+    },
+    {
+        emoji: "💧",
+        question: "Your home's water heater bursts and floods the basement. Is this covered by standard homeowner's insurance?",
+        options: ["No — all water damage is excluded", "Yes — sudden internal water damage is covered", "Only with flood insurance", "Only if the heater is less than 5 years old"],
+        correct: 1,
+        explanation: "Sudden and accidental water damage (like a burst pipe or water heater) IS covered by standard homeowner's insurance. What's NOT covered is external flood water or gradual leaks you ignored — that's where flood insurance comes in."
+    },
+    {
+        emoji: "🤝",
+        question: "Why might an independent agent save you more money than calling one insurance company directly?",
+        options: ["Independent agents get secret discounts", "They can compare rates from multiple carriers at once", "They charge lower fees", "There's no difference"],
+        correct: 1,
+        explanation: "Independent agents (like us!) aren't tied to one company. We shop your policy across multiple carriers — Progressive, Travelers, Nationwide, and more — to find the best rate for YOUR situation. One call, multiple quotes!"
+    }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = false;
+
+function startQuiz() {
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('quizArea').style.display = 'block';
+    document.getElementById('progressBar').style.display = 'block';
+    showQuestion();
+}
+
+function showQuestion() {
+    answered = false;
+    const q = questions[currentQuestion];
+    const emojiEl = document.getElementById('qEmoji');
+    emojiEl.textContent = q.emoji;
+    emojiEl.style.animation = 'none';
+    emojiEl.offsetHeight;
+    emojiEl.style.animation = 'emojiPop 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+    document.getElementById('qNumber').innerHTML = `<i class="fas fa-question-circle"></i> Question ${currentQuestion + 1}`;
+    document.getElementById('qText').textContent = q.question;
+    document.getElementById('explanation').style.display = 'none';
+    document.getElementById('nextBtn').classList.remove('visible');
+
+    const letters = ['A', 'B', 'C', 'D'];
+    const grid = document.getElementById('optionsGrid');
+    grid.innerHTML = '';
+    q.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+        btn.onclick = () => selectAnswer(i, btn);
+        grid.appendChild(btn);
+    });
+
+    // Progress
+    document.getElementById('progressText').textContent = `${currentQuestion + 1} of ${questions.length}`;
+    document.getElementById('progressFill').style.width = `${((currentQuestion) / questions.length) * 100}%`;
+
+    // Animate card
+    const card = document.getElementById('questionCard');
+    card.style.animation = 'none';
+    card.offsetHeight; // reflow
+    card.style.animation = 'slideUp 0.4s ease-out';
+}
+
+function selectAnswer(index, btn) {
+    if (answered) return;
+    answered = true;
+
+    const q = questions[currentQuestion];
+    const allBtns = document.querySelectorAll('.option-btn');
+
+    allBtns.forEach(b => b.classList.add('disabled'));
+
+    if (index === q.correct) {
+        btn.classList.add('correct');
+        btn.querySelector('.option-letter').innerHTML = '<i class="fas fa-check"></i>';
+        score++;
+    } else {
+        btn.classList.add('wrong');
+        btn.querySelector('.option-letter').innerHTML = '<i class="fas fa-times"></i>';
+        // Show correct answer
+        allBtns[q.correct].classList.add('correct');
+        allBtns[q.correct].querySelector('.option-letter').innerHTML = '<i class="fas fa-check"></i>';
+    }
+
+    // Show explanation
+    document.getElementById('explanationText').textContent = q.explanation;
+    document.getElementById('explanation').style.display = 'block';
+
+    // Show next button
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.textContent = currentQuestion === questions.length - 1 ? 'See My Results 🎉' : 'Next Question →';
+    nextBtn.classList.add('visible');
+}
+
+function nextQuestion() {
+    currentQuestion++;
+    if (currentQuestion >= questions.length) {
+        showResults();
+    } else {
+        showQuestion();
+    }
+}
+
+function showResults() {
+    document.getElementById('quizArea').style.display = 'none';
+    document.getElementById('progressBar').style.display = 'none';
+
+    const pct = Math.round((score / questions.length) * 100);
+    let rank, rankColor, rankBg, emoji, desc;
+
+    if (pct >= 90) {
+        rank = 'Insurance Expert'; emoji = '🏆'; rankColor = '#f59e0b'; rankBg = '#fffbeb';
+        desc = "Incredible! You know more about insurance than most agents. You clearly understand how to protect yourself and save money.";
+    } else if (pct >= 70) {
+        rank = 'Savvy Saver'; emoji = '⭐'; rankColor = '#10b981'; rankBg = '#ecfdf5';
+        desc = "Great job! You've got solid insurance knowledge. A quick review with an agent could help you maximize your savings.";
+    } else if (pct >= 50) {
+        rank = 'Getting There'; emoji = '📚'; rankColor = '#3b82f6'; rankBg = '#eff6ff';
+        desc = "Not bad! You know the basics, but there are some gaps that could be costing you money or leaving you underprotected.";
+    } else {
+        rank = 'Insurance Rookie'; emoji = '🌱'; rankColor = '#8b5cf6'; rankBg = '#f5f3ff';
+        desc = "Hey, everyone starts somewhere! The good news? Now you know more than when you started. A free consultation could save you hundreds.";
+    }
+
+    // Fill progress to 100%
+    document.getElementById('progressFill').style.width = '100%';
+
+    const resultsDiv = document.getElementById('resultsScreen');
+    resultsDiv.style.display = 'block';
+    resultsDiv.innerHTML = `
+        <div class="results-score-ring">
+            <svg viewBox="0 0 160 160">
+                <circle class="track" cx="80" cy="80" r="70"/>
+                <circle class="fill-ring" id="scoreRing" cx="80" cy="80" r="70"/>
+            </svg>
+            <div class="score-text">
+                <div class="score-number" id="scoreNum">0</div>
+                <div class="score-label">out of ${questions.length}</div>
+            </div>
+        </div>
+        <div class="results-rank" style="background:${rankBg};color:${rankColor};">
+            ${emoji} ${rank}
+        </div>
+        <h2 class="results-title">Your Insurance IQ Results</h2>
+        <p class="results-desc">${desc}</p>
+        <div class="results-stats">
+            <div class="stat-box">
+                <div class="stat-num" style="color:var(--success);">${score}</div>
+                <div class="stat-lbl">Correct</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-num" style="color:var(--danger);">${questions.length - score}</div>
+                <div class="stat-lbl">Missed</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-num">${pct}%</div>
+                <div class="stat-lbl">Score</div>
+            </div>
+        </div>
+        <div class="cta-group">
+            <a href="/auto-quote.html" class="cta-primary"><i class="fas fa-shield-alt"></i> Get a Free Quote — See How Much You Can Save</a>
+            <button class="cta-secondary" onclick="retakeQuiz()"><i class="fas fa-redo"></i> Retake the Challenge</button>
+            <a href="/" class="cta-secondary"><i class="fas fa-home"></i> Back to Home</a>
+        </div>
+    `;
+
+    // Animate score ring
+    setTimeout(() => {
+        const ring = document.getElementById('scoreRing');
+        const circumference = 2 * Math.PI * 70;
+        ring.style.strokeDasharray = circumference;
+        ring.style.strokeDashoffset = circumference - (circumference * pct / 100);
+
+        // Color the ring based on score
+        if (pct >= 70) ring.style.stroke = '#10b981';
+        else if (pct >= 50) ring.style.stroke = '#3b82f6';
+        else ring.style.stroke = '#f59e0b';
+    }, 100);
+
+    // Animate count up
+    let current = 0;
+    const timer = setInterval(() => {
+        current++;
+        document.getElementById('scoreNum').textContent = current;
+        if (current >= score) clearInterval(timer);
+    }, 120);
+
+    // Confetti for 70%+
+    if (pct >= 70) launchConfetti();
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function retakeQuiz() {
+    currentQuestion = 0;
+    score = 0;
+    document.getElementById('resultsScreen').style.display = 'none';
+    document.getElementById('quizArea').style.display = 'block';
+    document.getElementById('progressBar').style.display = 'block';
+    document.getElementById('progressFill').style.width = '0%';
+    showQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function launchConfetti() {
+    const colors = ['#1e40af', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#ec4899'];
+    for (let i = 0; i < 60; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + 'vw';
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.width = Math.random() * 8 + 6 + 'px';
+        piece.style.height = Math.random() * 8 + 6 + 'px';
+        piece.style.animationDuration = Math.random() * 2 + 2 + 's';
+        piece.style.animationDelay = Math.random() * 1.5 + 's';
+        document.body.appendChild(piece);
+        setTimeout(() => piece.remove(), 5000);
+    }
+}
+</script>
+
+<!-- Schema.org structured data -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Quiz",
+    "name": "Insurance IQ Challenge",
+    "description": "Test your insurance knowledge with 10 questions about auto, home, and NC insurance basics.",
+    "educationalLevel": "beginner",
+    "about": {
+        "@type": "Thing",
+        "name": "Insurance Knowledge"
+    },
+    "provider": {
+        "@type": "InsuranceAgency",
+        "name": "Bill Layne Insurance Agency",
+        "url": "https://www.billlayneinsurance.com"
+    }
+}
+</script>
+
+</body>
+</html>
