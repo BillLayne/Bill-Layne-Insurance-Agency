@@ -977,7 +977,7 @@
             <p style="color:rgba(255,255,255,0.65);font-size:12px;font-weight:600;margin-bottom:10px;text-align:center;">Local Elkin agent · 20+ years · <strong style="color:#fff;">No 1-800 number.</strong></p>
 
             <!-- CTAs — tight -->
-            <a href="get-quote.html" onclick="typeof gtag!=='undefined'&&gtag('event','quote_click',{'source':'mobile_hero'})" class="hero-cta" style="padding:14px;font-size:15px;margin-bottom:8px;">Compare My Rates — Free <i class="fas fa-arrow-right"></i></a>
+            <a href="get-quote.html" data-utm-content="savings_cta" onclick="typeof gtag!=='undefined'&&gtag('event','quote_click',{'source':'mobile_hero'})" class="hero-cta" style="padding:14px;font-size:15px;margin-bottom:8px;">Check My Savings <i class="fas fa-arrow-right"></i></a>
             <a href="tel:3368351993" onclick="typeof gtag!=='undefined'&&gtag('event','phone_click',{'source':'mobile_hero'})" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.22);color:#fff;font-weight:700;font-size:13px;border-radius:14px;text-decoration:none;">
               <i class="fas fa-phone-alt" style="color:#fbbf24"></i> Call (336) 835-1993
             </a>
@@ -2618,24 +2618,11 @@
     <!-- GEO-PERSONALIZATION -->
     <script>
     (function() {
-      try {
-        fetch('https://ipapi.co/json/')
-          .then(function(r) { return r.json(); })
-          .then(function(data) {
-            if (data && data.region === 'North Carolina' && data.city) {
-              var display = data.city + ', NC';
-              document.querySelectorAll('.geo-location').forEach(function(el) {
-                el.style.transition = 'opacity .4s';
-                el.style.opacity = '0';
-                setTimeout(function() {
-                  el.textContent = display;
-                  el.style.opacity = '1';
-                }, 300);
-              });
-            }
-          })
-          .catch(function() {});
-      } catch(e) {}
+      document.querySelectorAll('.geo-location').forEach(function(el) {
+        if (!el.textContent.trim()) {
+          el.textContent = 'North Carolina';
+        }
+      });
     })();
     </script>
     <script>
