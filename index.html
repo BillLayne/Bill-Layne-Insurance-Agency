@@ -22,7 +22,7 @@
     <link rel="preconnect" href="https://i.imgur.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <title>Elkin NC Insurance — Compare 7 Carriers & Save | Bill Layne</title>
-    <meta name="description" content="Exposed: NC drivers overpay $400+/yr using one carrier. We compare 7 top insurers in 5 min — same coverage, lower price. See what Elkin locals are saving.">
+    <meta name="description" content="Compare auto, home, renters, business, and DL-123 insurance options with Bill Layne Insurance in Elkin, NC. Local independent agency serving all North Carolina counties.">
     <meta name="keywords" content="auto insurance Elkin NC, home insurance Surry County, car insurance Mount Airy NC, independent insurance agent North Carolina, DL-123 filing NC, SR-22 alternative NC, bundle auto home insurance, cheap car insurance Elkin, insurance agency near me Surry County, compare insurance rates NC, best insurance agent Wilkes County NC, Jonesville NC insurance, Yadkin County insurance">
     <meta name="geo.region" content="US-NC">
     <meta name="geo.placename" content="Elkin, North Carolina">
@@ -1164,7 +1164,7 @@
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
 
                 <!-- Lower my auto rate -->
-                <a href="auto-quote.html" onclick="typeof gtag!=='undefined'&&gtag('event','homepage_need_click',{'need':'lower_auto_rate'})"
+                <a href="get-quote.html" data-utm-content="need_auto_rate" onclick="typeof gtag!=='undefined'&&gtag('event','homepage_need_click',{'need':'lower_auto_rate'})"
                    class="group flex flex-col items-center gap-3 p-4 sm:p-5 rounded-2xl border-2 border-slate-100 hover:border-primary-400 hover:bg-primary-50 transition-all text-center active:scale-[0.97] cursor-pointer">
                     <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center group-hover:bg-primary-600 transition-colors">
                         <i class="fas fa-car-side text-xl text-primary-600 group-hover:text-white transition-colors"></i>
@@ -1176,7 +1176,7 @@
                 </a>
 
                 <!-- Adding a teen driver -->
-                <a href="auto-quote.html" onclick="typeof gtag!=='undefined'&&gtag('event','homepage_need_click',{'need':'teen_driver'})"
+                <a href="get-quote.html" data-utm-content="need_teen_driver" onclick="typeof gtag!=='undefined'&&gtag('event','homepage_need_click',{'need':'teen_driver'})"
                    class="group flex flex-col items-center gap-3 p-4 sm:p-5 rounded-2xl border-2 border-slate-100 hover:border-amber-400 hover:bg-amber-50 transition-all text-center active:scale-[0.97] cursor-pointer">
                     <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center group-hover:bg-amber-500 transition-colors">
                         <i class="fas fa-user-graduate text-xl text-amber-600 group-hover:text-white transition-colors"></i>
@@ -1188,7 +1188,7 @@
                 </a>
 
                 <!-- Check home coverage -->
-                <a href="home-quote.html" onclick="typeof gtag!=='undefined'&&gtag('event','homepage_need_click',{'need':'home_coverage'})"
+                <a href="get-quote.html" data-utm-content="need_home_coverage" onclick="typeof gtag!=='undefined'&&gtag('event','homepage_need_click',{'need':'home_coverage'})"
                    class="group flex flex-col items-center gap-3 p-4 sm:p-5 rounded-2xl border-2 border-slate-100 hover:border-green-400 hover:bg-green-50 transition-all text-center active:scale-[0.97] cursor-pointer">
                     <div class="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center group-hover:bg-green-600 transition-colors">
                         <i class="fas fa-home text-xl text-green-600 group-hover:text-white transition-colors"></i>
@@ -1200,7 +1200,7 @@
                 </a>
 
                 <!-- DL-123 / DMV Help -->
-                <a href="auto-center/index.html" onclick="typeof gtag!=='undefined'&&gtag('event','homepage_need_click',{'need':'dl123_dmv'})"
+                <a href="auto-center/index.html?utm_source=homepage&amp;utm_medium=cta&amp;utm_campaign=homepage_cta_v1&amp;utm_content=need_dl123" data-utm-content="need_dl123" onclick="typeof gtag!=='undefined'&&gtag('event','homepage_need_click',{'need':'dl123_dmv'})"
                    class="group flex flex-col items-center gap-3 p-4 sm:p-5 rounded-2xl border-2 border-slate-100 hover:border-red-400 hover:bg-red-50 transition-all text-center active:scale-[0.97] cursor-pointer">
                     <div class="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center group-hover:bg-red-600 transition-colors">
                         <i class="fas fa-id-card text-xl text-red-600 group-hover:text-white transition-colors"></i>
@@ -2692,11 +2692,11 @@
         function normalizeQuoteLinks(variant) {
             document.querySelectorAll('a[href]').forEach(function(link, index) {
                 if (leadTypeFor(link) !== 'quote') return;
-                const quoteUrl = new URL('/get-quote', window.location.origin);
+                const quoteUrl = new URL('/get-quote.html', window.location.origin);
                 quoteUrl.searchParams.set('utm_source', 'homepage');
                 quoteUrl.searchParams.set('utm_medium', 'cta');
                 quoteUrl.searchParams.set('utm_campaign', TEST_NAME);
-                quoteUrl.searchParams.set('utm_content', variant);
+                quoteUrl.searchParams.set('utm_content', link.dataset.utmContent || variant);
                 link.href = quoteUrl.toString();
                 link.dataset.leadType = 'quote';
                 link.dataset.ctaIndex = String(index + 1);
