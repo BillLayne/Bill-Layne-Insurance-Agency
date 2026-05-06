@@ -237,16 +237,19 @@ body {
 
 /* =============================
    MOBILE HERO TRUST IMAGE
-   Capped to 200px on mobile so the carrier-logo marquee
-   peeks above the dock = visible trust signal + scroll cue.
-   Smart-cropped on Bill's face (object-position: center 32%).
+   Image has trust text baked in at the top ("Your neighbors trust
+   us…" + 4.9 Google rating bar). Anchor to TOP so the headline +
+   rating stay fully visible; let the bottom of the photo be the
+   part that gets minor cropping if needed.
+   Aspect-ratio matches the source image (3:2) so on most mobile
+   widths there is NO crop at all — just a smaller render.
    At ≥768px the desktop hero takes over (this is hidden anyway).
 ============================= */
 .mobile-hero .hero-inner > picture {
     display: block;
     width: 100%;
-    aspect-ratio: 16 / 9;
-    max-height: 200px;
+    aspect-ratio: 3 / 2;        /* matches source 1536x1024 → no crop */
+    max-height: 220px;          /* still saves ~20px vs natural, marquee peeks */
     overflow: hidden;
     border-radius: 12px;
     margin-bottom: 12px;
@@ -257,7 +260,7 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 32%;
+    object-position: center top;  /* preserve baked-in headline + ratings bar */
     /* Inline style on the <img> in HTML adds redundant border/shadow/radius;
        override here so the picture wrapper handles them cleanly. */
     border-radius: 0 !important;
