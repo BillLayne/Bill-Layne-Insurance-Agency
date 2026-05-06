@@ -116,12 +116,18 @@ All base64 images in the blog HTML must be extracted, uploaded to Imgur, and rep
 
 ### Step 6: Update the Embedded Blog Data in index.html (CRITICAL)
 - **This step is required or the blog will NOT appear on the landing page.**
-- Open `blog/index.html` — find line ~897 containing `window.__BLOG_DATA__`
+- Open `blog/index.html` and search for `window.__BLOG_DATA__`
 - This is a single very long line: `<script>window.__BLOG_DATA__ = [...];</script>`
 - Replace the entire JSON array on that line with the **current full contents** of `blog/data/blogs.json`, minified to a single line
-- **How to do it:** Read `blog/data/blogs.json`, minify it (remove all newlines and unnecessary whitespace), then replace line 897 with: `<script>window.__BLOG_DATA__ = MINIFIED_JSON;</script>`
-- **Verify** by checking that the number of `"id":` occurrences on line 897 matches the count in `blogs.json`
+- **How to do it:** Read `blog/data/blogs.json`, minify it (remove all newlines and unnecessary whitespace), then replace that script with: `<script>window.__BLOG_DATA__ = MINIFIED_JSON;</script>`
+- **Verify** by checking that the number of `"id":` occurrences in the embedded script matches the count in `blogs.json`
 - This embedded data is the primary data source for the blog landing page — if it's out of sync, blogs won't show
+
+### Step 6A: Update Crawlable Latest Posts + Blog Schema
+- In `blog/index.html`, update the visible "Latest NC Insurance Guides" HTML section so the newest 5-6 posts are present as regular `<article>` cards with title, summary, date, category, and an absolute/usable link.
+- Update the `<script type="application/ld+json">` near the top of `blog/index.html` so the `Blog`, `ItemList`, and newest `BlogPosting` entries match the latest posts.
+- Update the homepage `Latest from Our Blog` static cards in `index.html` when the newest post should appear on the homepage.
+- This is important because search engines and AI crawlers should see the newest blog titles and summaries in raw HTML/schema, not only inside `window.__BLOG_DATA__` or JavaScript-rendered cards.
 
 ### Step 7: Verify (ALL must pass)
 - [ ] Blog HTML file exists in `blog/blogs/`
@@ -130,8 +136,9 @@ All base64 images in the blog HTML must be extracted, uploaded to Imgur, and rep
 - [ ] Hero image and inline images have `loading="lazy"` (except hero) and `width`/`height` attributes
 - [ ] `blogs.json` has the new entry at the **top** with today's date
 - [ ] `imageUrl` in blogs.json uses the Imgur hero image URL
-- [ ] `window.__BLOG_DATA__` in `blog/index.html` line ~897 has the **same number of entries** as `blogs.json` (count `"id":` occurrences in both — they must match)
-- [ ] The new blog's `id` appears in both `blogs.json` AND the embedded data on line ~897
+- [ ] `window.__BLOG_DATA__` in `blog/index.html` has the **same number of entries** as `blogs.json` (count `"id":` occurrences in both — they must match)
+- [ ] The new blog's `id` appears in both `blogs.json` AND the embedded data script
+- [ ] The newest blog appears in the raw HTML "Latest NC Insurance Guides" section and in the blog JSON-LD schema
 
 ---
 
