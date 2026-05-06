@@ -773,6 +773,24 @@
     <link rel="stylesheet" href="css/tailwind-output.css">
 
     <style>
+        /* ==============================================
+           VIEW TRANSITIONS API — Cross-document smooth nav
+           Chrome 126+, Safari 18+. Browsers without support
+           silently ignore. Same-origin only.
+           ============================================== */
+        @view-transition { navigation: auto; }
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation-duration: 0.22s;
+            animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        /* Disable view transitions for users who prefer reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            ::view-transition-group(*),
+            ::view-transition-old(*),
+            ::view-transition-new(*) { animation: none !important; }
+        }
+
         /* Mobile Touch Fixes */
 
         /* Accessibility: Reduced Motion */
@@ -986,6 +1004,7 @@
         <div class="hero-inner">
             <!-- Trust image — first thing visitors see -->
             <picture>
+                <source type="image/avif" srcset="img/hero/bill_hero_mobile.avif 640w, img/hero/bill_hero_tablet.avif 960w, img/hero/bill_hero_full.avif 1536w" sizes="(max-width: 767px) 100vw, 50vw">
                 <source type="image/webp" srcset="img/hero/bill_hero_mobile.webp 640w, img/hero/bill_hero_tablet.webp 960w, img/hero/bill_hero_full.webp 1536w" sizes="(max-width: 767px) 100vw, 50vw">
                 <img src="https://i.imgur.com/X8hVOzb.jpeg" srcset="https://i.imgur.com/X8hVOzb.jpeg 640w, https://i.imgur.com/4DEjnlL.jpeg 960w, https://i.imgur.com/BHM86RN.jpeg 1536w" sizes="(max-width: 767px) 100vw, 50vw" alt="Bill Layne, owner of Bill Layne Insurance Agency in Elkin NC, meeting with longtime clients — 4.9 Google Rating, 2000+ NC families served since 2005" style="width:100%;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,0.35);border:1.5px solid rgba(255,255,255,0.12);margin-bottom:12px;" loading="eager" decoding="async" width="1536" height="1024" fetchpriority="high">
             </picture>
@@ -1038,6 +1057,7 @@
         <!-- BACKGROUND — NC Blue Ridge Mountains lifestyle image -->
         <div class="absolute inset-0 z-0 pointer-events-none">
             <picture>
+                <source type="image/avif" srcset="img/hero/pilot_mt_tablet.avif 960w, img/hero/pilot_mt_full.avif 1344w" sizes="100vw" media="(min-width: 768px)">
                 <source type="image/webp" srcset="img/hero/pilot_mt_tablet.webp 960w, img/hero/pilot_mt_full.webp 1344w" sizes="100vw" media="(min-width: 768px)">
                 <img src="https://i.imgur.com/y73HLEh.jpeg" srcset="https://i.imgur.com/OGOyF5g.jpeg 960w, https://i.imgur.com/y73HLEh.jpeg 1344w" sizes="100vw" alt="Pilot Mountain at sunset in North Carolina with rolling green foothills" class="w-full h-full object-cover hero-img-pilot" fetchpriority="high" decoding="async" width="1344" height="768">
             </picture>
@@ -1117,6 +1137,7 @@
                 <!-- Desktop-only: Trust Image -->
                 <div class="relative hidden lg:block reveal active" style="transition-delay: 0.2s;">
                     <picture>
+                        <source type="image/avif" srcset="img/hero/bill_hero_tablet.avif 960w, img/hero/bill_hero_full.avif 1536w" sizes="50vw" media="(min-width: 768px)">
                         <source type="image/webp" srcset="img/hero/bill_hero_tablet.webp 960w, img/hero/bill_hero_full.webp 1536w" sizes="50vw" media="(min-width: 768px)">
                         <img src="https://i.imgur.com/BHM86RN.jpeg" srcset="https://i.imgur.com/4DEjnlL.jpeg 960w, https://i.imgur.com/BHM86RN.jpeg 1536w" sizes="50vw" alt="Bill Layne, owner of Bill Layne Insurance Agency in Elkin NC, meeting with longtime clients — 4.9 Google Rating, 2000+ NC families served since 2005" class="w-full rounded-2xl shadow-2xl border-2 border-white/15" style="transform:scale(1.08);transform-origin:center center;" loading="eager" decoding="async" width="1536" height="1024" fetchpriority="high">
                     </picture>
