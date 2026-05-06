@@ -235,6 +235,37 @@ body {
     z-index: 2;
 }
 
+/* =============================
+   MOBILE HERO TRUST IMAGE
+   Capped to 200px on mobile so the carrier-logo marquee
+   peeks above the dock = visible trust signal + scroll cue.
+   Smart-cropped on Bill's face (object-position: center 32%).
+   At ≥768px the desktop hero takes over (this is hidden anyway).
+============================= */
+.mobile-hero .hero-inner > picture {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    max-height: 200px;
+    overflow: hidden;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+    border: 1.5px solid rgba(255,255,255,0.12);
+}
+.mobile-hero .hero-inner > picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 32%;
+    /* Inline style on the <img> in HTML adds redundant border/shadow/radius;
+       override here so the picture wrapper handles them cleanly. */
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    margin-bottom: 0 !important;
+}
+
 /* Trust Row */
 .mobile-hero .trust-row {
     display: flex;
