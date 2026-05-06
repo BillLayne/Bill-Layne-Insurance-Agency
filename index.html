@@ -11,13 +11,15 @@
       gtag('js', new Date());
       gtag('config', 'G-N37THY37CR');
     </script>
-    <!-- Microsoft Clarity -->
+    <!-- Microsoft Clarity — deferred to idle time (keeps TBT/INP low) -->
     <script type="text/javascript">
-      (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-      })(window, document, "clarity", "script", "vo5s3jhhub");
+      (window.requestIdleCallback || function(cb){return setTimeout(cb, 1500);})(function(){
+        (function(c,l,a,r,i,t,y){
+          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "vo5s3jhhub");
+      });
     </script>
     <link rel="preconnect" href="https://i.imgur.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
@@ -761,6 +763,22 @@
         ]
     }
     </script>
+
+    <!-- LCP image preload: hero AVIF gets fetched in parallel with HTML parse (saves 100-300ms LCP) -->
+    <!-- Mobile (<768px): Bill Layne trust photo is the LCP candidate -->
+    <link rel="preload" as="image" type="image/avif"
+          href="img/hero/bill_hero_mobile.avif"
+          imagesrcset="img/hero/bill_hero_mobile.avif 640w, img/hero/bill_hero_tablet.avif 960w, img/hero/bill_hero_full.avif 1536w"
+          imagesizes="(max-width: 767px) 100vw, 50vw"
+          media="(max-width: 767px)"
+          fetchpriority="high">
+    <!-- Desktop (≥768px): Pilot Mountain background is the LCP candidate -->
+    <link rel="preload" as="image" type="image/avif"
+          href="img/hero/pilot_mt_full.avif"
+          imagesrcset="img/hero/pilot_mt_tablet.avif 960w, img/hero/pilot_mt_full.avif 1344w"
+          imagesizes="100vw"
+          media="(min-width: 768px)"
+          fetchpriority="high">
 
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
