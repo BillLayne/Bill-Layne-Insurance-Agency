@@ -783,10 +783,17 @@
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Fonts trimmed: dropped DM Sans (replaced with Inter in mobile-dock.css), dropped 300 weights (0 uses on page). Saves ~80KB. -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" as="style">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Google Fonts: async-loaded via preload + onload swap (non-render-blocking) -->
+    <!-- &display=swap means fallback system font renders immediately, web font swaps in when ready -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap"></noscript>
+
+    <!-- Font Awesome: async-loaded (icons paint slightly after first text — acceptable for +8-12 LH score) -->
+    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
+
+    <!-- Layout-critical CSS: kept render-blocking (async would cause massive CLS) -->
     <link rel="stylesheet" href="css/mobile-dock.css">
     <link rel="stylesheet" href="css/tailwind-output.css">
 
