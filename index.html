@@ -892,11 +892,11 @@
         /* Mobile/tablet: navbar needs dark bg so white logo text is visible */
         @media (max-width: 767px) {
             #navbar:not(.glass-nav) {
-                background: linear-gradient(to right, #0f172a, #1e1b4b);
+                background: linear-gradient(to right, rgb(15 23 42), rgb(30 58 138));
             }
         }
         .bg-vivid-hero {
-            background: radial-gradient(circle at top right, #1e40af, #020617);
+            background: radial-gradient(circle at top right, rgb(30 64 175), rgb(2 6 23));
             position: relative;
         }
         .bg-vivid-hero::before {
@@ -931,14 +931,14 @@
             width: 60%;
             height: 2px;
             border-radius: 2px;
-            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            background: linear-gradient(90deg, rgb(251 191 36), rgb(245 158 11));
             transition: transform 0.3s ease;
         }
         .nav-link-item:hover::after {
             transform: translateX(-50%) scaleX(1);
         }
         .nav-link-item.scrolled::after {
-            background: linear-gradient(90deg, #2563eb, #4f46e5);
+            background: linear-gradient(90deg, rgb(37 99 235), rgb(30 64 175));
         }
         .btn-shine { position: relative; overflow: hidden; }
         .btn-shine::after {
@@ -1697,12 +1697,16 @@
         </div>
 
         <style>
-            :root {
-                --bl-primary: #1e3a8a;
-                --bl-secondary: #3b82f6;
-                --bl-accent: #fbbf24;
+            #blCoverageWidget {
+                --bl-primary: #1e40af;
+                --bl-primary-dark: #1e3a8a;
+                --bl-primary-bright: #2563eb;
+                --bl-blue-soft: #dbeafe;
                 --bl-text: #0f172a;
+                --bl-muted: #64748b;
                 --bl-card-bg: #ffffff;
+                --bl-border: #e2e8f0;
+                --bl-border-soft: #f1f5f9;
                 --bl-radius: 1.5rem;
                 --bl-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
             }
@@ -1721,7 +1725,7 @@
                 box-shadow: var(--bl-shadow);
                 overflow: hidden;
                 position: relative;
-                border: 1px solid rgba(226, 232, 240, 0.8);
+                border: 1px solid rgb(226 232 240 / 0.8);
             }
 
             .bl-graphic-topbar {
@@ -1729,16 +1733,16 @@
                 align-items: center;
                 justify-content: space-between;
                 padding: 16px 20px;
-                border-bottom: 1px solid #f1f5f9;
-                background: #fff;
+                border-bottom: 1px solid var(--bl-border-soft);
+                background: var(--bl-card-bg);
             }
 
             .bl-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
 
             .bl-tab {
-                border: 1px solid #e2e8f0;
+                border: 1px solid var(--bl-border);
                 background: #f8fafc;
-                color: #64748b;
+                color: var(--bl-muted);
                 border-radius: 999px;
                 padding: 8px 16px;
                 font-size: 13px;
@@ -1746,19 +1750,19 @@
                 cursor: pointer;
                 transition: all 0.2s ease;
             }
-            .bl-tab:hover { background: #fff; border-color: var(--bl-secondary); color: var(--bl-secondary); }
+            .bl-tab:hover { background: var(--bl-card-bg); border-color: var(--bl-primary-bright); color: var(--bl-primary-bright); }
             .bl-tab[aria-pressed="true"] {
                 background: var(--bl-primary);
                 border-color: var(--bl-primary);
                 color: #fff;
-                box-shadow: 0 4px 6px -1px rgba(30, 58, 138, 0.3);
+                box-shadow: 0 4px 6px -1px rgb(30 64 175 / 0.3);
             }
 
             .bl-graphic-wrap {
                 position: relative;
                 width: 100%;
                 aspect-ratio: 16/10;
-                background: #f1f5f9;
+                background: var(--bl-border-soft);
                 overflow: hidden;
             }
 
@@ -1776,7 +1780,7 @@
 
             .bl-overlay {
                 position: absolute; inset: 0;
-                background: linear-gradient(to top, rgba(15, 23, 42, 0.4), transparent);
+                background: linear-gradient(to top, rgb(15 23 42 / 0.4), transparent);
             }
 
             .bl-hotspot {
@@ -1785,9 +1789,9 @@
                 width: 44px; height: 44px;
                 border-radius: 999px;
                 border: 2.5px solid #fff;
-                background: rgba(30, 58, 138, 0.85);
+                background: rgb(30 64 175 / 0.88);
                 backdrop-filter: blur(4px);
-                box-shadow: 0 4px 14px rgba(0,0,0,0.35), 0 0 0 0 rgba(251, 191, 36, 0.5);
+                box-shadow: 0 4px 14px rgb(0 0 0 / 0.35), 0 0 0 0 rgb(37 99 235 / 0.45);
                 display: grid;
                 place-items: center;
                 cursor: pointer;
@@ -1795,29 +1799,29 @@
                 animation: bl-pulse 2.5s infinite;
             }
             .bl-hotspot i {
-                color: #fbbf24;
+                color: #fff;
                 font-size: 16px;
                 filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
                 transition: color 0.2s;
             }
             .bl-hotspot:hover {
                 transform: translate(-50%, -50%) scale(1.2);
-                background: var(--bl-accent);
+                background: var(--bl-card-bg);
                 border-color: #fff;
-                box-shadow: 0 6px 20px rgba(251, 191, 36, 0.5);
+                box-shadow: 0 6px 20px rgb(37 99 235 / 0.45);
             }
-            .bl-hotspot:hover i { color: #1e3a8a; }
+            .bl-hotspot:hover i { color: var(--bl-primary); }
             .bl-hotspot-active {
-                background: var(--bl-accent) !important;
-                box-shadow: 0 6px 20px rgba(251, 191, 36, 0.5) !important;
+                background: var(--bl-card-bg) !important;
+                box-shadow: 0 6px 20px rgb(37 99 235 / 0.45) !important;
                 animation: none !important;
                 transform: translate(-50%, -50%) scale(1.15);
             }
-            .bl-hotspot-active i { color: #1e3a8a !important; }
+            .bl-hotspot-active i { color: var(--bl-primary) !important; }
             @keyframes bl-pulse {
-                0% { box-shadow: 0 4px 14px rgba(0,0,0,0.35), 0 0 0 0 rgba(251, 191, 36, 0.5); }
-                70% { box-shadow: 0 4px 14px rgba(0,0,0,0.35), 0 0 0 12px rgba(251, 191, 36, 0); }
-                100% { box-shadow: 0 4px 14px rgba(0,0,0,0.35), 0 0 0 0 rgba(251, 191, 36, 0); }
+                0% { box-shadow: 0 4px 14px rgb(0 0 0 / 0.35), 0 0 0 0 rgb(37 99 235 / 0.45); }
+                70% { box-shadow: 0 4px 14px rgb(0 0 0 / 0.35), 0 0 0 12px rgb(37 99 235 / 0); }
+                100% { box-shadow: 0 4px 14px rgb(0 0 0 / 0.35), 0 0 0 0 rgb(37 99 235 / 0); }
             }
 
             .bl-panel {
@@ -1825,7 +1829,7 @@
                 border-radius: var(--bl-radius);
                 box-shadow: var(--bl-shadow);
                 overflow: hidden;
-                border: 1px solid rgba(226, 232, 240, 0.8);
+                border: 1px solid rgb(226 232 240 / 0.8);
                 height: 100%;
                 min-height: 400px;
                 display: flex;
@@ -1834,8 +1838,8 @@
 
             .bl-panel-header {
                 padding: 20px;
-                background: linear-gradient(to right, #f8fafc, #fff);
-                border-bottom: 1px solid #f1f5f9;
+                background: linear-gradient(to right, #f8fafc, var(--bl-card-bg));
+                border-bottom: 1px solid var(--bl-border-soft);
             }
             .bl-panel-header h3 {
                 margin: 0;
@@ -1847,7 +1851,7 @@
             .bl-panel-header p {
                 margin: 4px 0 0 0;
                 font-size: 0.875rem;
-                color: #64748b;
+                color: var(--bl-muted);
             }
 
             .bl-panel-body { padding: 20px; flex: 1; }
@@ -1889,13 +1893,13 @@
             .bl-btn-solid {
                 background: var(--bl-primary);
                 color: white;
-                box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+                box-shadow: 0 4px 6px -1px rgb(37 99 235 / 0.2);
             }
-            .bl-btn-solid:hover { background: #1d4ed8; transform: translateY(-1px); }
+            .bl-btn-solid:hover { background: var(--bl-primary-dark); transform: translateY(-1px); }
 
             .bl-btn-outline {
                 background: white;
-                border: 1px solid #e2e8f0;
+                border: 1px solid var(--bl-border);
                 color: #475569;
             }
             .bl-btn-outline:hover { background: #f8fafc; border-color: #cbd5e1; }
@@ -1907,7 +1911,7 @@
                 .bl-graphic-card { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom: none; }
                 .bl-panel {
                     border-top-left-radius: 0; border-top-right-radius: 0;
-                    border-top: 1px solid #f1f5f9;
+                    border-top: 1px solid var(--bl-border-soft);
                     min-height: auto;
                 }
                 .bl-tabs { justify-content: center; width: 100%; }
@@ -2559,7 +2563,7 @@
             <li><a href="https://www.billlayneinsurance.com/service-center.html"><span class="menu-icon green"><i class="fas fa-concierge-bell"></i></span> Service Center <i class="fas fa-chevron-right menu-arrow"></i></a></li>
             <li><a href="https://www.billlayneinsurance.com/contact-us/"><span class="menu-icon blue"><i class="fas fa-envelope"></i></span> Contact Us <i class="fas fa-chevron-right menu-arrow"></i></a></li>
             <li><a href="https://www.billlayneinsurance.com/espanol/"><span class="menu-icon green"><i class="fas fa-globe-americas"></i></span> Espa&ntilde;ol &#127474;&#127485; <i class="fas fa-chevron-right menu-arrow"></i></a></li>
-            <li style="margin-top:8px;border-top:1px solid rgba(255,255,255,0.08);padding-top:8px"><a href="https://m.me/dollarbillagency" target="_blank"><span class="menu-icon blue" style="background:linear-gradient(135deg,#0078FF,#00C6FF)"><i class="fab fa-facebook-messenger"></i></span> Message Us on Facebook <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li class="mt-2 border-t border-slate-100 pt-2"><a href="https://m.me/dollarbillagency" target="_blank"><span class="menu-icon blue"><i class="fab fa-facebook-messenger"></i></span> Message Us on Facebook <i class="fas fa-chevron-right menu-arrow"></i></a></li>
         </ul>
     </div>
 
