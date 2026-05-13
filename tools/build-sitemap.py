@@ -6,7 +6,7 @@ import re
 from datetime import date
 
 BASE_URL = "https://www.billlayneinsurance.com"
-TODAY = "2026-03-14"
+TODAY = date.today().isoformat()
 SITE_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def find_html_files():
@@ -144,9 +144,25 @@ def build_sitemap():
         "resources/consistent-header.html",
         "_frog/index.html",
         "blog.html",  # duplicate of blog/index.html
+        "toast.html",
+        "bill-layne-newsletter/newsletter_base_template.html",
     }
     # Exclude entire directories that are dev/utility
-    dev_dirs = ["Insurance-Contact-Information-main/"]
+    dev_dirs = [
+        "Insurance-Contact-Information-main/",
+        "_frog/",
+        "bolt-performance/",
+        "carter-foster/",
+        "general-4/",
+        "image-hosting/",
+        "insurance-1/",
+        "services-1/",
+        "carriers/",
+        "blog/tag/",
+        "bill-layne-newsletter/dist/",
+        "nc-auto-and-home/",
+        "social-media/",
+    ]
     for f in list(all_files):
         for d in dev_dirs:
             if f.startswith(d):

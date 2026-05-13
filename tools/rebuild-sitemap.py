@@ -14,14 +14,54 @@ TODAY = datetime.now().strftime('%Y-%m-%d')
 # Directories/files to exclude
 EXCLUDE_DIRS = {
     'css', 'js', 'data', 'tools', 'node_modules', '.git', '.claude',
-    'auto-center/Logos', 'Logos', 'fonts', 'images'
+    'auto-center/Logos', 'Logos', 'fonts', 'images',
+    # Crawl hygiene: these are internal/dev/legacy paths, not public SEO pages.
+    '_frog', 'bolt-performance', 'carter-foster', 'general-4',
+    'image-hosting', 'insurance-1', 'Insurance-Contact-Information-main',
+    'services-1', 'nc-auto-and-home', 'social-media'
 }
 
 EXCLUDE_FILES = {
     'blog-template.html', 'sample-blog-post.html', '404.html',
     'sw.js', 'manifest.json', 'robots.txt', 'sitemap.xml',
-    'CNAME', '.nojekyll'
+    'CNAME', '.nojekyll', 'blog.html', 'toast.html'
 }
+
+EXCLUDE_PREFIXES = (
+    'carriers/',
+    'blog/tag/',
+    'bill-layne-newsletter/dist/',
+    'post/',
+)
+
+EXCLUDE_EXACT = {
+    'bill-layne-newsletter/newsletter_base_template.html',
+}
+
+REDIRECT_STATUSES = {'301', '302', '303', '307', '308'}
+
+def load_redirect_sources():
+    """Return exact source paths from Cloudflare Pages _redirects."""
+    redirect_file = os.path.join(ROOT, '_redirects')
+    sources = set()
+    if not os.path.exists(redirect_file):
+        return sources
+    with open(redirect_file, 'r', encoding='utf-8', errors='ignore') as f:
+        for raw_line in f:
+            line = raw_line.strip()
+            if not line or line.startswith('#'):
+                continue
+            parts = line.split()
+            if len(parts) < 3 or parts[-1] not in REDIRECT_STATUSES:
+                continue
+            source = parts[0]
+            if '*' in source or ':' in source:
+                continue
+            sources.add(source)
+    return sources
+
+def is_redirect_source(url_path, redirect_sources):
+    return url_path in redirect_sources
 
 # Priority rules
 def get_priority(rel_path):
@@ -56,6 +96,11 @@ def get_changefreq(rel_path):
     return 'weekly'
 
 def should_exclude(rel_path):
+    rel_path = rel_path.replace('\\', '/')
+    if rel_path in EXCLUDE_EXACT:
+        return True
+    if any(rel_path.startswith(prefix) for prefix in EXCLUDE_PREFIXES):
+        return True
     parts = rel_path.replace('\\', '/').split('/')
     for part in parts:
         if part in EXCLUDE_DIRS:
@@ -69,6 +114,7 @@ def should_exclude(rel_path):
 
 def collect_pages():
     pages = []
+    redirect_sources = load_redirect_sources()
     for dirpath, dirnames, filenames in os.walk(ROOT):
         # Skip excluded dirs
         dirnames[:] = [d for d in dirnames if d not in EXCLUDE_DIRS and not d.startswith('.')]
@@ -89,6 +135,10 @@ def collect_pages():
                 url = BASE_URL + '/' + rel_path.replace('/index.html', '/')
             else:
                 url = BASE_URL + '/' + rel_path.replace('.html', '')
+
+            url_path = url.replace(BASE_URL, '')
+            if is_redirect_source(url_path, redirect_sources):
+                continue
 
             pages.append({
                 'url': url,
