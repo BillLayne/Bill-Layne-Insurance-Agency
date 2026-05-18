@@ -62,7 +62,11 @@
         }
         
         .bg-vivid-hero {
-            background: linear-gradient(rgba(15, 23, 42, 0.68), rgba(15, 118, 110, 0.56)), url("resources-hero.webp") center/cover no-repeat;
+            background:
+                radial-gradient(circle at 15% 18%, rgba(251, 191, 36, 0.18), transparent 28%),
+                radial-gradient(circle at 88% 12%, rgba(37, 99, 235, 0.24), transparent 34%),
+                linear-gradient(135deg, rgba(15, 23, 42, 0.90), rgba(30, 58, 138, 0.74) 52%, rgba(30, 64, 175, 0.72)),
+                url("resources-hero.webp") center/cover no-repeat;
         }
         
         .reveal { opacity: 0; transform: translateY(20px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
@@ -74,7 +78,7 @@
             top: 0;
             left: 0;
             height: 4px;
-            background: linear-gradient(to right, #2dd4bf, #3b82f6);
+            background: linear-gradient(to right, #fbbf24, #2563eb);
             z-index: 100;
             width: 0%;
             transition: width 0.1s;
@@ -96,7 +100,7 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
             color: white;
             padding: 1rem 3rem 1rem 1.5rem;
-            border-radius: 9999px;
+            border-radius: 1rem;
             font-size: 1.125rem;
             transition: all 0.3s ease;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -123,10 +127,80 @@
             transition: color 0.3s;
         }
         
-        .search-input:focus + .search-icon { color: #6366f1; }
+        .search-input:focus + .search-icon { color: #1e40af; }
 
         .section-container { scroll-margin-top: 6.5rem; }
         .resource-card { min-height: 100%; }
+
+        /* Premium Resources Hub styling layer */
+        #tools .grid > a,
+        .resource-card,
+        .official-resources-section .grid > a,
+        .resource-faq-section article {
+            background: #fff !important;
+            background-image: none !important;
+            border: 1px solid rgb(226 232 240) !important;
+            border-radius: 1rem !important;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+            transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease !important;
+        }
+
+        #tools .grid > a:hover,
+        .resource-card:hover,
+        .official-resources-section .grid > a:hover,
+        .resource-faq-section article:hover {
+            transform: translateY(-3px) !important;
+            border-color: rgba(37, 99, 235, 0.35) !important;
+            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12) !important;
+        }
+
+        #tools .grid > a > div[class*="bg-white"],
+        .resource-card div[class*="bg-white"][class*="items-center"],
+        .official-resources-section .grid > a div[class*="bg-white"][class*="items-center"] {
+            background: rgb(239 246 255) !important;
+            color: #1e40af !important;
+            box-shadow: none !important;
+        }
+
+        #tools .grid > a > span[class*="absolute"],
+        .resource-card span[class*="uppercase"],
+        .resource-card div[class*="uppercase"],
+        .inline-flex[class*="rounded-full"] {
+            border-radius: .75rem !important;
+        }
+
+        #tools .grid > a > span[class*="absolute"] {
+            background: #0f172a !important;
+            color: #fff !important;
+        }
+
+        .resource-card span[class*="font-bold"]:not([class*="text-slate"]):not([class*="block"]),
+        .resource-card span[class*="font-black"]:not([class*="text-white"]),
+        #tools .grid > a h3 + p + span,
+        .official-resources-section .grid > a i[class*="external-link"] {
+            color: #1e40af !important;
+        }
+
+        .section-container > .flex:first-child > div:first-child {
+            background: rgb(239 246 255) !important;
+            color: #1e40af !important;
+        }
+
+        #tools .text-center.mb-8,
+        .section-container,
+        .official-resources-section > div,
+        .resource-faq-section > div {
+            position: relative;
+        }
+
+        @media (min-width: 768px) {
+            #tools .grid > a,
+            .resource-card,
+            .official-resources-section .grid > a,
+            .resource-faq-section article {
+                border-radius: 1.25rem !important;
+            }
+        }
     </style>
     <link rel="stylesheet" href="../css/mobile-dock.css">
 
@@ -712,7 +786,7 @@
     </section>
 
     <!-- OFFICIAL NC RESOURCES -->
-    <section class="py-10 md:py-14 bg-slate-50">
+    <section class="official-resources-section py-10 md:py-14 bg-slate-50">
         <div class="max-w-5xl mx-auto px-4 sm:px-6">
             <h2 class="text-2xl md:text-3xl font-display font-extrabold text-slate-900 mb-2 text-center reveal">Official North Carolina Resources</h2>
             <p class="text-slate-500 text-center mb-8 reveal">Trusted government and industry links for NC insurance consumers.</p>
@@ -770,7 +844,7 @@
     </section>
 
     <!-- FAQ SECTION -->
-    <section class="py-10 md:py-16 bg-white">
+    <section class="resource-faq-section py-10 md:py-16 bg-white">
         <div class="max-w-4xl mx-auto px-4 sm:px-6">
             <div class="text-center mb-8 reveal">
                 <div class="inline-flex items-center gap-2 bg-blue-50 text-blue-700 text-xs font-bold px-4 py-1.5 rounded-full border border-blue-200 mb-4">
@@ -917,16 +991,18 @@
             if (searchInput) {
                 searchInput.addEventListener('input', function(e) {
                     const term = e.target.value.toLowerCase();
-                    const resourceCards = document.querySelectorAll('.resource-card');
-                    const sections = document.querySelectorAll('.section-container');
+                    const resourceCards = document.querySelectorAll('.resource-card, #tools .grid > a');
+                    const sections = [
+                        document.getElementById('tools'),
+                        ...Array.from(document.querySelectorAll('.section-container')).map(section => section.closest('section') || section)
+                    ].filter(Boolean);
                     
                     resourceCards.forEach(card => {
                         const name = card.dataset.name ? card.dataset.name.toLowerCase() : '';
                         const title = card.querySelector('h3, h4').innerText.toLowerCase();
                         
                         if (name.includes(term) || title.includes(term)) {
-                            card.style.display = 'flex'; // Use flex or block depending on your layout, Flex works best for these cards
-                            if(!card.classList.contains('flex')) card.style.display = 'block'; // Fallback
+                            card.style.display = '';
                         } else {
                             card.style.display = 'none';
                         }
@@ -934,11 +1010,11 @@
 
                     // Hide sections if all cards in them are hidden
                     sections.forEach(section => {
-                        const visibleCards = section.querySelectorAll('.resource-card:not([style*="display: none"])');
+                        const visibleCards = section.querySelectorAll('.resource-card:not([style*="display: none"]), #tools .grid > a:not([style*="display: none"])');
                         if (visibleCards.length === 0) {
                             section.style.display = 'none';
                         } else {
-                            section.style.display = 'block';
+                            section.style.display = '';
                         }
                     });
                 });
