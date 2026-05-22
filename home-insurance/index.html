@@ -802,10 +802,13 @@
                                     </select>
                                 </div>
                             </div>
+                            <button id="policy-compare-run" type="button" class="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-white/95 px-5 py-3.5 text-sm font-black text-teal-800 shadow-lg hover:bg-white focus:outline-none focus:ring-4 focus:ring-white/30 transition-all">
+                                <i class="fas fa-code-compare"></i> Compare Selected Policies
+                            </button>
                         </div>
 
                         <div class="p-4 sm:p-7">
-                            <div id="policy-comparison-output" class="space-y-5"></div>
+                            <div id="policy-comparison-output" class="space-y-5" aria-live="polite"></div>
 
                             <div class="mt-6 overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-teal-50 shadow-sm">
                                 <div class="grid lg:grid-cols-2">
@@ -1696,6 +1699,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             const policyA = document.getElementById('policy-a');
             const policyB = document.getElementById('policy-b');
+            const compareButton = document.getElementById('policy-compare-run');
+            const comparisonOutput = document.getElementById('policy-comparison-output');
             if (policyA && policyB) {
                 renderPolicyComparison();
                 const trackPolicySelection = (changedPolicy) => {
@@ -1705,14 +1710,30 @@
                         policy_b: policyB.value
                     });
                 };
-                policyA.addEventListener('change', () => {
+                const updatePolicyComparison = (changedPolicy, shouldScroll = false) => {
                     renderPolicyComparison();
-                    trackPolicySelection('policy_a');
+                    if (changedPolicy) trackPolicySelection(changedPolicy);
+                    if (shouldScroll && comparisonOutput) {
+                        comparisonOutput.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                };
+                policyA.addEventListener('input', () => renderPolicyComparison());
+                policyB.addEventListener('input', () => renderPolicyComparison());
+                policyA.addEventListener('change', () => {
+                    updatePolicyComparison('policy_a');
                 });
                 policyB.addEventListener('change', () => {
-                    renderPolicyComparison();
-                    trackPolicySelection('policy_b');
+                    updatePolicyComparison('policy_b');
                 });
+                if (compareButton) {
+                    compareButton.addEventListener('click', () => {
+                        updatePolicyComparison(null, true);
+                        trackHomeInsuranceEvent('home_policy_compare_button_click', {
+                            policy_a: policyA.value,
+                            policy_b: policyB.value
+                        });
+                    });
+                }
             }
 
             const homeInventoryTool = document.querySelector('#policy-compare a[href="https://billlayne.github.io/HOME-INVENTORY/"]');
