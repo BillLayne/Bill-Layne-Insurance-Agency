@@ -1948,6 +1948,76 @@
                 box-shadow: 0 10px 18px rgb(30 64 175 / 0.22);
             }
             .bl-mobile-body { padding: 14px; background: linear-gradient(180deg, #ffffff, #f8fafc); }
+            .bl-mobile-visual {
+                position: relative;
+                min-height: 190px;
+                border-radius: 20px;
+                overflow: hidden;
+                margin-bottom: 12px;
+                border: 1px solid rgb(219 234 254 / 0.9);
+                box-shadow: 0 18px 28px rgb(15 23 42 / 0.14);
+                isolation: isolate;
+            }
+            .bl-mobile-visual-bg {
+                position: absolute;
+                inset: 0;
+                background-size: cover;
+                background-position: center;
+                transform: scale(1.02);
+            }
+            .bl-mobile-visual::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(180deg, rgb(15 23 42 / 0.12), rgb(15 23 42 / 0.78));
+                z-index: 1;
+            }
+            .bl-mobile-visual-content {
+                position: absolute;
+                inset: auto 14px 14px 14px;
+                z-index: 2;
+                color: #fff;
+            }
+            .bl-mobile-visual-kicker {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                border-radius: 999px;
+                background: rgb(255 255 255 / 0.16);
+                border: 1px solid rgb(255 255 255 / 0.25);
+                padding: 6px 9px;
+                font-size: 0.68rem;
+                font-weight: 900;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                backdrop-filter: blur(8px);
+            }
+            .bl-mobile-visual h3 {
+                margin: 10px 0 0;
+                font-family: 'Outfit', sans-serif;
+                font-size: 1.35rem;
+                line-height: 1.05;
+                font-weight: 900;
+                text-shadow: 0 2px 10px rgb(0 0 0 / 0.35);
+            }
+            .bl-mobile-visual-chips {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 7px;
+                margin-top: 10px;
+            }
+            .bl-mobile-visual-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                border-radius: 999px;
+                background: rgb(255 255 255 / 0.92);
+                color: #1e40af;
+                padding: 5px 8px;
+                font-size: 0.7rem;
+                font-weight: 900;
+                box-shadow: 0 8px 15px rgb(15 23 42 / 0.18);
+            }
             .bl-mobile-intro {
                 border-radius: 18px;
                 background: linear-gradient(135deg, #eff6ff, #ffffff);
@@ -2203,11 +2273,22 @@
                             </div>
                         `;
                     }).join('');
+                    const visualChips = topic.hotspots.slice(0, 3).map(h => `
+                        <span class="bl-mobile-visual-chip"><i class="${h.icon}" aria-hidden="true"></i>${h.title}</span>
+                    `).join('');
 
                     mobileMount.innerHTML = `
                         <div class="bl-mobile-guide">
                             <div class="bl-mobile-tabs">${tabsHtml}</div>
                             <div class="bl-mobile-body">
+                                <div class="bl-mobile-visual" role="img" aria-label="${topic.title} coverage illustration">
+                                    <div class="bl-mobile-visual-bg ${topic.bgClass}"></div>
+                                    <div class="bl-mobile-visual-content">
+                                        <span class="bl-mobile-visual-kicker"><i class="${topic.icon}" aria-hidden="true"></i> Coverage snapshot</span>
+                                        <h3>${topic.title}</h3>
+                                        <div class="bl-mobile-visual-chips">${visualChips}</div>
+                                    </div>
+                                </div>
                                 <div class="bl-mobile-intro">
                                     <h3>${topic.title}</h3>
                                     <p>${topic.subtitle}</p>
