@@ -1685,15 +1685,22 @@
         </div>
     </section>
 
-    <!-- INTERACTIVE COVERAGE GRAPHIC (hidden on mobile — hotspots clunky on small screens) -->
-    <section class="hidden md:block py-10 sm:py-12 md:py-16 bg-white border-t border-slate-200">
+    <!-- INTERACTIVE COVERAGE GUIDE -->
+    <section class="py-10 sm:py-12 md:py-16 bg-white border-t border-slate-200">
         <div class="max-w-7xl mx-auto px-4">
             <div class="text-center mb-8 sm:mb-10 md:mb-12 reveal">
                 <h2 class="text-3xl sm:text-4xl md:text-5xl font-display font-black text-slate-900 mb-4 sm:mb-6">Explore Your Coverage</h2>
-                <p class="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">Tap the icons on the image to see exactly what's protected (and what isn't).</p>
+                <p class="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">See what common policies actually do, where NC families get surprised, and what to ask before a claim happens.</p>
             </div>
 
-            <div id="blCoverageWidget" class="reveal"></div>
+            <div class="mb-5 md:hidden reveal">
+                <div class="rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm text-slate-700">
+                    <strong class="text-slate-900">Mobile tip:</strong> Pick Home, Auto, or Business, then open each card for a plain-English example.
+                </div>
+            </div>
+
+            <div id="blCoverageMobile" class="md:hidden reveal"></div>
+            <div id="blCoverageWidget" class="hidden md:block reveal"></div>
         </div>
 
         <style>
@@ -1906,6 +1913,132 @@
 
             .bl-close { display: none; }
 
+            .bl-mobile-guide {
+                background: #fff;
+                border: 1px solid rgb(226 232 240 / 0.9);
+                border-radius: 1.5rem;
+                overflow: hidden;
+                box-shadow: 0 18px 35px rgb(15 23 42 / 0.08);
+            }
+            .bl-mobile-tabs {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+                padding: 12px;
+                background: #f8fafc;
+                border-bottom: 1px solid #e2e8f0;
+            }
+            .bl-mobile-tab {
+                border: 1px solid #e2e8f0;
+                border-radius: 14px;
+                background: #fff;
+                color: #475569;
+                min-height: 52px;
+                font-size: 12px;
+                font-weight: 900;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+            }
+            .bl-mobile-tab[aria-pressed="true"] {
+                background: #1e40af;
+                border-color: #1e40af;
+                color: #fff;
+                box-shadow: 0 10px 18px rgb(30 64 175 / 0.22);
+            }
+            .bl-mobile-body { padding: 14px; background: linear-gradient(180deg, #ffffff, #f8fafc); }
+            .bl-mobile-intro {
+                border-radius: 18px;
+                background: linear-gradient(135deg, #eff6ff, #ffffff);
+                border: 1px solid #dbeafe;
+                padding: 14px;
+                margin-bottom: 12px;
+            }
+            .bl-mobile-intro h3 {
+                margin: 0;
+                font-family: 'Outfit', sans-serif;
+                font-size: 1.15rem;
+                font-weight: 900;
+                color: #0f172a;
+            }
+            .bl-mobile-intro p {
+                margin: 4px 0 0;
+                color: #475569;
+                font-size: 0.88rem;
+                line-height: 1.45;
+            }
+            .bl-mobile-card {
+                border: 1px solid #e2e8f0;
+                border-radius: 18px;
+                background: #fff;
+                overflow: hidden;
+                margin-top: 10px;
+            }
+            .bl-mobile-toggle {
+                width: 100%;
+                border: 0;
+                background: #fff;
+                color: #0f172a;
+                padding: 14px;
+                text-align: left;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                font-weight: 900;
+            }
+            .bl-mobile-toggle span {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .bl-mobile-toggle i {
+                color: #1e40af;
+            }
+            .bl-mobile-chevron {
+                color: #94a3b8 !important;
+                transition: transform 0.2s ease;
+            }
+            .bl-mobile-toggle[aria-expanded="true"] .bl-mobile-chevron {
+                transform: rotate(180deg);
+            }
+            .bl-mobile-content {
+                display: none;
+                border-top: 1px solid #f1f5f9;
+                padding: 0 14px 14px;
+            }
+            .bl-mobile-toggle[aria-expanded="true"] + .bl-mobile-content {
+                display: block;
+            }
+            .bl-mobile-row {
+                border-radius: 14px;
+                padding: 12px;
+                margin-top: 10px;
+                background: #f8fafc;
+                border: 1px solid #e2e8f0;
+            }
+            .bl-mobile-row strong {
+                display: block;
+                color: #0f172a;
+                font-size: 0.78rem;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                margin-bottom: 4px;
+            }
+            .bl-mobile-row p {
+                color: #475569;
+                font-size: 0.88rem;
+                line-height: 1.45;
+                margin: 0;
+            }
+            .bl-mobile-actions {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 10px;
+                margin-top: 14px;
+            }
+
             @media (max-width: 768px) {
                 .bl-widget { grid-template-columns: 1fr; gap: 0; }
                 .bl-graphic-card { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom: none; }
@@ -1927,7 +2060,7 @@
             document.addEventListener("DOMContentLoaded", () => {
                 const CONFIG = {
                     cta: {
-                        quote: "/get-quote",
+                        quote: "get-quote.html",
                         learn: "tel:3368351993"
                     }
                 };
@@ -1938,13 +2071,13 @@
                         icon: "fas fa-home",
                         bgClass: "bg-home",
                         title: "Home Insurance",
-                        subtitle: "Tap an icon to see what's covered.",
+                        subtitle: "Plain-English examples from common NC home coverage conversations.",
                         hotspots: [
-                            { x: 50, y: 45, icon: "fas fa-home", title: "Dwelling Coverage", text: "Pays to rebuild your home if damaged by fire, wind, or hail. We calculate true replacement cost, not market value.", cta: "Check My Limit" },
-                            { x: 25, y: 65, icon: "fas fa-shield-alt", title: "Liability Protection", text: "Protects your savings if a guest is injured on your property or your dog bites someone.", cta: "Review Liability" },
-                            { x: 75, y: 30, icon: "fas fa-cloud-showers-heavy", title: "Roof & Storms", text: "NC storms are tough. We check if your policy covers 'Replacement Cost' for your roof, not just depreciated value.", cta: "Roof Check" },
-                            { x: 85, y: 55, icon: "fas fa-warehouse", title: "Other Structures", text: "Covers detached garages, fences, sheds, and driveways. Usually calculated as 10% of your dwelling coverage automatically.", cta: "Check Detached" },
-                            { x: 40, y: 65, icon: "fas fa-couch", title: "Personal Property", text: "Covers your stuff (furniture, clothes, electronics). We recommend 'Replacement Cost' so you get new items, not garage sale value.", cta: "Protect Stuff" }
+                            { x: 50, y: 45, icon: "fas fa-home", title: "Dwelling Coverage", text: "Pays to rebuild the house after covered damage such as fire, wind, or hail.", gap: "The limit should reflect rebuild cost, not what the home might sell for. Older estimates can leave a family short after a major claim.", example: "Example: A kitchen fire damages walls, cabinets, flooring, and smoke cleanup. The dwelling limit is what pays to repair the structure.", cta: "Check My Limit" },
+                            { x: 25, y: 65, icon: "fas fa-shield-alt", title: "Liability Protection", text: "Protects your savings if someone is hurt on your property or you are legally responsible for injury or damage.", gap: "Many households carry basic limits that may not fit their assets, pets, pool, trampoline, or teen-driver exposure.", example: "Example: A guest falls on icy steps and needs surgery. Liability coverage can help with legal defense and settlement costs.", cta: "Review Liability" },
+                            { x: 75, y: 30, icon: "fas fa-cloud-showers-heavy", title: "Roof & Storms", text: "Helps with covered wind or hail roof damage, depending on the deductible and roof settlement terms.", gap: "In NC, wind/hail deductibles and older-roof ACV rules can surprise people. A roof claim may not pay like a full replacement check.", example: "Example: A hailstorm damages shingles. The difference between replacement cost and ACV can change what you pay out of pocket.", cta: "Roof Check" },
+                            { x: 85, y: 55, icon: "fas fa-warehouse", title: "Detached Garages & Sheds", text: "Covers structures not attached to the home, such as detached garages, sheds, fences, and some outbuildings.", gap: "The automatic limit may be too low for a large garage, pole barn, workshop, or building with equipment inside.", example: "Example: A tree falls on a detached garage. Other Structures coverage is the bucket that may respond.", cta: "Check Detached" },
+                            { x: 40, y: 65, icon: "fas fa-couch", title: "Personal Property", text: "Covers belongings such as furniture, clothes, electronics, tools, and household items.", gap: "Replacement cost, special limits, receipts, and a home inventory matter. Jewelry, guns, tools, and collectibles may need extra scheduling.", example: "Example: Smoke ruins furniture and electronics. A room-by-room inventory helps prove what you owned.", cta: "Protect Stuff" }
                         ]
                     },
                     auto: {
@@ -1952,13 +2085,13 @@
                         icon: "fas fa-car",
                         bgClass: "bg-auto",
                         title: "Auto Insurance",
-                        subtitle: "Tap an icon to understand your coverage.",
+                        subtitle: "Common auto coverage choices that affect NC drivers after a claim.",
                         hotspots: [
-                            { x: 30, y: 55, icon: "fas fa-user-shield", title: "Liability Limits", text: "Pays for the OTHER person's medical bills if you crash. State minimums are often too low to protect your assets.", cta: "Check Limits" },
-                            { x: 65, y: 60, icon: "fas fa-car-crash", title: "Collision", text: "Fixes YOUR car if you hit something. Choosing a $500 vs $1000 deductible affects your rate significantly.", cta: "Compare Deductibles" },
-                            { x: 70, y: 35, icon: "fas fa-tree", title: "Comprehensive (Deer)", text: "Crucial for NC drivers. Covers deer hits, falling trees, glass, and theft. Usually affordable to add.", cta: "Add Deer Coverage" },
-                            { x: 20, y: 40, icon: "fas fa-key", title: "Rental Reimbursement", text: "Pays for a rental car ($30-$50/day) while yours is being repaired after a covered claim. Don't get stuck without a ride.", cta: "Add Rental" },
-                            { x: 85, y: 70, icon: "fas fa-truck-pickup", title: "Towing & Labor", text: "Pays for tow trucks, jump starts, and lockout services. Often much cheaper than third-party auto clubs.", cta: "Add Roadside" }
+                            { x: 30, y: 55, icon: "fas fa-user-shield", title: "Liability Limits", text: "Pays others when you cause injury or property damage in an accident.", gap: "Minimum liability can be quickly exhausted in a serious crash. Higher limits and umbrella coverage may be worth reviewing.", example: "Example: You rear-end a vehicle with multiple passengers. Liability limits determine how much protection you have before personal assets are exposed.", cta: "Check Limits" },
+                            { x: 65, y: 60, icon: "fas fa-car-crash", title: "Collision", text: "Helps repair your vehicle when you hit another car or object, subject to your deductible.", gap: "Deductible choice changes both monthly premium and claim-day cost. Some older vehicles may not justify full coverage.", example: "Example: You slide into a guardrail. Collision is the coverage that can help repair your own car.", cta: "Compare Deductibles" },
+                            { x: 70, y: 35, icon: "fas fa-tree", title: "Comprehensive", text: "Covers non-collision losses such as deer, theft, vandalism, falling objects, fire, and glass.", gap: "Rural NC drivers often think only about collision, but deer and falling limbs are common comprehensive losses.", example: "Example: A deer runs into the front of your car on a dark road. Comprehensive is usually the coverage involved.", cta: "Add Deer Coverage" },
+                            { x: 20, y: 40, icon: "fas fa-key", title: "Rental Reimbursement", text: "Helps pay for a rental while your car is repaired after a covered claim.", gap: "It is easy to skip because it looks small on the quote, but being without a car for two weeks can be expensive.", example: "Example: Your car sits at the body shop waiting on parts. Rental coverage can keep you driving.", cta: "Add Rental" },
+                            { x: 85, y: 70, icon: "fas fa-truck-pickup", title: "Towing & Labor", text: "Helps with towing, jump starts, lockouts, and roadside service depending on the carrier.", gap: "It is not the same with every company. Mileage limits and service rules matter.", example: "Example: Your car will not start after work. Towing and labor can help avoid a large unexpected tow bill.", cta: "Add Roadside" }
                         ]
                     },
                     business: {
@@ -1966,20 +2099,33 @@
                         icon: "fas fa-briefcase",
                         bgClass: "bg-business",
                         title: "Business Owners",
-                        subtitle: "Tap an icon to explore your protection.",
+                        subtitle: "Simple coverage examples for local shops, contractors, offices, and service businesses.",
                         hotspots: [
-                            { x: 35, y: 60, icon: "fas fa-balance-scale", title: "General Liability", text: "The foundation. Protects against slip-and-fall lawsuits or damage you cause to client property.", cta: "Get Liability Quote" },
-                            { x: 60, y: 50, icon: "fas fa-tools", title: "Property & Tools", text: "Covers your inventory, equipment, and building. Don't let a fire wipe out your hard work.", cta: "Protect Assets" },
-                            { x: 75, y: 25, icon: "fas fa-laptop-code", title: "Cyber Coverage", text: "Essential if you take credit cards or store client data. Protects against breaches and hacks.", cta: "Ask About Cyber" }
+                            { x: 35, y: 60, icon: "fas fa-balance-scale", title: "General Liability", text: "Helps protect against injury or property-damage claims tied to your business operations.", gap: "A certificate requirement is not the same as having the right limits or endorsements for your actual work.", example: "Example: A customer trips in your office or you damage a client's property while working. General liability is the starting point.", cta: "Get Liability Quote" },
+                            { x: 60, y: 50, icon: "fas fa-tools", title: "Property, Tools & Inventory", text: "Helps cover business property such as equipment, tools, stock, furniture, and sometimes the building.", gap: "Tools in transit, rented equipment, outdoor signs, and stock at a jobsite may need special attention.", example: "Example: A fire damages inventory and shop equipment. Property coverage helps keep one loss from wiping out years of work.", cta: "Protect Assets" },
+                            { x: 75, y: 25, icon: "fas fa-laptop-code", title: "Cyber & Data Risk", text: "Helps when a business is hit by a data breach, ransomware, phishing, or payment-card problem.", gap: "Small businesses are targets too. Taking cards, storing client info, or using email invoices creates exposure.", example: "Example: An employee clicks a phishing email and customer data is exposed. Cyber coverage can help with response costs.", cta: "Ask About Cyber" }
                         ]
                     }
                 };
 
                 const mount = document.getElementById("blCoverageWidget");
+                const mobileMount = document.getElementById("blCoverageMobile");
                 let activeTab = "home";
                 let selectedHotspot = null;
+                let activeMobileTab = "home";
+                let openMobileIndex = 0;
+
+                function trackCoverageGuide(action, params = {}) {
+                    if (typeof gtag === "function") {
+                        gtag("event", "homepage_coverage_guide_" + action, {
+                            event_category: "homepage",
+                            ...params
+                        });
+                    }
+                }
 
                 function render() {
+                    if (!mount) return;
                     const topic = DATA[activeTab];
                     const displayData = selectedHotspot || { title: topic.title, text: topic.subtitle, cta: "Start Quote" };
 
@@ -2012,16 +2158,61 @@
                                 </div>
                                 <div class="bl-panel-body">
                                     <div class="bl-info-row">
-                                        <div class="bl-label">What it does</div>
+                                        <div class="bl-label">${selectedHotspot ? "What it covers" : "How to use it"}</div>
                                         <div class="bl-value">${displayData.text}</div>
                                     </div>
-                                    ${selectedHotspot ? `<div class="bl-info-row"><div class="bl-label">Why it matters</div><div class="bl-value">Essential for financial safety.</div></div>` : ''}
+                                    ${selectedHotspot ? `<div class="bl-info-row"><div class="bl-label">Common gap</div><div class="bl-value">${displayData.gap}</div></div>` : ''}
+                                    ${selectedHotspot ? `<div class="bl-info-row"><div class="bl-label">Example claim</div><div class="bl-value">${displayData.example}</div></div>` : ''}
 
                                     <div class="bl-btn-group">
-                                        <a href="${CONFIG.cta.quote}" class="bl-action-btn bl-btn-solid">Get a Quote</a>
+                                        <a href="${CONFIG.cta.quote}" class="bl-action-btn bl-btn-solid">${selectedHotspot ? displayData.cta : "Compare My Coverage"}</a>
                                         <a href="${CONFIG.cta.learn}" class="bl-action-btn bl-btn-outline">Call Agent (336) 835-1993</a>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                function renderMobile() {
+                    if (!mobileMount) return;
+                    const topic = DATA[activeMobileTab];
+                    const tabsHtml = Object.keys(DATA).map(key => `
+                        <button class="bl-mobile-tab" type="button" aria-pressed="${activeMobileTab === key}" onclick="window.selectMobileCoverageTab('${key}')">
+                            <i class="${DATA[key].icon}" aria-hidden="true"></i>${DATA[key].label}
+                        </button>
+                    `).join('');
+
+                    const cardsHtml = topic.hotspots.map((h, i) => {
+                        const isOpen = openMobileIndex === i;
+                        return `
+                            <div class="bl-mobile-card">
+                                <button class="bl-mobile-toggle" type="button" aria-expanded="${isOpen}" onclick="window.toggleMobileCoverage(${i})">
+                                    <span><i class="${h.icon}" aria-hidden="true"></i>${h.title}</span>
+                                    <i class="fas fa-chevron-down bl-mobile-chevron" aria-hidden="true"></i>
+                                </button>
+                                <div class="bl-mobile-content">
+                                    <div class="bl-mobile-row"><strong>What it covers</strong><p>${h.text}</p></div>
+                                    <div class="bl-mobile-row"><strong>Common gap</strong><p>${h.gap}</p></div>
+                                    <div class="bl-mobile-row"><strong>Example claim</strong><p>${h.example}</p></div>
+                                    <div class="bl-mobile-actions">
+                                        <a href="${CONFIG.cta.quote}" class="bl-action-btn bl-btn-solid">${h.cta}</a>
+                                        <a href="${CONFIG.cta.learn}" class="bl-action-btn bl-btn-outline">Call Bill</a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    mobileMount.innerHTML = `
+                        <div class="bl-mobile-guide">
+                            <div class="bl-mobile-tabs">${tabsHtml}</div>
+                            <div class="bl-mobile-body">
+                                <div class="bl-mobile-intro">
+                                    <h3>${topic.title}</h3>
+                                    <p>${topic.subtitle}</p>
+                                </div>
+                                ${cardsHtml}
                             </div>
                         </div>
                     `;
@@ -2031,14 +2222,33 @@
                     activeTab = key;
                     selectedHotspot = null;
                     render();
+                    trackCoverageGuide("tab", { coverage_type: key, viewport: "desktop" });
                 };
 
                 window.selectHotspot = (index) => {
                     selectedHotspot = DATA[activeTab].hotspots[index];
                     render();
+                    trackCoverageGuide("hotspot", { coverage_type: activeTab, hotspot: selectedHotspot.title, viewport: "desktop" });
+                };
+
+                window.selectMobileCoverageTab = (key) => {
+                    activeMobileTab = key;
+                    openMobileIndex = 0;
+                    renderMobile();
+                    trackCoverageGuide("tab", { coverage_type: key, viewport: "mobile" });
+                };
+
+                window.toggleMobileCoverage = (index) => {
+                    const topic = DATA[activeMobileTab];
+                    openMobileIndex = openMobileIndex === index ? -1 : index;
+                    renderMobile();
+                    if (openMobileIndex >= 0) {
+                        trackCoverageGuide("accordion", { coverage_type: activeMobileTab, hotspot: topic.hotspots[index].title, viewport: "mobile" });
+                    }
                 };
 
                 render();
+                renderMobile();
             });
         </script>
     </section>
