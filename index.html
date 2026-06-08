@@ -532,7 +532,10 @@
             "name": "Bill Layne Insurance Agency - Independent Insurance in Elkin, NC",
             "url": "https://www.billlayneinsurance.com/",
             "datePublished": "2005-06-01",
-            "dateModified": "2026-03-19",
+            "dateModified": "2026-06-08",
+            "reviewedBy": {
+                "@id": "https://www.billlayneinsurance.com/#founder"
+            },
             "isPartOf": {
                 "@id": "https://www.billlayneinsurance.com/#website"
             },
@@ -2847,6 +2850,12 @@
         </div>
         <div class="max-w-4xl mx-auto px-4 mt-8 sm:mt-12 mb-8">
             <p class="text-xs text-slate-400 leading-relaxed text-center">Savings are not guaranteed. Individual savings will vary depending on coverage, driving record, vehicle, location, and other underwriting factors. Discounts and their availability vary by carrier and are subject to eligibility requirements. Not all applicants will qualify for the lowest rates. All insurance products are subject to the terms, conditions, and exclusions of the applicable insurance policy. Bill Layne Insurance Agency is a licensed independent insurance agency in North Carolina.</p>
+            <p class="mt-4 text-xs text-slate-400 leading-relaxed text-center">
+                <span class="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2">
+                    <i class="fas fa-shield-halved text-emerald-300" aria-hidden="true"></i>
+                    Reviewed by Bill Layne, owner and licensed NC insurance agent. Last reviewed June 8, 2026.
+                </span>
+            </p>
         </div>
         <div class="text-center text-xs font-black uppercase tracking-[0.4em] mt-10 opacity-30">
             &copy; 2026 Bill Layne Insurance Agency • Elkin, NC
@@ -3342,6 +3351,79 @@
             alert('Something went wrong. Please call us at (336) 835-1993.');
         }
     }
+    </script>
+    <script>
+    (function() {
+        if (!('PerformanceObserver' in window) || typeof gtag !== 'function') return;
+
+        var vitals = {};
+        var sent = {};
+
+        function trackMetric(name, value, rating) {
+            if (sent[name] || value == null || !isFinite(value)) return;
+            sent[name] = true;
+            gtag('event', 'web_vitals', {
+                event_category: 'Web Vitals',
+                event_label: name,
+                metric_name: name,
+                metric_value: Math.round(value),
+                metric_rating: rating,
+                page_location: window.location.href,
+                transport_type: 'beacon',
+                non_interaction: true
+            });
+        }
+
+        function ratingFor(name, value) {
+            if (name === 'CLS') return value <= 100 ? 'good' : value <= 250 ? 'needs_improvement' : 'poor';
+            if (name === 'LCP') return value <= 2500 ? 'good' : value <= 4000 ? 'needs_improvement' : 'poor';
+            if (name === 'INP') return value <= 200 ? 'good' : value <= 500 ? 'needs_improvement' : 'poor';
+            return 'unknown';
+        }
+
+        try {
+            new PerformanceObserver(function(list) {
+                list.getEntries().forEach(function(entry) {
+                    if (!entry.hadRecentInput) {
+                        vitals.LCP = entry.startTime;
+                    }
+                });
+            }).observe({ type: 'largest-contentful-paint', buffered: true });
+        } catch (e) {}
+
+        try {
+            var cls = 0;
+            new PerformanceObserver(function(list) {
+                list.getEntries().forEach(function(entry) {
+                    if (!entry.hadRecentInput) cls += entry.value;
+                });
+                vitals.CLS = cls * 1000;
+            }).observe({ type: 'layout-shift', buffered: true });
+        } catch (e) {}
+
+        try {
+            var longestInteraction = 0;
+            new PerformanceObserver(function(list) {
+                list.getEntries().forEach(function(entry) {
+                    if (entry.interactionId && entry.duration > longestInteraction) {
+                        longestInteraction = entry.duration;
+                        vitals.INP = longestInteraction;
+                    }
+                });
+            }).observe({ type: 'event', buffered: true, durationThreshold: 40 });
+        } catch (e) {}
+
+        function flushVitals() {
+            Object.keys(vitals).forEach(function(name) {
+                trackMetric(name, vitals[name], ratingFor(name, vitals[name]));
+            });
+        }
+
+        window.addEventListener('pagehide', flushVitals, { once: true });
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'hidden') flushVitals();
+        });
+    })();
     </script>
     <script defer src="js/accident-cost-estimator.js?v=20260525-3"></script>
 
