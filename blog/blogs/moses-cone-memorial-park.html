@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="canonical" href="https://www.billlayneinsurance.com/blog/blogs/moses-cone-memorial-park.html">
+    <meta property="og:url" content="https://www.billlayneinsurance.com/blog/blogs/moses-cone-memorial-park.html">
+    <meta name="robots" content="index, follow">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Denim King's Mountain Kingdom: An Interactive Exploration of Moses Cone Memorial Park</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals & Forest Greens -->
+    <!-- Application Structure Plan: A narrative, single-page scrolling experience divided into four thematic sections: 'The Visionaries,' 'Crafting a Kingdom,' 'A Public Treasure,' and 'Explore the Park.' This structure was chosen to guide the user through a compelling story, starting with the people behind the park, moving to its creation, explaining its transition to public land, and finally providing a practical guide for visitors. This flow is more intuitive and engaging than a direct translation of the report's structure. Key interactions include a clickable timeline to reveal historical details, an interactive trail guide to explore hiking options, and dynamic info cards for key figures, making the information digestible and discoverable. -->
+    <!-- Visualization & Content Choices:
+        - Report Info: Key dates in Cone family/estate history. Goal: Show chronological development. Viz/Method: Interactive vertical timeline (HTML/CSS/JS). Interaction: Clicking a date reveals a modal with detailed information. Justification: More engaging than a static list; allows users to explore events at their own pace.
+        - Report Info: Agricultural scale (acres, apple trees). Goal: Visualize the vastness of the enterprise. Viz/Method: Bar chart (Chart.js). Interaction: Hover tooltips provide exact numbers. Justification: A chart provides an immediate, powerful sense of scale that text alone cannot convey.
+        - Report Info: Trail details (length, difficulty, highlights). Goal: Help users plan a visit. Viz/Method: Interactive trail guide (HTML/CSS/JS). Interaction: Clicking a trail name displays its full details in a dedicated panel. Justification: Organizes complex information cleanly and allows for easy comparison, improving usability over a static table.
+        - Report Info: Key figures (Moses & Bertha). Goal: Introduce the main characters. Viz/Method: Profile cards (HTML/CSS). Interaction: Simple, clean presentation of their roles. Justification: Focuses the narrative on the human story behind the park.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background-color: #FDFBF8;
+            color: #3D403A;
+        }
+        h1, h2, h3 {
+            font-family: 'Lora', serif;
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link.active, .nav-link:hover {
+            color: #4A5C46;
+            border-bottom-color: #4A5C46;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: -21px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #B0A696;
+            border: 2px solid #FDFBF8;
+        }
+        .timeline-item:hover::before {
+            background-color: #4A5C46;
+        }
+        .trail-item.active {
+            background-color: #E9E5E0;
+            border-left-color: #4A5C46;
+        }
+        .modal {
+            transition: opacity 0.3s ease;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold text-[#4A5C46]">Moses Cone Park</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#visionaries" class="nav-link pb-1">The Visionaries</a>
+                <a href="#kingdom" class="nav-link pb-1">Crafting a Kingdom</a>
+                <a href="#legacy" class="nav-link pb-1">A Public Treasure</a>
+                <a href="#explore" class="nav-link pb-1">Explore the Park</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
+            <a href="#visionaries" class="block py-2 nav-link">The Visionaries</a>
+            <a href="#kingdom" class="block py-2 nav-link">Crafting a Kingdom</a>
+            <a href="#legacy" class="block py-2 nav-link">A Public Treasure</a>
+            <a href="#explore" class="block py-2 nav-link">Explore the Park</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="relative text-center py-20 md:py-32 bg-[#E9E5E0]">
+            <div class="absolute inset-0 bg-[url('https://pplx-res.cloudinary.com/image/upload/v1755967387/pplx_project_search_images/b789834faa1fe7132fa5b3dd5aec437177f40928.png')] bg-cover bg-center opacity-20"></div>
+            <div class="container mx-auto px-6 relative">
+                <h1 class="text-4xl md:text-6xl font-extrabold text-[#3D403A] mb-4">The Denim King's Mountain Kingdom</h1>
+                <p class="text-lg md:text-xl max-w-3xl mx-auto text-gray-700">An interactive journey through the history, creation, and enduring legacy of Moses H. Cone Memorial Park.</p>
+            </div>
+        </section>
+
+        <section id="visionaries" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">The Visionaries</h2>
+                <p class="text-center max-w-3xl mx-auto mb-12 text-gray-600">The story of this park begins with two people: a business genius who built a global empire, and the woman who became the guardian of his dream. Together, they created a mountain paradise that would one day become a gift to everyone.</p>
+                <div class="grid md:grid-cols-2 gap-10 items-start">
+                    <div class="bg-white p-8 rounded-lg shadow-lg">
+                        <h3 class="text-2xl font-bold mb-2 text-[#4A5C46]">Moses H. Cone</h3>
+                        <p class="font-semibold text-gray-500 mb-4">"The Denim King"</p>
+                        <p class="text-gray-700">The eldest of 13 children of German immigrants, Moses Cone was a true American success story. He and his brother, Caesar, started as traveling salesmen and built a massive company that made them the biggest producers of denim in the world. They even supplied the fabric for Levi's blue jeans! But the stress of running a huge business took a toll on Moses's health. He wanted a "healthful retreat" in the mountains, a place where the cool, clean air could help him recover. That's why he bought 3,500 acres of land and began building his dream estate.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-lg">
+                        <h3 class="text-2xl font-bold mb-2 text-[#4A5C46]">Bertha L. Cone</h3>
+                        <p class="font-semibold text-gray-500 mb-4">The Guardian of the Legacy</p>
+                        <p class="text-gray-700">Moses only got to enjoy his mountain home for seven years before he died. His wife, Bertha, took over and managed the huge estate for the next 39 years. She was a smart and strong manager who not only kept his vision alive but also protected it. When the government wanted to build the Blue Ridge Parkway right through the front lawn, she fought them and won, saving the amazing view we see today. The park is as much her legacy as it is his.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="kingdom" class="py-16 md:py-24 bg-[#E9E5E0]">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Crafting a Kingdom</h2>
+                <p class="text-center max-w-3xl mx-auto mb-12 text-gray-600">Moses Cone didn't just build a house; he built a whole world. He bought up old farmland and, like an artist, reshaped the land to create a perfect country estate. It was designed to be beautiful, fun, and also a working farm that could pay for itself.</p>
+                <div class="grid md:grid-cols-3 gap-10 mb-12">
+                    <div class="md:col-span-1">
+                        <h3 class="text-2xl font-bold mb-6 text-[#4A5C46]">A Timeline of Creation</h3>
+                        <div id="timeline" class="relative border-l-2 border-gray-300 ml-4">
+                        </div>
+                    </div>
+                    <div class="md:col-span-2">
+                         <div class="bg-white p-8 rounded-lg shadow-lg h-full">
+                            <h3 class="text-2xl font-bold mb-4 text-[#4A5C46]">A Gentleman's Farm</h3>
+                            <p class="text-gray-700 mb-6">This wasn't just a vacation spot. The estate had huge apple orchards with over 32,000 trees! The apples were famous for being delicious and were sold all over the country. They also raised cattle and sheep. The chart below shows just how big this operation was.</p>
+                            <div class="chart-container">
+                                <canvas id="estateChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-lg shadow-lg mb-12">
+                    <h3 class="text-3xl font-bold text-center mb-6 text-[#4A5C46]">A Visual Journey</h3>
+                    <div class="rounded-lg overflow-hidden h-80 md:h-[32rem]">
+                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/34SapbT8dpY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                </div>
+
+                <h3 class="text-3xl font-bold text-center mb-10 text-[#4A5C46]">Stories of the Estate</h3>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 text-left">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="text-4xl mb-3 text-[#4A5C46]">💡</div>
+                        <h3 class="text-xl font-bold mb-2">A Modern Marvel</h3>
+                        <p class="text-gray-600">Built for $25,000, the 13,000-square-foot manor had its own gas lights, telephones, and central heating. It was a true luxury mansion in the mountains.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="text-4xl mb-3 text-[#4A5C46]">🌳</div>
+                        <h3 class="text-xl font-bold mb-2">Conservation Pioneers</h3>
+                        <p class="text-gray-600">Moses Cone worked with Gifford Pinchot, the first Chief of the U.S. Forest Service, to plant huge forests of white pine and hemlock to restore the land.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="text-4xl mb-3 text-[#4A5C46]">🍎</div>
+                        <h3 class="text-xl font-bold mb-2">World-Famous Apples</h3>
+                        <p class="text-gray-600">The famous French artist Henri Matisse was a friend of Bertha's sisters and loved eating the crisp, delicious apples that were shipped to him from the estate.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="text-4xl mb-3 text-[#4A5C46]">👻</div>
+                        <h3 class="text-xl font-bold mb-2">Whispers on the Mountain</h3>
+                        <p class="text-gray-600">Legends say robbers once disturbed Moses's grave, and ever since, strange things happen. People report doors that won't stay closed and music from a piano that isn't there.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="legacy" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">A Public Treasure</h2>
+                <p class="text-center max-w-3xl mx-auto mb-12 text-gray-600">The Cones had no children and always wanted their estate to be a gift to the public. Their Jewish faith taught the value of *tikkun olam*, or "repairing the world," which guided their generosity.</p>
+                <div class="grid md:grid-cols-3 gap-8 text-center">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="text-4xl mb-3 text-[#4A5C46]">📜</div>
+                        <h3 class="text-xl font-bold mb-2">The Cone Will</h3>
+                        <p class="text-gray-600">The Cones' legal plan was clear: after Bertha died, the estate would become "Moses H. Cone Memorial Park" for the public to enjoy forever.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="text-4xl mb-3 text-[#4A5C46]">🏫</div>
+                        <h3 class="text-xl font-bold mb-2">Community Support</h3>
+                        <p class="text-gray-600">They supported local schools, churches, and endowed the training school that became Appalachian State University, leaving a lasting impact on the region.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="text-4xl mb-3 text-[#4A5C46]">🏞️</div>
+                        <h3 class="text-xl font-bold mb-2">A National Park is Born</h3>
+                        <p class="text-gray-600">In 1949, the estate was donated to the National Park Service, ensuring the Cones' dream would be protected forever as part of the Blue Ridge Parkway.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="explore" class="py-16 md:py-24 bg-[#E9E5E0]">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Explore the Park Today</h2>
+                <p class="text-center max-w-3xl mx-auto mb-12 text-gray-600">Today, the park is one of the most popular spots on the Blue Ridge Parkway. The best way to see it is by exploring the 25 miles of wide, gentle carriage trails that Moses Cone designed himself. Use this guide to plan your adventure.</p>
+                <div class="flex flex-col md:flex-row bg-white rounded-lg shadow-lg overflow-hidden min-h-[60vh]">
+                    <div class="w-full md:w-1/3 border-r border-gray-200">
+                        <div class="p-4 bg-gray-50 border-b border-gray-200">
+                            <h3 class="text-xl font-bold text-[#4A5C46]">Carriage Trails</h3>
+                        </div>
+                        <div id="trail-list" class="overflow-y-auto">
+                        </div>
+                    </div>
+                    <div id="trail-details" class="w-full md:w-2/3 p-8">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-[#3D403A] text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <div class="mb-6">
+                <h3 class="text-xl font-bold mb-4">Plan Your Visit & Learn More</h3>
+                <div class="flex justify-center space-x-4 md:space-x-8">
+                    <a href="https://www.nps.gov/blri/planyourvisit/moses-h-cone-memorial-park.htm" target="_blank" class="hover:text-gray-300 transition-colors">NPS Official Site</a>
+                    <a href="https://www.brpfoundation.org/cone-manor" target="_blank" class="hover:text-gray-300 transition-colors">Blue Ridge Parkway Foundation</a>
+                    <a href="https://www.southernhighlandguild.org/parkway-craft-center/" target="_blank" class="hover:text-gray-300 transition-colors">Parkway Craft Center</a>
+                </div>
+            </div>
+            <p>&copy; 2025 An Interactive Exploration. All data sourced from the provided report on Moses Cone Memorial Park.</p>
+            <p class="text-sm text-gray-400 mt-2">This is a conceptual web application created for informational purposes.</p>
+        </div>
+    </footer>
+
+    <div id="timeline-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div class="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 relative transform scale-95 transition-transform duration-300">
+            <button id="close-modal-button" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800">&times;</button>
+            <h3 id="modal-title" class="text-2xl font-bold mb-4 font-lora text-[#4A5C46]"></h3>
+            <p id="modal-content" class="text-gray-700"></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const timelineData = [
+                { year: 1892, title: 'Land Acquisition Begins', content: 'Moses Cone begins buying up 45 different pieces of land to create his huge 3,500-acre estate.' },
+                { year: 1895, title: 'Proximity Mill Founded', content: 'Moses and his brother Caesar start their first denim factory in Greensboro, the beginning of their textile empire.' },
+                { year: 1899, title: 'Manor Construction Starts', content: 'Work begins on Flat Top Manor, a huge 23-room mansion that would be their summer home.' },
+                { year: 1901, title: 'Flat Top Manor Completed', content: 'The grand summer home is finished, complete with amazing modern technology like indoor plumbing and telephones.' },
+                { year: 1908, title: 'Moses Cone Dies', content: 'Sadly, Moses Cone dies at only 51 years old. His wife, Bertha, takes over management of the entire estate.' },
+                { year: 1930, title: 'Parkway Rerouted', content: 'Bertha Cone successfully convinces the government to move the route of the Blue Ridge Parkway so it doesn\'t cut through her front yard.' },
+                { year: 1947, title: 'Bertha Cone Dies', content: 'After managing the estate for 39 years, Bertha Cone passes away at age 89. The estate is given to the Moses H. Cone Memorial Hospital.' },
+                { year: 1949, title: 'Donated to the Nation', content: 'The hospital gives the entire estate to the National Park Service, making sure it will be a public park forever.' }
+            ];
+
+            const trailData = [
+                {
+                    name: "Flat Top Mountain Trail",
+                    length: "5.6 miles",
+                    difficulty: "Moderate",
+                    features: "The park's most famous hike. It goes past the graves of Moses and Bertha Cone to an observation tower with amazing 360-degree views."
+                },
+                {
+                    name: "Rich Mountain Trail",
+                    length: "5.2 miles",
+                    difficulty: "Moderate",
+                    features: "A beautiful trail that goes through meadows and forests with great views. A good choice for a longer walk."
+                },
+                {
+                    name: "Bass Lake Loop",
+                    length: "0.9 miles",
+                    difficulty: "Easy",
+                    features: "A flat, easy, and scenic walk around the pretty Bass Lake. You can see the Manor up on the hill from here. Great for families."
+                },
+                {
+                    name: "Trout Lake Loop",
+                    length: "1.0 mile",
+                    difficulty: "Easy",
+                    features: "A quiet and peaceful loop trail around Trout Lake. This path goes through a cool, shady forest."
+                },
+                {
+                    name: "The Maze Carriage Trail",
+                    length: "4.6 miles",
+                    difficulty: "Moderate",
+                    features: "A fun network of winding trails that crisscross old pastures. You can see the historic apple barn from this trail."
+                },
+                {
+                    name: "Figure 8 Trail",
+                    length: "0.7 miles",
+                    difficulty: "Easy",
+                    features: "A short and easy loop that starts near the Manor. It's perfect if you just want a quick walk to see what the trails are like."
+                },
+                {
+                    name: "Deer Park Carriage Trail",
+                    length: "2.4 miles",
+                    difficulty: "Moderate",
+                    features: "This trail connects the Bass Lake area to the trails higher up near the Manor, climbing gently through the woods."
+                }
+            ];
+
+            const timelineContainer = document.getElementById('timeline');
+            const modal = document.getElementById('timeline-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalContent = document.getElementById('modal-content');
+            const closeModalButton = document.getElementById('close-modal-button');
+
+            timelineData.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'timeline-item mb-8 pl-8 cursor-pointer';
+                div.innerHTML = `<h4 class="font-bold text-lg">${item.year}</h4><p class="text-gray-600">${item.title}</p>`;
+                div.addEventListener('click', () => {
+                    modalTitle.textContent = `${item.year}: ${item.title}`;
+                    modalContent.textContent = item.content;
+                    modal.classList.remove('opacity-0', 'pointer-events-none');
+                    modal.querySelector('div').classList.remove('scale-95');
+                });
+                timelineContainer.appendChild(div);
+            });
+
+            closeModalButton.addEventListener('click', () => {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                modal.querySelector('div').classList.add('scale-95');
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModalButton.click();
+                }
+            });
+
+            const trailListContainer = document.getElementById('trail-list');
+            const trailDetailsContainer = document.getElementById('trail-details');
+
+            function displayTrailDetails(index) {
+                const trail = trailData[index];
+                trailDetailsContainer.innerHTML = `
+                    <h3 class="text-3xl font-bold mb-4 text-[#4A5C46]">${trail.name}</h3>
+                    <div class="flex items-center space-x-6 mb-6">
+                        <div>
+                            <p class="text-sm text-gray-500">Length</p>
+                            <p class="font-semibold">${trail.length} RT</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Difficulty</p>
+                            <p class="font-semibold">${trail.difficulty}</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 text-lg">${trail.features}</p>
+                `;
+
+                document.querySelectorAll('.trail-item').forEach((item, i) => {
+                    if (i === index) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+            }
+
+            trailData.forEach((trail, index) => {
+                const div = document.createElement('div');
+                div.className = 'trail-item p-4 cursor-pointer border-l-4 border-transparent hover:bg-gray-100 transition-colors duration-200';
+                div.innerHTML = `<h4 class="font-semibold">${trail.name}</h4><p class="text-sm text-gray-500">${trail.length} | ${trail.difficulty}</p>`;
+                div.addEventListener('click', () => displayTrailDetails(index));
+                trailListContainer.appendChild(div);
+            });
+
+            displayTrailDetails(0);
+
+            const ctx = document.getElementById('estateChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Total Estate Size (Acres)', 'Apple Orchards (Acres)', 'Number of Apple Trees'],
+                    datasets: [{
+                        label: 'Scale of the Estate',
+                        data: [3600, 200, 32000],
+                        backgroundColor: [
+                            'rgba(74, 92, 70, 0.6)',
+                            'rgba(176, 166, 150, 0.6)',
+                            'rgba(211, 199, 179, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(74, 92, 70, 1)',
+                            'rgba(176, 166, 150, 1)',
+                            'rgba(211, 199, 179, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            type: 'logarithmic',
+                            ticks: {
+                                callback: function(value, index, values) {
+                                    return Number(value.toString()).toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += new Intl.NumberFormat('en-US').format(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    if(mobileMenu.classList.contains('hidden') === false){
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('main section');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 60) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
+
+<!-- Migrated from legacy URL: https://billlayne.github.io/Mose-Cone-Park-Boone-NC/ on 2026-06-08 -->

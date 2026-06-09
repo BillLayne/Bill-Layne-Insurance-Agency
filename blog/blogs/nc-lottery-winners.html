@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <link rel="canonical" href="https://www.billlayneinsurance.com/blog/blogs/nc-lottery-winners.html">
+    <meta property="og:url" content="https://www.billlayneinsurance.com/blog/blogs/nc-lottery-winners.html">
+    <meta name="robots" content="index, follow">
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Powerball NC: Your Ultimate Guide to Winning in the Tar Heel State</title>
+
+    <meta name="description" content="An easy-to-understand guide to Powerball odds, strategies, and what to do if you win, with special information for North Carolina players from the NC Education Lottery.">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Chosen Palette: Calm Neutral Analytics -->
+
+    <!-- Application Structure Plan: A thematic, single-page application designed for user-led exploration. The structure moves from high-impact introductory concepts (the staggering odds) to deeper, interactive analyses (Expected Value calculator, strategy debunking), practical advice (winner's guide), and finally the psychology of play. This non-linear, modular approach is chosen over a direct report-to-page conversion because it allows users to engage with the content that most interests them first, making complex information more digestible and engaging. Interactive calculators and visualizations are central to this design, transforming abstract data into tangible insights for the user. -->
+
+    <!-- Visualization & Content Choices:
+
+        - Jackpot Odds (Hero): Goal: Inform/Impact -> Method: Dynamic text -> Interaction: None -> Justification: Immediately conveys the core message of improbability. -> Library: JS.
+
+        - Odds Comparison Chart: Goal: Compare -> Method: Horizontal Bar Chart with Emojis -> Interaction: Hover tooltips -> Justification: Contextualizes lottery odds against more relatable rare events for a younger audience. -> Library: Chart.js.
+
+        - Expected Value Calculator: Goal: Inform/Interact -> Method: User input form with dynamic outputs -> Interaction: User inputs jackpot, JS calculates and updates DOM -> Justification: Makes the abstract concept of EV concrete and personal. -> Library: JS.
+
+        - Strategy Debunker: Goal: Organize/Inform -> Method: Interactive cards/tabs -> Interaction: User clicks to reveal myth vs. reality -> Justification: A gamified way to present dense, factual corrections. -> Library: JS.
+
+        - Number Selection Heatmap: Goal: Compare -> Method: Canvas-based grid visualization -> Interaction: Toggle buttons -> Justification: Visually demonstrates the flaw in self-picking numbers vs. random Quick Picks. -> Library: Chart.js (as a bubble chart on a grid).
+
+        - Payout Infographic: Goal: Compare -> Method: Side-by-side HTML/CSS infographic -> Interaction: None -> Justification: Clearly illustrates the financial trade-offs between lump sum and annuity in a simple, visual format. -> Library: HTML/Tailwind.
+
+        - Psychology Accordion: Goal: Inform -> Method: Accordion UI -> Interaction: Click to expand -> Justification: Breaks down complex psychological concepts into manageable snippets. -> Library: JS.
+
+    -->
+
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+
+        body {
+
+            font-family: 'Inter', sans-serif;
+
+            background-color: #f8fafc;
+
+            color: #1e293b;
+
+        }
+
+        html {
+
+            scroll-padding-top: 4.5rem; /* Offset for sticky header */
+
+        }
+
+        .nav-link {
+
+            transition: color 0.3s ease, border-bottom-color 0.3s ease;
+
+            border-bottom: 2px solid transparent;
+
+        }
+
+        .nav-link:hover {
+
+            color: #4f46e5;
+
+            border-bottom-color: #4f46e5;
+
+        }
+
+        .card {
+
+            background-color: white;
+
+            border-radius: 0.75rem;
+
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+        }
+
+        .card:hover {
+
+            transform: translateY(-5px);
+
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+
+        }
+
+        .chart-container {
+
+            position: relative;
+
+            width: 100%;
+
+            max-width: 800px;
+
+            margin-left: auto;
+
+            margin-right: auto;
+
+            height: 400px;
+
+            max-height: 50vh;
+
+        }
+
+        @media (max-width: 768px) {
+
+            .chart-container {
+
+                height: 350px;
+
+            }
+
+        }
+
+        .tab-button {
+
+            transition: background-color 0.3s, color 0.3s;
+
+        }
+
+        .tab-button.active {
+
+            background-color: #4f46e5;
+
+            color: white;
+
+        }
+
+    </style>
+
+</head>
+
+<body class="antialiased">
+
+
+
+    <header class="bg-white shadow-md sticky top-0 z-50">
+
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+
+            <div class="flex items-center justify-between h-16">
+
+                <div class="flex items-center">
+
+                    <span class="font-bold text-xl text-slate-800">🎲 Powerball NC Guide</span>
+
+                </div>
+
+                <div class="hidden lg:block">
+
+                    <div class="ml-10 flex items-baseline space-x-4">
+
+                        <a href="#odds" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600">The Odds</a>
+
+                        <a href="#strategies" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600">Game Plans</a>
+
+                        <a href="#nc" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600">NC Powerball</a>
+
+                        <a href="#win" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600">If You Win</a>
+
+                        <a href="#scams" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600">Scam Watch</a>
+
+                    </div>
+
+                </div>
+
+                 <div class="lg:hidden">
+
+                    <select id="mobile-nav" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+
+                        <option value="#odds">The Odds</option>
+
+                        <option value="#strategies">Game Plans</option>
+
+                        <option value="#nc">NC Powerball</option>
+
+                        <option value="#win">If You Win</option>
+
+                        <option value="#scams">Scam Watch</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+
+
+        <section id="hero" class="text-center mb-24">
+
+            <h1 class="text-4xl md:text-6xl font-bold text-slate-900 mb-4">Your Chance of Winning the Jackpot Is</h1>
+
+            <div class="bg-indigo-600 text-white font-mono text-3xl md:text-5xl py-4 px-6 rounded-lg inline-block shadow-lg">
+
+                1 in 292,201,338
+
+            </div>
+
+            <p class="mt-6 max-w-3xl mx-auto text-lg text-slate-600">
+
+                Ever wonder what your real chances are of winning the lottery? This page breaks down the real math behind Powerball in a simple way, with special info for North Carolina players. Let's find out what's really going on!
+
+            </p>
+
+            <img src="https://github.com/BillLayne/bill-layne-images/blob/main/North%20Carolina%20Lotter%20Winner.png?raw=true"
+
+                 alt="Humorous image of a surprised Powerball winner in North Carolina"
+
+                 class="mt-8 mx-auto rounded-lg shadow-xl max-w-lg w-full">
+
+        </section>
+
+
+
+        <section id="odds" class="mb-24">
+
+            <h2 class="text-3xl font-bold text-center mb-2">Just How Unlikely Is It?</h2>
+
+            <p class="text-center text-slate-600 mb-8 max-w-2xl mx-auto">Winning the jackpot is super, super rare. Look at this chart to see how winning compares to other amazing or crazy things happening to you!</p>
+
+            <div class="card p-4 md:p-6">
+
+                <div class="chart-container">
+
+                    <canvas id="oddsComparisonChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <section id="value" class="mb-24">
+
+            <h2 class="text-3xl font-bold text-center mb-2">What's a $2 Ticket Really Worth?</h2>
+
+            <p class="text-center text-slate-600 mb-8 max-w-3xl mx-auto">Even though you pay $2 for a ticket, its actual value is much less. "Expected Value" is like the average amount you'd get back if you played millions of times. Let's see what it is for Powerball.</p>
+
+            <div class="card p-4 md:p-8">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+
+                    <div>
+
+                        <label for="jackpotInput" class="block text-sm font-medium text-slate-700">Jackpot Prize (in Millions)</label>
+
+                        <div class="mt-1 flex rounded-md shadow-sm">
+
+                            <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">$</span>
+
+                            <input type="number" id="jackpotInput" value="500" class="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300">
+
+                            <span class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">M</span>
+
+                        </div>
+
+                        <button id="calculateEV" class="mt-4 w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors">Calculate Value</button>
+
+                    </div>
+
+                    <div id="evResult" class="text-center p-6 bg-slate-50 rounded-lg">
+
+                        <h3 class="text-lg font-semibold text-slate-800">Average Value of Your $2 Ticket</h3>
+
+                        <p id="evValue" class="text-5xl font-bold text-red-500 my-2">$0.32</p>
+
+                        <p class="text-sm text-slate-500">This means for every $2 you spend, you only get about 32 cents back on average. It's almost always a losing deal!</p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <section id="strategies" class="mb-24">
+
+            <h2 class="text-3xl font-bold text-center mb-2">Are There Any Secret Game Plans?</h2>
+
+            <p class="text-center text-slate-600 mb-8 max-w-2xl mx-auto">People have all sorts of ideas to pick winning numbers. But do these tricks actually work? Let's look at the facts.</p>
+
+             <div class="card p-4 md:p-6">
+
+                <div class="mb-6 border-b border-gray-200">
+
+                    <nav class="-mb-px flex space-x-4" aria-label="Tabs">
+
+                        <button class="strategy-tab tab-button active whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm" data-tab="hot-cold">"Hot" & "Cold" Numbers</button>
+
+                        <button class="strategy-tab tab-button whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm" data-tab="quick-pick">Picking Your Own Numbers</button>
+
+                        <button class="strategy-tab tab-button whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm" data-tab="pools">Playing with Friends</button>
+
+                    </nav>
+
+                </div>
+
+                <div id="strategy-content">
+
+                    <div id="hot-cold" class="strategy-panel">
+
+                        <h3 class="text-xl font-bold mb-2">Myth: Some numbers are "due" to be picked.</h3>
+
+                        <p class="text-slate-600 mb-4">Some people think if a number hasn't been picked in a while, it's "due." Or if a number is picked a lot, it's "hot."</p>
+
+                        <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg">
+
+                            <p><strong class="font-bold">Fact:</strong> The lottery balls have no memory! Every single drawing is brand new and totally random. A number's past doesn't change its future chances.</p>
+
+                        </div>
+
+                    </div>
+
+                    <div id="quick-pick" class="strategy-panel hidden">
+
+                        <h3 class="text-xl font-bold mb-2">Myth: Picking your own "lucky" numbers is better.</h3>
+
+                        <p class="text-slate-600 mb-4">It feels special to pick birthdays or lucky numbers. But this can actually be a bad idea if you win!</p>
+
+                        <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-r-lg mb-6">
+
+                            <p><strong class="font-bold">Fact:</strong> Lots of people pick the same types of numbers (like birthdays, 1-31). If those numbers win, you have to share the prize with way more people! A computer "Quick Pick" is more random and less likely to be shared.</p>
+
+                        </div>
+
+                         <div class="chart-container" style="height: 450px; max-height: 60vh;">
+
+                            <canvas id="numberSelectionChart"></canvas>
+
+                        </div>
+
+                    </div>
+
+                    <div id="pools" class="strategy-panel hidden">
+
+                        <h3 class="text-xl font-bold mb-2">Playing in a Group: Lottery Pools</h3>
+
+                        <p class="text-slate-600 mb-4">A lottery pool is when you and your friends or coworkers put your money together to buy more tickets. This increases your chances of winning, but you also have to share the prize.</p>
+
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
+
+                            <h4 class="font-bold text-blue-800 mb-2">Lottery Pool Safety Checklist:</h4>
+
+                             <ul class="space-y-2 text-sm text-blue-700">
+
+                                <li class="flex items-start"><span class="mr-2">✅</span> <strong>Write it down:</strong> Have one person in charge and write down all the rules and who is playing.</li>
+
+                                <li class="flex items-start"><span class="mr-2">✅</span> <strong>Share the tickets:</strong> Send a picture of all the tickets to everyone in the group BEFORE the drawing.</li>
+
+                                <li class="flex items-start"><span class="mr-2">✅</span> <strong>Plan for winning:</strong> The rules should say exactly how you'll split any prize, big or small.</li>
+
+                            </ul>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <section id="nc" class="mb-24">
+
+            <h2 class="text-3xl font-bold text-center mb-2">Powerball in the Tar Heel State</h2>
+
+            <p class="text-center text-slate-600 mb-8 max-w-2xl mx-auto">When you play Powerball in North Carolina, you're playing the NC Education Lottery. Here's what that means for you and our state.</p>
+
+            <div class="card p-4 md:p-8">
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+
+                    <div>
+
+                        <h3 class="text-xl font-bold mb-4">Where Does the Money Go?</h3>
+
+                        <p class="text-slate-600 mb-4">A big chunk of the money from ticket sales goes to help education in North Carolina. It supports important things like:</p>
+
+                        <ul class="space-y-3">
+
+                            <li class="flex items-center"><span class="text-2xl mr-3">🏫</span><div><strong class="font-semibold">Building Schools:</strong> Helping to build and fix schools in all 100 counties.</div></li>
+
+                            <li class="flex items-center"><span class="text-2xl mr-3">🎓</span><div><strong class="font-semibold">College Scholarships:</strong> Giving scholarships to students who need them.</div></li>
+
+                            <li class="flex items-center"><span class="text-2xl mr-3">✏️</span><div><strong class="font-semibold">Pre-K Programs:</strong> Helping more kids get into Pre-K programs.</div></li>
+
+                        </ul>
+
+                    </div>
+
+                    <div class="bg-slate-50 p-6 rounded-lg">
+
+                        <h3 class="text-xl font-bold mb-4 text-center">Taxes for NC Winners</h3>
+
+                        <p class="text-slate-600 mb-4 text-center">If you win a big prize in North Carolina, you have to pay two types of taxes:</p>
+
+                        <div class="text-center space-y-2">
+
+                            <div class="font-semibold">Federal Taxes (to the U.S. government)</div>
+
+                            <div class="text-2xl font-bold">+</div>
+
+                            <div class="font-semibold">North Carolina State Taxes</div>
+
+                        </div>
+
+                        <p class="text-xs text-slate-500 mt-4 text-center">This means your final take-home prize will be smaller than the number you see on TV. It's important to plan for this!</p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <section id="win" class="mb-24">
+
+            <h2 class="text-3xl font-bold text-center mb-2">What If You Actually Win?!</h2>
+
+            <p class="text-center text-slate-600 mb-8 max-w-3xl mx-auto">It's almost impossible, but what if it happens? You have a big choice to make about how you get the money.</p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                <div class="card p-4 md:p-6">
+
+                    <h3 class="text-xl font-bold mb-4 text-center">How to Take the Money</h3>
+
+                    <p class="text-slate-600 mb-6 text-sm text-center">You have two choices: get a giant pile of cash right now, or get smaller payments every year for 30 years.</p>
+
+                    <div class="grid grid-cols-1 gap-6">
+
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+
+                            <div class="text-center">
+
+                                <span class="text-5xl">💰</span>
+
+                                <h4 class="text-lg font-bold mt-2">Lump Sum: The Big Payout NOW</h4>
+
+                                <p class="text-2xl font-bold text-blue-600 my-2">~$173 Million</p>
+
+                                <p class="text-xs text-slate-500">(After taxes, from a $500M jackpot)</p>
+
+                            </div>
+
+                            <ul class="mt-4 text-sm space-y-2">
+
+                                <li class="flex"><span class="mr-2 text-green-500">✔</span> You get all the money at once.</li>
+
+                                <li class="flex"><span class="mr-2 text-green-500">✔</span> You can invest it to make it grow faster.</li>
+
+                                <li class="flex"><span class="mr-2 text-red-500">❌</span> It's a smaller amount than the annuity total.</li>
+
+                                <li class="flex"><span class="mr-2 text-red-500">❌</span> It's easy to spend it all too quickly.</li>
+
+                            </ul>
+
+                        </div>
+
+                        <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+
+                            <div class="text-center">
+
+                                <span class="text-5xl">🗓️</span>
+
+                                <h4 class="text-lg font-bold mt-2">Annuity: Payments For 30 Years</h4>
+
+                                <p class="text-2xl font-bold text-green-600 my-2">~$10.5 Million a Year</p>
+
+                                <p class="text-xs text-slate-500">(After taxes, for the first year)</p>
+
+                            </div>
+
+                            <ul class="mt-4 text-sm space-y-2">
+
+                                <li class="flex"><span class="mr-2 text-green-500">✔</span> You get more money in total over 30 years.</li>
+
+                                <li class="flex"><span class="mr-2 text-green-500">✔</span> It protects you from spending it all at once.</li>
+
+                                <li class="flex"><span class="mr-2 text-red-500">❌</span> You have to wait a long time to get all of it.</li>
+
+                                <li class="flex"><span class="mr-2 text-red-500">❌</span> You can't invest the full amount right away.</li>
+
+                            </ul>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="card p-4 md:p-6">
+
+                    <h3 class="text-xl font-bold mb-4 text-center">Your First Steps After Winning</h3>
+
+                    <ul class="space-y-4">
+
+                        <li class="flex items-start">
+
+                            <div class="flex-shrink-0 h-6 w-6 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold mr-3">1</div>
+
+                            <p class="text-slate-700"><strong class="font-semibold">Don't Tell Anyone!</strong> Seriously, keep it a secret at first. Don't even sign the ticket right away. This keeps you safe.</p>
+
+                        </li>
+
+                        <li class="flex items-start">
+
+                            <div class="flex-shrink-0 h-6 w-6 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold mr-3">2</div>
+
+                            <p class="text-slate-700"><strong class="font-semibold">Get a Team of Experts.</strong> Before you do anything, hire a good lawyer, a money expert (accountant), and a financial planner. They will help you make smart choices.</p>
+
+                        </li>
+
+                        <li class="flex items-start">
+
+                            <div class="flex-shrink-0 h-6 w-6 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold mr-3">3</div>
+
+                            <p class="text-slate-700"><strong class="font-semibold">Make a Plan.</strong> Your team will help you decide what to do with the money, like how to pay taxes and invest it, before you even get the check.</p>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <section id="scams" class="mb-24">
+
+            <h2 class="text-3xl font-bold text-center mb-2">Watch Out for Lottery Scams!</h2>
+
+            <p class="text-center text-slate-600 mb-8 max-w-2xl mx-auto">Sadly, some people try to trick you into thinking you've won. Here are some red flags to watch out for to stay safe.</p>
+
+            <div class="card p-4 md:p-8 bg-amber-50 border border-amber-200">
+
+                <h3 class="text-xl font-bold text-center mb-6 text-amber-800">Red Flags: It's a Scam If They...</h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <div class="flex items-center"><span class="text-4xl mr-4">💸</span><div><strong class="font-semibold">Ask you to pay a fee.</strong> You NEVER have to pay money to get your prize.</div></div>
+
+                    <div class="flex items-center"><span class="text-4xl mr-4">🤫</span><div><strong class="font-semibold">Tell you to keep it a secret.</strong> They do this so you don't ask friends or family for advice.</div></div>
+
+                    <div class="flex items-center"><span class="text-4xl mr-4">💻</span><div><strong class="font-semibold">Contact you on social media.</strong> The real lottery will never contact you through Facebook or Instagram.</div></div>
+
+                    <div class="flex items-center"><span class="text-4xl mr-4">⏰</span><div><strong class="font-semibold">Say you have to act FAST.</strong> They want to rush you so you don't have time to think.</div></div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <section id="psychology" class="mb-16">
+
+            <h2 class="text-3xl font-bold text-center mb-2">If The Odds Are So Bad, Why Do We Play?</h2>
+
+            <p class="text-center text-slate-600 mb-8 max-w-2xl mx-auto">Our brains play funny tricks on us that make playing the lottery seem like a good idea, even when the math says it isn't.</p>
+
+            <div class="space-y-4 max-w-3xl mx-auto">
+
+                <div class="psychology-accordion-item card">
+
+                    <button class="psychology-accordion-header w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
+
+                        <span>We See Winners Everywhere!</span>
+
+                        <span class="accordion-icon text-2xl transform transition-transform">+</span>
+
+                    </button>
+
+                    <div class="psychology-accordion-content hidden p-4 border-t">
+
+                        <p class="text-slate-600">The news always shows big stories about people who won the jackpot. We never see stories about the millions of people who didn't win. This makes winning seem much more common than it really is.</p>
+
+                    </div>
+
+                </div>
+
+                <div class="psychology-accordion-item card">
+
+                    <button class="psychology-accordion-header w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
+
+                        <span>Picking "My" Lucky Numbers</span>
+
+                         <span class="accordion-icon text-2xl transform transition-transform">+</span>
+
+                    </button>
+
+                    <div class="psychology-accordion-content hidden p-4 border-t">
+
+                        <p class="text-slate-600">When we pick our own numbers, it feels like we have some control over the game. But it's still 100% random. It's like thinking you can make a coin land on heads by wishing for it.</p>
+
+                    </div>
+
+                </div>
+
+                <div class="psychology-accordion-item card">
+
+                    <button class="psychology-accordion-header w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
+
+                        <span>It's Fun to Dream!</span>
+
+                         <span class="accordion-icon text-2xl transform transition-transform">+</span>
+
+                    </button>
+
+                    <div class="psychology-accordion-content hidden p-4 border-t">
+
+                        <p class="text-slate-600">For just $2, you get to dream for a few days about what you would do if you won. That feeling of hope and excitement is what many people are really buying.</p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+    </main>
+
+
+
+    <footer class="bg-slate-800 text-slate-300 mt-16">
+
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
+
+            <p class="font-semibold text-lg mb-2">Play for Fun, Not to Win</p>
+
+            <p class="max-w-2xl mx-auto text-sm mb-4">
+
+                The lottery is a game, not a way to make money. Think of it like buying a movie ticket—it's for fun! Only spend money you're okay with losing.
+
+            </p>
+
+            <p class="text-sm">If you're worried about gambling, help is available. Call 1-800-GAMBLER.</p>
+
+        </div>
+
+    </footer>
+
+
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const data = {
+
+                odds: [
+
+                    { event: 'Becoming a movie star', odds: 1505000, emoji: '🌟' },
+
+                    { event: 'Getting struck by lightning this year', odds: 1222000, emoji: '⚡️' },
+
+                    { event: 'Winning an Olympic Gold Medal', odds: 662000, emoji: '🥇' },
+
+                    { event: 'Getting attacked by a shark', odds: 3700000, emoji: '🦈' },
+
+                    { event: 'Winning the Powerball Jackpot', odds: 292201338, emoji: ' lottery ' },
+
+                ],
+
+                prizes: [
+
+                    { match: '5 + PB', value: 0, prob: 1 / 292201338 },
+
+                    { match: '5', value: 1000000, prob: 1 / 11688054 },
+
+                    { match: '4 + PB', value: 50000, prob: 1 / 913129 },
+
+                    { match: '4', value: 100, prob: 1 / 36525 },
+
+                    { match: '3 + PB', value: 100, prob: 1 / 14494 },
+
+                    { match: '3', value: 7, prob: 1 / 580 },
+
+                    { match: '2 + PB', value: 7, prob: 1 / 701 },
+
+                    { match: '1 + PB', value: 4, prob: 1 / 92 },
+
+                    { match: '0 + PB', value: 4, prob: 1 / 38 },
+
+                ]
+
+            };
+
+
+
+            const mobileNav = document.getElementById('mobile-nav');
+
+            mobileNav.addEventListener('change', (e) => {
+
+                const section = document.querySelector(e.target.value);
+
+                if(section) {
+
+                    section.scrollIntoView({ behavior: 'smooth' });
+
+                }
+
+            });
+
+
+
+            function createOddsChart() {
+
+                const ctx = document.getElementById('oddsComparisonChart').getContext('2d');
+
+                const sortedOdds = [...data.odds].sort((a, b) => a.odds - b.odds);
+
+                new Chart(ctx, {
+
+                    type: 'bar',
+
+                    data: {
+
+                        labels: sortedOdds.map(d => `${d.emoji} ${d.event}`),
+
+                        datasets: [{
+
+                            label: 'Your Chance is 1 in...',
+
+                            data: sortedOdds.map(d => d.odds),
+
+                            backgroundColor: 'rgba(79, 70, 229, 0.8)',
+
+                            borderColor: 'rgba(79, 70, 229, 1)',
+
+                            borderWidth: 1
+
+                        }]
+
+                    },
+
+                    options: {
+
+                        indexAxis: 'y',
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        scales: {
+
+                            x: {
+
+                                type: 'logarithmic',
+
+                                title: {
+
+                                    display: true,
+
+                                    text: 'Your Chance is 1 in... (the bigger the bar, the harder it is!)'
+
+                                }
+
+                            }
+
+                        },
+
+                        plugins: {
+
+                            legend: { display: false },
+
+                            tooltip: {
+
+                                callbacks: {
+
+                                    label: function(context) {
+
+                                        let label = 'Chance: ';
+
+                                        if (context.parsed.x !== null) {
+
+                                            label += `1 in ${context.parsed.x.toLocaleString()}`;
+
+                                        }
+
+                                        return label;
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                });
+
+            }
+
+
+
+            const evValueEl = document.getElementById('evValue');
+
+            const jackpotInput = document.getElementById('jackpotInput');
+
+            document.getElementById('calculateEV').addEventListener('click', () => {
+
+                const jackpotMillions = parseFloat(jackpotInput.value) || 0;
+
+                const jackpot = jackpotMillions * 1000000;
+
+
+
+                const cashValue = jackpot * 0.55;
+
+                const afterFedTax = cashValue * (1 - 0.37);
+
+
+
+                let ev = 0;
+
+                data.prizes.forEach(prize => {
+
+                    if (prize.match !== '5 + PB') {
+
+                        ev += prize.value * prize.prob;
+
+                    }
+
+                });
+
+
+
+                const ticketsSold = 5000000 + Math.pow(jackpotMillions, 1.5);
+
+                const expectedWinners = ticketsSold / 292201338;
+
+                const jackpotShare = afterFedTax / (expectedWinners > 1 ? expectedWinners : 1);
+
+                const jackpotEV = jackpotShare * data.prizes[0].prob;
+
+
+
+                const totalEV = ev + jackpotEV;
+
+
+
+                evValueEl.textContent = `$${totalEV.toFixed(2)}`;
+
+                evValueEl.classList.remove('text-red-500', 'text-green-500');
+
+                evValueEl.classList.add(totalEV < 2.0 ? 'text-red-500' : 'text-green-500');
+
+            });
+
+
+
+            document.getElementById('calculateEV').click();
+
+
+
+            const strategyTabs = document.querySelectorAll('.strategy-tab');
+
+            const strategyPanels = document.querySelectorAll('.strategy-panel');
+
+            strategyTabs.forEach(tab => {
+
+                tab.addEventListener('click', () => {
+
+                    strategyTabs.forEach(t => t.classList.remove('active'));
+
+                    tab.classList.add('active');
+
+                    const targetPanelId = tab.getAttribute('data-tab');
+
+                    strategyPanels.forEach(panel => {
+
+                        if (panel.id === targetPanelId) {
+
+                            panel.classList.remove('hidden');
+
+                        } else {
+
+                            panel.classList.add('hidden');
+
+                        }
+
+                    });
+
+                });
+
+            });
+
+
+
+            function createNumberSelectionChart() {
+
+                const ctx = document.getElementById('numberSelectionChart').getContext('2d');
+
+                const humanPicksData = [];
+
+                const quickPicksData = [];
+
+                for (let i = 1; i <= 69; i++) {
+
+                    const humanBias = (i <= 31) ? Math.random() * 20 + 15 : Math.random() * 10 + 5;
+
+                    humanPicksData.push({x: i, y: Math.floor(i/10) + 1, r: humanBias});
+
+                    quickPicksData.push({x: i, y: Math.floor(i/10) + 1, r: Math.random() * 5 + 8});
+
+                }
+
+
+
+                new Chart(ctx, {
+
+                    type: 'bubble',
+
+                    data: {
+
+                        datasets: [
+
+                            {
+
+                                label: 'People\'s Picks (Birthdays are popular!)',
+
+                                data: humanPicksData,
+
+                                backgroundColor: 'rgba(239, 68, 68, 0.5)',
+
+                            },
+
+                            {
+
+                                label: 'Computer Quick Picks (Totally Random)',
+
+                                data: quickPicksData,
+
+                                backgroundColor: 'rgba(34, 197, 94, 0.5)',
+
+                                hidden: true,
+
+                            }
+
+                        ]
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            title: { display: true, text: 'Map of Popular Numbers' },
+
+                            legend: {
+
+                                onClick: (e, legendItem, legend) => {
+
+                                    const index = legendItem.datasetIndex;
+
+                                    const ci = legend.chart;
+
+                                    legend.chart.data.datasets.forEach((d, i) => {
+
+                                        ci.setDatasetVisibility(i, i === index);
+
+                                    });
+
+                                    ci.update();
+
+                                }
+
+                            }
+
+                        },
+
+                        scales: {
+
+                            x: {
+
+                                min: 0, max: 70,
+
+                                grid: { display: false },
+
+                                ticks: { stepSize: 10 }
+
+                            },
+
+                            y: {
+
+                                min: 0, max: 8,
+
+                                grid: { display: false },
+
+                                ticks: { display: false }
+
+                            }
+
+                        }
+
+                    }
+
+                });
+
+            }
+
+
+
+            const accordionHeaders = document.querySelectorAll('.psychology-accordion-header');
+
+            accordionHeaders.forEach(header => {
+
+                header.addEventListener('click', () => {
+
+                    const content = header.nextElementSibling;
+
+                    const icon = header.querySelector('.accordion-icon');
+
+                    const isOpen = !content.classList.contains('hidden');
+
+
+
+                    content.classList.toggle('hidden');
+
+                    if (isOpen) {
+
+                        icon.textContent = '+';
+
+                        icon.classList.remove('rotate-45');
+
+                    } else {
+
+                        icon.textContent = '+';
+
+                        icon.classList.add('rotate-45');
+
+                    }
+
+                });
+
+            });
+
+
+
+            createOddsChart();
+
+            createNumberSelectionChart();
+
+        });
+
+    </script>
+
+</body>
+
+</html>
+
+
+<!-- Migrated from legacy URL: https://billlayne.github.io/NC-Lottery-Winners/ on 2026-06-08 -->

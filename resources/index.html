@@ -54,13 +54,13 @@
 
     <style>
         body { -webkit-tap-highlight-color: transparent; }
-        
+
         .glass-nav {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(16px);
             border-bottom: 1px solid rgba(255,255,255,0.5);
         }
-        
+
         .bg-vivid-hero {
             background:
                 radial-gradient(circle at 15% 18%, rgba(251, 191, 36, 0.18), transparent 28%),
@@ -68,7 +68,7 @@
                 linear-gradient(135deg, rgba(15, 23, 42, 0.90), rgba(30, 58, 138, 0.74) 52%, rgba(30, 64, 175, 0.72)),
                 url("resources-hero.webp") center/cover no-repeat;
         }
-        
+
         .reveal { opacity: 0; transform: translateY(20px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
@@ -83,7 +83,7 @@
             width: 0%;
             transition: width 0.1s;
         }
-        
+
         /* Search Input Styling */
         .search-container {
             position: relative;
@@ -92,7 +92,7 @@
             max-width: 600px;
             margin: 0 auto;
         }
-        
+
         .search-input {
             width: 100%;
             background: rgba(255, 255, 255, 0.15);
@@ -105,18 +105,18 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        
+
         .search-input::placeholder { color: rgba(255, 255, 255, 0.8); }
-        
+
         .search-input:focus {
             background: white;
             color: #1e293b;
             outline: none;
             box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.2);
         }
-        
+
         .search-input:focus::placeholder { color: #94a3b8; }
-        
+
         .search-icon {
             position: absolute;
             right: 1.25rem;
@@ -126,7 +126,7 @@
             pointer-events: none;
             transition: color 0.3s;
         }
-        
+
         .search-input:focus + .search-icon { color: #1e40af; }
 
         .section-container { scroll-margin-top: 6.5rem; }
@@ -257,7 +257,7 @@
                     <a href="tel:3368351993" class="hidden md:flex items-center font-bold text-slate-700 hover:text-teal-600 transition-colors bg-white px-5 py-2.5 rounded-full shadow-sm border border-slate-100 text-sm">
                         <i class="fas fa-phone-alt mr-2 text-teal-500"></i>(336) 835-1993
                     </a>
-                    <a href="../get-quote.html" class="hidden md:block bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 text-white px-7 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-teal-500/30 transition-all hover:scale-105 active:scale-95">
+                    <a href="/get-quote" class="hidden md:block bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 text-white px-7 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-teal-500/30 transition-all hover:scale-105 active:scale-95">
                         Get Free Quote
                     </a>
                     <button id="menu-toggle" class="hidden md:block p-3 rounded-full transition-colors focus:outline-none hover:bg-white/10 text-white" aria-label="Open Menu">
@@ -332,13 +332,13 @@
                 <p class="text-xs md:text-sm text-teal-200/80 mb-6 md:mb-10 max-w-xl mx-auto hidden md:block">
                     Educational resources only; a licensed agent can confirm coverage, binding, cancellation, or claims decisions for your exact policy.
                 </p>
-                
+
                 <!-- Instant Search Bar -->
                 <div class="search-container mb-12">
                     <input type="text" id="resourceSearch" placeholder="Search guides, forms, calculators..." class="search-input">
                     <i class="fas fa-search search-icon"></i>
                 </div>
-                
+
                 <!-- Visual Service Icons -->
                 <div class="flex justify-center gap-6 sm:gap-12 mb-6 md:mb-8">
                     <a href="#calculators" class="flex flex-col items-center gap-1.5 md:gap-2 group cursor-pointer text-white hover:text-teal-200 transition-colors">
@@ -731,7 +731,7 @@
                                 </div>
                                 <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-green-50 flex items-center justify-center text-green-600 group-hover:translate-x-1 transition-transform text-xs md:text-base hidden md:flex"><i class="fas fa-chevron-right"></i></div>
                             </a>
-                            
+
                             <a href="/north-wilkesboro.html" target="_blank" rel="noopener noreferrer" class="resource-card group bg-gradient-to-br from-green-50 to-emerald-100/60 p-3 md:p-6 rounded-xl md:rounded-[2rem] border-2 border-green-200 hover:border-green-400 hover:shadow-lg hover:-translate-y-1 transition-all flex flex-row items-center gap-3 md:gap-6" data-name="wilkesboro savings deals">
                                 <div class="flex-shrink-0 w-10 h-10 md:w-16 md:h-16 bg-white rounded-xl md:rounded-2xl flex items-center justify-center text-green-600 text-lg md:text-3xl shadow-sm"><i class="fas fa-music"></i></div>
                                 <div class="flex-1 text-left">
@@ -987,7 +987,7 @@
 
             // Instant Search Functionality
             const searchInput = document.getElementById('resourceSearch');
-            
+
             if (searchInput) {
                 searchInput.addEventListener('input', function(e) {
                     const term = e.target.value.toLowerCase();
@@ -996,11 +996,11 @@
                         document.getElementById('tools'),
                         ...Array.from(document.querySelectorAll('.section-container')).map(section => section.closest('section') || section)
                     ].filter(Boolean);
-                    
+
                     resourceCards.forEach(card => {
                         const name = card.dataset.name ? card.dataset.name.toLowerCase() : '';
                         const title = card.querySelector('h3, h4').innerText.toLowerCase();
-                        
+
                         if (name.includes(term) || title.includes(term)) {
                             card.style.display = '';
                         } else {
@@ -1153,7 +1153,7 @@
         <a href="tel:3368351993" class="dock-btn dock-call">
             <i class="fas fa-phone-alt"></i> Call
         </a>
-        <a href="https://www.billlayneinsurance.com/get-quote.html" class="dock-btn dock-quote">
+        <a href="/get-quote" class="dock-btn dock-quote">
             <i class="fas fa-bolt"></i> Compare Rates
         </a>
         <button class="dock-btn dock-menu" onclick="toggleMobileDockMenu()">

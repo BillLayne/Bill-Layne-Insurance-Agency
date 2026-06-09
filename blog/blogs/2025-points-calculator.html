@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <link rel="canonical" href="https://www.billlayneinsurance.com/blog/blogs/2025-points-calculator.html">
+    <meta property="og:url" content="https://www.billlayneinsurance.com/blog/blogs/2025-points-calculator.html">
+    <meta name="robots" content="index, follow">
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NC Ticket Cost Calculator: See Your 2025 Insurance Hike in Seconds</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Chosen Palette: Calm Harmony Neutrals -->
+
+    <!-- Application Structure Plan: The application is designed as a multi-section, single-page dashboard. The primary feature, an interactive calculator, is placed at the top for immediate access. This is followed by thematic sections that break down the report's complex information into digestible parts: 'Key Concepts' to bridge the DMV vs. SDIP knowledge gap, a 'Violation Explorer' for quick lookups, a '2025 Regulatory Shift' section to explain future changes, and a 'Holiday Risk' section for proactive advice. This structure was chosen to support both task-oriented users (who need to calculate a ticket) and exploratory users (who want to understand the system), facilitating a non-linear but guided user flow via a sticky navigation bar. -->
+
+    <!-- Visualization & Content Choices: Report Info: DMV vs. SDIP points -> Goal: Compare -> Viz: Static Image -> Justification: The provided image is clearer and simpler than an interactive chart for this concept. | Report Info: 2025 Law Changes -> Goal: Compare -> Viz: Side-by-side comparison cards -> Interaction: Static display -> Justification: Clearly shows the 'before and after' for key rules. | Report Info: Labor Day citations -> Goal: Inform/Compare -> Viz: Horizontal Bar Chart -> Interaction: Static display -> Justification: Effectively demonstrates the 'halo effect' of enforcement. | Library/Method: Chart.js on Canvas for holiday chart. -->
+
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+
+        body {
+
+            font-family: 'Inter', sans-serif;
+
+            background-color: #FDFBF7;
+
+            color: #4A4A4A;
+
+        }
+
+        .chart-container {
+
+            position: relative;
+
+            width: 100%;
+
+            max-width: 600px;
+
+            margin-left: auto;
+
+            margin-right: auto;
+
+            height: 350px;
+
+            max-height: 400px;
+
+        }
+
+        @media (min-width: 768px) {
+
+            .chart-container {
+
+                height: 400px;
+
+            }
+
+        }
+
+        .step-indicator {
+
+            transition: all 0.3s ease-in-out;
+
+        }
+
+        .step-indicator.active {
+
+            background-color: #43A6AC;
+
+            color: white;
+
+            transform: scale(1.1);
+
+        }
+
+        .step-indicator.completed {
+
+            background-color: #88D4D8;
+
+            color: white;
+
+        }
+
+        .btn-primary {
+
+            background-color: #43A6AC;
+
+            color: white;
+
+            transition: background-color 0.3s;
+
+        }
+
+        .btn-primary:hover {
+
+            background-color: #368a8f;
+
+        }
+
+        .btn-secondary {
+
+            background-color: #E0E0E0;
+
+            color: #4A4A4A;
+
+            transition: background-color 0.3s;
+
+        }
+
+        .btn-secondary:hover {
+
+            background-color: #C7C7C7;
+
+        }
+
+        .card {
+
+            background-color: #FFFFFF;
+
+            border: 1px solid #E0E0E0;
+
+            border-radius: 0.75rem;
+
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+
+            transition: transform 0.3s, box-shadow 0.3s;
+
+        }
+
+        .card:hover {
+
+            transform: translateY(-5px);
+
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+
+        }
+
+        .nav-link {
+
+            transition: color 0.3s, border-bottom-color 0.3s;
+
+            border-bottom: 2px solid transparent;
+
+        }
+
+        .nav-link:hover {
+
+            color: #43A6AC;
+
+            border-bottom-color: #43A6AC;
+
+        }
+
+        .result-card {
+
+            background: linear-gradient(135deg, #43A6AC 0%, #88D4D8 100%);
+
+            color: white;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <div class="flex items-center justify-between h-16">
+
+                <div class="flex items-center">
+
+                    <a href="https://www.billlayneinsurance.com" target="_blank" rel="noopener noreferrer" class="font-bold text-xl text-[#43A6AC]">Bill Layne Insurance</a>
+
+                </div>
+
+                <div class="hidden md:block">
+
+                    <div class="ml-10 flex items-baseline space-x-4">
+
+                        <a href="#calculator" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Calculator</a>
+
+                        <a href="#concepts" class="nav-link px-3 py-2 rounded-md text-sm font-medium">How It Works</a>
+
+                        <a href="#violations" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Ticket Costs</a>
+
+                        <a href="#changes" class="nav-link px-3 py-2 rounded-md text-sm font-medium">2025 Changes</a>
+
+                        <a href="#reviews" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Reviews</a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+
+
+        <section id="calculator" class="mb-20">
+
+            <div class="text-center mb-12">
+
+                <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">NC Ticket Cost Calculator: See Your 2025 Insurance Hike in Seconds</h1>
+
+                <p class="mt-4 text-lg text-gray-600">See how a traffic ticket could raise your insurance price in North Carolina.</p>
+
+            </div>
+
+
+
+            <img src="https://github.com/BillLayne/bill-layne-images/blob/main/Blog%20Images/Scenic%20Highway%20Journey.png?raw=true" alt="Scenic highway in North Carolina representing the journey of a driver" class="w-full max-w-3xl mx-auto rounded-lg shadow-lg mb-12">
+
+
+
+            <div class="card p-6 md:p-8 max-w-4xl mx-auto">
+
+                <div id="step-indicators" class="flex justify-center items-center space-x-4 md:space-x-8 mb-8">
+
+                    <div id="indicator-1" class="step-indicator active flex items-center justify-center w-10 h-10 rounded-full font-bold">1</div>
+
+                    <div class="flex-1 h-1 bg-gray-200 rounded-full"></div>
+
+                    <div id="indicator-2" class="step-indicator flex items-center justify-center w-10 h-10 rounded-full font-bold bg-gray-200">2</div>
+
+                    <div class="flex-1 h-1 bg-gray-200 rounded-full"></div>
+
+                    <div id="indicator-3" class="step-indicator flex items-center justify-center w-10 h-10 rounded-full font-bold bg-gray-200">3</div>
+
+                </div>
+
+
+
+                <div id="calculator-form">
+
+                    <div id="step-1">
+
+                        <h3 class="text-2xl font-semibold mb-4 text-center">Your Policy & Ticket</h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                            <div>
+
+                                <label for="currentPremium" class="block text-sm font-medium text-gray-700">What you pay for insurance each year ($)</label>
+
+                                <input type="number" id="currentPremium" placeholder="e.g., 1500" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#43A6AC] focus:ring-[#43A6AC] sm:text-sm">
+
+                            </div>
+
+                            <div>
+
+                                <label for="convictionDate" class="block text-sm font-medium text-gray-700">Date on the ticket</label>
+
+                                <input type="date" id="convictionDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#43A6AC] focus:ring-[#43A6AC] sm:text-sm">
+
+                            </div>
+
+                            <div class="md:col-span-2">
+
+                                <label for="violationType" class="block text-sm font-medium text-gray-700">What was the ticket for?</label>
+
+                                <select id="violationType" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#43A6AC] focus:ring-[#43A6AC] sm:text-sm">
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                        <div class="mt-8 text-right">
+
+                            <button id="next-step-1" class="btn-primary font-bold py-2 px-6 rounded-lg">Next</button>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div id="step-2" class="hidden">
+
+                        <h3 class="text-2xl font-semibold mb-4 text-center">Your Driving Record</h3>
+
+                        <p class="text-center text-gray-600 mb-6">This helps check if you can get a break on your first ticket.</p>
+
+                        <div class="space-y-6">
+
+                            <div>
+
+                                <label for="priorConvictions" class="block text-sm font-medium text-gray-700">Any other tickets in the last <span id="lookback-period-convictions">3</span> years?</label>
+
+                                <input type="number" id="priorConvictions" value="0" min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#43A6AC] focus:ring-[#43A6AC] sm:text-sm">
+
+                            </div>
+
+                            <div>
+
+                                <label for="priorPJCs" class="block text-sm font-medium text-gray-700">Has anyone on your policy used a PJC in the last <span id="lookback-period-pjcs">3</span> years?</label>
+
+                                <input type="number" id="priorPJCs" value="0" min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#43A6AC] focus:ring-[#43A6AC] sm:text-sm">
+
+                            </div>
+
+                        </div>
+
+                        <div class="mt-8 flex justify-between">
+
+                            <button id="prev-step-2" class="btn-secondary font-bold py-2 px-6 rounded-lg">Back</button>
+
+                            <button id="calculate-btn" class="btn-primary font-bold py-2 px-6 rounded-lg">Calculate Impact</button>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div id="step-3" class="hidden">
+
+                        <h3 class="text-2xl font-semibold mb-4 text-center">Your Estimated Cost</h3>
+
+                        <div id="results-display" class="text-center"></div>
+
+                        <div class="mt-8 text-center">
+
+                            <button id="start-over-btn" class="btn-secondary font-bold py-2 px-6 rounded-lg">Start Over</button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <p class="text-xs text-gray-500 mt-4 text-center max-w-4xl mx-auto">Disclaimer: This is just an estimate to help you. It's not an official insurance quote. Your final price is set by your insurance company.</p>
+
+        </section>
+
+
+
+        <hr class="my-20 border-gray-200">
+
+
+
+        <section id="concepts" class="mb-20">
+
+            <div class="text-center mb-12">
+
+                <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Why One Ticket Gives You Two Kinds of Points</h2>
+
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">In North Carolina, a ticket gives you points in two different systems. It's confusing, but the "money points" are usually worse than the "license points."</p>
+
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+
+                <div class="card p-6">
+
+                    <h3 class="text-xl font-semibold mb-4 text-center">License Points vs. Money Points</h3>
+
+                    <img src="https://github.com/BillLayne/bill-layne-images/blob/main/Blog%20Images/license%20versus%20money%20image.png?raw=true" alt="Illustration of a balancing scale with a driver's license on one side and a heavier stack of money on the other, showing the financial impact of a ticket." class="w-full max-w-md mx-auto rounded-lg">
+
+                </div>
+
+                <div class="space-y-6">
+
+                    <div class="card p-6">
+
+                        <h4 class="font-bold text-lg text-[#43A6AC]">DMV "License" Points</h4>
+
+                        <p>Think of these like a report card for your driving. Get too many, and the DMV might suspend your license. They're about whether you get to keep driving.</p>
+
+                    </div>
+
+                    <div class="card p-6">
+
+                        <h4 class="font-bold text-lg text-[#F4A261]">Insurance "Money" Points</h4>
+
+                        <p>These points make your insurance price go up by a set amount for 3 years (or more soon!). They are all about how much you have to pay.</p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <hr class="my-20 border-gray-200">
+
+
+
+        <section id="violations" class="mb-20">
+
+            <div class="text-center mb-12">
+
+                <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Ticket Cost Cheat Sheet</h2>
+
+                <p class="mt-4 text-lg text-gray-600">Here are the official price increases for common tickets and accidents in NC.</p>
+
+            </div>
+
+            <div class="card p-4 sm:p-6">
+
+                <div class="overflow-x-auto">
+
+                    <table class="min-w-full divide-y divide-gray-200">
+
+                        <thead class="bg-gray-50">
+
+                            <tr>
+
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">"Money" Points</th>
+
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price Increase</th>
+
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Common Tickets / Accidents</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="violations-table-body" class="bg-white divide-y divide-gray-200">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <hr class="my-20 border-gray-200">
+
+
+
+        <section id="changes" class="mb-20">
+
+            <div class="text-center mb-12">
+
+                <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Big Insurance Rule Changes Coming in 2025</h2>
+
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Starting July 1, 2025, the rules for tickets are getting tougher. The price hikes will be more expensive and last longer.</p>
+
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                <div class="card p-6">
+
+                    <h3 class="text-lg font-semibold mb-3">Price Hikes Last Longer</h3>
+
+                    <div class="grid grid-cols-2 gap-4 text-center">
+
+                        <div>
+
+                            <p class="font-bold text-gray-500">NOW</p>
+
+                            <p class="text-2xl font-bold">3 Years</p>
+
+                        </div>
+
+                        <div class="border-l border-gray-200">
+
+                            <p class="font-bold text-[#F4A261]">AFTER JULY 2025</p>
+
+                            <p class="text-2xl font-bold">5 Years</p>
+
+                        </div>
+
+                    </div>
+
+                    <p class="text-sm mt-4">For serious tickets, you'll pay the higher price for 5 years instead of 3.</p>
+
+                </div>
+
+                <div class="card p-6">
+
+                    <h3 class="text-lg font-semibold mb-3">New Drivers Pay More, For Longer</h3>
+
+                    <div class="grid grid-cols-2 gap-4 text-center">
+
+                        <div>
+
+                            <p class="font-bold text-gray-500">NOW</p>
+
+                            <p class="text-2xl font-bold">3 Years</p>
+
+                        </div>
+
+                        <div class="border-l border-gray-200">
+
+                            <p class="font-bold text-[#F4A261]">AFTER JULY 2025</p>
+
+                            <p class="text-2xl font-bold">8 Years</p>
+
+                        </div>
+
+                    </div>
+
+                    <p class="text-sm mt-4">New drivers will pay higher "new driver" rates for 8 years instead of 3.</p>
+
+                </div>
+
+                <div class="card p-6">
+
+                    <h3 class="text-lg font-semibold mb-3">Harder to Get a Break</h3>
+
+                    <div class="grid grid-cols-2 gap-4 text-center">
+
+                        <div>
+
+                            <p class="font-bold text-gray-500">NOW</p>
+
+                            <p class="text-2xl font-bold">3 Years Clean</p>
+
+                        </div>
+
+                        <div class="border-l border-gray-200">
+
+                            <p class="font-bold text-[#F4A261]">AFTER JULY 2025</p>
+
+                            <p class="text-2xl font-bold">5 Years Clean</p>
+
+                        </div>
+
+                    </div>
+
+                    <p class="text-sm mt-4">You'll need a 5-year clean record (instead of 3) to get your first minor ticket forgiven.</p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <hr class="my-20 border-gray-200">
+
+
+
+        <section id="holiday" class="mb-20">
+
+            <div class="text-center mb-12">
+
+                <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Why Holiday Driving is Extra Risky</h2>
+
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">On holiday weekends like Labor Day, there are way more police on the roads. They are looking for drunk drivers, but they end up giving out tons of other tickets, too.</p>
+
+            </div>
+
+            <div class="card p-6 md:p-8">
+
+                <h3 class="text-xl font-semibold mb-2 text-center">Tickets Given During a Typical Labor Day Weekend</h3>
+
+                <p class="text-center text-sm text-gray-500 mb-8">(Based on past NC police data)</p>
+
+
+
+                <div class="space-y-6">
+
+                    <!-- Speeding Ticket Item -->
+
+                    <div class="infographic-item">
+
+                        <div class="flex justify-between items-center mb-1 font-semibold">
+
+                            <span class="text-lg">🚗 Speeding</span>
+
+                            <span class="text-gray-700">19,804 Tickets</span>
+
+                        </div>
+
+                        <div class="w-full bg-gray-200 rounded-full h-6 shadow-inner">
+
+                            <div class="bg-red-500 h-6 rounded-full text-white flex items-center justify-end pr-2 text-sm font-bold" style="width: 100%"></div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- DWLR Ticket Item -->
+
+                    <div class="infographic-item">
+
+                        <div class="flex justify-between items-center mb-1 font-semibold">
+
+                            <span class="text-lg">📄 Driving While License Revoked</span>
+
+                            <span class="text-gray-700">5,509 Tickets</span>
+
+                        </div>
+
+                        <div class="w-full bg-gray-200 rounded-full h-6 shadow-inner">
+
+                            <div class="bg-orange-500 h-6 rounded-full" style="width: 28%"></div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Seatbelt Ticket Item -->
+
+                    <div class="infographic-item">
+
+                        <div class="flex justify-between items-center mb-1 font-semibold">
+
+                            <span class="text-lg">💺 Seatbelt / Child Safety</span>
+
+                            <span class="text-gray-700">3,948 Tickets</span>
+
+                        </div>
+
+                        <div class="w-full bg-gray-200 rounded-full h-6 shadow-inner">
+
+                            <div class="bg-yellow-500 h-6 rounded-full" style="width: 20%"></div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Uninsured Ticket Item -->
+
+                    <div class="infographic-item">
+
+                        <div class="flex justify-between items-center mb-1 font-semibold">
+
+                            <span class="text-lg">💸 Uninsured Motorist</span>
+
+                            <span class="text-gray-700">1,464 Tickets</span>
+
+                        </div>
+
+                        <div class="w-full bg-gray-200 rounded-full h-6 shadow-inner">
+
+                            <div class="bg-teal-500 h-6 rounded-full" style="width: 8%"></div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- DWI Ticket Item -->
+
+                    <div class="infographic-item">
+
+                        <div class="flex justify-between items-center mb-1 font-semibold">
+
+                            <span class="text-lg">👮 DWI Arrests</span>
+
+                            <span class="text-gray-700">1,417 Arrests</span>
+
+                        </div>
+
+                        <div class="w-full bg-gray-200 rounded-full h-6 shadow-inner">
+
+                            <div class="bg-blue-500 h-6 rounded-full" style="width: 7%"></div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <p class="mt-8 text-center bg-blue-50 p-4 rounded-lg text-blue-800">For every <strong>1 DWI arrest</strong> 👮, police give about <strong>14 speeding tickets</strong> 🚗. With more cops on big roads like I-40 and I-85, your chances of getting an expensive ticket are much higher.</p>
+
+            </div>
+
+        </section>
+
+
+
+        <hr class="my-20 border-gray-200">
+
+
+
+        <section id="reviews" class="mb-20">
+
+            <div class="text-center mb-12">
+
+                <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">What North Carolina Drivers Are Saying</h2>
+
+                <p class="mt-4 text-lg text-gray-600">See how this tool has helped others understand their ticket costs.</p>
+
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                <div class="card p-6 flex flex-col">
+
+                    <div class="text-yellow-500 mb-2 text-2xl">★★★★★</div>
+
+                    <p class="flex-grow">"I got a speeding ticket outside of Charlotte and had no idea what it would do to my insurance. This calculator showed me the exact 30% increase I was facing. It was so simple to use and helped me budget for the extra cost."</p>
+
+                    <p class="font-bold mt-4">- Mark T., Charlotte, NC</p>
+
+                </div>
+
+                <div class="card p-6 flex flex-col">
+
+                    <div class="text-yellow-500 mb-2 text-2xl">★★★★★</div>
+
+                    <p class="flex-grow">"My son just got his license, and I wanted to show him how serious a ticket is. We used this tool, and seeing the total cost over 3 years really opened his eyes. Every parent of a teen driver in NC should use this."</p>
+
+                    <p class="font-bold mt-4">- Sarah K., Raleigh, NC</p>
+
+                </div>
+
+                <div class="card p-6 flex flex-col">
+
+                    <div class="text-yellow-500 mb-2 text-2xl">★★★★★</div>
+
+                    <p class="flex-grow">"Finally, something that explains the difference between DMV points and insurance points! I was so confused about my at-fault accident, but this tool made it clear. Seeing the numbers helped me decide my next steps. Highly recommend."</p>
+
+                    <p class="font-bold mt-4">- David P., Asheville, NC</p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+    </main>
+
+
+
+    <footer class="bg-white border-t border-gray-200">
+
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500">
+
+            <p>&copy; 2024 NC Ticket Cost Calculator. All data comes from public info from the NC Department of Insurance.</p>
+
+        </div>
+
+    </footer>
+
+
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const sdipData = {
+
+                1: { increase: 0.30, description: "Speeding <=10 mph (limit < 55 mph); Most other moving violations; At-fault accident (Property Damage <= $2,300)" },
+
+                2: { increase: 0.45, description: "Speeding >10 mph (total 56-75 mph); Speeding <=10 mph (limit >= 55 mph); Illegal passing; Following too closely; At-fault accident (PD > $2,300 and < $3,850)" },
+
+                3: { increase: 0.60, description: "At-fault accident with death or serious injury (>$1,800); At-fault accident (PD >= $3,850)" },
+
+                4: { increase: 0.80, description: "Reckless driving; Hit-and-run (property damage); Passing a stopped school bus; Speeding >75 mph" },
+
+                8: { increase: 1.95, description: "Driving while license suspended/revoked; Aggressive driving" },
+
+                10: { increase: 2.60, description: "Highway racing; Speeding to elude arrest" },
+
+                12: { increase: 3.40, description: "DWI; Manslaughter; Prearranged highway racing" }
+
+            };
+
+
+
+            const violationMap = [
+
+                { text: "Select a violation...", points: 0, waiver: false },
+
+                { text: "Speeding 10 mph or less (limit under 55 mph)", points: 1, waiver: true },
+
+                { text: "Stop Sign / Red Light Violation", points: 1, waiver: false },
+
+                { text: "Unsafe Movement / Littering", points: 1, waiver: false },
+
+                { text: "At-Fault Accident (Property Damage $2,300 or less)", points: 1, waiver: false },
+
+                { text: "Speeding > 10 mph (total speed 56-75 mph)", points: 2, waiver: false },
+
+                { text: "Speeding 10 mph or less (limit 55 mph or more)", points: 2, waiver: false },
+
+                { text: "Illegal Passing / Following Too Closely", points: 2, waiver: false },
+
+                { text: "At-Fault Accident (Property Damage $2,301 - $3,849)", points: 2, waiver: false },
+
+                { text: "At-Fault Accident (Bodily Injury > $1,800 or PD >= $3,850)", points: 3, waiver: false },
+
+                { text: "Reckless Driving", points: 4, waiver: false },
+
+                { text: "Passing a Stopped School Bus", points: 4, waiver: false },
+
+                { text: "Speeding over 75 mph", points: 4, waiver: false },
+
+                { text: "Driving While License Suspended / Revoked", points: 8, waiver: false },
+
+                { text: "Aggressive Driving", points: 8, waiver: false },
+
+                { text: "Highway Racing / Speeding to Elude", points: 10, waiver: false },
+
+                { text: "Driving While Impaired (DWI)", points: 12, waiver: false },
+
+                { text: "Manslaughter / Negligent Homicide", points: 12, waiver: false },
+
+                { text: "Prayer for Judgment Continued (PJC)", points: "pjc", waiver: false },
+
+            ];
+
+
+
+            let currentStep = 1;
+
+
+
+            const formatCurrency = (value) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+
+
+
+            function populateDropdowns() {
+
+                const violationSelect = document.getElementById('violationType');
+
+                violationMap.forEach(v => {
+
+                    const option = new Option(v.text, v.points);
+
+                    option.dataset.waiver = v.waiver;
+
+                    violationSelect.add(option);
+
+                });
+
+            }
+
+
+
+            function populateViolationsTable() {
+
+                const tableBody = document.getElementById('violations-table-body');
+
+                Object.entries(sdipData).forEach(([points, data]) => {
+
+                    const row = tableBody.insertRow();
+
+                    row.innerHTML = `
+
+                        <td class="px-6 py-4 whitespace-nowrap"><span class="px-3 py-1 inline-flex text-lg leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">${points}</span></td>
+
+                        <td class="px-6 py-4 whitespace-nowrap"><span class="text-lg font-bold text-[#F4A261]">${data.increase * 100}%</span></td>
+
+                        <td class="px-6 py-4 whitespace-normal text-sm text-gray-700">${data.description}</td>
+
+                    `;
+
+                });
+
+            }
+
+
+
+            function updateCalculatorStep(targetStep) {
+
+                document.getElementById(`step-${currentStep}`).classList.add('hidden');
+
+                document.getElementById(`indicator-${currentStep}`).classList.remove('active');
+
+                if (targetStep > currentStep) {
+
+                    document.getElementById(`indicator-${currentStep}`).classList.add('completed');
+
+                } else {
+
+                     document.getElementById(`indicator-${targetStep}`).classList.remove('completed');
+
+                }
+
+
+
+                currentStep = targetStep;
+
+                document.getElementById(`step-${currentStep}`).classList.remove('hidden');
+
+                document.getElementById(`indicator-${currentStep}`).classList.add('active');
+
+            }
+
+
+
+            function handleDateChange() {
+
+                const convictionDate = new Date(document.getElementById('convictionDate').value);
+
+                const thresholdDate = new Date('2025-07-01');
+
+                const isPost2025 = convictionDate >= thresholdDate;
+
+
+
+                const lookback = isPost2025 ? 5 : 3;
+
+                document.getElementById('lookback-period-convictions').textContent = lookback;
+
+                document.getElementById('lookback-period-pjcs').textContent = lookback;
+
+            }
+
+
+
+            function calculateSurcharge() {
+
+                const premium = parseFloat(document.getElementById('currentPremium').value) || 0;
+
+                const convictionDate = new Date(document.getElementById('convictionDate').value);
+
+                const violationSelect = document.getElementById('violationType');
+
+                const selectedOption = violationSelect.options[violationSelect.selectedIndex];
+
+                const pointsStr = selectedOption.value;
+
+                const isWaiverEligible = selectedOption.dataset.waiver === 'true';
+
+                const priorConvictions = parseInt(document.getElementById('priorConvictions').value) || 0;
+
+                const priorPJCs = parseInt(document.getElementById('priorPJCs').value) || 0;
+
+
+
+                let message = "";
+
+                if (!premium || !convictionDate.getTime() || pointsStr === "0") {
+
+                    message = `<div class="text-red-500 font-bold p-4 bg-red-100 rounded-lg">Please fill in all the info in Step 1.</div>`;
+
+                    document.getElementById('results-display').innerHTML = message;
+
+                    updateCalculatorStep(3);
+
+                    return;
+
+                }
+
+
+
+                const thresholdDate = new Date('2025-07-01');
+
+                const isPost2025 = convictionDate >= thresholdDate;
+
+
+
+                let points = 0;
+
+                let surchargeDuration = 3;
+
+
+
+                if (isWaiverEligible && priorConvictions === 0) {
+
+                    points = 0;
+
+                    message = `<div class="p-4 bg-green-100 rounded-lg text-green-800">
+
+                        <h4 class="font-bold text-xl mb-2">Good News! No Price Increase Expected.</h4>
+
+                        <p>Because this is your first minor speeding ticket, it should be forgiven by your insurance company.</p>
+
+                    </div>`;
+
+                } else if (pointsStr === "pjc") {
+
+                    if (priorPJCs === 0) {
+
+                        points = 0;
+
+                         message = `<div class="p-4 bg-green-100 rounded-lg text-green-800">
+
+                            <h4 class="font-bold text-xl mb-2">No Price Increase Expected.</h4>
+
+                            <p>Since this is the first PJC used on your policy recently, it shouldn't cause a price hike.</p>
+
+                        </div>`;
+
+                    } else {
+
+                        points = 0; // Complex scenario, advise user
+
+                        message = `<div class="p-4 bg-yellow-100 rounded-lg text-yellow-800">
+
+                            <h4 class="font-bold text-xl mb-2">This is a tricky one...</h4>
+
+                            <p>Using a PJC when another was used recently can cause problems. It's best to talk to a lawyer or your insurance agent about this.</p>
+
+                        </div>`;
+
+                    }
+
+                } else {
+
+                    points = parseInt(pointsStr);
+
+                    if (points >= 4 && isPost2025) {
+
+                        surchargeDuration = 5;
+
+                    }
+
+
+
+                    const surchargeRate = sdipData[points]?.increase || 0;
+
+                    const annualSurcharge = premium * surchargeRate;
+
+                    const totalSurcharge = annualSurcharge * surchargeDuration;
+
+                    const newPremium = premium + annualSurcharge;
+
+
+
+                    message = `
+
+                        <div class="result-card p-6 rounded-lg shadow-lg">
+
+                            <p class="text-lg">Your estimated price increase per year is:</p>
+
+                            <p class="text-5xl font-bold my-4">${formatCurrency(annualSurcharge)}</p>
+
+                            <div class="bg-white/20 p-4 rounded-lg">
+
+                                <p>New Estimated Yearly Cost: <strong class="text-xl">${formatCurrency(newPremium)}</strong></p>
+
+                                <p class="mt-2">Total extra cost over ${surchargeDuration} years: <strong class="text-xl">${formatCurrency(totalSurcharge)}</strong></p>
+
+                            </div>
+
+                        </div>
+
+                        <p class="text-sm text-gray-500 mt-4">This ${surchargeRate * 100}% price increase will be on your bill for ${surchargeDuration} years.</p>
+
+                    `;
+
+                }
+
+
+
+                document.getElementById('results-display').innerHTML = message;
+
+                updateCalculatorStep(3);
+
+            }
+
+
+
+            function resetCalculator() {
+
+                document.getElementById('calculator-form').reset();
+
+                handleDateChange();
+
+                updateCalculatorStep(1);
+
+            }
+
+
+
+            document.getElementById('next-step-1').addEventListener('click', () => updateCalculatorStep(2));
+
+            document.getElementById('prev-step-2').addEventListener('click', () => updateCalculatorStep(1));
+
+            document.getElementById('calculate-btn').addEventListener('click', calculateSurcharge);
+
+            document.getElementById('start-over-btn').addEventListener('click', resetCalculator);
+
+            document.getElementById('convictionDate').addEventListener('change', handleDateChange);
+
+
+
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+
+                anchor.addEventListener('click', function (e) {
+
+                    e.preventDefault();
+
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+
+                        behavior: 'smooth'
+
+                    });
+
+                });
+
+            });
+
+
+
+            populateDropdowns();
+
+            populateViolationsTable();
+
+            // createHolidayChart(); // This is no longer needed
+
+            const today = new Date().toISOString().split('T')[0];
+
+            document.getElementById('convictionDate').value = today;
+
+            handleDateChange();
+
+        });
+
+    </script>
+
+</body>
+
+</html>
+
+
+<!-- Migrated from legacy URL: https://billlayne.github.io/2025-Points-Calculator/ on 2026-06-08 -->

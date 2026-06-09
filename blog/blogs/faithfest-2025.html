@@ -1,0 +1,215 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="canonical" href="https://www.billlayneinsurance.com/blog/blogs/faithfest-2025.html">
+    <meta property="og:url" content="https://www.billlayneinsurance.com/blog/blogs/faithfest-2025.html">
+    <meta name="robots" content="index, follow">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Join FaithFest 2025 in Wilkesboro, NC, this weekend, Sept 12-13, for top Christian music, inspiring sermons, and family fun. Get tickets with Bill Layne Insurance!">
+    <title>FaithFest 2025: Your Ultimate Guide to This Weekend’s Christian Music Festival in Wilkesboro</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --card: 0 0% 100%;
+            --card-foreground: 222.2 84% 4.9%;
+            --primary: 221.2 83.2% 53.3%;
+            --primary-foreground: 210 40% 98%;
+            --secondary: 210 40% 96%;
+            --secondary-foreground: 222.2 84% 4.9%;
+            --muted: 210 40% 96%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --accent: 210 40% 96%;
+            --accent-foreground: 222.2 84% 4.9%;
+            --destructive: 0 84.2% 60.2%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 214.3 31.8% 91.4%;
+            --input: 214.3 31.8% 91.4%;
+            --ring: 221.2 83.2% 53.3%;
+            --radius: 0.5rem;
+        }
+        body {
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            border-radius: var(--radius);
+        }
+    </style>
+</head>
+<body class="bg-background text-foreground">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header Image -->
+        <img src="https://raw.githubusercontent.com/BillLayne/bill-layne-images/047a9563db44778e94305dcc2b800690f7bf2a01/Blog%20Images/hero%20backgroun.546Z.png" alt="Crowds enjoy FaithFest 2025 in Wilkesboro, NC, with top Christian artists performing live under a sunny sky." class="w-full h-64 mb-8">
+
+        <h1 class="text-3xl font-bold mb-4 text-center">FaithFest 2025: Your Ultimate Guide to This Weekend’s Christian Music Festival in Wilkesboro</h1>
+
+        <p class="text-lg mb-6 text-center">Experience FaithFest 2025 in Wilkesboro, NC, this weekend with top Christian artists and family fun! ✨</p>
+
+        <p class="mb-8">Get ready for an uplifting weekend at FaithFest 2025 in Wilkesboro, NC, happening September 12-13! This Christian music festival brings together top artists, inspiring sermons, and family-friendly fun for all ages. Discover why thousands flock to this faith-filled event and how Bill Layne Insurance can help you attend worry-free.</p>
+
+        <!-- Key Takeaways Card -->
+        <div class="rounded-lg border bg-card text-card-foreground shadow-sm mb-8">
+            <div class="flex flex-col space-y-1.5 p-6">
+                <h2 class="text-2xl font-semibold leading-none tracking-tight">Key Takeaways</h2>
+            </div>
+            <div class="p-6 pt-0">
+                <ul class="list-disc pl-5 space-y-2">
+                    <li>FaithFest 2025 is a two-day Christian music festival in Wilkesboro, NC, on September 12-13, featuring artists like Zach Williams and Phil Wickham.</li>
+                    <li>Enjoy family-friendly activities, great food, and inspiring sermons from Greg Laurie.</li>
+                    <li>Tickets range from $55-$75, with a lawn chair recommended for seating.</li>
+                    <li>Bill Layne Insurance offers peace of mind with event-related coverage for NC residents.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- What Is FaithFest 2025? -->
+        <h2 class="text-2xl font-bold mb-4">What Is FaithFest 2025?</h2>
+        <h3 class="text-xl font-semibold mb-2">A Celebration of Faith and Music</h3>
+        <p class="mb-4">FaithFest combines top Christian artists with powerful gospel messages at the FaithFest Events Complex in Wilkesboro. 🎶</p>
+        <h3 class="text-xl font-semibold mb-2">Event Dates and Times</h3>
+        <p class="mb-8">Friday, Sept 12 (3:00 PM–10:10 PM) and Saturday, Sept 13 (12:00 PM–10:10 PM), with fireworks to close both nights. 🎆</p>
+
+        <!-- Star-Studded Lineup -->
+        <h2 class="text-2xl font-bold mb-4">Star-Studded Lineup for 2025</h2>
+        <img src="https://raw.githubusercontent.com/BillLayne/bill-layne-images/047a9563db44778e94305dcc2b800690f7bf2a01/Blog%20Images/preaching.381Z.png" alt="Greg Laurie delivers an inspiring sermon at FaithFest 2025 in Wilkesboro, NC, to an engaged crowd." class="w-full h-48 mb-4">
+        <h3 class="text-xl font-semibold mb-2">Friday Performers</h3>
+        <p class="mb-4">Catch Zach Williams, Josiah Queen, Terrian, and Caleb & John, with Greg Laurie preaching.</p>
+        <h3 class="text-xl font-semibold mb-2">Saturday Performers</h3>
+        <p class="mb-4">Enjoy Phil Wickham, Charity Gayle, Ben Fuller, Cochren & Co., Leanna Crawford, and Jason Crabb, plus another sermon from Greg Laurie.</p>
+        <h3 class="text-xl font-semibold mb-2">Why These Artists Shine</h3>
+        <p class="mb-8">Learn about the inspiring stories behind these artists and their impact on Christian music. 🌟</p>
+
+        <!-- Family-Friendly Fun -->
+        <h2 class="text-2xl font-bold mb-4">Family-Friendly Fun at FaithFest</h2>
+        <img src="https://raw.githubusercontent.com/BillLayne/bill-layne-images/047a9563db44778e94305dcc2b800690f7bf2a01/Blog%20Images/image%203%20grok.986Z.png" alt="Families have fun at FaithFest 2025 in Wilkesboro, NC, enjoying food and kid-friendly activities." class="w-full h-48 mb-4">
+        <h3 class="text-xl font-semibold mb-2">Activities for All Ages</h3>
+        <p class="mb-4">From kid zones to food vendors, FaithFest offers something for everyone in the family. 👨‍👩‍👧‍👦</p>
+        <h3 class="text-xl font-semibold mb-2">Local Wilkesboro Vibes</h3>
+        <p class="mb-8">Experience the charm of Wilkesboro with nearby accommodations and local eateries.</p>
+
+        <!-- Planning Your Visit -->
+        <h2 class="text-2xl font-bold mb-4">Planning Your FaithFest Visit</h2>
+        <h3 class="text-xl font-semibold mb-2">Tickets and Logistics</h3>
+        <p class="mb-4">Tickets ($55-$75) are available online at <a href="https://faithfestnc.com" class="text-primary underline-offset-4 hover:underline">FaithFestNC.com</a>; bring a lawn chair for comfort. <a href="https://faithfestnc.com/contact-us/" class="text-primary underline-offset-4 hover:underline">Contact FaithFest</a> for cash or check purchases (Monday-Friday, 9 AM–4:30 PM, 336-990-9150).</p>[](https://faithfestnc.com/contact/)
+        <h3 class="text-xl font-semibold mb-2">Safety and Insurance Tips</h3>
+        <p class="mb-8">Bill Layne Insurance recommends event coverage to protect your festival experience. 🛡️</p>
+
+        <!-- Why FaithFest Matters -->
+        <h2 class="text-2xl font-bold mb-4">Why FaithFest Matters</h2>
+        <img src="https://github.com/BillLayne/bill-layne-images/blob/main/Blog%20Images/fireworks.013Z.png?raw=true" alt="Fireworks light up the sky at FaithFest 2025 in Wilkesboro, NC, closing the Christian music festival." class="w-full h-48 mb-4">
+        <h3 class="text-xl font-semibold mb-2">A Ministry with Purpose</h3>
+        <p class="mb-4">Organized by Craig Church Ministries, FaithFest supports local churches and spreads the gospel.</p>
+        <h3 class="text-xl font-semibold mb-2">Community Impact</h3>
+        <p class="mb-8">Discover how FaithFest fosters unity and faith in Wilkesboro and beyond. 🤝</p>
+
+        <!-- FAQ Section -->
+        <div class="rounded-lg border bg-card text-card-foreground shadow-sm mb-8">
+            <div class="flex flex-col space-y-1.5 p-6">
+                <h2 class="text-2xl font-semibold leading-none tracking-tight">Frequently Asked Questions</h2>
+            </div>
+            <div class="p-6 pt-0">
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold">What is the schedule for FaithFest 2025 in Wilkesboro?</h3>
+                    <p>Friday starts at 3:00 PM with Caleb & John, ending with Zach Williams and fireworks. Saturday begins at 12:00 PM with Leanna Crawford, closing with Phil Wickham.</p>
+                </div>
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold">How much are tickets for FaithFest 2025?</h3>
+                    <p>Tickets range from $55-$75 for single-day or two-day passes, available online at <a href="https://faithfestnc.com" class="text-primary underline-offset-4 hover:underline">FaithFestNC.com</a>.</p>
+                </div>
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold">Is FaithFest family-friendly?</h3>
+                    <p>Yes, FaithFest offers activities for kids, food vendors, and a welcoming environment for all ages.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold">What should I bring to FaithFest 2025?</h3>
+                    <p>Bring a lawn chair, sunscreen, and water; no chairs are provided on-site.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Button -->
+        <div class="text-center mb-8">
+            <button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
+                Contact Bill Layne Insurance Agency today for a personalized event insurance quote to ensure your FaithFest 2025 experience in Wilkesboro is worry-free!
+            </button>
+        </div>
+
+        <!-- Hashtags with Badges -->
+        <div class="flex flex-wrap justify-center space-x-2">
+            <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">
+                #FaithFest2025
+            </div>
+            <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">
+                #WilkesboroNC
+            </div>
+            <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">
+                #ChristianMusic
+            </div>
+            <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">
+                #NCFestivals
+            </div>
+            <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">
+                #ZachWilliams
+            </div>
+            <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">
+                #PhilWickham
+            </div>
+            <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">
+                #NCInsurance
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<!-- Migrated from legacy URL: https://billlayne.github.io/faithfest2025/ on 2026-06-08 -->
