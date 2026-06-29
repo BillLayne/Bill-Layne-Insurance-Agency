@@ -150,11 +150,7 @@
     </nav>
 
     <!-- ========== HERO ========== -->
-    <section class="pt-24 md:pt-32 pb-10 md:pb-14 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10">
-            <div class="absolute top-10 left-10 w-72 h-72 bg-indigo-500 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-10 right-10 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
-        </div>
+    <section class="pt-24 md:pt-32 pb-10 md:pb-14 text-white relative overflow-hidden" style="background-color:#0f172a; background-image:linear-gradient(100deg, rgba(15,23,42,0.93) 0%, rgba(17,18,52,0.82) 55%, rgba(30,27,75,0.58) 100%), url('claims-inventory-hero.jpg'); background-size:cover; background-position:center;">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
             <!-- Breadcrumb -->
             <nav class="flex items-center gap-2 text-xs text-indigo-300/70 mb-6">
@@ -182,22 +178,43 @@
         </div>
     </section>
 
+    <!-- ========== HOW IT WORKS (visual) ========== -->
+    <section class="bg-white border-b border-slate-100">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 py-8 md:py-12 grid md:grid-cols-2 gap-6 md:gap-10 items-center">
+            <picture>
+                <source srcset="claims-inventory-illustration.webp" type="image/webp">
+                <img src="claims-inventory-illustration.png" width="980" height="735" loading="lazy" decoding="async" alt="A homeowner photographs household items while the tool finds prices and builds a PDF report for the insurance adjuster" class="w-full rounded-2xl shadow-sm border border-slate-100">
+            </picture>
+            <div>
+                <span class="inline-block text-xs font-bold uppercase tracking-wide text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full mb-3">How it works</span>
+                <h2 class="font-display font-extrabold text-xl sm:text-2xl text-slate-900 mb-4">Snap it. Price it. Send it.</h2>
+                <ul class="space-y-3 text-sm sm:text-base text-slate-600">
+                    <li class="flex items-start gap-3"><i class="fas fa-camera text-indigo-500 mt-1"></i><span>Snap a photo or just describe each item you lost or that was damaged.</span></li>
+                    <li class="flex items-start gap-3"><i class="fas fa-robot text-violet-500 mt-1"></i><span>Our AI looks up what each item costs to buy new today.</span></li>
+                    <li class="flex items-start gap-3"><i class="fas fa-file-pdf text-red-500 mt-1"></i><span>Download a clean PDF report to hand your insurance adjuster.</span></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
     <!-- ========== MAIN APP ========== -->
     <main class="max-w-4xl mx-auto px-4 sm:px-6 py-8 md:py-12">
 
         <!-- API Key Setup (collapsible) -->
         <div id="api-setup" class="mb-6 bg-green-50 border border-green-200 rounded-2xl p-4 sm:p-5 no-print">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center shrink-0">
-                    <i class="fas fa-robot text-green-600 text-sm"></i>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                <div class="flex items-start gap-3 flex-1 min-w-0">
+                    <div class="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center shrink-0">
+                        <i class="fas fa-robot text-green-600 text-sm"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="font-bold text-green-900 text-sm">AI Price Lookup — Active</p>
+                        <p id="ai-mode-desc" class="text-xs text-green-700 leading-relaxed">Add all your items first, then click <strong>"Look Up Prices"</strong> and AI will find prices for everything at once.</p>
+                    </div>
                 </div>
-                <div class="flex-1 min-w-0">
-                    <p class="font-bold text-green-900 text-sm">AI Price Lookup — Active</p>
-                    <p id="ai-mode-desc" class="text-xs text-green-700">Add all your items first, then click <strong>"Look Up Prices"</strong> and AI will find prices for everything at once.</p>
-                </div>
-                <div class="ml-auto flex items-center gap-2 shrink-0">
+                <div class="flex items-center gap-2 shrink-0 pl-12 sm:pl-0 sm:ml-auto">
                     <label class="flex items-center gap-2 cursor-pointer select-none min-h-[44px] px-2" title="Toggle between pricing each item individually or batching all at once">
-                        <span class="text-[10px] font-bold text-green-800 hidden sm:inline">Per-item</span>
+                        <span class="text-[10px] font-bold text-green-800">Per-item</span>
                         <div class="relative">
                             <input type="checkbox" id="ai-mode-toggle" onchange="toggleAiMode()" class="sr-only peer">
                             <div class="w-11 h-6 bg-green-300 rounded-full peer-checked:bg-violet-500 transition-colors"></div>
