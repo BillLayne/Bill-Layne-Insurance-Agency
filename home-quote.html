@@ -175,9 +175,17 @@
     }
     </script>
 
+    <!-- Cloudflare Turnstile (spam protection) - replace TURNSTILE_SITE_KEY with your real key once issued in Cloudflare dashboard -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
     <script>
         window.SITE_VERSION = '2025.01.17.2';
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8Ewng1HqFoK31Ch7Ytn6Ux_V5KNDrtPjK9bthB21NSaWStmpj3Q-8mJUNm-meccihNQ/exec';
+        // TURNSTILE: replace with real site key from Cloudflare dashboard (Turnstile > Add site)
+        // Test key "1x00000000000000000000AA" always passes - safe placeholder until you create the real site.
+        const TURNSTILE_SITE_KEY = '1x00000000000000000000AA';
+        let turnstileToken = '';
+        window.onTurnstileSuccess = function(token) { turnstileToken = token; };
         const isDevelopment = window.location.hostname === 'localhost' ||
                              window.location.hostname === '127.0.0.1' ||
                              window.location.search.includes('dev=true');
@@ -1442,6 +1450,15 @@
                             </div>
                         </div>
 
+                        <!-- Cloudflare Turnstile (spam protection) - managed mode, only renders if challenge needed -->
+                        <div id="turnstile-container" style="margin: 16px 0; min-height: 1px;">
+                            <div class="cf-turnstile"
+                                 data-sitekey="1x00000000000000000000AA"
+                                 data-callback="onTurnstileSuccess"
+                                 data-theme="light"
+                                 data-size="flexible"></div>
+                        </div>
+
                         <!-- Nav Buttons -->
                         <div class="form-nav">
                             <button type="button" id="prev-btn" onclick="previousStep()" class="btn-prev hidden">
@@ -1744,6 +1761,38 @@
                 metadata:                getMetadata()
             };
 
+            // Generate confirmation number BEFORE submit so we can include it in the payload
+            // AND save it to localStorage as a recovery handle if Apps Script silently fails.
+            const confirmationNumber = `HOME-${new Date().getFullYear()}${String(new Date().getMonth()+1).padStart(2,'0')}${String(new Date().getDate()).padStart(2,'0')}-${Math.floor(Math.random()*10000).toString().padStart(4,'0')}`;
+            data.confirmation_number = confirmationNumber;
+            data.turnstile_token     = turnstileToken; // spam-protection token (verify server-side when ready)
+
+            // localStorage safety net: persist the submission attempt so Bill can recover any
+            // lead that the Apps Script silently dropped (fetch uses mode:'no-cors' so we
+            // can't tell server-side whether it landed). Pending submissions are flushed
+            // 7 days after the fact to avoid filling browser storage.
+            try {
+                const pendingKey = `bli_pending_${confirmationNumber}`;
+                const safetyPayload = {
+                    confirmation_number: confirmationNumber,
+                    submitted_at: new Date().toISOString(),
+                    form_type: 'home_insurance',
+                    customer: { firstname: data.firstname, lastname: data.lastname, email: data.email, phone: data.phone },
+                    full_data: data
+                };
+                localStorage.setItem(pendingKey, JSON.stringify(safetyPayload));
+                // Prune submissions older than 7 days
+                const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+                Object.keys(localStorage).filter(k => k.startsWith('bli_pending_')).forEach(k => {
+                    try {
+                        const entry = JSON.parse(localStorage.getItem(k));
+                        if (new Date(entry.submitted_at).getTime() < sevenDaysAgo) localStorage.removeItem(k);
+                    } catch (e) { /* ignore malformed entries */ }
+                });
+            } catch (storageErr) {
+                console.warn('localStorage unavailable; safety net skipped:', storageErr);
+            }
+
             try {
                 await fetch(SCRIPT_URL, {
                     method: 'POST',
@@ -1753,7 +1802,6 @@
                 });
 
                 setTimeout(() => {
-                    const confirmationNumber = `HOME-${new Date().getFullYear()}${String(new Date().getMonth()+1).padStart(2,'0')}${String(new Date().getDate()).padStart(2,'0')}-${Math.floor(Math.random()*10000).toString().padStart(4,'0')}`;
                     document.getElementById('modal-confirmation-number').textContent = confirmationNumber;
                     document.getElementById('customer-email').textContent = data.email;
 
