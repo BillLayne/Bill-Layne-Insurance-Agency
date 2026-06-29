@@ -182,8 +182,8 @@
         window.SITE_VERSION = '2025.01.17.3';
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8Ewng1HqFoK31Ch7Ytn6Ux_V5KNDrtPjK9bthB21NSaWStmpj3Q-8mJUNm-meccihNQ/exec';
         // TURNSTILE: replace with real site key from Cloudflare dashboard (Turnstile > Add site)
-        // Test key "1x00000000000000000000AA" always passes - safe placeholder until you create the real site.
-        const TURNSTILE_SITE_KEY = '1x00000000000000000000AA';
+        // Test key "0x4AAAAAADs4upS36xby4dVi" always passes - safe placeholder until you create the real site.
+        const TURNSTILE_SITE_KEY = '0x4AAAAAADs4upS36xby4dVi';
         let turnstileToken = '';
         window.onTurnstileSuccess = function(token) { turnstileToken = token; };
         const isDevelopment = window.location.hostname === 'localhost' ||
@@ -1217,11 +1217,7 @@
         @media (min-width: 768px) { .mobile-trust-strip { display: none; } }
 
         /* ── TURNSTILE: reserve space so the widget loading doesn't cause layout shift ── */
-        /* TEMPORARILY HIDDEN until Bill registers a real Cloudflare Turnstile sitekey.
-           The test sitekey shows a "For testing only" warning that scares real customers.
-           To re-enable: change display:none below to display:block AND swap the
-           data-sitekey in the HTML widget to your real production sitekey. */
-        #turnstile-container { display: none; min-height: 65px; }
+        #turnstile-container { min-height: 65px; }
     </style>
 </head>
 <body>
@@ -1715,7 +1711,7 @@
                         <!-- Cloudflare Turnstile (spam protection) - managed mode, only renders if challenge needed -->
                         <div id="turnstile-container" style="margin: 16px 0;">
                             <div class="cf-turnstile"
-                                 data-sitekey="1x00000000000000000000AA"
+                                 data-sitekey="0x4AAAAAADs4upS36xby4dVi"
                                  data-callback="onTurnstileSuccess"
                                  data-theme="light"
                                  data-size="flexible"></div>
