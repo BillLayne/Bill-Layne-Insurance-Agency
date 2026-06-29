@@ -307,6 +307,34 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <!-- PHOTO FIRST: take or upload a photo, AI fills in the details -->
+                <div class="sm:col-span-2">
+                    <div class="bg-gradient-to-br from-violet-50 to-indigo-50 border border-violet-200 rounded-2xl p-4 sm:p-5">
+                        <div class="flex items-start gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center shrink-0"><i class="fas fa-camera text-violet-600"></i></div>
+                            <div>
+                                <p class="font-bold text-slate-900 text-sm">Photograph the damaged item</p>
+                                <p class="text-xs text-violet-700">Snap or upload a photo and AI fills in the details for you — or just type them in below.</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="cursor-pointer bg-violet-600 hover:bg-violet-700 active:scale-95 text-white font-bold text-sm rounded-xl px-3 py-3.5 flex items-center justify-center gap-2 transition-all shadow-sm min-h-[52px]">
+                                <i class="fas fa-camera text-base"></i> Take a Photo
+                                <input type="file" id="item-photo-camera" accept="image/*,.heic,.heif,image/heic,image/heif" capture="environment" onchange="handlePhotoUpload(event)" class="hidden">
+                            </label>
+                            <label class="cursor-pointer bg-white border-2 border-violet-300 hover:border-violet-500 active:scale-95 text-violet-700 font-bold text-sm rounded-xl px-3 py-3.5 flex items-center justify-center gap-2 transition-all min-h-[52px]">
+                                <i class="fas fa-image text-base"></i> Upload Photo
+                                <input type="file" id="item-photo" accept="image/*,.heic,.heif,image/heic,image/heif" onchange="handlePhotoUpload(event)" class="hidden">
+                            </label>
+                        </div>
+                        <div id="photo-preview" class="hidden mt-3 p-3 bg-white rounded-xl border border-violet-100">
+                            <div class="flex items-center gap-3">
+                                <img id="photo-thumb" class="w-16 h-16 object-cover rounded-lg border border-violet-200" alt="Photo of the item">
+                                <div id="photo-ai-result" class="flex-1 text-xs text-violet-700"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="sm:col-span-2">
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">What is the item? <span class="text-red-400">*</span></label>
                     <p class="text-xs text-slate-400 mb-1.5">Include the brand and model if you know it</p>
@@ -391,22 +419,7 @@
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Extra details (optional)</label>
                     <textarea id="item-notes" rows="2" placeholder="Serial number, where you bought it, color, size, special features..." class="w-full border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50 resize-none"></textarea>
                 </div>
-                <div class="sm:col-span-2">
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5"><i class="fas fa-camera mr-1 text-violet-400"></i> Photo (optional)</label>
-                    <div class="flex items-center gap-3">
-                        <label class="cursor-pointer bg-gradient-to-r from-violet-50 to-indigo-50 border-2 border-dashed border-violet-200 hover:border-violet-400 rounded-xl px-4 py-4 flex items-center gap-3 transition-all flex-1 min-h-[56px]">
-                            <i class="fas fa-cloud-arrow-up text-violet-400 text-lg"></i>
-                            <span class="text-xs text-violet-600 font-medium">Take a photo or upload one — AI will try to identify the item for you</span>
-                            <input type="file" id="item-photo" accept="image/*,.heic,.heif,image/heic,image/heif" capture="environment" onchange="handlePhotoUpload(event)" class="hidden">
-                        </label>
-                    </div>
-                    <div id="photo-preview" class="hidden mt-2 p-3 bg-violet-50 rounded-xl border border-violet-100">
-                        <div class="flex items-center gap-3">
-                            <img id="photo-thumb" class="w-16 h-16 object-cover rounded-lg border border-violet-200" alt="Uploaded photo">
-                            <div id="photo-ai-result" class="flex-1 text-xs text-violet-700"></div>
-                        </div>
-                    </div>
-                </div>
+                <!-- photo capture moved to the top of Add Item -->
             </div>
 
             <!-- AI Status -->
@@ -1090,6 +1103,8 @@
         if (preview) preview.classList.add('hidden');
         const fileInput = document.getElementById('item-photo');
         if (fileInput) fileInput.value = '';
+        const camInput = document.getElementById('item-photo-camera');
+        if (camInput) camInput.value = '';
         // Exit edit mode if active
         if (editingItemId !== null) exitEditMode();
     }
