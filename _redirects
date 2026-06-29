@@ -25,11 +25,12 @@
 # Canonical quote URL hygiene
 /get-quote.html /get-quote 301
 /get-quote/ /get-quote 301
-# Auto-quote canonical: pretty URL -> .html file (no 301 to /get-quote — that broke the Auto flow)
-/auto-quote /auto-quote.html 200
-/auto-quote/ /auto-quote.html 301
-/home-quote /home-quote.html 200
-/home-quote/ /home-quote.html 301
+# DO NOT add /auto-quote -> /auto-quote.html or /home-quote -> /home-quote.html rewrites here.
+# Cloudflare Pages already serves the .html files when those clean URLs are requested,
+# and adding explicit rewrites creates an infinite redirect loop with the default behavior.
+# Just leave Cloudflare Pages' clean-URL handling alone for these two paths.
+/auto-quote/ /auto-quote 301
+/home-quote/ /home-quote 301
 
 # Explicit canonical redirects for Google Search Console redirect-error examples
 /auto-insurance.html /auto-insurance 301
