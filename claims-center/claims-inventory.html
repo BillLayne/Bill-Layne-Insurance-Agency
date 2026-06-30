@@ -320,6 +320,46 @@
         .start-card:hover .start-card-cta { gap: 11px; }
         .start-card-cta i { font-size: 12px; }
 
+        /* ===== SCAN HELP MODAL ===== */
+        .scan-help-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            background: rgba(2,6,23,0.55);
+            -webkit-backdrop-filter: blur(2px);
+            backdrop-filter: blur(2px);
+        }
+
+        .scan-help-overlay.hidden { display: none; }
+
+        .scan-help-card {
+            width: 100%;
+            max-width: 520px;
+            max-height: 92vh;
+            overflow-y: auto;
+            background: #fff;
+            border-radius: 24px 24px 0 0;
+            box-shadow: 0 -12px 44px rgba(2,6,23,0.35);
+            animation: scanHelpUp .26s ease;
+        }
+
+        @keyframes scanHelpUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to   { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (min-width: 640px) {
+            .scan-help-overlay { align-items: center; padding: 20px; }
+            .scan-help-card { border-radius: 24px; }
+            @keyframes scanHelpUp {
+                from { transform: translateY(12px) scale(0.98); opacity: 0; }
+                to   { transform: translateY(0) scale(1); opacity: 1; }
+            }
+        }
+
         .inventory-mobile-dock {
             display: none;
         }
@@ -600,7 +640,7 @@
                 <p class="text-slate-500 text-sm mt-1">Pick whatever's easiest — you can mix and match.</p>
             </div>
             <div class="start-cards">
-                <a href="#scan-list-section" class="start-card">
+                <a href="#scan-list-section" onclick="event.preventDefault(); openScanHelp();" class="start-card">
                     <span class="start-card-num">1</span>
                     <span class="start-card-icon"><i class="fas fa-camera"></i></span>
                     <span class="start-card-title">Scan a paper list</span>
@@ -1109,7 +1149,7 @@
 
     <!-- Mobile task dock -->
     <div id="inventory-mobile-dock" class="inventory-mobile-dock no-print" aria-label="Claims inventory quick actions">
-        <a id="dock-scan-action" href="#scan-list-section" class="inventory-dock-btn inventory-dock-primary">
+        <a id="dock-scan-action" href="#scan-list-section" onclick="event.preventDefault(); openScanHelp();" class="inventory-dock-btn inventory-dock-primary">
             <i class="fas fa-camera"></i><span>Scan</span>
         </a>
         <a id="dock-add-action" href="#add-item-section" class="inventory-dock-btn inventory-dock-secondary">
@@ -1124,6 +1164,61 @@
         <a id="dock-call-action" href="tel:3368351993" class="inventory-dock-btn inventory-dock-call">
             <i class="fas fa-phone-alt"></i><span>Call</span>
         </a>
+    </div>
+
+    <!-- ===== SCAN HELP MODAL ===== -->
+    <div id="scan-help-modal" class="scan-help-overlay hidden no-print" role="dialog" aria-modal="true" aria-labelledby="scan-help-title" onclick="if(event.target===this) closeScanHelp()">
+        <div class="scan-help-card">
+            <div class="p-5 sm:p-6">
+                <div class="flex items-start gap-3 mb-4">
+                    <div class="w-11 h-11 rounded-xl bg-cyan-100 flex items-center justify-center shrink-0">
+                        <i class="fas fa-file-pen text-cyan-700"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 id="scan-help-title" class="font-display font-bold text-lg text-slate-900 leading-tight">Scan a paper list</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">Already wrote your lost or damaged items on paper? Snap a photo and AI builds your inventory for you.</p>
+                    </div>
+                    <button type="button" onclick="closeScanHelp()" aria-label="Close" class="w-9 h-9 -mt-1 -mr-1 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center shrink-0">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <ol class="space-y-3 mb-5">
+                    <li class="flex items-start gap-3">
+                        <span class="w-6 h-6 rounded-lg bg-cyan-600 text-white text-xs font-bold flex items-center justify-center shrink-0">1</span>
+                        <p class="text-sm text-slate-600 leading-relaxed">Print the worksheet (or use any paper) and write <strong>one item per line</strong>.</p>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="w-6 h-6 rounded-lg bg-cyan-600 text-white text-xs font-bold flex items-center justify-center shrink-0">2</span>
+                        <p class="text-sm text-slate-600 leading-relaxed">Fill in what you can — the item, the room, about how old it is, and a price if you know it.</p>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="w-6 h-6 rounded-lg bg-cyan-600 text-white text-xs font-bold flex items-center justify-center shrink-0">3</span>
+                        <p class="text-sm text-slate-600 leading-relaxed">Take a clear photo of the page, or upload a PDF/photo you already have.</p>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="w-6 h-6 rounded-lg bg-cyan-600 text-white text-xs font-bold flex items-center justify-center shrink-0">4</span>
+                        <p class="text-sm text-slate-600 leading-relaxed">AI reads the page and adds the items for you to <strong>review and import</strong>.</p>
+                    </li>
+                </ol>
+
+                <div class="grid grid-cols-1 gap-2">
+                    <button type="button" onclick="scanHelpPick('camera')" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-sm px-4 py-3.5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 min-h-[52px]">
+                        <i class="fas fa-camera"></i> Take a Photo
+                    </button>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="scanHelpPick('file')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm px-4 py-3 rounded-xl transition-all border border-slate-200 flex items-center justify-center gap-2 min-h-[48px]">
+                            <i class="fas fa-upload"></i> Upload
+                        </button>
+                        <a href="home-claim-inventory-worksheet-bill-layne-insurance.pdf" download onclick="closeScanHelp()" class="bg-white hover:bg-amber-50 text-amber-700 font-bold text-sm px-4 py-3 rounded-xl transition-all border border-amber-200 flex items-center justify-center gap-2 min-h-[48px]">
+                            <i class="fas fa-file-arrow-down"></i> Worksheet
+                        </a>
+                    </div>
+                </div>
+
+                <p class="text-xs text-cyan-800 bg-cyan-50 border border-cyan-100 rounded-xl px-3 py-2 mt-3"><i class="fas fa-wand-magic-sparkles mr-1"></i> <strong>Best results:</strong> dark ink, keep the whole page in frame, one item per line.</p>
+            </div>
+        </div>
     </div>
 
     <!-- ========== FOOTER ========== -->
@@ -1246,6 +1341,37 @@
             priceBtn.innerHTML = '<i class="fas fa-robot"></i><span>Price All</span>';
         }
     }
+
+    // ===== SCAN HELP MODAL =====
+    function openScanHelp() {
+        const m = document.getElementById('scan-help-modal');
+        if (!m) return;
+        m.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeScanHelp() {
+        const m = document.getElementById('scan-help-modal');
+        if (!m) return;
+        m.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    // Close the scan-help modal, jump to the scan section, then open camera/file picker
+    function scanHelpPick(which) {
+        closeScanHelp();
+        const sec = document.getElementById('scan-list-section');
+        if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const input = document.getElementById(which === 'camera' ? 'scan-camera-input' : 'scan-file-input');
+        if (input) input.click();
+    }
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            const m = document.getElementById('scan-help-modal');
+            if (m && !m.classList.contains('hidden')) closeScanHelp();
+        }
+    });
 
     // ===== CALCULATE ACV =====
     function calculateACV(replacementCost, ageYears, category, condition) {
