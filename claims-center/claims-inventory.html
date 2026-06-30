@@ -819,10 +819,10 @@
                     <i class="fas fa-up-right-from-square"></i> Open in New Tab
                 </a>
             </div>
-            <div class="rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
-                <iframe id="worksheet-frame" src="home-claim-inventory-worksheet-bill-layne-insurance.pdf#view=FitH" title="Home Claim Inventory Worksheet — preview" class="w-full" style="height:480px; border:0;" loading="lazy"></iframe>
-            </div>
-            <p class="text-[11px] text-slate-400 mt-2 text-center">Worksheet not showing above? <a href="home-claim-inventory-worksheet-bill-layne-insurance.pdf" target="_blank" rel="noopener" class="text-indigo-600 font-semibold underline">Open it in a new tab</a> to view, print, or save it.</p>
+            <a href="home-claim-inventory-worksheet-bill-layne-insurance.pdf" target="_blank" rel="noopener" class="block rounded-xl overflow-hidden border border-slate-200 bg-white hover:border-amber-300 transition-colors" title="Open the full worksheet PDF to print or save">
+                <img src="https://i.imgur.com/ZwSYfvI.png" alt="Preview of the Home Claim Inventory Worksheet — write each damaged or stolen item on a line with its age, condition and quantity, then scan the page back in." class="w-full h-auto block" width="1103" height="1426" loading="lazy" decoding="async">
+            </a>
+            <p class="text-[11px] text-slate-400 mt-2 text-center">Tap the worksheet above to open the full PDF — then print it or save it to fill out.</p>
         </div>
 
         <!-- ===== SCAN PAPER INVENTORY SECTION ===== -->
@@ -1424,18 +1424,9 @@
         if (input) input.click();
     }
 
-    // Print the blank worksheet PDF. Prints the embedded preview when allowed,
-    // otherwise opens the PDF in a new tab so the visitor can print from there.
+    // Open the blank worksheet PDF in a new tab so the visitor can print it.
     const WORKSHEET_PDF = 'home-claim-inventory-worksheet-bill-layne-insurance.pdf';
     function printWorksheet() {
-        const frame = document.getElementById('worksheet-frame');
-        try {
-            if (frame && frame.contentWindow) {
-                frame.contentWindow.focus();
-                frame.contentWindow.print();
-                return;
-            }
-        } catch (e) { /* cross-origin or unsupported — fall through */ }
         const w = window.open(WORKSHEET_PDF, '_blank');
         if (w) {
             w.focus();
