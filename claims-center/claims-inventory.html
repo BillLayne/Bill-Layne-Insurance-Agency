@@ -841,6 +841,19 @@
             </div>
         </div>
 
+        <!-- ===== ESTIMATE NOTICE ===== -->
+        <div id="estimate-notice" class="bg-amber-50 rounded-2xl border border-amber-200 p-5 sm:p-6 mb-6">
+            <div class="flex items-start gap-3">
+                <div class="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+                    <i class="fas fa-scale-balanced text-amber-700 text-sm"></i>
+                </div>
+                <div>
+                    <h3 class="font-display font-bold text-base text-amber-950 mb-2">Important Estimate Notice</h3>
+                    <p class="text-xs sm:text-sm text-amber-900 leading-relaxed">Values shown by this tool are estimates for documentation and discussion only. They are not a guarantee of coverage, payment, settlement amount, or replacement cost. Final claim decisions are made by the insurance carrier and adjuster under the policy terms, limits, deductibles, depreciation rules, documentation, and applicable law. This tool does not change, expand, or interpret any insurance policy.</p>
+                </div>
+            </div>
+        </div>
+
         <!-- ===== ACV EXPLANATION ===== -->
         <div id="acv-explanation" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6">
             <h3 class="font-display font-bold text-base text-slate-900 mb-3"><i class="fas fa-chart-line text-emerald-500 mr-2"></i>Why Are There Two Dollar Amounts?</h3>
@@ -972,6 +985,7 @@
 
     // ===== AI API (Cloudflare Worker Proxy) =====
     const AI_API_BASE = 'https://claims-assistant-api.bill-7e3.workers.dev';
+    const ESTIMATE_NOTICE_TEXT = 'Values shown by this tool are estimates for documentation and discussion only. They are not a guarantee of coverage, payment, settlement amount, or replacement cost. Final claim decisions are made by the insurance carrier and adjuster under the policy terms, limits, deductibles, depreciation rules, documentation, and applicable law. This tool does not change, expand, or interpret any insurance policy.';
 
     // AI mode: false = batch only (default, saves tokens), true = per-item lookup enabled
     let aiPerItemMode = false;
@@ -1927,13 +1941,19 @@
             doc.text(`Total Actual Cash Value (ACV): $${totalACV.toFixed(2)}     |     Total Depreciation: $${(totalRCV - totalACV).toFixed(2)}`, margin + 5, finalY + 17.5);
         }
 
-        // Disclaimer
-        const disclaimerY = Math.min(finalY + 30, doc.internal.pageSize.getHeight() - 25);
-        doc.setFontSize(6);
-        doc.setTextColor(150, 150, 150);
-        doc.text('DISCLAIMER: This inventory was prepared as a reference tool only. Replacement values are estimates based on AI-assisted research of current retail prices.', margin, disclaimerY);
-        doc.text('Actual Cash Values (ACV) are calculated using standard straight-line depreciation and may differ from your insurance company\'s methodology.', margin, disclaimerY + 3.5);
-        doc.text('This document is not an official claim form. Please work with your insurance adjuster for final claim settlement. Bill Layne Insurance Agency — billlayneinsurance.com', margin, disclaimerY + 7);
+        // Estimate notice
+        let disclaimerY = finalY + 30;
+        if (disclaimerY > doc.internal.pageSize.getHeight() - 42) {
+            doc.addPage();
+            disclaimerY = 18;
+        }
+        const noticeLines = doc.splitTextToSize(`IMPORTANT ESTIMATE NOTICE: ${ESTIMATE_NOTICE_TEXT}`, pageWidth - 2 * margin - 8);
+        doc.setFillColor(255, 251, 235);
+        doc.setDrawColor(253, 230, 138);
+        doc.roundedRect(margin, disclaimerY - 5, pageWidth - 2 * margin, 8 + noticeLines.length * 3.5, 2, 2, 'FD');
+        doc.setFontSize(6.5);
+        doc.setTextColor(120, 53, 15);
+        doc.text(noticeLines, margin + 4, disclaimerY);
 
         // Generate filename
         const nameSlug = claim.name ? claim.name.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 30) : 'inventory';
@@ -1953,6 +1973,7 @@
         csv += `Date of Loss,${claim.dateOfLoss}\n`;
         csv += `Type of Loss,${claim.lossType}\n`;
         csv += `Adjuster,${claim.adjuster}\n\n`;
+        csv += `Important Estimate Notice,"${ESTIMATE_NOTICE_TEXT.replace(/"/g, '""')}"\n\n`;
         csv += '#,Description,Room,Category,Age (Years),Condition,Qty,Replacement Cost,ACV,Depreciation,Original Price,Notes\n';
 
         inventory.forEach((item, idx) => {
@@ -1998,6 +2019,7 @@
         body += `Total Replacement Value: $${totalRCV.toFixed(2)}\n`;
         body += `Total ACV: $${totalACV.toFixed(2)}\n`;
         body += `Total Depreciation: $${(totalRCV - totalACV).toFixed(2)}\n\n`;
+        body += `IMPORTANT ESTIMATE NOTICE:\n${ESTIMATE_NOTICE_TEXT}\n\n`;
         body += `--- Item List ---\n\n`;
 
         inventory.forEach((item, idx) => {
