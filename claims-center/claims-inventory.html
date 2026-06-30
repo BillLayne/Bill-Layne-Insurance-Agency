@@ -115,6 +115,7 @@
         /* Navbar */
         .navbar { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
 
+        #worksheet-section,
         #scan-list-section,
         #add-item-section,
         #inventory-section,
@@ -424,6 +425,7 @@
                 padding-bottom: 84px;
             }
 
+            #worksheet-section,
             #scan-list-section,
             #add-item-section,
             #inventory-section,
@@ -666,12 +668,12 @@
                     <span class="start-card-desc">Type each item, or photograph it and let AI fill in the details and current price for you.</span>
                     <span class="start-card-cta">Add an item <i class="fas fa-arrow-right"></i></span>
                 </a>
-                <a href="home-claim-inventory-worksheet-bill-layne-insurance.pdf" download class="start-card">
+                <a href="#worksheet-section" class="start-card">
                     <span class="start-card-num">3</span>
-                    <span class="start-card-icon"><i class="fas fa-file-arrow-down"></i></span>
+                    <span class="start-card-icon"><i class="fas fa-print"></i></span>
                     <span class="start-card-title">Print the worksheet</span>
-                    <span class="start-card-desc">Prefer pen and paper first? Download a printable worksheet to fill out by hand, then scan it back in.</span>
-                    <span class="start-card-cta">Download PDF <i class="fas fa-arrow-right"></i></span>
+                    <span class="start-card-desc">Prefer pen and paper first? Download or print a worksheet to fill out by hand, then scan it back in.</span>
+                    <span class="start-card-cta">Print or download <i class="fas fa-arrow-right"></i></span>
                 </a>
             </div>
         </div>
@@ -698,27 +700,17 @@
 
         <!-- API Key Setup (collapsible) -->
         <div id="api-setup" class="mb-6 bg-green-50 border border-green-200 rounded-2xl p-4 sm:p-5 no-print">
-            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-                <div class="flex items-start gap-3 flex-1 min-w-0">
-                    <div class="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center shrink-0">
-                        <i class="fas fa-robot text-green-600 text-sm"></i>
-                    </div>
-                    <div class="min-w-0">
-                        <p class="font-bold text-green-900 text-sm">AI Price Lookup — Active</p>
-                        <p id="ai-mode-desc" class="text-xs text-green-700 leading-relaxed">Type your items or scan a paper list, then click <strong>"Look Up Prices"</strong> and AI will find prices for everything at once.</p>
-                    </div>
+            <!-- hidden input kept so existing scripts don't break; pricing is always one-tap batch now -->
+            <input type="checkbox" id="ai-mode-toggle" class="hidden">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center shrink-0">
+                    <i class="fas fa-robot text-green-600 text-sm"></i>
                 </div>
-                <div class="flex items-center gap-2 shrink-0 pl-12 sm:pl-0 sm:ml-auto">
-                    <label class="flex items-center gap-2 cursor-pointer select-none min-h-[44px] px-2" title="Toggle between pricing each item individually or batching all at once">
-                        <span class="text-[10px] font-bold text-green-800">Per-item</span>
-                        <div class="relative">
-                            <input type="checkbox" id="ai-mode-toggle" onchange="toggleAiMode()" class="sr-only peer">
-                            <div class="w-11 h-6 bg-green-300 rounded-full peer-checked:bg-violet-500 transition-colors"></div>
-                            <div class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow peer-checked:translate-x-5 transition-transform"></div>
-                        </div>
-                    </label>
-                    <span class="inline-flex items-center gap-1.5 bg-green-500 text-white text-[10px] font-black px-2.5 py-1.5 rounded-full"><i class="fas fa-check-circle"></i> Ready</span>
+                <div class="min-w-0 flex-1">
+                    <p class="font-bold text-green-900 text-sm">Price helper is ready</p>
+                    <p class="text-xs text-green-700 leading-relaxed">Just list your items — when you're ready, tap <strong>"Look Up Prices"</strong> and we'll find what each one costs to buy new today. Nothing to set up.</p>
                 </div>
+                <span class="inline-flex items-center gap-1.5 bg-green-500 text-white text-[10px] font-black px-2.5 py-1.5 rounded-full shrink-0"><i class="fas fa-check-circle"></i> Ready</span>
             </div>
         </div>
 
@@ -730,7 +722,7 @@
                 </div>
                 <div>
                     <h2 class="font-display font-bold text-lg text-slate-900">Your Information</h2>
-                    <p class="text-xs text-slate-400">Tell us about yourself and what happened</p>
+                    <p class="text-xs text-slate-400">Your name and the date help most — everything else is optional, skip what you don't have.</p>
                 </div>
             </div>
 
@@ -777,6 +769,34 @@
                     <input type="text" id="cl-adjuster" placeholder="The person your insurance company assigned to your claim" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50">
                 </div>
             </div>
+        </div>
+
+        <!-- ===== PRINTABLE WORKSHEET SECTION ===== -->
+        <div id="worksheet-section" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6 no-print">
+            <div class="flex items-start gap-3 mb-4">
+                <div class="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+                    <i class="fas fa-print text-amber-700 text-sm"></i>
+                </div>
+                <div>
+                    <h2 class="font-display font-bold text-lg text-slate-900">Prefer pen &amp; paper? Print the worksheet</h2>
+                    <p class="text-xs text-slate-500 leading-relaxed">Download or print this blank worksheet, write your items down by hand, then come back and snap a photo of it — we'll turn it into your list automatically.</p>
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-2 mb-4">
+                <a href="home-claim-inventory-worksheet-bill-layne-insurance.pdf" download class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-4 py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 min-h-[48px]">
+                    <i class="fas fa-file-arrow-down"></i> Download Worksheet (PDF)
+                </a>
+                <button type="button" onclick="printWorksheet()" class="bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm px-4 py-3 rounded-xl transition-all border border-slate-200 flex items-center justify-center gap-2 min-h-[48px]">
+                    <i class="fas fa-print"></i> Print Worksheet
+                </button>
+                <a href="home-claim-inventory-worksheet-bill-layne-insurance.pdf" target="_blank" rel="noopener" class="bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm px-4 py-3 rounded-xl transition-all border border-slate-200 flex items-center justify-center gap-2 min-h-[48px]">
+                    <i class="fas fa-up-right-from-square"></i> Open in New Tab
+                </a>
+            </div>
+            <div class="rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
+                <iframe id="worksheet-frame" src="home-claim-inventory-worksheet-bill-layne-insurance.pdf#view=FitH" title="Home Claim Inventory Worksheet — preview" class="w-full" style="height:480px; border:0;" loading="lazy"></iframe>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-2 text-center">Worksheet not showing above? <a href="home-claim-inventory-worksheet-bill-layne-insurance.pdf" target="_blank" rel="noopener" class="text-indigo-600 font-semibold underline">Open it in a new tab</a> to view, print, or save it.</p>
         </div>
 
         <!-- ===== SCAN PAPER INVENTORY SECTION ===== -->
@@ -934,10 +954,10 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">How old is it? <span class="text-red-400">*</span></label>
-                    <p class="text-xs text-slate-400 mb-1.5">Roughly how many years you've had it</p>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">How old is it &amp; what condition?</label>
+                    <p class="text-xs text-slate-400 mb-1.5">Roughly how many years — leave blank if you're not sure</p>
                     <div class="flex gap-2">
-                        <input type="number" id="item-age" min="0" max="50" step="0.5" placeholder="Years" class="flex-1 border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50">
+                        <input type="number" id="item-age" min="0" max="50" step="0.5" placeholder="Years (or skip)" class="flex-1 border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50">
                         <select id="item-condition" class="border border-slate-200 rounded-xl px-3 py-3 text-base bg-slate-50 cursor-pointer">
                             <option value="New">Like New</option>
                             <option value="Good" selected>Good</option>
@@ -1068,8 +1088,8 @@
                         <p class="text-xl sm:text-2xl font-extrabold text-emerald-700">$<span id="total-acv">0.00</span></p>
                     </div>
                     <div class="bg-amber-50 rounded-xl p-4 text-center col-span-2 sm:col-span-1">
-                        <p class="text-xs font-bold text-amber-500 uppercase tracking-wide mb-1">Value Lost to Age</p>
-                        <p class="text-[10px] text-amber-400 mb-1">Wear &amp; tear over time</p>
+                        <p class="text-xs font-bold text-amber-500 uppercase tracking-wide mb-1">Wear &amp; Tear</p>
+                        <p class="text-[10px] text-amber-400 mb-1">Value lost to age over time</p>
                         <p class="text-xl sm:text-2xl font-extrabold text-amber-700">$<span id="total-dep">0.00</span></p>
                     </div>
                 </div>
@@ -1082,7 +1102,7 @@
                 <i class="fas fa-file-pdf"></i> Download PDF
             </button>
             <button onclick="exportCSV()" class="flex-1 sm:flex-none bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm py-3 px-6 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
-                <i class="fas fa-file-csv"></i> Export CSV
+                <i class="fas fa-file-excel"></i> Spreadsheet (Excel)
             </button>
             <button onclick="saveToLocal()" class="flex-1 sm:flex-none bg-indigo-500 hover:bg-indigo-600 text-white font-bold text-sm py-3 px-6 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
                 <i class="fas fa-save"></i> Save Progress
@@ -1376,6 +1396,25 @@
         if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
         const input = document.getElementById(which === 'camera' ? 'scan-camera-input' : 'scan-file-input');
         if (input) input.click();
+    }
+
+    // Print the blank worksheet PDF. Prints the embedded preview when allowed,
+    // otherwise opens the PDF in a new tab so the visitor can print from there.
+    const WORKSHEET_PDF = 'home-claim-inventory-worksheet-bill-layne-insurance.pdf';
+    function printWorksheet() {
+        const frame = document.getElementById('worksheet-frame');
+        try {
+            if (frame && frame.contentWindow) {
+                frame.contentWindow.focus();
+                frame.contentWindow.print();
+                return;
+            }
+        } catch (e) { /* cross-origin or unsupported — fall through */ }
+        const w = window.open(WORKSHEET_PDF, '_blank');
+        if (w) {
+            w.focus();
+            w.addEventListener('load', function () { try { w.print(); } catch (e) {} });
+        }
     }
 
     document.addEventListener('keydown', function (e) {
@@ -1824,7 +1863,7 @@
     // ===== ADD OR UPDATE ITEM =====
     function addOrUpdateItem() {
         const desc = document.getElementById('item-desc').value.trim();
-        const age = parseFloat(document.getElementById('item-age').value);
+        let age = parseFloat(document.getElementById('item-age').value);
         const price = parseFloat(document.getElementById('item-price').value) || 0;
         const originalPrice = parseFloat(document.getElementById('item-original').value) || 0;
         const qty = parseInt(document.getElementById('item-qty').value) || 1;
@@ -1834,7 +1873,8 @@
         const notes = document.getElementById('item-notes').value.trim();
 
         if (!desc) { showToast('Please tell us what the item is', 'error'); return; }
-        if (isNaN(age) || age < 0) { showToast('Please enter how old the item is (in years)', 'error'); return; }
+        // Age is optional — if left blank, assume a moderate 3 years so a current value can still be estimated
+        if (isNaN(age) || age < 0) { age = 3; }
 
         const acv = price > 0 ? calculateACV(price, age, category, condition) : 0;
 
@@ -2626,13 +2666,6 @@
 
     // ===== INIT =====
     document.addEventListener('DOMContentLoaded', function() {
-        // Restore AI mode preference
-        const savedMode = localStorage.getItem('bli_ai_mode');
-        if (savedMode === 'per-item') {
-            document.getElementById('ai-mode-toggle').checked = true;
-            toggleAiMode();
-        }
-
         // Load saved progress
         loadFromLocal();
         updateMobileDock();
