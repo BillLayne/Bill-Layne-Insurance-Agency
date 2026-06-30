@@ -124,6 +124,28 @@
         }
 
         /* ===== HERO (clean, single-CTA) ===== */
+        /* Desktop: full-bleed background image + navy gradient (text overlaid on the left) */
+        .claims-hero-bg {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(105deg, rgba(0,15,38,0.96) 0%, rgba(0,30,72,0.88) 46%, rgba(0,42,94,0.55) 76%, rgba(0,52,120,0.30) 100%), url('claims-inventory-hero.jpg?v=2');
+            background-size: cover;
+            background-position: center right;
+        }
+
+        /* Mobile: show the whole scene as a clean framed band above the text */
+        .claims-hero-mobile-img {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background-image: url('claims-inventory-hero.jpg?v=2');
+            background-size: cover;
+            background-position: center;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.38);
+            margin-bottom: 22px;
+        }
+
         .hero-badge {
             display: inline-flex;
             align-items: center;
@@ -520,7 +542,9 @@
     </nav>
 
     <!-- ========== HERO ========== -->
-    <section class="claims-hero pt-24 md:pt-32 pb-10 md:pb-14 text-white relative overflow-hidden" style="background-color:#001a3d; background-image:linear-gradient(105deg, rgba(0,15,38,0.96) 0%, rgba(0,30,72,0.88) 46%, rgba(0,42,94,0.55) 76%, rgba(0,52,120,0.30) 100%), url('claims-inventory-hero.jpg'); background-size:cover; background-position:center right;">
+    <section class="claims-hero pt-24 md:pt-32 pb-10 md:pb-14 text-white relative overflow-hidden" style="background-color:#001a3d;">
+        <!-- Desktop full-bleed background image + gradient -->
+        <div class="claims-hero-bg hidden md:block" aria-hidden="true"></div>
         <div class="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
             <!-- Breadcrumb -->
             <nav class="claims-hero-breadcrumb flex items-center gap-2 text-xs text-indigo-300/70 mb-6">
@@ -530,6 +554,8 @@
                 <i class="fas fa-chevron-right text-[10px]"></i>
                 <span class="text-indigo-200">Inventory Tool</span>
             </nav>
+            <!-- Mobile: full hero scene as a clean band above the text -->
+            <div class="claims-hero-mobile-img md:hidden" role="img" aria-label="A phone photographing household items while the tool prices them and builds a PDF report"></div>
             <span class="hero-badge"><span class="hero-badge-dot"></span> Free Tool &middot; AI-Powered &middot; 100% Private</span>
             <h1 class="hero-title">Lost or damaged items?<br><span class="hero-accent">Build your claim list</span> in minutes.</h1>
             <p class="hero-sub">After a fire, storm, theft, or water loss, list what you lost — our AI prices each item and builds a clean report you can hand your insurance adjuster.</p>
