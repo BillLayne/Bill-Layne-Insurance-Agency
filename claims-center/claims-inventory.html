@@ -115,7 +115,7 @@
         /* Navbar */
         .navbar { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
 
-        #worksheet-section,
+        #quick-start,
         #scan-list-section,
         #add-item-section,
         #inventory-section,
@@ -322,6 +322,48 @@
         .start-card:hover .start-card-cta { gap: 11px; }
         .start-card-cta i { font-size: 12px; }
 
+        /* ===== "Add more details" collapse on the Add Item form ===== */
+        .add-details summary { list-style: none; }
+        .add-details summary::-webkit-details-marker { display: none; }
+
+        .add-details-summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            cursor: pointer;
+            -webkit-user-select: none;
+            user-select: none;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #4f46e5;
+            background: #eef2ff;
+            border: 1px solid #e0e7ff;
+            border-radius: 0.85rem;
+            padding: 13px 16px;
+            min-height: 50px;
+            -webkit-tap-highlight-color: transparent;
+            transition: background .15s ease;
+        }
+
+        .add-details-summary:hover { background: #e0e7ff; }
+        .add-details-hint { font-weight: 500; color: #818cf8; }
+        .add-details-chevron { font-size: 12px; transition: transform .2s ease; }
+        .add-details[open] .add-details-chevron { transform: rotate(180deg); }
+
+        /* ===== Generic tap-to-expand info panel (e.g. ACV explainer) ===== */
+        .info-collapse summary { list-style: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+        .info-collapse summary::-webkit-details-marker { display: none; }
+        .info-collapse-summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 18px 20px;
+        }
+        .info-collapse-chevron { color: #94a3b8; font-size: 13px; transition: transform .2s ease; }
+        .info-collapse[open] .info-collapse-chevron { transform: rotate(180deg); }
+
         /* ===== SCAN HELP MODAL ===== */
         .scan-help-overlay {
             position: fixed;
@@ -425,7 +467,7 @@
                 padding-bottom: 84px;
             }
 
-            #worksheet-section,
+            #quick-start,
             #scan-list-section,
             #add-item-section,
             #inventory-section,
@@ -680,25 +722,25 @@
                 <p class="text-slate-500 text-sm mt-1">Pick whatever's easiest — you can mix and match.</p>
             </div>
             <div class="start-cards">
-                <a href="#scan-list-section" onclick="event.preventDefault(); openScanHelp();" class="start-card">
+                <a href="#add-item-section" class="start-card">
                     <span class="start-card-num">1</span>
                     <span class="start-card-icon"><i class="fas fa-camera"></i></span>
-                    <span class="start-card-title">Scan a paper list</span>
-                    <span class="start-card-desc">Write your items on the worksheet, snap one photo, and AI turns the whole page into your inventory.</span>
-                    <span class="start-card-cta">Take a photo <i class="fas fa-arrow-right"></i></span>
-                </a>
-                <a href="#add-item-section" class="start-card">
-                    <span class="start-card-num">2</span>
-                    <span class="start-card-icon"><i class="fas fa-plus-circle"></i></span>
-                    <span class="start-card-title">Add items one at a time</span>
-                    <span class="start-card-desc">Type each item, or photograph it and let AI fill in the details and current price for you.</span>
+                    <span class="start-card-title">Snap a photo of each item</span>
+                    <span class="start-card-desc">Take a photo and AI fills in the item and its price for you — or just type it in. The easiest way to start.</span>
                     <span class="start-card-cta">Add an item <i class="fas fa-arrow-right"></i></span>
                 </a>
-                <a href="#worksheet-section" class="start-card">
+                <a href="#quick-start" class="start-card">
+                    <span class="start-card-num">2</span>
+                    <span class="start-card-icon"><i class="fas fa-bolt"></i></span>
+                    <span class="start-card-title">Quick Start by room</span>
+                    <span class="start-card-desc">Don't want to type? Pick a room — like Kitchen or Living Room — and we'll add the common items for you.</span>
+                    <span class="start-card-cta">Pick a room <i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="#scan-list-section" class="start-card">
                     <span class="start-card-num">3</span>
                     <span class="start-card-icon"><i class="fas fa-print"></i></span>
-                    <span class="start-card-title">Print the worksheet</span>
-                    <span class="start-card-desc">Prefer pen and paper first? Download or print a worksheet to fill out by hand, then scan it back in.</span>
+                    <span class="start-card-title">Use a paper list</span>
+                    <span class="start-card-desc">Prefer pen and paper first? Print the worksheet, fill it out by hand, then snap a photo to add it all.</span>
                     <span class="start-card-cta">Print or download <i class="fas fa-arrow-right"></i></span>
                 </a>
             </div>
@@ -797,63 +839,53 @@
             </div>
         </div>
 
-        <!-- ===== PRINTABLE WORKSHEET SECTION ===== -->
-        <div id="worksheet-section" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6 no-print">
-            <div class="flex items-start gap-3 mb-4">
-                <div class="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
-                    <i class="fas fa-print text-amber-700 text-sm"></i>
+        <!-- ===== USE A PAPER LIST (print worksheet -> fill in -> snap a photo) ===== -->
+        <div id="scan-list-section" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6 no-print">
+            <div class="flex items-start gap-3 mb-5">
+                <div class="w-9 h-9 rounded-xl bg-cyan-100 flex items-center justify-center shrink-0">
+                    <i class="fas fa-file-pen text-cyan-700 text-sm"></i>
                 </div>
                 <div>
-                    <h2 class="font-display font-bold text-lg text-slate-900">Prefer pen &amp; paper? Print the worksheet</h2>
-                    <p class="text-xs text-slate-500 leading-relaxed">Download or print this blank worksheet, write your items down by hand, then come back and snap a photo of it — we'll turn it into your list automatically.</p>
+                    <h2 class="font-display font-bold text-lg text-slate-900">Use a paper list</h2>
+                    <p class="text-xs text-slate-500 leading-relaxed">Print the worksheet, write your items down by hand, then snap one photo — AI turns the page into your inventory.</p>
                 </div>
             </div>
-            <div class="flex flex-col sm:flex-row gap-2 mb-4">
-                <a href="home-claim-inventory-worksheet-bill-layne-insurance.pdf" download class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-4 py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 min-h-[48px]">
-                    <i class="fas fa-file-arrow-down"></i> Download Worksheet (PDF)
-                </a>
-                <button type="button" onclick="printWorksheet()" class="bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm px-4 py-3 rounded-xl transition-all border border-slate-200 flex items-center justify-center gap-2 min-h-[48px]">
-                    <i class="fas fa-print"></i> Print Worksheet
-                </button>
-                <a href="home-claim-inventory-worksheet-bill-layne-insurance.pdf" target="_blank" rel="noopener" class="bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm px-4 py-3 rounded-xl transition-all border border-slate-200 flex items-center justify-center gap-2 min-h-[48px]">
-                    <i class="fas fa-up-right-from-square"></i> Open in New Tab
-                </a>
-            </div>
-            <a href="home-claim-inventory-worksheet-bill-layne-insurance.pdf" target="_blank" rel="noopener" class="block rounded-xl overflow-hidden border border-slate-200 bg-white hover:border-amber-300 transition-colors" title="Open the full worksheet PDF to print or save">
-                <img src="https://i.imgur.com/ZwSYfvI.png" alt="Preview of the Home Claim Inventory Worksheet — write each damaged or stolen item on a line with its age, condition and quantity, then scan the page back in." class="w-full h-auto block" width="1103" height="1426" loading="lazy" decoding="async">
-            </a>
-            <p class="text-[11px] text-slate-400 mt-2 text-center">Tap the worksheet above to open the full PDF — then print it or save it to fill out.</p>
-        </div>
 
-        <!-- ===== SCAN PAPER INVENTORY SECTION ===== -->
-        <div id="scan-list-section" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6 no-print">
-            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                <div class="flex items-start gap-3 flex-1 min-w-0">
-                    <div class="w-9 h-9 rounded-xl bg-cyan-100 flex items-center justify-center shrink-0">
-                        <i class="fas fa-file-pen text-cyan-700 text-sm"></i>
-                    </div>
-                    <div>
-                        <h2 class="font-display font-bold text-lg text-slate-900">Scan a Paper List</h2>
-                        <p class="text-xs text-slate-500 leading-relaxed">Print the worksheet, write one item per line, then take one clear photo or upload the completed PDF/image. AI will turn the page into inventory rows you can review and import.</p>
-                    </div>
-                </div>
-                <div class="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:shrink-0 sm:justify-end">
-                    <a href="home-claim-inventory-worksheet-bill-layne-insurance.pdf" download class="bg-white hover:bg-amber-50 text-amber-700 font-bold text-xs px-4 py-3 rounded-xl transition-all border border-amber-200 flex items-center justify-center gap-2 min-h-[44px]">
-                        <i class="fas fa-file-arrow-down"></i> Download Worksheet
+            <!-- Step 1: print or download the worksheet -->
+            <div class="mb-5">
+                <p class="text-sm font-bold text-slate-700 mb-2 flex items-center gap-2"><span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-cyan-600 text-white text-[11px] font-black shrink-0">1</span> Print or download the worksheet</p>
+                <div class="flex flex-col sm:flex-row gap-2 mb-3">
+                    <a href="home-claim-inventory-worksheet-bill-layne-insurance.pdf" download class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-4 py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 min-h-[48px]">
+                        <i class="fas fa-file-arrow-down"></i> Download (PDF)
                     </a>
-                    <button type="button" onclick="document.getElementById('scan-camera-input').click()" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs px-4 py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 min-h-[44px]">
-                        <i class="fas fa-camera"></i> Take Photo
+                    <button type="button" onclick="printWorksheet()" class="flex-1 bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm px-4 py-3 rounded-xl transition-all border border-slate-200 flex items-center justify-center gap-2 min-h-[48px]">
+                        <i class="fas fa-print"></i> Print
                     </button>
-                    <button type="button" onclick="document.getElementById('scan-file-input').click()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-4 py-3 rounded-xl transition-all border border-slate-200 flex items-center justify-center gap-2 min-h-[44px]">
-                        <i class="fas fa-upload"></i> Upload PDF/Image
+                    <a href="home-claim-inventory-worksheet-bill-layne-insurance.pdf" target="_blank" rel="noopener" class="flex-1 bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm px-4 py-3 rounded-xl transition-all border border-slate-200 flex items-center justify-center gap-2 min-h-[48px]">
+                        <i class="fas fa-up-right-from-square"></i> Open
+                    </a>
+                </div>
+                <a href="home-claim-inventory-worksheet-bill-layne-insurance.pdf" target="_blank" rel="noopener" class="block rounded-xl overflow-hidden border border-slate-200 bg-white hover:border-amber-300 transition-colors" title="Open the full worksheet PDF to print or save">
+                    <img src="https://i.imgur.com/ZwSYfvI.png" alt="Preview of the Home Claim Inventory Worksheet — write each damaged or stolen item on a line with its age, condition and quantity, then scan the page back in." class="w-full h-auto block" width="1103" height="1426" loading="lazy" decoding="async">
+                </a>
+            </div>
+
+            <!-- Step 2: snap a photo of the filled-in page -->
+            <div>
+                <p class="text-sm font-bold text-slate-700 mb-2 flex items-center gap-2"><span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-cyan-600 text-white text-[11px] font-black shrink-0">2</span> Filled it out? Snap a photo to add it all</p>
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <button type="button" onclick="document.getElementById('scan-camera-input').click()" class="flex-1 bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-sm px-4 py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 min-h-[48px]">
+                        <i class="fas fa-camera"></i> Take Photo of List
+                    </button>
+                    <button type="button" onclick="document.getElementById('scan-file-input').click()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm px-4 py-3 rounded-xl transition-all border border-slate-200 flex items-center justify-center gap-2 min-h-[48px]">
+                        <i class="fas fa-upload"></i> Upload Photo/PDF
                     </button>
                     <input type="file" id="scan-camera-input" accept="image/*,.heic,.heif,image/heic,image/heif" capture="environment" onchange="handleInventoryScan(event)" class="hidden">
                     <input type="file" id="scan-file-input" accept="image/*,.heic,.heif,image/heic,image/heif,application/pdf,.pdf" onchange="handleInventoryScan(event)" class="hidden">
                 </div>
-            </div>
-
-            <div class="mt-4 p-3 bg-cyan-50 rounded-xl border border-cyan-100">
-                <p class="text-xs text-cyan-800"><i class="fas fa-wand-magic-sparkles mr-1.5"></i><strong>Best results:</strong> use dark ink, keep the whole page in the picture, and write one item per line. Apple HEIC photos, JPG/PNG/WebP images, and PDF scans are supported.</p>
+                <div class="mt-3 p-3 bg-cyan-50 rounded-xl border border-cyan-100">
+                    <p class="text-xs text-cyan-800"><i class="fas fa-wand-magic-sparkles mr-1.5"></i><strong>Best results:</strong> use dark ink, keep the whole page in the picture, and write one item per line.</p>
+                </div>
             </div>
 
             <div id="scan-status" class="hidden mt-4 p-3 rounded-xl text-xs font-medium"></div>
@@ -903,9 +935,9 @@
                 <span id="editing-banner-text">Editing item — make changes and click "Update Item"</span>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div class="mb-4">
                 <!-- PHOTO FIRST: take or upload a photo, AI fills in the details -->
-                <div class="sm:col-span-2">
+                <div class="mb-4">
                     <div class="bg-gradient-to-br from-violet-50 to-indigo-50 border border-violet-200 rounded-2xl p-4 sm:p-5">
                         <div class="flex items-start gap-3 mb-4">
                             <div class="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center shrink-0"><i class="fas fa-camera text-violet-600"></i></div>
@@ -932,11 +964,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="sm:col-span-2">
+                <div class="mb-4">
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">What is the item? <span class="text-red-400">*</span></label>
-                    <p class="text-xs text-slate-400 mb-1.5">Include the brand and model if you know it</p>
+                    <p class="text-xs text-slate-400 mb-1.5">Include the brand and model if you know it — that's all you need to add it.</p>
                     <input type="text" id="item-desc" placeholder='e.g. Samsung 65" 4K Smart TV, Nike Air Max shoes, KitchenAid stand mixer' class="w-full border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50">
                 </div>
+
+                <!-- Everything below is optional — tucked away so it isn't overwhelming -->
+                <details class="add-details" id="add-details">
+                    <summary class="add-details-summary">
+                        <span><i class="fas fa-sliders-h mr-2"></i>Add more details <span class="add-details-hint">— room, age, price (optional)</span></span>
+                        <i class="fas fa-chevron-down add-details-chevron"></i>
+                    </summary>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Which room was it in?</label>
                     <select id="item-room" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50 cursor-pointer">
@@ -1016,7 +1056,8 @@
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Extra details (optional)</label>
                     <textarea id="item-notes" rows="2" placeholder="Serial number, where you bought it, color, size, special features..." class="w-full border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50 resize-none"></textarea>
                 </div>
-                <!-- photo capture moved to the top of Add Item -->
+                    </div>
+                </details>
             </div>
 
             <!-- AI Status -->
@@ -1030,7 +1071,7 @@
         </div>
 
         <!-- ===== QUICK-ADD TEMPLATES ===== -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6 no-print">
+        <div id="quick-start" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6 no-print">
             <div class="flex items-center gap-3 mb-2">
                 <div class="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center">
                     <i class="fas fa-bolt text-amber-600 text-sm"></i>
@@ -1138,30 +1179,9 @@
             </button>
         </div>
 
-        <!-- ===== HOW IT WORKS ===== -->
-        <div class="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl border border-indigo-100 p-5 sm:p-6 mb-6">
-            <h3 class="font-display font-bold text-base text-indigo-900 mb-4"><i class="fas fa-lightbulb text-amber-400 mr-2"></i>How to Use This Tool (4 Easy Steps)</h3>
-            <div class="grid sm:grid-cols-2 gap-3 text-xs text-indigo-800">
-                <div class="flex items-start gap-3">
-                    <div class="w-7 h-7 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm text-indigo-600 font-extrabold text-sm">1</div>
-                    <p><strong>Fill in your info</strong> — your name, insurance company, and what happened (fire, theft, storm, etc.)</p>
-                </div>
-                <div class="flex items-start gap-3">
-                    <div class="w-7 h-7 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm text-indigo-600 font-extrabold text-sm">2</div>
-                    <p><strong>List or scan your items</strong> - type items one by one, use Quick Start, photograph one item, or scan a handwritten/PDF inventory list and import the rows.</p>
-                </div>
-                <div class="flex items-start gap-3">
-                    <div class="w-7 h-7 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm text-indigo-600 font-extrabold text-sm">3</div>
-                    <p><strong>Get prices</strong> — click "<strong>Look Up Prices</strong>" and our AI finds what each item costs to buy new today.</p>
-                </div>
-                <div class="flex items-start gap-3">
-                    <div class="w-7 h-7 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm text-indigo-600 font-extrabold text-sm">4</div>
-                    <p><strong>Download your report</strong> — get a professional PDF to give your insurance adjuster (the person handling your claim).</p>
-                </div>
-            </div>
-            <div class="mt-4 p-3 bg-white/60 rounded-xl border border-indigo-100">
-                <p id="privacy-note" class="text-xs text-indigo-600"><i class="fas fa-shield-halved mr-1.5"></i> <strong>Privacy:</strong> Your saved inventory stays in your browser. AI price lookups and scan parsing are routed through our secure proxy and are not stored on our servers.</p>
-            </div>
+        <!-- ===== PRIVACY NOTE ===== -->
+        <div class="bg-indigo-50 rounded-2xl border border-indigo-100 p-4 sm:p-5 mb-6">
+            <p id="privacy-note" class="text-xs text-indigo-700 leading-relaxed"><i class="fas fa-shield-halved mr-1.5"></i> <strong>Your privacy:</strong> Your inventory stays saved in your browser, on your device. Price look-ups and scans run through our secure service and are never stored on our servers.</p>
         </div>
 
         <!-- ===== ESTIMATE NOTICE ===== -->
@@ -1177,17 +1197,22 @@
             </div>
         </div>
 
-        <!-- ===== ACV EXPLANATION ===== -->
-        <div id="acv-explanation" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6">
-            <h3 class="font-display font-bold text-base text-slate-900 mb-3"><i class="fas fa-chart-line text-emerald-500 mr-2"></i>Why Are There Two Dollar Amounts?</h3>
-            <p class="text-sm text-slate-600 mb-3">Insurance companies usually pay based on what your items were <strong>actually worth</strong> at the time of the loss — not what they'd cost brand new. This is called <strong>"Actual Cash Value" (ACV)</strong>. Think of it like selling a used car — a 5-year-old car is worth less than a new one, even if it works fine.</p>
-            <div class="bg-slate-50 rounded-xl p-4 text-sm text-slate-700">
-                <p class="font-bold mb-2">Simple example:</p>
-                <p>Your TV costs <strong>$800 brand new</strong> today, but it's 3 years old. Since TVs typically last about 7 years, your TV has used up about half its life.</p>
-                <p class="mt-2 font-mono text-xs bg-white px-3 py-2 rounded-lg border border-slate-200">$800 new price - $343 wear &amp; tear = <strong class="text-emerald-600">$457 current value</strong></p>
-                <p class="text-xs text-slate-500 mt-2"><i class="fas fa-info-circle mr-1"></i> <strong>Good news:</strong> If your policy includes "Replacement Cost" coverage, your insurance may pay the full $800 to buy a new one after you replace it. This tool calculates both amounts so you're prepared.</p>
+        <!-- ===== ACV EXPLANATION (tap to expand) ===== -->
+        <details id="acv-explanation" class="info-collapse bg-white rounded-2xl shadow-sm border border-slate-200 mb-6">
+            <summary class="info-collapse-summary">
+                <span class="font-display font-bold text-base text-slate-900"><i class="fas fa-chart-line text-emerald-500 mr-2"></i>Why are there two dollar amounts?</span>
+                <i class="fas fa-chevron-down info-collapse-chevron"></i>
+            </summary>
+            <div class="px-5 sm:px-6 pb-5 sm:pb-6">
+                <p class="text-sm text-slate-600 mb-3">Insurance companies usually pay based on what your items were <strong>actually worth</strong> at the time of the loss — not what they'd cost brand new. This is called <strong>"Actual Cash Value" (ACV)</strong>. Think of it like selling a used car — a 5-year-old car is worth less than a new one, even if it works fine.</p>
+                <div class="bg-slate-50 rounded-xl p-4 text-sm text-slate-700">
+                    <p class="font-bold mb-2">Simple example:</p>
+                    <p>Your TV costs <strong>$800 brand new</strong> today, but it's 3 years old. Since TVs typically last about 7 years, your TV has used up about half its life.</p>
+                    <p class="mt-2 font-mono text-xs bg-white px-3 py-2 rounded-lg border border-slate-200">$800 new price - $343 wear &amp; tear = <strong class="text-emerald-600">$457 current value</strong></p>
+                    <p class="text-xs text-slate-500 mt-2"><i class="fas fa-info-circle mr-1"></i> <strong>Good news:</strong> If your policy includes "Replacement Cost" coverage, your insurance may pay the full $800 to buy a new one after you replace it. This tool calculates both amounts so you're prepared.</p>
+                </div>
             </div>
-        </div>
+        </details>
 
         <!-- CTA -->
         <div class="bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl p-6 sm:p-8 text-center text-white mb-8 shadow-xl">
@@ -1979,6 +2004,10 @@
         document.getElementById('item-original').value = item.originalPrice || '';
         document.getElementById('item-notes').value = item.notes || '';
 
+        // Show all the detail fields while editing
+        const dEl = document.getElementById('add-details');
+        if (dEl) dEl.open = true;
+
         // Switch UI to edit mode
         enterEditMode(item.description);
 
@@ -2134,6 +2163,9 @@
         document.getElementById('item-category').selectedIndex = 0;
         document.getElementById('item-condition').value = 'Good';
         document.getElementById('ai-status').classList.add('hidden');
+        // Collapse the optional details again for the next item
+        const dEl = document.getElementById('add-details');
+        if (dEl) dEl.open = false;
         // Clear photo preview
         const preview = document.getElementById('photo-preview');
         if (preview) preview.classList.add('hidden');
@@ -2529,6 +2561,10 @@
                     const condMap = { 'Excellent': 'New', 'Like New': 'New', 'Good': 'Good', 'Fair': 'Fair', 'Poor': 'Poor' };
                     condSelect.value = condMap[result.condition] || 'Good';
                 }
+
+                // Reveal the detail fields so the user can see/adjust what AI filled in
+                const dEl = document.getElementById('add-details');
+                if (dEl) dEl.open = true;
 
                 resultDiv.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-1"></i> Detected: <strong>${escapeHtml(result.description || 'Item')}</strong>${result.brand ? ' by ' + escapeHtml(result.brand) : ''} — ${result.ageYears || '?'} yrs, ${result.condition || 'Good'} condition`;
 
