@@ -171,6 +171,7 @@
             <p class="text-indigo-200 text-sm sm:text-base max-w-2xl leading-relaxed mb-4">Make a list of everything you lost or that was damaged. Our AI looks up current prices for you, and you can download a professional report to give your insurance company.</p>
             <div class="flex flex-wrap gap-3 text-xs">
                 <span class="bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10"><i class="fas fa-robot mr-1.5 text-amber-400"></i> AI-Powered Pricing</span>
+                <span class="bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10"><i class="fas fa-file-pen mr-1.5 text-cyan-300"></i> Paper List Scan</span>
                 <span class="bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10"><i class="fas fa-file-pdf mr-1.5 text-red-400"></i> PDF Export</span>
                 <span class="bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10"><i class="fas fa-calculator mr-1.5 text-green-400"></i> ACV Calculator</span>
                 <span class="bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10"><i class="fas fa-lock mr-1.5 text-blue-400"></i> 100% Private</span>
@@ -189,7 +190,7 @@
                 <span class="inline-block text-xs font-bold uppercase tracking-wide text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full mb-3">How it works</span>
                 <h2 class="font-display font-extrabold text-xl sm:text-2xl text-slate-900 mb-4">Snap it. Price it. Send it.</h2>
                 <ul class="space-y-3 text-sm sm:text-base text-slate-600">
-                    <li class="flex items-start gap-3"><i class="fas fa-camera text-indigo-500 mt-1"></i><span>Snap a photo or just describe each item you lost or that was damaged.</span></li>
+                    <li class="flex items-start gap-3"><i class="fas fa-camera text-indigo-500 mt-1"></i><span>Snap one item, scan a paper list, or describe each item you lost or that was damaged.</span></li>
                     <li class="flex items-start gap-3"><i class="fas fa-robot text-violet-500 mt-1"></i><span>Our AI looks up what each item costs to buy new today.</span></li>
                     <li class="flex items-start gap-3"><i class="fas fa-file-pdf text-red-500 mt-1"></i><span>Download a clean PDF report to hand your insurance adjuster.</span></li>
                 </ul>
@@ -209,7 +210,7 @@
                     </div>
                     <div class="min-w-0">
                         <p class="font-bold text-green-900 text-sm">AI Price Lookup — Active</p>
-                        <p id="ai-mode-desc" class="text-xs text-green-700 leading-relaxed">Add all your items first, then click <strong>"Look Up Prices"</strong> and AI will find prices for everything at once.</p>
+                        <p id="ai-mode-desc" class="text-xs text-green-700 leading-relaxed">Type your items or scan a paper list, then click <strong>"Look Up Prices"</strong> and AI will find prices for everything at once.</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-2 shrink-0 pl-12 sm:pl-0 sm:ml-auto">
@@ -280,6 +281,58 @@
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Adjuster's Name & Contact (if assigned)</label>
                     <input type="text" id="cl-adjuster" placeholder="The person your insurance company assigned to your claim" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-base bg-slate-50">
                 </div>
+            </div>
+        </div>
+
+        <!-- ===== SCAN PAPER INVENTORY SECTION ===== -->
+        <div id="scan-list-section" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6 no-print">
+            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                <div class="flex items-start gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-cyan-100 flex items-center justify-center shrink-0">
+                        <i class="fas fa-file-pen text-cyan-700 text-sm"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-display font-bold text-lg text-slate-900">Scan a Paper List</h2>
+                        <p class="text-xs text-slate-500 leading-relaxed">Wrote everything down already? Take one clear photo or upload a PDF/image and AI will turn the page into inventory rows you can review and import.</p>
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-2 sm:shrink-0">
+                    <button type="button" onclick="document.getElementById('scan-camera-input').click()" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs px-4 py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 min-h-[44px]">
+                        <i class="fas fa-camera"></i> Take Photo
+                    </button>
+                    <button type="button" onclick="document.getElementById('scan-file-input').click()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-4 py-3 rounded-xl transition-all border border-slate-200 flex items-center justify-center gap-2 min-h-[44px]">
+                        <i class="fas fa-upload"></i> Upload PDF/Image
+                    </button>
+                    <input type="file" id="scan-camera-input" accept="image/*,.heic,.heif,image/heic,image/heif" capture="environment" onchange="handleInventoryScan(event)" class="hidden">
+                    <input type="file" id="scan-file-input" accept="image/*,.heic,.heif,image/heic,image/heif,application/pdf,.pdf" onchange="handleInventoryScan(event)" class="hidden">
+                </div>
+            </div>
+
+            <div class="mt-4 p-3 bg-cyan-50 rounded-xl border border-cyan-100">
+                <p class="text-xs text-cyan-800"><i class="fas fa-wand-magic-sparkles mr-1.5"></i><strong>Best results:</strong> use dark ink, keep the whole page in the picture, and write one item per line. Apple HEIC photos, JPG/PNG/WebP images, and PDF scans are supported.</p>
+            </div>
+
+            <div id="scan-status" class="hidden mt-4 p-3 rounded-xl text-xs font-medium"></div>
+
+            <div id="scan-review" class="hidden mt-4 border border-cyan-100 rounded-xl overflow-hidden">
+                <div class="bg-cyan-50 px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div>
+                        <p class="font-bold text-sm text-cyan-950"><span id="scan-review-count">0</span> items found</p>
+                        <p id="scan-review-note" class="text-xs text-cyan-700">Review the list, uncheck anything AI misread, then import.</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <button type="button" onclick="importScannedItems(false)" class="bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 min-h-[44px]">
+                            <i class="fas fa-check"></i> Import Selected
+                        </button>
+                        <button type="button" onclick="importScannedItems(true)" class="bg-violet-500 hover:bg-violet-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 min-h-[44px]">
+                            <i class="fas fa-robot"></i> Import + Price
+                        </button>
+                        <button type="button" onclick="clearScanReview()" class="bg-white hover:bg-slate-50 text-slate-500 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-200 min-h-[44px]">
+                            Clear
+                        </button>
+                    </div>
+                </div>
+                <div id="scan-review-list" class="divide-y divide-slate-100 max-h-[420px] overflow-y-auto bg-white"></div>
             </div>
         </div>
 
@@ -497,7 +550,7 @@
                     <i class="fas fa-box-open text-slate-300 text-2xl"></i>
                 </div>
                 <p class="font-bold text-slate-400 text-sm mb-1">Your list is empty</p>
-                <p class="text-xs text-slate-300">Add items above, or use Quick Start to add a whole room at once</p>
+                <p class="text-xs text-slate-300">Scan a paper list, add items above, or use Quick Start to add a whole room at once</p>
             </div>
 
             <!-- Items container -->
@@ -551,7 +604,7 @@
                 </div>
                 <div class="flex items-start gap-3">
                     <div class="w-7 h-7 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm text-indigo-600 font-extrabold text-sm">2</div>
-                    <p><strong>List your items</strong> — go room by room and add everything that was lost or damaged. Use Quick Start buttons for common items!</p>
+                    <p><strong>List or scan your items</strong> - type items one by one, use Quick Start, photograph one item, or scan a handwritten/PDF inventory list and import the rows.</p>
                 </div>
                 <div class="flex items-start gap-3">
                     <div class="w-7 h-7 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm text-indigo-600 font-extrabold text-sm">3</div>
@@ -563,7 +616,7 @@
                 </div>
             </div>
             <div class="mt-4 p-3 bg-white/60 rounded-xl border border-indigo-100">
-                <p class="text-xs text-indigo-600"><i class="fas fa-shield-halved mr-1.5"></i> <strong>Privacy:</strong> All data stays in your browser and is never stored on our servers. AI lookups are routed through our secure proxy — your information is never saved or logged.</p>
+                <p class="text-xs text-indigo-600"><i class="fas fa-shield-halved mr-1.5"></i> <strong>Privacy:</strong> Your saved inventory stays in your browser. AI price lookups and scan parsing are routed through our secure proxy and are not stored on our servers.</p>
             </div>
         </div>
 
@@ -648,6 +701,7 @@
     let inventory = [];
     let itemIdCounter = 0;
     let editingItemId = null; // Track which item is being edited
+    let scannedInventoryItems = [];
 
     // Expected useful life by category (years) for depreciation
     const USEFUL_LIFE = {
@@ -691,7 +745,7 @@
             desc.innerHTML = 'Click <strong>AI Lookup</strong> on each item, or <strong>Look Up Prices</strong> to do all at once.';
         } else {
             btn.classList.add('hidden');
-            desc.innerHTML = 'Add all your items first, then click <strong>"Look Up Prices"</strong> and AI will find prices for everything at once.';
+            desc.innerHTML = 'Type your items or scan a paper list, then click <strong>"Look Up Prices"</strong> and AI will find prices for everything at once.';
         }
         localStorage.setItem('bli_ai_mode', aiPerItemMode ? 'per-item' : 'batch');
     }
@@ -841,6 +895,282 @@
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-robot"></i> Price All';
         autoSave();
+    }
+
+    // ===== SCAN PAPER LIST & IMPORT =====
+    const SCAN_MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
+    const SCAN_IMAGE_MAX_DIMENSION = 2600;
+    const SCAN_CATEGORIES = [
+        'Electronics',
+        'Furniture',
+        'Appliances',
+        'Clothing',
+        'Jewelry / Watches',
+        'Tools / Equipment',
+        'Sports / Outdoor',
+        'Books / Media',
+        'Kitchenware',
+        'Bedding / Linens',
+        'Art / Decor',
+        'Musical Instruments',
+        'Toys / Games',
+        'Personal Care',
+        'Other'
+    ];
+
+    function inferUploadMimeType(file) {
+        const name = (file.name || '').toLowerCase();
+        if (file.type) return file.type.toLowerCase();
+        if (name.endsWith('.pdf')) return 'application/pdf';
+        if (name.endsWith('.heic')) return 'image/heic';
+        if (name.endsWith('.heif')) return 'image/heif';
+        if (name.endsWith('.webp')) return 'image/webp';
+        if (name.endsWith('.png')) return 'image/png';
+        return 'image/jpeg';
+    }
+
+    function readFileAsDataUrl(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function dataUrlToPayload(dataUrl, fallbackMimeType) {
+        const match = String(dataUrl || '').match(/^data:([^;]+);base64,(.*)$/);
+        if (match) {
+            return { mimeType: match[1].toLowerCase(), base64: match[2] };
+        }
+        return { mimeType: fallbackMimeType, base64: String(dataUrl || '').split(',').pop() || '' };
+    }
+
+    function base64Size(base64) {
+        const clean = String(base64 || '').replace(/\s+/g, '');
+        const padding = clean.endsWith('==') ? 2 : clean.endsWith('=') ? 1 : 0;
+        return Math.max(0, Math.floor((clean.length * 3) / 4) - padding);
+    }
+
+    async function prepareScanFile(file) {
+        const originalMime = inferUploadMimeType(file);
+
+        if (originalMime === 'application/pdf') {
+            const dataUrl = await readFileAsDataUrl(file);
+            const payload = dataUrlToPayload(dataUrl, originalMime);
+            return { ...payload, dataUrl: '', byteSize: base64Size(payload.base64) };
+        }
+
+        try {
+            const bitmap = await createImageBitmap(file);
+            let width = bitmap.width;
+            let height = bitmap.height;
+            if (Math.max(width, height) > SCAN_IMAGE_MAX_DIMENSION) {
+                const scale = SCAN_IMAGE_MAX_DIMENSION / Math.max(width, height);
+                width = Math.round(width * scale);
+                height = Math.round(height * scale);
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(bitmap, 0, 0, width, height);
+            bitmap.close();
+
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.86);
+            const payload = dataUrlToPayload(dataUrl, 'image/jpeg');
+            return { ...payload, dataUrl, byteSize: base64Size(payload.base64) };
+        } catch (err) {
+            const dataUrl = await readFileAsDataUrl(file);
+            const payload = dataUrlToPayload(dataUrl, originalMime);
+            return { ...payload, dataUrl, byteSize: base64Size(payload.base64) };
+        }
+    }
+
+    function setScanStatus(type, message) {
+        const status = document.getElementById('scan-status');
+        status.classList.remove('hidden');
+        const styles = {
+            working: 'mt-4 p-3 rounded-xl text-xs font-medium bg-cyan-50 text-cyan-800 border border-cyan-100 ai-pulse',
+            success: 'mt-4 p-3 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-100',
+            error: 'mt-4 p-3 rounded-xl text-xs font-medium bg-red-50 text-red-700 border border-red-100'
+        };
+        const icons = {
+            working: 'fa-spinner fa-spin',
+            success: 'fa-check-circle',
+            error: 'fa-exclamation-triangle'
+        };
+        status.className = styles[type] || styles.working;
+        status.innerHTML = `<i class="fas ${icons[type] || icons.working} mr-1.5"></i>${message}`;
+    }
+
+    async function handleInventoryScan(event) {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+        event.target.value = '';
+
+        clearScanReview(false);
+        setScanStatus('working', `Preparing ${escapeHtml(file.name || 'your scan')}...`);
+
+        try {
+            const prepared = await prepareScanFile(file);
+            if (prepared.byteSize > SCAN_MAX_UPLOAD_BYTES) {
+                throw new Error('That scan is too large. Please use one clear page/photo under 8 MB.');
+            }
+
+            setScanStatus('working', 'AI is reading the page and building your inventory rows...');
+            const response = await fetch(`${AI_API_BASE}/api/parse-inventory`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fileData: prepared.base64,
+                    mimeType: prepared.mimeType,
+                    fileName: file.name || 'claims-inventory-scan'
+                })
+            });
+
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(result.error || `Scan failed with status ${response.status}`);
+            }
+
+            const items = Array.isArray(result.items) ? result.items : [];
+            if (items.length === 0) {
+                throw new Error('AI could not find inventory items on that page. Try a clearer photo with one item per line.');
+            }
+
+            scannedInventoryItems = items;
+            renderScanReview(items, result.warnings || []);
+            setScanStatus('success', `Found ${items.length} item${items.length === 1 ? '' : 's'}. Review below, then import.`);
+        } catch (err) {
+            scannedInventoryItems = [];
+            setScanStatus('error', `${escapeHtml(err.message)} You can still add items manually below.`);
+        }
+    }
+
+    function renderScanReview(items, warnings = []) {
+        const review = document.getElementById('scan-review');
+        const list = document.getElementById('scan-review-list');
+        const count = document.getElementById('scan-review-count');
+        const note = document.getElementById('scan-review-note');
+
+        count.textContent = items.length;
+        note.textContent = warnings.length ? `AI note: ${warnings.join(' ')}` : 'Review the list, uncheck anything AI misread, then import.';
+        list.innerHTML = items.map((item, index) => {
+            const qty = Math.max(1, parseInt(item.quantity, 10) || 1);
+            const age = item.ageYears === '' || item.ageYears === undefined ? 'Age not listed' : `${item.ageYears} yr`;
+            const price = Number(item.replacementCost || 0) > 0 ? `$${Number(item.replacementCost).toFixed(2)}` : 'Needs price';
+            return `
+                <label class="flex gap-3 p-4 hover:bg-slate-50 cursor-pointer">
+                    <input type="checkbox" data-scan-index="${index}" checked class="mt-1 h-4 w-4 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <p class="font-bold text-sm text-slate-800">${escapeHtml(item.description || 'Unnamed item')}</p>
+                            ${qty > 1 ? `<span class="text-[10px] font-bold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">x${qty}</span>` : ''}
+                            <span class="text-[10px] font-bold bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded">${escapeHtml(item.confidence || 'medium')} confidence</span>
+                        </div>
+                        <div class="flex flex-wrap gap-x-3 gap-y-1 mt-1 text-xs text-slate-500">
+                            ${item.room ? `<span><i class="fas fa-door-open mr-1"></i>${escapeHtml(item.room)}</span>` : ''}
+                            <span><i class="fas fa-tag mr-1"></i>${escapeHtml(item.category || 'Other')}</span>
+                            <span><i class="fas fa-clock mr-1"></i>${escapeHtml(age)}</span>
+                            <span><i class="fas fa-star mr-1"></i>${escapeHtml(item.condition || 'Good')}</span>
+                            <span><i class="fas fa-dollar-sign mr-1"></i>${escapeHtml(price)}</span>
+                        </div>
+                        ${item.notes ? `<p class="mt-1.5 text-xs text-slate-500 italic">${escapeHtml(item.notes)}</p>` : ''}
+                    </div>
+                </label>`;
+        }).join('');
+
+        review.classList.remove('hidden');
+        review.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function clearScanReview(hideStatus = true) {
+        scannedInventoryItems = [];
+        const review = document.getElementById('scan-review');
+        const list = document.getElementById('scan-review-list');
+        if (review) review.classList.add('hidden');
+        if (list) list.innerHTML = '';
+        if (hideStatus) {
+            const status = document.getElementById('scan-status');
+            if (status) status.classList.add('hidden');
+        }
+    }
+
+    function normalizeScanCategory(category, description) {
+        const exact = SCAN_CATEGORIES.find(c => c.toLowerCase() === String(category || '').toLowerCase());
+        if (exact) return exact;
+        const text = String(description || '').toLowerCase();
+        if (/(tv|phone|computer|laptop|tablet|monitor|camera|speaker|game console|xbox|playstation|nintendo)/.test(text)) return 'Electronics';
+        if (/(sofa|couch|chair|table|bed|dresser|desk|cabinet|mattress|recliner)/.test(text)) return 'Furniture';
+        if (/(refrigerator|washer|dryer|microwave|stove|oven|dishwasher|freezer|vacuum)/.test(text)) return 'Appliances';
+        if (/(shirt|pants|coat|shoes|boots|clothes|clothing|jacket|dress)/.test(text)) return 'Clothing';
+        if (/(ring|watch|necklace|bracelet|jewelry)/.test(text)) return 'Jewelry / Watches';
+        if (/(drill|saw|mower|tool|ladder|chainsaw|trimmer|blower)/.test(text)) return 'Tools / Equipment';
+        return 'Other';
+    }
+
+    function normalizeScanCondition(condition) {
+        const text = String(condition || '').toLowerCase();
+        if (text.includes('new') || text.includes('excellent')) return 'New';
+        if (text.includes('fair')) return 'Fair';
+        if (text.includes('poor') || text.includes('worn')) return 'Poor';
+        return 'Good';
+    }
+
+    function importScannedItems(priceAfterImport) {
+        const checked = Array.from(document.querySelectorAll('#scan-review-list input[data-scan-index]:checked'));
+        if (checked.length === 0) {
+            showToast('Select at least one scanned item to import', 'error');
+            return;
+        }
+
+        let imported = 0;
+        checked.forEach(box => {
+            const item = scannedInventoryItems[Number(box.dataset.scanIndex)];
+            if (!item || !item.description) return;
+
+            const price = parseFloat(item.replacementCost) || 0;
+            const originalPrice = parseFloat(item.originalPrice) || 0;
+            const age = Number.isFinite(parseFloat(item.ageYears)) ? Math.max(0, parseFloat(item.ageYears)) : 2;
+            const quantity = Math.max(1, parseInt(item.quantity, 10) || 1);
+            const category = normalizeScanCategory(item.category, item.description);
+            const condition = normalizeScanCondition(item.condition);
+            const acv = price > 0 ? calculateACV(price, age, category, condition) : 0;
+            const notes = item.notes ? `Scanned note: ${item.notes}` : 'Imported from scanned paper inventory.';
+
+            inventory.push({
+                id: ++itemIdCounter,
+                description: item.description,
+                room: item.room || '',
+                category,
+                age,
+                condition,
+                quantity,
+                replacementCost: price,
+                originalPrice,
+                acv,
+                notes,
+                status: price > 0 ? 'priced' : 'pending'
+            });
+            imported++;
+        });
+
+        if (imported === 0) {
+            showToast('No usable scanned items were selected', 'error');
+            return;
+        }
+
+        renderInventory();
+        autoSave();
+        clearScanReview();
+        showToast(`Imported ${imported} scanned item${imported === 1 ? '' : 's'}`, 'success');
+        document.getElementById('inventory-items').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        if (priceAfterImport) {
+            setTimeout(() => aiPriceAll(), 350);
+        }
     }
 
     // ===== ADD OR UPDATE ITEM =====
