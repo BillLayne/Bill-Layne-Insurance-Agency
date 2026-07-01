@@ -1539,6 +1539,80 @@
         delete item.priceSourceEngine;
     }
 
+    function itemReplacementTotal(item) {
+        return (Number(item.replacementCost) || 0) * (Number(item.quantity) || 1);
+    }
+
+    function itemAcvTotal(item) {
+        return (Number(item.acv) || 0) * (Number(item.quantity) || 1);
+    }
+
+    function isHighValueCategory(item) {
+        return /jewelry|watch|art|decor|musical|instrument|tool|equipment/i.test(String(item.category || ''));
+    }
+
+    function highValueWarning(item) {
+        const total = itemReplacementTotal(item);
+        if (total >= 1000 || isHighValueCategory(item)) {
+            const reason = total >= 1000 ? `estimated replacement cost is $${total.toFixed(2)}` : `category is ${item.category || 'high-value/specialty property'}`;
+            return `High-value review recommended: ${reason}. Add receipts, photos, serial/model numbers, appraisals, or adjuster notes when available.`;
+        }
+        return '';
+    }
+
+    function itemEvidenceProfile(item) {
+        const hasPrice = itemReplacementTotal(item) > 0;
+        const hasSourceLink = !!item.priceSourceUrl;
+        const hasSource = !!itemSourceSummary(item);
+        const hasAge = Number.isFinite(Number(item.age)) && Number(item.age) >= 0;
+        const hasCondition = !!item.condition;
+        const hasNotes = !!String(item.notes || '').trim();
+
+        if (hasPrice && hasSourceLink && hasAge && hasCondition) {
+            return {
+                label: 'Strong',
+                className: 'bg-emerald-50 text-emerald-700 border-emerald-100',
+                detail: 'Priced with source link, age, and condition.'
+            };
+        }
+        if (hasPrice && (hasSource || (hasAge && hasCondition) || hasNotes)) {
+            return {
+                label: 'Good',
+                className: 'bg-blue-50 text-blue-700 border-blue-100',
+                detail: 'Usable estimate; add a source link, receipt, photo, or model detail if available.'
+            };
+        }
+        return {
+            label: 'Needs Review',
+            className: 'bg-amber-50 text-amber-700 border-amber-100',
+            detail: 'Add a price, source, receipt/photo, age, or condition before sending if possible.'
+        };
+    }
+
+    function inventoryReportSummary() {
+        let totalRCV = 0;
+        let totalACV = 0;
+        let strong = 0;
+        let good = 0;
+        let needsReview = 0;
+        let sourceCount = 0;
+        let highValueCount = 0;
+
+        inventory.forEach(item => {
+            totalRCV += itemReplacementTotal(item);
+            totalACV += itemAcvTotal(item);
+            if (itemSourceSummary(item)) sourceCount++;
+            if (highValueWarning(item)) highValueCount++;
+
+            const profile = itemEvidenceProfile(item);
+            if (profile.label === 'Strong') strong++;
+            else if (profile.label === 'Good') good++;
+            else needsReview++;
+        });
+
+        return { totalRCV, totalACV, strong, good, needsReview, sourceCount, highValueCount };
+    }
+
     // ===== AI PRICE LOOKUP (Single Item) =====
     async function aiPriceLookup() {
         const desc = document.getElementById('item-desc').value.trim();
@@ -1625,6 +1699,7 @@
             dockPriceBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Pricing</span>';
         }
         let totalSuccess = 0;
+        let highValueWarnings = 0;
         const totalItems = unpriced.length;
         const totalBatches = Math.ceil(totalItems / BATCH_SIZE);
 
@@ -1668,6 +1743,7 @@
                         item.acv = calculateACV(result.currentPrice, item.age, item.category, item.condition);
                         Object.assign(item, priceSourceFromResult(result));
                         item.status = 'priced';
+                        if (highValueWarning(item)) highValueWarnings++;
                         totalSuccess++;
                     }
                 });
@@ -1689,6 +1765,9 @@
         }
 
         showToast(`Priced ${totalSuccess} of ${totalItems} items`, 'success');
+        if (highValueWarnings > 0) {
+            showToast(`${highValueWarnings} high-value item${highValueWarnings === 1 ? '' : 's'} may need receipts, photos, serial/model numbers, appraisals, or adjuster review.`, 'warning');
+        }
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-robot"></i> Price All';
         if (dockPriceBtn) {
@@ -1929,6 +2008,7 @@
         }
 
         let imported = 0;
+        let importHighValueWarnings = 0;
         checked.forEach(box => {
             const item = scannedInventoryItems[Number(box.dataset.scanIndex)];
             if (!item || !item.description) return;
@@ -1956,6 +2036,8 @@
                 notes,
                 status: price > 0 ? 'priced' : 'pending'
             });
+            const warning = highValueWarning(inventory[inventory.length - 1]);
+            if (warning) importHighValueWarnings++;
             imported++;
         });
 
@@ -1968,6 +2050,9 @@
         autoSave();
         clearScanReview();
         showToast(`Imported ${imported} scanned item${imported === 1 ? '' : 's'}`, 'success');
+        if (importHighValueWarnings > 0) {
+            showToast(`${importHighValueWarnings} high-value item${importHighValueWarnings === 1 ? '' : 's'} may need receipts, photos, serial/model numbers, appraisals, or adjuster review.`, 'warning');
+        }
         document.getElementById('inventory-items').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
         if (priceAfterImport) {
@@ -2016,6 +2101,8 @@
                     clearItemPriceSource(item);
                 }
                 showToast(`Updated: ${desc}`, 'success');
+                const warning = highValueWarning(item);
+                if (warning) showToast(warning, 'warning');
             }
             editingItemId = null;
             exitEditMode();
@@ -2040,6 +2127,8 @@
             }
             inventory.push(item);
             showToast(`Added: ${desc}`, 'success');
+            const warning = highValueWarning(item);
+            if (warning) showToast(warning, 'warning');
         }
 
         renderInventory();
@@ -2171,6 +2260,18 @@
             const statusClass = item.status === 'priced' ? 'status-priced' : item.status === 'error' ? 'status-error' : 'status-pending';
             const statusLabel = item.status === 'priced' ? 'Priced' : item.status === 'error' ? 'Error' : 'Pending';
             const sourceSummary = itemSourceSummary(item);
+            const evidence = itemEvidenceProfile(item);
+            const warning = highValueWarning(item);
+            const evidenceHtml = `
+                <div class="mt-2 inline-flex items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-[11px] font-bold leading-tight ${evidence.className}" title="${escapeHtml(evidence.detail)}">
+                    <i class="fas fa-shield-alt mt-0.5"></i>
+                    <span>Evidence: ${escapeHtml(evidence.label)}</span>
+                </div>`;
+            const warningHtml = warning ? `
+                <div class="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] text-amber-900 leading-relaxed">
+                    <i class="fas fa-exclamation-triangle mr-1"></i>
+                    <strong>High-value review:</strong> ${escapeHtml(warning.replace('High-value review recommended: ', ''))}
+                </div>` : '';
             const sourceHtml = sourceSummary ? `
                 <div class="mt-2 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-[11px] text-blue-800 leading-relaxed">
                     <i class="fas fa-link mr-1"></i>
@@ -2194,6 +2295,8 @@
                             <span><i class="fas fa-star mr-1"></i>${item.condition}</span>
                         </div>
                         ${item.notes ? `<p class="mt-1.5 text-xs text-slate-500 italic"><i class="fas fa-sticky-note mr-1 text-amber-400"></i>${escapeHtml(item.notes)}</p>` : ''}
+                        ${evidenceHtml}
+                        ${warningHtml}
                     </div>
                     <div class="flex items-center gap-1.5 flex-shrink-0">
                         <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${statusClass}">${statusLabel}</span>
@@ -2417,12 +2520,72 @@
         }
 
         y += 50;
+        const reportSummary = inventoryReportSummary();
+        const totalRCV = reportSummary.totalRCV;
+        const totalACV = reportSummary.totalACV;
+
+        // Adjuster cover page
+        doc.setFontSize(15);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(15, 23, 42);
+        doc.text('Adjuster Cover Page', margin, y);
+        y += 8;
+
+        doc.setFillColor(239, 246, 255);
+        doc.setDrawColor(191, 219, 254);
+        doc.roundedRect(margin, y, pageWidth - 2 * margin, 34, 3, 3, 'FD');
+        doc.setFontSize(8.5);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(30, 58, 138);
+        doc.text('Claim Inventory Summary', margin + 5, y + 7);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(15, 23, 42);
+        doc.text(`Total Items: ${inventory.length}`, margin + 5, y + 15);
+        doc.text(`Total Replacement Cost: $${totalRCV.toFixed(2)}`, margin + 5, y + 22);
+        doc.text(`Total Current / ACV Estimate: $${totalACV.toFixed(2)}`, margin + 85, y + 15);
+        doc.text(`Estimated Wear & Tear: $${(totalRCV - totalACV).toFixed(2)}`, margin + 85, y + 22);
+        doc.text(`Items with price sources: ${reportSummary.sourceCount}`, margin + 5, y + 29);
+        doc.text(`High-value review items: ${reportSummary.highValueCount}`, margin + 85, y + 29);
+        y += 44;
+
+        doc.setFillColor(248, 250, 252);
+        doc.setDrawColor(226, 232, 240);
+        doc.roundedRect(margin, y, pageWidth - 2 * margin, 30, 3, 3, 'FD');
+        doc.setFontSize(8.5);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(51, 65, 85);
+        doc.text('Evidence Snapshot', margin + 5, y + 7);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Strong evidence items: ${reportSummary.strong}`, margin + 5, y + 15);
+        doc.text(`Good evidence items: ${reportSummary.good}`, margin + 75, y + 15);
+        doc.text(`Needs review items: ${reportSummary.needsReview}`, margin + 140, y + 15);
+        const coverWarningLines = doc.splitTextToSize('High-value warnings are advisory only. Items remain included in this report; customers should add receipts, photos, serial/model numbers, appraisals, or adjuster notes when available.', pageWidth - 2 * margin - 10);
+        doc.text(coverWarningLines, margin + 5, y + 23);
+
+        doc.addPage();
+        doc.setFillColor(0, 63, 135);
+        doc.rect(0, 0, pageWidth, 32, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(17);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Detailed Claims Inventory', margin, 14);
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'normal');
+        doc.text('Replacement values are estimates. Price sources are included where available.', margin, 23);
+        y = 40;
+        doc.setTextColor(0, 0, 0);
 
         // Items Table
         const tableData = inventory.map((item, idx) => {
             const rcv = item.replacementCost * item.quantity;
             const acvT = item.acv * item.quantity;
-            const descLine = item.description + (item.quantity > 1 ? ` (×${item.quantity})` : '') + (item.notes ? `\n${item.notes}` : '');
+            const evidence = itemEvidenceProfile(item);
+            const warning = highValueWarning(item);
+            const descLine = item.description
+                + (item.quantity > 1 ? ` (×${item.quantity})` : '')
+                + `\nEvidence: ${evidence.label}`
+                + (warning ? `\nHigh-value review recommended` : '')
+                + (item.notes ? `\n${item.notes}` : '');
             return [
                 idx + 1,
                 descLine,
@@ -2433,13 +2596,6 @@
                 rcv > 0 ? '$' + rcv.toFixed(2) : '—',
                 acvT > 0 ? '$' + acvT.toFixed(2) : '—'
             ];
-        });
-
-        // Totals
-        let totalRCV = 0, totalACV = 0;
-        inventory.forEach(item => {
-            totalRCV += item.replacementCost * item.quantity;
-            totalACV += item.acv * item.quantity;
         });
 
         doc.autoTable({
@@ -2564,11 +2720,13 @@
         csv += `Type of Loss,${claim.lossType}\n`;
         csv += `Adjuster,${claim.adjuster}\n\n`;
         csv += `Important Estimate Notice,${csvCell(ESTIMATE_NOTICE_TEXT)}\n\n`;
-        csv += '#,Description,Room,Category,Age (Years),Condition,Qty,Replacement Cost,ACV,Depreciation,Original Price,Price Source,Source URL,Source Price,Source Checked,Match Type,Notes\n';
+        csv += '#,Description,Room,Category,Age (Years),Condition,Qty,Replacement Cost,ACV,Depreciation,Original Price,Evidence Strength,High Value Warning,Price Source,Source URL,Source Price,Source Checked,Match Type,Notes\n';
 
         inventory.forEach((item, idx) => {
             const rcv = item.replacementCost * item.quantity;
             const acvT = item.acv * item.quantity;
+            const evidence = itemEvidenceProfile(item);
+            const warning = highValueWarning(item);
             csv += [
                 idx + 1,
                 csvCell(item.description),
@@ -2581,6 +2739,8 @@
                 acvT.toFixed(2),
                 (rcv - acvT).toFixed(2),
                 item.originalPrice || '',
+                csvCell(evidence.label),
+                csvCell(warning),
                 csvCell(itemSourceLabel(item)),
                 csvCell(item.priceSourceUrl || ''),
                 item.priceSourcePrice || '',
@@ -2595,7 +2755,7 @@
             totalRCV += item.replacementCost * item.quantity;
             totalACV += item.acv * item.quantity;
         });
-        csv += `\nTOTALS,,,,,,,$${totalRCV.toFixed(2)},$${totalACV.toFixed(2)},$${(totalRCV - totalACV).toFixed(2)},,,,,,,\n`;
+        csv += `\nTOTALS,,,,,,,$${totalRCV.toFixed(2)},$${totalACV.toFixed(2)},$${(totalRCV - totalACV).toFixed(2)},,,,,,,,,\n`;
 
         const blob = new Blob([csv], { type: 'text/csv' });
         const a = document.createElement('a');
@@ -2635,6 +2795,10 @@
             if (item.quantity > 1) body += ` (×${item.quantity})`;
             body += `\n   Room: ${item.room || 'N/A'} | Age: ${item.age} yrs | Condition: ${item.condition}\n`;
             body += `   Replacement: $${(item.replacementCost * item.quantity).toFixed(2)} | ACV: $${(item.acv * item.quantity).toFixed(2)}\n`;
+            const evidence = itemEvidenceProfile(item);
+            const warning = highValueWarning(item);
+            body += `   Evidence Strength: ${evidence.label} - ${evidence.detail}\n`;
+            if (warning) body += `   High Value Warning: ${warning}\n`;
             const sourceText = itemSourceText(item);
             if (sourceText) body += `   Price Source: ${sourceText}\n`;
             if (item.notes) body += `   Notes: ${item.notes}\n`;
@@ -2859,6 +3023,9 @@
         } else if (type === 'error') {
             toast.classList.add('bg-red-600', 'text-white');
             toast.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+        } else if (type === 'warning') {
+            toast.classList.add('bg-amber-500', 'text-white');
+            toast.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
         } else {
             toast.classList.add('bg-slate-800', 'text-white');
             toast.innerHTML = message;
