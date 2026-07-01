@@ -21,7 +21,8 @@
     </script>
     <link rel="preconnect" href="https://i.imgur.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="preload" as="image" href="contact-us-hero.webp" type="image/webp" fetchpriority="high">
+    <link rel="preload" as="image" href="contact-us-hero-mobile.webp" type="image/webp" media="(max-width: 767px)" fetchpriority="high">
+    <link rel="preload" as="image" href="contact-us-hero.webp" type="image/webp" media="(min-width: 768px)" fetchpriority="high">
 
     <!-- Primary Meta Tags -->
     <title>Contact Bill Layne Insurance | Elkin & Dobson NC Offices</title>
@@ -38,8 +39,8 @@
     <meta property="og:title" content="Contact Bill Layne Insurance | Elkin & Dobson NC">
     <meta property="og:description" content="Call, email, visit, or request a quote from Bill Layne Insurance in Elkin and Aseguranza Comunidad Unida in Dobson. Se habla Espanol.">
     <meta property="og:image" content="https://www.billlayneinsurance.com/contact-us/contact-us-hero.webp">
-    <meta property="og:image:width" content="1344">
-    <meta property="og:image:height" content="768">
+    <meta property="og:image:width" content="1600">
+    <meta property="og:image:height" content="900">
     <meta property="og:locale" content="en_US">
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
@@ -122,13 +123,13 @@
       },
       "serviceType": ["Auto Insurance", "Home Insurance", "Commercial Insurance"],
       "employee": [
-        {"@type": "Person", "name": "Bill Layne", "jobTitle": "Agent/Owner", "email": "Bill@BillLayneInsurance.com"},
-        {"@type": "Person", "name": "Debbie Garner", "jobTitle": "Office Manager", "email": "Debbie@BillLayneInsurance.com"},
-        {"@type": "Person", "name": "Tina Jennings", "jobTitle": "Agent", "email": "Tina@BillLayneInsurance.com"},
-        {"@type": "Person", "name": "Robin Holbrook", "jobTitle": "Agent", "email": "Robin@BillLayneInsurance.com"},
-        {"@type": "Person", "name": "Scott Coleson", "jobTitle": "Agent", "email": "Scott@BillLayneInsurance.com"},
-        {"@type": "Person", "name": "Michele Royall", "jobTitle": "Agent", "email": "Michele@BillLayneInsurance.com"},
-        {"@type": "Person", "name": "Rosa Jimenez", "jobTitle": "Agent", "email": "jimenez.links@gmail.com", "image": "https://i.imgur.com/W2t2vHm.jpeg", "workLocation": {"@type": "Place", "name": "Aseguranza Comunidad Unida", "address": "209 S Main St, Dobson, NC 27017"}, "knowsLanguage": ["es", "en"]}
+        {"@type": "Person", "name": "Bill Layne", "jobTitle": "Agent / President", "email": "Bill@BillLayneInsurance.com", "image": "https://www.billlayneinsurance.com/contact-us/agents/bill-layne.webp"},
+        {"@type": "Person", "name": "Debbie Garner", "jobTitle": "Agent", "email": "Debbie@BillLayneInsurance.com", "image": "https://www.billlayneinsurance.com/contact-us/agents/debbie-garner.webp"},
+        {"@type": "Person", "name": "Tina Jennings", "jobTitle": "Agent", "email": "Tina@BillLayneInsurance.com", "image": "https://www.billlayneinsurance.com/contact-us/agents/tina-jennings.webp"},
+        {"@type": "Person", "name": "Robin Holbrook", "jobTitle": "Agent", "email": "Robin@BillLayneInsurance.com", "image": "https://www.billlayneinsurance.com/contact-us/agents/robin-holbrook.webp"},
+        {"@type": "Person", "name": "Scott Coleson", "jobTitle": "Agent", "email": "Scott@BillLayneInsurance.com", "image": "https://www.billlayneinsurance.com/contact-us/agents/scott-coleson.webp"},
+        {"@type": "Person", "name": "Michele Royall", "jobTitle": "Agent", "email": "Michele@BillLayneInsurance.com", "image": "https://www.billlayneinsurance.com/contact-us/agents/michele-royall.webp"},
+        {"@type": "Person", "name": "Rosa Jimenez", "jobTitle": "Agent", "email": "jimenez.links@gmail.com", "image": "https://www.billlayneinsurance.com/contact-us/agents/rosa-jimenez.webp", "workLocation": {"@type": "Place", "name": "Aseguranza Comunidad Unida", "address": "209 S Main St, Dobson, NC 27017"}, "knowsLanguage": ["es", "en"]}
       ]
     }
     </script>
@@ -164,7 +165,37 @@
         }
 
         .bg-vivid-hero {
-            background: linear-gradient(rgba(15, 23, 42, 0.72), rgba(30, 58, 138, 0.58)), url("contact-us-hero.webp") center/cover no-repeat;
+            background: #0f172a;
+        }
+
+        .contact-hero-picture {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+
+        .contact-hero-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .contact-hero-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            background: linear-gradient(90deg, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.74) 42%, rgba(15, 23, 42, 0.24) 72%, rgba(15, 23, 42, 0.08) 100%);
+        }
+
+        @media (max-width: 767px) {
+            .contact-hero-picture img {
+                object-position: center top;
+            }
+
+            .contact-hero-overlay {
+                background: linear-gradient(180deg, rgba(15, 23, 42, 0.82) 0%, rgba(15, 23, 42, 0.72) 54%, rgba(15, 23, 42, 0.96) 100%);
+            }
         }
 
         .reveal { opacity: 0; transform: translateY(20px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
@@ -339,12 +370,16 @@
     <!-- HERO SECTION -->
     <main id="main-content">
 <section class="relative pt-24 pb-14 lg:pt-48 lg:pb-32 overflow-hidden bg-vivid-hero text-white min-h-[50vh] lg:min-h-[60vh] flex items-center">
-        <div class="absolute inset-0 z-0 lg:hidden bg-gradient-to-b from-slate-900/60 via-slate-900/70 to-slate-900/90 pointer-events-none"></div>
+        <picture class="contact-hero-picture" aria-hidden="true">
+            <source media="(max-width: 767px)" srcset="contact-us-hero-mobile.webp">
+            <img src="contact-us-hero.webp" alt="" width="1600" height="900" fetchpriority="high" decoding="async">
+        </picture>
+        <div class="contact-hero-overlay pointer-events-none"></div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full text-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full text-center lg:text-left">
             <div class="reveal active">
                 <nav aria-label="Breadcrumb" class="mb-6">
-                    <ol class="flex items-center justify-center gap-2 text-sm text-blue-200/80">
+                    <ol class="flex items-center justify-center lg:justify-start gap-2 text-sm text-blue-200/80">
                         <li><a href="../index.html" class="hover:text-white transition-colors">Home</a></li>
                         <li><i class="fas fa-chevron-right text-[10px] opacity-50"></i></li>
                         <li class="text-white font-medium">Contact Us</li>
@@ -357,33 +392,33 @@
                     Get In Touch<br>
                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-white to-indigo-200">With Our Local Team.</span>
                 </h1>
-                <p class="text-base sm:text-lg md:text-xl text-indigo-100 mb-6 max-w-2xl mx-auto font-medium leading-relaxed drop-shadow-lg">
+                <p class="text-base sm:text-lg md:text-xl text-indigo-100 mb-6 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed drop-shadow-lg">
                     Call, email, visit, or send a message to our Elkin team or bilingual Dobson office.
                 </p>
-                <p class="text-sm text-indigo-200/80 mb-12 max-w-xl mx-auto">
+                <p class="text-sm text-indigo-200/80 mb-12 max-w-xl mx-auto lg:mx-0">
                     As an independent agency, we work for <strong class="text-white">you</strong> - not the insurance companies. That means honest advice and multiple options.
                 </p>
 
                 <!-- Action Cards -->
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-6 max-w-4xl mx-auto">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 max-w-3xl mx-auto lg:mx-0">
                     <a href="tel:3368351993" class="group glass-dark p-3 sm:p-6 rounded-xl sm:rounded-3xl hover:bg-white/10 transition-all border border-white/10 flex flex-col items-center">
                         <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-300 text-lg sm:text-2xl mb-2 sm:mb-4 group-hover:scale-110 transition-transform"><i class="fas fa-phone-alt"></i></div>
                         <h3 class="font-bold text-xs sm:text-lg mb-0.5">Call Us</h3>
                         <p class="text-[10px] sm:text-sm text-blue-100 hidden sm:block">(336) 835-1993</p>
                     </a>
+                    <a href="/get-quote" class="group glass-dark p-3 sm:p-6 rounded-xl sm:rounded-3xl hover:bg-white/10 transition-all border border-white/10 flex flex-col items-center">
+                        <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-200 text-lg sm:text-2xl mb-2 sm:mb-4 group-hover:scale-110 transition-transform"><i class="fas fa-bolt"></i></div>
+                        <h3 class="font-bold text-xs sm:text-lg mb-0.5">Get Quote</h3>
+                        <p class="text-[10px] sm:text-sm text-amber-100 hidden sm:block">Compare rates</p>
+                    </a>
                     <a href="#contactForm" class="group glass-dark p-3 sm:p-6 rounded-xl sm:rounded-3xl hover:bg-white/10 transition-all border border-white/10 flex flex-col items-center">
                         <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-green-500/20 flex items-center justify-center text-green-300 text-lg sm:text-2xl mb-2 sm:mb-4 group-hover:scale-110 transition-transform"><i class="fas fa-envelope"></i></div>
-                        <h3 class="font-bold text-xs sm:text-lg mb-0.5">Email Us</h3>
+                        <h3 class="font-bold text-xs sm:text-lg mb-0.5">Send Message</h3>
                         <p class="text-[10px] sm:text-sm text-green-100 hidden sm:block">Reply in 24h</p>
-                    </a>
-                    <a href="https://m.me/dollarbillagency" target="_blank" rel="noopener noreferrer" class="group glass-dark p-3 sm:p-6 rounded-xl sm:rounded-3xl hover:bg-white/10 transition-all border border-white/10 flex flex-col items-center">
-                        <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-sky-500/20 flex items-center justify-center text-sky-300 text-lg sm:text-2xl mb-2 sm:mb-4 group-hover:scale-110 transition-transform"><i class="fab fa-facebook-messenger"></i></div>
-                        <h3 class="font-bold text-xs sm:text-lg mb-0.5">Message</h3>
-                        <p class="text-[10px] sm:text-sm text-sky-100 hidden sm:block">Facebook</p>
                     </a>
                     <a href="https://maps.google.com/?q=1283+N+Bridge+St,+Elkin,+NC+28621" target="_blank" rel="noopener noreferrer" class="group glass-dark p-3 sm:p-6 rounded-xl sm:rounded-3xl hover:bg-white/10 transition-all border border-white/10 flex flex-col items-center">
                         <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-300 text-lg sm:text-2xl mb-2 sm:mb-4 group-hover:scale-110 transition-transform"><i class="fas fa-map-marker-alt"></i></div>
-                        <h3 class="font-bold text-xs sm:text-lg mb-0.5">Visit Us</h3>
+                        <h3 class="font-bold text-xs sm:text-lg mb-0.5">Directions</h3>
                         <p class="text-[10px] sm:text-sm text-purple-100 hidden sm:block">Elkin, NC</p>
                     </a>
                 </div>
@@ -508,45 +543,85 @@
 
                     <!-- Meet The Team -->
                     <div class="reveal delay-200">
-                        <h3 class="font-display font-bold text-xl sm:text-2xl text-slate-900 mb-4 sm:mb-6">Meet The Team</h3>
+                        <div class="bg-white p-4 sm:p-5 rounded-3xl shadow-sm border border-slate-100 mb-4 sm:mb-6">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-display font-bold text-xl sm:text-2xl text-slate-900">Licensed Agents</h3>
+                                    <p class="text-xs sm:text-sm text-slate-500">Real people in Elkin and Dobson ready to help.</p>
+                                </div>
+                            </div>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                Choose a team member or use the form. Either way, your request goes to a licensed insurance professional.
+                            </p>
+                        </div>
 
-                        <!-- Staff Caricature Image -->
-                        <div class="bg-gradient-to-br from-indigo-50 to-indigo-50 p-4 rounded-3xl border border-indigo-100 mb-6 overflow-hidden">
-                            <img src="https://i.imgur.com/5Kd7Wj7.jpeg" alt="Bill Layne Insurance team caricature" width="800" height="533" loading="lazy" decoding="async" class="w-full rounded-2xl shadow-lg">
-                            <p class="text-center text-sm text-indigo-700 font-bold mt-4">Your Local Insurance Experts</p>
+                        <div class="bg-white p-3 rounded-3xl shadow-sm border border-slate-100 mb-4 sm:mb-6 overflow-hidden">
+                            <img src="agents/bill-layne-team.webp" alt="Bill Layne Insurance licensed agent team in Elkin North Carolina" width="900" height="675" loading="lazy" decoding="async" class="w-full rounded-2xl object-cover">
+                            <div class="pt-4 px-1 pb-1">
+                                <p class="text-sm font-bold text-slate-900">Real local agents. No call center.</p>
+                                <p class="text-xs text-slate-500 leading-relaxed mt-1">When you call or send a message, you are reaching people here in North Carolina who can help with quotes, policy questions, and service.</p>
+                            </div>
                         </div>
 
                         <!-- Team Contact Grid -->
-                        <div class="grid grid-cols-2 gap-3">
-                            <a href="mailto:Bill@BillLayneInsurance.com" class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-center hover:shadow-md hover:border-indigo-200 transition-all group">
-                                <h4 class="font-bold text-slate-900 text-sm">Bill Layne</h4>
-                                <p class="text-[10px] text-indigo-600 font-bold uppercase">Owner</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <a href="mailto:Tina@BillLayneInsurance.com" class="group bg-white p-3 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-indigo-200 transition-all flex items-center gap-3">
+                                <img src="agents/tina-jennings.webp" alt="Tina Jennings insurance agent at Bill Layne Insurance" width="320" height="320" loading="lazy" decoding="async" class="w-14 h-14 rounded-2xl object-cover border-2 border-white ring-1 ring-slate-200 flex-shrink-0">
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-slate-900 text-sm">Tina Jennings</h4>
+                                    <p class="text-[10px] text-indigo-600 font-bold uppercase tracking-wide">Agent</p>
+                                    <p class="text-[11px] text-slate-500 truncate">tina@billlayneinsurance.com</p>
+                                </div>
                             </a>
-                            <a href="mailto:Debbie@BillLayneInsurance.com" class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-center hover:shadow-md hover:border-indigo-200 transition-all group">
-                                <h4 class="font-bold text-slate-900 text-sm">Debbie Garner</h4>
-                                <p class="text-[10px] text-indigo-600 font-bold uppercase">Manager</p>
+                            <a href="mailto:Robin@BillLayneInsurance.com" class="group bg-white p-3 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-indigo-200 transition-all flex items-center gap-3">
+                                <img src="agents/robin-holbrook.webp" alt="Robin Holbrook insurance agent at Bill Layne Insurance" width="320" height="320" loading="lazy" decoding="async" class="w-14 h-14 rounded-2xl object-cover border-2 border-white ring-1 ring-slate-200 flex-shrink-0">
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-slate-900 text-sm">Robin Holbrook</h4>
+                                    <p class="text-[10px] text-indigo-600 font-bold uppercase tracking-wide">Agent</p>
+                                    <p class="text-[11px] text-slate-500 truncate">robin@billlayneinsurance.com</p>
+                                </div>
                             </a>
-                            <a href="mailto:Tina@BillLayneInsurance.com" class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-center hover:shadow-md hover:border-indigo-200 transition-all group">
-                                <h4 class="font-bold text-slate-900 text-sm">Tina Jennings</h4>
-                                <p class="text-[10px] text-indigo-600 font-bold uppercase">Agent</p>
+                            <a href="mailto:Scott@BillLayneInsurance.com" class="group bg-white p-3 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-indigo-200 transition-all flex items-center gap-3">
+                                <img src="agents/scott-coleson.webp" alt="Scott Coleson insurance agent at Bill Layne Insurance" width="320" height="320" loading="lazy" decoding="async" class="w-14 h-14 rounded-2xl object-cover border-2 border-white ring-1 ring-slate-200 flex-shrink-0">
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-slate-900 text-sm">Scott Coleson</h4>
+                                    <p class="text-[10px] text-indigo-600 font-bold uppercase tracking-wide">Agent</p>
+                                    <p class="text-[11px] text-slate-500 truncate">scott@billlayneinsurance.com</p>
+                                </div>
                             </a>
-                            <a href="mailto:Robin@BillLayneInsurance.com" class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-center hover:shadow-md hover:border-indigo-200 transition-all group">
-                                <h4 class="font-bold text-slate-900 text-sm">Robin Holbrook</h4>
-                                <p class="text-[10px] text-indigo-600 font-bold uppercase">Agent</p>
+                            <a href="mailto:Michele@BillLayneInsurance.com" class="group bg-white p-3 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-indigo-200 transition-all flex items-center gap-3">
+                                <img src="agents/michele-royall.webp" alt="Michele Royall insurance agent at Bill Layne Insurance" width="320" height="320" loading="lazy" decoding="async" class="w-14 h-14 rounded-2xl object-cover border-2 border-white ring-1 ring-slate-200 flex-shrink-0">
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-slate-900 text-sm">Michele Royall</h4>
+                                    <p class="text-[10px] text-indigo-600 font-bold uppercase tracking-wide">Agent</p>
+                                    <p class="text-[11px] text-slate-500 truncate">michele@billlayneinsurance.com</p>
+                                </div>
                             </a>
-                            <a href="mailto:Scott@BillLayneInsurance.com" class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-center hover:shadow-md hover:border-indigo-200 transition-all group">
-                                <h4 class="font-bold text-slate-900 text-sm">Scott Coleson</h4>
-                                <p class="text-[10px] text-indigo-600 font-bold uppercase">Agent</p>
+                            <a href="mailto:Debbie@BillLayneInsurance.com" class="group bg-white p-3 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-indigo-200 transition-all flex items-center gap-3">
+                                <img src="agents/debbie-garner.webp" alt="Debbie Garner insurance agent at Bill Layne Insurance" width="320" height="320" loading="lazy" decoding="async" class="w-14 h-14 rounded-2xl object-cover border-2 border-white ring-1 ring-slate-200 flex-shrink-0">
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-slate-900 text-sm">Debbie Garner</h4>
+                                    <p class="text-[10px] text-indigo-600 font-bold uppercase tracking-wide">Agent</p>
+                                    <p class="text-[11px] text-slate-500 truncate">debbie@billlayneinsurance.com</p>
+                                </div>
                             </a>
-                            <a href="mailto:Michele@BillLayneInsurance.com" class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-center hover:shadow-md hover:border-indigo-200 transition-all group">
-                                <h4 class="font-bold text-slate-900 text-sm">Michele Royall</h4>
-                                <p class="text-[10px] text-indigo-600 font-bold uppercase">Agent</p>
+                            <a href="mailto:Bill@BillLayneInsurance.com" class="group bg-white p-3 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-indigo-200 transition-all flex items-center gap-3">
+                                <img src="agents/bill-layne.webp" alt="Bill Layne agent and president at Bill Layne Insurance" width="320" height="320" loading="lazy" decoding="async" class="w-14 h-14 rounded-2xl object-cover border-2 border-white ring-1 ring-slate-200 flex-shrink-0">
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-slate-900 text-sm">Bill Layne</h4>
+                                    <p class="text-[10px] text-indigo-600 font-bold uppercase tracking-wide">Agent / President</p>
+                                    <p class="text-[11px] text-slate-500 truncate">bill@billlayneinsurance.com</p>
+                                </div>
                             </a>
-                            <a href="mailto:jimenez.links@gmail.com" class="bg-gradient-to-br from-emerald-50 to-teal-50 p-3 rounded-xl shadow-sm border border-emerald-100 text-center hover:shadow-md hover:border-emerald-200 transition-all group col-span-2 flex items-center gap-3">
-                                <img src="https://i.imgur.com/W2t2vHm.jpeg" alt="Rosa Jimenez bilingual insurance agent at Bill Layne Insurance" width="40" height="40" loading="lazy" decoding="async" class="w-10 h-10 rounded-full object-cover border-2 border-white ring-1 ring-emerald-200 flex-shrink-0">
-                                <div class="text-left">
+                            <a href="mailto:jimenez.links@gmail.com" class="group bg-gradient-to-br from-emerald-50 to-teal-50 p-3 rounded-2xl shadow-sm border border-emerald-100 hover:shadow-md hover:border-emerald-200 transition-all flex items-center gap-3 sm:col-span-2">
+                                <img src="agents/rosa-jimenez.webp" alt="Rosa Jimenez bilingual insurance agent at Bill Layne Insurance" width="320" height="320" loading="lazy" decoding="async" class="w-14 h-14 rounded-2xl object-cover border-2 border-white ring-1 ring-emerald-200 flex-shrink-0">
+                                <div class="min-w-0">
                                     <h4 class="font-bold text-slate-900 text-sm">Rosa Jimenez <span class="text-xs">&#127474;&#127485;</span></h4>
-                                    <p class="text-[10px] text-emerald-600 font-bold uppercase">Agent &bull; Dobson &bull; Se Habla Espa&ntilde;ol</p>
+                                    <p class="text-[10px] text-emerald-600 font-bold uppercase tracking-wide">Agent &bull; Dobson &bull; Se Habla Espa&ntilde;ol</p>
+                                    <p class="text-[11px] text-slate-500 truncate">jimenez.links@gmail.com</p>
                                 </div>
                             </a>
                         </div>
@@ -876,7 +951,7 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebPage",
+      "@type": "ContactPage",
       "@id": "https://www.billlayneinsurance.com/contact-us/#webpage",
       "name": "Contact Bill Layne Insurance Agency",
       "description": "Contact Bill Layne Insurance Agency in Elkin, NC or Aseguranza Comunidad Unida in Dobson for insurance quotes, service, claims help, and bilingual assistance.",
@@ -886,10 +961,10 @@
       "primaryImageOfPage": {
         "@type": "ImageObject",
         "url": "https://www.billlayneinsurance.com/contact-us/contact-us-hero.webp",
-        "width": 1344,
-        "height": 768
+        "width": 1600,
+        "height": 900
       },
-      "dateModified": "2026-06-23",
+      "dateModified": "2026-07-01",
       "inLanguage": "en-US",
       "speakable": {
         "@type": "SpeakableSpecification",
