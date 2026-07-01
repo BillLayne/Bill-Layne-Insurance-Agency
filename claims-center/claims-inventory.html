@@ -776,7 +776,7 @@
                 </div>
                 <div class="min-w-0 flex-1">
                     <p class="font-bold text-green-900 text-sm">Price helper is ready</p>
-                    <p class="text-xs text-green-700 leading-relaxed">Just list your items — when you're ready, tap <strong>"Look Up Prices"</strong> and we'll find what each one costs to buy new today. Nothing to set up.</p>
+                    <p class="text-xs text-green-700 leading-relaxed">Just list your items - when you're ready, tap <strong>"Look Up Prices"</strong> and we'll find what each one costs to buy new today, including source details when available. Nothing to set up.</p>
                 </div>
                 <span class="inline-flex items-center gap-1.5 bg-green-500 text-white text-[10px] font-black px-2.5 py-1.5 rounded-full shrink-0"><i class="fas fa-check-circle"></i> Ready</span>
             </div>
@@ -1358,6 +1358,7 @@
     let itemIdCounter = 0;
     let editingItemId = null; // Track which item is being edited
     let scannedInventoryItems = [];
+    let pendingPriceSource = null;
 
     // Expected useful life by category (years) for depreciation
     const USEFUL_LIFE = {
@@ -1402,7 +1403,7 @@
             desc.innerHTML = 'Click <strong>AI Lookup</strong> on each item, or <strong>Look Up Prices</strong> to do all at once.';
         } else {
             btn.classList.add('hidden');
-            desc.innerHTML = 'Type your items or scan a paper list, then click <strong>"Look Up Prices"</strong> and AI will find prices for everything at once.';
+            desc.innerHTML = 'Type your items or scan a paper list, then click <strong>"Look Up Prices"</strong> and AI will find prices and source details for everything at once.';
         }
         localStorage.setItem('bli_ai_mode', aiPerItemMode ? 'per-item' : 'batch');
     }
@@ -1476,6 +1477,68 @@
         return Math.max(acv, replacementCost * 0.15); // Minimum 15% of replacement
     }
 
+    function normalizeSourceUrl(url) {
+        const text = String(url || '').trim();
+        if (!text) return '';
+        try {
+            const parsed = new URL(text);
+            return ['http:', 'https:'].includes(parsed.protocol) ? parsed.href : '';
+        } catch (e) {
+            return '';
+        }
+    }
+
+    function priceSourceFromResult(result) {
+        if (!result) return {};
+        return {
+            priceSourceName: String(result.sourceName || '').trim(),
+            priceSourceUrl: normalizeSourceUrl(result.sourceUrl),
+            priceSourcePrice: Number.isFinite(Number(result.sourcePrice)) ? Number(result.sourcePrice) : (Number.isFinite(Number(result.currentPrice)) ? Number(result.currentPrice) : 0),
+            priceSourceCheckedAt: String(result.sourceCheckedAt || new Date().toISOString().split('T')[0]).trim(),
+            priceSourceMatch: String(result.sourceMatch || 'Comparable').trim(),
+            priceSourceExplanation: String(result.explanation || '').trim(),
+            priceSourceEngine: String(result.source || '').trim()
+        };
+    }
+
+    function itemSourceLabel(item) {
+        return item.priceSourceName || (item.priceSourceEngine === 'fallback' ? 'Fallback estimate table' : '');
+    }
+
+    function itemSourceSummary(item) {
+        const label = itemSourceLabel(item);
+        if (!label && !item.priceSourceUrl) return '';
+        const match = item.priceSourceMatch || 'Comparable';
+        const date = item.priceSourceCheckedAt || '';
+        const price = Number(item.priceSourcePrice || 0) > 0 ? ` at $${Number(item.priceSourcePrice).toFixed(2)}` : '';
+        return `${label || 'Replacement source'}${price} (${match}${date ? ', checked ' + date : ''})`;
+    }
+
+    function itemSourceText(item) {
+        const summary = itemSourceSummary(item);
+        if (!summary) return '';
+        return item.priceSourceUrl ? `${summary} - ${item.priceSourceUrl}` : summary;
+    }
+
+    function sourceMatchesPrice(source, price) {
+        const sourcePrice = Number(source?.priceSourcePrice || 0);
+        return source && sourcePrice > 0 && Math.abs(sourcePrice - price) < 0.01;
+    }
+
+    function csvCell(value) {
+        return `"${String(value ?? '').replace(/"/g, '""')}"`;
+    }
+
+    function clearItemPriceSource(item) {
+        delete item.priceSourceName;
+        delete item.priceSourceUrl;
+        delete item.priceSourcePrice;
+        delete item.priceSourceCheckedAt;
+        delete item.priceSourceMatch;
+        delete item.priceSourceExplanation;
+        delete item.priceSourceEngine;
+    }
+
     // ===== AI PRICE LOOKUP (Single Item) =====
     async function aiPriceLookup() {
         const desc = document.getElementById('item-desc').value.trim();
@@ -1521,12 +1584,21 @@
 
             if (result && result.currentPrice && typeof result.currentPrice === 'number') {
                 document.getElementById('item-price').value = result.currentPrice.toFixed(2);
+                pendingPriceSource = priceSourceFromResult(result);
                 statusDiv.className = 'mb-4 p-3 rounded-xl text-xs font-medium flex items-center gap-2 bg-green-50 text-green-700';
                 statusDiv.innerHTML = `<i class="fas fa-check-circle"></i> Found: <strong>${escapeHtml(desc)}</strong> — $${result.currentPrice.toFixed(2)} replacement cost<br><span class="text-[10px] opacity-70">${escapeHtml(result.explanation || '')}</span>`;
+                const sourceSummary = itemSourceSummary(pendingPriceSource);
+                if (sourceSummary) {
+                    statusDiv.innerHTML += `<br><span class="text-[10px] opacity-80">Source: ${escapeHtml(sourceSummary)}</span>`;
+                }
+                if (pendingPriceSource.priceSourceUrl) {
+                    statusDiv.innerHTML += `<br><a href="${escapeHtml(pendingPriceSource.priceSourceUrl)}" target="_blank" rel="noopener" class="underline font-bold">View replacement source</a>`;
+                }
             } else {
                 throw new Error('Invalid price data returned');
             }
         } catch (err) {
+            pendingPriceSource = null;
             statusDiv.className = 'mb-4 p-3 rounded-xl text-xs font-medium flex items-center gap-2 bg-red-50 text-red-700';
             statusDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> Could not find price: ${escapeHtml(err.message)}. You can enter the price manually.`;
         }
@@ -1594,6 +1666,7 @@
                     if (item && result.currentPrice && typeof result.currentPrice === 'number') {
                         item.replacementCost = result.currentPrice;
                         item.acv = calculateACV(result.currentPrice, item.age, item.category, item.condition);
+                        Object.assign(item, priceSourceFromResult(result));
                         item.status = 'priced';
                         totalSuccess++;
                     }
@@ -1919,11 +1992,13 @@
         if (isNaN(age) || age < 0) { age = 3; }
 
         const acv = price > 0 ? calculateACV(price, age, category, condition) : 0;
+        const matchingPendingSource = sourceMatchesPrice(pendingPriceSource, price) ? pendingPriceSource : null;
 
         if (editingItemId !== null) {
             // UPDATE existing item
             const item = inventory.find(i => i.id === editingItemId);
             if (item) {
+                const oldSourceStillMatches = sourceMatchesPrice(item, price);
                 item.description = desc;
                 item.room = room;
                 item.category = category;
@@ -1935,6 +2010,11 @@
                 item.acv = acv;
                 item.notes = notes;
                 item.status = price > 0 ? 'priced' : 'pending';
+                if (matchingPendingSource) {
+                    Object.assign(item, matchingPendingSource);
+                } else if (!oldSourceStillMatches) {
+                    clearItemPriceSource(item);
+                }
                 showToast(`Updated: ${desc}`, 'success');
             }
             editingItemId = null;
@@ -1955,6 +2035,9 @@
                 notes: notes,
                 status: price > 0 ? 'priced' : 'pending'
             };
+            if (matchingPendingSource) {
+                Object.assign(item, matchingPendingSource);
+            }
             inventory.push(item);
             showToast(`Added: ${desc}`, 'success');
         }
@@ -1991,6 +2074,7 @@
         const item = inventory.find(i => i.id === id);
         if (!item) return;
 
+        pendingPriceSource = null;
         editingItemId = id;
 
         // Fill form with item data
@@ -2086,6 +2170,13 @@
             const acvTotal = item.acv * item.quantity;
             const statusClass = item.status === 'priced' ? 'status-priced' : item.status === 'error' ? 'status-error' : 'status-pending';
             const statusLabel = item.status === 'priced' ? 'Priced' : item.status === 'error' ? 'Error' : 'Pending';
+            const sourceSummary = itemSourceSummary(item);
+            const sourceHtml = sourceSummary ? `
+                <div class="mt-2 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-[11px] text-blue-800 leading-relaxed">
+                    <i class="fas fa-link mr-1"></i>
+                    <strong>Price source:</strong> ${escapeHtml(sourceSummary)}
+                    ${item.priceSourceUrl ? `<a href="${escapeHtml(item.priceSourceUrl)}" target="_blank" rel="noopener" class="ml-1 font-bold underline">View price source</a>` : ''}
+                </div>` : '';
 
             html += `
             <div class="item-row bg-slate-50 rounded-xl p-4 border border-slate-100 fade-in" data-id="${item.id}">
@@ -2135,6 +2226,7 @@
                         <p class="text-sm font-extrabold text-amber-600">${rcv > 0 ? '$' + (rcv - acvTotal).toFixed(2) : '—'}</p>
                     </div>
                 </div>
+                ${sourceHtml}
             </div>`;
         });
 
@@ -2163,6 +2255,7 @@
         document.getElementById('item-category').selectedIndex = 0;
         document.getElementById('item-condition').value = 'Good';
         document.getElementById('ai-status').classList.add('hidden');
+        pendingPriceSource = null;
         // Collapse the optional details again for the next item
         const dEl = document.getElementById('add-details');
         if (dEl) dEl.open = false;
@@ -2378,7 +2471,7 @@
         });
 
         // Summary Box after table
-        const finalY = doc.lastAutoTable.finalY + 8;
+        let finalY = doc.lastAutoTable.finalY + 8;
         if (finalY < doc.internal.pageSize.getHeight() - 50) {
             doc.setFillColor(239, 246, 255);
             doc.setDrawColor(191, 219, 254);
@@ -2391,6 +2484,51 @@
             doc.setFont('helvetica', 'normal');
             doc.text(`Total Replacement Cost Value (RCV): $${totalRCV.toFixed(2)}`, margin + 5, finalY + 13);
             doc.text(`Total Actual Cash Value (ACV): $${totalACV.toFixed(2)}     |     Total Depreciation: $${(totalRCV - totalACV).toFixed(2)}`, margin + 5, finalY + 17.5);
+        }
+
+        const sourcedItems = inventory
+            .map((item, idx) => ({ item, idx }))
+            .filter(entry => itemSourceSummary(entry.item));
+        if (sourcedItems.length > 0) {
+            let sourceY = finalY + 30;
+            if (sourceY > doc.internal.pageSize.getHeight() - 45) {
+                doc.addPage();
+                sourceY = 18;
+            }
+
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(30, 58, 138);
+            doc.text('Replacement Price Sources', margin, sourceY);
+            sourceY += 6;
+
+            sourcedItems.forEach(({ item, idx }) => {
+                if (sourceY > doc.internal.pageSize.getHeight() - 28) {
+                    doc.addPage();
+                    sourceY = 18;
+                }
+
+                const summary = `#${idx + 1} ${item.description}: ${itemSourceSummary(item)}`;
+                const summaryLines = doc.splitTextToSize(summary, pageWidth - 2 * margin);
+                doc.setFontSize(7);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(51, 65, 85);
+                doc.text(summaryLines, margin, sourceY);
+                sourceY += summaryLines.length * 3.4;
+
+                if (item.priceSourceUrl) {
+                    const urlText = item.priceSourceUrl.length > 105 ? item.priceSourceUrl.slice(0, 102) + '...' : item.priceSourceUrl;
+                    doc.setTextColor(37, 99, 235);
+                    if (typeof doc.textWithLink === 'function') {
+                        doc.textWithLink(urlText, margin + 4, sourceY, { url: item.priceSourceUrl });
+                    } else {
+                        doc.text(urlText, margin + 4, sourceY);
+                    }
+                    sourceY += 5;
+                }
+            });
+
+            finalY = sourceY;
         }
 
         // Estimate notice
@@ -2425,13 +2563,31 @@
         csv += `Date of Loss,${claim.dateOfLoss}\n`;
         csv += `Type of Loss,${claim.lossType}\n`;
         csv += `Adjuster,${claim.adjuster}\n\n`;
-        csv += `Important Estimate Notice,"${ESTIMATE_NOTICE_TEXT.replace(/"/g, '""')}"\n\n`;
-        csv += '#,Description,Room,Category,Age (Years),Condition,Qty,Replacement Cost,ACV,Depreciation,Original Price,Notes\n';
+        csv += `Important Estimate Notice,${csvCell(ESTIMATE_NOTICE_TEXT)}\n\n`;
+        csv += '#,Description,Room,Category,Age (Years),Condition,Qty,Replacement Cost,ACV,Depreciation,Original Price,Price Source,Source URL,Source Price,Source Checked,Match Type,Notes\n';
 
         inventory.forEach((item, idx) => {
             const rcv = item.replacementCost * item.quantity;
             const acvT = item.acv * item.quantity;
-            csv += `${idx + 1},"${item.description}",${item.room || ''},${item.category || ''},${item.age},${item.condition},${item.quantity},${rcv.toFixed(2)},${acvT.toFixed(2)},${(rcv - acvT).toFixed(2)},${item.originalPrice || ''},"${(item.notes || '').replace(/"/g, '""')}"\n`;
+            csv += [
+                idx + 1,
+                csvCell(item.description),
+                csvCell(item.room || ''),
+                csvCell(item.category || ''),
+                item.age,
+                csvCell(item.condition),
+                item.quantity,
+                rcv.toFixed(2),
+                acvT.toFixed(2),
+                (rcv - acvT).toFixed(2),
+                item.originalPrice || '',
+                csvCell(itemSourceLabel(item)),
+                csvCell(item.priceSourceUrl || ''),
+                item.priceSourcePrice || '',
+                csvCell(item.priceSourceCheckedAt || ''),
+                csvCell(item.priceSourceMatch || ''),
+                csvCell(item.notes || '')
+            ].join(',') + '\n';
         });
 
         let totalRCV = 0, totalACV = 0;
@@ -2439,7 +2595,7 @@
             totalRCV += item.replacementCost * item.quantity;
             totalACV += item.acv * item.quantity;
         });
-        csv += `\nTOTALS,,,,,,,$${totalRCV.toFixed(2)},$${totalACV.toFixed(2)},$${(totalRCV - totalACV).toFixed(2)}\n`;
+        csv += `\nTOTALS,,,,,,,$${totalRCV.toFixed(2)},$${totalACV.toFixed(2)},$${(totalRCV - totalACV).toFixed(2)},,,,,,,\n`;
 
         const blob = new Blob([csv], { type: 'text/csv' });
         const a = document.createElement('a');
@@ -2479,6 +2635,8 @@
             if (item.quantity > 1) body += ` (×${item.quantity})`;
             body += `\n   Room: ${item.room || 'N/A'} | Age: ${item.age} yrs | Condition: ${item.condition}\n`;
             body += `   Replacement: $${(item.replacementCost * item.quantity).toFixed(2)} | ACV: $${(item.acv * item.quantity).toFixed(2)}\n`;
+            const sourceText = itemSourceText(item);
+            if (sourceText) body += `   Price Source: ${sourceText}\n`;
             if (item.notes) body += `   Notes: ${item.notes}\n`;
             body += '\n';
         });
