@@ -696,7 +696,7 @@
     </script>
 
     <!-- Resource Hints (Performance/LCP) -->
-    <link rel="preload" href="css/tailwind-index.css?v=20260525" as="style">
+    <link rel="preload" href="css/tailwind-index.css?v=20260702" as="style">
 
     <!-- Speculation Rules: prerender quote pages on hover/focus for instant navigation -->
     <!-- Browsers without support silently ignore this. Chrome 121+, Edge 121+. -->
@@ -716,9 +716,9 @@
     <!-- LCP image preload: hero AVIF gets fetched in parallel with HTML parse (saves 100-300ms LCP) -->
     <!-- Mobile (<768px): Bill Layne trust photo is the LCP candidate -->
     <link rel="preload" as="image" type="image/avif"
-          href="img/hero/bill_hero_mobile.avif"
-          imagesrcset="img/hero/bill_hero_mobile.avif 640w, img/hero/bill_hero_tablet.avif 960w, img/hero/bill_hero_full.avif 1536w"
-          imagesizes="(max-width: 767px) 100vw, 50vw"
+          href="img/hero/homepage_hero_mobile.avif"
+          imagesrcset="img/hero/homepage_hero_mobile.avif 640w, img/hero/homepage_hero_mobile_lg.avif 1112w"
+          imagesizes="100vw"
           media="(max-width: 767px)"
           fetchpriority="high">
     <!-- Desktop (>=768px): advisor background hero is the LCP candidate -->
@@ -770,8 +770,8 @@
     <!-- Layout-critical CSS: kept render-blocking (async would cause massive CLS) -->
     <!-- tailwind-index.css is a HOMEPAGE-ONLY subset (~60KB vs the 295KB site-wide build). -->
     <!-- Other pages still use tailwind-output.css. Rebuild homepage CSS via build-css-index.bat. -->
-    <link rel="stylesheet" href="css/mobile-dock.css">
-    <link rel="stylesheet" href="css/tailwind-index.css?v=20260525">
+    <link rel="stylesheet" href="css/mobile-dock.css?v=20260702">
+    <link rel="stylesheet" href="css/tailwind-index.css?v=20260702">
 
     <style>
         /* ==============================================
@@ -1231,17 +1231,22 @@
     <!-- MOBILE HERO (visible <768px only, managed by css/mobile-dock.css) -->
     <section class="mobile-hero" aria-label="Mobile Hero" style="padding:12px 16px 14px;">
         <div class="hero-inner">
-            <!-- Trust image — first thing visitors see -->
-            <picture>
-                <source type="image/avif" srcset="img/hero/bill_hero_mobile.avif 640w, img/hero/bill_hero_tablet.avif 960w, img/hero/bill_hero_full.avif 1536w" sizes="(max-width: 767px) 100vw, 50vw">
-                <source type="image/webp" srcset="img/hero/bill_hero_mobile.webp 640w, img/hero/bill_hero_tablet.webp 960w, img/hero/bill_hero_full.webp 1536w" sizes="(max-width: 767px) 100vw, 50vw">
-                <img src="https://i.imgur.com/xQlOXDP.jpeg" srcset="https://i.imgur.com/xQlOXDP.jpeg 640w, https://i.imgur.com/MTKUizj.jpeg 960w, https://i.imgur.com/7lEqkwC.jpeg 1536w" sizes="(max-width: 767px) 100vw, 50vw" alt="Bill Layne, owner of Bill Layne Insurance Agency in Elkin NC, meeting with longtime clients — 4.9 Google Rating, 2000+ NC families served since 2005" class="w-full rounded-xl shadow-2xl border border-white/10 mb-3" loading="eager" decoding="async" width="1536" height="1024" fetchpriority="high">
-            </picture>
+            <!-- Trust image — first thing visitors see (clean photo + HTML trust chip) -->
+            <div class="hero-photo-wrap">
+                <picture>
+                    <source type="image/avif" srcset="img/hero/homepage_hero_mobile.avif 640w, img/hero/homepage_hero_mobile_lg.avif 1112w" sizes="100vw">
+                    <source type="image/webp" srcset="img/hero/homepage_hero_mobile.webp 640w, img/hero/homepage_hero_mobile_lg.webp 1112w" sizes="100vw">
+                    <img src="img/hero/homepage_hero_mobile.jpg" alt="Bill Layne, owner of Bill Layne Insurance Agency in Elkin NC, shaking hands with longtime clients in his office with Pilot Mountain in the window" loading="eager" decoding="async" width="1112" height="626" fetchpriority="high">
+                </picture>
+                <div class="hero-trust-chip" aria-label="4.9 Google Rating, over 2,000 NC families served">
+                    <span class="chip-star" aria-hidden="true">&#9733;</span> 4.9 Google Rating
+                    <span class="chip-divider" aria-hidden="true"></span> 2,000+ NC Families
+                </div>
+            </div>
 
             <!-- Headline -->
             <div class="hero-headline text-[32px] mb-1 text-center drop-shadow-lg" role="heading" aria-level="1">Stop Overpaying $400+/yr<sup class="text-sm text-amber-300 font-bold" aria-describedby="mobile-hero-disclaimer">*</sup><br><span class="highlight">for NC Insurance.</span></div>
-            <p class="text-white/80 text-[13px] font-semibold mb-1.5 text-center tracking-[0.01em] leading-snug">Local Elkin agent · 20+ years · <strong class="text-white">No 1-800 number.</strong></p>
-            <p id="mobile-hero-disclaimer" class="text-white/60 text-[11px] font-medium mb-3 text-center leading-snug tracking-[0.015em]">*Avg. savings reported by NC clients. Results vary by coverage &amp; underwriting.</p>
+            <p class="text-white/80 text-[13px] font-semibold mb-3 text-center tracking-[0.01em] leading-snug">Local Elkin agent · 20+ years · <strong class="text-white">No 1-800 number.</strong></p>
 
             <!-- CTAs — tight -->
             <a href="/get-quote" data-utm-content="savings_cta" onclick="typeof gtag!=='undefined'&&gtag('event','quote_click',{'source':'mobile_hero'})" class="hero-cta p-3 text-[15px] mb-2">Check Savings <i class="fas fa-arrow-right"></i></a>
@@ -1251,6 +1256,7 @@
             <a href="#policy-review" onclick="typeof gtag!=='undefined'&&gtag('event','upload_policy_click',{'source':'mobile_hero'})" class="flex items-center justify-center gap-2 mt-2 text-white/80 text-xs font-bold underline underline-offset-4">
               <i class="fas fa-file-arrow-up text-amber-300"></i> Already insured? Upload your policy for review
             </a>
+            <p id="mobile-hero-disclaimer" class="text-white/50 text-[10.5px] font-medium mt-3 mb-0 text-center leading-snug tracking-[0.015em]">*Avg. savings reported by NC clients. Results vary by coverage &amp; underwriting.</p>
         </div>
     </section>
 
