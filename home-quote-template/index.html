@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<!-- ============================================================================
+     BILL LAYNE INSURANCE — HOME QUOTE TEMPLATE (2026 · dark, single-rate)
+     Single file · 100% mobile-first · WCAG 2.2 AA · dark by default
+     Twin of auto-quote-template — same shell, homeowners content.
+     ----------------------------------------------------------------------------
+     ▶ ONE quote (the best value) — no coverage tiers.
+     ▶ Coverages A–F + deductibles + endorsements, each in plain English.
+     ▶ EDIT ONE PLACE: the QUOTE object in the <script> at the bottom.
+     ▶ BEFORE SENDING:
+         1. QUOTE.agent.npn   → your real NC NPN
+         2. QUOTE.agent.photo → hosted headshot URL (leave "" for BL monogram)
+         3. og:image meta      → share-card URL
+     ▶ Private quote link → noindex is set on purpose.
+     ============================================================================ -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#070a12" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Your Bill Layne Insurance home quote" />
+  <meta property="og:description" content="Tap to see your personalized Surry County homeowners coverage — built by your local Elkin agent." />
+  <meta property="og:image" content="https://i.imgur.com/REPLACE_ME_share_card.png" /><!-- TODO: share-card image -->
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" href="https://i.imgur.com/cBAgeX8.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ===========================  TOKENS — DARK (default)  =========================== */
+    :root, html[data-theme="dark"]{
+      --bg:#070a12; --bg-2:#0b1020;
+      --surface:rgba(255,255,255,.045); --surface-2:rgba(255,255,255,.07); --surface-solid:#121a2e;
+      --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.18);
+      --ink:#eef2fb; --ink-soft:#aeb9d2; --ink-faint:#7d8aa6;
+      --blue:#4aa6ef; --cyan:#38e1c6; --violet:#8b7bff;
+      --gold:#e8c879; --gold-soft:rgba(232,200,121,.12); --gold-ink:#f0dca0;
+      --cta-a:#34d399; --cta-b:#10b981; --cta-ink:#04231a;
+      --grad:linear-gradient(120deg,#4aa6ef,#38e1c6);
+      --ring:rgba(74,166,239,.65);
+      --shadow:0 2px 10px rgba(0,0,0,.45), 0 22px 50px rgba(0,0,0,.5);
+      --glow-1:rgba(56,225,198,.12); --glow-2:rgba(74,166,239,.16); --glow-3:rgba(139,123,255,.10);
+    }
+    /* ===========================  TOKENS — LIGHT (toggle)  =========================== */
+    html[data-theme="light"]{
+      --bg:#eef2f8; --bg-2:#f6f8fc;
+      --surface:#ffffff; --surface-2:#f3f6fb; --surface-solid:#ffffff;
+      --border:#e4e9f2; --border-strong:#d3dcea;
+      --ink:#0e1730; --ink-soft:#48516a; --ink-faint:#6b7790;
+      --blue:#0076d3; --cyan:#0ea5a0; --violet:#6d5dff;
+      --gold:#C8A84E; --gold-soft:#f5edd6; --gold-ink:#5c4a16;
+      --cta-a:#10b981; --cta-b:#059669; --cta-ink:#04231a;
+      --grad:linear-gradient(120deg,#003f87,#0076d3);
+      --ring:rgba(0,118,211,.5);
+      --shadow:0 1px 2px rgba(16,24,40,.05), 0 14px 34px rgba(16,24,40,.10);
+      --glow-1:rgba(14,165,160,.10); --glow-2:rgba(0,118,211,.10); --glow-3:rgba(109,93,255,.06);
+    }
+
+    *{box-sizing:border-box}
+    html{background:var(--bg); -webkit-text-size-adjust:100%}
+    body{
+      margin:0; color:var(--ink); background:transparent;
+      font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+      line-height:1.55; -webkit-font-smoothing:antialiased; -webkit-tap-highlight-color:transparent;
+      padding-bottom:96px; /* clears mobile dock */
+    }
+    body::before{ /* ambient glow layer — modern dark depth */
+      content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+      background:
+        radial-gradient(60% 48% at 88% -4%, var(--glow-1), transparent 60%),
+        radial-gradient(58% 44% at 6% 102%, var(--glow-2), transparent 60%),
+        radial-gradient(50% 40% at 50% 50%, var(--glow-3), transparent 72%);
+    }
+    @media(min-width:760px){ body{padding-bottom:0} }
+    h1,h2,h3{margin:0; line-height:1.14; letter-spacing:-.02em}
+    p{margin:0}
+    a{color:inherit}
+    img{max-width:100%; display:block}
+    .app{max-width:620px; margin:0 auto; padding:0 16px}
+
+    :focus-visible{outline:2.5px solid var(--ring); outline-offset:2px; border-radius:10px}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+    .skip{position:absolute;left:-999px;top:8px;background:var(--blue);color:#04231a;padding:10px 16px;border-radius:10px;z-index:200;font-weight:700}
+    .skip:focus{left:12px}
+    section[id], #top, #coverage, #agent{scroll-margin-top:74px}
+
+    /* ===========================  HEADER  =========================== */
+    header.site{position:sticky; top:0; z-index:90; height:58px; display:flex; align-items:center;
+      background:color-mix(in srgb, var(--bg) 72%, transparent);
+      -webkit-backdrop-filter:saturate(180%) blur(14px); backdrop-filter:saturate(180%) blur(14px);
+      border-bottom:1px solid var(--border)}
+    header.site .app{display:flex; align-items:center; justify-content:space-between; width:100%}
+    .brand{display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--ink); font-weight:800; letter-spacing:-.02em}
+    .brand .mark{width:34px;height:34px;border-radius:10px;background:var(--grad);display:grid;place-items:center;color:#04231a;font-weight:900;flex:none;font-size:14px}
+    .brand small{display:block;font-weight:500;font-size:11px;color:var(--ink-faint)}
+    .hdr-actions{display:flex; align-items:center; gap:8px}
+    .iconbtn{min-width:44px; min-height:44px; display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      background:var(--surface-2); color:var(--ink); border:1px solid var(--border); border-radius:12px; cursor:pointer;
+      font:inherit; font-weight:600; font-size:14px; padding:0 12px; transition:transform .12s ease, border-color .2s ease}
+    .iconbtn:hover{transform:translateY(-1px); border-color:var(--blue)}
+    .iconbtn svg{width:20px;height:20px}
+    .iconbtn .lbl{display:none}
+    @media(min-width:560px){.iconbtn .lbl{display:inline}}
+
+    /* ===========================  HERO  =========================== */
+    .hero{padding:26px 0 6px}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.03em;
+      color:var(--ink-soft);background:var(--surface-2);border:1px solid var(--border);padding:6px 12px;border-radius:999px}
+    .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--cta-a);box-shadow:0 0 0 4px rgba(52,211,153,.2)}
+    .hero h1{font-size:clamp(27px,7vw,40px);font-weight:800;margin:14px 0 8px}
+    .hero .sub{color:var(--ink-soft);font-size:15.5px;max-width:44ch}
+
+    .glass{background:var(--surface); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+      border:1px solid var(--border); border-radius:22px; box-shadow:var(--shadow)}
+    .pricecard{margin-top:20px; padding:22px}
+    .pc-top{display:flex; align-items:center; justify-content:space-between; gap:12px}
+    .pc-label{font-size:12.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint)}
+    .carrier-chip{display:inline-flex;align-items:center;gap:7px;background:var(--surface-2);border:1px solid var(--border);
+      border-radius:999px;padding:5px 11px 5px 6px;color:var(--ink);font-weight:700;font-size:12px}
+    .carrier-chip img{height:18px;width:auto;border-radius:4px;background:#fff;padding:1px 3px}
+    .price{display:flex; align-items:flex-start; line-height:.86; margin:10px 0 2px}
+    .price .cur{font-size:30px;font-weight:800;color:var(--ink);margin-top:8px}
+    .price .amt{font-size:clamp(60px,18vw,86px);font-weight:900;letter-spacing:-.035em;color:var(--ink);
+      background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    .price .per{align-self:flex-end;margin:0 0 14px 5px;color:var(--ink-faint);font-weight:700;font-size:18px}
+    .price-meta{color:var(--ink-soft);font-size:14px}
+    .price-meta b{color:var(--ink)}
+    .discounts{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 2px}
+    .dchip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--cta-a);
+      background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.24);padding:5px 10px;border-radius:999px}
+    .dchip svg{width:13px;height:13px}
+
+    .btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:54px;border-radius:15px;
+      font:inherit;font-weight:700;font-size:16px;text-decoration:none;cursor:pointer;border:1px solid transparent;margin-top:12px;
+      transition:transform .12s ease, box-shadow .2s ease, filter .2s ease}
+    .btn svg{width:20px;height:20px}
+    .btn-primary{background:linear-gradient(180deg,var(--cta-a),var(--cta-b));color:var(--cta-ink);box-shadow:0 12px 30px rgba(16,185,129,.32)}
+    .btn-primary:hover{transform:translateY(-2px);filter:brightness(1.05)}
+    .btn-ghost{background:var(--surface-2);color:var(--ink);border-color:var(--border-strong)}
+    .btn-ghost:hover{transform:translateY(-2px)}
+    .hero-trust{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px;color:var(--ink-faint);font-size:12.5px}
+    .hero-trust span{display:inline-flex;align-items:center;gap:6px}
+    .hero-trust svg{width:15px;height:15px;color:var(--cta-a)}
+
+    /* ===========================  SECTION LABEL  =========================== */
+    .seclabel{display:flex;align-items:center;gap:12px;margin:28px 4px 12px;font-size:12px;font-weight:700;
+      letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+    .seclabel .ln{height:1px;flex:1;background:var(--border)}
+
+    /* ===========================  EXPAND/COLLAPSE CARDS  =========================== */
+    .card{background:var(--surface); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+      border:1px solid var(--border); border-radius:18px; box-shadow:var(--shadow); overflow:hidden; margin-bottom:12px}
+    details.card>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:13px;padding:15px 16px;min-height:56px}
+    details.card>summary::-webkit-details-marker{display:none}
+    .ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;flex:none;
+      background:var(--surface-2);border:1px solid var(--border);color:var(--blue)}
+    .ic svg{width:23px;height:23px}
+    .sm-main{flex:1;min-width:0}
+    .sm-title{display:block;font-weight:700;font-size:16px;color:var(--ink)}
+    .sm-sub{display:block;font-size:12.5px;color:var(--ink-faint)}
+    .sm-val{font-weight:800;font-size:14.5px;color:var(--ink);white-space:nowrap}
+    .chev{width:22px;height:22px;color:var(--ink-faint);transition:transform .3s ease;flex:none}
+    details[open]>summary .chev{transform:rotate(180deg)}
+    .body{padding:2px 16px 16px}
+    details[open] .body{animation:reveal .3s ease}
+    @keyframes reveal{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+    .bodytext{color:var(--ink-soft);font-size:14px;margin-bottom:4px}
+    .row{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid var(--border);font-size:14.5px;color:var(--ink-soft)}
+    .row:last-child{border-bottom:0}
+    .row b{color:var(--ink);font-weight:700;text-align:right;min-width:0}
+    .row span:first-child{flex-shrink:0;max-width:46%}
+    .row em{font-style:normal;color:var(--ink-faint);font-size:12.5px}
+
+    .pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+    .pill{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:6px 11px;border-radius:999px;
+      background:rgba(16,185,129,.13);color:var(--cta-a);border:1px solid rgba(16,185,129,.25)}
+    .pill svg{width:13px;height:13px}
+
+    /* insureds */
+    .drv{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+    .drv:last-child{border-bottom:0}
+    .av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:12.5px;flex:none;
+      background:var(--grad);color:#04231a}
+    .drv b{display:block;font-size:14.5px;color:var(--ink)}
+    .drv small{color:var(--ink-faint);font-size:12.5px}
+
+    /* "Bill's note" callout */
+    .note{display:flex;gap:11px;margin-top:13px;background:var(--surface-2);border:1px solid var(--border);
+      border-left:3px solid var(--blue);border-radius:13px;padding:12px 13px}
+    .note.law{border-left-color:var(--gold)}
+    .note .who{width:30px;height:30px;border-radius:50%;flex:none;background:var(--grad);color:#04231a;
+      display:grid;place-items:center;font-weight:800;font-size:12px}
+    .note .txt{font-size:13px;color:var(--ink-soft)}
+    .note .txt b{color:var(--ink)}
+
+    /* gold (recommended) tile */
+    .card.gold{border-color:rgba(232,200,121,.45)}
+    .card.gold .ic{background:var(--gold-soft);border-color:rgba(232,200,121,.45);color:var(--gold-ink)}
+    .ribbon{display:inline-flex;align-items:center;gap:5px;background:var(--gold);color:#3a2e0a;font-size:10px;font-weight:800;
+      letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:999px;margin-bottom:5px}
+    .ribbon svg{width:12px;height:12px}
+
+    /* ===========================  CARRIER BAND  =========================== */
+    .carrierband{padding:20px;text-align:center}
+    .lead-carrier{display:inline-flex;align-items:center;gap:11px;flex-wrap:wrap;justify-content:center}
+    .lead-carrier span{color:var(--ink-soft);font-size:14.5px;font-weight:600}
+    .lead-carrier img{height:30px;width:auto;background:#fff;border-radius:6px;padding:3px 6px}
+    .muted{color:var(--ink-faint);font-size:13px;max-width:46ch;margin:8px auto 0}
+    .logos{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:18px 26px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+    .logos img{height:26px;width:auto;object-fit:contain;opacity:.92}
+    html[data-theme="dark"] .logos img{filter:brightness(0) invert(1);opacity:.62}
+
+    /* ===========================  BUNDLE  =========================== */
+    .bundle{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px;padding:22px;
+      background:linear-gradient(135deg, rgba(74,166,239,.16), rgba(56,225,198,.10)); border-color:var(--border-strong)}
+    .bundle h3{font-size:20px;font-weight:800}
+    .bundle p{color:var(--ink-soft);font-size:14px;margin-top:5px;max-width:40ch}
+    .save-amt{font-weight:900;font-size:32px;letter-spacing:-.02em;display:block;margin-top:8px;
+      background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    .save-amt small{font-size:14px;font-weight:600;color:var(--ink-faint);-webkit-text-fill-color:var(--ink-faint)}
+    .switch{display:inline-flex;align-items:center;gap:11px;background:var(--surface-2);border:1px solid var(--border-strong);
+      border-radius:14px;padding:12px 15px;cursor:pointer;min-height:52px;font-weight:700}
+    .switch input{position:absolute;opacity:0;width:0;height:0}
+    .track{width:46px;height:26px;border-radius:999px;background:var(--border-strong);position:relative;transition:background .2s ease;flex:none}
+    .track::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s ease}
+    .switch input:checked + .track{background:var(--cta-a)}
+    .switch input:checked + .track::after{transform:translateX(20px)}
+    .switch input:focus-visible + .track{outline:2.5px solid var(--ring);outline-offset:2px}
+
+    /* ===========================  AGENT  =========================== */
+    .agent{display:flex;gap:18px;flex-wrap:wrap;align-items:center;padding:22px}
+    .agent .photo{width:96px;height:96px;border-radius:20px;object-fit:cover;flex:none;border:1px solid var(--border)}
+    .agent .photo.ph{display:grid;place-items:center;background:var(--grad);color:#04231a;font-size:34px;font-weight:900}
+    .agent-body{flex:1;min-width:240px}
+    .agent-body h3{font-size:21px;font-weight:800}
+    .npn-badge{display:inline-flex;align-items:center;gap:7px;margin-top:6px;background:var(--gold-soft);color:var(--gold-ink);
+      border:1px solid rgba(232,200,121,.45);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700}
+    .npn-badge svg{width:14px;height:14px}
+    .agent-body p{color:var(--ink-soft);font-size:14.5px;margin-top:12px}
+    .agent-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+    @media(max-width:480px){.agent-actions{grid-template-columns:1fr}}
+    .actbtn{min-height:52px;display:flex;align-items:center;justify-content:center;gap:9px;border-radius:14px;font-weight:700;
+      font-size:15px;text-decoration:none;border:1px solid var(--border);transition:transform .12s ease,box-shadow .2s ease}
+    .actbtn svg{width:19px;height:19px}
+    .actbtn:hover{transform:translateY(-2px)}
+    .act-call{background:var(--blue);color:#04231a;border-color:var(--blue)}
+    .act-text{background:linear-gradient(180deg,var(--cta-a),var(--cta-b));color:var(--cta-ink);border:0}
+    .act-email{background:var(--surface-2);color:var(--ink)}
+
+    /* ===========================  FOOTER  =========================== */
+    footer.site{margin-top:30px;border-top:1px solid var(--border);background:color-mix(in srgb,var(--bg) 60%,#000 8%)}
+    footer.site .app{padding:28px 16px 30px}
+    footer .flogo{height:38px;width:auto;margin-bottom:14px}
+    html[data-theme="light"] footer .flogo{filter:none}
+    footer .fgrid{display:flex;flex-wrap:wrap;gap:22px;justify-content:space-between}
+    footer .fcol{min-width:180px}
+    footer h4{color:var(--ink);font-size:12.5px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+    footer a{color:var(--ink-soft);text-decoration:none}
+    footer a:hover{color:var(--ink);text-decoration:underline}
+    footer .fline{display:flex;align-items:flex-start;gap:9px;font-size:14px;margin-bottom:9px;color:var(--ink-soft)}
+    footer .fline svg{width:16px;height:16px;color:var(--gold);flex:none;margin-top:2px}
+    footer .fline b{color:var(--ink)}
+    .disclaimer{margin-top:20px;padding-top:16px;border-top:1px solid var(--border);font-size:11.5px;color:var(--ink-faint);line-height:1.6}
+    .disclaimer b{color:var(--ink-soft)}
+
+    /* ===========================  STICKY MOBILE DOCK  =========================== */
+    .dock{position:fixed;left:0;right:0;bottom:0;z-index:95;display:grid;grid-template-columns:1.5fr 1fr;gap:10px;
+      padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+      background:color-mix(in srgb,var(--bg) 80%,transparent);
+      -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--border)}
+    .dock a{min-height:52px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;font-weight:700;font-size:16px;text-decoration:none}
+    .dock svg{width:20px;height:20px}
+    .dock .d-secure{background:linear-gradient(180deg,var(--cta-a),var(--cta-b));color:var(--cta-ink);box-shadow:0 8px 22px rgba(16,185,129,.32)}
+    .dock .d-call{background:var(--surface-2);color:var(--ink);border:1px solid var(--border-strong)}
+    @media(min-width:760px){.dock{display:none}}
+
+    @media (prefers-reduced-motion: reduce){
+      *{animation-duration:.001ms !important;transition-duration:.001ms !important}
+    }
+  </style>
+</head>
+
+<body>
+  <a href="#coverage" class="skip">Skip to your coverage</a>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site">
+    <div class="app">
+      <a class="brand" href="#top" aria-label="Bill Layne Insurance home">
+        <span class="mark">BL</span>
+        <span>Bill Layne Insurance<small>Independent agent · Elkin, NC</small></span>
+      </a>
+      <div class="hdr-actions">
+        <button class="iconbtn" id="shareBtn" type="button" aria-label="Share this quote">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+          <span class="lbl">Share</span>
+        </button>
+        <button class="iconbtn" id="themeBtn" type="button" aria-label="Toggle light mode">
+          <svg id="sunIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          <svg id="moonIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- ===== HERO (single rate) ===== -->
+    <section class="hero app">
+      <span class="eyebrow"><span class="dot"></span> Personalized home quote · <span data-q="county">Surry</span> County, NC</span>
+      <h1>Here's your home quote, <span data-q="firstName">Sarah</span>.</h1>
+      <p class="sub">One straightforward rate — the best value Bill found to protect your home. No jargon, no upsell.</p>
+
+      <div class="pricecard glass">
+        <div class="pc-top">
+          <span class="pc-label">Your rate</span>
+          <span class="carrier-chip">Quoted with <img id="carrierLogo" src="https://i.imgur.com/MjJTKti.png" alt="" /> <span data-q="carrierName">Nationwide</span></span>
+        </div>
+        <div class="price">
+          <span class="cur">$</span><span class="amt" data-q="monthly">128</span><span class="per">/mo</span>
+        </div>
+        <p class="price-meta">or <b>$<span data-q="term">1,536</span></b> for your <span data-q="termLabel">12-month term</span> · effective <b data-q="effective">July 1, 2026</b></p>
+
+        <div class="discounts" id="discountChips"><!-- filled from QUOTE.discounts --></div>
+
+        <a class="btn btn-primary" href="#agent">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+          Secure this rate
+        </a>
+        <a class="btn btn-ghost" href="sms:+13368351993">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Text Bill a question
+        </a>
+
+        <div class="hero-trust">
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Locked-in rate, no obligation</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Real local agent, not a call center</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== YOUR HOME ===== -->
+    <section class="app" id="home">
+      <div class="seclabel">Your home <span class="ln"></span></div>
+      <details class="card" open>
+        <summary>
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg></span>
+          <span class="sm-main"><span class="sm-title" data-q="homeAddress">123 Example Rd, Elkin</span><span class="sm-sub" data-q="homeSummary">Single family · brick · built 2004</span></span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="body" id="homeDetails"><!-- filled from QUOTE.home.details --></div>
+      </details>
+    </section>
+
+    <!-- ===== ON THIS POLICY ===== -->
+    <section class="app">
+      <div class="seclabel">On this policy <span class="ln"></span></div>
+      <details class="card" open>
+        <summary>
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.4"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 5.5a3.4 3.4 0 0 1 0 6.6M21 20a6 6 0 0 0-5-5.9"/></svg></span>
+          <span class="sm-main"><span class="sm-title">Named insured</span><span class="sm-sub"><span data-q="insuredCount">2</span> on this policy</span></span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="body" id="insuredList"><!-- filled from QUOTE.insureds --></div>
+      </details>
+    </section>
+
+    <!-- ===== COVERAGE ===== -->
+    <section class="app" id="coverage">
+      <div class="seclabel">Your coverage <span class="ln"></span></div>
+
+      <!-- Coverage A — Dwelling -->
+      <details class="card" open>
+        <summary>
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg></span>
+          <span class="sm-main"><span class="sm-title">If your home is damaged or destroyed</span><span class="sm-sub">Coverage A — Dwelling</span></span>
+          <span class="sm-val" data-q="dwelling">$385,000</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="body">
+          <p class="bodytext">Pays to rebuild or repair your house after a covered loss — fire, wind, a tree through the roof, and more.</p>
+          <div class="row"><span>Rebuild limit</span><b data-q="dwelling2">$385,000</b></div>
+          <div class="row"><span>Settlement basis</span><b data-q="dwellingBasis">Replacement cost</b></div>
+          <div class="note law"><span class="who">B</span><span class="txt"><b>Bill's note:</b> Your dwelling limit reflects what it costs to <b>rebuild today</b> — not your home's market or tax value. I set this to full replacement cost so a total loss is covered in full, with no coinsurance penalty.</span></div>
+        </div>
+      </details>
+
+      <!-- Coverage C — Personal Property -->
+      <details class="card">
+        <summary>
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></span>
+          <span class="sm-main"><span class="sm-title">Your belongings</span><span class="sm-sub">Coverage C — Personal Property</span></span>
+          <span class="sm-val" data-q="personalProperty">$269,500</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="body">
+          <p class="bodytext">Covers your furniture, clothes, electronics, and appliances — at home and anywhere in the world.</p>
+          <div class="row"><span>Coverage limit</span><b data-q="personalProperty2">$269,500</b></div>
+          <div class="row"><span>Settlement basis</span><b data-q="contentsBasis">Replacement cost</b></div>
+          <div class="note"><span class="who">B</span><span class="txt"><b>Why this matters:</b> written at <b>replacement cost</b>, a 10-year-old couch is replaced with a new one — not depreciated to pennies. Many standard policies only pay actual cash value; I upgrade you.</span></div>
+        </div>
+      </details>
+
+      <!-- Coverage E — Personal Liability -->
+      <details class="card">
+        <summary>
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.4 8.5-8 10-4.6-1.5-8-5-8-10V6z"/></svg></span>
+          <span class="sm-main"><span class="sm-title">If someone's hurt or you're sued</span><span class="sm-sub">Coverage E — Personal Liability</span></span>
+          <span class="sm-val" data-q="liability">$300,000</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="body">
+          <p class="bodytext">Protects you if a guest is injured on your property, or you're held responsible for damage — legal defense included.</p>
+          <div class="row"><span>Liability limit</span><b data-q="liability2">$300,000</b></div>
+          <div class="note law"><span class="who">B</span><span class="txt"><b>Bill's note:</b> as your savings grow, ask me about an <b>umbrella policy</b> — it stacks another $1 million of protection on top of this for about the price of one dinner out a month.</span></div>
+        </div>
+      </details>
+
+      <!-- Deductibles -->
+      <details class="card">
+        <summary>
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5L5 19"/><circle cx="7.5" cy="7.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg></span>
+          <span class="sm-main"><span class="sm-title">What you pay first on a claim</span><span class="sm-sub">Deductibles</span></span>
+          <span class="sm-val" data-q="dedShort">$1,000 / 1%</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="body">
+          <div class="row"><span>All other perils <em>(fire, theft, water)</em></span><b data-q="aopDeductible">$1,000</b></div>
+          <div class="row"><span>Wind &amp; hail</span><b data-q="windHailDeductible">1% ($3,850)</b></div>
+          <div class="note law"><span class="who">B</span><span class="txt"><b>Know this before storm season:</b> many NC policies carry a <b>separate wind &amp; hail deductible</b> — often a percentage of your dwelling limit, not a flat dollar amount. Yours is above. I'll walk you through exactly what that means in a claim.</span></div>
+        </div>
+      </details>
+
+      <!-- Water backup — gold recommended -->
+      <details class="card gold" open>
+        <summary>
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg></span>
+          <span class="sm-main">
+            <span class="ribbon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.6 6.8L12 17.8 5.8 20.9l1.6-6.8L2.2 9.5l6.9-.6z"/></svg> Agency recommended</span>
+            <span class="sm-title">If a drain or sump pump backs up</span><span class="sm-sub">Water backup &amp; sump overflow</span>
+          </span>
+          <span class="sm-val" data-q="waterBackup">$10,000</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="body">
+          <div class="row"><span>Endorsement limit</span><b data-q="waterBackup2">$10,000</b></div>
+          <div class="note"><span class="who">B</span><span class="txt"><b>Why I include this:</b> a backed-up sewer or failed sump pump is the <b>#1 claim standard policies don't cover</b> by default. For a few dollars a month, it's the endorsement I recommend to nearly every homeowner.</span></div>
+        </div>
+      </details>
+
+      <!-- Also included: B / D / F -->
+      <details class="card">
+        <summary>
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+          <span class="sm-main"><span class="sm-title">Also included in your policy</span><span class="sm-sub">Coverages B, D &amp; F</span></span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="body">
+          <div class="row"><span>Other structures <em>(B — shed, fence, detached garage)</em></span><b data-q="otherStructures">$38,500</b></div>
+          <div class="row"><span>Loss of use <em>(D — hotel &amp; meals if displaced)</em></span><b data-q="lossOfUse">$77,000</b></div>
+          <div class="row"><span>Medical payments to others <em>(F — minor guest injuries)</em></span><b data-q="medicalOthers">$5,000</b></div>
+          <div class="pills" id="endorsePills"><!-- filled from QUOTE.endorsements --></div>
+        </div>
+      </details>
+    </section>
+
+    <!-- ===== CARRIER CONFIDENCE ===== -->
+    <section class="app">
+      <div class="seclabel">Backed by <span class="ln"></span></div>
+      <div class="card glass carrierband">
+        <div class="lead-carrier"><span>Backed by the strength of</span> <img id="carrierLogoBig" src="https://i.imgur.com/MjJTKti.png" alt="Nationwide" /></div>
+        <p class="muted">As an independent agent, Bill shopped your rate across every carrier below — you keep the choice.</p>
+        <div class="logos">
+          <img src="https://i.imgur.com/MjJTKti.png" alt="Nationwide" width="152" height="128" loading="lazy" />
+          <img src="https://i.imgur.com/JNB2wDG.png" alt="Travelers" width="213" height="128" loading="lazy" />
+          <img src="https://i.imgur.com/9ZWQsAS.png" alt="National General" width="249" height="128" loading="lazy" />
+          <img src="https://i.imgur.com/RexcFEo.png" alt="Alamance Farmers Mutual" width="205" height="128" loading="lazy" />
+          <img src="https://i.imgur.com/rHIo4r5.jpg" alt="Foremost" width="300" height="67" loading="lazy" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== BUNDLE & SAVE ===== -->
+    <section class="app">
+      <div class="card bundle">
+        <div>
+          <h3>Insure your car too? Bundle &amp; save.</h3>
+          <p>Add your auto policy to this home policy and most Surry County families save on both.</p>
+          <span class="save-amt" id="bundleAmt" aria-live="polite">$0<small>/yr</small></span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="bundleToggle" />
+          <span class="track" aria-hidden="true"></span>
+          <span>Add auto</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- ===== AGENT ===== -->
+    <section class="app" id="agent">
+      <div class="seclabel">Your agent <span class="ln"></span></div>
+      <div class="card glass agent">
+        <div class="photo ph" id="agentPhoto" aria-hidden="true">BL</div>
+        <div class="agent-body">
+          <h3 data-q="agentName">Bill Layne</h3>
+          <span class="npn-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.4 8.5-8 10-4.6-1.5-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg> Licensed in NC · NPN <span data-q="npn">[YOUR NPN]</span></span>
+          <p>"I live and work right here in Elkin. Not sure your dwelling limit is enough to rebuild, or whether you need water-backup coverage? Text my direct line — you'll reach me, not a call center."</p>
+          <div class="agent-actions">
+            <a class="actbtn act-call" href="tel:+13368351993"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg> Call</a>
+            <a class="actbtn act-text" href="sms:+13368351993"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Text</a>
+            <a class="actbtn act-email" href="mailto:Bill@BillLayneInsurance.com?subject=My%20home%20quote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg> Email</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== FOOTER (NC DOI compliance) ===== -->
+  <footer class="site">
+    <div class="app">
+      <img class="flogo" src="https://i.imgur.com/lxu9nfT.png" alt="Bill Layne Insurance" />
+      <div class="fgrid">
+        <div class="fcol">
+          <h4>Bill Layne Insurance Agency</h4>
+          <div class="fline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>1283 N Bridge St<br>Elkin, NC 28621</span></div>
+          <div class="fline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg><a href="tel:+13368351993">(336) 835-1993</a></div>
+          <div class="fline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><a href="mailto:Bill@BillLayneInsurance.com">Bill@BillLayneInsurance.com</a></div>
+        </div>
+        <div class="fcol">
+          <h4>Licensing</h4>
+          <div class="fline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.4 8.5-8 10-4.6-1.5-8-5-8-10V6z"/></svg><span>Licensed in North Carolina<br>NPN: <b>[YOUR NPN]</b></span></div>
+          <div class="fline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>Mon–Fri 9am–5pm<br>Serving all 100 NC counties</span></div>
+        </div>
+        <div class="fcol">
+          <h4>Links</h4>
+          <div class="fline"><a href="https://www.billlayneinsurance.com">billlayneinsurance.com</a></div>
+          <div class="fline"><a href="https://www.billlayneinsurance.com/privacy-policy.html">Privacy Policy</a></div>
+          <div class="fline"><a href="https://www.billlayneinsurance.com/terms.html">Terms of Service</a></div>
+        </div>
+      </div>
+      <p class="disclaimer"><b>This is a quote estimate, not a binder of insurance.</b> Premiums and coverages are subject to underwriting review, inspection, verification of information, and final carrier approval. Coverage is not bound, changed, or canceled until confirmed in writing by a licensed agent. Actual policy terms, conditions, exclusions, and limits are governed solely by the policy documents issued by the carrier. © <span id="yr">2026</span> Bill Layne Insurance Agency. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- ===== STICKY MOBILE DOCK ===== -->
+  <nav class="dock" aria-label="Quick actions">
+    <a class="d-secure" href="#agent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Secure this rate</a>
+    <a class="d-call" href="tel:+13368351993"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg> Call</a>
+  </nav>
+
+  <script>
+  /* ============================================================================
+     ▼▼▼  THE ONLY THING YOU EDIT  ▼▼▼  (one best-value quote — no tiers)
+     ============================================================================ */
+  const QUOTE = {
+    firstName: "Sarah",
+    county:    "Surry",
+    effective: "July 1, 2026",
+    carrier:   { name: "Nationwide", logo: "https://i.imgur.com/MjJTKti.png" },
+
+    monthly:   128,
+    term:      1536,
+    termLabel: "12-month term",
+    discounts: ["Multi-policy", "New roof", "Protective devices", "Claims-free"],
+    bundleSavings: 312,  // estimated combined annual savings if they add auto
+
+    // The home itself — details render as rows inside the "Your home" card.
+    home: {
+      address: "123 Example Rd, Elkin",
+      summary: "Single family · brick · built 2004",
+      details: [
+        { label:"Year built",        value:"2004" },
+        { label:"Construction",      value:"Brick veneer" },
+        { label:"Roof",              value:"Architectural shingle · 2021" },
+        { label:"Living area",       value:"2,150 sq ft" },
+        { label:"Fire protection",   value:"Class 4 · 3 mi to station" }
+      ]
+    },
+
+    // Named insured(s) on the policy
+    insureds: [
+      { name:"Sarah Mitchell", detail:"Named insured" },
+      { name:"James Mitchell", detail:"Co-insured · spouse" }
+    ],
+
+    // Coverages A–F, deductibles, and the recommended endorsement
+    coverage: {
+      dwelling:"$385,000", dwellingBasis:"Replacement cost",           // A
+      otherStructures:"$38,500",                                        // B
+      personalProperty:"$269,500", contentsBasis:"Replacement cost",   // C
+      lossOfUse:"$77,000",                                              // D
+      liability:"$300,000",                                             // E
+      medicalOthers:"$5,000",                                           // F
+      aopDeductible:"$1,000", windHailDeductible:"1% ($3,850)", dedShort:"$1,000 / 1%",
+      waterBackup:"$10,000"
+    },
+
+    // Extra endorsements shown as pills under "Also included" (leave [] for none)
+    endorsements: ["Service line", "Equipment breakdown", "Identity theft"],
+
+    agent: {
+      name:  "Bill Layne",
+      npn:   "[YOUR NPN]",   // ← replace with your real NC NPN
+      photo: ""              // ← hosted headshot URL (leave "" to show BL monogram)
+    }
+  };
+  /* ▲▲▲  END EDIT ZONE  ▲▲▲ */
+
+
+  (function(){
+    "use strict";
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const $  = (s,el=document)=>el.querySelector(s);
+    const $$ = (s,el=document)=>Array.from(el.querySelectorAll(s));
+    const money = n => Number(n).toLocaleString('en-US');
+    const initials = name => name.trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
+
+    const checkSVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+
+    /* ---- scalar fills ---- */
+    const c = QUOTE.coverage;
+    const fills = {
+      firstName:QUOTE.firstName, county:QUOTE.county, effective:QUOTE.effective,
+      carrierName:QUOTE.carrier.name, agentName:QUOTE.agent.name, npn:QUOTE.agent.npn,
+      monthly:money(QUOTE.monthly), term:money(QUOTE.term), termLabel:QUOTE.termLabel,
+      homeAddress:QUOTE.home.address, homeSummary:QUOTE.home.summary,
+      insuredCount:QUOTE.insureds.length,
+      dwelling:c.dwelling, dwelling2:c.dwelling, dwellingBasis:c.dwellingBasis,
+      personalProperty:c.personalProperty, personalProperty2:c.personalProperty, contentsBasis:c.contentsBasis,
+      liability:c.liability, liability2:c.liability,
+      dedShort:c.dedShort, aopDeductible:c.aopDeductible, windHailDeductible:c.windHailDeductible,
+      waterBackup:c.waterBackup, waterBackup2:c.waterBackup,
+      otherStructures:c.otherStructures, lossOfUse:c.lossOfUse, medicalOthers:c.medicalOthers
+    };
+    Object.keys(fills).forEach(k => $$('[data-q="'+k+'"]').forEach(e => e.textContent = fills[k]));
+    $('#yr').textContent = new Date().getFullYear();
+    [['#carrierLogo'],['#carrierLogoBig']].forEach(([id])=>{ const el=$(id); if(el){ el.src=QUOTE.carrier.logo; el.alt=QUOTE.carrier.name; } });
+
+    /* ---- agent photo ---- */
+    if (QUOTE.agent.photo){
+      const img=document.createElement('img'); img.src=QUOTE.agent.photo; img.alt=QUOTE.agent.name; img.className='photo';
+      $('#agentPhoto').replaceWith(img);
+    }
+
+    /* ---- discount chips ---- */
+    $('#discountChips').innerHTML = QUOTE.discounts.map(d=>'<span class="dchip">'+checkSVG+d+'</span>').join('');
+
+    /* ---- home detail rows ---- */
+    $('#homeDetails').innerHTML = QUOTE.home.details.map(d=>
+      '<div class="row"><span>'+d.label+'</span><b>'+d.value+'</b></div>').join('');
+
+    /* ---- named insureds ---- */
+    $('#insuredList').innerHTML = QUOTE.insureds.map(d=>
+      '<div class="drv"><span class="av">'+initials(d.name)+'</span><span><b>'+d.name+'</b><small>'+(d.detail||'')+'</small></span></div>').join('');
+
+    /* ---- endorsement pills ---- */
+    const ep=$('#endorsePills');
+    if (QUOTE.endorsements && QUOTE.endorsements.length){
+      ep.innerHTML = QUOTE.endorsements.map(e=>'<span class="pill">'+checkSVG+e+'</span>').join('');
+    } else if (ep){ ep.remove(); }
+
+    /* ---- bundle & save ---- */
+    const bToggle=$('#bundleToggle'), bAmt=$('#bundleAmt');
+    bToggle.addEventListener('change', ()=>{
+      const to = bToggle.checked ? QUOTE.bundleSavings : 0;
+      if (reduce){ bAmt.firstChild.textContent='$'+money(to); return; }
+      const from=parseInt(bAmt.textContent.replace(/[^0-9]/g,''),10)||0, dur=500, start=performance.now();
+      (function step(now){ const p=Math.min(1,(now-start)/dur), e=1-Math.pow(1-p,3);
+        bAmt.firstChild.textContent='$'+money(Math.round(from+(to-from)*e)); if(p<1) requestAnimationFrame(step); })(performance.now());
+    });
+
+    /* ---- theme (dark default, persisted) ---- */
+    const root=document.documentElement, sun=$('#sunIcon'), moon=$('#moonIcon');
+    function setTheme(mode){ root.setAttribute('data-theme',mode); const dark=mode==='dark';
+      sun.style.display=dark?'block':'none'; moon.style.display=dark?'none':'block';
+      try{ localStorage.setItem('bli-theme',mode); }catch(e){} }
+    let saved=null; try{ saved=localStorage.getItem('bli-theme'); }catch(e){}
+    setTheme(saved || 'dark');
+    $('#themeBtn').addEventListener('click', ()=> setTheme(root.getAttribute('data-theme')==='dark'?'light':'dark'));
+
+    /* ---- share (Web Share + clipboard fallback) ---- */
+    $('#shareBtn').addEventListener('click', async function(){
+      const data={ title:'My Bill Layne Insurance home quote', text:"Here's the home quote Bill built for me:", url:location.href };
+      try{
+        if (navigator.share){ await navigator.share(data); return; }
+        await navigator.clipboard.writeText(location.href);
+        const l=this.querySelector('.lbl'); if(l){ const t=l.textContent; l.textContent='Copied!'; setTimeout(()=>l.textContent=t,1700); }
+      }catch(e){}
+    });
+  })();
+  </script>
+</body>
+</html>
