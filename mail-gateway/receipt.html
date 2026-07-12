@@ -44,6 +44,8 @@
   .primary:hover:not(:disabled){background:var(--navy-dark)}
   .goldbtn{background:var(--gold);color:var(--navy-dark);width:100%;margin-top:8px}
   .goldbtn:hover:not(:disabled){filter:brightness(1.06)}
+  .quiet{background:#e2e8f0;color:var(--ink);width:100%;margin-top:8px;font-weight:600}
+  .quiet:hover:not(:disabled){background:#cbd5e1}
 
   .hint{font-size:11px;color:var(--muted);margin:6px 0 0}
   #result{margin-top:10px;border-radius:8px;padding:9px 11px;font-size:13.5px;display:none}
@@ -125,6 +127,7 @@
       <div style="margin-top:12px">
         <button class="primary" id="draftBtn" type="button">Create Gmail Draft</button>
         <button class="goldbtn" id="sendBtn" type="button">Send Now</button>
+        <button class="quiet" id="newBtn" type="button">&#127381; New receipt &mdash; clear everything</button>
       </div>
       <div class="checks" id="checks"></div>
       <div id="result" role="status"></div>
@@ -325,6 +328,7 @@
   }
   $('draftBtn').addEventListener('click', function () { submit('draft'); });
   $('sendBtn').addEventListener('click', function () { submit('send'); });
+  $('newBtn').addEventListener('click', function () { location.replace('receipt.html'); });
 
   /* ---------- prefill from #d= (extension hand-off) ---------- */
   function prefillFromHash() {
