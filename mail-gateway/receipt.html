@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>BLI Receipt Builder</title>
+<link rel="icon" href="data:,">
+<style>
+  :root{
+    --navy:#003f87; --navy-dark:#00295c; --gold:#C8A84E; --teal:#0f766e;
+    --ink:#0f172a; --muted:#475569; --line:#e2e8f0; --bg:#f1f5f9; --card:#ffffff;
+    --ok:#166534; --ok-bg:#f0fdf4; --err:#b91c1c; --err-bg:#fef2f2;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:14.5px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  header{background:linear-gradient(135deg,var(--navy-dark) 0%,var(--navy) 55%,var(--teal) 140%);color:#fff;padding:18px 22px}
+  header h1{margin:0;font-size:20px}
+  header .gold{color:var(--gold)}
+  header p{margin:4px 0 0;color:#cbd5e1;font-size:13px}
+  .badge{display:inline-block;margin-top:8px;padding:3px 11px;border-radius:999px;font-size:12px;font-weight:600;
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25)}
+  .badge.ok{background:#dcfce7;color:var(--ok);border-color:#86efac}
+  .badge.err{background:#fee2e2;color:var(--err);border-color:#fca5a5}
+
+  .layout{display:grid;grid-template-columns:430px 1fr;gap:16px;max-width:1400px;margin:0 auto;padding:16px 22px 50px}
+  @media(max-width:960px){.layout{grid-template-columns:1fr}}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+  .card h2{margin:0 0 10px;font-size:14px;color:var(--navy)}
+
+  label{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin:9px 0 3px}
+  label .soft{font-weight:400}
+  input[type=text],input[type=email],input[type=date],select{
+    width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:7px;font-size:14px;color:var(--ink);background:#fff}
+  input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--navy);outline-offset:1px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+  .locked{background:#f8fafc;color:var(--muted)}
+
+  button{font:inherit;font-weight:700;border:0;border-radius:8px;padding:10px 16px;cursor:pointer}
+  button:disabled{opacity:.55;cursor:not-allowed}
+  .primary{background:var(--navy);color:#fff;width:100%}
+  .primary:hover:not(:disabled){background:var(--navy-dark)}
+  .goldbtn{background:var(--gold);color:var(--navy-dark);width:100%;margin-top:8px}
+  .goldbtn:hover:not(:disabled){filter:brightness(1.06)}
+
+  .hint{font-size:11px;color:var(--muted);margin:6px 0 0}
+  #result{margin-top:10px;border-radius:8px;padding:9px 11px;font-size:13.5px;display:none}
+  #result.ok{display:block;background:var(--ok-bg);border:1px solid #bbf7d0;color:var(--ok)}
+  #result.err{display:block;background:var(--err-bg);border:1px solid #fecaca;color:var(--err)}
+  #result a{color:var(--navy);font-weight:700}
+
+  .previewwrap{position:sticky;top:14px}
+  #preview{width:100%;height:calc(100vh - 120px);min-height:560px;border:1px solid var(--line);border-radius:12px;background:#fff}
+  .checks{font-size:11.5px;color:var(--muted);margin-top:8px}
+  .checks .bad{color:var(--err);font-weight:700}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>BLI <span class="gold">Receipt Builder</span></h1>
+  <p>Confirm the payment details, watch the locked receipt fill itself, then draft it into Gmail. BCC to Save@ is automatic on every receipt.</p>
+  <span class="badge" id="connBadge">Gateway: using saved settings</span>
+</header>
+
+<div class="layout">
+  <div>
+    <div class="card">
+      <h2>Customer &amp; payment</h2>
+      <div class="two">
+        <div><label for="first">First name</label><input type="text" id="first" autocomplete="off"></div>
+        <div><label for="last">Last name</label><input type="text" id="last" autocomplete="off"></div>
+      </div>
+      <label for="to">Customer email <span class="soft">(optional — blank = add it in Gmail)</span></label>
+      <input type="email" id="to" autocomplete="off">
+      <div class="two">
+        <div><label for="amount">Amount paid <span class="soft">($)</span></label><input type="text" id="amount" placeholder="284.50" autocomplete="off"></div>
+        <div><label for="pdate">Payment date</label><input type="date" id="pdate"></div>
+      </div>
+      <div class="two">
+        <div><label for="ptime">Time <span class="soft">(optional)</span></label><input type="text" id="ptime" placeholder="2:14 PM ET" autocomplete="off"></div>
+        <div><label for="method">Payment method</label><input type="text" id="method" placeholder="Visa ending in 4821" autocomplete="off"></div>
+      </div>
+      <div class="two">
+        <div><label for="conf">Confirmation #</label><input type="text" id="conf" autocomplete="off"></div>
+        <div><label for="txn">Transaction ID <span class="soft">(blank = same)</span></label><input type="text" id="txn" autocomplete="off"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Policy &amp; carrier</h2>
+      <div class="two">
+        <div><label for="policy">Policy number</label><input type="text" id="policy" autocomplete="off"></div>
+        <div>
+          <label for="ptype">Policy type</label>
+          <select id="ptype">
+            <option>Auto</option><option>Home</option><option>Dwelling Fire</option><option>Renters</option>
+            <option>Mobile Home</option><option>Umbrella</option><option>Motorcycle</option><option>Boat</option>
+            <option>Business</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+      <label for="carrier">Carrier</label>
+      <select id="carrier"></select>
+      <div id="customCarrierWrap" style="display:none">
+        <div class="two">
+          <div><label for="carrierName">Carrier display name</label><input type="text" id="carrierName" autocomplete="off"></div>
+          <div><label for="carrierLegal">Carrier legal entity</label><input type="text" id="carrierLegal" autocomplete="off"></div>
+        </div>
+      </div>
+      <div class="two">
+        <div><label for="cstart">Coverage start <span class="soft">(optional)</span></label><input type="date" id="cstart"></div>
+        <div><label for="cend">Coverage end <span class="soft">(optional)</span></label><input type="date" id="cend"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Send</h2>
+      <label for="subject">Subject <span class="soft">(lowercase, auto-built)</span></label>
+      <input type="text" id="subject" autocomplete="off">
+      <label>BCC <span class="soft">(required on every receipt — E&amp;O record)</span></label>
+      <input type="text" class="locked" value="Save@BillLayneInsurance.com" readonly>
+      <div style="margin-top:12px">
+        <button class="primary" id="draftBtn" type="button">Create Gmail Draft</button>
+        <button class="goldbtn" id="sendBtn" type="button">Send Now</button>
+      </div>
+      <div class="checks" id="checks"></div>
+      <div id="result" role="status"></div>
+      <p class="hint">Gateway settings are shared with the <a href="./">main sender page</a> — set them there once per browser.</p>
+    </div>
+  </div>
+
+  <div class="previewwrap">
+    <iframe id="preview" sandbox="" title="Receipt preview"></iframe>
+  </div>
+</div>
+
+<script src="receipt-template.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+
+  var CARRIERS = [
+    { name: 'Progressive', legal: 'Progressive Universal Insurance Company' },
+    { name: 'Nationwide', legal: 'Nationwide Mutual Insurance Company' },
+    { name: 'National General', legal: 'Integon National Insurance Company' },
+    { name: 'Travelers', legal: 'The Travelers Indemnity Company' },
+    { name: 'Foremost', legal: 'Foremost Insurance Company' },
+    { name: 'Dairyland', legal: 'Dairyland Insurance Company' },
+    { name: 'Hagerty', legal: 'Essentia Insurance Company' },
+    { name: 'Alamance Farmers Mutual', legal: 'Alamance Farmers Mutual Insurance Company' },
+    { name: 'NC Grange Mutual', legal: 'NC Grange Mutual Insurance Company' },
+    { name: 'NCJUA', legal: 'NC Joint Underwriting Association' },
+    { name: 'Steadily', legal: 'Fortegra Specialty Insurance Company' }
+  ];
+  var sel = $('carrier');
+  CARRIERS.forEach(function (c, i) {
+    var o = document.createElement('option'); o.value = String(i); o.textContent = c.name; sel.appendChild(o);
+  });
+  var other = document.createElement('option'); other.value = 'other'; other.textContent = 'Other / not listed'; sel.appendChild(other);
+  sel.addEventListener('change', function () {
+    $('customCarrierWrap').style.display = sel.value === 'other' ? 'block' : 'none';
+    autoSubject(); render();
+  });
+
+  function carrierNames() {
+    if (sel.value === 'other') {
+      return { name: $('carrierName').value.trim() || '—', legal: $('carrierLegal').value.trim() || $('carrierName').value.trim() || '—' };
+    }
+    var c = CARRIERS[parseInt(sel.value, 10)] || CARRIERS[0];
+    return { name: c.name, legal: c.legal };
+  }
+
+  /* ---------- derived fields (recompute, never guess) ---------- */
+  function fmtAmount(v) {
+    var n = parseFloat(String(v).replace(/[^0-9.]/g, ''));
+    if (isNaN(n)) return { fmt: '—', raw: '—' };
+    var raw = n.toFixed(2);
+    var fmt = raw.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return { fmt: fmt, raw: raw };
+  }
+  var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  function humanDate(iso) {
+    if (!iso) return { human: '—', iso: '—' };
+    var p = iso.split('-');
+    if (p.length !== 3) return { human: '—', iso: '—' };
+    return { human: MONTHS[parseInt(p[1], 10) - 1] + ' ' + parseInt(p[2], 10) + ', ' + p[0], iso: iso };
+  }
+  function methodShort(full) {
+    if (!full) return '—';
+    var last4 = (full.match(/(\d{4})(?!.*\d)/) || [])[1] || '';
+    var brand = (full.match(/visa|mastercard|amex|american express|discover|debit|credit|checking|savings|ach|e-?check|card/i) || [''])[0];
+    var map = { 'american express': 'Amex', 'mastercard': 'MC', 'checking': 'ACH', 'savings': 'ACH', 'e-check': 'ACH', 'echeck': 'ACH' };
+    brand = brand ? (map[brand.toLowerCase()] || (brand.charAt(0).toUpperCase() + brand.slice(1).toLowerCase())) : 'Card';
+    var s = last4 ? brand + ' ••4' .replace('4', '') + last4 : brand;
+    s = last4 ? brand + ' ••' + last4 : brand;
+    return s.length > 12 ? s.slice(0, 12) : s;
+  }
+  function dash(v) { var t = String(v || '').trim(); return t ? t : '—'; }
+
+  function values() {
+    var c = carrierNames();
+    var a = fmtAmount($('amount').value);
+    var d = humanDate($('pdate').value);
+    var cs = humanDate($('cstart').value);
+    var ce = humanDate($('cend').value);
+    var policy = $('policy').value.trim();
+    var conf = $('conf').value.trim();
+    return {
+      FIRST_NAME: dash($('first').value), LAST_NAME: dash($('last').value),
+      PAYMENT_AMOUNT: a.fmt, PAYMENT_AMOUNT_RAW: a.raw,
+      PAYMENT_DATE: d.human, PAYMENT_DATE_ISO: d.iso,
+      PAYMENT_TIME: dash($('ptime').value),
+      PAYMENT_METHOD: dash($('method').value),
+      PAYMENT_METHOD_SHORT: methodShort($('method').value.trim()),
+      CONFIRMATION_NUMBER: dash(conf),
+      TRANSACTION_ID: dash($('txn').value) !== '—' ? $('txn').value.trim() : dash(conf),
+      POLICY_NUMBER: dash(policy),
+      POLICY_NUMBER_LAST4: policy ? policy.slice(-4) : '—',
+      POLICY_TYPE: $('ptype').value,
+      CARRIER_NAME: c.name, CARRIER_LEGAL: c.legal,
+      COVERAGE_START: cs.human, COVERAGE_END: ce.human
+    };
+  }
+
+  function fill() {
+    var v = values();
+    var html = window.BLI_RECEIPT_TEMPLATE;
+    Object.keys(v).forEach(function (k) {
+      html = html.split('{{' + k + '}}').join(String(v[k]));
+    });
+    return html;
+  }
+
+  /* ---------- integrity checks (from the locked skill rules) ---------- */
+  function integrity(html) {
+    var problems = [];
+    var m = html.match(/\{\{[A-Z_]+\}\}/);
+    if (m) problems.push('unfilled variable ' + m[0]);
+    ['cdn-cgi', '__cf_email__', 'email-protection', 'XacnUW4', 'border-radius:50%'].forEach(function (bad) {
+      if (html.indexOf(bad) !== -1) problems.push('forbidden string: ' + bad);
+    });
+    if (html.indexOf('mailto:Save@BillLayneInsurance.com') === -1) problems.push('Save@ mailto missing');
+    if (new Blob([html]).size > 102400) problems.push('over Gmail 102 KB clip limit');
+    return problems;
+  }
+
+  function autoSubject() {
+    var c = carrierNames();
+    var s = ('your payment receipt — ' + (c.name === '—' ? 'Bill Layne Insurance' : c.name)).toLowerCase();
+    if (s.length > 45) s = s.slice(0, 45);
+    $('subject').value = s;
+  }
+
+  function render() {
+    var html = fill();
+    $('preview').srcdoc = html;
+    var probs = integrity(html);
+    $('checks').innerHTML = probs.length
+      ? 'Checks: <span class="bad">' + probs.map(esc).join(' · ') + '</span>'
+      : 'Checks: all clear ✓ (' + (new Blob([html]).size / 1024).toFixed(1) + ' KB)';
+    var block = probs.length > 0;
+    $('draftBtn').disabled = block;
+    $('sendBtn').disabled = block;
+    return { html: html, problems: probs };
+  }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+  }
+  function showResult(ok, msg) {
+    var r = $('result'); r.className = ok ? 'ok' : 'err'; r.innerHTML = msg;
+  }
+
+  /* ---------- gateway (same localStorage as the sender page) ---------- */
+  function gatewayConfig() {
+    var url = localStorage.getItem('bliMailGateway.url') || '';
+    var secret = localStorage.getItem('bliMailGateway.secret') || '';
+    if (!url) { url = (prompt('BLI Mail Gateway URL (ends in /exec):') || '').trim(); if (url) localStorage.setItem('bliMailGateway.url', url); }
+    if (!secret) { secret = (prompt('Gateway secret:') || '').trim(); if (secret) localStorage.setItem('bliMailGateway.secret', secret); }
+    return { url: url, secret: secret };
+  }
+
+  function submit(mode) {
+    var cfg = gatewayConfig();
+    if (!cfg.url || !cfg.secret) { showResult(false, 'Gateway not configured — set it up on the <a href="./">main sender page</a> first.'); return; }
+    var r = render();
+    if (r.problems.length) { showResult(false, 'Fix the failed checks first.'); return; }
+    var to = $('to').value.trim();
+    if (mode === 'send') {
+      if (!to) { showResult(false, '"Send Now" needs the customer email.'); return; }
+      if (!window.confirm('Send this receipt NOW to: ' + to + '?')) return;
+    }
+    $('draftBtn').disabled = true; $('sendBtn').disabled = true;
+    showResult(true, mode === 'send' ? 'Sending…' : 'Creating draft…');
+    var ctrl = new AbortController();
+    var t = setTimeout(function () { ctrl.abort(); }, 45000);
+    fetch(cfg.url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        secret: cfg.secret, mode: mode, to: to,
+        subject: $('subject').value.trim() || 'your payment receipt',
+        html: r.html, bcc: 'Save@BillLayneInsurance.com',
+        fromName: 'Bill Layne Insurance'
+      }),
+      redirect: 'follow', signal: ctrl.signal
+    }).then(function (res) { return res.json(); })
+      .then(function (d) {
+        if (!d.ok) throw new Error(d.error || 'Gateway error.');
+        var quota = typeof d.remainingQuota === 'number' ? ' · ' + d.remainingQuota + ' sends left today' : '';
+        showResult(true, d.mode === 'send'
+          ? '✅ Receipt sent to <b>' + esc(d.to) + '</b>' + quota
+          : '✅ Draft created' + (d.to ? ' for <b>' + esc(d.to) + '</b>' : '') + ' — <a href="https://mail.google.com/mail/u/0/#drafts" target="_blank" rel="noopener">open Gmail Drafts →</a>' + quota);
+      })
+      .catch(function (e) {
+        showResult(false, '❌ ' + esc(e && e.name === 'AbortError' ? 'The gateway took too long (45s). Try again.' : (e && e.message) || 'Unknown error'));
+      })
+      .then(function () { clearTimeout(t); render(); });
+  }
+  $('draftBtn').addEventListener('click', function () { submit('draft'); });
+  $('sendBtn').addEventListener('click', function () { submit('send'); });
+
+  /* ---------- prefill from #d= (extension hand-off) ---------- */
+  function prefillFromHash() {
+    var m = /[#&]d=([A-Za-z0-9_-]+)/.exec(location.hash || '');
+    if (!m) return;
+    try {
+      var pad = m[1].length % 4 ? m[1] + '==='.slice((m[1].length % 4) - 1) : m[1];
+      var json = atob(pad.replace(/-/g, '+').replace(/_/g, '/'));
+      var d = JSON.parse(decodeURIComponent(escape(json)));
+      if (d.first) $('first').value = d.first;
+      if (d.last) $('last').value = d.last;
+      if (d.to) $('to').value = d.to;
+      if (d.amount) $('amount').value = d.amount;
+      if (d.date) $('pdate').value = d.date;
+      if (d.time) $('ptime').value = d.time;
+      if (d.method) $('method').value = d.method;
+      if (d.conf) $('conf').value = d.conf;
+      if (d.txn) $('txn').value = d.txn;
+      if (d.policy) $('policy').value = d.policy;
+      if (d.ptype) $('ptype').value = d.ptype;
+      if (d.carrier) {
+        var idx = CARRIERS.findIndex(function (c) { return c.name.toLowerCase() === String(d.carrier).toLowerCase(); });
+        if (idx >= 0) { sel.value = String(idx); }
+        else { sel.value = 'other'; $('customCarrierWrap').style.display = 'block'; $('carrierName').value = d.carrier; }
+      }
+      showResult(true, 'Pre-filled from the captured page — double-check every field against the confirmation screen before drafting.');
+    } catch (e) { /* bad payload - start blank */ }
+  }
+
+  /* ---------- init ---------- */
+  var today = new Date();
+  $('pdate').value = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+  ['first','last','amount','ptime','method','conf','txn','policy','carrierName','carrierLegal'].forEach(function (id) {
+    $(id).addEventListener('input', render);
+  });
+  ['pdate','cstart','cend','ptype'].forEach(function (id) { $(id).addEventListener('change', render); });
+  $('carrierName').addEventListener('input', autoSubject);
+  var badge = $('connBadge');
+  if (localStorage.getItem('bliMailGateway.url')) { badge.className = 'badge ok'; badge.textContent = 'Gateway: settings found ✓'; }
+  else { badge.className = 'badge err'; badge.textContent = 'Gateway: set up on the main page first'; }
+  prefillFromHash();
+  autoSubject();
+  render();
+})();
+</script>
+</body>
+</html>
