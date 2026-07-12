@@ -231,7 +231,7 @@
 
   /* ---------- HTML input, preview, subject autofill ---------- */
   function refresh(){
-    var v = $('htmlInput').value;
+    var v = stripSendToolbar($('htmlInput').value);
     var bytes = new Blob([v]).size;
     $('sizeInfo').textContent = (bytes/1024).toFixed(1) + ' KB';
     $('clipWarn').hidden = bytes < 100 * 1024;
@@ -247,6 +247,17 @@
     var d = document.createElement('textarea');
     d.innerHTML = m[1].replace(/<[^>]+>/g, '');
     return d.value.replace(/\s+/g, ' ').trim();
+  }
+  // Templates built with the Designer prompt carry a "Draft in Gmail" toolbar.
+  // It must never reach a customer, so remove it from anything pasted/dropped here.
+  function stripSendToolbar(html){
+    if (!html || (html.indexOf('bli-send-toolbar') === -1 && html.indexOf('bli-send-script') === -1)) return html;
+    try {
+      var doc = new DOMParser().parseFromString(html, 'text/html');
+      doc.querySelectorAll('#bli-send-toolbar, #bli-send-script').forEach(function(n){ n.remove(); });
+      var dt = /^\s*<!doctype[^>]*>/i.exec(html);
+      return (dt ? dt[0] + '\n' : '<!doctype html>\n') + doc.documentElement.outerHTML;
+    } catch (e) { return html; }
   }
   $('htmlInput').addEventListener('input', refresh);
 
@@ -306,7 +317,7 @@
       showResult(false, 'Enter the gateway URL and secret first (Gateway settings above), then click <b>Save settings</b>.');
       return;
     }
-    var html = $('htmlInput').value.trim();
+    var html = stripSendToolbar($('htmlInput').value.trim());
     if (!html) { showResult(false, 'Paste or drop the email HTML first (step 1).'); return; }
     var to = $('toInput').value.trim();
     if (mode === 'send') {
