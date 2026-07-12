@@ -1,0 +1,1209 @@
+/* ==========================================================================
+   BLI Social Studio — component styles
+   Scale model: SocialCanvas sets font-size = canvasWidth / 100,
+   so 1em = 1% of canvas width everywhere below. Components are designed
+   to live INSIDE a SocialCanvas.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Canvas
+   -------------------------------------------------------------------------- */
+
+.bss-scale {
+  position: relative;
+  display: block;
+}
+
+.bss-canvas {
+  position: relative;
+  overflow: hidden;
+  transform-origin: top left;
+  font-family: var(--bss-font-sans);
+  color: var(--bss-ink);
+  box-sizing: border-box;
+}
+
+.bss-canvas *,
+.bss-canvas *::before,
+.bss-canvas *::after {
+  box-sizing: border-box;
+}
+
+/* Background variants — each remaps the contextual ink so every child
+   component auto-adapts (dark surfaces get white ink + light gold accent). */
+
+.bss-canvas--gradient { background: var(--bss-grad-hero); }
+.bss-canvas--navy     { background: var(--bss-grad-navy); }
+.bss-canvas--teal     { background: var(--bss-grad-teal); }
+.bss-canvas--photo    { background: var(--bss-navy-deep); }
+
+.bss-canvas--gradient,
+.bss-canvas--navy,
+.bss-canvas--teal,
+.bss-canvas--photo {
+  --bss-ink: #ffffff;
+  --bss-ink-soft: rgba(255, 255, 255, 0.84);
+  --bss-ink-faint: rgba(255, 255, 255, 0.6);
+  --bss-accent: var(--bss-gold-light);
+  --bss-accent-strong: var(--bss-gold);
+  --bss-hl: rgba(200, 168, 78, 0.5);
+  --bss-surface: rgba(255, 255, 255, 0.07);
+  --bss-surface-border: rgba(255, 255, 255, 0.16);
+  --bss-line: rgba(255, 255, 255, 0.24);
+  --bss-pill-ink: #06264f;
+  --bss-chip-teal-bg: rgba(20, 184, 166, 0.18);
+  --bss-chip-teal-ink: #8ceadf;
+}
+
+.bss-canvas--cream { background: var(--bss-cream); }
+.bss-canvas--white { background: var(--bss-white); }
+
+.bss-canvas--cream,
+.bss-canvas--white {
+  --bss-chip-teal-bg: rgba(15, 118, 110, 0.1);
+  --bss-chip-teal-ink: #0f766e;
+}
+
+.bss-canvas--gold {
+  background: var(--bss-grad-gold);
+  --bss-ink: #06264f;
+  --bss-ink-soft: rgba(6, 38, 79, 0.82);
+  --bss-ink-faint: rgba(6, 38, 79, 0.58);
+  --bss-accent: #06264f;
+  --bss-accent-strong: #06264f;
+  --bss-hl: rgba(255, 255, 255, 0.42);
+  --bss-surface: rgba(255, 255, 255, 0.5);
+  --bss-surface-border: rgba(6, 38, 79, 0.16);
+  --bss-line: rgba(6, 38, 79, 0.28);
+  --bss-pill-ink: #06264f;
+  --bss-chip-teal-bg: rgba(6, 38, 79, 0.12);
+  --bss-chip-teal-ink: #06264f;
+}
+
+/* Layers */
+
+.bss-canvas__photo {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.bss-canvas__photo--fallback { background: var(--bss-grad-hero); }
+
+.bss-canvas__shade { position: absolute; inset: 0; }
+
+.bss-canvas__shade--soft {
+  background: linear-gradient(
+    180deg,
+    rgba(6, 18, 38, 0.2) 0%,
+    rgba(6, 18, 38, 0.38) 52%,
+    rgba(6, 18, 38, 0.84) 100%
+  );
+}
+
+.bss-canvas__shade--strong {
+  background: linear-gradient(180deg, rgba(6, 18, 38, 0.55) 0%, rgba(6, 18, 38, 0.9) 100%);
+}
+
+.bss-canvas__grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 15em 15em;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+}
+
+.bss-canvas--cream .bss-canvas__grain,
+.bss-canvas--white .bss-canvas__grain,
+.bss-canvas--gold .bss-canvas__grain {
+  opacity: 0.045;
+}
+
+.bss-canvas__inner {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.bss-pad--none     { padding: 0; }
+.bss-pad--snug     { padding: 5em; }
+.bss-pad--standard { padding: 7em; }
+.bss-pad--roomy    { padding: 9.5em; }
+
+/* Safe-area guides (design aid only — turn safeGuides off before export) */
+
+.bss-canvas__guides {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+}
+
+.bss-guide {
+  position: absolute;
+  border: 2px dashed rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(0, 0, 0, 0.35);
+  border-radius: 4px;
+}
+
+.bss-guide__label {
+  position: absolute;
+  top: 0.5em;
+  left: 0.9em;
+  font-family: var(--bss-font-sans);
+  font-weight: 800;
+  font-size: 1.3em;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+/* --------------------------------------------------------------------------
+   Atoms
+   -------------------------------------------------------------------------- */
+
+/* BrandLockup */
+
+.bss-lockup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1;
+}
+
+.bss-lockup--center { align-items: center; text-align: center; }
+
+.bss-lockup--sm { font-size: 2.1em; }
+.bss-lockup--md { font-size: 3.4em; }
+.bss-lockup--lg { font-size: 4.8em; }
+
+.bss-lockup__name {
+  font-family: var(--bss-font-display);
+  font-weight: 900;
+  font-size: 1em;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--bss-ink);
+  white-space: nowrap;
+}
+
+.bss-lockup__rule {
+  width: 2.6em;
+  height: 0.09em;
+  background: var(--bss-accent-strong);
+  border-radius: 0.1em;
+  margin: 0.3em 0 0.32em;
+}
+
+.bss-lockup--center .bss-lockup__rule { margin-left: auto; margin-right: auto; }
+
+.bss-lockup__sub {
+  font-family: var(--bss-font-sans);
+  font-weight: 700;
+  font-size: 0.365em;
+  letter-spacing: 0.44em;
+  text-transform: uppercase;
+  color: var(--bss-ink-soft);
+  white-space: nowrap;
+}
+
+.bss-lockup__loc {
+  font-family: var(--bss-font-sans);
+  font-weight: 500;
+  font-size: 0.27em;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--bss-ink-faint);
+  margin-top: 1em;
+  white-space: nowrap;
+}
+
+/* LogoStrap — margin-top:auto pins it to the canvas bottom automatically */
+
+.bss-strap {
+  margin-top: auto;
+  flex: none;
+}
+
+.bss-strap__fine {
+  font-weight: 500;
+  font-size: 1.35em;
+  line-height: 1.45;
+  color: var(--bss-ink-faint);
+  margin-bottom: 1.4em;
+}
+
+.bss-strap__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2em;
+  border-top: 0.14em solid var(--bss-line);
+  padding-top: 2.2em;
+}
+
+.bss-strap__brand {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+}
+
+.bss-strap__brand-name {
+  font-family: var(--bss-font-display);
+  font-weight: 900;
+  font-size: 2.3em;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--bss-ink);
+  white-space: nowrap;
+}
+
+.bss-strap__brand-sub {
+  font-weight: 700;
+  font-size: 1.05em;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--bss-accent);
+  margin-top: 0.5em;
+  white-space: nowrap;
+}
+
+.bss-strap__contact {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  line-height: 1.15;
+}
+
+.bss-strap__phone {
+  font-weight: 900;
+  font-size: 2.4em;
+  letter-spacing: 0.01em;
+  color: var(--bss-ink);
+  white-space: nowrap;
+}
+
+.bss-strap__site {
+  font-weight: 500;
+  font-size: 1.45em;
+  color: var(--bss-ink-soft);
+  margin-top: 0.4em;
+  white-space: nowrap;
+}
+
+/* CTAPill */
+
+.bss-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  border-radius: 99em;
+  font-family: var(--bss-font-sans);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.bss-pill--md { font-size: 2em; padding: 0.85em 1.7em; }
+.bss-pill--lg { font-size: 2.5em; padding: 0.9em 1.8em; }
+
+.bss-pill--gold {
+  background: var(--bss-grad-gold);
+  color: var(--bss-pill-ink);
+  box-shadow: 0 0.35em 1.4em rgba(0, 0, 0, 0.2);
+}
+
+.bss-pill--navy { background: var(--bss-navy); color: #ffffff; }
+
+.bss-pill--outline {
+  border: 0.11em solid var(--bss-line);
+  color: var(--bss-ink);
+  background: transparent;
+}
+
+.bss-pill--white { background: #ffffff; color: var(--bss-navy-ink); }
+
+.bss-pill__icon { width: 1.05em; height: 1.05em; flex: none; }
+
+/* StarRating */
+
+.bss-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.14em;
+}
+
+.bss-stars--sm { font-size: 2em; }
+.bss-stars--md { font-size: 2.8em; }
+.bss-stars--lg { font-size: 3.8em; }
+
+.bss-stars__star { width: 1em; height: 1em; display: inline-flex; }
+/* target the svg itself — its fill="currentColor" attribute would win over
+   an inherited fill from the wrapper span */
+.bss-stars__star svg { fill: var(--bss-accent-strong); }
+.bss-stars__star--empty svg { fill: var(--bss-line); }
+
+.bss-stars__label {
+  font-family: var(--bss-font-sans);
+  font-weight: 700;
+  font-size: 0.55em;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--bss-ink-soft);
+  margin-left: 0.6em;
+  white-space: nowrap;
+}
+
+/* Kicker */
+
+.bss-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9em;
+  font-family: var(--bss-font-sans);
+  font-weight: 800;
+  font-size: 1.7em;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--bss-accent);
+  line-height: 1.3;
+}
+
+.bss-kicker__bar {
+  width: 2.2em;
+  height: 0.16em;
+  background: var(--bss-accent-strong);
+  border-radius: 0.1em;
+  flex: none;
+}
+
+.bss-kicker__dot {
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: var(--bss-accent-strong);
+  flex: none;
+}
+
+/* Headline */
+
+.bss-headline {
+  font-family: var(--bss-font-display);
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -0.012em;
+  color: var(--bss-ink);
+}
+
+.bss-headline--xl { font-size: 10.5em; line-height: 0.98; }
+.bss-headline--lg { font-size: 8.4em; }
+.bss-headline--md { font-size: 6.4em; }
+.bss-headline--sm { font-size: 4.8em; line-height: 1.08; }
+
+.bss-headline--sans {
+  font-family: var(--bss-font-sans);
+  letter-spacing: -0.02em;
+  line-height: 1.04;
+}
+
+.bss-headline--center { text-align: center; }
+
+/* Highlight — 2026 hand-annotated accents */
+
+.bss-hl { color: inherit; }
+
+.bss-hl--marker {
+  background-image: linear-gradient(to top, var(--bss-hl) 46%, transparent 46%);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding: 0 0.06em;
+}
+
+.bss-hl--marker.bss-hl--teal {
+  background-image: linear-gradient(to top, rgba(20, 184, 166, 0.4) 46%, transparent 46%);
+}
+
+.bss-hl--underline {
+  background-repeat: no-repeat;
+  background-position: 0 97%;
+  background-size: 100% 0.16em;
+  padding-bottom: 0.06em;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 12' preserveAspectRatio='none'%3E%3Cpath d='M3 9 Q 28 3 58 7 T 117 5' fill='none' stroke='%23c8a84e' stroke-width='4.5' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+.bss-hl--underline.bss-hl--teal {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 12' preserveAspectRatio='none'%3E%3Cpath d='M3 9 Q 28 3 58 7 T 117 5' fill='none' stroke='%2314b8a6' stroke-width='4.5' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+.bss-hl--circle {
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  padding: 0.05em 0.22em;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 84' preserveAspectRatio='none'%3E%3Cpath d='M100 9 C 158 6 192 22 191 42 C 190 64 148 76 97 75 C 45 74 9 62 8 41 C 7 21 48 11 118 10' fill='none' stroke='%23c8a84e' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+.bss-hl--circle.bss-hl--teal {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 84' preserveAspectRatio='none'%3E%3Cpath d='M100 9 C 158 6 192 22 191 42 C 190 64 148 76 97 75 C 45 74 9 62 8 41 C 7 21 48 11 118 10' fill='none' stroke='%2314b8a6' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+/* ChipBadge */
+
+.bss-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  font-family: var(--bss-font-sans);
+  font-weight: 800;
+  font-size: 1.5em;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0.62em 1.3em;
+  border-radius: 99em;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.bss-chip--outline { border: 0.1em solid var(--bss-line); color: var(--bss-ink-soft); }
+.bss-chip--gold    { background: var(--bss-grad-gold); color: var(--bss-pill-ink); }
+.bss-chip--teal    { background: var(--bss-chip-teal-bg); color: var(--bss-chip-teal-ink); }
+.bss-chip--white   { background: rgba(255, 255, 255, 0.94); color: var(--bss-navy-ink); }
+.bss-chip--navy    { background: var(--bss-navy); color: #ffffff; }
+
+.bss-chip__icon { width: 1em; height: 1em; flex: none; }
+
+/* PhoneCTA */
+
+.bss-phonecta {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.3em;
+}
+
+.bss-phonecta__circle {
+  flex: none;
+  width: 5.4em;
+  height: 5.4em;
+  border-radius: 50%;
+  background: var(--bss-grad-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0.3em 1.2em rgba(0, 0, 0, 0.18);
+}
+
+.bss-phonecta__circle svg { width: 2.5em; height: 2.5em; fill: #06264f; }
+
+.bss-phonecta__stack { display: flex; flex-direction: column; }
+
+.bss-phonecta__label {
+  font-weight: 800;
+  font-size: 1.5em;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--bss-ink-faint);
+}
+
+.bss-phonecta__phone {
+  font-weight: 900;
+  font-size: 3.4em;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  color: var(--bss-ink);
+  margin-top: 0.08em;
+  white-space: nowrap;
+}
+
+.bss-phonecta--lg .bss-phonecta__circle { width: 6.6em; height: 6.6em; }
+.bss-phonecta--lg .bss-phonecta__circle svg { width: 3em; height: 3em; }
+.bss-phonecta--lg .bss-phonecta__phone { font-size: 4.2em; }
+
+/* --------------------------------------------------------------------------
+   Template scaffold
+   -------------------------------------------------------------------------- */
+
+.bss-t {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.bss-t__main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.bss-t__main--top { justify-content: flex-start; }
+
+.bss-t__cta {
+  margin-top: 2.8em;
+  display: flex;
+  align-items: center;
+  gap: 2em;
+  flex-wrap: wrap;
+}
+
+/* --------------------------------------------------------------------------
+   HeroPromoPost
+   -------------------------------------------------------------------------- */
+
+.bss-hero__kicker { margin-bottom: 2.4em; }
+
+.bss-hero__sub {
+  font-weight: 500;
+  font-size: 2.7em;
+  line-height: 1.4;
+  color: var(--bss-ink-soft);
+  margin-top: 1.3em;
+  max-width: 30em;
+}
+
+.bss-hero__cta {
+  margin-top: 3.4em;
+  display: flex;
+  align-items: center;
+  gap: 2.2em;
+  flex-wrap: wrap;
+}
+
+.bss-hero--center .bss-t__main { align-items: center; text-align: center; }
+.bss-hero--center .bss-hero__cta { justify-content: center; }
+.bss-hero--center .bss-hero__sub { margin-left: auto; margin-right: auto; }
+
+/* --------------------------------------------------------------------------
+   TipsListPost
+   -------------------------------------------------------------------------- */
+
+.bss-tips__title { margin-top: 0.9em; }
+
+.bss-tips__list {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4em;
+  margin-top: 2.8em;
+}
+
+.bss-tips__row {
+  display: flex;
+  gap: 1.9em;
+  align-items: flex-start;
+}
+
+.bss-tips__num {
+  flex: none;
+  font-size: 2.3em;
+  width: 1.95em;
+  height: 1.95em;
+  border-radius: 50%;
+  background: var(--bss-grad-gold);
+  color: #06264f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.bss-tips__text {
+  font-weight: 500;
+  font-size: 2.55em;
+  line-height: 1.32;
+  color: var(--bss-ink);
+  padding-top: 0.28em;
+}
+
+.bss-tips__text strong { font-weight: 800; }
+
+.bss-tips__footnote {
+  font-weight: 500;
+  font-size: 1.6em;
+  line-height: 1.4;
+  color: var(--bss-ink-faint);
+  margin-top: 2.2em;
+}
+
+/* --------------------------------------------------------------------------
+   Carousel slides
+   -------------------------------------------------------------------------- */
+
+.bss-carrow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2em;
+}
+
+.bss-carrow--top { margin-bottom: auto; padding-bottom: 2.5em; }
+
+.bss-carrow--foot {
+  margin-top: auto;
+  border-top: 0.14em solid var(--bss-line);
+  padding-top: 2.4em;
+}
+
+.bss-cardots { display: inline-flex; align-items: center; gap: 0.75em; font-size: 1.15em; }
+
+.bss-cardots__dot {
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  background: var(--bss-line);
+}
+
+.bss-cardots__dot--on {
+  background: var(--bss-accent-strong);
+  width: 2.7em;
+  border-radius: 99em;
+}
+
+.bss-swipe {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8em;
+  font-weight: 800;
+  font-size: 1.8em;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--bss-ink);
+  line-height: 1;
+}
+
+.bss-swipe svg { width: 1.4em; height: 1.4em; fill: var(--bss-accent-strong); }
+
+.bss-carcover__hook { margin: auto 0; }
+
+.bss-carcover__sub {
+  font-weight: 500;
+  font-size: 2.5em;
+  line-height: 1.4;
+  color: var(--bss-ink-soft);
+  margin-top: 1.4em;
+  max-width: 30em;
+}
+
+.bss-carslide__idx {
+  font-family: var(--bss-font-display);
+  font-weight: 900;
+  font-size: 9em;
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 0.035em var(--bss-accent-strong);
+  flex: none;
+}
+
+.bss-carslide__body {
+  font-weight: 500;
+  font-size: 3em;
+  line-height: 1.42;
+  color: var(--bss-ink-soft);
+  margin-top: 1.1em;
+  max-width: 26em;
+}
+
+.bss-carslide__body strong { font-weight: 800; color: var(--bss-ink); }
+
+.bss-carcta .bss-t__main {
+  align-items: center;
+  text-align: center;
+  gap: 2.4em;
+}
+
+.bss-carcta__sub {
+  font-weight: 500;
+  font-size: 2.6em;
+  line-height: 1.4;
+  color: var(--bss-ink-soft);
+  max-width: 26em;
+}
+
+/* --------------------------------------------------------------------------
+   TestimonialPost
+   -------------------------------------------------------------------------- */
+
+.bss-quote__mark {
+  font-family: var(--bss-font-display);
+  font-weight: 900;
+  font-size: 15em;
+  line-height: 0.55;
+  height: 0.42em;
+  color: var(--bss-accent-strong);
+  overflow: visible;
+}
+
+.bss-quote__text {
+  font-family: var(--bss-font-display);
+  font-weight: 600;
+  font-size: 4.6em;
+  line-height: 1.2;
+  letter-spacing: -0.008em;
+  color: var(--bss-ink);
+  margin-top: 0.4em;
+}
+
+.bss-quote__text--long { font-size: 3.7em; }
+
+.bss-quote__attr {
+  margin-top: 2.6em;
+  display: flex;
+  align-items: center;
+  gap: 1.6em;
+  flex-wrap: wrap;
+}
+
+.bss-quote__who {
+  font-weight: 700;
+  font-size: 2.3em;
+  color: var(--bss-ink);
+}
+
+.bss-quote__where {
+  font-weight: 500;
+  font-size: 2.3em;
+  color: var(--bss-ink-faint);
+}
+
+.bss-quote__stars { margin-bottom: 1.8em; }
+
+/* --------------------------------------------------------------------------
+   StatPost
+   -------------------------------------------------------------------------- */
+
+.bss-stat__big {
+  font-family: var(--bss-font-display);
+  font-weight: 900;
+  font-size: 21em;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  background: var(--bss-grad-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  white-space: nowrap;
+}
+
+.bss-stat__big--long { font-size: 14em; }
+.bss-stat__big--xlong { font-size: 10em; line-height: 1.02; white-space: normal; }
+
+/* Light canvases: the gold-gradient number would ghost (gold-on-gold) or run
+   marginal on cream — remap the text fill to a high-contrast brand gradient. */
+.bss-canvas--cream .bss-stat__big,
+.bss-canvas--white .bss-stat__big {
+  background: linear-gradient(150deg, var(--bss-navy) 0%, var(--bss-teal) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.bss-canvas--gold .bss-stat__big {
+  background: linear-gradient(150deg, #06264f 0%, #0f4d8f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.bss-stat__suffix {
+  font-size: 0.38em;
+  letter-spacing: -0.01em;
+}
+
+.bss-stat__label {
+  font-weight: 600;
+  font-size: 3.4em;
+  line-height: 1.28;
+  color: var(--bss-ink);
+  margin-top: 0.55em;
+  max-width: 24em;
+}
+
+.bss-stat__source {
+  font-weight: 500;
+  font-size: 1.6em;
+  line-height: 1.4;
+  color: var(--bss-ink-faint);
+  margin-top: 1.8em;
+}
+
+/* --------------------------------------------------------------------------
+   MythFactPost
+   -------------------------------------------------------------------------- */
+
+.bss-mf__cards {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4em;
+  margin-top: 2.8em;
+}
+
+.bss-mf__card {
+  border-radius: 1.6em;
+  padding: 2.8em 3em;
+  background: var(--bss-surface);
+  border: 0.12em solid var(--bss-surface-border);
+}
+
+.bss-mf__card--fact {
+  border-color: var(--bss-accent-strong);
+  border-width: 0.18em;
+}
+
+.bss-mf__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7em;
+  font-weight: 900;
+  font-size: 1.6em;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--bss-ink-faint);
+  margin-bottom: 0.9em;
+}
+
+.bss-mf__card--fact .bss-mf__tag { color: var(--bss-accent); }
+
+.bss-mf__tag svg { width: 1.1em; height: 1.1em; }
+
+.bss-mf__myth {
+  font-weight: 600;
+  font-size: 3em;
+  line-height: 1.3;
+  color: var(--bss-ink-soft);
+  text-decoration: line-through;
+  text-decoration-thickness: 0.07em;
+  text-decoration-color: var(--bss-ink-faint);
+}
+
+.bss-mf__fact {
+  font-weight: 700;
+  font-size: 3.2em;
+  line-height: 1.28;
+  color: var(--bss-ink);
+}
+
+/* --------------------------------------------------------------------------
+   ChecklistPost
+   -------------------------------------------------------------------------- */
+
+.bss-check__list { margin-top: 1.8em; }
+
+.bss-check__row {
+  display: flex;
+  gap: 1.7em;
+  align-items: flex-start;
+  padding: 1.9em 0;
+  border-bottom: 0.1em dashed var(--bss-line);
+}
+
+.bss-check__row:last-child { border-bottom: none; }
+
+.bss-check__box {
+  flex: none;
+  font-size: 2.2em;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 0.32em;
+  background: var(--bss-grad-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.1em;
+}
+
+.bss-check__box svg { width: 1em; height: 1em; fill: #06264f; }
+
+.bss-check__box--empty {
+  background: transparent;
+  border: 0.12em solid var(--bss-line);
+}
+
+.bss-check__text {
+  font-weight: 600;
+  font-size: 2.7em;
+  line-height: 1.3;
+  color: var(--bss-ink);
+  padding-top: 0.22em;
+}
+
+.bss-check__footnote {
+  font-weight: 500;
+  font-size: 1.6em;
+  line-height: 1.4;
+  color: var(--bss-ink-faint);
+  margin-top: 2em;
+}
+
+/* --------------------------------------------------------------------------
+   QAPost
+   -------------------------------------------------------------------------- */
+
+.bss-qa__question { margin-top: 0.7em; }
+
+.bss-qa__answer {
+  margin-top: 2.8em;
+  background: var(--bss-surface);
+  border: 0.12em solid var(--bss-surface-border);
+  border-left: 0.55em solid var(--bss-accent-strong);
+  border-radius: 1.4em;
+  padding: 2.6em 3em;
+}
+
+.bss-qa__answer-label {
+  font-weight: 800;
+  font-size: 1.5em;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--bss-accent);
+  margin-bottom: 1em;
+}
+
+.bss-qa__answer-text {
+  font-weight: 500;
+  font-size: 2.75em;
+  line-height: 1.42;
+  color: var(--bss-ink);
+}
+
+.bss-qa__answer-text strong { font-weight: 800; }
+
+/* --------------------------------------------------------------------------
+   PhotoPost
+   -------------------------------------------------------------------------- */
+
+.bss-photopost__content {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+
+.bss-photopost--center .bss-photopost__content {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.bss-photopost .bss-strap { margin-top: 3em; }
+
+.bss-photopost__sub {
+  font-weight: 500;
+  font-size: 2.6em;
+  line-height: 1.4;
+  color: var(--bss-ink-soft);
+  margin-top: 1.2em;
+  max-width: 30em;
+}
+
+.bss-photopost__cta {
+  margin-top: 2.8em;
+  display: flex;
+  align-items: center;
+  gap: 2em;
+}
+
+.bss-photopost--center .bss-photopost__cta { justify-content: center; }
+
+/* --------------------------------------------------------------------------
+   CommunityPost
+   -------------------------------------------------------------------------- */
+
+.bss-comm__row {
+  display: flex;
+  gap: 2.6em;
+  align-items: center;
+  margin-top: 2.6em;
+}
+
+.bss-comm__datecard {
+  flex: none;
+  width: 8em;
+  border-radius: 1.2em;
+  overflow: hidden;
+  text-align: center;
+  background: #ffffff;
+  box-shadow: 0 0.5em 1.8em rgba(0, 0, 0, 0.22);
+}
+
+.bss-comm__datecard-month {
+  background: var(--bss-grad-gold);
+  color: #06264f;
+  font-weight: 900;
+  font-size: 1.4em;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  padding: 0.55em 0 0.45em 0.3em;
+}
+
+.bss-comm__datecard-day {
+  font-family: var(--bss-font-display);
+  font-weight: 900;
+  font-size: 4.2em;
+  line-height: 1;
+  color: var(--bss-navy-ink);
+  padding: 0.28em 0 0.32em;
+}
+
+.bss-comm__info { min-width: 0; }
+
+.bss-comm__meta {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  font-weight: 500;
+  font-size: 2.2em;
+  color: var(--bss-ink-soft);
+  margin-top: 0.7em;
+}
+
+.bss-comm__meta svg {
+  width: 1em;
+  height: 1em;
+  fill: var(--bss-accent-strong);
+  flex: none;
+}
+
+.bss-comm__details {
+  font-weight: 500;
+  font-size: 2.4em;
+  line-height: 1.42;
+  color: var(--bss-ink-soft);
+  margin-top: 2.2em;
+  max-width: 32em;
+}
+
+/* --------------------------------------------------------------------------
+   HoursUpdatePost
+   -------------------------------------------------------------------------- */
+
+.bss-hours__list { margin-top: 2.4em; }
+
+.bss-hours__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 2em;
+  padding: 1.7em 0;
+  border-bottom: 0.1em solid var(--bss-line);
+}
+
+.bss-hours__row:last-child { border-bottom: none; }
+
+.bss-hours__label {
+  font-weight: 600;
+  font-size: 2.6em;
+  color: var(--bss-ink);
+}
+
+.bss-hours__value {
+  font-weight: 900;
+  font-size: 2.6em;
+  color: var(--bss-accent);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.bss-hours__note {
+  font-weight: 500;
+  font-size: 2em;
+  line-height: 1.45;
+  color: var(--bss-ink-soft);
+  margin-top: 2.2em;
+}
+
+/* --------------------------------------------------------------------------
+   CoverBanner (Facebook cover 1640×624 — safe zone = central 1280px)
+   -------------------------------------------------------------------------- */
+
+.bss-cover {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3em;
+  padding: 0 11em;
+}
+
+.bss-cover__left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.bss-cover__tagline {
+  font-weight: 600;
+  font-size: 1.55em;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--bss-ink-soft);
+  margin-top: 1.8em;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bss-cover__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  gap: 1.1em;
+  flex: none;
+}
+
+.bss-cover__phone {
+  font-weight: 900;
+  font-size: 3.1em;
+  letter-spacing: -0.01em;
+  color: var(--bss-ink);
+  white-space: nowrap;
+}
+
+.bss-cover__site {
+  font-weight: 500;
+  font-size: 1.7em;
+  color: var(--bss-ink-soft);
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   GBPPost (1200×900 — everything inside the central 900×900 square)
+   -------------------------------------------------------------------------- */
+
+.bss-gbp {
+  height: 100%;
+  width: 71em;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 2.6em;
+  padding: 3em 0;
+}
+
+.bss-gbp__sub {
+  font-weight: 500;
+  font-size: 2.5em;
+  line-height: 1.4;
+  color: var(--bss-ink-soft);
+  max-width: 24em;
+}
+
+.bss-gbp__contact {
+  font-weight: 600;
+  font-size: 1.9em;
+  letter-spacing: 0.06em;
+  color: var(--bss-ink-faint);
+}
