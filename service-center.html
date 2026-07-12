@@ -1416,14 +1416,16 @@
     }, { threshold: 0.1 });
     revealElements.forEach(el => observer.observe(el));
 
-    // Auto-open payment panel when linked from #payment-panel
-    if (window.location.hash === '#payment-panel') {
-        const payBtn = document.querySelector('[onclick*="payment-panel"]');
-        if (payBtn) {
+    // Auto-open a service panel when deep-linked (e.g. from the Client Hub)
+    const deepLinkPanels = ['payment-panel', 'claims-panel', 'policy-panel', 'idcard-panel'];
+    const requestedPanel = window.location.hash.replace('#', '');
+    if (deepLinkPanels.includes(requestedPanel)) {
+        const panelBtn = document.querySelector('[onclick*="' + requestedPanel + '"]');
+        if (panelBtn) {
             setTimeout(() => {
-                togglePanel('payment-panel', payBtn);
+                togglePanel(requestedPanel, panelBtn);
                 setTimeout(() => {
-                    payBtn.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    panelBtn.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }, 150);
             }, 300);
         }
