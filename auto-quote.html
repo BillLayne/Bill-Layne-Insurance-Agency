@@ -2347,5 +2347,17 @@
             }
         });
     </script>
+    <script>
+    // Prefill ZIP passed from the homepage hero (?zip=XXXXX)
+    (function() {
+        try {
+            const zip = new URLSearchParams(window.location.search).get('zip');
+            if (zip && /^[0-9]{5}$/.test(zip)) {
+                const field = document.getElementById('zip_code');
+                if (field && !field.value) field.value = zip;
+            }
+        } catch (e) {}
+    })();
+    </script>
 </body>
 </html>

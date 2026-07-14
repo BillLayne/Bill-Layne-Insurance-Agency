@@ -1337,6 +1337,21 @@ button { cursor: pointer; font-family: 'DM Sans', sans-serif; }
     _mp.addEventListener('touchend',   e => { if (e.changedTouches[0].clientY - _sy > 60) closeMenu(); }, { passive: true });
     // Escape key
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
+    // -- ZIP HANDOFF ------------------------------------------------
+    // Homepage hero ZIP form lands here with ?zip=XXXXX. Forward it onto
+    // the auto/home quote links so their zip_code field can prefill.
+    (function() {
+        try {
+            const zip = new URLSearchParams(window.location.search).get('zip');
+            if (!zip || !/^[0-9]{5}$/.test(zip)) return;
+            document.querySelectorAll('a[href^="auto-quote.html"], a[href^="home-quote.html"]').forEach(a => {
+                const u = new URL(a.getAttribute('href'), window.location.origin);
+                u.searchParams.set('zip', zip);
+                a.href = u.pathname.replace(/^\//, '') + u.search;
+            });
+        } catch (e) {}
+    })();
 </script>
 
 </body>
