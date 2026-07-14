@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLI Mail Gateway</title>
+<link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+
+<header class="brand">
+  <h1>BLI <span class="gold">Mail Gateway</span></h1>
+  <p>Capture the open email template, then draft it in Gmail or send it — without leaving Chrome.</p>
+  <span class="badge" id="connBadge">Gateway: not tested</span>
+</header>
+
+<main>
+
+  <details class="card" id="settingsCard">
+    <summary>&#9881;&#65039; Gateway settings <span class="hint" id="setStatus"></span></summary>
+    <label for="gwUrl">Gateway URL (ends in /exec)</label>
+    <input type="text" id="gwUrl" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off" spellcheck="false">
+    <label for="gwSecret">Secret</label>
+    <div class="inline">
+      <input type="password" id="gwSecret" placeholder="GATEWAY_SECRET value" autocomplete="off" spellcheck="false">
+      <button class="quiet mini" id="showSecret" type="button">Show</button>
+    </div>
+    <div class="row">
+      <button class="primary mini" id="saveSettings" type="button">Save</button>
+      <button class="quiet mini" id="testConn" type="button">Test connection</button>
+    </div>
+    <p class="hint">Stored only in this extension on this computer. Never hardcoded into pages or emails.</p>
+  </details>
+
+  <section class="card">
+    <h2><span class="step">1</span>Email HTML</h2>
+    <button class="primary block" id="captureBtn" type="button">&#128247; Capture current page as email</button>
+    <button class="gold block" id="receiptBtn" type="button" disabled>&#129534; Receipt from this page</button>
+    <p class="hint">Clicking the BLI toolbar icon on a template tab captures it automatically; this button re-captures. On a carrier <b>payment-confirmation</b> screen, capture first, then "Receipt from this page" — it pulls the payment details into the BLI receipt builder instead of emailing the raw page. For local files (file://), enable "Allow access to file URLs" in the extension's Details once.</p>
+    <details id="manualDetails">
+      <summary>Or paste / drop the HTML instead</summary>
+      <div id="dropZone">Drag &amp; drop an .html file here, <label class="filebtn" for="fileInput">choose a file</label>, or paste below.
+        <input type="file" id="fileInput" accept=".html,.htm,text/html">
+      </div>
+      <textarea id="htmlInput" placeholder="Paste the full email HTML here…" spellcheck="false"></textarea>
+    </details>
+    <div class="meta">
+      <span id="sourceInfo">No email loaded yet</span>
+      <span id="clipWarn" hidden>&#9888;&#65039; Over ~100 KB — Gmail may clip this email</span>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="step">2</span>Recipients &amp; subject</h2>
+    <label for="toInput">To <span class="soft">(optional for drafts)</span></label>
+    <input type="text" id="toInput" placeholder="customer@example.com" autocomplete="off">
+    <label for="subjectInput">Subject <span class="soft">(auto-fills from the template)</span></label>
+    <input type="text" id="subjectInput" autocomplete="off">
+    <div class="two">
+      <div>
+        <label for="ccInput">CC</label>
+        <input type="text" id="ccInput" autocomplete="off">
+      </div>
+      <div>
+        <label for="bccInput">BCC <span class="soft">(clear = no copy)</span></label>
+        <input type="text" id="bccInput" value="Save@BillLayneInsurance.com" autocomplete="off">
+      </div>
+    </div>
+    <div class="two">
+      <div>
+        <label for="fromNameInput">From name</label>
+        <input type="text" id="fromNameInput" value="Bill Layne Insurance" autocomplete="off">
+      </div>
+      <div>
+        <label for="replyToInput">Reply-To <span class="soft">(optional)</span></label>
+        <input type="text" id="replyToInput" autocomplete="off">
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="step">3</span>Preview</h2>
+    <iframe id="preview" sandbox="" title="Email preview"></iframe>
+  </section>
+
+  <section class="card actions">
+    <button class="primary block" id="draftBtn" type="button" disabled>Create Gmail Draft</button>
+    <button class="gold block" id="sendBtn" type="button" disabled>Send Now</button>
+    <button class="quiet block" id="clearBtn" type="button" style="margin-top:8px">&#129529; Clear &mdash; start a new email</button>
+    <p class="hint">Draft = lands in Gmail Drafts for a final look. Send Now = goes out immediately. Capturing a different page also auto-resets To &amp; Subject for the next customer.</p>
+    <div id="result" role="status"></div>
+  </section>
+
+</main>
+
+<footer>
+  Bill Layne Insurance &middot; Nothing leaves this panel until you click Draft or Send, and then only to your own gateway.
+</footer>
+
+<script src="sidepanel.js"></script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bill Layne Insurance Assistant</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <header class="brand-header">
+    <img src="icons/icon-48.png" width="42" height="42" alt="">
+    <div>
+      <p class="eyebrow">BILL LAYNE INSURANCE</p>
+      <h1>Browser Assistant</h1>
+    </div>
+  </header>
+
+  <main>
+    <div class="privacy-banner" role="status">
+      <span class="privacy-dot" aria-hidden="true"></span>
+      Local-only capture &bull; No API key &bull; Nothing sent automatically
+    </div>
+
+    <section class="card" aria-labelledby="capture-title">
+      <div class="section-heading">
+        <div>
+          <p class="step-label">STEP 1</p>
+          <h2 id="capture-title">Capture the current page</h2>
+        </div>
+        <button id="clearButton" class="text-button" type="button">Clear</button>
+      </div>
+
+      <p class="help-text">Chrome asks for access only when you click a capture button. Password fields are excluded.</p>
+
+      <div class="button-grid">
+        <button id="capturePageButton" class="button button-primary" type="button">
+          <span aria-hidden="true">&#9638;</span>
+          Capture page
+        </button>
+        <button id="captureSelectionButton" class="button button-secondary" type="button">
+          <span aria-hidden="true">&#9998;</span>
+          Capture selection
+        </button>
+      </div>
+
+      <div id="captureStatus" class="status" aria-live="polite">No page information captured yet.</div>
+
+      <label class="field-label" for="capturedContext">Captured information</label>
+      <textarea id="capturedContext" class="context-area" readonly placeholder="Captured page information will appear here."></textarea>
+      <div class="context-meta">
+        <span id="sourceLabel">No source</span>
+        <span id="characterCount">0 characters</span>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="workflow-title">
+      <div class="section-heading">
+        <div>
+          <p class="step-label">STEP 2</p>
+          <h2 id="workflow-title">Choose the insurance workflow</h2>
+        </div>
+      </div>
+
+      <label class="field-label" for="workflowSelect">Workflow</label>
+      <select id="workflowSelect">
+        <option value="auto-intake">Auto policy quote intake</option>
+        <option value="home-intake">Home policy quote intake</option>
+        <option value="customer-review">Customer review and correction form</option>
+        <option value="quote-compare">Compare quotes or policies</option>
+        <option value="email-draft">Draft a customer email</option>
+        <option value="general">General insurance assistance</option>
+      </select>
+
+      <label class="field-label" for="notes">Optional instructions</label>
+      <textarea id="notes" class="notes-area" placeholder="Example: Focus on missing drivers, lienholders, and physical damage deductibles."></textarea>
+
+      <label class="check-row">
+        <input id="includeUrl" type="checkbox" checked>
+        <span>Include the page title and URL in the prompt</span>
+      </label>
+      <div class="security-note">SSNs and payment-card patterns are masked before copying.</div>
+    </section>
+
+    <section class="card action-card" aria-labelledby="send-title">
+      <div class="section-heading">
+        <div>
+          <p class="step-label">STEP 3</p>
+          <h2 id="send-title">Use with your existing subscription</h2>
+        </div>
+      </div>
+
+      <button id="copyOpenButton" class="button button-chatgpt" type="button" disabled>
+        Copy prompt + Open ChatGPT
+      </button>
+      <div class="button-grid secondary-actions">
+        <button id="copyButton" class="button button-secondary" type="button" disabled>Copy for Codex</button>
+        <button id="downloadButton" class="button button-secondary" type="button" disabled>Save prompt</button>
+      </div>
+      <p class="help-text centered">Paste the copied prompt into ChatGPT or this Codex task. The extension never submits it for you.</p>
+    </section>
+
+    <section class="quick-links" aria-labelledby="links-title">
+      <h2 id="links-title">Quick links</h2>
+      <div class="quick-link-grid">
+        <a href="https://chatgpt.com/" target="_blank" rel="noreferrer">ChatGPT</a>
+        <a href="https://www.billlayneinsurance.com/" target="_blank" rel="noreferrer">Agency website</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <strong>Bill Layne Insurance Agency</strong><br>
+    Elkin, North Carolina &bull; Internal workflow tool
+  </footer>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>
