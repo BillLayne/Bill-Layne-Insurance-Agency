@@ -53,6 +53,9 @@
   button:disabled{opacity:.55;cursor:not-allowed}
   .primary{background:var(--navy);color:#fff;width:100%}
   .primary:hover:not(:disabled){background:var(--navy-dark)}
+  .primary.armed{background:#b45309;animation:pulse 1.2s ease-in-out infinite}
+  .primary.armed:hover:not(:disabled){background:#92400e}
+  @keyframes pulse{50%{filter:brightness(1.15)}}
   .goldbtn{background:var(--gold);color:var(--navy-dark);width:100%;margin-top:8px}
   .goldbtn:hover:not(:disabled){filter:brightness(1.06)}
   .quiet{background:#e2e8f0;color:var(--ink);width:100%;margin-top:8px;font-weight:600}
@@ -128,6 +131,15 @@
   var TPLS = window.BLI_STUDIO.templates;
   var current = TPLS[0];
   var subjectDirty = false;
+  var armed = false, armTimer = null;
+
+  function disarm() {
+    armed = false;
+    clearTimeout(armTimer);
+    var b = $('sendBtn');
+    b.classList.remove('armed');
+    b.textContent = 'Send Now';
+  }
 
   /* ---------- template picker ---------- */
   var grid = $('tplGrid');
@@ -140,6 +152,7 @@
   });
 
   function selectTemplate(id) {
+    disarm();
     current = TPLS.filter(function (t) { return t.id === id; })[0] || TPLS[0];
     Array.prototype.forEach.call(grid.children, function (el) {
       el.className = 'tpl' + (el.dataset.id === current.id ? ' active' : '');
@@ -284,10 +297,18 @@
     var to = $('to').value.trim();
     if (mode === 'send') {
       if (!to) { showResult(false, '&#9888;&#65039; NOT SENT — "Send Now" needs the customer email (top of this card).'); return; }
-      if (!window.confirm('Send this ' + current.name + ' NOW to: ' + to + '?')) {
-        showResult(false, 'Cancelled — nothing was sent.');
+      // Two-click confirm built into the button — native confirm() dialogs get
+      // auto-blocked by Chrome, which made sending impossible.
+      if (!armed) {
+        armed = true;
+        $('sendBtn').classList.add('armed');
+        $('sendBtn').textContent = '⚠️ Click again to send to ' + to;
+        showResult(true, 'Ready — click the orange button once more to send to <b>' + esc(to) + '</b>. (Changing anything cancels.)');
+        clearTimeout(armTimer);
+        armTimer = setTimeout(disarm, 10000);
         return;
       }
+      disarm();
     }
     var cfg = gatewayConfig();
     if (!cfg.url || !cfg.secret) { showResult(false, '&#9888;&#65039; NOT SENT — gateway not configured. Set it up on the <a href="./">main sender page</a> first.'); return; }
@@ -331,6 +352,9 @@
   $('newBtn').addEventListener('click', function () { location.replace('studio.html'); });
 
   /* ---------- init ---------- */
+  // Editing anything (fields, recipient, subject) cancels a pending armed send.
+  document.addEventListener('input', disarm, true);
+  document.addEventListener('change', disarm, true);
   var badge = $('connBadge');
   if (localStorage.getItem('bliMailGateway.url')) { badge.className = 'badge ok'; badge.textContent = 'Gateway: settings found ✓'; }
   else { badge.className = 'badge err'; badge.textContent = 'Gateway: set up on the main page first'; }
