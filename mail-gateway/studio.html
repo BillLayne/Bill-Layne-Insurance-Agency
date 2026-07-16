@@ -61,9 +61,9 @@
   .half-row .quiet{margin-top:0}
 
   .hint{font-size:11px;color:var(--muted);margin:6px 0 0}
-  #result{margin-top:10px;border-radius:8px;padding:9px 11px;font-size:13.5px;display:none}
-  #result.ok{display:block;background:var(--ok-bg);border:1px solid #bbf7d0;color:var(--ok)}
-  #result.err{display:block;background:var(--err-bg);border:1px solid #fecaca;color:var(--err)}
+  #result{margin-top:10px;border-radius:10px;padding:14px 16px;font-size:15px;font-weight:600;line-height:1.5;display:none}
+  #result.ok{display:block;background:var(--ok-bg);border:2px solid #4ade80;color:var(--ok)}
+  #result.err{display:block;background:var(--err-bg);border:2px solid #f87171;color:var(--err)}
   #result a{color:var(--navy);font-weight:700}
 
   .previewwrap{position:sticky;top:14px}
@@ -254,9 +254,7 @@
     $('checks').innerHTML = parts.length
       ? 'Checks: ' + parts.join(' &middot; ')
       : 'Checks: all clear ✓ (' + (new Blob([html]).size / 1024).toFixed(1) + ' KB)';
-    var block = probs.length > 0 || missing.length > 0;
-    $('sendBtn').disabled = block;
-    $('draftBtn').disabled = block;
+    // Buttons stay ENABLED — submit() explains loudly instead of silently ignoring clicks.
     return { html: html, problems: probs, missing: missing };
   }
 
@@ -267,6 +265,7 @@
   }
   function showResult(ok, msg) {
     var r = $('result'); r.className = ok ? 'ok' : 'err'; r.innerHTML = msg;
+    r.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   /* ---------- gateway (same localStorage as the sender page) ---------- */
@@ -279,15 +278,19 @@
   }
 
   function submit(mode) {
-    var cfg = gatewayConfig();
-    if (!cfg.url || !cfg.secret) { showResult(false, 'Gateway not configured — set it up on the <a href="./">main sender page</a> first.'); return; }
     var r = render();
-    if (r.problems.length || r.missing.length) { showResult(false, 'Fix the flagged items first.'); return; }
+    if (r.missing.length) { showResult(false, '&#9888;&#65039; NOT SENT — please fill in: <b>' + r.missing.map(esc).join(', ') + '</b>'); return; }
+    if (r.problems.length) { showResult(false, '&#9888;&#65039; NOT SENT — failed checks: <b>' + r.problems.map(esc).join(' · ') + '</b>'); return; }
     var to = $('to').value.trim();
     if (mode === 'send') {
-      if (!to) { showResult(false, '"Send Now" needs the customer email.'); return; }
-      if (!window.confirm('Send this ' + current.name + ' NOW to: ' + to + '?')) return;
+      if (!to) { showResult(false, '&#9888;&#65039; NOT SENT — "Send Now" needs the customer email (top of this card).'); return; }
+      if (!window.confirm('Send this ' + current.name + ' NOW to: ' + to + '?')) {
+        showResult(false, 'Cancelled — nothing was sent.');
+        return;
+      }
     }
+    var cfg = gatewayConfig();
+    if (!cfg.url || !cfg.secret) { showResult(false, '&#9888;&#65039; NOT SENT — gateway not configured. Set it up on the <a href="./">main sender page</a> first.'); return; }
     $('sendBtn').disabled = true; $('draftBtn').disabled = true;
     showResult(true, mode === 'send' ? 'Sending…' : 'Creating draft…');
     var ctrl = new AbortController();
@@ -307,13 +310,13 @@
         if (!d.ok) throw new Error(d.error || 'Gateway error.');
         var quota = typeof d.remainingQuota === 'number' ? ' · ' + d.remainingQuota + ' sends left today' : '';
         showResult(true, d.mode === 'send'
-          ? '✅ ' + current.name + ' sent to <b>' + esc(d.to) + '</b>' + quota
+          ? '✅ SENT! Your ' + current.name + ' is on its way to <b>' + esc(d.to) + '</b>. Proof: <a href="https://mail.google.com/mail/u/0/#sent" target="_blank" rel="noopener">open your Gmail Sent folder →</a>' + quota
           : '✅ Draft created' + (d.to ? ' for <b>' + esc(d.to) + '</b>' : '') + ' — <a href="https://mail.google.com/mail/u/0/#drafts" target="_blank" rel="noopener">open Gmail Drafts →</a>' + quota);
       })
       .catch(function (e) {
         showResult(false, '❌ ' + esc(e && e.name === 'AbortError' ? 'The gateway took too long (45s). Try again.' : (e && e.message) || 'Unknown error'));
       })
-      .then(function () { clearTimeout(t); render(); });
+      .then(function () { clearTimeout(t); $('sendBtn').disabled = false; $('draftBtn').disabled = false; render(); });
   }
   $('sendBtn').addEventListener('click', function () { submit('send'); });
   $('draftBtn').addEventListener('click', function () { submit('draft'); });
