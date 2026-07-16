@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>BLI Mail Studio</title>
+<link rel="icon" href="data:,">
+<style>
+  :root{
+    --navy:#003f87; --navy-dark:#00295c; --gold:#C8A84E; --teal:#0f766e;
+    --ink:#0f172a; --muted:#475569; --line:#e2e8f0; --bg:#f1f5f9; --card:#ffffff;
+    --ok:#166534; --ok-bg:#f0fdf4; --err:#b91c1c; --err-bg:#fef2f2;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:14.5px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  header{background:linear-gradient(135deg,var(--navy-dark) 0%,var(--navy) 55%,var(--teal) 140%);color:#fff;padding:18px 22px}
+  header h1{margin:0;font-size:20px}
+  header .gold{color:var(--gold)}
+  header p{margin:4px 0 0;color:#cbd5e1;font-size:13px}
+  header a{color:#fff}
+  .badge{display:inline-block;margin-top:8px;padding:3px 11px;border-radius:999px;font-size:12px;font-weight:600;
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25)}
+  .badge.ok{background:#dcfce7;color:var(--ok);border-color:#86efac}
+  .badge.err{background:#fee2e2;color:var(--err);border-color:#fca5a5}
+
+  .layout{display:grid;grid-template-columns:460px 1fr;gap:16px;max-width:1440px;margin:0 auto;padding:16px 22px 50px}
+  @media(max-width:1000px){.layout{grid-template-columns:1fr}}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+  .card h2{margin:0 0 10px;font-size:14px;color:var(--navy)}
+
+  /* template picker */
+  .tpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .tpl{border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;background:#fff;text-align:left;font:inherit}
+  .tpl:hover{border-color:#94a3b8}
+  .tpl.active{border-color:var(--navy);background:#eff6ff;box-shadow:0 0 0 1px var(--navy)}
+  .tpl .ic{font-size:18px}
+  .tpl .nm{display:block;font-weight:700;font-size:13px;margin-top:2px}
+  .tpl .ds{display:block;font-size:11px;color:var(--muted);margin-top:2px;line-height:1.35}
+
+  label{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin:9px 0 3px}
+  label .req{color:var(--err)}
+  input[type=text],input[type=email],input[type=date],select,textarea{
+    width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:7px;font-size:14px;color:var(--ink);background:#fff;font-family:inherit}
+  textarea{resize:vertical}
+  input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--navy);outline-offset:1px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+  .locked{background:#f8fafc;color:var(--muted)}
+
+  button{font:inherit;font-weight:700;border:0;border-radius:8px;padding:10px 16px;cursor:pointer}
+  button:disabled{opacity:.55;cursor:not-allowed}
+  .primary{background:var(--navy);color:#fff;width:100%}
+  .primary:hover:not(:disabled){background:var(--navy-dark)}
+  .goldbtn{background:var(--gold);color:var(--navy-dark);width:100%;margin-top:8px}
+  .goldbtn:hover:not(:disabled){filter:brightness(1.06)}
+  .quiet{background:#e2e8f0;color:var(--ink);width:100%;margin-top:8px;font-weight:600}
+  .quiet:hover:not(:disabled){background:#cbd5e1}
+  .half-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+  .half-row .quiet{margin-top:0}
+
+  .hint{font-size:11px;color:var(--muted);margin:6px 0 0}
+  #result{margin-top:10px;border-radius:8px;padding:9px 11px;font-size:13.5px;display:none}
+  #result.ok{display:block;background:var(--ok-bg);border:1px solid #bbf7d0;color:var(--ok)}
+  #result.err{display:block;background:var(--err-bg);border:1px solid #fecaca;color:var(--err)}
+  #result a{color:var(--navy);font-weight:700}
+
+  .previewwrap{position:sticky;top:14px}
+  #preview{width:100%;height:calc(100vh - 120px);min-height:560px;border:1px solid var(--line);border-radius:12px;background:#fff}
+  .checks{font-size:11.5px;color:var(--muted);margin-top:8px}
+  .checks .bad{color:var(--err);font-weight:700}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>BLI <span class="gold">Mail Studio</span></h1>
+  <p>Pick a template, fill in the blanks, watch it build itself — then send it straight from here. Every send BCCs Save@ automatically.</p>
+  <span class="badge" id="connBadge">Gateway: checking…</span>
+</header>
+
+<div class="layout">
+  <div>
+    <div class="card">
+      <h2>1 &middot; Choose a template</h2>
+      <div class="tpl-grid" id="tplGrid"></div>
+      <p class="hint">Payment receipts have their own page: <a href="receipt.html">Receipt Builder</a>. Paste-any-HTML lives on the <a href="./">main sender page</a>.</p>
+    </div>
+
+    <div class="card">
+      <h2>2 &middot; Fill in the details</h2>
+      <div id="formArea"></div>
+    </div>
+
+    <div class="card">
+      <h2>3 &middot; Send</h2>
+      <label for="to">Customer email <span class="req">*required to send</span></label>
+      <input type="email" id="to" autocomplete="off">
+      <label for="subject">Subject <span style="font-weight:400">(auto-built — edit if you like)</span></label>
+      <input type="text" id="subject" autocomplete="off">
+      <label>BCC <span style="font-weight:400">(locked — E&amp;O record)</span></label>
+      <input type="text" class="locked" value="Save@BillLayneInsurance.com" readonly>
+      <div style="margin-top:12px">
+        <button class="primary" id="sendBtn" type="button">Send Now</button>
+        <button class="goldbtn" id="draftBtn" type="button">Create Gmail Draft instead</button>
+        <div class="half-row">
+          <button class="quiet" id="copyBtn" type="button">Copy HTML</button>
+          <button class="quiet" id="newBtn" type="button">&#127381; Start over</button>
+        </div>
+      </div>
+      <div class="checks" id="checks"></div>
+      <div id="result" role="status"></div>
+      <p class="hint">Gateway settings are shared with the <a href="./">main sender page</a> — set them there once per browser.</p>
+    </div>
+  </div>
+
+  <div class="previewwrap">
+    <iframe id="preview" sandbox="" title="Email preview"></iframe>
+  </div>
+</div>
+
+<script src="studio-templates.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var TPLS = window.BLI_STUDIO.templates;
+  var current = TPLS[0];
+  var subjectDirty = false;
+
+  /* ---------- template picker ---------- */
+  var grid = $('tplGrid');
+  TPLS.forEach(function (t) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'tpl'; b.dataset.id = t.id;
+    b.innerHTML = '<span class="ic">' + t.icon + '</span><span class="nm">' + t.name + '</span><span class="ds">' + t.desc + '</span>';
+    b.addEventListener('click', function () { selectTemplate(t.id); });
+    grid.appendChild(b);
+  });
+
+  function selectTemplate(id) {
+    current = TPLS.filter(function (t) { return t.id === id; })[0] || TPLS[0];
+    Array.prototype.forEach.call(grid.children, function (el) {
+      el.className = 'tpl' + (el.dataset.id === current.id ? ' active' : '');
+    });
+    buildForm();
+    subjectDirty = false;
+    autoSubject();
+    render();
+  }
+
+  /* ---------- dynamic form ---------- */
+  function fieldInput(f) {
+    var el;
+    if (f.type === 'select') {
+      el = document.createElement('select');
+      f.options.forEach(function (o) {
+        var op = document.createElement('option'); op.value = o; op.textContent = o; el.appendChild(op);
+      });
+    } else if (f.type === 'textarea') {
+      el = document.createElement('textarea');
+      el.rows = f.rows || 3;
+    } else {
+      el = document.createElement('input');
+      el.type = f.type || 'text';
+      el.autocomplete = 'off';
+    }
+    el.id = 'f_' + f.id;
+    if (f.placeholder) el.placeholder = f.placeholder;
+    if (f.default === 'today') {
+      var d = new Date();
+      el.value = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+    var evt = (f.type === 'select' || f.type === 'date') ? 'change' : 'input';
+    el.addEventListener(evt, function () { autoSubject(); render(); });
+    return el;
+  }
+
+  function buildForm() {
+    var area = $('formArea');
+    area.innerHTML = '';
+    var i = 0, fields = current.fields;
+    while (i < fields.length) {
+      var f = fields[i];
+      if (f.half && fields[i + 1] && fields[i + 1].half) {
+        var row = document.createElement('div'); row.className = 'two';
+        [f, fields[i + 1]].forEach(function (ff) {
+          var w = document.createElement('div');
+          w.appendChild(labelFor(ff)); w.appendChild(fieldInput(ff));
+          row.appendChild(w);
+        });
+        area.appendChild(row);
+        i += 2;
+      } else {
+        area.appendChild(labelFor(f));
+        area.appendChild(fieldInput(f));
+        i += 1;
+      }
+    }
+  }
+
+  function labelFor(f) {
+    var l = document.createElement('label');
+    l.htmlFor = 'f_' + f.id;
+    l.innerHTML = f.label + (f.required ? ' <span class="req">*</span>' : '');
+    return l;
+  }
+
+  function values() {
+    var v = {};
+    current.fields.forEach(function (f) {
+      var el = $('f_' + f.id);
+      v[f.id] = el ? el.value : '';
+    });
+    return v;
+  }
+
+  function missingRequired(v) {
+    return current.fields.filter(function (f) {
+      return f.required && !String(v[f.id] || '').trim();
+    }).map(function (f) { return f.label.replace(/\s*\(.*$/, ''); });
+  }
+
+  /* ---------- subject ---------- */
+  function autoSubject() {
+    if (subjectDirty) return;
+    $('subject').value = current.subject(values());
+  }
+  $('subject').addEventListener('input', function () { subjectDirty = true; });
+
+  /* ---------- integrity checks (locked skill rules) ---------- */
+  function integrity(html) {
+    var problems = [];
+    var m = html.match(/\{\{[A-Z_]+\}\}/);
+    if (m) problems.push('unfilled variable ' + m[0]);
+    ['cdn-cgi', '__cf_email__', 'email-protection', 'XacnUW4', 'border-radius:50%'].forEach(function (bad) {
+      if (html.indexOf(bad) !== -1) problems.push('forbidden string: ' + bad);
+    });
+    if (html.indexOf('mailto:Save@BillLayneInsurance.com') === -1) problems.push('Save@ mailto missing');
+    if (new Blob([html]).size > 102400) problems.push('over Gmail 102 KB clip limit');
+    return problems;
+  }
+
+  function render() {
+    var v = values();
+    var html = current.build(v);
+    $('preview').srcdoc = html;
+    var probs = integrity(html);
+    var missing = missingRequired(v);
+    var parts = [];
+    if (missing.length) parts.push('<span class="bad">missing: ' + missing.map(esc).join(', ') + '</span>');
+    if (probs.length) parts.push('<span class="bad">' + probs.map(esc).join(' &middot; ') + '</span>');
+    $('checks').innerHTML = parts.length
+      ? 'Checks: ' + parts.join(' &middot; ')
+      : 'Checks: all clear ✓ (' + (new Blob([html]).size / 1024).toFixed(1) + ' KB)';
+    var block = probs.length > 0 || missing.length > 0;
+    $('sendBtn').disabled = block;
+    $('draftBtn').disabled = block;
+    return { html: html, problems: probs, missing: missing };
+  }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+  }
+  function showResult(ok, msg) {
+    var r = $('result'); r.className = ok ? 'ok' : 'err'; r.innerHTML = msg;
+  }
+
+  /* ---------- gateway (same localStorage as the sender page) ---------- */
+  function gatewayConfig() {
+    var url = localStorage.getItem('bliMailGateway.url') || '';
+    var secret = localStorage.getItem('bliMailGateway.secret') || '';
+    if (!url) { url = (prompt('BLI Mail Gateway URL (ends in /exec):') || '').trim(); if (url) localStorage.setItem('bliMailGateway.url', url); }
+    if (!secret) { secret = (prompt('Gateway secret:') || '').trim(); if (secret) localStorage.setItem('bliMailGateway.secret', secret); }
+    return { url: url, secret: secret };
+  }
+
+  function submit(mode) {
+    var cfg = gatewayConfig();
+    if (!cfg.url || !cfg.secret) { showResult(false, 'Gateway not configured — set it up on the <a href="./">main sender page</a> first.'); return; }
+    var r = render();
+    if (r.problems.length || r.missing.length) { showResult(false, 'Fix the flagged items first.'); return; }
+    var to = $('to').value.trim();
+    if (mode === 'send') {
+      if (!to) { showResult(false, '"Send Now" needs the customer email.'); return; }
+      if (!window.confirm('Send this ' + current.name + ' NOW to: ' + to + '?')) return;
+    }
+    $('sendBtn').disabled = true; $('draftBtn').disabled = true;
+    showResult(true, mode === 'send' ? 'Sending…' : 'Creating draft…');
+    var ctrl = new AbortController();
+    var t = setTimeout(function () { ctrl.abort(); }, 45000);
+    fetch(cfg.url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        secret: cfg.secret, mode: mode, to: to,
+        subject: $('subject').value.trim() || current.subject(values()),
+        html: r.html, bcc: 'Save@BillLayneInsurance.com',
+        fromName: 'Bill Layne Insurance'
+      }),
+      redirect: 'follow', signal: ctrl.signal
+    }).then(function (res) { return res.json(); })
+      .then(function (d) {
+        if (!d.ok) throw new Error(d.error || 'Gateway error.');
+        var quota = typeof d.remainingQuota === 'number' ? ' · ' + d.remainingQuota + ' sends left today' : '';
+        showResult(true, d.mode === 'send'
+          ? '✅ ' + current.name + ' sent to <b>' + esc(d.to) + '</b>' + quota
+          : '✅ Draft created' + (d.to ? ' for <b>' + esc(d.to) + '</b>' : '') + ' — <a href="https://mail.google.com/mail/u/0/#drafts" target="_blank" rel="noopener">open Gmail Drafts →</a>' + quota);
+      })
+      .catch(function (e) {
+        showResult(false, '❌ ' + esc(e && e.name === 'AbortError' ? 'The gateway took too long (45s). Try again.' : (e && e.message) || 'Unknown error'));
+      })
+      .then(function () { clearTimeout(t); render(); });
+  }
+  $('sendBtn').addEventListener('click', function () { submit('send'); });
+  $('draftBtn').addEventListener('click', function () { submit('draft'); });
+  $('copyBtn').addEventListener('click', function () {
+    var html = render().html;
+    navigator.clipboard.writeText(html).then(function () {
+      showResult(true, '📋 Full email HTML copied to clipboard.');
+    }, function () {
+      showResult(false, 'Could not copy — your browser blocked clipboard access.');
+    });
+  });
+  $('newBtn').addEventListener('click', function () { location.replace('studio.html'); });
+
+  /* ---------- init ---------- */
+  var badge = $('connBadge');
+  if (localStorage.getItem('bliMailGateway.url')) { badge.className = 'badge ok'; badge.textContent = 'Gateway: settings found ✓'; }
+  else { badge.className = 'badge err'; badge.textContent = 'Gateway: set up on the main page first'; }
+  selectTemplate(TPLS[0].id);
+})();
+</script>
+</body>
+</html>
