@@ -123,7 +123,19 @@ Do **not** disable the send button when validation fails (a disabled button swal
 - green `✅ SENT! … on its way to <b>address</b>` **with a link to `https://mail.google.com/mail/u/0/#sent`** as proof, plus the `remainingQuota` count.
 Also run validation **before** any gateway-config prompt, and add a fetch timeout (`AbortController`, 45s).
 
-### 3.5 Settings live in localStorage, shared per-origin
+### 3.5 Emoji corruption: entity-escape the HTML, strip astral chars from subject/text
+**Found 2026-07-16 on Quote Template Studio's first live send.** Apps Script's `GmailApp` corrupts **astral-plane (4-byte) characters** — every literal emoji (🚗 🛡️ 🚑) in the subject or body arrives as `������` diamond soup, which visually wrecks icon cards and section chips even though the layout survives. BMP characters (· — ✓ ☔) pass through fine. Verified by draft probes: the gateway *receives* the string intact (the response echoes it correctly); the corruption happens inside `GmailApp.createDraft/sendEmail`.
+
+Fix in every client, before POSTing:
+```js
+// HTML: numeric character references render identically and are pure ASCII — immune.
+const safeHtml = html.replace(/[^\x00-\x7F]/gu, (ch) => `&#x${ch.codePointAt(0).toString(16).toUpperCase()};`);
+// Subject + text part can't carry entities — strip astral chars, keep BMP.
+const safeSubject = subject.replace(/[\u{10000}-\u{10FFFF}]/gu, '').replace(/ {2,}/g, ' ').trim();
+```
+(Reference implementation: `lib/mailGateway.ts` in the Quote Template Studio repo. A future gateway-side fix would be switching `Code.gs` to the Advanced Gmail Service with raw MIME — until then every client must escape.)
+
+### 3.6 Settings live in localStorage, shared per-origin
 Keys (exact): `bliMailGateway.url` and `bliMailGateway.secret`. Every BLI page on `www.billlayneinsurance.com` shares them automatically — configure once on `/mail-gateway/`, and Studio/Receipt/any new page just works. A page on a *different origin* (localhost port, workers.dev, pages.dev) has its own localStorage and needs a one-time entry there. Never hardcode either value in a page, a repo, or an email.
 
 ### The drop-in client (`gateway-client.js`)
