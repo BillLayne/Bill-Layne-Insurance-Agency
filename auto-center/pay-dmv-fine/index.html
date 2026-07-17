@@ -101,6 +101,8 @@
         .guide-panel { display: none; padding: 24px; }
         .guide-panel.is-active { display: block; }
         .guide-layout { display: grid; grid-template-columns: minmax(0,0.82fr) minmax(0,1.18fr); gap: 28px; align-items: start; }
+        .guide-layout > figure { order: 1; }
+        .guide-layout > div { order: 2; }
         .guide-image { width: 100%; max-height: 520px; object-fit: contain; background: #eef2f7; border: 1px solid #cbd5e1; border-radius: 16px; }
         .guide-image-wide { max-height: 310px; }
         .guide-kicker { color: #0f766e; font: 800 0.75rem/1 Inter,sans-serif; text-transform: uppercase; letter-spacing: 0.08em; }
@@ -133,6 +135,11 @@
             .guide-step-tab strong { font-size: 0.8rem; }
             .guide-panel { padding: 20px 16px; }
             .guide-layout { grid-template-columns: 1fr; gap: 18px; }
+            .guide-panel[data-guide-panel="1"] .guide-layout > div { order: 1; }
+            .guide-panel[data-guide-panel="1"] .guide-layout > figure { order: 2; }
+            .guide-intro { margin-bottom: 1.25rem !important; }
+            .guide-intro > p, .guide-panel[data-guide-panel="1"] .guide-kicker { display: none; }
+            .guide-panel[data-guide-panel="1"] { padding-top: 16px; }
             .guide-image { max-height: 430px; }
             .guide-image-wide { max-height: 220px; }
             .guide-choice-grid { grid-template-columns: 1fr; }
@@ -499,7 +506,7 @@
     <!-- INTERACTIVE INSURANCE LAPSE GUIDE -->
     <section id="lapse-guide" class="py-12 md:py-20 bg-slate-50 scroll-mt-20">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 reveal">
-            <div class="text-center mb-10">
+            <div class="text-center mb-10 guide-intro">
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-100 text-teal-700 text-xs font-bold uppercase tracking-wider mb-4">
                     <i class="fas fa-list-check"></i> Interactive Help
                 </div>
@@ -520,28 +527,28 @@
 
                 <article class="guide-panel is-active" data-guide-panel="1">
                     <div class="guide-layout">
-                        <figure>
-                            <a href="images/nc-dmv-fs5-cancellation-date.webp" target="_blank" rel="noopener" aria-label="Open a larger example of the FS-5 notice">
-                                <img src="images/nc-dmv-fs5-cancellation-date.webp" width="640" height="960" alt="Example NCDMV FS-5 termination notice with the insurance cancellation date highlighted" class="guide-image" loading="lazy" decoding="async">
-                            </a>
-                            <figcaption class="mt-2 text-xs text-slate-500 text-center">Example FS-5 notice. Your information and dates will be different. Tap the image to enlarge.</figcaption>
-                        </figure>
                         <div>
                             <p class="guide-kicker mb-3">Step 1 of 4</p>
                             <h3 class="text-2xl md:text-3xl font-display font-extrabold text-slate-900 mb-3">Check the cancellation date first</h3>
                             <p class="text-slate-600 leading-relaxed">Find the date shown on your letter. Then call your insurance agency and ask: <strong>&ldquo;Was my policy active on this date?&rdquo;</strong></p>
-                            <div class="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-900">
-                                <strong>Do not guess and do not pay yet.</strong> If there was no real break in coverage, your carrier may be able to send an FS-1 showing continuous insurance so NCDMV can clear the fine.
-                            </div>
                             <p class="mt-5 font-bold text-slate-900">What did your agency confirm?</p>
                             <div class="guide-choice-grid" role="group" aria-label="Choose whether coverage lapsed">
                                 <button type="button" class="guide-choice" data-lapse-choice="unsure" aria-pressed="false"><i class="fas fa-question-circle mr-1 text-blue-600"></i> Not sure</button>
                                 <button type="button" class="guide-choice" data-lapse-choice="no" aria-pressed="false"><i class="fas fa-check-circle mr-1 text-green-600"></i> No gap</button>
                                 <button type="button" class="guide-choice" data-lapse-choice="yes" aria-pressed="false"><i class="fas fa-exclamation-circle mr-1 text-red-600"></i> Yes, a gap</button>
                             </div>
+                            <div class="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-900">
+                                <strong>Do not guess and do not pay yet.</strong> If there was no real break in coverage, your carrier may be able to send an FS-1 showing continuous insurance so NCDMV can clear the fine.
+                            </div>
                             <div class="guide-alert" id="lapse-choice-message"></div>
                             <div class="guide-actions" id="step-one-actions"></div>
                         </div>
+                        <figure>
+                            <a href="images/nc-dmv-fs5-cancellation-date.webp" target="_blank" rel="noopener" aria-label="Open a larger example of the FS-5 notice">
+                                <img src="images/nc-dmv-fs5-cancellation-date.webp" width="640" height="960" alt="Example NCDMV FS-5 termination notice with the insurance cancellation date highlighted" class="guide-image" loading="lazy" decoding="async">
+                            </a>
+                            <figcaption class="mt-2 text-xs text-slate-500 text-center">Need help finding the date? View this sample FS-5 letter. Your information and dates will be different.</figcaption>
+                        </figure>
                     </div>
                 </article>
 
