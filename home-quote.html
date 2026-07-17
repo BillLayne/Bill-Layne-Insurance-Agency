@@ -1897,6 +1897,15 @@
                     modal.style.display = 'flex';
                     modal.classList.add('active');
 
+                    // GA4 conversion event: fires only when the quote actually completes
+                    // (success modal shown). This is the completion metric that was missing.
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'form_submit', {
+                            form_type: 'home_insurance',
+                            confirmation_number: confirmationNumber
+                        });
+                    }
+
                     sessionStorage.setItem('lastQuoteConfirmation', confirmationNumber);
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Get My Free Quote';
