@@ -1228,8 +1228,13 @@
         }
         .hero-stat i { color: var(--amber); font-size: 11px; }
         @media(max-width: 768px) {
-            .page-hero { padding: 22px 16px 18px; }
-            .hero-stat { font-size: 11px; padding: 4px 10px; }
+            /* Compact the hero on mobile so the first form field sits near the top of the
+               screen (biggest lever for form starts). The trust chips are hidden here because
+               the same trust content is replicated in the trust strip below the form. */
+            .page-hero { padding: 14px 16px 12px; }
+            .hero-tag { margin-bottom: 6px; }
+            .hero-sub { margin-bottom: 0; font-size: 13px; }
+            .hero-stats { display: none; }
         }
 
         /* ── MOBILE TRUST STRIP: replicates desktop sidebar content for mobile users ── */
@@ -1411,7 +1416,7 @@
         <p class="hero-sub">We shop 6 auto insurance carriers to find you the best rate</p>
         <div class="hero-stats">
             <span class="hero-stat"><i class="fas fa-check-circle"></i> 100% Free</span>
-            <span class="hero-stat"><i class="fas fa-clock"></i> 5 Minutes</span>
+            <span class="hero-stat"><i class="fas fa-bolt"></i> Quick &amp; Easy</span>
             <span class="hero-stat"><i class="fas fa-star"></i> 4.9 Google Rating</span>
             <span class="hero-stat"><i class="fas fa-shield-alt"></i> No Obligation</span>
         </div>
@@ -1450,13 +1455,13 @@
                         <div class="step-dot" id="dot-6"></div>
                     </div>
                     <div class="progress-meta">
-                        <span class="progress-step-label" id="step-label-display">Step 1 of 6 — Contact Info</span>
+                        <span class="progress-step-label" id="step-label-display">Just the basics to start</span>
                         <span class="progress-pct"><span id="progress-percent">17</span>% done</span>
                     </div>
                     <div class="progress-bar-track">
                         <div class="progress-bar-fill" id="progress-bar" style="width:17%"></div>
                     </div>
-                    <div class="progress-motivator" id="progress-motivator">Takes about 5 minutes · 100% free</div>
+                    <div class="progress-motivator" id="progress-motivator">We shop 6 carriers for you · 100% free</div>
                 </div>
 
                 <!-- Form -->
@@ -1565,11 +1570,9 @@
 
                             <div id="drivers-container">
                                 <div class="entry-card" data-driver="1">
-                                    <div class="entry-card-title"><i class="fas fa-user" style="color:var(--blue)"></i> Primary Driver</div>
-                                    <div class="field-group">
-                                        <label class="field-label">Full Name <span class="req">*</span></label>
-                                        <input type="text" name="driver_1_name" required placeholder="John Smith">
-                                    </div>
+                                    <div class="entry-card-title"><i class="fas fa-user" style="color:var(--blue)"></i> Primary Driver<span id="driver-1-name-tag" style="color:var(--gray-500);font-weight:500;"></span></div>
+                                    <!-- Name carried over from Step 1 — no need to re-type -->
+                                    <input type="hidden" name="driver_1_name" id="driver_1_name">
                                     <div class="field-row field-row-2">
                                         <div class="field-group">
                                             <label class="field-label">Date of Birth <span class="req">*</span></label>
@@ -1929,7 +1932,7 @@
             'Your Vehicle', 'Coverage Options', 'Final Details'
         ];
         const MOTIVATORS = [
-            'Takes about 5 minutes · 100% free',
+            'We shop 6 carriers for you · 100% free',
             'Add all drivers for the most accurate rate',
             'Switching? We time it perfectly to avoid gaps',
             'More details = faster quote from us',
@@ -1963,13 +1966,28 @@
             e.target.value = v;
         });
 
+        // ─── CARRY STEP-1 NAME INTO PRIMARY DRIVER (avoids re-typing) ──
+        function syncPrimaryDriver() {
+            const fn = (document.getElementById('firstname')?.value || '').trim();
+            const ln = (document.getElementById('lastname')?.value || '').trim();
+            const full = (fn + ' ' + ln).trim();
+            const hidden = document.getElementById('driver_1_name');
+            if (hidden) hidden.value = full;
+            const tag = document.getElementById('driver-1-name-tag');
+            if (tag) tag.textContent = full ? ' · ' + full : '';
+        }
+        document.getElementById('firstname').addEventListener('input', syncPrimaryDriver);
+        document.getElementById('lastname').addEventListener('input', syncPrimaryDriver);
+
         // ─── PROGRESS ─────────────────────────────────────────────────
         function updateProgress() {
             const pct = Math.round((currentStep / totalSteps) * 100);
             document.getElementById('progress-percent').textContent = pct;
             document.getElementById('progress-bar').style.width = pct + '%';
             document.getElementById('step-label-display').textContent =
-                `Step ${currentStep} of ${totalSteps} — ${STEP_NAMES[currentStep-1]}`;
+                currentStep === 1
+                    ? 'Just the basics to start'
+                    : `Step ${currentStep} of ${totalSteps} — ${STEP_NAMES[currentStep-1]}`;
             document.getElementById('progress-motivator').textContent = MOTIVATORS[currentStep-1];
 
             // Dots
@@ -1994,6 +2012,7 @@
             else { nextBtn.classList.remove('hidden'); submitBtn.classList.add('hidden'); }
 
             updateProgress();
+            syncPrimaryDriver();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 

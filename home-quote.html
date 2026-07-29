@@ -866,6 +866,9 @@
         @media(max-width: 768px) {
             .carrier-strip { display: none; }
             .page-hero { padding: 14px 20px 12px; }
+            /* Hide hero trust chips on mobile so the first form field sits near the top
+               of the screen (trust content is replicated in the strip below the form). */
+            .hero-stats { display: none; }
         }
 
         /* ── MOBILE TRUST STRIP: replicates desktop sidebar content for mobile users ── */
@@ -1047,7 +1050,7 @@
         <p class="hero-sub">We shop 9+ home insurance carriers to find you the best coverage at the best price</p>
         <div class="hero-stats">
             <span class="hero-stat"><i class="fas fa-check-circle"></i> 100% Free</span>
-            <span class="hero-stat"><i class="fas fa-clock"></i> 5 Minutes</span>
+            <span class="hero-stat"><i class="fas fa-bolt"></i> Quick &amp; Easy</span>
             <span class="hero-stat"><i class="fas fa-star"></i> 4.9 Google Rating</span>
             <span class="hero-stat"><i class="fas fa-shield-alt"></i> No Obligation</span>
         </div>
@@ -1084,13 +1087,13 @@
                         <div class="step-dot" id="dot-5"></div>
                     </div>
                     <div class="progress-meta">
-                        <span class="progress-step-label" id="step-label-display">Step 1 of 5 — Contact Info</span>
+                        <span class="progress-step-label" id="step-label-display">Just the basics to start</span>
                         <span class="progress-pct"><span id="progress-percent">20</span>% done</span>
                     </div>
                     <div class="progress-bar-track">
                         <div class="progress-bar-fill" id="progress-bar" style="width:20%"></div>
                     </div>
-                    <div class="progress-motivator" id="progress-motivator">Takes about 5 minutes · 100% free · No obligation</div>
+                    <div class="progress-motivator" id="progress-motivator">We shop your rate for you · 100% free · No obligation</div>
                 </div>
 
                 <!-- Form -->
@@ -1652,7 +1655,7 @@
             'Coverage Options', 'Final Details'
         ];
         const MOTIVATORS = [
-            'Takes about 5 minutes · 100% free · No obligation',
+            'We shop your rate for you · 100% free · No obligation',
             'Property details help us find your best rate',
             'Helps us time your switch perfectly — no gaps',
             'Not sure? We\'ll guide you to the right coverage',
@@ -1689,7 +1692,9 @@
             document.getElementById('progress-percent').textContent = pct;
             document.getElementById('progress-bar').style.width = pct + '%';
             document.getElementById('step-label-display').textContent =
-                `Step ${currentStep} of ${totalSteps} — ${STEP_NAMES[currentStep-1]}`;
+                currentStep === 1
+                    ? 'Just the basics to start'
+                    : `Step ${currentStep} of ${totalSteps} — ${STEP_NAMES[currentStep-1]}`;
             document.getElementById('progress-motivator').textContent = MOTIVATORS[currentStep-1];
             for (let i = 1; i <= totalSteps; i++) {
                 const dot = document.getElementById(`dot-${i}`);
