@@ -2392,15 +2392,65 @@
         });
     </script>
     <script>
-    // Prefill ZIP passed from the homepage hero (?zip=XXXXX)
+    // ── ZIP prefill + city-personalized hero ("Stop Overpaying for Elkin Auto") ──
     (function() {
+        // Core NC service-area ZIPs (exact match). Unlisted ZIPs stay "NC".
+        // Add ZIPs here anytime to personalize more towns.
+        const ZIP_CITY = {
+            // Surry County
+            '28621':'Elkin','27030':'Mount Airy','27017':'Dobson','27041':'Pilot Mountain',
+            '28676':'State Road','27007':'Ararat','27024':'Low Gap','27049':'Toast','27043':'Pinnacle',
+            // Yadkin County
+            '27055':'Yadkinville','28642':'Jonesville','27011':'Boonville','27018':'East Bend','27020':'Hamptonville',
+            // Wilkes County
+            '28659':'North Wilkesboro','28697':'Wilkesboro','28654':'Millers Creek',
+            // Alleghany County
+            '28675':'Sparta',
+            // Stokes County
+            '27021':'King','27052':'Walnut Cove','27016':'Danbury','27019':'Germanton','27050':'Tobaccoville','27042':'Pine Hall',
+            // Davie County
+            '27028':'Mocksville','27006':'Advance','27014':'Cooleemee',
+            // Forsyth County / Winston-Salem
+            '27101':'Winston-Salem','27103':'Winston-Salem','27104':'Winston-Salem','27105':'Winston-Salem',
+            '27106':'Winston-Salem','27107':'Winston-Salem','27127':'Winston-Salem',
+            '27284':'Kernersville','27012':'Clemmons','27023':'Pfafftown','27040':'Rural Hall','27051':'Walkertown',
+            // Guilford County
+            '27401':'Greensboro','27403':'Greensboro','27405':'Greensboro','27406':'Greensboro',
+            '27407':'Greensboro','27409':'Greensboro','27410':'Greensboro','27455':'Greensboro',
+            '27260':'High Point','27262':'High Point','27265':'High Point',
+            // Iredell County
+            '28625':'Statesville','28677':'Statesville','28115':'Mooresville','28117':'Mooresville','28166':'Troutman',
+            // Alexander / Caldwell / Watauga
+            '28681':'Taylorsville','28645':'Lenoir','28638':'Hudson','28607':'Boone','28605':'Blowing Rock','28604':'Banner Elk',
+            // Mecklenburg County / Charlotte (core ZIPs)
+            '28202':'Charlotte','28203':'Charlotte','28204':'Charlotte','28205':'Charlotte','28206':'Charlotte',
+            '28207':'Charlotte','28208':'Charlotte','28209':'Charlotte','28210':'Charlotte','28211':'Charlotte',
+            '28212':'Charlotte','28213':'Charlotte','28214':'Charlotte','28215':'Charlotte','28216':'Charlotte',
+            '28217':'Charlotte','28226':'Charlotte','28227':'Charlotte','28262':'Charlotte','28269':'Charlotte',
+            '28270':'Charlotte','28273':'Charlotte','28277':'Charlotte','28278':'Charlotte',
+            '28105':'Matthews','28078':'Huntersville','28031':'Cornelius','28036':'Davidson',
+            // Wake County / Raleigh
+            '27601':'Raleigh','27603':'Raleigh','27604':'Raleigh','27606':'Raleigh','27609':'Raleigh',
+            '27610':'Raleigh','27612':'Raleigh','27613':'Raleigh','27615':'Raleigh','27616':'Raleigh'
+        };
+        const PRODUCT = 'Auto';
+        function personalizeHero(z) {
+            const span = document.querySelector('.hero-title span');
+            if (!span) return;
+            const city = (/^[0-9]{5}$/.test(z) && ZIP_CITY[z]) ? ZIP_CITY[z] : 'NC';
+            span.textContent = city + ' ' + PRODUCT;
+        }
         try {
             const zip = new URLSearchParams(window.location.search).get('zip');
             if (zip && /^[0-9]{5}$/.test(zip)) {
                 const field = document.getElementById('zip_code');
                 if (field && !field.value) field.value = zip;
+                personalizeHero(zip);
             }
         } catch (e) {}
+        // Live-update the hero as the customer types their ZIP
+        const zipField = document.getElementById('zip_code');
+        if (zipField) zipField.addEventListener('input', function() { personalizeHero(this.value.trim()); });
     })();
     </script>
 </body>
