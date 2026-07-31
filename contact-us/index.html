@@ -902,6 +902,18 @@
                             contactForm.reset();
                             submitBtn.textContent = 'Send Message';
                             submitBtn.disabled = false;
+                            if (typeof window.bliTrackConversion === 'function') {
+                                window.bliTrackConversion('contact_form_submit', {
+                                    lead_type: 'contact_form',
+                                    form_name: 'contact_page'
+                                });
+                                window.bliTrackConversion('generate_lead', {
+                                    lead_type: 'contact',
+                                    service_line: 'general',
+                                    form_name: 'contact_page',
+                                    method: 'web_form'
+                                });
+                            }
                         })
                         .catch(function(error) {
                             console.error('EmailJS Error:', error);
@@ -1011,6 +1023,7 @@
     </div>
 
     <script defer src="../js/mobile-dock.js"></script>
+    <script defer src="../js/conversion-tracking.js"></script>
     </main>
 </body>
 </html>
