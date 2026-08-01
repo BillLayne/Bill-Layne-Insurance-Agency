@@ -233,7 +233,7 @@ function buildUnsubscribePage(email) {
     '</head>' +
     '<body>' +
     '<div class="card">' +
-    '<img src="https://i.imgur.com/lxu9nfT.png" alt="Bill Layne Insurance Agency" class="logo">' +
+    '<img src="https://img.billlayneinsurance.com/i/2026/08/bli-agency-logo-4jqj2j.png" alt="Bill Layne Insurance Agency" class="logo">' +
     '<div class="badge">Successfully Unsubscribed</div>' +
     "<h2>You've been removed.</h2>" +
     '<p>You will no longer receive newsletters from<br><strong>Bill Layne Insurance Agency</strong>.</p>' +

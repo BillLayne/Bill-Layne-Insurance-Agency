@@ -1,0 +1,460 @@
+/* ==========================================================================
+   BLI Image Studio — component styles
+   Scale model: ImageCanvas sets font-size = canvasWidth / 100, so 1em = 1% of
+   canvas width everywhere below. Components are designed to live INSIDE an
+   ImageCanvas. Namespace --bis-* / .bis-* (separate from the Social Studio).
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Canvas
+   -------------------------------------------------------------------------- */
+
+.bis-scale { position: relative; display: block; }
+
+.bis-canvas {
+  position: relative;
+  overflow: hidden;
+  transform-origin: top left;
+  font-family: var(--bis-font-sans);
+  color: var(--bis-ink);
+  box-sizing: border-box;
+}
+
+.bis-canvas *,
+.bis-canvas *::before,
+.bis-canvas *::after { box-sizing: border-box; }
+
+/* Background variants — each remaps the contextual ink so every child adapts. */
+
+.bis-canvas--gradient { background: var(--bis-grad-hero); }
+.bis-canvas--navy     { background: var(--bis-grad-navy); }
+.bis-canvas--teal     { background: var(--bis-grad-teal); }
+.bis-canvas--photo    { background: var(--bis-navy-deep); }
+
+.bis-canvas--gradient,
+.bis-canvas--navy,
+.bis-canvas--teal,
+.bis-canvas--photo {
+  --bis-ink: #ffffff;
+  --bis-ink-soft: rgba(255, 255, 255, 0.84);
+  --bis-ink-faint: rgba(255, 255, 255, 0.6);
+  --bis-accent: var(--bis-gold-light);
+  --bis-accent-strong: var(--bis-gold);
+  --bis-hl: rgba(200, 168, 78, 0.5);
+  --bis-surface: rgba(255, 255, 255, 0.07);
+  --bis-surface-border: rgba(255, 255, 255, 0.16);
+  --bis-line: rgba(255, 255, 255, 0.24);
+  --bis-pill-ink: #06264f;
+  --bis-chip-teal-bg: rgba(20, 184, 166, 0.18);
+  --bis-chip-teal-ink: #8ceadf;
+}
+
+.bis-canvas--cream { background: var(--bis-cream); }
+.bis-canvas--white { background: var(--bis-white); }
+
+.bis-canvas--cream,
+.bis-canvas--white {
+  --bis-chip-teal-bg: rgba(15, 118, 110, 0.1);
+  --bis-chip-teal-ink: #0f766e;
+}
+
+.bis-canvas--gold {
+  background: var(--bis-grad-gold);
+  --bis-ink: #06264f;
+  --bis-ink-soft: rgba(6, 38, 79, 0.82);
+  --bis-ink-faint: rgba(6, 38, 79, 0.58);
+  --bis-accent: #06264f;
+  --bis-accent-strong: #06264f;
+  --bis-hl: rgba(255, 255, 255, 0.42);
+  --bis-surface: rgba(255, 255, 255, 0.5);
+  --bis-surface-border: rgba(6, 38, 79, 0.16);
+  --bis-line: rgba(6, 38, 79, 0.28);
+  --bis-pill-ink: #06264f;
+  --bis-chip-teal-bg: rgba(6, 38, 79, 0.12);
+  --bis-chip-teal-ink: #06264f;
+}
+
+/* Layers */
+
+.bis-canvas__photo { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.bis-canvas__photo--fallback { background: var(--bis-grad-hero); }
+.bis-canvas__shade { position: absolute; inset: 0; }
+.bis-canvas__shade--soft {
+  background: linear-gradient(180deg, rgba(6, 18, 38, 0.2) 0%, rgba(6, 18, 38, 0.38) 52%, rgba(6, 18, 38, 0.84) 100%);
+}
+.bis-canvas__shade--strong {
+  background: linear-gradient(180deg, rgba(6, 18, 38, 0.55) 0%, rgba(6, 18, 38, 0.9) 100%);
+}
+
+.bis-canvas__grain {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 15em 15em; opacity: 0.07; mix-blend-mode: overlay;
+}
+.bis-canvas--cream .bis-canvas__grain,
+.bis-canvas--white .bis-canvas__grain,
+.bis-canvas--gold .bis-canvas__grain { opacity: 0.045; }
+
+.bis-canvas__inner { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; }
+
+.bis-pad--none     { padding: 0; }
+.bis-pad--snug     { padding: 5em; }
+.bis-pad--standard { padding: 7em; }
+.bis-pad--roomy    { padding: 9.5em; }
+
+/* Safe-area guides (design aid only) */
+.bis-canvas__guides { position: absolute; inset: 0; z-index: 9; pointer-events: none; }
+.bis-guide {
+  position: absolute; border: 2px dashed rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(0, 0, 0, 0.35); border-radius: 4px;
+}
+.bis-guide__label {
+  position: absolute; top: 0.5em; left: 0.9em; font-family: var(--bis-font-sans);
+  font-weight: 800; font-size: 1.3em; letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85); text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+/* --------------------------------------------------------------------------
+   Template frame
+   -------------------------------------------------------------------------- */
+
+.bis-t { display: flex; flex-direction: column; height: 100%; width: 100%; }
+.bis-t__main { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; justify-content: center; gap: 2.6em; }
+
+/* --------------------------------------------------------------------------
+   Atoms
+   -------------------------------------------------------------------------- */
+
+/* Kicker */
+.bis-kicker { display: inline-flex; align-items: center; gap: 1.1em; }
+.bis-kicker__bar { width: 3.4em; height: 0.5em; border-radius: 1em; background: var(--bis-accent-strong); }
+.bis-kicker--teal .bis-kicker__bar { background: var(--bis-teal); }
+.bis-kicker__text {
+  font-family: var(--bis-font-sans); font-weight: 800; font-size: 1.95em;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--bis-accent);
+}
+.bis-kicker--teal .bis-kicker__text { color: var(--bis-teal); }
+.bis-canvas--gradient .bis-kicker--teal .bis-kicker__text,
+.bis-canvas--navy .bis-kicker--teal .bis-kicker__text,
+.bis-canvas--teal .bis-kicker--teal .bis-kicker__text,
+.bis-canvas--photo .bis-kicker--teal .bis-kicker__text { color: var(--bis-teal-bright); }
+
+/* Highlight */
+.bis-hl { position: relative; display: inline; white-space: pre-wrap; }
+.bis-hl__text { position: relative; }
+.bis-hl--marker .bis-hl__text {
+  background: linear-gradient(120deg, var(--bis-hl) 0%, var(--bis-hl) 100%);
+  background-repeat: no-repeat; background-position: 0 78%; background-size: 100% 42%;
+  padding: 0 0.06em; -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+.bis-hl--underline .bis-hl__text {
+  background: linear-gradient(var(--bis-accent-strong), var(--bis-accent-strong));
+  background-repeat: no-repeat; background-position: 0 100%; background-size: 100% 0.12em;
+  padding-bottom: 0.06em; -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+.bis-hl--text .bis-hl__text { color: var(--bis-accent-strong); }
+.bis-hl--teal.bis-hl--text .bis-hl__text { color: var(--bis-teal); }
+.bis-canvas--gradient .bis-hl--teal.bis-hl--text .bis-hl__text,
+.bis-canvas--navy .bis-hl--teal.bis-hl--text .bis-hl__text,
+.bis-canvas--teal .bis-hl--teal.bis-hl--text .bis-hl__text,
+.bis-canvas--photo .bis-hl--teal.bis-hl--text .bis-hl__text { color: var(--bis-teal-bright); }
+.bis-hl--teal.bis-hl--underline .bis-hl__text { background-image: linear-gradient(var(--bis-teal), var(--bis-teal)); }
+
+/* Headline */
+.bis-headline {
+  font-family: var(--bis-font-display); font-weight: 900; line-height: 1.03;
+  letter-spacing: -0.012em; color: var(--bis-ink); text-wrap: balance;
+}
+.bis-headline--sans { font-family: var(--bis-font-sans); letter-spacing: -0.02em; }
+.bis-headline--center { text-align: center; }
+.bis-headline--xl { font-size: 9.4em; }
+.bis-headline--lg { font-size: 7em; }
+.bis-headline--md { font-size: 5em; }
+.bis-headline--sm { font-size: 3.7em; }
+
+/* CTA pill */
+.bis-cta {
+  display: inline-flex; align-items: center; gap: 0.7em; border-radius: 999em;
+  font-family: var(--bis-font-sans); font-weight: 800; letter-spacing: 0.01em;
+  line-height: 1; white-space: nowrap; box-shadow: var(--bis-shadow-soft);
+}
+.bis-cta--lg { font-size: 2.5em; padding: 0.95em 1.5em; }
+.bis-cta--md { font-size: 2.1em; padding: 0.85em 1.35em; }
+.bis-cta--sm { font-size: 1.7em; padding: 0.75em 1.2em; }
+.bis-cta__icon { display: inline-flex; width: 1.05em; height: 1.05em; }
+.bis-cta__icon svg { width: 100%; height: 100%; }
+.bis-cta--gold { background: var(--bis-grad-gold); color: #06264f; }
+.bis-cta--navy { background: var(--bis-navy); color: #fff; }
+.bis-cta--teal { background: var(--bis-teal); color: #fff; }
+.bis-cta--white { background: #fff; color: var(--bis-navy); }
+.bis-cta--outline { background: transparent; color: var(--bis-ink); box-shadow: inset 0 0 0 0.14em var(--bis-line); }
+
+/* Chip badge */
+.bis-chip {
+  display: inline-flex; align-items: center; gap: 0.55em; border-radius: 999em;
+  font-family: var(--bis-font-sans); font-weight: 700; font-size: 1.85em;
+  letter-spacing: 0.02em; line-height: 1; padding: 0.6em 1.05em;
+}
+.bis-chip__icon { display: inline-flex; width: 1.05em; height: 1.05em; }
+.bis-chip__icon svg { width: 100%; height: 100%; }
+.bis-chip--soft { background: var(--bis-surface); color: var(--bis-ink); box-shadow: inset 0 0 0 0.08em var(--bis-surface-border); }
+.bis-chip--gold { background: rgba(200, 168, 78, 0.18); color: var(--bis-accent-strong); }
+.bis-chip--teal { background: var(--bis-chip-teal-bg); color: var(--bis-chip-teal-ink); }
+.bis-chip--solid { background: var(--bis-navy); color: #fff; }
+
+/* Phone CTA */
+.bis-phonecta { display: flex; flex-direction: column; gap: 0.25em; }
+.bis-phonecta--center { align-items: center; text-align: center; }
+.bis-phonecta__label {
+  font-family: var(--bis-font-sans); font-weight: 700; font-size: 1.7em;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--bis-ink-faint);
+}
+.bis-phonecta__row { display: inline-flex; align-items: center; gap: 0.42em; color: var(--bis-ink); }
+.bis-phonecta__icon { display: inline-flex; width: 0.82em; height: 0.82em; color: var(--bis-accent-strong); }
+.bis-phonecta__icon svg { width: 100%; height: 100%; }
+.bis-phonecta__num { font-family: var(--bis-font-display); font-weight: 900; font-size: 4.4em; line-height: 1; letter-spacing: -0.01em; }
+
+/* Brand lockup */
+.bis-lockup { display: flex; flex-direction: column; align-items: flex-start; line-height: 1; gap: 0.12em; }
+.bis-lockup--center { align-items: center; text-align: center; }
+.bis-lockup--light { color: #fff; }
+.bis-lockup--dark { color: var(--bis-navy-ink); }
+.bis-lockup__img { max-width: 34em; max-height: 10em; object-fit: contain; }
+.bis-lockup__name { font-family: var(--bis-font-display); font-weight: 900; font-size: 3.6em; color: var(--bis-ink); }
+.bis-lockup__sub {
+  font-family: var(--bis-font-sans); font-weight: 800; font-size: 1.7em;
+  letter-spacing: 0.24em; text-transform: uppercase; color: var(--bis-accent);
+}
+.bis-lockup__tagline { margin-top: 0.5em; font-family: var(--bis-font-sans); font-weight: 500; font-size: 1.55em; color: var(--bis-ink-soft); }
+
+/* Logo strap (pins to canvas bottom) */
+.bis-strap { margin-top: auto; padding-top: 2.4em; }
+.bis-strap__fine { font-family: var(--bis-font-sans); font-weight: 500; font-size: 1.35em; line-height: 1.4; color: var(--bis-ink-faint); margin-bottom: 1.1em; }
+.bis-strap__bar { display: flex; align-items: center; justify-content: space-between; gap: 2em; padding-top: 1.5em; border-top: 0.14em solid var(--bis-line); }
+.bis-strap__brand { display: flex; flex-direction: column; line-height: 1; }
+.bis-strap__brand-name { font-family: var(--bis-font-display); font-weight: 900; font-size: 2.9em; color: var(--bis-ink); }
+.bis-strap__brand-sub { font-family: var(--bis-font-sans); font-weight: 800; font-size: 1.4em; letter-spacing: 0.22em; text-transform: uppercase; color: var(--bis-accent); }
+.bis-strap__contact { display: flex; flex-direction: column; align-items: flex-end; text-align: right; line-height: 1.25; }
+.bis-strap__phone { font-family: var(--bis-font-display); font-weight: 900; font-size: 2.7em; color: var(--bis-ink); }
+.bis-strap__site { font-family: var(--bis-font-sans); font-weight: 600; font-size: 1.7em; color: var(--bis-ink-soft); }
+.bis-strap__addr { font-family: var(--bis-font-sans); font-weight: 500; font-size: 1.45em; color: var(--bis-ink-faint); }
+
+/* Stat number */
+.bis-stat { display: flex; flex-direction: column; gap: 0.15em; }
+.bis-stat--center { align-items: center; text-align: center; }
+.bis-stat__value { font-family: var(--bis-font-display); font-weight: 900; line-height: 0.92; letter-spacing: -0.02em; color: var(--bis-accent-strong); }
+.bis-stat--xl .bis-stat__value { font-size: 15em; }
+.bis-stat--lg .bis-stat__value { font-size: 11em; }
+.bis-stat--md .bis-stat__value { font-size: 8em; }
+.bis-canvas--gradient .bis-stat__value,
+.bis-canvas--navy .bis-stat__value,
+.bis-canvas--teal .bis-stat__value,
+.bis-canvas--photo .bis-stat__value {
+  background: var(--bis-grad-gold); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+}
+.bis-stat__caption { font-family: var(--bis-font-sans); font-weight: 600; font-size: 2.2em; line-height: 1.25; color: var(--bis-ink-soft); max-width: 22em; }
+.bis-stat--center .bis-stat__caption { max-width: 26em; }
+
+/* Icon badge */
+.bis-iconbadge { display: inline-flex; align-items: center; justify-content: center; flex: none; color: #06264f; }
+.bis-iconbadge svg { width: 58%; height: 58%; }
+.bis-iconbadge--lg { width: 7em; height: 7em; font-size: 1em; }
+.bis-iconbadge--md { width: 5.4em; height: 5.4em; }
+.bis-iconbadge--sm { width: 3.9em; height: 3.9em; }
+.bis-iconbadge--tile { border-radius: 1.4em; }
+.bis-iconbadge--circle { border-radius: 999em; }
+.bis-iconbadge--plain { background: none !important; box-shadow: none !important; }
+.bis-iconbadge--gold { background: var(--bis-grad-gold); color: #06264f; }
+.bis-iconbadge--teal { background: var(--bis-teal); color: #fff; }
+.bis-iconbadge--navy { background: var(--bis-navy); color: #fff; }
+.bis-iconbadge--soft { background: var(--bis-surface); color: var(--bis-accent-strong); box-shadow: inset 0 0 0 0.08em var(--bis-surface-border); }
+.bis-iconbadge--plain.bis-iconbadge--gold { color: var(--bis-accent-strong); }
+.bis-iconbadge--plain.bis-iconbadge--teal { color: var(--bis-teal); }
+
+/* QR block */
+.bis-qr { display: inline-flex; flex-direction: column; align-items: center; gap: 0.8em; }
+.bis-qr__img, .bis-qr__ph { border-radius: 1em; background: #fff; box-shadow: var(--bis-shadow-soft); }
+.bis-qr--lg .bis-qr__img, .bis-qr--lg .bis-qr__ph { width: 16em; height: 16em; }
+.bis-qr--md .bis-qr__img, .bis-qr--md .bis-qr__ph { width: 12em; height: 12em; }
+.bis-qr--sm .bis-qr__img, .bis-qr--sm .bis-qr__ph { width: 9em; height: 9em; }
+.bis-qr__img { object-fit: contain; padding: 0.6em; }
+.bis-qr__ph { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.6em; border: 0.16em dashed rgba(6,38,79,0.4); color: #06264f; }
+.bis-qr__ph-grid { width: 45%; height: 45%; border-radius: 0.4em; background-image: repeating-conic-gradient(#06264f 0% 25%, #fff 0% 50%); background-size: 1.6em 1.6em; opacity: 0.5; }
+.bis-qr__ph-text { font-family: var(--bis-font-sans); font-weight: 800; font-size: 1.2em; letter-spacing: 0.1em; }
+.bis-qr__caption { font-family: var(--bis-font-sans); font-weight: 600; font-size: 1.5em; color: var(--bis-ink-soft); }
+
+/* Logo placeholder */
+.bis-logoph {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.35em;
+  border: 0.18em dashed var(--bis-line); border-radius: 1em; background: var(--bis-surface); color: var(--bis-ink-faint); text-align: center; padding: 1.4em;
+}
+.bis-logoph--wide { width: 30em; height: 10em; }
+.bis-logoph--square { width: 16em; height: 16em; }
+.bis-logoph--tall { width: 14em; height: 20em; }
+.bis-logoph__label { font-family: var(--bis-font-sans); font-weight: 800; font-size: 1.7em; letter-spacing: 0.08em; }
+.bis-logoph__hint { font-family: var(--bis-font-sans); font-weight: 500; font-size: 1.3em; opacity: 0.8; }
+
+/* Carrier logo slot */
+.bis-carrier { display: inline-flex; flex-direction: column; align-items: center; gap: 0.5em; }
+.bis-carrier__img { max-width: 20em; max-height: 7em; object-fit: contain; }
+.bis-carrier__ph {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.25em;
+  width: 18em; height: 7em; border: 0.16em dashed var(--bis-line); border-radius: 0.8em; background: var(--bis-surface); color: var(--bis-ink-faint);
+}
+.bis-carrier__ph-name { font-family: var(--bis-font-sans); font-weight: 800; font-size: 1.9em; letter-spacing: 0.04em; }
+.bis-carrier__ph-hint { font-family: var(--bis-font-sans); font-weight: 500; font-size: 1.15em; opacity: 0.8; }
+.bis-carrier__note { font-family: var(--bis-font-sans); font-weight: 700; font-size: 1.35em; letter-spacing: 0.16em; text-transform: uppercase; color: var(--bis-accent); }
+
+/* Disclaimer */
+.bis-disclaimer { margin: 0; font-family: var(--bis-font-sans); font-weight: 500; font-size: 1.4em; line-height: 1.45; color: var(--bis-ink-faint); max-width: 42em; }
+.bis-disclaimer--center { margin-left: auto; margin-right: auto; text-align: center; }
+
+/* --------------------------------------------------------------------------
+   Templates
+   -------------------------------------------------------------------------- */
+
+/* FlyerPromo (PROMO) */
+.bis-flyer--center { text-align: center; }
+.bis-flyer--center .bis-t__main { align-items: center; }
+.bis-flyer__kicker { margin-bottom: -0.4em; }
+.bis-flyer__sub { font-family: var(--bis-font-sans); font-weight: 500; font-size: 2.6em; line-height: 1.38; color: var(--bis-ink-soft); max-width: 30em; }
+.bis-flyer--center .bis-flyer__sub { margin-left: auto; margin-right: auto; }
+.bis-flyer__points { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1.3em; }
+.bis-flyer--center .bis-flyer__points { align-items: center; }
+.bis-flyer__point { display: flex; align-items: center; gap: 1.2em; }
+.bis-flyer__point-text { font-family: var(--bis-font-sans); font-weight: 600; font-size: 2.4em; color: var(--bis-ink); }
+.bis-flyer__action { display: flex; flex-wrap: wrap; align-items: center; gap: 2.2em; }
+.bis-flyer--center .bis-flyer__action { justify-content: center; }
+
+/* ExplainerInfographic (EDUCATION) */
+.bis-explain__head { display: flex; flex-direction: column; gap: 1.4em; margin-bottom: 3.4em; }
+.bis-explain__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2.6em; flex: 1 1 auto; justify-content: center; }
+.bis-explain__item { display: flex; align-items: flex-start; gap: 2em; }
+.bis-explain__num { flex: none; width: 5.4em; height: 5.4em; border-radius: 999em; background: var(--bis-grad-gold); color: #06264f; display: flex; align-items: center; justify-content: center; font-family: var(--bis-font-display); font-weight: 900; font-size: 1em; }
+.bis-explain__num { font-size: 2.6em; }
+.bis-explain__copy { display: flex; flex-direction: column; gap: 0.4em; padding-top: 0.4em; }
+.bis-explain__title { font-family: var(--bis-font-display); font-weight: 900; font-size: 3em; line-height: 1.1; color: var(--bis-ink); }
+.bis-explain__body { font-family: var(--bis-font-sans); font-weight: 500; font-size: 2.15em; line-height: 1.4; color: var(--bis-ink-soft); max-width: 34em; }
+.bis-explain__foot { margin-top: 2.6em; font-family: var(--bis-font-sans); font-weight: 600; font-size: 2.1em; color: var(--bis-accent); }
+
+/* QuoteCard (SALES / QUOTE) */
+.bis-quote .bis-t__main { justify-content: flex-start; gap: 2.4em; padding-top: 1em; }
+.bis-quote__head { display: flex; align-items: center; gap: 1.6em; }
+.bis-quote__title { display: flex; flex-direction: column; gap: 0.5em; }
+.bis-quote__for { font-family: var(--bis-font-sans); font-weight: 600; font-size: 2em; color: var(--bis-ink-soft); }
+.bis-quote__figure { display: flex; flex-direction: column; gap: 0.2em; padding: 1.4em 1.6em; border-radius: 1.2em; background: var(--bis-surface); box-shadow: inset 0 0 0 0.08em var(--bis-surface-border); }
+.bis-quote__figure-val { font-family: var(--bis-font-display); font-weight: 900; font-size: 6.5em; line-height: 1; color: var(--bis-accent-strong); }
+.bis-quote__figure-label { font-family: var(--bis-font-sans); font-weight: 700; font-size: 1.7em; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bis-ink-faint); }
+.bis-quote__lines { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1.25em; }
+.bis-quote__line { display: flex; align-items: baseline; gap: 0.8em; }
+.bis-quote__line-label { font-family: var(--bis-font-sans); font-weight: 700; font-size: 2.15em; color: var(--bis-ink); }
+.bis-quote__line-dots { flex: 1 1 auto; border-bottom: 0.12em dotted var(--bis-line); transform: translateY(-0.2em); }
+.bis-quote__line-value { font-family: var(--bis-font-sans); font-weight: 700; font-size: 2.15em; color: var(--bis-accent); }
+.bis-quote__action { display: flex; align-items: center; flex-wrap: wrap; gap: 2em; margin-top: 0.4em; }
+
+/* StatSpotlight (EDUCATION / PROMO) */
+.bis-spotlight__main { gap: 1.6em; }
+.bis-spotlight--center .bis-t__main { align-items: center; text-align: center; }
+.bis-spotlight__body { font-family: var(--bis-font-sans); font-weight: 500; font-size: 2.5em; line-height: 1.4; color: var(--bis-ink-soft); max-width: 28em; }
+.bis-spotlight--center .bis-spotlight__body { margin-left: auto; margin-right: auto; }
+.bis-spotlight__source { font-family: var(--bis-font-sans); font-weight: 600; font-size: 1.5em; letter-spacing: 0.04em; color: var(--bis-ink-faint); }
+
+/* ChecklistSheet (EDUCATION) */
+.bis-checklist__head { display: flex; flex-direction: column; gap: 1.4em; margin-bottom: 3em; }
+.bis-checklist__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1.9em; flex: 1 1 auto; justify-content: center; }
+.bis-checklist__item { display: flex; align-items: flex-start; gap: 1.5em; }
+.bis-checklist__box { flex: none; width: 3.4em; height: 3.4em; border-radius: 0.7em; background: var(--bis-grad-gold); color: #06264f; display: flex; align-items: center; justify-content: center; }
+.bis-checklist__box svg { width: 62%; height: 62%; }
+.bis-checklist__text { font-family: var(--bis-font-sans); font-weight: 600; font-size: 2.55em; line-height: 1.28; color: var(--bis-ink); padding-top: 0.2em; }
+.bis-checklist__foot { margin-top: 2.6em; font-family: var(--bis-font-sans); font-weight: 600; font-size: 2.1em; color: var(--bis-accent); }
+
+/* ComparePanel (EDUCATION) */
+.bis-compare__head { display: flex; flex-direction: column; gap: 1.3em; margin-bottom: 3em; }
+.bis-compare__cols { display: flex; gap: 2.4em; flex: 1 1 auto; align-items: stretch; }
+.bis-compare__col { flex: 1 1 0; display: flex; flex-direction: column; gap: 1.6em; padding: 2.4em; border-radius: 1.6em; background: var(--bis-surface); box-shadow: inset 0 0 0 0.08em var(--bis-surface-border); }
+.bis-compare__col--neg { background: rgba(192, 57, 43, 0.08); box-shadow: inset 0 0 0 0.08em rgba(192, 57, 43, 0.24); }
+.bis-compare__col--pos { background: rgba(15, 118, 110, 0.1); box-shadow: inset 0 0 0 0.08em rgba(15, 118, 110, 0.26); }
+.bis-compare__col-label { font-family: var(--bis-font-sans); font-weight: 800; font-size: 2em; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bis-ink); }
+.bis-compare__items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1.3em; }
+.bis-compare__row { display: flex; align-items: flex-start; gap: 0.9em; }
+.bis-compare__mark { flex: none; width: 2.2em; height: 2.2em; border-radius: 999em; display: flex; align-items: center; justify-content: center; }
+.bis-compare__mark svg { width: 62%; height: 62%; }
+.bis-compare__col--neg .bis-compare__mark { background: rgba(192, 57, 43, 0.16); color: #e06a5c; }
+.bis-compare__col--pos .bis-compare__mark { background: rgba(15, 118, 110, 0.18); color: var(--bis-teal-bright); }
+.bis-compare__text { font-family: var(--bis-font-sans); font-weight: 600; font-size: 2.05em; line-height: 1.3; color: var(--bis-ink); }
+
+/* CollageBoard (COLLAGE) */
+.bis-collage__head { display: flex; flex-direction: column; gap: 1em; margin-bottom: 2em; }
+.bis-collage__grid { flex: 1 1 auto; display: grid; gap: 1.4em; min-height: 0; }
+.bis-collage__grid--n2 { grid-template-columns: 1fr 1fr; }
+.bis-collage__grid--n3 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+.bis-collage__grid--n3 .bis-collage__panel:first-child { grid-column: 1 / -1; }
+.bis-collage__grid--n4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+.bis-collage__grid--n5 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr; }
+.bis-collage__grid--n5 .bis-collage__panel:first-child { grid-column: 1 / 3; grid-row: 1 / 3; }
+.bis-collage__grid--n6 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr; }
+.bis-collage__grid--strip { display: flex; }
+.bis-collage__grid--strip .bis-collage__panel { flex: 1 1 0; }
+.bis-collage__grid--feature { grid-template-columns: 1.5fr 1fr; grid-auto-rows: 1fr; }
+.bis-collage__grid--feature .bis-collage__panel:first-child { grid-row: 1 / -1; }
+.bis-collage__panel { position: relative; overflow: hidden; border-radius: 1.2em; background: var(--bis-navy-deep); box-shadow: var(--bis-shadow-soft); min-height: 0; }
+.bis-collage__photo { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.bis-collage__photo--ph { background: linear-gradient(135deg, #1a365d 0%, #0f766e 100%); }
+.bis-collage__tag { position: absolute; top: 1em; left: 1em; z-index: 2; font-family: var(--bis-font-sans); font-weight: 800; font-size: 1.5em; letter-spacing: 0.1em; text-transform: uppercase; color: #06264f; background: var(--bis-gold); padding: 0.35em 0.85em; border-radius: 0.5em; }
+.bis-collage__caption { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 2.4em 1.2em 1.1em; font-family: var(--bis-font-sans); font-weight: 700; font-size: 1.75em; color: #fff; background: linear-gradient(transparent, rgba(6, 18, 38, 0.85)); }
+
+/* YouTubeThumbnail (YOUTUBE — use format="youtube") */
+.bis-yt { flex-direction: row; align-items: stretch; gap: 3em; }
+.bis-yt__text { flex: 1 1 60%; display: flex; flex-direction: column; justify-content: center; gap: 1.1em; min-width: 0; }
+.bis-yt--textonly .bis-yt__text { flex: 1 1 100%; }
+.bis-yt__kicker { display: inline-flex; }
+.bis-yt__headline { font-family: var(--bis-font-display); font-weight: 900; font-size: 8.6em; line-height: 0.98; letter-spacing: -0.02em; color: #fff; text-shadow: 0 0.05em 0.2em rgba(0,0,0,0.35); text-wrap: balance; }
+.bis-yt--textonly .bis-yt__headline { font-size: 10em; }
+.bis-yt__sub { font-family: var(--bis-font-sans); font-weight: 700; font-size: 2.6em; color: var(--bis-gold-light); }
+.bis-yt__channel { margin-top: 0.4em; font-family: var(--bis-font-sans); font-weight: 800; font-size: 2em; letter-spacing: 0.04em; color: rgba(255,255,255,0.82); }
+.bis-yt__media { flex: 1 1 40%; position: relative; border-radius: 1.4em; overflow: hidden; box-shadow: var(--bis-shadow-card); }
+.bis-yt__photo { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.bis-yt__photo--ph { background: linear-gradient(150deg, #10529f 0%, #0f766e 100%); }
+.bis-yt__stamp { position: absolute; top: 1em; right: 1em; z-index: 2; font-family: var(--bis-font-sans); font-weight: 900; font-size: 2.3em; letter-spacing: 0.02em; color: #06264f; background: var(--bis-gold); padding: 0.3em 0.7em; border-radius: 0.4em; transform: rotate(4deg); box-shadow: var(--bis-shadow-soft); }
+.bis-yt__stamp--float { top: auto; bottom: 1.2em; right: 1.2em; }
+
+/* CorporateCard (CORPORATE) */
+.bis-corp__main { flex: 1 1 auto; display: flex; align-items: center; gap: 4em; min-height: 0; }
+.bis-corp__copy { flex: 1 1 auto; display: flex; flex-direction: column; gap: 1.8em; }
+.bis-corp__body { font-family: var(--bis-font-sans); font-weight: 400; font-size: 2.4em; line-height: 1.5; color: var(--bis-ink-soft); max-width: 34em; }
+.bis-corp__attr { font-family: var(--bis-font-display); font-weight: 900; font-size: 2.2em; color: var(--bis-ink); }
+.bis-corp__lockup { margin-top: 0.8em; }
+.bis-corp__media { flex: none; width: 34%; align-self: stretch; border-radius: 1.4em; overflow: hidden; box-shadow: var(--bis-shadow-card); background: var(--bis-navy-deep); }
+.bis-corp__photo { width: 100%; height: 100%; background-size: cover; background-position: center; min-height: 40em; }
+
+/* UWDocSheet (UNDERWRITING / DOCUMENTATION — use background="white", grain off) */
+.bis-uw { gap: 2.4em; color: #14213a; font-family: var(--bis-font-sans); }
+.bis-uw__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 2em; padding-bottom: 1.6em; border-bottom: 0.2em solid var(--bis-navy); }
+.bis-uw__titles { display: flex; flex-direction: column; gap: 0.35em; }
+.bis-uw__title { font-family: var(--bis-font-display); font-weight: 900; font-size: 3.4em; line-height: 1.05; color: var(--bis-navy); }
+.bis-uw__subtitle { font-weight: 600; font-size: 1.9em; color: #4a5a72; }
+.bis-uw__brand { display: flex; flex-direction: column; align-items: flex-end; text-align: right; line-height: 1.3; }
+.bis-uw__brand-name { font-family: var(--bis-font-display); font-weight: 900; font-size: 2.1em; color: var(--bis-navy); }
+.bis-uw__brand-sub { font-weight: 600; font-size: 1.4em; color: #5a6a82; }
+.bis-uw__meta { display: flex; flex-wrap: wrap; gap: 1.4em 3em; padding: 1.6em 1.8em; border-radius: 0.8em; background: #f1f4f9; }
+.bis-uw__meta-field { display: flex; flex-direction: column; gap: 0.15em; }
+.bis-uw__meta-label { font-weight: 800; font-size: 1.35em; letter-spacing: 0.12em; text-transform: uppercase; color: #7a879c; }
+.bis-uw__meta-value { font-weight: 700; font-size: 2em; color: #14213a; }
+.bis-uw__grid { flex: 1 1 auto; display: grid; gap: 2em; grid-template-columns: 1fr 1fr; min-height: 0; }
+.bis-uw__grid--n1 { grid-template-columns: 1fr; }
+.bis-uw__grid--n3 { grid-template-columns: 1fr 1fr 1fr; }
+.bis-uw__grid--n5, .bis-uw__grid--n6 { grid-template-columns: 1fr 1fr 1fr; }
+.bis-uw__cell { display: flex; flex-direction: column; gap: 0.9em; min-height: 0; }
+.bis-uw__frame { position: relative; flex: 1 1 auto; min-height: 18em; border-radius: 0.7em; overflow: hidden; background: #dfe5ee; box-shadow: inset 0 0 0 0.12em #c3ccda; }
+.bis-uw__photo { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.bis-uw__photo--empty { display: flex; align-items: center; justify-content: center; color: #9aa6ba; font-weight: 800; font-size: 1.9em; letter-spacing: 0.14em; }
+.bis-uw__callout { position: absolute; z-index: 3; pointer-events: none; }
+.bis-uw__callout--circle { top: 28%; left: 32%; width: 34%; height: 34%; border: 0.4em solid var(--bis-callout); border-radius: 999em; box-shadow: 0 0 0 0.15em rgba(255,255,255,0.5); }
+.bis-uw__callout--arrow { top: 22%; right: 20%; width: 24%; height: 0.55em; background: var(--bis-callout); transform: rotate(35deg); box-shadow: 0 0 0 0.12em rgba(255,255,255,0.4); }
+.bis-uw__callout--arrow::after { content: ''; position: absolute; right: -0.1em; top: 50%; width: 0; height: 0; border-left: 1.6em solid var(--bis-callout); border-top: 1em solid transparent; border-bottom: 1em solid transparent; transform: translateY(-50%); }
+.bis-uw__redact { position: absolute; left: 0; right: 0; bottom: 0; height: 22%; z-index: 3; background: var(--bis-redact); }
+.bis-uw__cell-index { position: absolute; top: 0.7em; left: 0.7em; z-index: 4; width: 2.4em; height: 2.4em; border-radius: 0.4em; background: var(--bis-navy); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.6em; }
+.bis-uw__cell-cap { display: flex; flex-direction: column; gap: 0.2em; }
+.bis-uw__cell-label { font-weight: 800; font-size: 1.9em; color: #14213a; }
+.bis-uw__cell-note { font-weight: 500; font-size: 1.55em; line-height: 1.35; color: #566277; }
+.bis-uw__foot { margin: 0; padding-top: 1.4em; border-top: 0.12em solid #d4dae4; font-weight: 500; font-size: 1.4em; line-height: 1.45; color: #6a7688; }

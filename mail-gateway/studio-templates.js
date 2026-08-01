@@ -88,7 +88,7 @@ window.BLI_STUDIO = (function () {
       '<tr><td align="center" style="padding:20px 24px 16px 24px;">\n' +
       '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto 10px auto;"><tr>' +
       '<td bgcolor="#ffffff" style="background-color:#ffffff;padding:10px 18px;border-radius:10px;border:1px solid #e2e8f0;">' +
-      '<img src="https://i.imgur.com/lxu9nfT.png" width="150" alt="Bill Layne Insurance Agency" style="display:block;width:150px;height:auto;border:0;"></td></tr></table>\n' +
+      '<img src="https://img.billlayneinsurance.com/i/2026/08/bli-agency-logo-4jqj2j.png" width="150" alt="Bill Layne Insurance Agency" style="display:block;width:150px;height:auto;border:0;"></td></tr></table>\n' +
       '<p style="margin:0;font-size:10px;font-weight:700;color:#64748b;font-family:' + FONT + ';letter-spacing:1.5px;text-transform:uppercase;">' + eyebrow + '</p>\n' +
       '</td></tr>\n</table>\n</td>\n</tr>\n';
   }
@@ -228,7 +228,7 @@ window.BLI_STUDIO = (function () {
       '<tr><td height="3" style="height:3px;background:linear-gradient(90deg,#003f87,#C8A84E);font-size:0;line-height:0;">&nbsp;</td></tr></table>\n' +
       '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto 14px auto;"><tr>' +
       '<td bgcolor="#ffffff" style="background-color:#ffffff;padding:10px 20px;border-radius:10px;border:1px solid #e2e8f0;">' +
-      '<img src="https://i.imgur.com/lxu9nfT.png" width="140" alt="Bill Layne Insurance Agency" style="display:block;width:140px;height:auto;"></td></tr></table>\n' +
+      '<img src="https://img.billlayneinsurance.com/i/2026/08/bli-agency-logo-4jqj2j.png" width="140" alt="Bill Layne Insurance Agency" style="display:block;width:140px;height:auto;"></td></tr></table>\n' +
       '<p style="margin:0 0 4px 0;font-size:14px;font-weight:700;color:#0f172a;font-family:' + FONT + ';">Bill Layne Insurance Agency</p>\n' +
       '<p style="margin:0 0 2px 0;font-size:12px;color:#64748b;font-family:' + FONT + ';">1283 N Bridge St &bull; Elkin, NC 28621</p>\n' +
       '<p style="margin:0 0 2px 0;font-size:12px;color:#64748b;font-family:' + FONT + ';">(336) 835-1993 &bull; <a href="mailto:Save@BillLayneInsurance.com" style="color:#003f87;text-decoration:none;">Save@BillLayneInsurance.com</a></p>\n' +
