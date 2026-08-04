@@ -43,24 +43,15 @@ Copy and paste these instructions to Claude each time you want to add a new blog
   `blog/blogs/[slug-matching-the-title].html`
 - The filename should be a URL-friendly slug of the blog title
 
-### Step 3: Handle Images — Upload to Imgur (IMPORTANT)
-All base64 images in the blog HTML must be extracted, uploaded to Imgur, and replaced with Imgur direct URLs. This keeps HTML files small and pages loading fast via Imgur's CDN.
+### Step 3: Handle Images — Upload to the BLI Image Host (IMPORTANT)
+All base64 images must be extracted, uploaded, and replaced with hosted URLs. This keeps HTML files small and pages fast.
+
+**New images go to `img.billlayneinsurance.com`, NOT Imgur.** The agency runs its own image host (live since 2026-07-23); Imgur is legacy. Existing Imgur URLs on older posts are fine — leave them alone. Bill's headshot (`i.imgur.com/nDFmjxh.png`) is still on Imgur across ~49 posts; do not migrate it for a single post.
 
 **For base64 images (`data:image/...`):**
-1. Find ALL base64 image strings in the HTML using regex: `src="(data:image/(png|jpeg|jpg|gif|webp);base64,([^"]+))"`
-2. For **each** base64 image found:
-   a. Decode the base64 string to binary
-   b. Save it temporarily as a file (e.g., `/tmp/blog-img-1.png`)
-   c. Upload it to **Imgur** using the anonymous upload API:
-      ```
-      curl -s -X POST https://api.imgur.com/3/image \
-        -H "Authorization: Client-ID YOUR_CLIENT_ID" \
-        -F "image=@/tmp/blog-img-1.png"
-      ```
-      *(Use the Imgur Client-ID stored in the environment or ask the user for one)*
-   d. Get the direct URL from the response: `https://i.imgur.com/XXXXXXX.png`
-   e. Replace the base64 `src` in the HTML with the Imgur direct URL
-3. Note which image is the **hero image** (first `<img>` or one with class `hero-img`) — you'll need its Imgur URL for the `imageUrl` field in blogs.json
+1. Find ALL base64 image strings using regex: `src="(data:image/(png|jpeg|jpg|gif|webp);base64,([^"]+))"`
+2. For **each** one: decode to binary, save temporarily, upload to the BLI image host, and replace the base64 `src` with the returned URL (`https://img.billlayneinsurance.com/i/YYYY/MM/<name>.webp`)
+3. Note which image is the **hero** (first `<img>`, or one with class `hero-img`) — its URL goes in the `imageUrl` field in blogs.json
 
 **For external URLs** (e.g., Unsplash):
 - These can stay as-is — no upload needed
@@ -123,22 +114,49 @@ All base64 images in the blog HTML must be extracted, uploaded to Imgur, and rep
 - **Verify** by checking that the number of `"id":` occurrences in the embedded script matches the count in `blogs.json`
 - This embedded data is the primary data source for the blog landing page — if it's out of sync, blogs won't show
 
+### Step 5A: Canonical + Link Hygiene (REQUIRED — checked before every publish)
+- The canonical URL has exactly ONE correct shape:
+  `https://www.billlayneinsurance.com/blog/blogs/[slug]`
+  — **www** host (apex 301s to www), **no `.html`** (Cloudflare 308s it away), no trailing slash.
+- `og:url`, `twitter:url` (if present), the `BlogPosting` `@id`/`mainEntityOfPage`, and the breadcrumb `item` must all use that same URL. The BlogPosting node id is `...#blogposting` (not `#article`).
+- Every internal `billlayneinsurance.com` link in the post body must use the **www** host.
+- Internal links to `/get-quote` must use `?src=blog_[campaign]_[placement]` — **NEVER `utm_*` on internal links** (UTMs reset GA4 attribution). Share links to Facebook/newsletter/etc. DO keep their `utm_*` params; that's correct for outbound.
+- A full audit + repair of all existing posts shipped 2026-08-03 (commit bb38ade). Three posts intentionally canonicalize to a DIFFERENT post (duplicate-content consolidation) — never "fix" those to self-canonical, and never add them to the sitemap.
+
 ### Step 6A: Update Crawlable Latest Posts + Blog Schema
 - In `blog/index.html`, update the visible "Latest NC Insurance Guides" HTML section so the newest 5-6 posts are present as regular `<article>` cards with title, summary, date, category, and an absolute/usable link.
 - Update the `<script type="application/ld+json">` near the top of `blog/index.html` so the `Blog`, `ItemList`, and newest `BlogPosting` entries match the latest posts.
 - Update the homepage `Latest from Our Blog` static cards in `index.html` when the newest post should appear on the homepage.
 - This is important because search engines and AI crawlers should see the newest blog titles and summaries in raw HTML/schema, not only inside `window.__BLOG_DATA__` or JavaScript-rendered cards.
 
+### Step 6B: Add to sitemap.xml (REQUIRED — this step was missing before 2026-08-04 and 10 published posts never got indexed via the sitemap)
+- Open `sitemap.xml` in the repo root
+- Add a `<url>` block before `</urlset>`, using the **extensionless** URL:
+  ```xml
+  <url>
+    <loc>https://www.billlayneinsurance.com/blog/blogs/[slug]</loc>
+    <lastmod>YYYY-MM-DD</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  ```
+- Also bump the `<lastmod>` on the `https://www.billlayneinsurance.com/blog/` entry to today
+- Do NOT touch `sitemap-images.xml` — it covers landing pages only, never blog posts
+
 ### Step 7: Verify (ALL must pass)
 - [ ] Blog HTML file exists in `blog/blogs/`
 - [ ] No base64 `data:image` strings remain in the blog HTML
-- [ ] All images in the blog HTML use Imgur URLs (or existing external/local URLs)
+- [ ] All images use hosted URLs (img.billlayneinsurance.com for new, existing external/local OK)
 - [ ] Hero image and inline images have `loading="lazy"` (except hero) and `width`/`height` attributes
+- [ ] Canonical / og:url / schema @ids all use `https://www.billlayneinsurance.com/blog/blogs/[slug]` (www, no .html) — see Step 5A
+- [ ] No `utm_*` on internal links (only on outbound share links)
 - [ ] `blogs.json` has the new entry at the **top** with today's date
-- [ ] `imageUrl` in blogs.json uses the Imgur hero image URL
+- [ ] `imageUrl` in blogs.json uses the hosted hero image URL
 - [ ] `window.__BLOG_DATA__` in `blog/index.html` has the **same number of entries** as `blogs.json` (count `"id":` occurrences in both — they must match)
 - [ ] The new blog's `id` appears in both `blogs.json` AND the embedded data script
 - [ ] The newest blog appears in the raw HTML "Latest NC Insurance Guides" section and in the blog JSON-LD schema
+- [ ] `sitemap.xml` has the new post (extensionless URL) and the `/blog/` lastmod is bumped
+- [ ] After pushing: Search Console → URL Inspection → Request Indexing on the new URL
 
 ---
 
