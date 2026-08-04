@@ -121,6 +121,7 @@ All base64 images must be extracted, uploaded, and replaced with hosted URLs. Th
 - `og:url`, `twitter:url` (if present), the `BlogPosting` `@id`/`mainEntityOfPage`, and the breadcrumb `item` must all use that same URL. The BlogPosting node id is `...#blogposting` (not `#article`).
 - Every internal `billlayneinsurance.com` link in the post body must use the **www** host.
 - Internal links to `/get-quote` must use `?src=blog_[campaign]_[placement]` — **NEVER `utm_*` on internal links** (UTMs reset GA4 attribution). Share links to Facebook/newsletter/etc. DO keep their `utm_*` params; that's correct for outbound.
+- The schema `author` object MUST carry `"@id": "https://www.billlayneinsurance.com/#founder"` (Person "Bill Layne") — this merges every post's author with the sitewide entity graph. If the author is the agency, use `"@id": "https://www.billlayneinsurance.com/#agency"` instead. NEVER invent a new Person/Organization `@id` (no `#bill-layne`, no `#organization`). Author `url` is `https://www.billlayneinsurance.com/about/`.
 - A full audit + repair of all existing posts shipped 2026-08-03 (commit bb38ade). Three posts intentionally canonicalize to a DIFFERENT post (duplicate-content consolidation) — never "fix" those to self-canonical, and never add them to the sitemap.
 
 ### Step 6A: Update Crawlable Latest Posts + Blog Schema
