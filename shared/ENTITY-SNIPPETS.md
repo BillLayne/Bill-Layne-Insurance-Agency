@@ -27,7 +27,7 @@ and splits authority instead of pooling it.
   "@type": "InsuranceAgency",
   "@id": "https://www.billlayneinsurance.com/#agency",
   "name": "Bill Layne Insurance Agency",
-  "image": "https://i.imgur.com/lxu9nfT.png",
+  "image": "https://img.billlayneinsurance.com/i/2026/08/im-lxu9nft-etpncs.png",
   "url": "https://www.billlayneinsurance.com",
   "telephone": "+1-336-835-1993",
   "email": "Save@BillLayneInsurance.com",
@@ -55,7 +55,7 @@ Used on the tool microsites. The MAIN SITE keeps its own SEO-hardened footer
 
 ```html
 <footer style="background:#14184d;color:#f4f6fb;padding:28px 16px;text-align:center;font-family:'DM Sans','Helvetica Neue',Arial,sans-serif;font-size:14px;line-height:1.7;">
-  <img src="https://i.imgur.com/lxu9nfT.png" alt="Bill Layne Insurance Agency logo" width="130" style="display:block;margin:0 auto 12px;border:0;max-width:130px;height:auto;">
+  <img src="https://img.billlayneinsurance.com/i/2026/08/im-lxu9nft-etpncs.png" alt="Bill Layne Insurance Agency logo" width="130" style="display:block;margin:0 auto 12px;border:0;max-width:130px;height:auto;">
   <strong>Bill Layne Insurance Agency</strong><br>
   1283 N Bridge St, Elkin NC 28621<br>
   <a href="tel:3368351993" style="color:#ffd966;text-decoration:none;">336-835-1993</a> &nbsp;|&nbsp;

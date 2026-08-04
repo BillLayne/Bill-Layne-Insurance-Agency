@@ -15,8 +15,8 @@ Copy and paste these instructions to Claude each time you want to add a new blog
 > Please add this blog to my site following the standard process in `blog/HOW-TO-ADD-A-BLOG.md`.
 
 **That's it!** The file path is the only thing you need to provide. Claude will:
-- Extract images from base64 in the HTML and upload them to **Imgur** for fast CDN hosting
-- Replace base64 `src` attributes with Imgur direct URLs (`https://i.imgur.com/...`)
+- Extract images from base64 in the HTML and upload them to the **BLI Image Host** (img.billlayneinsurance.com)
+- Replace base64 `src` attributes with hosted URLs (`https://img.billlayneinsurance.com/i/...`)
 - Add `loading="lazy"` and `width`/`height` attributes to images for performance
 - Pull the title from the blog's `<h1>` or `<title>` tag
 - Write a 1-2 sentence summary for the landing page card
@@ -46,7 +46,7 @@ Copy and paste these instructions to Claude each time you want to add a new blog
 ### Step 3: Handle Images — Upload to the BLI Image Host (IMPORTANT)
 All base64 images must be extracted, uploaded, and replaced with hosted URLs. This keeps HTML files small and pages fast.
 
-**New images go to `img.billlayneinsurance.com`, NOT Imgur.** The agency runs its own image host (live since 2026-07-23); Imgur is legacy. Existing Imgur URLs on older posts are fine — leave them alone. Bill's headshot (`i.imgur.com/nDFmjxh.png`) is still on Imgur across ~49 posts; do not migrate it for a single post.
+**All images live on `img.billlayneinsurance.com` — the site has ZERO Imgur dependencies as of 2026-08-04 (full migration, 474 images).** Never introduce a new `i.imgur.com` URL. Bill's headshot is `https://img.billlayneinsurance.com/i/2026/08/blog-ndfmjxh-skjqy5.png`.
 
 **For base64 images (`data:image/...`):**
 1. Find ALL base64 image strings using regex: `src="(data:image/(png|jpeg|jpg|gif|webp);base64,([^"]+))"`
@@ -69,8 +69,8 @@ All base64 images must be extracted, uploaded, and replaced with hosted URLs. Th
 
 ### Step 4: Confirm Hero Image URL for Landing Page Card
 - The blog landing page (`blog/index.html`) needs a hero image URL for the preview card
-- For new blog posts, this will be an **Imgur URL** (from Step 3)
-- Note the hero image's Imgur URL — it goes in the `imageUrl` field of the blogs.json entry
+- For new blog posts, this will be an **img.billlayneinsurance.com URL** (from Step 3)
+- Note the hero image URL — it goes in the `imageUrl` field of the blogs.json entry
 - No local hero image file is needed for new posts (existing older posts may still use local paths — that's fine)
 
 ### Step 5: Add Entry to blogs.json
@@ -85,7 +85,7 @@ All base64 images must be extracted, uploaded, and replaced with hosted URLs. Th
   "url": "./blogs/[filename].html",
   "linkUrl": "./blogs/[filename].html",
   "readMoreUrl": "./blogs/[filename].html",
-  "imageUrl": "https://i.imgur.com/XXXXXXX.png",
+  "imageUrl": "https://img.billlayneinsurance.com/i/YYYY/MM/hero-name.webp",
   "summary": "1-2 sentence summary for the blog card preview.",
   "tags": ["Tag1", "Tag2", "Tag3", "North Carolina"],
   "author": "Bill Layne",
@@ -98,7 +98,7 @@ All base64 images must be extracted, uploaded, and replaced with hosted URLs. Th
 
 **Important fields:**
 - `date` — Use today's actual date (YYYY-MM-DD format). Do NOT use a future date.
-- `imageUrl` — Use the **Imgur direct URL** for the hero image (e.g., `https://i.imgur.com/XXXXXXX.png`). Older posts may still use local paths like `./assets/images/...` — that's fine, leave those as-is.
+- `imageUrl` — Use the **img.billlayneinsurance.com URL** for the hero image. Older posts may still use local paths like `./assets/images/...` — that's fine, leave those as-is.
 - `title` — Extracted from the blog HTML (or user-provided override)
 - `summary` — Written from the blog content (or user-provided override)
 - `tags` — Generated from the content, always include "North Carolina" (or user-provided override)
@@ -168,7 +168,7 @@ All base64 images must be extracted, uploaded, and replaced with hosted URLs. Th
 | Blog data (JSON) | `blog/data/blogs.json` |
 | Blog landing page | `blog/index.html` |
 | Blog app logic | `blog/app.js` |
-| Hero images (new posts) | Hosted on Imgur (`https://i.imgur.com/...`) |
+| Hero images (new posts) | Hosted on BLI Image Host (`https://img.billlayneinsurance.com/i/...`) |
 | Hero images (older posts) | `blog/assets/images/[name]-hero.[png\|jpg]` (leave as-is) |
 
 ---

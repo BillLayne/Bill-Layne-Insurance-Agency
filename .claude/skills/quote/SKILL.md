@@ -173,9 +173,9 @@ Build a self-contained HTML file following the **Bill Layne Quote Template v3** 
 - Elkin Office: 1283 N Bridge St, Elkin, NC 28621
 - Dobson Office: 209 S Main St, Dobson, NC 27017
 - Founded: 2005
-- Logo: https://i.imgur.com/lxu9nfT.png
-- Bill Photo: https://i.imgur.com/BalAE1Q.jpeg
-- Carrier logos: Dairyland=https://i.imgur.com/1VkIvxv.png, NatGen=https://i.imgur.com/HF8oPAF.png, Safeco=https://i.imgur.com/DDGMV4c.png
+- Logo: https://img.billlayneinsurance.com/i/2026/08/im-lxu9nft-etpncs.png
+- Bill Photo: https://img.billlayneinsurance.com/i/2026/08/im-balae1q-ve95cc.jpg
+- Carrier logos: Dairyland=https://img.billlayneinsurance.com/i/2026/08/im-1vkivxv-ah7aw5.png, NatGen=https://img.billlayneinsurance.com/i/2026/08/im-hf8opaf-c8yp48.png, Safeco=https://img.billlayneinsurance.com/i/2026/08/im-ddgmv4c-4k7nvz.png
 
 **Social links** (footer):
 - Facebook: https://www.facebook.com/dollarbillagency/

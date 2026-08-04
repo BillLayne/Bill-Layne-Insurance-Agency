@@ -240,7 +240,7 @@ window.BLI_STUDIO = (function () {
       '<a href="https://x.com/shopsavecompare" style="color:#003f87;text-decoration:none;font-weight:700;">X</a></p>\n' +
       '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto 14px auto;"><tr>' +
       '<td bgcolor="#ffffff" align="center" style="background-color:#ffffff;padding:8px 14px;border-radius:20px;border:1px solid #e2e8f0;">' +
-      '<img src="https://i.imgur.com/nDFmjxh.png" width="16" height="16" alt="Google" style="display:inline-block;vertical-align:middle;width:16px;height:16px;margin-right:6px;">' +
+      '<img src="https://img.billlayneinsurance.com/i/2026/08/blog-ndfmjxh-skjqy5.png" width="16" height="16" alt="Google" style="display:inline-block;vertical-align:middle;width:16px;height:16px;margin-right:6px;">' +
       '<span style="font-size:11px;color:#64748b;font-family:' + FONT + ';vertical-align:middle;font-weight:600;">&#11088; 4.9 Stars on Google &bull; 100+ Reviews</span></td></tr></table>\n' +
       '<p style="margin:0 0 6px 0;font-size:11px;color:#64748b;font-family:' + FONT + ';">Follow us on <a href="https://www.facebook.com/dollarbillagency" style="color:#003f87;text-decoration:none;font-weight:700;">Facebook</a> for insurance tips &amp; local updates.</p>\n' +
       '<p style="margin:0 0 14px 0;font-size:11px;color:#64748b;font-family:' + FONT + ';">Prefer to chat? Reach us on <a href="https://m.me/dollarbillagency" style="color:#003f87;text-decoration:none;font-weight:700;">Facebook Messenger</a> anytime.</p>\n' +
