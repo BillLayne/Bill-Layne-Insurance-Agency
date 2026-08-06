@@ -649,7 +649,7 @@
         <div class="max-w-5xl mx-auto px-4">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                 <div class="reveal">
-                    <div class="text-3xl md:text-4xl font-display font-black text-primary-600">50+</div>
+                    <div class="text-3xl md:text-4xl font-display font-black text-primary-600">260+</div>
                     <div class="text-xs text-slate-500 uppercase tracking-widest font-bold mt-1">Videos</div>
                 </div>
                 <div class="reveal" style="transition-delay: 0.1s;">
@@ -668,12 +668,66 @@
         </div>
     </section>
 
+    <!-- LATEST FROM YOUTUBE — auto-updates from the channel feed via /api/videos -->
+    <section id="latest" class="py-12 md:py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-10 reveal active">
+                <span class="inline-flex items-center gap-2 bg-red-50 text-red-700 text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full mb-4"><i class="fab fa-youtube"></i> Fresh from our channel &middot; updates automatically</span>
+                <h2 class="text-3xl md:text-5xl font-display font-black text-slate-900 mb-4">Our Newest Videos</h2>
+                <p class="text-lg text-slate-600 max-w-2xl mx-auto">The latest tips from <a href="https://www.youtube.com/@ncautoandhome" target="_blank" rel="noopener" class="text-red-600 font-bold hover:underline">@ncautoandhome</a> — the moment we post on YouTube, they show up here.</p>
+            </div>
+            <div id="latest-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            <div id="latest-fallback" class="hidden text-center py-10">
+                <p class="text-slate-600 mb-4">Our newest videos are on the channel:</p>
+                <a href="https://www.youtube.com/@ncautoandhome/videos" target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-red-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-red-700 transition-all"><i class="fab fa-youtube"></i> Watch on YouTube</a>
+            </div>
+        </div>
+    </section>
+    <script>
+    // Latest-videos grid: same-origin JSON from the Pages Function at /api/videos
+    // (which proxies the channel's public RSS feed). Fails soft to a channel link.
+    (function () {
+        var grid = document.getElementById('latest-grid');
+        var esc = function (t) { return t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); };
+        window.playLatest = function (card, id) {
+            card.innerHTML = '<iframe class="absolute inset-0 w-full h-full" src="https://www.youtube-nocookie.com/embed/' + id +
+                '?autoplay=1&rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+        };
+        fetch('/api/videos')
+            .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+            .then(function (data) {
+                var vids = (data && data.videos) || [];
+                if (!vids.length) throw 0;
+                grid.innerHTML = vids.map(function (v) {
+                    var d = new Date(v.published);
+                    var when = isNaN(d) ? '' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                    return '<div class="video-card bg-white rounded-[1.5rem] overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl hover:border-primary-200 transition-all">' +
+                        '<div class="relative aspect-video bg-slate-900 cursor-pointer" onclick="playLatest(this, \'' + v.id + '\')">' +
+                            '<img src="https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg" alt="' + esc(v.title) + '" class="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async">' +
+                            '<div class="absolute inset-0 flex items-center justify-center bg-slate-900/0 hover:bg-slate-900/20 transition-colors">' +
+                                '<div class="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-xl"><i class="fas fa-play text-white text-lg ml-1"></i></div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="p-5">' +
+                            '<div class="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">' + when + '</div>' +
+                            '<h3 class="font-bold text-slate-900 leading-snug">' + esc(v.title) + '</h3>' +
+                        '</div>' +
+                    '</div>';
+                }).join('');
+            })
+            .catch(function () {
+                grid.style.display = 'none';
+                document.getElementById('latest-fallback').classList.remove('hidden');
+            });
+    })();
+    </script>
+
     <!-- VIDEO CATEGORIES & FILTER -->
     <section id="videos" class="py-12 md:py-20 bg-slate-50">
         <div class="max-w-7xl mx-auto px-4">
             <div class="text-center mb-12 reveal">
-                <h2 class="text-3xl md:text-5xl font-display font-black text-slate-900 mb-4">Insurance Video Library</h2>
-                <p class="text-lg text-slate-600 max-w-2xl mx-auto">Browse our collection of educational videos. Click any video to watch!</p>
+                <h2 class="text-3xl md:text-5xl font-display font-black text-slate-900 mb-4">Start Here: The Essentials</h2>
+                <p class="text-lg text-slate-600 max-w-2xl mx-auto">Our hand-picked explainers &mdash; the videos that answer the questions NC families ask us every week. Click any video to watch!</p>
             </div>
 
             <!-- Category Filter Pills -->
