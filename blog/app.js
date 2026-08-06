@@ -228,7 +228,10 @@ class EtherealBlog {
    */
   formatDisplayDate(dateString) {
     try {
-      const date = new Date(dateString);
+      // Date-only strings parse as UTC midnight, which renders as the PREVIOUS
+      // day in US timezones. Anchor to local noon so the displayed date matches
+      // the publish date (same fix the homepage blog module uses).
+      const date = new Date(/^\d{4}-\d{2}-\d{2}$/.test(dateString) ? dateString + 'T12:00:00' : dateString);
       if (isNaN(date.getTime())) return dateString;
       return date.toLocaleDateString('en-US', {
         year: 'numeric', month: 'long', day: 'numeric'
