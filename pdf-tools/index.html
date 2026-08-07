@@ -798,11 +798,16 @@
         <h3>Quick stamps <span class="grow"></span><button class="ghost" id="btnStampsClose">&#10005; Close</button></h3>
         <div class="sig-note">Tap a stamp — it lands in the middle of the page, already selected, so you just drag it into place.</div>
         <div id="quickStamps" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
-        <div class="sig-note" style="margin-top:4px;"><strong>Your saved stamps</strong> &mdash; save text you use all the time (kept only on this computer):</div>
+        <div class="sig-note" style="margin-top:4px;"><strong>Your saved text stamps</strong> &mdash; save text you use all the time (kept only on this computer):</div>
         <div id="customStamps" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
         <textarea id="customStampText" placeholder="Type text to save as a reusable stamp&#10;(more than one line is fine)"></textarea>
         <div class="sig-row">
           <button class="primary" id="btnSaveStamp">+ Save as a stamp</button>
+        </div>
+        <div class="sig-note" style="margin-top:4px;"><strong>Your saved picture stamps</strong> &mdash; upload a PNG or JPG (logo, rubber stamp, badge) once and reuse it forever:</div>
+        <div id="imgStamps" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
+        <div class="sig-row">
+          <button class="primary" id="btnStampImgUpload">&#8682; Upload a picture stamp</button>
         </div>
       </div>
     </div>
@@ -876,6 +881,7 @@ Bill Layne Insurance
 <input type="file" id="fileInput" accept="application/pdf,.pdf,image/*" multiple hidden>
 <input type="file" id="sigFileInput" accept="image/*" hidden>
 <input type="file" id="imgFileInput" accept="image/*" hidden>
+<input type="file" id="stampImgInput" accept="image/*" hidden>
 <div id="toast"></div>
 <div id="busy">Working&hellip;</div>
 
@@ -1955,6 +1961,7 @@ Bill Layne Insurance
 
   function openStampPanel() {
     renderStampChips();
+    renderImgStampChips();
     $('stampPanel').style.display = 'flex';
   }
   function closeStampPanel() { $('stampPanel').style.display = 'none'; }
@@ -2011,6 +2018,120 @@ Bill Layne Insurance
       wrap.appendChild(chip);
     });
   }
+
+  /* picture stamps: uploaded PNG/JPG saved on this computer, tap to place */
+  const IMG_STAMP_KEY = 'bliPdfStudioImgStamps';
+  function loadImgStamps() {
+    try { return JSON.parse(localStorage.getItem(IMG_STAMP_KEY)) || []; } catch (_) { return []; }
+  }
+  function saveImgStamps(list) {
+    try { localStorage.setItem(IMG_STAMP_KEY, JSON.stringify(list.slice(0, 6))); }
+    catch (_) { toast('Could not save that stamp on this computer (storage full?). You can still place it now.'); }
+  }
+
+  function placeCenteredImage(dataUrl) {
+    if (!editorItem || !editorVp) return;
+    const img = new Image();
+    img.onload = () => {
+      const cw = parseFloat(editCanvas.style.width) / 2;
+      const ch = parseFloat(editCanvas.style.height) / 2;
+      const cssW = 140 * editorFit;
+      const cssH = cssW * ((img.naturalHeight || 1) / (img.naturalWidth || 1));
+      const a = cssToPdf(cw - cssW / 2, ch - cssH / 2);
+      const b = cssToPdf(cw + cssW / 2, ch + cssH / 2);
+      const st = {
+        kind: 'img',
+        dataUrl,
+        x: Math.min(a.px, b.px), y: Math.min(a.py, b.py),
+        w: Math.abs(b.px - a.px), h: Math.abs(b.py - a.py)
+      };
+      editorItem.stamps.push(st);
+      selectedStamp = st;
+      syncStampLayer();
+      setEditorMode('text');
+    };
+    img.src = dataUrl;
+  }
+
+  function renderImgStampChips() {
+    const wrap = $('imgStamps');
+    wrap.innerHTML = '';
+    const saved = loadImgStamps();
+    if (!saved.length) {
+      const note = document.createElement('div');
+      note.className = 'sig-note';
+      note.textContent = 'None saved yet.';
+      wrap.appendChild(note);
+      return;
+    }
+    saved.forEach((s, i) => {
+      const chip = document.createElement('div');
+      chip.className = 'sig-chip';
+      chip.title = 'Tap to place this stamp';
+      const img = document.createElement('img');
+      img.src = s;
+      chip.appendChild(img);
+      const use = document.createElement('div');
+      use.className = 'use-label';
+      use.textContent = 'Tap to use';
+      chip.appendChild(use);
+      const del = document.createElement('button');
+      del.className = 'chip-del';
+      del.innerHTML = '&#10005;';
+      del.title = 'Forget this stamp';
+      del.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const list = loadImgStamps();
+        list.splice(i, 1);
+        saveImgStamps(list);
+        renderImgStampChips();
+      });
+      chip.appendChild(del);
+      chip.addEventListener('click', () => { closeStampPanel(); placeCenteredImage(s); });
+      wrap.appendChild(chip);
+    });
+  }
+
+  $('btnStampImgUpload').addEventListener('click', () => $('stampImgInput').click());
+  $('stampImgInput').addEventListener('change', async (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    try {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      await new Promise((res, rej) => { img.onload = res; img.onerror = () => rej(new Error('bad image')); img.src = url; });
+      const maxSide = 700;   // keep localStorage small; plenty sharp for a stamp
+      const sc = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
+      const c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(img.naturalWidth * sc));
+      c.height = Math.max(1, Math.round(img.naturalHeight * sc));
+      const ctx = c.getContext('2d');
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      // JPG scans/logos: lift the white paper background so the stamp floats on the page.
+      // PNGs keep their own transparency untouched.
+      const t = (file.type || '').toLowerCase();
+      if (t === 'image/jpeg' || t === 'image/jpg') {
+        const id = ctx.getImageData(0, 0, c.width, c.height);
+        const d = id.data;
+        for (let i = 0; i < d.length; i += 4) {
+          if (d[i] > 235 && d[i + 1] > 235 && d[i + 2] > 235) d[i + 3] = 0;
+        }
+        ctx.putImageData(id, 0, 0);
+      }
+      const trimmed = trimCanvas(c) || c;
+      const dataUrl = trimmed.toDataURL('image/png');
+      const list = loadImgStamps().filter(s => s !== dataUrl);
+      list.unshift(dataUrl);
+      saveImgStamps(list);
+      renderImgStampChips();
+      toast('Picture stamp saved — tap it to place it on the page.');
+    } catch (err) {
+      console.error(err);
+      toast('Could not read that image — try a JPG or PNG.');
+    }
+  });
 
   $('btnSaveStamp').addEventListener('click', () => {
     const t = $('customStampText').value.replace(/\s+$/, '');
