@@ -7,6 +7,7 @@
 <title>PDF Studio | Split &amp; Combine PDFs | Bill Layne Insurance</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
   :root {
     --navy: #003f87;
@@ -495,7 +496,7 @@
   #customStampText { width: 100%; font: inherit; font-size: 13px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; resize: vertical; min-height: 54px; }
 
   /* form-fill modal */
-  #formModal, #emailModal {
+  #formModal, #emailModal, #phoneModal {
     position: fixed;
     inset: 0;
     background: rgba(2,6,23,.55);
@@ -505,7 +506,8 @@
     z-index: 70;
     padding: 14px;
   }
-  #formModal.open, #emailModal.open { display: flex; }
+  #formModal.open, #emailModal.open, #phoneModal.open { display: flex; }
+  #phoneModal { z-index: 72; }
   .mail-banner { display: none; border-radius: 10px; padding: 10px 12px; font-size: 13px; font-weight: 600; }
   .mail-banner.ok { display: block; background: #f0fdf4; border: 1px solid #86efac; color: #166534; }
   .mail-banner.bad { display: block; background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; }
@@ -860,8 +862,24 @@ Bill Layne Insurance
       <div class="mail-banner" id="mailBanner"></div>
     </div>
     <div class="form-foot">
+      <button class="ghost" id="btnPhoneSetup" style="margin-right:auto">&#128241; Use on my phone</button>
       <button id="btnEmailCancel">Cancel</button>
       <button class="teal" id="btnEmailGo">&#9993; Create draft in Gmail</button>
+    </div>
+  </div>
+</div>
+
+<!-- phone-setup QR modal -->
+<div id="phoneModal">
+  <div class="form-card" style="width:min(420px,100%)">
+    <div class="form-head">Use Gmail drafts on your phone <span class="grow"></span><button class="ghost" id="btnPhoneClose">&#10005;</button></div>
+    <div class="form-body" style="align-items:center;text-align:center">
+      <div class="sig-note">1. Open your phone&rsquo;s <strong>camera</strong> and point it at this code.<br>2. Tap the link that pops up.<br>3. Done &mdash; Gmail drafts now work in PDF Studio on that phone.</div>
+      <div id="qrBox" style="background:#fff;padding:12px;border-radius:12px;border:1px solid var(--line)"></div>
+      <div class="sig-note">The connection is copied straight between your devices &mdash; nothing is sent to any server. This code contains your private mail key, so don&rsquo;t screenshot or share it.</div>
+    </div>
+    <div class="form-foot">
+      <button class="teal" id="btnPhoneDone">&#10003; Done</button>
     </div>
   </div>
 </div>
@@ -2307,6 +2325,7 @@ Bill Layne Insurance
   $('btnEditDone').addEventListener('click', closeEditor);
   $('editModal').addEventListener('click', (e) => { if (e.target === $('editModal')) closeEditor(); });
   document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && $('phoneModal').classList.contains('open')) { closePhoneModal(); return; }
     if (e.key === 'Escape' && $('emailModal').classList.contains('open')) { closeEmailModal(); return; }
     if (e.key === 'Escape' && $('formModal').classList.contains('open')) { closeFormModal(); return; }
     if (!$('editModal').classList.contains('open')) return;
@@ -2432,6 +2451,44 @@ Bill Layne Insurance
 
   /* ── Email as Gmail draft (BLI Mail Gateway) ── */
   const GW_URL_KEY = 'bliMailGateway.url', GW_SECRET_KEY = 'bliMailGateway.secret';
+
+  // phone setup: arriving with #gw=<base64url({u,s})> (from the QR) connects this device
+  function connectFromHash() {
+    const m = location.hash.match(/#gw=([A-Za-z0-9\-_]+)/);
+    if (!m) return;
+    try {
+      const cfg = JSON.parse(atob(m[1].replace(/-/g, '+').replace(/_/g, '/')));
+      if (cfg && typeof cfg.u === 'string' && /^https:\/\/script\.google\.com\/macros\//.test(cfg.u) && cfg.s) {
+        localStorage.setItem(GW_URL_KEY, cfg.u);
+        localStorage.setItem(GW_SECRET_KEY, String(cfg.s));
+        setTimeout(() => toast('✅ Gmail drafts are now connected on this device.'), 400);
+      }
+    } catch (_) {}
+    history.replaceState(null, '', location.pathname + location.search);
+  }
+  connectFromHash();
+  window.addEventListener('hashchange', connectFromHash);
+
+  $('btnPhoneSetup').addEventListener('click', () => {
+    const url = localStorage.getItem(GW_URL_KEY), secret = localStorage.getItem(GW_SECRET_KEY);
+    if (!url || !secret) {
+      mailBanner(false, '⚠️ Set up the Mail Gateway in THIS browser first (open <a href="/mail-gateway/" target="_blank">the Mail Gateway page</a>), then use this button to copy the connection to your phone.');
+      return;
+    }
+    const b64 = btoa(JSON.stringify({ u: url, s: secret })).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    const link = 'https://www.billlayneinsurance.com/pdf-tools/#gw=' + b64;
+    const box = $('qrBox');
+    box.innerHTML = '';
+    new QRCode(box, { text: link, width: 240, height: 240, correctLevel: QRCode.CorrectLevel.L });
+    $('phoneModal').classList.add('open');
+  });
+  function closePhoneModal() {
+    $('phoneModal').classList.remove('open');
+    $('qrBox').innerHTML = '';   // don't leave the secret-bearing QR in the DOM
+  }
+  $('btnPhoneClose').addEventListener('click', closePhoneModal);
+  $('btnPhoneDone').addEventListener('click', closePhoneModal);
+  $('phoneModal').addEventListener('click', (e) => { if (e.target === $('phoneModal')) closePhoneModal(); });
 
   function mailBanner(ok, html) {
     const b = $('mailBanner');
