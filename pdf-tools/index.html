@@ -628,6 +628,7 @@
       <button class="mode-btn active" id="modeText">T&nbsp; Add text</button>
       <button class="mode-btn" id="modeBox">&#11036; White-out box</button>
       <button class="mode-btn" id="modeSig">&#9997; Signature</button>
+      <button class="mode-btn" id="modeImg">&#128444; Image</button>
       <input type="text" id="stampText" placeholder="Type your text, then click the page" style="flex:1;min-width:170px">
       <select id="stampSize" title="Text size">
         <option value="10">10 pt</option>
@@ -675,6 +676,7 @@
 
 <input type="file" id="fileInput" accept="application/pdf,.pdf,image/*" multiple hidden>
 <input type="file" id="sigFileInput" accept="image/*" hidden>
+<input type="file" id="imgFileInput" accept="image/*" hidden>
 <div id="toast"></div>
 <div id="busy">Working&hellip;</div>
 
@@ -1038,14 +1040,16 @@
     for (const st of stamps) {
       if (st.kind === 'box') {
         page.drawRectangle({ x: st.x, y: st.y, width: st.w, height: st.h, color: PDFLib.rgb(1, 1, 1) });
-      } else if (st.kind === 'sig') {
+      } else if (st.kind === 'sig' || st.kind === 'img') {
         if (!fontRef.sigs) fontRef.sigs = new Map();
         const key = st.dataUrl + '|' + R;
         let img = fontRef.sigs.get(key);
         if (!img) {
           // pre-rotate the bitmap so it appears upright on rotated pages
           const url = R ? await rotateDataUrl(st.dataUrl, (360 - R) % 360) : st.dataUrl;
-          img = await out.embedPng(dataUrlToBytes(url));
+          img = url.startsWith('data:image/jpeg')
+            ? await out.embedJpg(dataUrlToBytes(url))
+            : await out.embedPng(dataUrlToBytes(url));
           fontRef.sigs.set(key, img);
         }
         page.drawImage(img, { x: st.x, y: st.y, width: st.w, height: st.h });
@@ -1116,11 +1120,14 @@
     $('modeText').classList.toggle('active', mode === 'text');
     $('modeBox').classList.toggle('active', mode === 'box');
     $('modeSig').classList.toggle('active', mode === 'sig');
+    $('modeImg').classList.toggle('active', mode === 'img');
     $('editHint').textContent = mode === 'text'
       ? 'Type your text above, then click the page to place it in a box you can move. Drag the box anywhere, drag the blue corner to make it bigger or smaller, double-click to edit the words.'
       : mode === 'box'
         ? 'Press and drag on the page to draw a white box over anything you need to cover. Boxes can be moved and resized after you draw them.'
-        : 'Click the page where you want your signature. You can move and resize it after placing it.';
+        : mode === 'sig'
+          ? 'Click the page where you want your signature. You can move and resize it after placing it.'
+          : 'Click the page where you want the picture. You can move and resize it after placing it.';
   }
 
   function openEditor(item) {
@@ -1247,11 +1254,11 @@
       el.appendChild(txt);
       positionTextEl(el, st);
       el.addEventListener('dblclick', (e) => { e.stopPropagation(); startTextEdit(el, st); });
-    } else if (st.kind === 'sig') {
+    } else if (st.kind === 'sig' || st.kind === 'img') {
       el.classList.add('stamp-sig');
       const img = document.createElement('img');
       img.src = st.dataUrl;
-      img.alt = 'signature';
+      img.alt = st.kind === 'sig' ? 'signature' : 'picture';
       el.appendChild(img);
       positionBoxEl(el, st);
     } else {
@@ -1343,7 +1350,7 @@
       rs.addEventListener('pointerup', up);
     } else {
       const sw = parseFloat(el.style.width), sh = parseFloat(el.style.height);
-      const keepAspect = st.kind === 'sig';
+      const keepAspect = st.kind === 'sig' || st.kind === 'img';
       const mv = (ev) => {
         const nw = Math.max(8, sw + ev.clientX - sx);
         el.style.width = nw + 'px';
@@ -1404,28 +1411,37 @@
     }
     boxDrag = null;
   });
+  // place an image-like stamp (signature or picture) centered on the click
+  function placeImageStamp(e, kind, dataUrl, dim, viewWpt) {
+    const rect = editOverlay.getBoundingClientRect();
+    const cx = e.clientX - rect.left, cy = e.clientY - rect.top;
+    // size in on-screen terms so it looks right on rotated pages too
+    const cssW = viewWpt * editorFit;
+    const cssH = cssW * (dim.h / dim.w);
+    const a = cssToPdf(cx - cssW / 2, cy - cssH / 2);
+    const b = cssToPdf(cx + cssW / 2, cy + cssH / 2);
+    const st = {
+      kind,
+      dataUrl,
+      x: Math.min(a.px, b.px), y: Math.min(a.py, b.py),
+      w: Math.abs(b.px - a.px), h: Math.abs(b.py - a.py)
+    };
+    editorItem.stamps.push(st);
+    selectedStamp = st;
+    syncStampLayer();
+    setEditorMode('text');   // one per click; switch back so stray clicks don't re-place
+  }
+
   editOverlay.addEventListener('click', (e) => {
     if (!editorItem || !editorVp) return;
     if (editorMode === 'sig') {
       if (!currentSig) { openSigPanel(); return; }
-      const rect = editOverlay.getBoundingClientRect();
-      const cx = e.clientX - rect.left, cy = e.clientY - rect.top;
-      // size the signature in on-screen terms so it looks right on rotated pages too
-      const viewWpt = 150;
-      const cssW = viewWpt * editorFit;
-      const cssH = cssW * (currentSigDim.h / currentSigDim.w);
-      const a = cssToPdf(cx - cssW / 2, cy - cssH / 2);
-      const b = cssToPdf(cx + cssW / 2, cy + cssH / 2);
-      const st = {
-        kind: 'sig',
-        dataUrl: currentSig,
-        x: Math.min(a.px, b.px), y: Math.min(a.py, b.py),
-        w: Math.abs(b.px - a.px), h: Math.abs(b.py - a.py)
-      };
-      editorItem.stamps.push(st);
-      selectedStamp = st;
-      syncStampLayer();
-      setEditorMode('text');   // one signature per click; switch back so stray clicks don't re-place
+      placeImageStamp(e, 'sig', currentSig, currentSigDim, 150);
+      return;
+    }
+    if (editorMode === 'img') {
+      if (!currentImg) { $('imgFileInput').click(); return; }
+      placeImageStamp(e, 'img', currentImg, currentImgDim, 220);
       return;
     }
     if (editorMode !== 'text') return;
@@ -1650,9 +1666,41 @@
   $('btnSigClose').addEventListener('click', closeSigPanel);
   $('sigPanel').addEventListener('click', (e) => { if (e.target === $('sigPanel')) closeSigPanel(); });
 
+  /* ── Pictures placed on the page ── */
+  let currentImg = null, currentImgDim = { w: 1, h: 1 };
+  $('imgFileInput').addEventListener('change', async (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    try {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      await new Promise((res, rej) => { img.onload = res; img.onerror = () => rej(new Error('bad image')); img.src = url; });
+      const maxSide = 1600;
+      const sc = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
+      const c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(img.naturalWidth * sc));
+      c.height = Math.max(1, Math.round(img.naturalHeight * sc));
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      // keep PNG for transparency-capable files, JPEG for photos (smaller)
+      const t = (file.type || '').toLowerCase();
+      currentImg = (t === 'image/png' || t === 'image/webp' || t === 'image/gif')
+        ? c.toDataURL('image/png')
+        : c.toDataURL('image/jpeg', 0.9);
+      currentImgDim = { w: c.width, h: c.height };
+      setEditorMode('img');
+      toast('Now click the page where you want the picture.');
+    } catch (err) {
+      console.error(err);
+      toast('Could not read that image — try a JPG or PNG.');
+    }
+  });
+
   $('modeText').addEventListener('click', () => setEditorMode('text'));
   $('modeBox').addEventListener('click', () => setEditorMode('box'));
   $('modeSig').addEventListener('click', () => openSigPanel());
+  $('modeImg').addEventListener('click', () => $('imgFileInput').click());
   $('btnUndoStamp').addEventListener('click', () => {
     if (editorItem && editorItem.stamps.length) {
       editorItem.stamps.pop();
