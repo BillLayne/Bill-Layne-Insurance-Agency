@@ -360,7 +360,74 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    position: relative;
   }
+  /* signature stamps */
+  .stamp-sig { cursor: move; }
+  .stamp-sig img { width: 100%; height: 100%; display: block; pointer-events: none; }
+  /* signature panel */
+  #sigPanel {
+    position: absolute;
+    inset: 0;
+    background: rgba(248,250,252,.97);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    padding: 16px;
+  }
+  #sigPanel.open { display: flex; }
+  .sig-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: 0 12px 40px rgba(2,6,23,.18);
+    padding: 16px;
+    width: min(640px, 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .sig-card h3 { font-size: 14px; color: var(--navy); text-transform: uppercase; letter-spacing: .08em; display: flex; align-items: center; }
+  .sig-card h3 .grow { flex: 1; }
+  #sigSaved { display: flex; gap: 10px; flex-wrap: wrap; }
+  .sig-chip {
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    padding: 6px 8px;
+    background: #fff;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .sig-chip:hover { border-color: var(--teal); }
+  .sig-chip img { height: 44px; max-width: 190px; object-fit: contain; }
+  .sig-chip .chip-del {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 18px; height: 18px;
+    border: none;
+    border-radius: 999px;
+    background: #b91c1c;
+    color: #fff;
+    font-size: 10px;
+    line-height: 1;
+    padding: 0;
+    cursor: pointer;
+  }
+  #sigPad {
+    border: 2px dashed #94a3b8;
+    border-radius: 10px;
+    background: #fff;
+    width: 100%;
+    height: 190px;
+    touch-action: none;
+    cursor: crosshair;
+  }
+  .sig-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .sig-note { font-size: 12px; color: var(--muted); }
   .edit-head {
     display: flex;
     align-items: center;
@@ -560,6 +627,7 @@
       <span class="edit-title">Add text to page</span>
       <button class="mode-btn active" id="modeText">T&nbsp; Add text</button>
       <button class="mode-btn" id="modeBox">&#11036; White-out box</button>
+      <button class="mode-btn" id="modeSig">&#9997; Signature</button>
       <input type="text" id="stampText" placeholder="Type your text, then click the page" style="flex:1;min-width:170px">
       <select id="stampSize" title="Text size">
         <option value="10">10 pt</option>
@@ -586,10 +654,27 @@
         <div id="stampLayer"></div>
       </div>
     </div>
+
+    <!-- signature setup panel -->
+    <div id="sigPanel">
+      <div class="sig-card">
+        <h3>Your signature <span class="grow"></span><button class="ghost" id="btnSigClose">&#10005; Close</button></h3>
+        <div id="sigSaved"></div>
+        <canvas id="sigPad"></canvas>
+        <div class="sig-row">
+          <button id="btnSigClear">Clear pad</button>
+          <button class="primary" id="btnSigUse">&#10003; Use this signature</button>
+          <span style="flex:1"></span>
+          <button id="btnSigUpload">&#8682; Upload signature image</button>
+        </div>
+        <div class="sig-note">Draw your signature above with the mouse (or finger on a touchscreen), or upload a photo/scan of it &mdash; white backgrounds are removed automatically. Signatures are saved <strong>only on this computer</strong> so next time it&rsquo;s one click.</div>
+      </div>
+    </div>
   </div>
 </div>
 
 <input type="file" id="fileInput" accept="application/pdf,.pdf,image/*" multiple hidden>
+<input type="file" id="sigFileInput" accept="image/*" hidden>
 <div id="toast"></div>
 <div id="busy">Working&hellip;</div>
 
@@ -926,6 +1011,26 @@
     blue: [0.11, 0.31, 0.85]
   };
 
+  // rotate a PNG data URL clockwise by deg (0/90/180/270) via canvas
+  function rotateDataUrl(dataUrl, cwDeg) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const swap = cwDeg % 180 !== 0;
+        const c = document.createElement('canvas');
+        c.width = swap ? img.height : img.width;
+        c.height = swap ? img.width : img.height;
+        const ctx = c.getContext('2d');
+        ctx.translate(c.width / 2, c.height / 2);
+        ctx.rotate(cwDeg * Math.PI / 180);
+        ctx.drawImage(img, -img.width / 2, -img.height / 2);
+        resolve(c.toDataURL('image/png'));
+      };
+      img.onerror = reject;
+      img.src = dataUrl;
+    });
+  }
+
   async function drawStamps(out, page, stamps, fontRef) {
     if (!stamps || !stamps.length) return fontRef;
     // compensate for page rotation so text reads horizontally as viewed
@@ -933,6 +1038,17 @@
     for (const st of stamps) {
       if (st.kind === 'box') {
         page.drawRectangle({ x: st.x, y: st.y, width: st.w, height: st.h, color: PDFLib.rgb(1, 1, 1) });
+      } else if (st.kind === 'sig') {
+        if (!fontRef.sigs) fontRef.sigs = new Map();
+        const key = st.dataUrl + '|' + R;
+        let img = fontRef.sigs.get(key);
+        if (!img) {
+          // pre-rotate the bitmap so it appears upright on rotated pages
+          const url = R ? await rotateDataUrl(st.dataUrl, (360 - R) % 360) : st.dataUrl;
+          img = await out.embedPng(dataUrlToBytes(url));
+          fontRef.sigs.set(key, img);
+        }
+        page.drawImage(img, { x: st.x, y: st.y, width: st.w, height: st.h });
       } else {
         if (!fontRef.font) fontRef.font = await out.embedFont(PDFLib.StandardFonts.Helvetica);
         const c = STAMP_COLORS[st.color] || STAMP_COLORS.black;
@@ -999,9 +1115,12 @@
     editorMode = mode;
     $('modeText').classList.toggle('active', mode === 'text');
     $('modeBox').classList.toggle('active', mode === 'box');
+    $('modeSig').classList.toggle('active', mode === 'sig');
     $('editHint').textContent = mode === 'text'
       ? 'Type your text above, then click the page to place it in a box you can move. Drag the box anywhere, drag the blue corner to make it bigger or smaller, double-click to edit the words.'
-      : 'Press and drag on the page to draw a white box over anything you need to cover. Boxes can be moved and resized after you draw them.';
+      : mode === 'box'
+        ? 'Press and drag on the page to draw a white box over anything you need to cover. Boxes can be moved and resized after you draw them.'
+        : 'Click the page where you want your signature. You can move and resize it after placing it.';
   }
 
   function openEditor(item) {
@@ -1128,6 +1247,13 @@
       el.appendChild(txt);
       positionTextEl(el, st);
       el.addEventListener('dblclick', (e) => { e.stopPropagation(); startTextEdit(el, st); });
+    } else if (st.kind === 'sig') {
+      el.classList.add('stamp-sig');
+      const img = document.createElement('img');
+      img.src = st.dataUrl;
+      img.alt = 'signature';
+      el.appendChild(img);
+      positionBoxEl(el, st);
     } else {
       positionBoxEl(el, st);
     }
@@ -1217,9 +1343,11 @@
       rs.addEventListener('pointerup', up);
     } else {
       const sw = parseFloat(el.style.width), sh = parseFloat(el.style.height);
+      const keepAspect = st.kind === 'sig';
       const mv = (ev) => {
-        el.style.width = Math.max(8, sw + ev.clientX - sx) + 'px';
-        el.style.height = Math.max(8, sh + ev.clientY - sy) + 'px';
+        const nw = Math.max(8, sw + ev.clientX - sx);
+        el.style.width = nw + 'px';
+        el.style.height = (keepAspect ? Math.max(4, nw * sh / sw) : Math.max(8, sh + ev.clientY - sy)) + 'px';
       };
       const up = () => {
         rs.removeEventListener('pointermove', mv);
@@ -1277,7 +1405,30 @@
     boxDrag = null;
   });
   editOverlay.addEventListener('click', (e) => {
-    if (!editorItem || !editorVp || editorMode !== 'text') return;
+    if (!editorItem || !editorVp) return;
+    if (editorMode === 'sig') {
+      if (!currentSig) { openSigPanel(); return; }
+      const rect = editOverlay.getBoundingClientRect();
+      const cx = e.clientX - rect.left, cy = e.clientY - rect.top;
+      // size the signature in on-screen terms so it looks right on rotated pages too
+      const viewWpt = 150;
+      const cssW = viewWpt * editorFit;
+      const cssH = cssW * (currentSigDim.h / currentSigDim.w);
+      const a = cssToPdf(cx - cssW / 2, cy - cssH / 2);
+      const b = cssToPdf(cx + cssW / 2, cy + cssH / 2);
+      const st = {
+        kind: 'sig',
+        dataUrl: currentSig,
+        x: Math.min(a.px, b.px), y: Math.min(a.py, b.py),
+        w: Math.abs(b.px - a.px), h: Math.abs(b.py - a.py)
+      };
+      editorItem.stamps.push(st);
+      selectedStamp = st;
+      syncStampLayer();
+      setEditorMode('text');   // one signature per click; switch back so stray clicks don't re-place
+      return;
+    }
+    if (editorMode !== 'text') return;
     const text = $('stampText').value.trim();
     if (!text && selectedStamp) { selectStamp(null); return; }  // empty click = deselect
     const pt = overlayToPdfPoint(e);
@@ -1314,8 +1465,194 @@
     }
   });
 
+  /* ── Signatures: draw pad, upload, save on this computer ── */
+  const SIG_KEY = 'bliPdfStudioSigs';
+  let currentSig = null, currentSigDim = { w: 1, h: 1 }, padDirty = false, padStroke = null;
+  const sigPad = $('sigPad');
+
+  function loadSigs() {
+    try { return JSON.parse(localStorage.getItem(SIG_KEY)) || []; } catch (_) { return []; }
+  }
+  function saveSigs(list) {
+    try { localStorage.setItem(SIG_KEY, JSON.stringify(list.slice(0, 4))); }
+    catch (_) { toast('Could not save the signature on this computer (storage full?). You can still use it now.'); }
+  }
+
+  function openSigPanel() {
+    $('sigPanel').classList.add('open');
+    renderSigList();
+    initPad();
+  }
+  function closeSigPanel() { $('sigPanel').classList.remove('open'); }
+
+  function renderSigList() {
+    const wrap = $('sigSaved');
+    wrap.innerHTML = '';
+    const sigs = loadSigs();
+    sigs.forEach((s, i) => {
+      const chip = document.createElement('div');
+      chip.className = 'sig-chip';
+      chip.title = 'Click to use this signature';
+      const img = document.createElement('img');
+      img.src = s;
+      chip.appendChild(img);
+      const del = document.createElement('button');
+      del.className = 'chip-del';
+      del.innerHTML = '&#10005;';
+      del.title = 'Forget this signature';
+      del.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const list = loadSigs();
+        list.splice(i, 1);
+        saveSigs(list);
+        renderSigList();
+      });
+      chip.appendChild(del);
+      chip.addEventListener('click', () => useSignature(s));
+      wrap.appendChild(chip);
+    });
+    if (!sigs.length) {
+      const note = document.createElement('div');
+      note.className = 'sig-note';
+      note.textContent = 'No saved signatures yet — draw one below or upload an image.';
+      wrap.appendChild(note);
+    }
+  }
+
+  function useSignature(dataUrl) {
+    const img = new Image();
+    img.onload = () => {
+      currentSig = dataUrl;
+      currentSigDim = { w: img.naturalWidth || 1, h: img.naturalHeight || 1 };
+      closeSigPanel();
+      setEditorMode('sig');
+    };
+    img.src = dataUrl;
+  }
+
+  function rememberSignature(dataUrl) {
+    const list = loadSigs().filter(s => s !== dataUrl);
+    list.unshift(dataUrl);
+    saveSigs(list);
+  }
+
+  // crop a canvas to its inked bounding box (alpha > 0), with padding
+  function trimCanvas(c) {
+    const ctx = c.getContext('2d');
+    const d = ctx.getImageData(0, 0, c.width, c.height).data;
+    let minX = c.width, minY = c.height, maxX = -1, maxY = -1;
+    for (let y = 0; y < c.height; y++) {
+      for (let x = 0; x < c.width; x++) {
+        if (d[(y * c.width + x) * 4 + 3] > 10) {
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+        }
+      }
+    }
+    if (maxX < 0) return null;   // nothing drawn
+    const pad = 6;
+    minX = Math.max(0, minX - pad); minY = Math.max(0, minY - pad);
+    maxX = Math.min(c.width - 1, maxX + pad); maxY = Math.min(c.height - 1, maxY + pad);
+    const out = document.createElement('canvas');
+    out.width = maxX - minX + 1;
+    out.height = maxY - minY + 1;
+    out.getContext('2d').drawImage(c, minX, minY, out.width, out.height, 0, 0, out.width, out.height);
+    return out;
+  }
+
+  function initPad() {
+    const rect = sigPad.getBoundingClientRect();
+    if (sigPad.width !== Math.round(rect.width * 2)) {
+      sigPad.width = Math.round(rect.width * 2);
+      sigPad.height = Math.round(rect.height * 2);
+    }
+    clearPad();
+  }
+  function clearPad() {
+    sigPad.getContext('2d').clearRect(0, 0, sigPad.width, sigPad.height);
+    padDirty = false;
+  }
+  function padPoint(e) {
+    const rect = sigPad.getBoundingClientRect();
+    return {
+      x: (e.clientX - rect.left) * (sigPad.width / rect.width),
+      y: (e.clientY - rect.top) * (sigPad.height / rect.height)
+    };
+  }
+  sigPad.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    try { sigPad.setPointerCapture(e.pointerId); } catch (_) {}
+    padStroke = padPoint(e);
+  });
+  sigPad.addEventListener('pointermove', (e) => {
+    if (!padStroke) return;
+    const p = padPoint(e);
+    const ctx = sigPad.getContext('2d');
+    ctx.strokeStyle = '#1e40af';   // blue ink
+    ctx.lineWidth = 5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(padStroke.x, padStroke.y);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    padStroke = p;
+    padDirty = true;
+  });
+  sigPad.addEventListener('pointerup', () => { padStroke = null; });
+
+  $('btnSigClear').addEventListener('click', clearPad);
+  $('btnSigUse').addEventListener('click', () => {
+    if (!padDirty) { toast('Draw your signature on the pad first, or upload an image.'); return; }
+    const trimmed = trimCanvas(sigPad);
+    if (!trimmed) { toast('Draw your signature on the pad first.'); return; }
+    const dataUrl = trimmed.toDataURL('image/png');
+    rememberSignature(dataUrl);
+    useSignature(dataUrl);
+  });
+  $('btnSigUpload').addEventListener('click', () => $('sigFileInput').click());
+  $('sigFileInput').addEventListener('change', async (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    try {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      await new Promise((res, rej) => { img.onload = res; img.onerror = () => rej(new Error('bad image')); img.src = url; });
+      const c = document.createElement('canvas');
+      const maxSide = 1200;
+      const sc = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
+      c.width = Math.max(1, Math.round(img.naturalWidth * sc));
+      c.height = Math.max(1, Math.round(img.naturalHeight * sc));
+      const ctx = c.getContext('2d');
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      // make white / near-white background transparent so it lays over the page
+      const id = ctx.getImageData(0, 0, c.width, c.height);
+      const d = id.data;
+      for (let i = 0; i < d.length; i += 4) {
+        if (d[i] > 235 && d[i + 1] > 235 && d[i + 2] > 235) d[i + 3] = 0;
+      }
+      ctx.putImageData(id, 0, 0);
+      const trimmed = trimCanvas(c);
+      if (!trimmed) { toast('That image looks blank after removing the white background.'); return; }
+      const dataUrl = trimmed.toDataURL('image/png');
+      rememberSignature(dataUrl);
+      useSignature(dataUrl);
+      toast('Signature saved on this computer — click the page to place it.');
+    } catch (err) {
+      console.error(err);
+      toast('Could not read that image — try a JPG or PNG.');
+    }
+  });
+  $('btnSigClose').addEventListener('click', closeSigPanel);
+  $('sigPanel').addEventListener('click', (e) => { if (e.target === $('sigPanel')) closeSigPanel(); });
+
   $('modeText').addEventListener('click', () => setEditorMode('text'));
   $('modeBox').addEventListener('click', () => setEditorMode('box'));
+  $('modeSig').addEventListener('click', () => openSigPanel());
   $('btnUndoStamp').addEventListener('click', () => {
     if (editorItem && editorItem.stamps.length) {
       editorItem.stamps.pop();
@@ -1338,6 +1675,7 @@
     const typing = a && (a.isContentEditable || a.tagName === 'INPUT' || a.tagName === 'SELECT' || a.tagName === 'TEXTAREA');
     if (e.key === 'Escape') {
       if (a && a.isContentEditable) { a.blur(); return; }
+      if ($('sigPanel').classList.contains('open')) { closeSigPanel(); return; }
       closeEditor();
       return;
     }
@@ -1435,6 +1773,7 @@
     },
     buildPdfBytes,
     openEditorFor: (i) => { if (tray[i]) openEditor(tray[i]); },
+    useSignature,
     getState: () => ({
       docs: [...docs.values()].map(d => ({ name: d.name, pages: d.pages.length })),
       tray: tray.map(t => ({ docId: t.docId, pageIndex: t.pageIndex, rot: t.rot, stamps: t.stamps }))
