@@ -30,15 +30,18 @@
  *   "cc":       "",                             // optional
  *   "bcc":      "Save@BillLayneInsurance.com",  // omit field = default Save@; "" = no BCC
  *   "replyTo":  "Bill@BillLayneInsurance.com",  // optional
- *   "fromName": "Bill Layne Insurance"          // display name; default below
+ *   "fromName": "Bill Layne Insurance",         // display name; default below
+ *   "attachments": [                            // optional (v1.1) — up to 5
+ *     { "name": "policy.pdf", "mimeType": "application/pdf", "dataB64": "<base64>" }
+ *   ]
  * }
  *
- * RESPONSE: { ok:true, mode, draftId?, remainingQuota } or { ok:false, error }
+ * RESPONSE: { ok:true, mode, draftId?, attached, remainingQuota } or { ok:false, error }
  */
 
 const DEFAULT_BCC = 'Save@BillLayneInsurance.com';
 const DEFAULT_FROM_NAME = 'Bill Layne Insurance';
-const VERSION = '1.0';
+const VERSION = '1.1';
 
 function doGet() {
   return respond_({ ok: true, service: 'BLI Mail Gateway', version: VERSION });
@@ -86,15 +89,32 @@ function doPost(e) {
   if (req.cc) options.cc = String(req.cc).trim();
   if (req.replyTo) options.replyTo = String(req.replyTo).trim();
 
+  // v1.1: optional file attachments (base64) — e.g. PDFs from PDF Studio
+  let attached = 0;
+  if (Array.isArray(req.attachments) && req.attachments.length) {
+    try {
+      options.attachments = req.attachments.slice(0, 5).map(function (a) {
+        return Utilities.newBlob(
+          Utilities.base64Decode(String(a.dataB64 || '')),
+          String(a.mimeType || 'application/octet-stream'),
+          String(a.name || 'attachment')
+        );
+      });
+      attached = options.attachments.length;
+    } catch (attErr) {
+      return respond_({ ok: false, error: 'Bad attachment data: ' + attErr });
+    }
+  }
+
   try {
     if (mode === 'send') {
       GmailApp.sendEmail(to, subject, text, options);
-      console.log('SEND ok -> ' + to + ' | ' + subject);
-      return respond_({ ok: true, mode: 'send', to: to, subject: subject, remainingQuota: quota_() });
+      console.log('SEND ok -> ' + to + ' | ' + subject + ' | attachments: ' + attached);
+      return respond_({ ok: true, mode: 'send', to: to, subject: subject, attached: attached, remainingQuota: quota_() });
     }
     const draft = GmailApp.createDraft(to, subject, text, options);
-    console.log('DRAFT ok -> ' + (to || '(no recipient)') + ' | ' + subject);
-    return respond_({ ok: true, mode: 'draft', draftId: draft.getId(), to: to, subject: subject, remainingQuota: quota_() });
+    console.log('DRAFT ok -> ' + (to || '(no recipient)') + ' | ' + subject + ' | attachments: ' + attached);
+    return respond_({ ok: true, mode: 'draft', draftId: draft.getId(), to: to, subject: subject, attached: attached, remainingQuota: quota_() });
   } catch (err) {
     console.log('ERROR: ' + err);
     return respond_({ ok: false, error: String((err && err.message) || err) });

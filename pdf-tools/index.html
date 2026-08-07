@@ -478,7 +478,7 @@
   #customStampText { width: 100%; font: inherit; font-size: 13px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; resize: vertical; min-height: 54px; }
 
   /* form-fill modal */
-  #formModal {
+  #formModal, #emailModal {
     position: fixed;
     inset: 0;
     background: rgba(2,6,23,.55);
@@ -488,7 +488,11 @@
     z-index: 70;
     padding: 14px;
   }
-  #formModal.open { display: flex; }
+  #formModal.open, #emailModal.open { display: flex; }
+  .mail-banner { display: none; border-radius: 10px; padding: 10px 12px; font-size: 13px; font-weight: 600; }
+  .mail-banner.ok { display: block; background: #f0fdf4; border: 1px solid #86efac; color: #166534; }
+  .mail-banner.bad { display: block; background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; }
+  .mail-banner a { color: inherit; }
   .form-card {
     background: #fff;
     border-radius: 14px;
@@ -716,7 +720,11 @@
       <span class="tray-count" id="trayCount">0 pages</span>
       <span class="grow"></span>
       <input type="text" id="nameInput" value="new-document" title="File name for the new PDF" style="width:160px">
+      <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:#475569;white-space:nowrap;cursor:pointer" title="Re-saves every page as a compact scan — much smaller file, ideal for emailing. (Text is no longer selectable in the shrunk copy.)">
+        <input type="checkbox" id="chkShrink" style="width:15px;height:15px;accent-color:var(--teal)"> Shrink for email
+      </label>
       <button class="teal" id="btnCreate">&#8681; Create PDF</button>
+      <button id="btnEmail" title="Create a Gmail draft with this PDF attached">&#9993; Gmail draft</button>
       <button id="btnEachPage" title="Download every page in the tray as its own one-page PDF">Split into single pages</button>
       <button class="ghost" id="btnClearTray">Clear tray</button>
     </div>
@@ -796,6 +804,38 @@
         </div>
         <div class="sig-note">Draw your signature above with the mouse (or finger on a touchscreen), or upload a photo/scan of it &mdash; white backgrounds are removed automatically. Signatures are saved <strong>only on this computer</strong> so next time it&rsquo;s one click.</div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Gmail-draft modal -->
+<div id="emailModal">
+  <div class="form-card">
+    <div class="form-head">Email as Gmail draft <span class="grow"></span><button class="ghost" id="btnEmailClose">&#10005;</button></div>
+    <div class="form-body">
+      <div class="form-row">
+        <label>To (optional &mdash; you can add it in Gmail)</label>
+        <input type="text" id="mailTo" placeholder="customer@example.com">
+      </div>
+      <div class="form-row">
+        <label>Subject</label>
+        <input type="text" id="mailSubject">
+      </div>
+      <div class="form-row">
+        <label>Short note (you can edit everything in Gmail before sending)</label>
+        <textarea id="mailNote">Hi,
+
+The document you need is attached.
+
+Bill Layne Insurance
+(336) 835-1993</textarea>
+      </div>
+      <div class="sig-note">BCC: <strong>Save@BillLayneInsurance.com</strong> (agency record copy &mdash; always on) &bull; the PDF from your tray is attached automatically<span id="mailShrinkNote"></span>.</div>
+      <div class="mail-banner" id="mailBanner"></div>
+    </div>
+    <div class="form-foot">
+      <button id="btnEmailCancel">Cancel</button>
+      <button class="teal" id="btnEmailGo">&#9993; Create draft in Gmail</button>
     </div>
   </div>
 </div>
@@ -2121,6 +2161,7 @@
   $('btnEditDone').addEventListener('click', closeEditor);
   $('editModal').addEventListener('click', (e) => { if (e.target === $('editModal')) closeEditor(); });
   document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && $('emailModal').classList.contains('open')) { closeEmailModal(); return; }
     if (e.key === 'Escape' && $('formModal').classList.contains('open')) { closeFormModal(); return; }
     if (!$('editModal').classList.contains('open')) return;
     const a = document.activeElement;
@@ -2167,13 +2208,58 @@
     renderAll();
   });
   $('btnClearTray').addEventListener('click', () => { tray = []; renderAll(); });
+  /* "Shrink for email": re-save every page as a compact scan-style JPEG page */
+  async function compressPdfBytes(bytes) {
+    const src = await pdfjsLib.getDocument({ data: bytes.slice() }).promise;
+    const out = await PDFLib.PDFDocument.create();
+    for (let i = 1; i <= src.numPages; i++) {
+      const page = await src.getPage(i);
+      const vp1 = page.getViewport({ scale: 1 });
+      const scale = Math.min(2.2, 1650 / Math.max(vp1.width, vp1.height));
+      const vp = page.getViewport({ scale });
+      const c = document.createElement('canvas');
+      c.width = Math.ceil(vp.width);
+      c.height = Math.ceil(vp.height);
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, c.width, c.height);
+      await page.render({ canvasContext: ctx, viewport: vp, intent: 'print' }).promise;
+      const jpg = await out.embedJpg(dataUrlToBytes(c.toDataURL('image/jpeg', 0.72)));
+      const p = out.addPage([vp1.width, vp1.height]);
+      p.drawImage(jpg, { x: 0, y: 0, width: vp1.width, height: vp1.height });
+    }
+    src.destroy();
+    return new Uint8Array(await out.save());
+  }
+
+  function fmtSize(n) {
+    return n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB';
+  }
+
+  // build the tray PDF, honoring the "Shrink for email" checkbox; returns {bytes, note}
+  async function buildFinalBytes() {
+    let bytes = await buildPdfBytes(tray);
+    let note = '';
+    if ($('chkShrink').checked) {
+      busy(true, 'Shrinking for email…');
+      const small = await compressPdfBytes(bytes);
+      if (small.length < bytes.length) {
+        note = ' (' + fmtSize(bytes.length) + ' → ' + fmtSize(small.length) + ')';
+        bytes = small;
+      } else {
+        note = ' (already compact — kept original ' + fmtSize(bytes.length) + ')';
+      }
+    }
+    return { bytes, note };
+  }
+
   $('btnCreate').addEventListener('click', async () => {
     if (!tray.length) return;
     busy(true, 'Creating PDF…');
     try {
-      const bytes = await buildPdfBytes(tray);
-      download(bytes, cleanName());
-      toast('Created ' + cleanName() + ' — ' + tray.length + ' page' + (tray.length === 1 ? '' : 's'));
+      const r = await buildFinalBytes();
+      download(r.bytes, cleanName());
+      toast('Created ' + cleanName() + ' — ' + tray.length + ' page' + (tray.length === 1 ? '' : 's') + r.note);
     } catch (err) {
       console.error(err);
       toast('Sorry — something went wrong building that PDF.');
@@ -2194,6 +2280,98 @@
     } catch (err) {
       console.error(err);
       toast('Sorry — something went wrong splitting those pages.');
+    }
+    busy(false);
+  });
+
+  /* ── Email as Gmail draft (BLI Mail Gateway) ── */
+  const GW_URL_KEY = 'bliMailGateway.url', GW_SECRET_KEY = 'bliMailGateway.secret';
+
+  function mailBanner(ok, html) {
+    const b = $('mailBanner');
+    b.className = 'mail-banner ' + (ok ? 'ok' : 'bad');
+    b.innerHTML = html;
+    b.scrollIntoView({ block: 'nearest' });
+  }
+
+  function b64FromBytes(u8) {
+    let s = '';
+    const CH = 0x8000;
+    for (let i = 0; i < u8.length; i += CH) s += String.fromCharCode.apply(null, u8.subarray(i, i + CH));
+    return btoa(s);
+  }
+
+  function openEmailModal() {
+    if (!tray.length) { toast('Put some pages in the New Document tray first.'); return; }
+    $('mailBanner').className = 'mail-banner';
+    $('mailSubject').value = cleanName().replace(/\.pdf$/i, '').replace(/-/g, ' ');
+    $('mailShrinkNote').textContent = $('chkShrink').checked ? ', shrunk for email' : '';
+    $('emailModal').classList.add('open');
+  }
+  function closeEmailModal() { $('emailModal').classList.remove('open'); }
+
+  $('btnEmail').addEventListener('click', openEmailModal);
+  $('btnEmailClose').addEventListener('click', closeEmailModal);
+  $('btnEmailCancel').addEventListener('click', closeEmailModal);
+  $('emailModal').addEventListener('click', (e) => { if (e.target === $('emailModal')) closeEmailModal(); });
+
+  $('btnEmailGo').addEventListener('click', async () => {
+    const url = localStorage.getItem(GW_URL_KEY), secret = localStorage.getItem(GW_SECRET_KEY);
+    if (!url || !secret) {
+      mailBanner(false, '⚠️ The Mail Gateway is not set up in this browser yet. Open <a href="/mail-gateway/" target="_blank">the Mail Gateway page</a>, save the gateway URL and secret once, then come back and try again.');
+      return;
+    }
+    busy(true, 'Building the PDF…');
+    try {
+      const r = await buildFinalBytes();
+      if (r.bytes.length > 20 * 1048576) {
+        busy(false);
+        mailBanner(false, '⚠️ This PDF is ' + fmtSize(r.bytes.length) + ' — too big to email. Turn on “Shrink for email” or remove some pages.');
+        return;
+      }
+      busy(true, 'Creating the Gmail draft…');
+      // Gmail-safe minimal note; entity-escape non-ASCII (GmailApp corrupts astral chars)
+      const noteHtml = '<!DOCTYPE html><html><body><p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#1e293b;line-height:1.6">'
+        + $('mailNote').value
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          .replace(/\n/g, '<br>')
+        + '</p></body></html>';
+      const safeHtml = noteHtml.replace(/[^\x00-\x7F]/gu, (ch) => '&#x' + ch.codePointAt(0).toString(16).toUpperCase() + ';');
+      const safeSubject = $('mailSubject').value.replace(/[\u{10000}-\u{10FFFF}]/gu, '').replace(/ {2,}/g, ' ').trim() || 'document attached';
+      const payload = {
+        secret,
+        mode: 'draft',
+        to: $('mailTo').value.trim(),
+        subject: safeSubject,
+        html: safeHtml,
+        attachments: [{ name: cleanName(), mimeType: 'application/pdf', dataB64: b64FromBytes(r.bytes) }]
+        // bcc omitted on purpose → gateway defaults to Save@BillLayneInsurance.com (agency record)
+      };
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 45000);
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload),
+        redirect: 'follow',
+        signal: ctrl.signal
+      });
+      clearTimeout(timer);
+      const out = await res.json();
+      if (out && out.ok) {
+        if (out.attached === 1) {
+          mailBanner(true, '✅ Draft created with <strong>' + cleanName() + '</strong> attached' + r.note +
+            ' — <a href="https://mail.google.com/mail/u/0/#drafts" target="_blank">open Gmail Drafts</a> to review and send.' +
+            (out.remainingQuota != null ? ' (' + out.remainingQuota + ' sends left today)' : ''));
+        } else {
+          mailBanner(false, '⚠️ A draft was created but the PDF was <strong>not attached</strong> — the Mail Gateway needs its one-time update to version 1.1. Ask Claude for the update steps, then try again.');
+        }
+      } else {
+        mailBanner(false, '⚠️ NOT CREATED — ' + ((out && out.error) || 'the gateway did not answer as expected.'));
+      }
+    } catch (err) {
+      console.error(err);
+      mailBanner(false, '⚠️ NOT CREATED — ' + (err && err.name === 'AbortError' ? 'the gateway timed out (45s).' : 'could not reach the Mail Gateway.'));
     }
     busy(false);
   });
