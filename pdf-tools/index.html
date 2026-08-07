@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>PDF Studio | Split &amp; Combine PDFs | Bill Layne Insurance</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<style>
+  :root {
+    --navy: #003f87;
+    --navy-dark: #002a5c;
+    --teal: #0f766e;
+    --gold: #C8A84E;
+    --ink: #1e293b;
+    --muted: #64748b;
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --line: #e2e8f0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Header ─────────────────────────────── */
+  header {
+    background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 55%, var(--teal) 100%);
+    color: #fff;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+  .brand { font-weight: 800; font-size: 15px; letter-spacing: .04em; text-transform: uppercase; }
+  .brand small { display: block; font-weight: 500; font-size: 11px; letter-spacing: .12em; color: var(--gold); }
+  .app-title { margin-left: auto; font-size: 14px; font-weight: 600; opacity: .95; }
+  .privacy-chip {
+    background: rgba(255,255,255,.14);
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 999px;
+    font-size: 11px;
+    padding: 4px 10px;
+    white-space: nowrap;
+  }
+
+  button {
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+    white-space: nowrap;
+  }
+  button:hover { background: #f8fafc; border-color: #cbd5e1; }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  button.primary { background: var(--navy); border-color: var(--navy); color: #fff; }
+  button.primary:hover { background: var(--navy-dark); }
+  button.teal { background: var(--teal); border-color: var(--teal); color: #fff; }
+  button.teal:hover { background: #0d5f59; }
+  button.danger { color: #b91c1c; }
+  button.danger:hover { background: #fef2f2; border-color: #fca5a5; }
+  button.ghost { background: transparent; border-color: transparent; color: var(--muted); }
+  button.ghost:hover { background: #f1f5f9; color: var(--ink); }
+  input[type="text"] {
+    font: inherit;
+    font-size: 13px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 10px;
+  }
+  input[type="text"]:focus { outline: 2px solid var(--teal); outline-offset: -1px; }
+
+  /* ── Layout ─────────────────────────────── */
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  /* Source pane */
+  #sourcePane {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 18px;
+    min-height: 0;
+  }
+  .pane-title {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .pane-title .tip { font-weight: 500; text-transform: none; letter-spacing: 0; font-size: 12px; }
+
+  .doc-block { margin-bottom: 18px; }
+  .doc-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+  }
+  .doc-head .doc-name { font-weight: 700; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .doc-head .doc-pages { font-size: 12px; color: var(--muted); flex-shrink: 0; }
+  .doc-head .grow { flex: 1; }
+
+  .src-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+    gap: 12px;
+  }
+  .page-card {
+    background: var(--card);
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    padding: 7px 7px 5px;
+    cursor: grab;
+    user-select: none;
+    position: relative;
+    transition: border-color .12s, box-shadow .12s;
+  }
+  .page-card:hover { border-color: var(--teal); box-shadow: 0 2px 10px rgba(15,118,110,.15); }
+  .page-card.drag-src { opacity: .35; }
+  .thumb-box {
+    aspect-ratio: 3 / 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+    border-radius: 6px;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .thumb-box img {
+    max-width: 100%;
+    max-height: 100%;
+    box-shadow: 0 1px 4px rgba(0,0,0,.18);
+    transition: transform .2s;
+  }
+  .thumb-box img.r90  { transform: rotate(90deg)  scale(.75); }
+  .thumb-box img.r180 { transform: rotate(180deg); }
+  .thumb-box img.r270 { transform: rotate(270deg) scale(.75); }
+  .page-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+  }
+  .used-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: var(--teal);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  /* Empty state */
+  .dropzone {
+    max-width: 620px;
+    margin: 40px auto;
+    border: 2px dashed #94a3b8;
+    border-radius: 16px;
+    background: var(--card);
+    padding: 54px 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+  }
+  .dropzone.dragover, .dropzone:hover { border-color: var(--teal); background: #f0fdfa; }
+  .dropzone .dz-icon { font-size: 42px; }
+  .dropzone h2 { font-size: 20px; margin: 12px 0 6px; color: var(--navy); }
+  .dropzone p { color: var(--muted); font-size: 14px; }
+  .dropzone .hint { margin-top: 16px; font-size: 12px; color: var(--teal); font-weight: 600; }
+
+  /* ── New Document tray ──────────────────── */
+  #trayPane {
+    flex-shrink: 0;
+    background: var(--card);
+    border-top: 3px solid var(--navy);
+    box-shadow: 0 -6px 18px rgba(2,6,23,.08);
+    padding: 10px 18px 12px;
+  }
+  .tray-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .tray-head .tray-title {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--navy);
+  }
+  .tray-count {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--teal);
+    background: #f0fdfa;
+    border: 1px solid #99f6e4;
+    border-radius: 999px;
+    padding: 3px 10px;
+  }
+  .tray-head .grow { flex: 1; }
+
+  #trayStrip {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 8px;
+    min-height: 172px;
+    border: 2px dashed var(--line);
+    border-radius: 12px;
+    align-items: stretch;
+    background: #f8fafc;
+  }
+  #trayStrip.dragover { border-color: var(--gold); background: #fffbeb; }
+  #trayStrip .tray-empty {
+    align-self: center;
+    margin: 0 auto;
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+    pointer-events: none;
+  }
+  .tray-card {
+    flex: 0 0 108px;
+    background: #fff;
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    padding: 5px;
+    position: relative;
+    cursor: grab;
+    user-select: none;
+  }
+  .tray-card:hover { border-color: var(--navy); }
+  .tray-card.drag-src { opacity: .35; }
+  .tray-card.insert-before { box-shadow: -4px 0 0 0 var(--gold); }
+  .tray-card.insert-after { box-shadow: 4px 0 0 0 var(--gold); }
+  .tray-card .thumb-box { aspect-ratio: 3 / 4; }
+  .tray-card .order-badge {
+    position: absolute;
+    top: -7px;
+    left: -7px;
+    background: var(--navy);
+    color: #fff;
+    font-weight: 700;
+    font-size: 11px;
+    min-width: 21px;
+    height: 21px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,.3);
+    pointer-events: none;
+  }
+  .tray-card .card-actions {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    display: flex;
+    gap: 3px;
+  }
+  .tray-card .card-actions button {
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    font-size: 12px;
+    line-height: 1;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,.95);
+  }
+  .tray-card .tray-label {
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+  }
+
+  footer {
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    padding: 8px;
+    flex-shrink: 0;
+  }
+  footer strong { color: var(--teal); }
+
+  /* toast + busy */
+  #toast {
+    position: fixed;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%) translateY(120px);
+    background: var(--navy-dark);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 11px 20px;
+    border-radius: 999px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.25);
+    transition: transform .25s;
+    z-index: 50;
+    max-width: 90vw;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+  #busy {
+    position: fixed;
+    inset: 0;
+    background: rgba(241,245,249,.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 40;
+    font-weight: 700;
+    color: var(--navy);
+    font-size: 15px;
+  }
+  #busy.show { display: flex; }
+
+  @media (max-width: 640px) {
+    .app-title, .privacy-chip { display: none; }
+    .src-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 9px; }
+    #sourcePane { padding: 10px; }
+    #trayPane { padding: 8px 10px 10px; }
+    .tray-card { flex-basis: 88px; }
+    #trayStrip { min-height: 148px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">Bill Layne Insurance<small>Elkin, NC &bull; Since 2005</small></div>
+  <span class="app-title">PDF Studio &mdash; Split &amp; Combine</span>
+  <span class="privacy-chip">&#128274; 100% private &mdash; files never leave this computer</span>
+</header>
+
+<main>
+  <!-- Source pages -->
+  <section id="sourcePane">
+    <div class="pane-title" id="sourceTitle" style="display:none">
+      Current document(s)
+      <span class="tip">&mdash; click a page (or drag it down) to add it to the new document</span>
+      <span style="flex:1"></span>
+      <button class="primary" id="btnAdd">+ Add PDFs</button>
+      <button class="danger" id="btnReset">Start over</button>
+    </div>
+
+    <div class="dropzone" id="dropzone">
+      <div class="dz-icon">&#128196;</div>
+      <h2>Drop PDFs or images here</h2>
+      <p>or click to browse. Load PDFs to split or combine them &mdash; photos and scans (JPG, PNG) become PDF pages too.</p>
+      <p class="hint">Every page shows as a thumbnail &mdash; click or drag pages into the New Document tray, then create your PDF.</p>
+    </div>
+
+    <div id="docList"></div>
+  </section>
+
+  <!-- New Document tray -->
+  <section id="trayPane" style="display:none">
+    <div class="tray-head">
+      <span class="tray-title">New document</span>
+      <span class="tray-count" id="trayCount">0 pages</span>
+      <span class="grow"></span>
+      <input type="text" id="nameInput" value="new-document" title="File name for the new PDF" style="width:160px">
+      <button class="teal" id="btnCreate">&#8681; Create PDF</button>
+      <button id="btnEachPage" title="Download every page in the tray as its own one-page PDF">Split into single pages</button>
+      <button class="ghost" id="btnClearTray">Clear tray</button>
+    </div>
+    <div id="trayStrip">
+      <div class="tray-empty">Click or drag pages here to build your new PDF.<br>Drag cards left / right to reorder &bull; &#8635; rotates &bull; &#10005; removes.</div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Bill Layne Insurance Agency internal tool &bull; <strong>Nothing is uploaded</strong> &mdash; all PDF work happens right in your browser.
+</footer>
+
+<input type="file" id="fileInput" accept="application/pdf,.pdf,image/*" multiple hidden>
+<div id="toast"></div>
+<div id="busy">Working&hellip;</div>
+
+<script>
+(function () {
+  'use strict';
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+  const docs = new Map();   // docId -> { name, bytes, pages: [{sid, pageIndex, thumb}] }
+  let tray = [];            // ordered [{tid, docId, pageIndex, rot, thumb}]
+  const srcIndex = new Map(); // sid -> {docId, pageIndex, thumb}
+  let nextDocId = 1, nextSid = 1, nextTid = 1;
+
+  const $ = (id) => document.getElementById(id);
+  const docList = $('docList'), trayStrip = $('trayStrip'), dropzone = $('dropzone');
+
+  /* ── UI helpers ── */
+  let toastTimer;
+  function toast(msg) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+  }
+  function busy(on, msg) {
+    $('busy').textContent = msg || 'Working…';
+    $('busy').classList.toggle('show', !!on);
+  }
+  function escapeHtml(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  /* ── Loading PDFs ── */
+  function isPdfFile(f) { return /\.pdf$/i.test(f.name) || f.type === 'application/pdf'; }
+  function isImageFile(f) {
+    return (f.type && f.type.startsWith('image/')) || /\.(jpe?g|png|webp|gif|bmp)$/i.test(f.name);
+  }
+
+  async function addFiles(fileList) {
+    const files = [...fileList].filter(f => isPdfFile(f) || isImageFile(f));
+    if (!files.length) { toast('Please choose PDF or image files (JPG, PNG…).'); return; }
+    busy(true, 'Reading files…');
+    for (const file of files) {
+      try {
+        if (isPdfFile(file)) {
+          const buf = new Uint8Array(await file.arrayBuffer());
+          await addPdfData(file.name, buf);
+        } else {
+          await addImageData(file.name, file);
+        }
+      } catch (err) {
+        console.error(err);
+        toast('Could not open "' + file.name + '" — it may be password-protected, damaged, or an unsupported format.');
+      }
+    }
+    busy(false);
+    renderAll();
+  }
+
+  function dataUrlToBytes(dataUrl) {
+    const b64 = dataUrl.split(',')[1];
+    const bin = atob(b64);
+    const out = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+
+  async function addImageData(name, blob) {
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    try {
+      await new Promise((res, rej) => { img.onload = res; img.onerror = () => rej(new Error('decode failed')); img.src = url; });
+    } finally {
+      // revoked below after canvas use; keep url alive until drawn
+    }
+    const w = img.naturalWidth, h = img.naturalHeight;
+    const t = (blob.type || '').toLowerCase();
+    let bytes, imgType;
+    if (t === 'image/jpeg' || t === 'image/jpg') {
+      bytes = new Uint8Array(await blob.arrayBuffer());
+      imgType = 'jpg';
+    } else if (t === 'image/png') {
+      bytes = new Uint8Array(await blob.arrayBuffer());
+      imgType = 'png';
+    } else {
+      // webp/gif/bmp etc. → normalize to PNG through a canvas
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0);
+      bytes = dataUrlToBytes(c.toDataURL('image/png'));
+      imgType = 'png';
+    }
+    const tc = document.createElement('canvas');
+    const scale = 170 / w;
+    tc.width = 170;
+    tc.height = Math.max(1, Math.round(h * scale));
+    const tctx = tc.getContext('2d');
+    tctx.fillStyle = '#ffffff';
+    tctx.fillRect(0, 0, tc.width, tc.height);
+    tctx.drawImage(img, 0, 0, tc.width, tc.height);
+    URL.revokeObjectURL(url);
+    const docId = nextDocId++;
+    const doc = { name, kind: 'image', bytes, imgType, imgW: w, imgH: h, pages: [] };
+    docs.set(docId, doc);
+    const entry = { sid: nextSid++, docId, pageIndex: 0, thumb: tc.toDataURL('image/jpeg', 0.82) };
+    doc.pages.push(entry);
+    srcIndex.set(entry.sid, entry);
+    toast('Added image "' + name + '" — it will become a PDF page');
+  }
+
+  async function addPdfData(name, bytes) {
+    // pdf.js transfers the buffer to its worker, so hand it a copy
+    const pdfjsDoc = await pdfjsLib.getDocument({ data: bytes.slice() }).promise;
+    const docId = nextDocId++;
+    const doc = { name, bytes, pages: [] };
+    docs.set(docId, doc);
+    for (let i = 0; i < pdfjsDoc.numPages; i++) {
+      const page = await pdfjsDoc.getPage(i + 1);
+      const viewport = page.getViewport({ scale: 1 });
+      const scale = 170 / viewport.width;
+      const vp = page.getViewport({ scale });
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.ceil(vp.width);
+      canvas.height = Math.ceil(vp.height);
+      // intent:'print' renders without requestAnimationFrame, so thumbnails
+      // still load while this tab is in the background
+      await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp, intent: 'print' }).promise;
+      const entry = { sid: nextSid++, docId, pageIndex: i, thumb: canvas.toDataURL('image/jpeg', 0.82) };
+      doc.pages.push(entry);
+      srcIndex.set(entry.sid, entry);
+    }
+    const n = pdfjsDoc.numPages;
+    pdfjsDoc.destroy();
+    toast('Added "' + name + '" (' + n + ' page' + (n === 1 ? '' : 's') + ')');
+  }
+
+  /* ── Rendering: source pane ── */
+  function renderAll() { renderSources(); renderTray(); }
+
+  function renderSources() {
+    const has = docs.size > 0;
+    dropzone.style.display = has ? 'none' : '';
+    $('sourceTitle').style.display = has ? '' : 'none';
+    $('trayPane').style.display = has ? '' : 'none';
+    docList.innerHTML = '';
+    const usage = new Map();
+    tray.forEach(t => {
+      const k = t.docId + ':' + t.pageIndex;
+      usage.set(k, (usage.get(k) || 0) + 1);
+    });
+    for (const [docId, doc] of docs) {
+      const block = document.createElement('div');
+      block.className = 'doc-block';
+      const head = document.createElement('div');
+      head.className = 'doc-head';
+      head.innerHTML =
+        '<span class="doc-name">' + (doc.kind === 'image' ? '&#128444;' : '&#128196;') + ' ' + escapeHtml(doc.name) + '</span>' +
+        '<span class="doc-pages">' + (doc.kind === 'image' ? 'image' :
+          doc.pages.length + ' page' + (doc.pages.length === 1 ? '' : 's')) + '</span>' +
+        '<span class="grow"></span>';
+      const addAllBtn = document.createElement('button');
+      addAllBtn.textContent = 'Add all pages';
+      addAllBtn.addEventListener('click', () => {
+        doc.pages.forEach(p => trayAdd(p));
+        renderAll();
+        toast('Added all ' + doc.pages.length + ' pages of "' + doc.name + '" to the new document');
+      });
+      const rmBtn = document.createElement('button');
+      rmBtn.className = 'danger';
+      rmBtn.textContent = '✕ Remove file';
+      rmBtn.addEventListener('click', () => {
+        tray = tray.filter(t => t.docId !== docId);
+        doc.pages.forEach(p => srcIndex.delete(p.sid));
+        docs.delete(docId);
+        renderAll();
+      });
+      head.appendChild(addAllBtn);
+      head.appendChild(rmBtn);
+      block.appendChild(head);
+
+      const grid = document.createElement('div');
+      grid.className = 'src-grid';
+      doc.pages.forEach(p => {
+        const used = usage.get(p.docId + ':' + p.pageIndex) || 0;
+        const card = document.createElement('div');
+        card.className = 'page-card';
+        card.draggable = true;
+        card.title = 'Click to add to the new document';
+        card.innerHTML =
+          (used ? '<div class="used-badge">' + (used > 1 ? '×' + used : '✓') + '</div>' : '') +
+          '<div class="thumb-box"><img src="' + p.thumb + '" alt=""></div>' +
+          '<div class="page-label">p.' + (p.pageIndex + 1) + '</div>';
+        card.addEventListener('click', () => {
+          trayAdd(p);
+          renderAll();
+        });
+        card.addEventListener('dragstart', (e) => {
+          dragData = { kind: 'src', sid: p.sid };
+          card.classList.add('drag-src');
+          e.dataTransfer.effectAllowed = 'copy';
+          try { e.dataTransfer.setData('text/plain', 'src:' + p.sid); } catch (_) {}
+        });
+        card.addEventListener('dragend', () => { dragData = null; card.classList.remove('drag-src'); clearTrayMarks(); });
+        grid.appendChild(card);
+      });
+      block.appendChild(grid);
+      docList.appendChild(block);
+    }
+  }
+
+  /* ── Tray ── */
+  function trayAdd(srcEntry, atIndex) {
+    const item = {
+      tid: nextTid++,
+      docId: srcEntry.docId,
+      pageIndex: srcEntry.pageIndex,
+      rot: 0,
+      thumb: srcEntry.thumb
+    };
+    if (atIndex == null || atIndex >= tray.length) tray.push(item);
+    else tray.splice(Math.max(0, atIndex), 0, item);
+    return item;
+  }
+
+  function renderTray() {
+    trayStrip.querySelectorAll('.tray-card').forEach(c => c.remove());
+    const empty = trayStrip.querySelector('.tray-empty');
+    empty.style.display = tray.length ? 'none' : '';
+    tray.forEach((t, i) => {
+      const doc = docs.get(t.docId);
+      const card = document.createElement('div');
+      card.className = 'tray-card';
+      card.draggable = true;
+      card.dataset.tid = t.tid;
+      const rotCls = t.rot ? ' class="r' + t.rot + '"' : '';
+      card.innerHTML =
+        '<div class="order-badge">' + (i + 1) + '</div>' +
+        '<div class="card-actions">' +
+          '<button class="act-rot" title="Rotate 90°">&#8635;</button>' +
+          '<button class="act-del" title="Remove from new document">&#10005;</button>' +
+        '</div>' +
+        '<div class="thumb-box"><img' + rotCls + ' src="' + t.thumb + '" alt=""></div>' +
+        '<div class="tray-label">' + escapeHtml(doc ? doc.name : '') + ' p.' + (t.pageIndex + 1) + '</div>';
+      card.querySelector('.act-rot').addEventListener('click', (e) => {
+        e.stopPropagation();
+        t.rot = (t.rot + 90) % 360;
+        renderTray();
+      });
+      card.querySelector('.act-del').addEventListener('click', (e) => {
+        e.stopPropagation();
+        tray = tray.filter(x => x.tid !== t.tid);
+        renderAll();
+      });
+      card.addEventListener('dragstart', (e) => {
+        dragData = { kind: 'tray', tid: t.tid };
+        card.classList.add('drag-src');
+        e.dataTransfer.effectAllowed = 'move';
+        try { e.dataTransfer.setData('text/plain', 'tray:' + t.tid); } catch (_) {}
+      });
+      card.addEventListener('dragend', () => { dragData = null; card.classList.remove('drag-src'); clearTrayMarks(); });
+      trayStrip.appendChild(card);
+    });
+    const n = tray.length;
+    $('trayCount').textContent = n + ' page' + (n === 1 ? '' : 's');
+    $('btnCreate').disabled = !n;
+    $('btnEachPage').disabled = !n;
+    $('btnClearTray').disabled = !n;
+  }
+
+  /* ── Drag & drop into / within tray ── */
+  let dragData = null;
+  function clearTrayMarks() {
+    trayStrip.classList.remove('dragover');
+    trayStrip.querySelectorAll('.tray-card').forEach(c => c.classList.remove('insert-before', 'insert-after'));
+  }
+  function trayInsertIndex(clientX) {
+    const cards = [...trayStrip.querySelectorAll('.tray-card')];
+    for (let i = 0; i < cards.length; i++) {
+      const r = cards[i].getBoundingClientRect();
+      if (clientX < r.left + r.width / 2) return i;
+    }
+    return cards.length;
+  }
+  trayStrip.addEventListener('dragover', (e) => {
+    if (!dragData) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = dragData.kind === 'src' ? 'copy' : 'move';
+    clearTrayMarks();
+    trayStrip.classList.add('dragover');
+    const idx = trayInsertIndex(e.clientX);
+    const cards = [...trayStrip.querySelectorAll('.tray-card')];
+    if (cards.length) {
+      if (idx < cards.length) cards[idx].classList.add('insert-before');
+      else cards[cards.length - 1].classList.add('insert-after');
+    }
+  });
+  trayStrip.addEventListener('dragleave', (e) => {
+    if (!trayStrip.contains(e.relatedTarget)) clearTrayMarks();
+  });
+  trayStrip.addEventListener('drop', (e) => {
+    if (!dragData) return;
+    e.preventDefault();
+    const idx = trayInsertIndex(e.clientX);
+    if (dragData.kind === 'src') {
+      const src = srcIndex.get(dragData.sid);
+      if (src) trayAdd(src, idx);
+    } else {
+      const fromIdx = tray.findIndex(t => t.tid === dragData.tid);
+      if (fromIdx >= 0) {
+        const [moved] = tray.splice(fromIdx, 1);
+        let to = idx;
+        if (fromIdx < to) to -= 1;
+        tray.splice(to, 0, moved);
+      }
+    }
+    dragData = null;
+    clearTrayMarks();
+    renderAll();
+  });
+
+  /* ── Building PDFs ── */
+  async function buildPdfBytes(list) {
+    const out = await PDFLib.PDFDocument.create();
+    const srcCache = new Map();
+    for (const p of list) {
+      const doc = docs.get(p.docId);
+      if (doc.kind === 'image') {
+        let embedded = srcCache.get('img:' + p.docId);
+        if (!embedded) {
+          embedded = doc.imgType === 'jpg' ? await out.embedJpg(doc.bytes) : await out.embedPng(doc.bytes);
+          srcCache.set('img:' + p.docId, embedded);
+        }
+        // letter page, orientation matched to the photo, image centered and scaled to fit
+        const landscape = doc.imgW > doc.imgH;
+        const pw = landscape ? 792 : 612, ph = landscape ? 612 : 792;
+        const margin = 24;
+        const s = Math.min((pw - 2 * margin) / doc.imgW, (ph - 2 * margin) / doc.imgH);
+        const w2 = doc.imgW * s, h2 = doc.imgH * s;
+        const page = out.addPage([pw, ph]);
+        page.drawImage(embedded, { x: (pw - w2) / 2, y: (ph - h2) / 2, width: w2, height: h2 });
+        if (p.rot) page.setRotation(PDFLib.degrees(p.rot % 360));
+        continue;
+      }
+      let src = srcCache.get(p.docId);
+      if (!src) {
+        src = await PDFLib.PDFDocument.load(doc.bytes, { ignoreEncryption: true });
+        srcCache.set(p.docId, src);
+      }
+      const [copied] = await out.copyPages(src, [p.pageIndex]);
+      if (p.rot) {
+        const cur = copied.getRotation().angle || 0;
+        copied.setRotation(PDFLib.degrees(((cur + p.rot) % 360 + 360) % 360));
+      }
+      out.addPage(copied);
+    }
+    return out.save();
+  }
+
+  function cleanName(extra) {
+    let n = ($('nameInput').value || 'new-document').trim()
+      .replace(/\.pdf$/i, '').replace(/[\\/:*?"<>|]+/g, '-') || 'new-document';
+    return n + (extra || '') + '.pdf';
+  }
+
+  function download(bytes, filename) {
+    const blob = new Blob([bytes], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  }
+
+  /* ── Toolbar wiring ── */
+  $('btnAdd').addEventListener('click', () => $('fileInput').click());
+  $('btnReset').addEventListener('click', () => {
+    if (!confirm('Clear all loaded PDFs and the new document tray?')) return;
+    docs.clear();
+    srcIndex.clear();
+    tray = [];
+    $('fileInput').value = '';
+    renderAll();
+  });
+  $('btnClearTray').addEventListener('click', () => { tray = []; renderAll(); });
+  $('btnCreate').addEventListener('click', async () => {
+    if (!tray.length) return;
+    busy(true, 'Creating PDF…');
+    try {
+      const bytes = await buildPdfBytes(tray);
+      download(bytes, cleanName());
+      toast('Created ' + cleanName() + ' — ' + tray.length + ' page' + (tray.length === 1 ? '' : 's'));
+    } catch (err) {
+      console.error(err);
+      toast('Sorry — something went wrong building that PDF.');
+    }
+    busy(false);
+  });
+  $('btnEachPage').addEventListener('click', async () => {
+    if (!tray.length) return;
+    busy(true, 'Splitting into single pages…');
+    try {
+      for (let i = 0; i < tray.length; i++) {
+        const bytes = await buildPdfBytes([tray[i]]);
+        download(bytes, cleanName('-page-' + (i + 1)));
+        await new Promise(r => setTimeout(r, 350));
+      }
+      toast('Downloaded ' + tray.length + ' single-page PDF' + (tray.length === 1 ? '' : 's') +
+        ' — if Chrome asks, allow multiple downloads.');
+    } catch (err) {
+      console.error(err);
+      toast('Sorry — something went wrong splitting those pages.');
+    }
+    busy(false);
+  });
+
+  /* ── File input + drag/drop of files ── */
+  $('fileInput').addEventListener('change', (e) => { addFiles(e.target.files); e.target.value = ''; });
+  dropzone.addEventListener('click', () => $('fileInput').click());
+  ['dragover', 'dragenter'].forEach(ev => document.body.addEventListener(ev, (e) => {
+    if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) {
+      e.preventDefault();
+      dropzone.classList.add('dragover');
+    }
+  }));
+  ['dragleave', 'drop'].forEach(ev => document.body.addEventListener(ev, (e) => {
+    if (ev === 'drop' && e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+      e.preventDefault();
+      addFiles(e.dataTransfer.files);
+    }
+    dropzone.classList.remove('dragover');
+  }));
+
+  // exposed for automated testing
+  window.PDFStudio = {
+    addPdfData: async (name, bytes) => { await addPdfData(name, bytes); renderAll(); },
+    addImageData: async (name, blob) => { await addImageData(name, blob); renderAll(); },
+    addAllToTray: () => { for (const [, d] of docs) d.pages.forEach(p => trayAdd(p)); renderAll(); },
+    addPageToTray: (docNo, pageIndex) => {
+      const doc = [...docs.values()][docNo];
+      if (doc) { trayAdd(doc.pages[pageIndex]); renderAll(); }
+    },
+    buildPdfBytes,
+    getState: () => ({
+      docs: [...docs.values()].map(d => ({ name: d.name, pages: d.pages.length })),
+      tray: tray.map(t => ({ docId: t.docId, pageIndex: t.pageIndex, rot: t.rot }))
+    })
+  };
+})();
+</script>
+</body>
+</html>
