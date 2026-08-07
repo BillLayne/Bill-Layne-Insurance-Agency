@@ -407,18 +407,35 @@
   .sig-card h3 { font-size: 14px; color: var(--navy); text-transform: uppercase; letter-spacing: .08em; display: flex; align-items: center; }
   .sig-card h3 .grow { flex: 1; }
   #sigSaved { display: flex; gap: 10px; flex-wrap: wrap; }
+  .sig-saved-box {
+    border: 2px solid #99f6e4;
+    background: #f0fdfa;
+    border-radius: 12px;
+    padding: 10px 12px;
+  }
+  .sig-saved-head {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--teal);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
   .sig-chip {
     border: 2px solid var(--line);
     border-radius: 10px;
-    padding: 6px 8px;
+    padding: 8px 10px;
     background: #fff;
     cursor: pointer;
     position: relative;
     display: flex;
+    flex-direction: column;
     align-items: center;
+    gap: 4px;
   }
-  .sig-chip:hover { border-color: var(--teal); }
-  .sig-chip img { height: 44px; max-width: 190px; object-fit: contain; }
+  .sig-chip:hover { border-color: var(--teal); box-shadow: 0 2px 10px rgba(15,118,110,.18); }
+  .sig-chip img { height: 52px; max-width: 210px; object-fit: contain; }
+  .sig-chip .use-label { font-size: 10px; font-weight: 800; color: var(--teal); letter-spacing: .06em; text-transform: uppercase; }
   .sig-chip .chip-del {
     position: absolute;
     top: -8px;
@@ -794,7 +811,11 @@
     <div id="sigPanel">
       <div class="sig-card">
         <h3>Your signature <span class="grow"></span><button class="ghost" id="btnSigClose">&#10005; Close</button></h3>
-        <div id="sigSaved"></div>
+        <div class="sig-saved-box">
+          <div class="sig-saved-head">&#11088; Saved signatures &mdash; tap one to use it (no need to draw or upload again)</div>
+          <div id="sigSaved"></div>
+        </div>
+        <div class="sig-note" style="margin-top:2px"><strong>Add a new one:</strong> draw below or upload an image &mdash; it saves to your list automatically.</div>
         <canvas id="sigPad"></canvas>
         <div class="sig-row">
           <button id="btnSigClear">Clear pad</button>
@@ -1693,7 +1714,7 @@ Bill Layne Insurance
     try { return JSON.parse(localStorage.getItem(SIG_KEY)) || []; } catch (_) { return []; }
   }
   function saveSigs(list) {
-    try { localStorage.setItem(SIG_KEY, JSON.stringify(list.slice(0, 4))); }
+    try { localStorage.setItem(SIG_KEY, JSON.stringify(list.slice(0, 6))); }
     catch (_) { toast('Could not save the signature on this computer (storage full?). You can still use it now.'); }
   }
 
@@ -1715,6 +1736,10 @@ Bill Layne Insurance
       const img = document.createElement('img');
       img.src = s;
       chip.appendChild(img);
+      const use = document.createElement('div');
+      use.className = 'use-label';
+      use.textContent = 'Tap to use';
+      chip.appendChild(use);
       const del = document.createElement('button');
       del.className = 'chip-del';
       del.innerHTML = '&#10005;';
