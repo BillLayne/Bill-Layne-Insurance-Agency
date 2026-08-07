@@ -325,6 +325,22 @@
     pointer-events: none;
   }
 
+  .tray-card .nav-l, .tray-card .nav-r {
+    position: absolute;
+    bottom: 17px;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    font-size: 10px;
+    line-height: 1;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,.95);
+  }
+  .tray-card .nav-l { left: 3px; }
+  .tray-card .nav-r { right: 3px; }
   .tray-card .stamp-badge {
     position: absolute;
     bottom: 18px;
@@ -428,6 +444,92 @@
   }
   .sig-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
   .sig-note { font-size: 12px; color: var(--muted); }
+
+  /* quick text-stamp chips */
+  .text-chip {
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    padding: 8px 12px;
+    background: #fff;
+    cursor: pointer;
+    position: relative;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: pre-line;
+    max-width: 260px;
+  }
+  .text-chip:hover { border-color: var(--teal); }
+  .text-chip.red-chip { color: #b91c1c; font-weight: 800; letter-spacing: .05em; }
+  .text-chip small { display: block; font-weight: 500; color: var(--muted); font-size: 11px; }
+  .text-chip .chip-del {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 18px; height: 18px;
+    border: none;
+    border-radius: 999px;
+    background: #b91c1c;
+    color: #fff;
+    font-size: 10px;
+    line-height: 1;
+    padding: 0;
+    cursor: pointer;
+  }
+  #customStampText { width: 100%; font: inherit; font-size: 13px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; resize: vertical; min-height: 54px; }
+
+  /* form-fill modal */
+  #formModal {
+    position: fixed;
+    inset: 0;
+    background: rgba(2,6,23,.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 70;
+    padding: 14px;
+  }
+  #formModal.open { display: flex; }
+  .form-card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    width: min(680px, 100%);
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .form-head {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+  .form-head .fn { text-transform: none; letter-spacing: 0; color: var(--muted); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .form-head .grow { flex: 1; }
+  .form-body { overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; }
+  .form-row { display: flex; flex-direction: column; gap: 4px; }
+  .form-row label { font-size: 12px; font-weight: 700; color: #475569; }
+  .form-row input[type="text"], .form-row textarea, .form-row select {
+    width: 100%;
+    font: inherit;
+    font-size: 13px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 10px;
+  }
+  .form-row textarea { resize: vertical; min-height: 60px; }
+  .form-row.check-row { flex-direction: row; align-items: center; gap: 8px; }
+  .form-row.check-row input { width: 18px; height: 18px; accent-color: var(--teal); }
+  .form-row.check-row label { font-size: 13px; }
+  .form-foot { padding: 10px 16px; border-top: 1px solid var(--line); display: flex; gap: 8px; justify-content: flex-end; background: #f8fafc; }
   .edit-head {
     display: flex;
     align-items: center;
@@ -565,8 +667,16 @@
     .src-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 9px; }
     #sourcePane { padding: 10px; }
     #trayPane { padding: 8px 10px 10px; }
-    .tray-card { flex-basis: 88px; }
+    .tray-card { flex-basis: 96px; }
     #trayStrip { min-height: 148px; }
+    /* page editor: single scrollable toolbar row instead of a tall stack */
+    .edit-head { flex-wrap: nowrap; overflow-x: auto; padding: 8px 10px; }
+    .edit-head .edit-title { display: none; }
+    .edit-head button, .edit-head select { font-size: 12px; padding: 6px 9px; flex-shrink: 0; }
+    .edit-head input[type="text"] { min-width: 130px; flex: 0 0 130px; }
+    .edit-hint { font-size: 11px; padding: 5px 10px 0; }
+    .sig-card { padding: 12px; }
+    #sigPad { height: 150px; }
   }
 </style>
 </head>
@@ -629,6 +739,7 @@
       <button class="mode-btn" id="modeBox">&#11036; White-out box</button>
       <button class="mode-btn" id="modeSig">&#9997; Signature</button>
       <button class="mode-btn" id="modeImg">&#128444; Image</button>
+      <button class="mode-btn" id="modeStamps">&#11088; Stamps</button>
       <input type="text" id="stampText" placeholder="Type your text, then click the page" style="flex:1;min-width:170px">
       <select id="stampSize" title="Text size">
         <option value="10">10 pt</option>
@@ -656,6 +767,21 @@
       </div>
     </div>
 
+    <!-- quick-stamp library panel -->
+    <div id="stampPanel" style="position:absolute;inset:0;background:rgba(248,250,252,.97);display:none;align-items:center;justify-content:center;z-index:5;padding:16px;">
+      <div class="sig-card">
+        <h3>Quick stamps <span class="grow"></span><button class="ghost" id="btnStampsClose">&#10005; Close</button></h3>
+        <div class="sig-note">Tap a stamp — it lands in the middle of the page, already selected, so you just drag it into place.</div>
+        <div id="quickStamps" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
+        <div class="sig-note" style="margin-top:4px;"><strong>Your saved stamps</strong> &mdash; save text you use all the time (kept only on this computer):</div>
+        <div id="customStamps" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
+        <textarea id="customStampText" placeholder="Type text to save as a reusable stamp&#10;(more than one line is fine)"></textarea>
+        <div class="sig-row">
+          <button class="primary" id="btnSaveStamp">+ Save as a stamp</button>
+        </div>
+      </div>
+    </div>
+
     <!-- signature setup panel -->
     <div id="sigPanel">
       <div class="sig-card">
@@ -670,6 +796,18 @@
         </div>
         <div class="sig-note">Draw your signature above with the mouse (or finger on a touchscreen), or upload a photo/scan of it &mdash; white backgrounds are removed automatically. Signatures are saved <strong>only on this computer</strong> so next time it&rsquo;s one click.</div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- fillable-form modal -->
+<div id="formModal">
+  <div class="form-card">
+    <div class="form-head">Fill form <span class="fn" id="formFileName"></span><span class="grow"></span><button class="ghost" id="btnFormClose">&#10005;</button></div>
+    <div class="form-body" id="formBody"></div>
+    <div class="form-foot">
+      <button id="btnFormCancel">Cancel</button>
+      <button class="teal" id="btnFormApply">&#10003; Fill the form</button>
     </div>
   </div>
 </div>
@@ -794,6 +932,11 @@
     const pdfjsDoc = await pdfjsLib.getDocument({ data: bytes.slice() }).promise;
     const docId = nextDocId++;
     const doc = { name, bytes, pages: [] };
+    // detect fillable form fields (ACORD forms, carrier forms…)
+    try {
+      const fdoc = await PDFLib.PDFDocument.load(bytes, { ignoreEncryption: true });
+      doc.formFields = fdoc.getForm().getFields().length;
+    } catch (_) { doc.formFields = 0; }
     docs.set(docId, doc);
     for (let i = 0; i < pdfjsDoc.numPages; i++) {
       const page = await pdfjsDoc.getPage(i + 1);
@@ -839,6 +982,13 @@
         '<span class="doc-pages">' + (doc.kind === 'image' ? 'image' :
           doc.pages.length + ' page' + (doc.pages.length === 1 ? '' : 's')) + '</span>' +
         '<span class="grow"></span>';
+      if (doc.formFields) {
+        const fillBtn = document.createElement('button');
+        fillBtn.className = 'teal';
+        fillBtn.textContent = '📝 Fill form (' + doc.formFields + ')';
+        fillBtn.addEventListener('click', () => openFormModal(docId));
+        head.appendChild(fillBtn);
+      }
       const addAllBtn = document.createElement('button');
       addAllBtn.textContent = 'Add all pages';
       addAllBtn.addEventListener('click', () => {
@@ -924,7 +1074,20 @@
         '</div>' +
         '<div class="thumb-box"><img' + rotCls + ' src="' + t.thumb + '" alt=""></div>' +
         (t.stamps && t.stamps.length ? '<div class="stamp-badge">T&times;' + t.stamps.length + '</div>' : '') +
+        (i > 0 ? '<button class="nav-l" title="Move earlier">&#9664;</button>' : '') +
+        (i < tray.length - 1 ? '<button class="nav-r" title="Move later">&#9654;</button>' : '') +
         '<div class="tray-label">' + escapeHtml(doc ? doc.name : '') + ' p.' + (t.pageIndex + 1) + '</div>';
+      const navL = card.querySelector('.nav-l'), navR = card.querySelector('.nav-r');
+      if (navL) navL.addEventListener('click', (e) => {
+        e.stopPropagation();
+        tray.splice(i - 1, 0, tray.splice(i, 1)[0]);
+        renderTray();
+      });
+      if (navR) navR.addEventListener('click', (e) => {
+        e.stopPropagation();
+        tray.splice(i + 1, 0, tray.splice(i, 1)[0]);
+        renderTray();
+      });
       card.querySelector('.act-edit').addEventListener('click', (e) => {
         e.stopPropagation();
         openEditor(t);
@@ -1697,10 +1860,250 @@
     }
   });
 
+  /* ── Quick-stamp library ── */
+  const STAMP_TEXT_KEY = 'bliPdfStudioTextStamps';
+  const AGENCY_BLOCK = 'Bill Layne Insurance Agency\n1283 N Bridge St, Elkin NC 28621\n(336) 835-1993';
+
+  function todayStr() {
+    const d = new Date();
+    return String(d.getMonth() + 1).padStart(2, '0') + '/' + String(d.getDate()).padStart(2, '0') + '/' + d.getFullYear();
+  }
+  function loadTextStamps() {
+    try { return JSON.parse(localStorage.getItem(STAMP_TEXT_KEY)) || []; } catch (_) { return []; }
+  }
+  function saveTextStamps(list) {
+    try { localStorage.setItem(STAMP_TEXT_KEY, JSON.stringify(list.slice(0, 8))); } catch (_) {}
+  }
+
+  // drop a text stamp in the middle of the page, selected and ready to drag
+  function placeCenteredText(text, size, color) {
+    if (!editorItem || !editorVp) return;
+    const cw = parseFloat(editCanvas.style.width) / 2;
+    const ch = parseFloat(editCanvas.style.height) / 2;
+    const b = cssToPdf(cw, ch);
+    const st = { kind: 'text', x: b.px, y: b.py, text, size, color };
+    editorItem.stamps.push(st);
+    selectedStamp = st;
+    syncStampLayer();
+    setEditorMode('text');
+  }
+
+  function openStampPanel() {
+    renderStampChips();
+    $('stampPanel').style.display = 'flex';
+  }
+  function closeStampPanel() { $('stampPanel').style.display = 'none'; }
+
+  function renderStampChips() {
+    const quick = $('quickStamps');
+    quick.innerHTML = '';
+    const presets = [
+      { label: todayStr(), sub: "Today's date", text: todayStr(), size: 14, color: 'black' },
+      { label: 'RECEIVED ' + todayStr(), sub: 'Received + date', text: 'RECEIVED ' + todayStr(), size: 14, color: 'blue' },
+      { label: 'COPY', text: 'COPY', size: 36, color: 'red', red: true },
+      { label: 'VOID', text: 'VOID', size: 36, color: 'red', red: true },
+      { label: 'PAID', text: 'PAID', size: 36, color: 'red', red: true },
+      { label: AGENCY_BLOCK, sub: 'Agency block', text: AGENCY_BLOCK, size: 11, color: 'black' }
+    ];
+    presets.forEach(p => {
+      const chip = document.createElement('div');
+      chip.className = 'text-chip' + (p.red ? ' red-chip' : '');
+      chip.textContent = p.label;
+      if (p.sub) {
+        const s = document.createElement('small');
+        s.textContent = p.sub;
+        chip.appendChild(s);
+      }
+      chip.addEventListener('click', () => { closeStampPanel(); placeCenteredText(p.text, p.size, p.color); });
+      quick.appendChild(chip);
+    });
+    const wrap = $('customStamps');
+    wrap.innerHTML = '';
+    const saved = loadTextStamps();
+    if (!saved.length) {
+      const note = document.createElement('div');
+      note.className = 'sig-note';
+      note.textContent = 'None saved yet.';
+      wrap.appendChild(note);
+    }
+    saved.forEach((s, i) => {
+      const chip = document.createElement('div');
+      chip.className = 'text-chip';
+      chip.textContent = s;
+      const del = document.createElement('button');
+      del.className = 'chip-del';
+      del.innerHTML = '&#10005;';
+      del.title = 'Forget this stamp';
+      del.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const list = loadTextStamps();
+        list.splice(i, 1);
+        saveTextStamps(list);
+        renderStampChips();
+      });
+      chip.appendChild(del);
+      chip.addEventListener('click', () => { closeStampPanel(); placeCenteredText(s, 14, 'black'); });
+      wrap.appendChild(chip);
+    });
+  }
+
+  $('btnSaveStamp').addEventListener('click', () => {
+    const t = $('customStampText').value.replace(/\s+$/, '');
+    if (!t.trim()) { toast('Type the stamp text first.'); return; }
+    const list = loadTextStamps().filter(s => s !== t);
+    list.unshift(t);
+    saveTextStamps(list);
+    $('customStampText').value = '';
+    renderStampChips();
+  });
+  $('btnStampsClose').addEventListener('click', closeStampPanel);
+  $('stampPanel').addEventListener('click', (e) => { if (e.target === $('stampPanel')) closeStampPanel(); });
+
+  /* ── Fillable forms (ACORD / carrier forms) ── */
+  let formDocId = null;
+
+  function prettyFieldName(n) {
+    return n.replace(/[_.]+/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2').trim();
+  }
+
+  async function openFormModal(docId) {
+    const doc = docs.get(docId);
+    if (!doc) return;
+    busy(true, 'Reading form fields…');
+    try {
+      const pdfDoc = await PDFLib.PDFDocument.load(doc.bytes, { ignoreEncryption: true });
+      const fields = pdfDoc.getForm().getFields();
+      const body = $('formBody');
+      body.innerHTML = '';
+      let shown = 0;
+      for (const f of fields) {
+        const name = f.getName();
+        const row = document.createElement('div');
+        row.className = 'form-row';
+        if (f instanceof PDFLib.PDFTextField) {
+          const multi = f.isMultiline && f.isMultiline();
+          row.innerHTML = '<label></label>';
+          row.querySelector('label').textContent = prettyFieldName(name);
+          const input = document.createElement(multi ? 'textarea' : 'input');
+          if (!multi) input.type = 'text';
+          input.value = (f.getText && f.getText()) || '';
+          input.dataset.fname = name;
+          input.dataset.ftype = 'text';
+          row.appendChild(input);
+        } else if (f instanceof PDFLib.PDFCheckBox) {
+          row.className = 'form-row check-row';
+          const input = document.createElement('input');
+          input.type = 'checkbox';
+          input.checked = f.isChecked();
+          input.dataset.fname = name;
+          input.dataset.ftype = 'check';
+          const lab = document.createElement('label');
+          lab.textContent = prettyFieldName(name);
+          row.appendChild(input);
+          row.appendChild(lab);
+        } else if (f instanceof PDFLib.PDFRadioGroup || f instanceof PDFLib.PDFDropdown) {
+          const isRadio = f instanceof PDFLib.PDFRadioGroup;
+          row.innerHTML = '<label></label>';
+          row.querySelector('label').textContent = prettyFieldName(name);
+          const sel = document.createElement('select');
+          sel.dataset.fname = name;
+          sel.dataset.ftype = isRadio ? 'radio' : 'drop';
+          const blank = document.createElement('option');
+          blank.value = '';
+          blank.textContent = '— leave as is —';
+          sel.appendChild(blank);
+          (f.getOptions() || []).forEach(o => {
+            const opt = document.createElement('option');
+            opt.value = o;
+            opt.textContent = o;
+            sel.appendChild(opt);
+          });
+          const cur = isRadio ? f.getSelected() : (f.getSelected() || [])[0];
+          if (cur) sel.value = cur;
+          row.appendChild(sel);
+        } else {
+          continue;  // signatures / unsupported field types
+        }
+        body.appendChild(row);
+        shown++;
+      }
+      if (!shown) { busy(false); toast('No fillable fields I can edit in this form.'); return; }
+      $('formFileName').textContent = doc.name;
+      formDocId = docId;
+      $('formModal').classList.add('open');
+    } catch (err) {
+      console.error(err);
+      toast('Sorry — could not read the form fields in that PDF.');
+    }
+    busy(false);
+  }
+
+  function closeFormModal() {
+    $('formModal').classList.remove('open');
+    formDocId = null;
+  }
+
+  async function rebuildThumbs(docId) {
+    const doc = docs.get(docId);
+    const pdfjsDoc = await pdfjsLib.getDocument({ data: doc.bytes.slice() }).promise;
+    for (const p of doc.pages) {
+      const page = await pdfjsDoc.getPage(p.pageIndex + 1);
+      const viewport = page.getViewport({ scale: 1 });
+      const scale = 170 / viewport.width;
+      const vp = page.getViewport({ scale });
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.ceil(vp.width);
+      canvas.height = Math.ceil(vp.height);
+      await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp, intent: 'print' }).promise;
+      p.thumb = canvas.toDataURL('image/jpeg', 0.82);
+    }
+    pdfjsDoc.destroy();
+    tray.forEach(t => {
+      if (t.docId === docId) {
+        const src = doc.pages.find(pp => pp.pageIndex === t.pageIndex);
+        if (src) t.thumb = src.thumb;
+      }
+    });
+  }
+
+  $('btnFormApply').addEventListener('click', async () => {
+    if (formDocId == null) return;
+    const doc = docs.get(formDocId);
+    busy(true, 'Filling the form…');
+    try {
+      const pdfDoc = await PDFLib.PDFDocument.load(doc.bytes, { ignoreEncryption: true });
+      const form = pdfDoc.getForm();
+      let applied = 0;
+      $('formBody').querySelectorAll('[data-fname]').forEach(inp => {
+        const name = inp.dataset.fname, type = inp.dataset.ftype;
+        try {
+          if (type === 'text') { form.getTextField(name).setText(inp.value); applied++; }
+          else if (type === 'check') { const cb = form.getCheckBox(name); if (inp.checked) cb.check(); else cb.uncheck(); applied++; }
+          else if (type === 'radio') { if (inp.value) { form.getRadioGroup(name).select(inp.value); applied++; } }
+          else if (type === 'drop') { if (inp.value) { form.getDropdown(name).select(inp.value); applied++; } }
+        } catch (err) { console.warn('field skipped:', name, err); }
+      });
+      form.updateFieldAppearances();
+      doc.bytes = new Uint8Array(await pdfDoc.save());
+      await rebuildThumbs(formDocId);
+      closeFormModal();
+      renderAll();
+      toast('Form filled (' + applied + ' fields) — the pages now show your answers.');
+    } catch (err) {
+      console.error(err);
+      toast('Sorry — something went wrong filling that form.');
+    }
+    busy(false);
+  });
+  $('btnFormCancel').addEventListener('click', closeFormModal);
+  $('btnFormClose').addEventListener('click', closeFormModal);
+  $('formModal').addEventListener('click', (e) => { if (e.target === $('formModal')) closeFormModal(); });
+
   $('modeText').addEventListener('click', () => setEditorMode('text'));
   $('modeBox').addEventListener('click', () => setEditorMode('box'));
   $('modeSig').addEventListener('click', () => openSigPanel());
   $('modeImg').addEventListener('click', () => $('imgFileInput').click());
+  $('modeStamps').addEventListener('click', openStampPanel);
   $('btnUndoStamp').addEventListener('click', () => {
     if (editorItem && editorItem.stamps.length) {
       editorItem.stamps.pop();
@@ -1718,12 +2121,14 @@
   $('btnEditDone').addEventListener('click', closeEditor);
   $('editModal').addEventListener('click', (e) => { if (e.target === $('editModal')) closeEditor(); });
   document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && $('formModal').classList.contains('open')) { closeFormModal(); return; }
     if (!$('editModal').classList.contains('open')) return;
     const a = document.activeElement;
     const typing = a && (a.isContentEditable || a.tagName === 'INPUT' || a.tagName === 'SELECT' || a.tagName === 'TEXTAREA');
     if (e.key === 'Escape') {
       if (a && a.isContentEditable) { a.blur(); return; }
       if ($('sigPanel').classList.contains('open')) { closeSigPanel(); return; }
+      if ($('stampPanel').style.display === 'flex') { closeStampPanel(); return; }
       closeEditor();
       return;
     }
