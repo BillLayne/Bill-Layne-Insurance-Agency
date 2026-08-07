@@ -325,6 +325,95 @@
     pointer-events: none;
   }
 
+  .tray-card .stamp-badge {
+    position: absolute;
+    bottom: 18px;
+    right: 4px;
+    background: var(--gold);
+    color: #1e293b;
+    font-weight: 800;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 999px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.3);
+    pointer-events: none;
+  }
+
+  /* ── Page editor modal ──────────────────── */
+  #editModal {
+    position: fixed;
+    inset: 0;
+    background: rgba(2,6,23,.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 60;
+    padding: 14px;
+  }
+  #editModal.open { display: flex; }
+  .edit-panel {
+    background: var(--card);
+    border-radius: 14px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    width: min(1040px, 100%);
+    height: min(760px, 100%);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .edit-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    background: #f8fafc;
+  }
+  .edit-head .edit-title {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-right: 4px;
+  }
+  .mode-btn.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+  select {
+    font: inherit;
+    font-size: 13px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 7px 8px;
+    background: #fff;
+  }
+  .edit-hint {
+    font-size: 12px;
+    color: var(--muted);
+    padding: 6px 14px 0;
+  }
+  #editCanvasWrap {
+    flex: 1;
+    overflow: auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 12px;
+    background: #e2e8f0;
+    min-height: 0;
+  }
+  #editStack {
+    position: relative;
+    box-shadow: 0 4px 18px rgba(0,0,0,.25);
+    flex-shrink: 0;
+  }
+  #editStack canvas { display: block; }
+  #editOverlay {
+    position: absolute;
+    inset: 0;
+    cursor: crosshair;
+  }
+
   footer {
     text-align: center;
     font-size: 11px;
@@ -425,6 +514,41 @@
 <footer>
   Bill Layne Insurance Agency internal tool &bull; <strong>Nothing is uploaded</strong> &mdash; all PDF work happens right in your browser.
 </footer>
+
+<!-- Page editor: add text / white-out to a tray page -->
+<div id="editModal">
+  <div class="edit-panel">
+    <div class="edit-head">
+      <span class="edit-title">Add text to page</span>
+      <button class="mode-btn active" id="modeText">T&nbsp; Add text</button>
+      <button class="mode-btn" id="modeBox">&#11036; White-out box</button>
+      <input type="text" id="stampText" placeholder="Type your text, then click the page" style="flex:1;min-width:170px">
+      <select id="stampSize" title="Text size">
+        <option value="10">10 pt</option>
+        <option value="12">12 pt</option>
+        <option value="14" selected>14 pt</option>
+        <option value="18">18 pt</option>
+        <option value="24">24 pt</option>
+        <option value="36">36 pt</option>
+      </select>
+      <select id="stampColor" title="Text color">
+        <option value="black" selected>Black</option>
+        <option value="red">Red</option>
+        <option value="blue">Blue</option>
+      </select>
+      <button id="btnUndoStamp">&#8630; Undo</button>
+      <button class="danger" id="btnClearStamps">Remove all</button>
+      <button class="teal" id="btnEditDone">&#10003; Done</button>
+    </div>
+    <div class="edit-hint" id="editHint">Type your text above, then click the page where it should go. Switch to White-out box to drag a white rectangle over anything you need to cover.</div>
+    <div id="editCanvasWrap">
+      <div id="editStack">
+        <canvas id="editCanvas"></canvas>
+        <canvas id="editOverlay"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
 
 <input type="file" id="fileInput" accept="application/pdf,.pdf,image/*" multiple hidden>
 <div id="toast"></div>
@@ -646,6 +770,7 @@
       docId: srcEntry.docId,
       pageIndex: srcEntry.pageIndex,
       rot: 0,
+      stamps: [],
       thumb: srcEntry.thumb
     };
     if (atIndex == null || atIndex >= tray.length) tray.push(item);
@@ -667,11 +792,17 @@
       card.innerHTML =
         '<div class="order-badge">' + (i + 1) + '</div>' +
         '<div class="card-actions">' +
+          '<button class="act-edit" title="Add text / white-out">&#9998;</button>' +
           '<button class="act-rot" title="Rotate 90°">&#8635;</button>' +
           '<button class="act-del" title="Remove from new document">&#10005;</button>' +
         '</div>' +
         '<div class="thumb-box"><img' + rotCls + ' src="' + t.thumb + '" alt=""></div>' +
+        (t.stamps && t.stamps.length ? '<div class="stamp-badge">T&times;' + t.stamps.length + '</div>' : '') +
         '<div class="tray-label">' + escapeHtml(doc ? doc.name : '') + ' p.' + (t.pageIndex + 1) + '</div>';
+      card.querySelector('.act-edit').addEventListener('click', (e) => {
+        e.stopPropagation();
+        openEditor(t);
+      });
       card.querySelector('.act-rot').addEventListener('click', (e) => {
         e.stopPropagation();
         t.rot = (t.rot + 90) % 360;
@@ -750,9 +881,37 @@
   });
 
   /* ── Building PDFs ── */
+  const STAMP_COLORS = {
+    black: [0, 0, 0],
+    red: [0.72, 0.11, 0.11],
+    blue: [0.11, 0.31, 0.85]
+  };
+
+  async function drawStamps(out, page, stamps, fontRef) {
+    if (!stamps || !stamps.length) return fontRef;
+    // compensate for page rotation so text reads horizontally as viewed
+    const R = page.getRotation().angle || 0;
+    for (const st of stamps) {
+      if (st.kind === 'box') {
+        page.drawRectangle({ x: st.x, y: st.y, width: st.w, height: st.h, color: PDFLib.rgb(1, 1, 1) });
+      } else {
+        if (!fontRef.font) fontRef.font = await out.embedFont(PDFLib.StandardFonts.Helvetica);
+        const c = STAMP_COLORS[st.color] || STAMP_COLORS.black;
+        page.drawText(st.text, {
+          x: st.x, y: st.y, size: st.size,
+          font: fontRef.font,
+          color: PDFLib.rgb(c[0], c[1], c[2]),
+          rotate: PDFLib.degrees(R)
+        });
+      }
+    }
+    return fontRef;
+  }
+
   async function buildPdfBytes(list) {
     const out = await PDFLib.PDFDocument.create();
     const srcCache = new Map();
+    const fontRef = { font: null };
     for (const p of list) {
       const doc = docs.get(p.docId);
       if (doc.kind === 'image') {
@@ -770,6 +929,7 @@
         const page = out.addPage([pw, ph]);
         page.drawImage(embedded, { x: (pw - w2) / 2, y: (ph - h2) / 2, width: w2, height: h2 });
         if (p.rot) page.setRotation(PDFLib.degrees(p.rot % 360));
+        await drawStamps(out, page, p.stamps, fontRef);
         continue;
       }
       let src = srcCache.get(p.docId);
@@ -783,9 +943,141 @@
         copied.setRotation(PDFLib.degrees(((cur + p.rot) % 360 + 360) % 360));
       }
       out.addPage(copied);
+      await drawStamps(out, copied, p.stamps, fontRef);
     }
     return out.save();
   }
+
+  /* ── Page editor (add text / white-out) ── */
+  let editorItem = null, editorVp = null, editorMode = 'text', boxDrag = null;
+  const editCanvas = $('editCanvas'), editOverlay = $('editOverlay');
+
+  function setEditorMode(mode) {
+    editorMode = mode;
+    $('modeText').classList.toggle('active', mode === 'text');
+    $('modeBox').classList.toggle('active', mode === 'box');
+    $('editHint').textContent = mode === 'text'
+      ? 'Type your text above, then click the page where it should go. Each click places the text.'
+      : 'Press and drag on the page to draw a white box over anything you need to cover.';
+  }
+
+  function openEditor(item) {
+    editorItem = item;
+    setEditorMode('text');
+    $('editModal').classList.add('open');
+    renderEditor();
+  }
+
+  function closeEditor() {
+    $('editModal').classList.remove('open');
+    editorItem = null;
+    editorVp = null;
+    renderAll();
+  }
+
+  async function renderEditor() {
+    if (!editorItem) return;
+    busy(true, 'Rendering page…');
+    try {
+      const bytes = await buildPdfBytes([editorItem]);
+      const task = pdfjsLib.getDocument({ data: bytes });
+      const pdoc = await task.promise;
+      const page = await pdoc.getPage(1);
+      const vp1 = page.getViewport({ scale: 1 });
+      const wrap = $('editCanvasWrap');
+      const maxW = Math.max(280, wrap.clientWidth - 28);
+      const maxH = Math.max(280, wrap.clientHeight - 28);
+      const fit = Math.min(maxW / vp1.width, maxH / vp1.height);
+      const vp = page.getViewport({ scale: fit * 2 });   // render 2x for crisp text
+      editCanvas.width = Math.ceil(vp.width);
+      editCanvas.height = Math.ceil(vp.height);
+      editCanvas.style.width = Math.ceil(vp.width / 2) + 'px';
+      editCanvas.style.height = Math.ceil(vp.height / 2) + 'px';
+      editOverlay.width = editCanvas.width;
+      editOverlay.height = editCanvas.height;
+      editOverlay.style.width = editCanvas.style.width;
+      editOverlay.style.height = editCanvas.style.height;
+      await page.render({ canvasContext: editCanvas.getContext('2d'), viewport: vp, intent: 'print' }).promise;
+      editorVp = vp;
+      pdoc.destroy();
+    } catch (err) {
+      console.error(err);
+      toast('Sorry — could not render that page.');
+    }
+    busy(false);
+  }
+
+  // overlay CSS pixel coords → canvas pixel coords → PDF user-space points
+  function overlayToPdfPoint(e) {
+    const rect = editOverlay.getBoundingClientRect();
+    const cx = (e.clientX - rect.left) * (editOverlay.width / rect.width);
+    const cy = (e.clientY - rect.top) * (editOverlay.height / rect.height);
+    const [px, py] = editorVp.convertToPdfPoint(cx, cy);
+    return { cx, cy, px, py };
+  }
+
+  editOverlay.addEventListener('mousedown', (e) => {
+    if (!editorItem || !editorVp) return;
+    if (editorMode !== 'box') return;
+    boxDrag = overlayToPdfPoint(e);
+  });
+  editOverlay.addEventListener('mousemove', (e) => {
+    if (!boxDrag) return;
+    const now = overlayToPdfPoint(e);
+    const ctx = editOverlay.getContext('2d');
+    ctx.clearRect(0, 0, editOverlay.width, editOverlay.height);
+    ctx.strokeStyle = '#C8A84E';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([8, 6]);
+    ctx.fillStyle = 'rgba(255,255,255,.65)';
+    const x = Math.min(boxDrag.cx, now.cx), y = Math.min(boxDrag.cy, now.cy);
+    const w = Math.abs(now.cx - boxDrag.cx), h = Math.abs(now.cy - boxDrag.cy);
+    ctx.fillRect(x, y, w, h);
+    ctx.strokeRect(x, y, w, h);
+  });
+  editOverlay.addEventListener('mouseup', (e) => {
+    if (editorMode === 'box' && boxDrag) {
+      const end = overlayToPdfPoint(e);
+      editOverlay.getContext('2d').clearRect(0, 0, editOverlay.width, editOverlay.height);
+      const x = Math.min(boxDrag.px, end.px), y = Math.min(boxDrag.py, end.py);
+      const w = Math.abs(end.px - boxDrag.px), h = Math.abs(end.py - boxDrag.py);
+      boxDrag = null;
+      if (w > 2 && h > 2) {
+        editorItem.stamps.push({ kind: 'box', x, y, w, h });
+        renderEditor();
+      }
+      return;
+    }
+    boxDrag = null;
+  });
+  editOverlay.addEventListener('click', (e) => {
+    if (!editorItem || !editorVp || editorMode !== 'text') return;
+    const text = $('stampText').value.trim();
+    if (!text) { toast('Type your text in the box first, then click the page.'); $('stampText').focus(); return; }
+    const pt = overlayToPdfPoint(e);
+    editorItem.stamps.push({
+      kind: 'text',
+      x: pt.px, y: pt.py,
+      text,
+      size: parseInt($('stampSize').value, 10) || 14,
+      color: $('stampColor').value
+    });
+    renderEditor();
+  });
+
+  $('modeText').addEventListener('click', () => setEditorMode('text'));
+  $('modeBox').addEventListener('click', () => setEditorMode('box'));
+  $('btnUndoStamp').addEventListener('click', () => {
+    if (editorItem && editorItem.stamps.length) { editorItem.stamps.pop(); renderEditor(); }
+  });
+  $('btnClearStamps').addEventListener('click', () => {
+    if (editorItem && editorItem.stamps.length) { editorItem.stamps = []; renderEditor(); }
+  });
+  $('btnEditDone').addEventListener('click', closeEditor);
+  $('editModal').addEventListener('click', (e) => { if (e.target === $('editModal')) closeEditor(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && $('editModal').classList.contains('open')) closeEditor();
+  });
 
   function cleanName(extra) {
     let n = ($('nameInput').value || 'new-document').trim()
@@ -874,9 +1166,10 @@
       if (doc) { trayAdd(doc.pages[pageIndex]); renderAll(); }
     },
     buildPdfBytes,
+    openEditorFor: (i) => { if (tray[i]) openEditor(tray[i]); },
     getState: () => ({
       docs: [...docs.values()].map(d => ({ name: d.name, pages: d.pages.length })),
-      tray: tray.map(t => ({ docId: t.docId, pageIndex: t.pageIndex, rot: t.rot }))
+      tray: tray.map(t => ({ docId: t.docId, pageIndex: t.pageIndex, rot: t.rot, stamps: t.stamps }))
     })
   };
 })();
