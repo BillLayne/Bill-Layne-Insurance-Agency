@@ -413,6 +413,44 @@
     inset: 0;
     cursor: crosshair;
   }
+  #stampLayer { position: absolute; inset: 0; pointer-events: none; }
+  .stamp-el { position: absolute; pointer-events: auto; touch-action: none; }
+  .stamp-text {
+    font-family: Helvetica, Arial, sans-serif;
+    line-height: 1.2;
+    white-space: pre;
+    cursor: move;
+    outline: none;
+    min-width: 8px;
+    min-height: 8px;
+  }
+  .stamp-text.editing { cursor: text; }
+  .stamp-box {
+    background: #fff;
+    box-shadow: 0 0 0 1px rgba(2,6,23,.12);
+    cursor: move;
+  }
+  .stamp-el.selected { outline: 2px dashed var(--teal); outline-offset: 3px; }
+  .stamp-el .h { display: none; position: absolute; z-index: 2; }
+  .stamp-el.selected .h { display: flex; }
+  .h-del {
+    top: -14px; right: -14px;
+    width: 20px; height: 20px;
+    background: #b91c1c; color: #fff;
+    border: none; border-radius: 999px;
+    align-items: center; justify-content: center;
+    font-size: 11px; line-height: 1;
+    cursor: pointer;
+  }
+  .h-resize {
+    bottom: -12px; right: -12px;
+    width: 18px; height: 18px;
+    background: var(--navy);
+    border: 2px solid #fff;
+    border-radius: 4px;
+    cursor: nwse-resize;
+    box-shadow: 0 1px 3px rgba(0,0,0,.35);
+  }
 
   footer {
     text-align: center;
@@ -545,6 +583,7 @@
       <div id="editStack">
         <canvas id="editCanvas"></canvas>
         <canvas id="editOverlay"></canvas>
+        <div id="stampLayer"></div>
       </div>
     </div>
   </div>
@@ -901,7 +940,8 @@
           x: st.x, y: st.y, size: st.size,
           font: fontRef.font,
           color: PDFLib.rgb(c[0], c[1], c[2]),
-          rotate: PDFLib.degrees(R)
+          rotate: PDFLib.degrees(R),
+          lineHeight: st.size * 1.2
         });
       }
     }
@@ -949,16 +989,19 @@
   }
 
   /* ── Page editor (add text / white-out) ── */
-  let editorItem = null, editorVp = null, editorMode = 'text', boxDrag = null;
-  const editCanvas = $('editCanvas'), editOverlay = $('editOverlay');
+  let editorItem = null, editorVp = null, editorFit = 1, editorMode = 'text', boxDrag = null, selectedStamp = null;
+  const editCanvas = $('editCanvas'), editOverlay = $('editOverlay'), stampLayer = $('stampLayer');
+  const CSSF = 0.5;   // canvas is rendered at 2x and displayed at half size
+  const BASE = 0.9;   // first-line baseline offset within a line-height:1.2 text box
+  const CSS_COLORS = { black: '#000000', red: '#b91c1c', blue: '#1d4ed8' };
 
   function setEditorMode(mode) {
     editorMode = mode;
     $('modeText').classList.toggle('active', mode === 'text');
     $('modeBox').classList.toggle('active', mode === 'box');
     $('editHint').textContent = mode === 'text'
-      ? 'Type your text above, then click the page where it should go. Each click places the text.'
-      : 'Press and drag on the page to draw a white box over anything you need to cover.';
+      ? 'Type your text above, then click the page to place it in a box you can move. Drag the box anywhere, drag the blue corner to make it bigger or smaller, double-click to edit the words.'
+      : 'Press and drag on the page to draw a white box over anything you need to cover. Boxes can be moved and resized after you draw them.';
   }
 
   function openEditor(item) {
@@ -979,7 +1022,9 @@
     if (!editorItem) return;
     busy(true, 'Rendering page…');
     try {
-      const bytes = await buildPdfBytes([editorItem]);
+      // render the base page WITHOUT stamps — stamps live as movable overlay boxes
+      const base = { docId: editorItem.docId, pageIndex: editorItem.pageIndex, rot: editorItem.rot, stamps: [] };
+      const bytes = await buildPdfBytes([base]);
       const task = pdfjsLib.getDocument({ data: bytes });
       const pdoc = await task.promise;
       const page = await pdoc.getPage(1);
@@ -999,12 +1044,191 @@
       editOverlay.style.height = editCanvas.style.height;
       await page.render({ canvasContext: editCanvas.getContext('2d'), viewport: vp, intent: 'print' }).promise;
       editorVp = vp;
+      editorFit = fit;
       pdoc.destroy();
+      syncStampLayer();
     } catch (err) {
       console.error(err);
       toast('Sorry — could not render that page.');
     }
     busy(false);
+  }
+
+  /* stamp elements: movable / resizable containers over the page */
+  function pdfToCss(px, py) {
+    const p = editorVp.convertToViewportPoint(px, py);
+    return { x: p[0] * CSSF, y: p[1] * CSSF };
+  }
+  function cssToPdf(x, y) {
+    const p = editorVp.convertToPdfPoint(x / CSSF, y / CSSF);
+    return { px: p[0], py: p[1] };
+  }
+  function textCssSize(st) { return st.size * editorFit; }
+
+  function positionTextEl(el, st) {
+    const fs = textCssSize(st);
+    el.querySelector('.stamp-text').style.fontSize = fs + 'px';
+    const p = pdfToCss(st.x, st.y);
+    el.style.left = p.x + 'px';
+    el.style.top = (p.y - BASE * fs) + 'px';
+  }
+  function commitTextPos(el, st) {
+    const fs = textCssSize(st);
+    const b = cssToPdf(parseFloat(el.style.left), parseFloat(el.style.top) + BASE * fs);
+    st.x = b.px; st.y = b.py;
+  }
+  function positionBoxEl(el, st) {
+    const c1 = pdfToCss(st.x, st.y), c2 = pdfToCss(st.x + st.w, st.y + st.h);
+    el.style.left = Math.min(c1.x, c2.x) + 'px';
+    el.style.top = Math.min(c1.y, c2.y) + 'px';
+    el.style.width = Math.abs(c2.x - c1.x) + 'px';
+    el.style.height = Math.abs(c2.y - c1.y) + 'px';
+  }
+  function commitBoxPos(el, st) {
+    const L = parseFloat(el.style.left), T = parseFloat(el.style.top);
+    const W = parseFloat(el.style.width), H = parseFloat(el.style.height);
+    const a = cssToPdf(L, T), b = cssToPdf(L + W, T + H);
+    st.x = Math.min(a.px, b.px); st.y = Math.min(a.py, b.py);
+    st.w = Math.abs(b.px - a.px); st.h = Math.abs(b.py - a.py);
+  }
+
+  function selectStamp(st) {
+    selectedStamp = st;
+    [...stampLayer.children].forEach(el => el.classList.toggle('selected', el.__stamp === st));
+    if (st && st.kind === 'text') {
+      const sizeSel = $('stampSize');
+      if ([...sizeSel.options].some(o => parseInt(o.value, 10) === st.size)) sizeSel.value = String(st.size);
+      $('stampColor').value = st.color;
+    }
+  }
+  function elForStamp(st) { return [...stampLayer.children].find(el => el.__stamp === st) || null; }
+  function removeStamp(st) {
+    const i = editorItem.stamps.indexOf(st);
+    if (i >= 0) editorItem.stamps.splice(i, 1);
+    if (selectedStamp === st) selectedStamp = null;
+    syncStampLayer();
+  }
+
+  function syncStampLayer() {
+    stampLayer.innerHTML = '';
+    if (!editorItem || !editorVp) return;
+    for (const st of editorItem.stamps) stampLayer.appendChild(buildStampEl(st));
+    selectStamp(selectedStamp && editorItem.stamps.includes(selectedStamp) ? selectedStamp : null);
+  }
+
+  function buildStampEl(st) {
+    const el = document.createElement('div');
+    el.className = 'stamp-el' + (st.kind === 'box' ? ' stamp-box' : '');
+    el.__stamp = st;
+    if (st.kind === 'text') {
+      const txt = document.createElement('div');
+      txt.className = 'stamp-text';
+      txt.innerText = st.text;
+      txt.style.color = CSS_COLORS[st.color] || '#000000';
+      el.appendChild(txt);
+      positionTextEl(el, st);
+      el.addEventListener('dblclick', (e) => { e.stopPropagation(); startTextEdit(el, st); });
+    } else {
+      positionBoxEl(el, st);
+    }
+    const del = document.createElement('button');
+    del.className = 'h h-del';
+    del.innerHTML = '&#10005;';
+    del.title = 'Delete';
+    del.addEventListener('pointerdown', (e) => e.stopPropagation());
+    del.addEventListener('click', (e) => { e.stopPropagation(); removeStamp(st); });
+    const rs = document.createElement('div');
+    rs.className = 'h h-resize';
+    rs.title = 'Drag to resize';
+    rs.addEventListener('pointerdown', (e) => startResize(e, el, st));
+    el.appendChild(del);
+    el.appendChild(rs);
+    el.addEventListener('pointerdown', (e) => startDrag(e, el, st));
+    return el;
+  }
+
+  function startTextEdit(el, st) {
+    selectStamp(st);
+    const txt = el.querySelector('.stamp-text');
+    try { txt.contentEditable = 'plaintext-only'; } catch (_) { txt.contentEditable = 'true'; }
+    txt.classList.add('editing');
+    txt.focus();
+    const r = document.createRange();
+    r.selectNodeContents(txt);
+    const s = window.getSelection();
+    s.removeAllRanges();
+    s.addRange(r);
+    const done = () => {
+      txt.removeEventListener('blur', done);
+      txt.contentEditable = 'false';
+      txt.classList.remove('editing');
+      const t = txt.innerText.replace(/ /g, ' ').replace(/\s+$/, '');
+      if (!t.trim()) { removeStamp(st); }
+      else { st.text = t; txt.innerText = t; }
+    };
+    txt.addEventListener('blur', done);
+  }
+
+  function startDrag(e, el, st) {
+    const txt = el.querySelector('.stamp-text');
+    if (txt && txt.isContentEditable) return;
+    if (e.target.closest('.h')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    selectStamp(st);
+    const sx = e.clientX, sy = e.clientY;
+    const sl = parseFloat(el.style.left), stp = parseFloat(el.style.top);
+    try { el.setPointerCapture(e.pointerId); } catch (_) {}
+    const mv = (ev) => {
+      el.style.left = (sl + ev.clientX - sx) + 'px';
+      el.style.top = (stp + ev.clientY - sy) + 'px';
+    };
+    const up = () => {
+      el.removeEventListener('pointermove', mv);
+      el.removeEventListener('pointerup', up);
+      if (st.kind === 'text') commitTextPos(el, st); else commitBoxPos(el, st);
+    };
+    el.addEventListener('pointermove', mv);
+    el.addEventListener('pointerup', up);
+  }
+
+  function startResize(e, el, st) {
+    e.preventDefault();
+    e.stopPropagation();
+    selectStamp(st);
+    const rs = e.currentTarget;
+    const sx = e.clientX, sy = e.clientY;
+    try { rs.setPointerCapture(e.pointerId); } catch (_) {}
+    if (st.kind === 'text') {
+      const txt = el.querySelector('.stamp-text');
+      const startSize = st.size;
+      const startW = Math.max(20, el.offsetWidth);
+      const mv = (ev) => {
+        const f = Math.max(0.15, (startW + ev.clientX - sx) / startW);
+        st.size = Math.round(Math.min(120, Math.max(6, startSize * f)) * 2) / 2;
+        txt.style.fontSize = textCssSize(st) + 'px';
+      };
+      const up = () => {
+        rs.removeEventListener('pointermove', mv);
+        rs.removeEventListener('pointerup', up);
+        commitTextPos(el, st);
+      };
+      rs.addEventListener('pointermove', mv);
+      rs.addEventListener('pointerup', up);
+    } else {
+      const sw = parseFloat(el.style.width), sh = parseFloat(el.style.height);
+      const mv = (ev) => {
+        el.style.width = Math.max(8, sw + ev.clientX - sx) + 'px';
+        el.style.height = Math.max(8, sh + ev.clientY - sy) + 'px';
+      };
+      const up = () => {
+        rs.removeEventListener('pointermove', mv);
+        rs.removeEventListener('pointerup', up);
+        commitBoxPos(el, st);
+      };
+      rs.addEventListener('pointermove', mv);
+      rs.addEventListener('pointerup', up);
+    }
   }
 
   // overlay CSS pixel coords → canvas pixel coords → PDF user-space points
@@ -1043,8 +1267,10 @@
       const w = Math.abs(end.px - boxDrag.px), h = Math.abs(end.py - boxDrag.py);
       boxDrag = null;
       if (w > 2 && h > 2) {
-        editorItem.stamps.push({ kind: 'box', x, y, w, h });
-        renderEditor();
+        const st = { kind: 'box', x, y, w, h };
+        editorItem.stamps.push(st);
+        selectedStamp = st;
+        syncStampLayer();
       }
       return;
     }
@@ -1053,30 +1279,72 @@
   editOverlay.addEventListener('click', (e) => {
     if (!editorItem || !editorVp || editorMode !== 'text') return;
     const text = $('stampText').value.trim();
-    if (!text) { toast('Type your text in the box first, then click the page.'); $('stampText').focus(); return; }
+    if (!text && selectedStamp) { selectStamp(null); return; }  // empty click = deselect
     const pt = overlayToPdfPoint(e);
-    editorItem.stamps.push({
+    const st = {
       kind: 'text',
       x: pt.px, y: pt.py,
-      text,
+      text: text || 'Type here',
       size: parseInt($('stampSize').value, 10) || 14,
       color: $('stampColor').value
-    });
-    renderEditor();
+    };
+    editorItem.stamps.push(st);
+    selectedStamp = st;
+    syncStampLayer();
+    // no text typed yet → drop straight into editing the new box
+    if (!text) {
+      const el = elForStamp(st);
+      if (el) startTextEdit(el, st);
+    }
+  });
+
+  // size / color pickers also restyle the selected text box
+  $('stampSize').addEventListener('change', () => {
+    if (selectedStamp && selectedStamp.kind === 'text') {
+      selectedStamp.size = parseInt($('stampSize').value, 10) || 14;
+      const el = elForStamp(selectedStamp);
+      if (el) { positionTextEl(el, selectedStamp); commitTextPos(el, selectedStamp); }
+    }
+  });
+  $('stampColor').addEventListener('change', () => {
+    if (selectedStamp && selectedStamp.kind === 'text') {
+      selectedStamp.color = $('stampColor').value;
+      const el = elForStamp(selectedStamp);
+      if (el) el.querySelector('.stamp-text').style.color = CSS_COLORS[selectedStamp.color] || '#000000';
+    }
   });
 
   $('modeText').addEventListener('click', () => setEditorMode('text'));
   $('modeBox').addEventListener('click', () => setEditorMode('box'));
   $('btnUndoStamp').addEventListener('click', () => {
-    if (editorItem && editorItem.stamps.length) { editorItem.stamps.pop(); renderEditor(); }
+    if (editorItem && editorItem.stamps.length) {
+      editorItem.stamps.pop();
+      selectedStamp = null;
+      syncStampLayer();
+    }
   });
   $('btnClearStamps').addEventListener('click', () => {
-    if (editorItem && editorItem.stamps.length) { editorItem.stamps = []; renderEditor(); }
+    if (editorItem && editorItem.stamps.length) {
+      editorItem.stamps = [];
+      selectedStamp = null;
+      syncStampLayer();
+    }
   });
   $('btnEditDone').addEventListener('click', closeEditor);
   $('editModal').addEventListener('click', (e) => { if (e.target === $('editModal')) closeEditor(); });
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && $('editModal').classList.contains('open')) closeEditor();
+    if (!$('editModal').classList.contains('open')) return;
+    const a = document.activeElement;
+    const typing = a && (a.isContentEditable || a.tagName === 'INPUT' || a.tagName === 'SELECT' || a.tagName === 'TEXTAREA');
+    if (e.key === 'Escape') {
+      if (a && a.isContentEditable) { a.blur(); return; }
+      closeEditor();
+      return;
+    }
+    if ((e.key === 'Delete' || e.key === 'Backspace') && selectedStamp && !typing) {
+      e.preventDefault();
+      removeStamp(selectedStamp);
+    }
   });
 
   function cleanName(extra) {
