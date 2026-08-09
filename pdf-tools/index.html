@@ -818,6 +818,9 @@
       <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:#475569;white-space:nowrap;cursor:pointer" title="Stamps Page 1 of N at the bottom of every page">
         <input type="checkbox" id="chkNumbers" style="width:15px;height:15px;accent-color:var(--teal)"> Page numbers
       </label>
+      <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:#475569;white-space:nowrap;cursor:pointer" title="The PDF will require a password to open — you choose it when you create the file">
+        <input type="checkbox" id="chkLock" style="width:15px;height:15px;accent-color:var(--teal)"> &#128274; Lock with password
+      </label>
       <button class="teal" id="btnCreate">&#8681; Create PDF</button>
       <button id="btnPrint" title="Print the new document">&#128424; Print</button>
       <button id="btnEmail" title="Create a Gmail draft with this PDF attached">&#9993; Gmail draft</button>
@@ -2614,7 +2617,68 @@ Bill Layne Insurance
     return new Uint8Array(await out.save());
   }
 
-  // build the tray PDF, honoring the "Page numbers" + "Shrink for email" checkboxes
+  /* Lock with password — uses the @cantoo/pdf-lib fork (loaded on demand,
+     kept OFF the global so the rest of the app stays on stock pdf-lib) */
+  let cantooLib = null;
+  function getCantoo() {
+    if (cantooLib) return Promise.resolve(cantooLib);
+    return new Promise((res, rej) => {
+      const orig = window.PDFLib;
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/@cantoo/pdf-lib@2.5.3/dist/pdf-lib.min.js';
+      s.onload = () => {
+        cantooLib = window.PDFLib;
+        window.PDFLib = orig;   // restore immediately — nothing else may run on the fork
+        res(cantooLib);
+      };
+      s.onerror = () => rej(new Error('could not load the encryption library'));
+      document.head.appendChild(s);
+    });
+  }
+  async function lockPdfBytes(bytes, pw) {
+    const Fork = await getCantoo();
+    const doc = await Fork.PDFDocument.load(bytes);
+    await doc.encrypt({ userPassword: pw, ownerPassword: pw });
+    return new Uint8Array(await doc.save());
+  }
+
+  // ask for the password to LOCK with (reuses the pwModal, shown as visible text to avoid typos)
+  function askSetPassword() {
+    return new Promise((resolve) => {
+      $('pwFileName').textContent = cleanName();
+      $('pwHint').textContent = 'Choose the password this PDF will need to open. You can see what you type so there are no typos. Share the password by phone or text — never in the same email as the PDF.';
+      const ok = $('btnPwOk'), cancel = $('btnPwCancel'), input = $('pwInput');
+      const okHtml = ok.innerHTML, cancelHtml = cancel.innerHTML;
+      ok.innerHTML = '&#128274; Lock';
+      cancel.innerHTML = 'Cancel';
+      input.type = 'text';
+      input.value = '';
+      $('pwModal').classList.add('open');
+      function cleanup(val) {
+        $('pwModal').classList.remove('open');
+        ok.innerHTML = okHtml;
+        cancel.innerHTML = cancelHtml;
+        input.type = 'password';
+        ok.removeEventListener('click', onOk);
+        cancel.removeEventListener('click', onCancel);
+        input.removeEventListener('keydown', onKey);
+        resolve(val);
+      }
+      function onOk() { cleanup(input.value.trim()); }
+      function onCancel() { cleanup(null); }
+      function onKey(e) {
+        if (e.key === 'Enter') onOk();
+        if (e.key === 'Escape') onCancel();
+      }
+      ok.addEventListener('click', onOk);
+      cancel.addEventListener('click', onCancel);
+      input.addEventListener('keydown', onKey);
+      setTimeout(() => input.focus(), 60);
+    });
+  }
+
+  // build the tray PDF, honoring the Page-numbers / Shrink / Lock checkboxes.
+  // Returns null if the user cancels the lock password.
   async function buildFinalBytes() {
     let bytes = await buildPdfBytes(tray);
     let note = '';
@@ -2632,6 +2696,13 @@ Bill Layne Insurance
         note = ' (already compact — kept original ' + fmtSize(bytes.length) + ')';
       }
     }
+    if ($('chkLock').checked) {
+      const pw = await askSetPassword();
+      if (!pw) return null;
+      busy(true, 'Locking with password…');
+      bytes = await lockPdfBytes(bytes, pw);
+      note += ' — locked 🔒';
+    }
     return { bytes, note };
   }
 
@@ -2640,6 +2711,7 @@ Bill Layne Insurance
     busy(true, 'Creating PDF…');
     try {
       const r = await buildFinalBytes();
+      if (!r) { busy(false); toast('Cancelled — no password was set, so nothing was created.'); return; }
       download(r.bytes, cleanName());
       toast('Created ' + cleanName() + ' — ' + tray.length + ' page' + (tray.length === 1 ? '' : 's') + r.note);
     } catch (err) {
@@ -2797,6 +2869,7 @@ Bill Layne Insurance
     busy(true, 'Building the PDF…');
     try {
       const r = await buildFinalBytes();
+      if (!r) { busy(false); mailBanner(false, '⚠️ Cancelled — no password was set, so no draft was created.'); return; }
       if (r.bytes.length > 20 * 1048576) {
         busy(false);
         mailBanner(false, '⚠️ This PDF is ' + fmtSize(r.bytes.length) + ' — too big to email. Turn on “Shrink for email” or remove some pages.');
