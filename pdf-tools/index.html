@@ -743,6 +743,7 @@
         <input type="checkbox" id="chkShrink" style="width:15px;height:15px;accent-color:var(--teal)"> Shrink for email
       </label>
       <button class="teal" id="btnCreate">&#8681; Create PDF</button>
+      <button id="btnPrint" title="Print the new document">&#128424; Print</button>
       <button id="btnEmail" title="Create a Gmail draft with this PDF attached">&#9993; Gmail draft</button>
       <button id="btnEachPage" title="Download every page in the tray as its own one-page PDF">Split into single pages</button>
       <button class="ghost" id="btnClearTray">Clear tray</button>
@@ -1199,6 +1200,8 @@ Bill Layne Insurance
     const n = tray.length;
     $('trayCount').textContent = n + ' page' + (n === 1 ? '' : 's');
     $('btnCreate').disabled = !n;
+    $('btnPrint').disabled = !n;
+    $('btnEmail').disabled = !n;
     $('btnEachPage').disabled = !n;
     $('btnClearTray').disabled = !n;
   }
@@ -2431,6 +2434,58 @@ Bill Layne Insurance
     }
     busy(false);
   });
+  /* Print: render pages to images in a hidden frame, then open the print dialog.
+     (More reliable than printing an embedded PDF, especially on phones.) */
+  $('btnPrint').addEventListener('click', async () => {
+    if (!tray.length) return;
+    busy(true, 'Preparing to print…');
+    try {
+      const bytes = await buildPdfBytes(tray);
+      const src = await pdfjsLib.getDocument({ data: bytes.slice() }).promise;
+      const imgs = [];
+      for (let i = 1; i <= src.numPages; i++) {
+        const page = await src.getPage(i);
+        const vp1 = page.getViewport({ scale: 1 });
+        const scale = Math.min(3, 2200 / Math.max(vp1.width, vp1.height));
+        const vp = page.getViewport({ scale });
+        const c = document.createElement('canvas');
+        c.width = Math.ceil(vp.width);
+        c.height = Math.ceil(vp.height);
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, c.width, c.height);
+        await page.render({ canvasContext: ctx, viewport: vp, intent: 'print' }).promise;
+        imgs.push(c.toDataURL('image/jpeg', 0.85));
+      }
+      src.destroy();
+      const old = document.getElementById('printFrame');
+      if (old) old.remove();
+      const frame = document.createElement('iframe');
+      frame.id = 'printFrame';
+      frame.style.cssText = 'position:fixed;right:0;bottom:0;width:1px;height:1px;border:0;visibility:hidden';
+      document.body.appendChild(frame);
+      const fdoc = frame.contentDocument;
+      fdoc.open();
+      fdoc.write('<!DOCTYPE html><html><head><title>' + cleanName().replace(/</g, '&lt;') + '</title><style>' +
+        '@page{margin:0.25in}html,body{margin:0;padding:0}' +
+        '.pg{page-break-after:always;text-align:center}.pg:last-child{page-break-after:auto}' +
+        '.pg img{max-width:100%;max-height:97vh}' +
+        '</style></head><body>' +
+        imgs.map(u => '<div class="pg"><img src="' + u + '"></div>').join('') +
+        '</body></html>');
+      fdoc.close();
+      await Promise.all([...fdoc.images].map(im => im.decode ? im.decode().catch(() => {}) : Promise.resolve()));
+      busy(false);
+      frame.contentWindow.focus();
+      frame.contentWindow.print();
+      toast('Print window opened — ' + imgs.length + ' page' + (imgs.length === 1 ? '' : 's') + '.');
+    } catch (err) {
+      console.error(err);
+      busy(false);
+      toast('Sorry — something went wrong preparing the print.');
+    }
+  });
+
   $('btnEachPage').addEventListener('click', async () => {
     if (!tray.length) return;
     busy(true, 'Splitting into single pages…');
