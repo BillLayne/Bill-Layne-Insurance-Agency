@@ -496,7 +496,7 @@
   #customStampText { width: 100%; font: inherit; font-size: 13px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; resize: vertical; min-height: 54px; }
 
   /* form-fill modal */
-  #formModal, #emailModal, #phoneModal {
+  #formModal, #emailModal, #phoneModal, #pwModal, #viewModal {
     position: fixed;
     inset: 0;
     background: rgba(2,6,23,.55);
@@ -506,8 +506,72 @@
     z-index: 70;
     padding: 14px;
   }
-  #formModal.open, #emailModal.open, #phoneModal.open { display: flex; }
+  #formModal.open, #emailModal.open, #phoneModal.open, #pwModal.open, #viewModal.open { display: flex; }
   #phoneModal { z-index: 72; }
+  #pwModal { z-index: 74; }
+
+  /* restore-work banner */
+  #restoreBar {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    background: #fffbeb;
+    border: 2px solid var(--gold);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #713f12;
+  }
+  #restoreBar.show { display: flex; }
+
+  /* search hits */
+  .page-card.search-hit { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,168,78,.35); }
+  .hit-badge {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: var(--gold);
+    color: #1e293b;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 999px;
+    pointer-events: none;
+  }
+
+  /* zoom button on source cards */
+  .zoom-btn {
+    position: absolute;
+    bottom: 24px;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    font-size: 12px;
+    line-height: 1;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,.95);
+  }
+
+  /* page viewer */
+  #viewModal .form-card { width: min(860px, 100%); height: min(92vh, 900px); }
+  #viewBody {
+    flex: 1;
+    overflow: auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background: #e2e8f0;
+    padding: 12px;
+    min-height: 0;
+  }
+  #viewCanvas { box-shadow: 0 4px 18px rgba(0,0,0,.25); }
   .mail-banner { display: none; border-radius: 10px; padding: 10px 12px; font-size: 13px; font-weight: 600; }
   .mail-banner.ok { display: block; background: #f0fdf4; border: 1px solid #86efac; color: #166534; }
   .mail-banner.bad { display: block; background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; }
@@ -718,8 +782,17 @@
       Current document(s)
       <span class="tip">&mdash; click a page (or drag it down) to add it to the new document</span>
       <span style="flex:1"></span>
+      <input type="text" id="searchInput" placeholder="Find text, e.g. VIN" style="width:150px" title="Highlight the pages that contain this text">
+      <button id="btnSearch">&#128269; Find</button>
+      <button class="ghost" id="btnSearchClear" style="display:none">Clear</button>
       <button class="primary" id="btnAdd">+ Add PDFs</button>
       <button class="danger" id="btnReset">Start over</button>
+    </div>
+
+    <div id="restoreBar">
+      <span>&#9202; You have unsaved work from earlier<span id="restoreInfo"></span>.</span>
+      <button class="primary" id="btnRestore">Restore it</button>
+      <button class="ghost" id="btnDiscardRestore">Discard</button>
     </div>
 
     <div class="dropzone" id="dropzone">
@@ -741,6 +814,9 @@
       <input type="text" id="nameInput" value="new-document" title="File name for the new PDF" style="width:160px">
       <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:#475569;white-space:nowrap;cursor:pointer" title="Re-saves every page as a compact scan — much smaller file, ideal for emailing. (Text is no longer selectable in the shrunk copy.)">
         <input type="checkbox" id="chkShrink" style="width:15px;height:15px;accent-color:var(--teal)"> Shrink for email
+      </label>
+      <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:#475569;white-space:nowrap;cursor:pointer" title="Stamps Page 1 of N at the bottom of every page">
+        <input type="checkbox" id="chkNumbers" style="width:15px;height:15px;accent-color:var(--teal)"> Page numbers
       </label>
       <button class="teal" id="btnCreate">&#8681; Create PDF</button>
       <button id="btnPrint" title="Print the new document">&#128424; Print</button>
@@ -885,6 +961,37 @@ Bill Layne Insurance
   </div>
 </div>
 
+<!-- password modal for locked PDFs -->
+<div id="pwModal">
+  <div class="form-card" style="width:min(420px,100%)">
+    <div class="form-head">Locked PDF <span class="fn" id="pwFileName"></span><span class="grow"></span></div>
+    <div class="form-body">
+      <div class="sig-note" id="pwHint">This PDF is password-protected. Enter its password to open it (often the last 4 of an SSN or a date of birth &mdash; check the email it came in).</div>
+      <div class="form-row">
+        <label>Password</label>
+        <input type="password" id="pwInput" autocomplete="off">
+      </div>
+    </div>
+    <div class="form-foot">
+      <button id="btnPwCancel">Skip this file</button>
+      <button class="teal" id="btnPwOk">&#128275; Open</button>
+    </div>
+  </div>
+</div>
+
+<!-- page viewer (zoom) -->
+<div id="viewModal">
+  <div class="form-card">
+    <div class="form-head"><span class="fn" id="viewTitle" style="text-transform:none"></span><span class="grow"></span><button class="ghost" id="btnViewClose">&#10005;</button></div>
+    <div id="viewBody"><canvas id="viewCanvas"></canvas></div>
+    <div class="form-foot" style="justify-content:center">
+      <button id="btnViewPrev">&#9664; Previous</button>
+      <button class="teal" id="btnViewAdd">+ Add this page to the new document</button>
+      <button id="btnViewNext">Next &#9654;</button>
+    </div>
+  </div>
+</div>
+
 <!-- fillable-form modal -->
 <div id="formModal">
   <div class="form-card">
@@ -1013,9 +1120,75 @@ Bill Layne Insurance
     toast('Added image "' + name + '" — it will become a PDF page');
   }
 
+  // small promise-based password prompt (native prompt() is unreliable in Chrome)
+  function askPassword(name, wasWrong) {
+    return new Promise((resolve) => {
+      $('pwFileName').textContent = name;
+      $('pwHint').textContent = wasWrong
+        ? 'That password was not right — try again.'
+        : 'This PDF is password-protected. Enter its password to open it (often the last 4 of an SSN or a date of birth — check the email it came in).';
+      $('pwInput').value = '';
+      $('pwModal').classList.add('open');
+      const ok = $('btnPwOk'), cancel = $('btnPwCancel'), input = $('pwInput');
+      function cleanup(val) {
+        $('pwModal').classList.remove('open');
+        ok.removeEventListener('click', onOk);
+        cancel.removeEventListener('click', onCancel);
+        input.removeEventListener('keydown', onKey);
+        resolve(val);
+      }
+      function onOk() { cleanup(input.value); }
+      function onCancel() { cleanup(null); }
+      function onKey(e) {
+        if (e.key === 'Enter') onOk();
+        if (e.key === 'Escape') onCancel();
+      }
+      ok.addEventListener('click', onOk);
+      cancel.addEventListener('click', onCancel);
+      input.addEventListener('keydown', onKey);
+      setTimeout(() => input.focus(), 60);
+    });
+  }
+
   async function addPdfData(name, bytes) {
-    // pdf.js transfers the buffer to its worker, so hand it a copy
-    const pdfjsDoc = await pdfjsLib.getDocument({ data: bytes.slice() }).promise;
+    // pdf.js transfers the buffer to its worker, so hand it a copy.
+    // Locked PDFs: keep asking for the password until it opens or the user skips.
+    let pdfjsDoc = null, password;
+    while (true) {
+      try {
+        pdfjsDoc = await pdfjsLib.getDocument(
+          password ? { data: bytes.slice(), password } : { data: bytes.slice() }
+        ).promise;
+        break;
+      } catch (err) {
+        if (err && err.name === 'PasswordException') {
+          password = await askPassword(name, password !== undefined);
+          if (password === null) { toast('Skipped "' + name + '".'); return; }
+        } else { throw err; }
+      }
+    }
+    if (password) {
+      // rebuild an UNLOCKED copy by re-rendering each page, so every other
+      // feature (editing, combining, printing) works on it normally
+      const out = await PDFLib.PDFDocument.create();
+      for (let i = 1; i <= pdfjsDoc.numPages; i++) {
+        const page = await pdfjsDoc.getPage(i);
+        const vp1 = page.getViewport({ scale: 1 });
+        const scale = Math.min(3, 2200 / Math.max(vp1.width, vp1.height));
+        const vp = page.getViewport({ scale });
+        const c = document.createElement('canvas');
+        c.width = Math.ceil(vp.width);
+        c.height = Math.ceil(vp.height);
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, c.width, c.height);
+        await page.render({ canvasContext: ctx, viewport: vp, intent: 'print' }).promise;
+        const jpg = await out.embedJpg(dataUrlToBytes(c.toDataURL('image/jpeg', 0.85)));
+        out.addPage([vp1.width, vp1.height]).drawImage(jpg, { x: 0, y: 0, width: vp1.width, height: vp1.height });
+      }
+      bytes = new Uint8Array(await out.save());
+      toast('Unlocked "' + name + '" — an unlocked copy is now in your workspace.');
+    }
     const docId = nextDocId++;
     const doc = { name, bytes, pages: [] };
     // detect fillable form fields (ACORD forms, carrier forms…)
@@ -1045,7 +1218,7 @@ Bill Layne Insurance
   }
 
   /* ── Rendering: source pane ── */
-  function renderAll() { renderSources(); renderTray(); }
+  function renderAll() { renderSources(); renderTray(); scheduleAutosave(); }
 
   function renderSources() {
     const has = docs.size > 0;
@@ -1089,6 +1262,7 @@ Bill Layne Insurance
         tray = tray.filter(t => t.docId !== docId);
         doc.pages.forEach(p => srcIndex.delete(p.sid));
         docs.delete(docId);
+        docTextCache.delete(docId);
         renderAll();
       });
       head.appendChild(addAllBtn);
@@ -1099,17 +1273,24 @@ Bill Layne Insurance
       grid.className = 'src-grid';
       doc.pages.forEach(p => {
         const used = usage.get(p.docId + ':' + p.pageIndex) || 0;
+        const isHit = searchHits.has(p.docId + ':' + p.pageIndex);
         const card = document.createElement('div');
-        card.className = 'page-card';
+        card.className = 'page-card' + (isHit ? ' search-hit' : '');
         card.draggable = true;
         card.title = 'Click to add to the new document';
         card.innerHTML =
           (used ? '<div class="used-badge">' + (used > 1 ? '×' + used : '✓') + '</div>' : '') +
+          (isHit ? '<div class="hit-badge">match</div>' : '') +
           '<div class="thumb-box"><img src="' + p.thumb + '" alt=""></div>' +
+          '<button class="zoom-btn" title="View this page large">&#128269;</button>' +
           '<div class="page-label">p.' + (p.pageIndex + 1) + '</div>';
         card.addEventListener('click', () => {
           trayAdd(p);
           renderAll();
+        });
+        card.querySelector('.zoom-btn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          openViewer(p.docId, p.pageIndex);
         });
         card.addEventListener('dragstart', (e) => {
           dragData = { kind: 'src', sid: p.sid };
@@ -1491,6 +1672,7 @@ Bill Layne Insurance
     if (!editorItem || !editorVp) return;
     for (const st of editorItem.stamps) stampLayer.appendChild(buildStampEl(st));
     selectStamp(selectedStamp && editorItem.stamps.includes(selectedStamp) ? selectedStamp : null);
+    scheduleAutosave();
   }
 
   function buildStampEl(st) {
@@ -2292,6 +2474,7 @@ Bill Layne Insurance
       });
       form.updateFieldAppearances();
       doc.bytes = new Uint8Array(await pdfDoc.save());
+      docTextCache.delete(formDocId);
       await rebuildThumbs(formDocId);
       closeFormModal();
       renderAll();
@@ -2328,6 +2511,7 @@ Bill Layne Insurance
   $('btnEditDone').addEventListener('click', closeEditor);
   $('editModal').addEventListener('click', (e) => { if (e.target === $('editModal')) closeEditor(); });
   document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && $('viewModal').classList.contains('open')) { closeViewer(); return; }
     if (e.key === 'Escape' && $('phoneModal').classList.contains('open')) { closePhoneModal(); return; }
     if (e.key === 'Escape' && $('emailModal').classList.contains('open')) { closeEmailModal(); return; }
     if (e.key === 'Escape' && $('formModal').classList.contains('open')) { closeFormModal(); return; }
@@ -2372,7 +2556,10 @@ Bill Layne Insurance
     docs.clear();
     srcIndex.clear();
     tray = [];
+    docTextCache.clear();
+    searchHits = new Set();
     $('fileInput').value = '';
+    sessionDel().catch(() => {});
     renderAll();
   });
   $('btnClearTray').addEventListener('click', () => { tray = []; renderAll(); });
@@ -2404,10 +2591,37 @@ Bill Layne Insurance
     return n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB';
   }
 
-  // build the tray PDF, honoring the "Shrink for email" checkbox; returns {bytes, note}
+  // stamp "Page N of M" at the display-bottom-center of each page (rotation-aware)
+  async function addPageNumbers(bytes) {
+    const src = await pdfjsLib.getDocument({ data: bytes.slice() }).promise;
+    const out = await PDFLib.PDFDocument.load(bytes);
+    const font = await out.embedFont(PDFLib.StandardFonts.Helvetica);
+    const pages = out.getPages();
+    for (let i = 0; i < pages.length; i++) {
+      const label = 'Page ' + (i + 1) + ' of ' + pages.length;
+      const w = font.widthOfTextAtSize(label, 9);
+      const page = pages[i];
+      const R = page.getRotation().angle || 0;
+      const vp = (await src.getPage(i + 1)).getViewport({ scale: 1 });
+      const p = vp.convertToPdfPoint(vp.width / 2 - w / 2, vp.height - 12);
+      page.drawText(label, {
+        x: p[0], y: p[1], size: 9, font,
+        color: PDFLib.rgb(0.42, 0.45, 0.5),
+        rotate: PDFLib.degrees(R)
+      });
+    }
+    src.destroy();
+    return new Uint8Array(await out.save());
+  }
+
+  // build the tray PDF, honoring the "Page numbers" + "Shrink for email" checkboxes
   async function buildFinalBytes() {
     let bytes = await buildPdfBytes(tray);
     let note = '';
+    if ($('chkNumbers').checked) {
+      busy(true, 'Adding page numbers…');
+      bytes = await addPageNumbers(bytes);
+    }
     if ($('chkShrink').checked) {
       busy(true, 'Shrinking for email…');
       const small = await compressPdfBytes(bytes);
@@ -2440,7 +2654,8 @@ Bill Layne Insurance
     if (!tray.length) return;
     busy(true, 'Preparing to print…');
     try {
-      const bytes = await buildPdfBytes(tray);
+      let bytes = await buildPdfBytes(tray);
+      if ($('chkNumbers').checked) bytes = await addPageNumbers(bytes);
       const src = await pdfjsLib.getDocument({ data: bytes.slice() }).promise;
       const imgs = [];
       for (let i = 1; i <= src.numPages; i++) {
@@ -2650,6 +2865,228 @@ Bill Layne Insurance
     }
     dropzone.classList.remove('dragover');
   }));
+
+  /* ── Page viewer (zoom) ── */
+  let viewDocId = null, viewPageIndex = 0;
+
+  async function openViewer(docId, pageIndex) {
+    viewDocId = docId;
+    viewPageIndex = pageIndex;
+    $('viewModal').classList.add('open');
+    renderViewer();
+  }
+  async function renderViewer() {
+    const doc = docs.get(viewDocId);
+    if (!doc) return;
+    busy(true, 'Rendering page…');
+    try {
+      const bytes = await buildPdfBytes([{ docId: viewDocId, pageIndex: viewPageIndex, rot: 0, stamps: [] }]);
+      const pdoc = await pdfjsLib.getDocument({ data: bytes }).promise;
+      const page = await pdoc.getPage(1);
+      const vp1 = page.getViewport({ scale: 1 });
+      const body = $('viewBody');
+      const maxW = Math.max(280, body.clientWidth - 26);
+      const maxH = Math.max(280, body.clientHeight - 26);
+      const fit = Math.min(maxW / vp1.width, maxH / vp1.height);
+      const vp = page.getViewport({ scale: fit * 2 });
+      const canvas = $('viewCanvas');
+      canvas.width = Math.ceil(vp.width);
+      canvas.height = Math.ceil(vp.height);
+      canvas.style.width = Math.ceil(vp.width / 2) + 'px';
+      canvas.style.height = Math.ceil(vp.height / 2) + 'px';
+      await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp, intent: 'print' }).promise;
+      pdoc.destroy();
+      $('viewTitle').textContent = doc.name + ' — page ' + (viewPageIndex + 1) + ' of ' + doc.pages.length;
+      $('btnViewPrev').disabled = viewPageIndex <= 0;
+      $('btnViewNext').disabled = viewPageIndex >= doc.pages.length - 1;
+    } catch (err) {
+      console.error(err);
+      toast('Could not render that page.');
+    }
+    busy(false);
+  }
+  function closeViewer() { $('viewModal').classList.remove('open'); }
+  $('btnViewClose').addEventListener('click', closeViewer);
+  $('viewModal').addEventListener('click', (e) => { if (e.target === $('viewModal')) closeViewer(); });
+  $('btnViewPrev').addEventListener('click', () => { if (viewPageIndex > 0) { viewPageIndex--; renderViewer(); } });
+  $('btnViewNext').addEventListener('click', () => {
+    const doc = docs.get(viewDocId);
+    if (doc && viewPageIndex < doc.pages.length - 1) { viewPageIndex++; renderViewer(); }
+  });
+  $('btnViewAdd').addEventListener('click', () => {
+    const doc = docs.get(viewDocId);
+    const src = doc && doc.pages.find(p => p.pageIndex === viewPageIndex);
+    if (src) {
+      trayAdd(src);
+      renderAll();
+      toast('Added page ' + (viewPageIndex + 1) + ' to the new document.');
+    }
+  });
+
+  /* ── Find text across loaded pages ── */
+  const docTextCache = new Map();   // docId -> [lower-cased page text]
+  let searchHits = new Set();       // 'docId:pageIndex'
+
+  async function getDocTexts(docId) {
+    if (docTextCache.has(docId)) return docTextCache.get(docId);
+    const doc = docs.get(docId);
+    if (!doc || doc.kind === 'image') { docTextCache.set(docId, []); return []; }
+    const pdoc = await pdfjsLib.getDocument({ data: doc.bytes.slice() }).promise;
+    const texts = [];
+    for (let i = 1; i <= pdoc.numPages; i++) {
+      const tc = await (await pdoc.getPage(i)).getTextContent();
+      texts.push(tc.items.map(it => it.str).join(' ').toLowerCase());
+    }
+    pdoc.destroy();
+    docTextCache.set(docId, texts);
+    return texts;
+  }
+
+  $('btnSearch').addEventListener('click', async () => {
+    const q = $('searchInput').value.trim().toLowerCase();
+    if (!q) { toast('Type something to find, like VIN or a name.'); return; }
+    if (!docs.size) { toast('Load a PDF first.'); return; }
+    busy(true, 'Searching pages…');
+    try {
+      searchHits = new Set();
+      for (const [docId] of docs) {
+        const texts = await getDocTexts(docId);
+        texts.forEach((t, i) => { if (t.includes(q)) searchHits.add(docId + ':' + i); });
+      }
+      renderAll();
+      $('btnSearchClear').style.display = '';
+      if (searchHits.size) {
+        toast(searchHits.size + ' page' + (searchHits.size === 1 ? '' : 's') + ' contain "' + $('searchInput').value.trim() + '" — highlighted in gold.');
+        const first = document.querySelector('.page-card.search-hit');
+        if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        toast('No pages contain that text. (Photos and scanned pages cannot be searched.)');
+      }
+    } catch (err) {
+      console.error(err);
+      toast('Sorry — search hit a problem.');
+    }
+    busy(false);
+  });
+  $('searchInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('btnSearch').click(); });
+  $('btnSearchClear').addEventListener('click', () => {
+    searchHits = new Set();
+    $('searchInput').value = '';
+    $('btnSearchClear').style.display = 'none';
+    renderAll();
+  });
+
+  /* ── Auto-save & restore (IndexedDB — stays on this computer) ── */
+  function sdb() {
+    return new Promise((res, rej) => {
+      const r = indexedDB.open('bliPdfStudio', 1);
+      r.onupgradeneeded = () => r.result.createObjectStore('session');
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    });
+  }
+  function sessionPut(v) {
+    return sdb().then(db => new Promise((res, rej) => {
+      const tx = db.transaction('session', 'readwrite');
+      tx.objectStore('session').put(v, 'current');
+      tx.oncomplete = res;
+      tx.onerror = () => rej(tx.error);
+    }));
+  }
+  function sessionGet() {
+    return sdb().then(db => new Promise((res, rej) => {
+      const tx = db.transaction('session', 'readonly');
+      const q = tx.objectStore('session').get('current');
+      q.onsuccess = () => res(q.result);
+      q.onerror = () => rej(q.error);
+    }));
+  }
+  function sessionDel() {
+    return sdb().then(db => new Promise((res, rej) => {
+      const tx = db.transaction('session', 'readwrite');
+      tx.objectStore('session').delete('current');
+      tx.oncomplete = res;
+      tx.onerror = () => rej(tx.error);
+    }));
+  }
+
+  let autosaveTimer = null;
+  function scheduleAutosave() {
+    clearTimeout(autosaveTimer);
+    autosaveTimer = setTimeout(() => {
+      if (!docs.size && !tray.length) { sessionDel().catch(() => {}); return; }
+      sessionPut({
+        when: Date.now(),
+        nextDocId, nextSid, nextTid,
+        name: $('nameInput').value,
+        docs: [...docs.entries()].map(([id, d]) => ({
+          id, name: d.name, kind: d.kind || 'pdf', bytes: d.bytes,
+          imgType: d.imgType || null, imgW: d.imgW || 0, imgH: d.imgH || 0,
+          formFields: d.formFields || 0,
+          pages: d.pages.map(p => ({ sid: p.sid, pageIndex: p.pageIndex, thumb: p.thumb }))
+        })),
+        tray: tray.map(t => ({ tid: t.tid, docId: t.docId, pageIndex: t.pageIndex, rot: t.rot, stamps: t.stamps, thumb: t.thumb }))
+      }).catch(() => {});
+    }, 1200);
+  }
+
+  async function offerRestore() {
+    let saved = null;
+    try { saved = await sessionGet(); } catch (_) {}
+    if (!saved || !saved.docs || !saved.docs.length || docs.size) return;
+    const pageCount = saved.docs.reduce((n, d) => n + d.pages.length, 0);
+    const at = new Date(saved.when);
+    $('restoreInfo').textContent = ' (' + saved.docs.length + ' file' + (saved.docs.length === 1 ? '' : 's') + ', ' +
+      pageCount + ' page' + (pageCount === 1 ? '' : 's') + ', saved ' +
+      at.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) + ')';
+    $('restoreBar').classList.add('show');
+    $('btnRestore').onclick = () => {
+      try {
+        docs.clear();
+        srcIndex.clear();
+        tray = [];
+        saved.docs.forEach(d => {
+          const doc = {
+            name: d.name,
+            bytes: d.bytes instanceof Uint8Array ? d.bytes : new Uint8Array(d.bytes),
+            pages: [],
+            formFields: d.formFields || 0
+          };
+          if (d.kind === 'image') {
+            doc.kind = 'image';
+            doc.imgType = d.imgType || 'png';
+            doc.imgW = d.imgW;
+            doc.imgH = d.imgH;
+          }
+          docs.set(d.id, doc);
+          d.pages.forEach(p => {
+            const entry = { sid: p.sid, docId: d.id, pageIndex: p.pageIndex, thumb: p.thumb };
+            doc.pages.push(entry);
+            srcIndex.set(entry.sid, entry);
+          });
+        });
+        tray = (saved.tray || []).map(t => ({
+          tid: t.tid, docId: t.docId, pageIndex: t.pageIndex,
+          rot: t.rot || 0, stamps: t.stamps || [], thumb: t.thumb
+        }));
+        nextDocId = saved.nextDocId || (Math.max(0, ...docs.keys()) + 1);
+        nextSid = saved.nextSid || 1;
+        nextTid = saved.nextTid || 1;
+        if (saved.name) $('nameInput').value = saved.name;
+        $('restoreBar').classList.remove('show');
+        renderAll();
+        toast('Restored your earlier work.');
+      } catch (err) {
+        console.error(err);
+        toast('Sorry — could not restore the earlier work.');
+      }
+    };
+    $('btnDiscardRestore').onclick = () => {
+      $('restoreBar').classList.remove('show');
+      sessionDel().catch(() => {});
+    };
+  }
+  offerRestore();
 
   // exposed for automated testing
   window.PDFStudio = {
