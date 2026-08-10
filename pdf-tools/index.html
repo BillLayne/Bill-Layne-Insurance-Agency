@@ -527,6 +527,9 @@
   }
   #restoreBar.show { display: flex; }
 
+  .watch-btn.watching { background: var(--teal); border-color: var(--teal); color: #fff; }
+  .watch-btn.resume { background: #fffbeb; border-color: var(--gold); color: #713f12; }
+
   /* search hits */
   .page-card.search-hit { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,168,78,.35); }
   .hit-badge {
@@ -786,6 +789,7 @@
       <button id="btnSearch">&#128269; Find</button>
       <button class="ghost" id="btnSearchClear" style="display:none">Clear</button>
       <button class="primary" id="btnAdd">+ Add PDFs</button>
+      <button class="watch-btn" id="btnWatch1">&#128424; Watch my print folder</button>
       <button class="danger" id="btnReset">Start over</button>
     </div>
 
@@ -800,6 +804,8 @@
       <h2>Drop PDFs or images here</h2>
       <p>or click to browse. Load PDFs to split or combine them &mdash; photos and scans (JPG, PNG) become PDF pages too.</p>
       <p class="hint">Every page shows as a thumbnail &mdash; click or drag pages into the New Document tray, then create your PDF.</p>
+      <p style="margin-top:14px"><button class="watch-btn" id="btnWatch2">&#128424; Watch my print folder</button></p>
+      <p class="hint" style="color:var(--muted);font-weight:500">Pick a folder once &mdash; then &ldquo;Print &rarr; Microsoft Print to PDF&rdquo; into it from any program and the file loads here automatically.</p>
     </div>
 
     <div id="docList"></div>
@@ -3052,11 +3058,39 @@ Bill Layne Insurance
   /* ── Auto-save & restore (IndexedDB — stays on this computer) ── */
   function sdb() {
     return new Promise((res, rej) => {
-      const r = indexedDB.open('bliPdfStudio', 1);
-      r.onupgradeneeded = () => r.result.createObjectStore('session');
+      const r = indexedDB.open('bliPdfStudio', 2);
+      r.onupgradeneeded = () => {
+        const db = r.result;
+        if (!db.objectStoreNames.contains('session')) db.createObjectStore('session');
+        if (!db.objectStoreNames.contains('settings')) db.createObjectStore('settings');
+      };
       r.onsuccess = () => res(r.result);
       r.onerror = () => rej(r.error);
     });
+  }
+  function settingsPut(key, v) {
+    return sdb().then(db => new Promise((res, rej) => {
+      const tx = db.transaction('settings', 'readwrite');
+      tx.objectStore('settings').put(v, key);
+      tx.oncomplete = res;
+      tx.onerror = () => rej(tx.error);
+    }));
+  }
+  function settingsGet(key) {
+    return sdb().then(db => new Promise((res, rej) => {
+      const tx = db.transaction('settings', 'readonly');
+      const q = tx.objectStore('settings').get(key);
+      q.onsuccess = () => res(q.result);
+      q.onerror = () => rej(q.error);
+    }));
+  }
+  function settingsDel(key) {
+    return sdb().then(db => new Promise((res, rej) => {
+      const tx = db.transaction('settings', 'readwrite');
+      tx.objectStore('settings').delete(key);
+      tx.oncomplete = res;
+      tx.onerror = () => rej(tx.error);
+    }));
   }
   function sessionPut(v) {
     return sdb().then(db => new Promise((res, rej) => {
@@ -3161,8 +3195,140 @@ Bill Layne Insurance
   }
   offerRestore();
 
+  /* ── Watch a folder for freshly printed PDFs ──
+     Print from ANY program with "Microsoft Print to PDF" into the watched
+     folder and the file loads here automatically. Chrome/Edge only. */
+  let watchHandle = null, pendingHandle = null, watchTimer = null;
+  const watchSeen = new Map();   // filename -> lastModified
+  const watchBusy = new Set();
+
+  function updateWatchUI() {
+    document.querySelectorAll('.watch-btn').forEach(b => {
+      b.classList.toggle('watching', !!watchHandle);
+      b.classList.toggle('resume', !watchHandle && !!pendingHandle);
+      if (watchHandle) {
+        b.innerHTML = '&#128424; Watching &ldquo;' + escapeHtml(watchHandle.name) + '&rdquo; &mdash; click to stop';
+      } else if (pendingHandle) {
+        b.innerHTML = '&#9654; Resume watching &ldquo;' + escapeHtml(pendingHandle.name) + '&rdquo;';
+      } else {
+        b.innerHTML = '&#128424; Watch my print folder';
+      }
+    });
+  }
+
+  async function baselineWatch() {
+    watchSeen.clear();
+    for await (const [name, h] of watchHandle.entries()) {
+      if (h.kind === 'file' && /\.pdf$/i.test(name)) {
+        try { watchSeen.set(name, (await h.getFile()).lastModified); } catch (_) {}
+      }
+    }
+  }
+
+  function startWatchLoop() {
+    clearInterval(watchTimer);
+    watchTimer = setInterval(async () => {
+      if (!watchHandle) return;
+      try {
+        for await (const [name, h] of watchHandle.entries()) {
+          if (h.kind !== 'file' || !/\.pdf$/i.test(name) || watchBusy.has(name)) continue;
+          let f;
+          try { f = await h.getFile(); } catch (_) { continue; }
+          const prev = watchSeen.get(name);
+          if (prev !== undefined && f.lastModified <= prev) continue;
+          watchBusy.add(name);
+          (async () => {
+            // give the printer driver a moment to finish writing the file
+            await new Promise(r => setTimeout(r, 1000));
+            try {
+              const f2 = await h.getFile();
+              watchSeen.set(name, f2.lastModified);
+              await addFiles([f2]);
+              renderAll();
+              toast('🖨 Loaded "' + name + '" from your print folder.');
+            } catch (_) {}
+            watchBusy.delete(name);
+          })();
+        }
+      } catch (err) {
+        // folder gone or permission revoked — stop quietly
+        clearInterval(watchTimer);
+        watchHandle = null;
+        updateWatchUI();
+      }
+    }, 2500);
+  }
+
+  function stopWatch(forget) {
+    clearInterval(watchTimer);
+    watchHandle = null;
+    if (forget) settingsDel('watchDir').catch(() => {});
+    updateWatchUI();
+    toast('Stopped watching the print folder.');
+  }
+
+  async function pickWatchFolder() {
+    try {
+      const h = await window.showDirectoryPicker({ id: 'bliPrintWatch', mode: 'read', startIn: 'documents' });
+      watchHandle = h;
+      pendingHandle = null;
+      await baselineWatch();
+      startWatchLoop();
+      settingsPut('watchDir', h).catch(() => {});
+      updateWatchUI();
+      toast('Watching "' + h.name + '" — print to PDF into that folder and it loads here automatically.');
+    } catch (_) { /* user cancelled the picker */ }
+  }
+
+  async function onWatchClick() {
+    if (watchHandle) { stopWatch(true); return; }
+    if (pendingHandle) {
+      try {
+        const p = await pendingHandle.requestPermission({ mode: 'read' });
+        if (p === 'granted') {
+          watchHandle = pendingHandle;
+          pendingHandle = null;
+          await baselineWatch();
+          startWatchLoop();
+          updateWatchUI();
+          toast('Watching "' + watchHandle.name + '" again.');
+          return;
+        }
+      } catch (_) {}
+      pendingHandle = null;
+    }
+    pickWatchFolder();
+  }
+
+  async function initWatch() {
+    if (!window.showDirectoryPicker) {
+      document.querySelectorAll('.watch-btn').forEach(b => b.style.display = 'none');
+      return;
+    }
+    document.querySelectorAll('.watch-btn').forEach(b => b.addEventListener('click', (e) => {
+      e.stopPropagation();
+      onWatchClick();
+    }));
+    try {
+      const h = await settingsGet('watchDir');
+      if (h) {
+        const p = await h.queryPermission({ mode: 'read' });
+        if (p === 'granted') {
+          watchHandle = h;
+          await baselineWatch();
+          startWatchLoop();
+        } else {
+          pendingHandle = h;
+        }
+      }
+    } catch (_) {}
+    updateWatchUI();
+  }
+  initWatch();
+
   // exposed for automated testing
   window.PDFStudio = {
+    _setWatchHandle: async (h) => { watchHandle = h; pendingHandle = null; await baselineWatch(); startWatchLoop(); updateWatchUI(); },
     addPdfData: async (name, bytes) => { await addPdfData(name, bytes); renderAll(); },
     addImageData: async (name, blob) => { await addImageData(name, blob); renderAll(); },
     addAllToTray: () => { for (const [, d] of docs) d.pages.forEach(p => trayAdd(p)); renderAll(); },
