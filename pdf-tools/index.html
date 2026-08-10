@@ -1544,6 +1544,13 @@ Bill Layne Insurance
         copied.setRotation(PDFLib.degrees(((cur + p.rot) % 360 + 360) % 360));
       }
       out.addPage(copied);
+      // some scanners save pixel counts as page points, producing 30-inch "poster"
+      // pages that print partially — scale anything beyond ~20in down to letter
+      const mw = copied.getWidth(), mh = copied.getHeight();
+      if (Math.max(mw, mh) > 1450) {
+        const s = mh >= mw ? Math.min(612 / mw, 792 / mh) : Math.min(792 / mw, 612 / mh);
+        copied.scale(s, s);
+      }
       await drawStamps(out, copied, p.stamps, fontRef);
     }
     return out.save();
