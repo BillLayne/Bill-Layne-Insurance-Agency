@@ -69,7 +69,9 @@ Rules the gateway enforces (from `Code.gs`):
 { "ok": false, "error": "Unauthorized: bad or missing secret." }
 ```
 
-**Health check:** plain GET to the /exec URL returns `{ ok:true, service:'BLI Mail Gateway', version:'1.0' }`.
+**Health check:** plain GET to the /exec URL returns `{ ok:true, service:'BLI Mail Gateway', version:'1.1' }`.
+
+**v1.1 (2026-08-07): file attachments.** The payload also accepts `"attachments": [{ "name", "mimeType", "dataB64" }]` (max 5) and responses include `attached: N`. Full recipe, client code, and gotchas: **`HANDOFF-ATTACH-PDF-TO-GMAIL.md`** (reference implementation: PDF Studio's "Gmail draft" button in `pdf-tools/index.html`). Clients MUST verify `attached === 1` — a stale v1.0 gateway silently drops attachments.
 
 **Redeploying the gateway:** Deploy → Manage deployments → pencil → Version: **New version** → Deploy. **Same /exec URL.** (Creating a *new deployment* instead would mint a new URL and break every app — same rule as SendBillDocs.)
 
