@@ -158,4 +158,5 @@ UI rules that still apply (from the base handoff — they broke real sends befor
 ## 7. Where this is already wired
 
 - **PDF Studio** (`pdf-tools/index.html`) — "✉ Gmail draft" button: builds the tray PDF (optionally shrunk/page-numbered/locked), attaches, drafts. The complete, battle-tested example to copy.
+- **CertGuard AI** (`Playground\coi-certificates-certguard-ai-sprint-2026-04-28-081935`, live at coi-certificates-certguard-ai.pages.dev) — "Gmail Draft + Attach PDF" (2026-08-11): certificate PDF attached AND a fully styled 600px email body in the same draft. For the styled-body layer, see `HANDOFF-STYLED-DRAFT-BODY.md`.
 - Candidates Bill has mentioned for the same treatment: quote studios, receipt builder, letterhead generator — any app that produces a file the customer should receive.
