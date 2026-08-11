@@ -170,5 +170,5 @@ Everything in `pdf-tools/index.html` stays — settings keys, `b64FromBytes`, PO
 ## 8. Where this already works
 
 - **CertGuard AI** (`coi-certificates-certguard-ai.pages.dev`) — "Gmail Draft + Attach PDF": full styled certificate email + ACORD PDF in one draft. The pattern this doc describes.
-- **PDF Studio** (`/pdf-tools/`) — has the gateway + attachment layer; body upgrade is the next step (this doc).
+- **PDF Studio** (`/pdf-tools/`) — DONE 2026-08-12: Bill's "Gold Elite Document Delivery" template embedded as `<script type="text/plain" id="emailTpl">` (inert full-document storage — do NOT use `<template>`, the parser strips `<html>/<head>/<body>` inside it). Tokens filled per this doc; a "What is this email delivering?" dropdown swaps HEADLINE/INTRO_LINE/subject per document type (one template, five voices); IF_NOTE follows the note box, IF_LOCKED follows the lock-with-password checkbox.
 - Same recipe applies to any future BLI app that owns a styled template: quote studios, receipt builder, letterhead generator.

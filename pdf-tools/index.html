@@ -932,17 +932,22 @@
         <input type="text" id="mailTo" placeholder="customer@example.com">
       </div>
       <div class="form-row">
+        <label>What is this email delivering?</label>
+        <select id="mailDocType">
+          <option value="general" selected>Just a document</option>
+          <option value="policy">Policy documents</option>
+          <option value="idcards">Insurance ID cards</option>
+          <option value="signed">Signed forms</option>
+          <option value="photos">Photos</option>
+        </select>
+      </div>
+      <div class="form-row">
         <label>Subject</label>
         <input type="text" id="mailSubject">
       </div>
       <div class="form-row">
-        <label>Short note (you can edit everything in Gmail before sending)</label>
-        <textarea id="mailNote">Hi,
-
-The document you need is attached.
-
-Bill Layne Insurance
-(336) 835-1993</textarea>
+        <label>Personal note (optional &mdash; the styled email looks complete without one)</label>
+        <textarea id="mailNote" placeholder="Anything you type here appears in an &quot;A note from Bill&quot; card inside the email."></textarea>
       </div>
       <div class="sig-note">BCC: <strong>Save@BillLayneInsurance.com</strong> (agency record copy &mdash; always on) &bull; the PDF from your tray is attached automatically<span id="mailShrinkNote"></span>.</div>
       <div class="mail-banner" id="mailBanner"></div>
@@ -1012,6 +1017,155 @@ Bill Layne Insurance
     </div>
   </div>
 </div>
+
+<!-- Gmail draft body: Bill's Gold Elite "PDF Studio Document Delivery" template.
+     Stored as inert text (script type=text/plain) so the full email document —
+     doctype, head, body — survives verbatim. Read at send time, tokens filled,
+     IF_NOTE / IF_LOCKED blocks kept or stripped, then POSTed to the gateway. -->
+<script type="text/plain" id="emailTpl">
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light">
+<title>Document Delivery &mdash; Bill Layne Insurance</title>
+<!--[if mso]>
+<noscript><xml><o:OfficeDocumentSettings><o:AllowPNG/><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+<![endif]-->
+<style>
+@media only screen and (max-width:620px){
+  .email-container{width:100%!important;padding:0 8px!important}
+  .card-pad{padding:22px 18px!important}
+  .hero-pad{padding:26px 18px!important}
+  .h1{font-size:25px!important;line-height:31px!important}
+  .stack-col{display:block!important;width:100%!important;text-align:left!important;padding-left:0!important}
+  .stack-gap{display:block!important;height:12px!important;line-height:12px!important;font-size:0!important}
+}
+</style>
+</head>
+<body style="margin:0;padding:0;width:100%;background-color:#f1efe9;font-family:Arial,Helvetica,sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%" bgcolor="#f1efe9">
+
+<div style="display:none;max-height:0;overflow:hidden;font-size:1px;line-height:1px;color:#f1efe9;mso-hide:all">{{HEADLINE}} &mdash; see the attached PDF.&#847;&#847;&#847;&#847;&#847;</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#f1efe9" style="background-color:#f1efe9">
+<tr><td align="center" style="padding:20px 12px">
+<!--[if mso]><table role="presentation" width="600" align="center" cellpadding="0" cellspacing="0"><tr><td><![endif]-->
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" class="email-container" style="width:600px;max-width:600px;margin:0 auto">
+
+<!-- IMAGES-OFF FALLBACK STRIP -->
+<tr><td style="padding-bottom:4px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#000000" style="background-color:#000000;border-radius:16px 16px 0 0">
+<tr><td align="center" style="background-color:#000000;padding:9px 20px;border-radius:16px 16px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:11.5px;line-height:16px;font-weight:bold;letter-spacing:1.4px;text-transform:uppercase;color:#D4A843">Document attached from Bill Layne Insurance</td></tr>
+</table>
+</td></tr>
+
+<!-- HEADER -->
+<tr><td style="padding-bottom:4px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#000000" style="background-color:#000000">
+<tr><td style="background-color:#000000;padding:18px 24px;border-bottom:4px solid #D4A843">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+<td align="left" valign="middle" style="width:58%;font-size:0;line-height:0"><img src="https://img.billlayneinsurance.com/i/2026/08/bli-agency-logo-4jqj2j.png" alt="Bill Layne Insurance Agency" width="150" style="display:block;width:150px;max-width:150px;height:auto"></td>
+<td align="right" valign="middle" style="width:42%"><table role="presentation" cellpadding="0" cellspacing="0" border="0" align="right"><tr><td style="border:1px solid #3a3a3a;border-radius:6px;padding:7px 13px;font-family:Arial,Helvetica,sans-serif;font-size:10.5px;line-height:14px;font-weight:bold;letter-spacing:1.6px;text-transform:uppercase;color:#D4A843">Documents</td></tr></table></td>
+</tr></table>
+</td></tr></table>
+</td></tr>
+
+<!-- HERO -->
+<tr><td style="padding-bottom:4px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="background-color:#ffffff;border:1px solid #e3dccd">
+<tr><td class="hero-pad" style="padding:32px 26px 30px 26px">
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:15px;font-weight:bold;letter-spacing:1.8px;text-transform:uppercase;color:#D4A843">Document delivery</div>
+<div class="h1" style="font-family:Georgia,'Times New Roman',serif;font-size:29px;line-height:36px;color:#000000;padding-top:12px">{{HEADLINE}}</div>
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:24px;color:#374151;padding-top:12px">{{INTRO_LINE}}</div>
+</td></tr></table>
+</td></tr>
+
+<!-- ATTACHMENT CARD -->
+<tr><td style="padding-bottom:4px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#fdfbf6" style="background-color:#fdfbf6;border:1px solid #e3dccd">
+<tr><td class="card-pad" style="padding:24px 26px">
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:15px;font-weight:bold;letter-spacing:1.6px;text-transform:uppercase;color:#D4A843;padding-bottom:14px">Attached to this email</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+<td class="stack-col" width="40" valign="top" style="width:40px;font-family:Arial,Helvetica,sans-serif;font-size:25px;line-height:28px;color:#000000">&#128206;</td>
+<td class="stack-gap" width="1" style="display:none;font-size:0;line-height:0">&nbsp;</td>
+<td class="stack-col" valign="top" style="font-family:Arial,Helvetica,sans-serif">
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:23px;font-weight:bold;color:#000000;word-break:break-all">{{ATTACHMENT_NAME}}</div>
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:17px;letter-spacing:.8px;text-transform:uppercase;font-weight:bold;color:#6b7280;padding-top:5px">{{PAGE_COUNT}} &bull; PDF</div>
+</td>
+</tr></table>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="background-color:#ffffff;border:1px solid #ece3d2;border-radius:6px;margin-top:16px">
+<tr><td style="padding:13px 16px;font-family:Arial,Helvetica,sans-serif;font-size:13.5px;line-height:21px;color:#374151">Tap or click the attachment at the bottom of this email to open it.</td></tr>
+</table>
+</td></tr></table>
+</td></tr>
+
+<!-- {{IF_NOTE_START}} -->
+<tr><td style="padding-bottom:4px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="background-color:#ffffff;border:1px solid #e3dccd">
+<tr><td class="card-pad" style="padding:24px 26px">
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:15px;font-weight:bold;letter-spacing:1.6px;text-transform:uppercase;color:#D4A843">A note from Bill</div>
+<div style="font-family:Georgia,'Times New Roman',serif;font-size:15.5px;line-height:26px;color:#1f2937;padding-top:12px">{{NOTE_BODY}}</div>
+</td></tr></table>
+</td></tr>
+<!-- {{IF_NOTE_END}} -->
+
+<!-- {{IF_LOCKED_START}} -->
+<tr><td style="padding-bottom:4px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#fffbeb" style="background-color:#fffbeb;border:1px solid #f0e2b8;border-left:5px solid #D4A843">
+<tr><td class="card-pad" style="padding:18px 22px;font-family:Arial,Helvetica,sans-serif;font-size:13.5px;line-height:22px;color:#4a3a12">&#128274; This PDF is password-protected for your privacy. We&rsquo;ll send the password separately &mdash; call us at <a href="tel:+13368351993" style="color:#000000;text-decoration:underline;font-weight:bold">(336) 835-1993</a> if you need it.</td></tr>
+</table>
+</td></tr>
+<!-- {{IF_LOCKED_END}} -->
+
+<!-- HELP -->
+<tr><td style="padding-bottom:4px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#000000" style="background-color:#000000;border-left:5px solid #D4A843">
+<tr><td class="card-pad" style="padding:22px 24px">
+<div style="font-family:Georgia,'Times New Roman',serif;font-size:19px;line-height:25px;color:#ffffff">Questions? We&rsquo;re right here.</div>
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:22px;color:#e5e7eb;padding-top:7px">Give the document a look and tell us if anything needs correcting. We&rsquo;re your independent agent and glad to help.</div>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:16px"><tr>
+<td bgcolor="#D4A843" style="background-color:#D4A843;border-radius:6px"><a href="tel:+13368351993" style="display:block;padding:13px 24px;font-family:Arial,Helvetica,sans-serif;font-size:14.5px;font-weight:bold;color:#000000;text-decoration:none">Call 336&#8209;835&#8209;1993</a></td>
+<td width="10" style="font-size:1px;line-height:1px">&nbsp;</td>
+<td style="border:1px solid #3a3a3a;border-radius:6px"><a href="mailto:Bill@BillLayneInsurance.com" style="display:block;padding:13px 24px;font-family:Arial,Helvetica,sans-serif;font-size:14.5px;font-weight:bold;color:#ffffff;text-decoration:none">Email Bill</a></td>
+</tr></table>
+</td></tr></table>
+</td></tr>
+
+<!-- FOOTER -->
+<tr><td>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#000000" style="background-color:#000000;border-radius:0 0 16px 16px">
+<tr><td align="center" style="padding:26px 24px 30px 24px;border-radius:0 0 16px 16px">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto 14px auto"><tr><td bgcolor="#ffffff" style="background-color:#ffffff;padding:8px 14px;border-radius:6px;font-size:0;line-height:0"><img src="https://img.billlayneinsurance.com/i/2026/08/bli-agency-logo-4jqj2j.png" alt="Bill Layne Insurance Agency" width="140" style="display:block;width:140px;max-width:140px;height:auto"></td></tr></table>
+<div style="font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:20px;color:#ffffff;font-weight:bold">Bill Layne Insurance Agency</div>
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:16px;color:#D4A843;font-weight:bold;letter-spacing:.5px;padding-top:3px">Your Neighbor. Your Agent.</div>
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:12.5px;line-height:20px;color:#c9c9c9;padding-top:10px">
+1283 N Bridge St, PO Box 827, Elkin, NC 28621<br>
+<a href="tel:+13368351993" style="color:#D4A843;text-decoration:none;font-weight:bold">(336) 835-1993</a> &middot;
+<a href="mailto:Bill@BillLayneInsurance.com" style="color:#D4A843;text-decoration:none;font-weight:bold">Bill@BillLayneInsurance.com</a><br>
+<a href="https://www.BillLayneInsurance.com" style="color:#D4A843;text-decoration:none;font-weight:bold">www.BillLayneInsurance.com</a> &middot;
+<a href="mailto:Save@BillLayneInsurance.com" style="color:#D4A843;text-decoration:none;font-weight:bold">Records copy</a>
+</div>
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:12.5px;line-height:20px;color:#D4A843;padding-top:11px">
+<a href="https://www.facebook.com/dollarbillagency" style="color:#D4A843;text-decoration:none;font-weight:bold">Facebook</a> &middot;
+<a href="https://www.instagram.com/ncautoandhome" style="color:#D4A843;text-decoration:none;font-weight:bold">Instagram</a> &middot;
+<a href="https://www.youtube.com/@ncautoandhome" style="color:#D4A843;text-decoration:none;font-weight:bold">YouTube</a> &middot;
+<a href="https://x.com/shopsavecompare" style="color:#D4A843;text-decoration:none;font-weight:bold">X</a>
+</div>
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:10.5px;line-height:16px;color:#888888;padding-top:13px">This message and the attached document are provided for your information and are not a policy or a statement of coverage. Coverage is governed by the terms, conditions, and limits of your policy.</div>
+</td></tr></table>
+</td></tr>
+
+</table>
+<!--[if mso]></td></tr></table><![endif]-->
+</td></tr>
+</table>
+</body>
+</html>
+</script>
 
 <input type="file" id="fileInput" accept="application/pdf,.pdf,image/*" multiple hidden>
 <input type="file" id="sigFileInput" accept="image/*" hidden>
@@ -2859,10 +3013,53 @@ Bill Layne Insurance
     return btoa(s);
   }
 
+  /* per-document-type voices for the styled email (one template, many voices) */
+  const MAIL_TYPES = {
+    general: { h: 'Your documents are attached', i: 'The PDF you need is attached to this email — save a copy for your records.', s: 'your documents from bill layne insurance' },
+    policy:  { h: 'Your policy documents are attached', i: 'Attached are your insurance policy documents — please look them over and keep them with your records.', s: 'your policy documents are attached' },
+    idcards: { h: 'Your insurance ID cards are attached', i: 'Print them or save them to your phone — it’s smart to keep a copy in each vehicle.', s: 'your insurance id cards are attached' },
+    signed:  { h: 'Your signed forms are attached', i: 'Here’s a copy of what you signed, for your records.', s: 'your signed forms for your records' },
+    photos:  { h: 'The photos you requested are attached', i: 'The photos are combined into the attached PDF for easy viewing and printing.', s: 'the photos you requested are attached' }
+  };
+  function applyMailType() {
+    const t = MAIL_TYPES[$('mailDocType').value] || MAIL_TYPES.general;
+    const subj = $('mailSubject');
+    const defaults = Object.values(MAIL_TYPES).map(x => x.s);
+    if (!subj.value.trim() || defaults.includes(subj.value.trim())) subj.value = t.s;
+  }
+  $('mailDocType').addEventListener('change', applyMailType);
+
+  function escMailValue(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function applyMailBlock(html, marker, enabled) {
+    const re = new RegExp('<!-- \\{\\{IF_' + marker + '_START\\}\\} -->[\\s\\S]*?<!-- \\{\\{IF_' + marker + '_END\\}\\} -->', 'g');
+    return html.replace(re, (block) => enabled
+      ? block.replace(new RegExp('<!-- \\{\\{IF_' + marker + '_(START|END)\\}\\} -->', 'g'), '')
+      : '');
+  }
+  // fill Bill's Gold Elite delivery template — the SAME string becomes the draft body
+  function buildEmailHtml() {
+    const type = MAIL_TYPES[$('mailDocType').value] || MAIL_TYPES.general;
+    const note = $('mailNote').value.trim();
+    let html = $('emailTpl').textContent.trim();
+    html = applyMailBlock(html, 'NOTE', !!note);
+    html = applyMailBlock(html, 'LOCKED', $('chkLock').checked);
+    const vars = {
+      HEADLINE: escMailValue(type.h),
+      INTRO_LINE: escMailValue(type.i),
+      NOTE_BODY: escMailValue(note).replace(/\n/g, '<br>'),
+      ATTACHMENT_NAME: escMailValue(cleanName()),
+      PAGE_COUNT: tray.length + ' page' + (tray.length === 1 ? '' : 's')
+    };
+    Object.keys(vars).forEach(k => { html = html.split('{{' + k + '}}').join(vars[k]); });
+    return html;
+  }
+
   function openEmailModal() {
     if (!tray.length) { toast('Put some pages in the New Document tray first.'); return; }
     $('mailBanner').className = 'mail-banner';
-    $('mailSubject').value = cleanName().replace(/\.pdf$/i, '').replace(/-/g, ' ');
+    applyMailType();
     $('mailShrinkNote').textContent = $('chkShrink').checked ? ', shrunk for email' : '';
     $('emailModal').classList.add('open');
   }
@@ -2889,13 +3086,20 @@ Bill Layne Insurance
         return;
       }
       busy(true, 'Creating the Gmail draft…');
-      // Gmail-safe minimal note; entity-escape non-ASCII (GmailApp corrupts astral chars)
-      const noteHtml = '<!DOCTYPE html><html><body><p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#1e293b;line-height:1.6">'
-        + $('mailNote').value
-          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-          .replace(/\n/g, '<br>')
-        + '</p></body></html>';
-      const safeHtml = noteHtml.replace(/[^\x00-\x7F]/gu, (ch) => '&#x' + ch.codePointAt(0).toString(16).toUpperCase() + ';');
+      // styled body from Bill's template; entity-escape non-ASCII ONCE, as the
+      // final step (GmailApp corrupts astral chars)
+      const filledHtml = buildEmailHtml();
+      const safeHtml = filledHtml.replace(/[^\x00-\x7F]/gu, (ch) => '&#x' + ch.codePointAt(0).toString(16).toUpperCase() + ';');
+      if (new Blob([safeHtml]).size > 102400) {
+        busy(false);
+        mailBanner(false, '⚠️ The email body is over Gmail’s 102 KB limit — shorten the note.');
+        return;
+      }
+      if (safeHtml.includes('{{')) {
+        busy(false);
+        mailBanner(false, '⚠️ Email template error (an unfilled placeholder remains) — tell Claude.');
+        return;
+      }
       const safeSubject = $('mailSubject').value.replace(/[\u{10000}-\u{10FFFF}]/gu, '').replace(/ {2,}/g, ' ').trim() || 'document attached';
       const payload = {
         secret,
