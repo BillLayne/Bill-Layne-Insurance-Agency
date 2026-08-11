@@ -13,10 +13,23 @@ rules.
 
 | File | What it is |
 |---|---|
-| `Code.gs` | The Apps Script gateway — paste into script.google.com (one time) |
+| `Code.gs` | The Apps Script gateway (v1.1, attachments) — paste into script.google.com (one time) |
 | `index.html` | Universal sender page — paste/drop any template, preview, Draft or Send |
 | `gateway-client.js` | Drop-in snippet to add a "Draft in Gmail" button to any BLI app |
 | `README.md` | This file |
+
+## Integrating the gateway into a NEW app — read these in order
+
+| Read | To add |
+|---|---|
+| 1. `HANDOFF-GATEWAY-INTEGRATION.md` | The base: send/draft any HTML email from any app (CORS rules, secrets, escaping, UI rules) |
+| 2. `HANDOFF-ATTACH-PDF-TO-GMAIL.md` | **Attach a PDF (or any file) to the draft automatically** — v1.1 contract, base64 recipe, `attached===1` check |
+| 3. `HANDOFF-STYLED-DRAFT-BODY.md` | **Put a fully styled branded email body in the draft** — template + `{{TOKENS}}` + conditional blocks pipeline |
+
+Working reference implementations: **PDF Studio** (`/pdf-tools/index.html` — all three layers,
+search `btnEmailGo`) and **CertGuard AI** (styled COI email + ACORD PDF). A future Claude
+prompt as simple as *"add a Gmail-draft button like PDF Studio's — read the three handoffs
+in mail-gateway/"* is enough to wire everything correctly.
 
 ## One-time deploy (about 3 minutes)
 
