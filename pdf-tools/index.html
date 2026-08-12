@@ -853,6 +853,8 @@
       <button class="mode-btn" id="modeSig">&#9997; Signature</button>
       <button class="mode-btn" id="modeImg">&#128444; Image</button>
       <button class="mode-btn" id="modeStamps">&#11088; Stamps</button>
+      <button class="mode-btn" id="modeCrop">&#9986; Crop</button>
+      <button class="danger" id="btnUncrop" style="display:none">Remove crop</button>
       <input type="text" id="stampText" placeholder="Type your text, then click the page" style="flex:1;min-width:170px">
       <select id="stampSize" title="Text size">
         <option value="10">10 pt</option>
@@ -1683,6 +1685,10 @@
         const w2 = doc.imgW * s, h2 = doc.imgH * s;
         const page = out.addPage([pw, ph]);
         page.drawImage(embedded, { x: (pw - w2) / 2, y: (ph - h2) / 2, width: w2, height: h2 });
+        if (p.crop) {
+          page.setMediaBox(p.crop.x, p.crop.y, p.crop.w, p.crop.h);
+          page.setCropBox(p.crop.x, p.crop.y, p.crop.w, p.crop.h);
+        }
         if (p.rot) page.setRotation(PDFLib.degrees(p.rot % 360));
         await drawStamps(out, page, p.stamps, fontRef);
         continue;
@@ -1693,6 +1699,12 @@
         srcCache.set(p.docId, src);
       }
       const [copied] = await out.copyPages(src, [p.pageIndex]);
+      if (p.crop) {
+        // the page becomes exactly the kept area (content outside is clipped
+        // by the page boxes — a sizing fix, not redaction)
+        copied.setMediaBox(p.crop.x, p.crop.y, p.crop.w, p.crop.h);
+        copied.setCropBox(p.crop.x, p.crop.y, p.crop.w, p.crop.h);
+      }
       if (p.rot) {
         const cur = copied.getRotation().angle || 0;
         copied.setRotation(PDFLib.degrees(((cur + p.rot) % 360 + 360) % 360));
@@ -1723,13 +1735,17 @@
     $('modeBox').classList.toggle('active', mode === 'box');
     $('modeSig').classList.toggle('active', mode === 'sig');
     $('modeImg').classList.toggle('active', mode === 'img');
+    $('modeCrop').classList.toggle('active', mode === 'crop');
+    $('btnUncrop').style.display = (editorItem && editorItem.crop) ? '' : 'none';
     $('editHint').textContent = mode === 'text'
       ? 'Type your text above, then click the page to place it in a box you can move. Drag the box anywhere, drag the blue corner to make it bigger or smaller, double-click to edit the words.'
       : mode === 'box'
         ? 'Press and drag on the page to draw a white box over anything you need to cover. Boxes can be moved and resized after you draw them.'
         : mode === 'sig'
           ? 'Click the page where you want your signature. You can move and resize it after placing it.'
-          : 'Click the page where you want the picture. You can move and resize it after placing it.';
+          : mode === 'img'
+            ? 'Click the page where you want the picture. You can move and resize it after placing it.'
+            : 'Press and drag a box around the part of the page you want to KEEP — everything outside it is trimmed away. Drag again to re-crop; Remove crop brings the whole page back.';
   }
 
   function openEditor(item) {
@@ -1751,7 +1767,7 @@
     busy(true, 'Rendering page…');
     try {
       // render the base page WITHOUT stamps — stamps live as movable overlay boxes
-      const base = { docId: editorItem.docId, pageIndex: editorItem.pageIndex, rot: editorItem.rot, stamps: [] };
+      const base = { docId: editorItem.docId, pageIndex: editorItem.pageIndex, rot: editorItem.rot, stamps: [], crop: editorItem.crop };
       const bytes = await buildPdfBytes([base]);
       const task = pdfjsLib.getDocument({ data: bytes });
       const pdoc = await task.promise;
@@ -1980,7 +1996,7 @@
 
   editOverlay.addEventListener('mousedown', (e) => {
     if (!editorItem || !editorVp) return;
-    if (editorMode !== 'box') return;
+    if (editorMode !== 'box' && editorMode !== 'crop') return;
     boxDrag = overlayToPdfPoint(e);
   });
   editOverlay.addEventListener('mousemove', (e) => {
@@ -1998,12 +2014,18 @@
     ctx.strokeRect(x, y, w, h);
   });
   editOverlay.addEventListener('mouseup', (e) => {
-    if (editorMode === 'box' && boxDrag) {
+    if ((editorMode === 'box' || editorMode === 'crop') && boxDrag) {
       const end = overlayToPdfPoint(e);
       editOverlay.getContext('2d').clearRect(0, 0, editOverlay.width, editOverlay.height);
       const x = Math.min(boxDrag.px, end.px), y = Math.min(boxDrag.py, end.py);
       const w = Math.abs(end.px - boxDrag.px), h = Math.abs(end.py - boxDrag.py);
+      const wasCrop = editorMode === 'crop';
       boxDrag = null;
+      if (wasCrop) {
+        if (w > 24 && h > 24) applyCrop({ x, y, w, h });
+        else toast('Drag a bigger box around the part you want to keep.');
+        return;
+      }
       if (w > 2 && h > 2) {
         const st = { kind: 'box', x, y, w, h };
         editorItem.stamps.push(st);
@@ -2014,6 +2036,41 @@
     }
     boxDrag = null;
   });
+
+  async function applyCrop(rect) {
+    editorItem.crop = rect;
+    await renderEditor();
+    setEditorMode('text');
+    regenTrayThumb(editorItem);
+    toast('Cropped — the page is now just the area you selected.');
+  }
+  $('modeCrop').addEventListener('click', () => setEditorMode('crop'));
+  $('btnUncrop').addEventListener('click', async () => {
+    if (!editorItem || !editorItem.crop) return;
+    delete editorItem.crop;
+    await renderEditor();
+    setEditorMode('text');
+    regenTrayThumb(editorItem);
+    toast('Crop removed — the whole page is back.');
+  });
+
+  // refresh a tray card's thumbnail after a crop change
+  async function regenTrayThumb(item) {
+    try {
+      const bytes = await buildPdfBytes([{ docId: item.docId, pageIndex: item.pageIndex, rot: 0, stamps: [], crop: item.crop }]);
+      const pdoc = await pdfjsLib.getDocument({ data: bytes }).promise;
+      const page = await pdoc.getPage(1);
+      const vp1 = page.getViewport({ scale: 1 });
+      const vp = page.getViewport({ scale: 170 / vp1.width });
+      const c = document.createElement('canvas');
+      c.width = Math.ceil(vp.width);
+      c.height = Math.ceil(vp.height);
+      await page.render({ canvasContext: c.getContext('2d'), viewport: vp, intent: 'print' }).promise;
+      pdoc.destroy();
+      item.thumb = c.toDataURL('image/jpeg', 0.82);
+      renderTray();
+    } catch (_) {}
+  }
   // place an image-like stamp (signature or picture) centered on the click
   function placeImageStamp(e, kind, dataUrl, dim, viewWpt) {
     const rect = editOverlay.getBoundingClientRect();
@@ -3343,7 +3400,7 @@
           formFields: d.formFields || 0,
           pages: d.pages.map(p => ({ sid: p.sid, pageIndex: p.pageIndex, thumb: p.thumb }))
         })),
-        tray: tray.map(t => ({ tid: t.tid, docId: t.docId, pageIndex: t.pageIndex, rot: t.rot, stamps: t.stamps, thumb: t.thumb }))
+        tray: tray.map(t => ({ tid: t.tid, docId: t.docId, pageIndex: t.pageIndex, rot: t.rot, stamps: t.stamps, crop: t.crop || null, thumb: t.thumb }))
       }).catch(() => {});
     }, 1200);
   }
@@ -3383,10 +3440,14 @@
             srcIndex.set(entry.sid, entry);
           });
         });
-        tray = (saved.tray || []).map(t => ({
-          tid: t.tid, docId: t.docId, pageIndex: t.pageIndex,
-          rot: t.rot || 0, stamps: t.stamps || [], thumb: t.thumb
-        }));
+        tray = (saved.tray || []).map(t => {
+          const item = {
+            tid: t.tid, docId: t.docId, pageIndex: t.pageIndex,
+            rot: t.rot || 0, stamps: t.stamps || [], thumb: t.thumb
+          };
+          if (t.crop) item.crop = t.crop;
+          return item;
+        });
         nextDocId = saved.nextDocId || (Math.max(0, ...docs.keys()) + 1);
         nextSid = saved.nextSid || 1;
         nextTid = saved.nextTid || 1;
@@ -3552,7 +3613,7 @@
     useSignature,
     getState: () => ({
       docs: [...docs.values()].map(d => ({ name: d.name, pages: d.pages.length })),
-      tray: tray.map(t => ({ docId: t.docId, pageIndex: t.pageIndex, rot: t.rot, stamps: t.stamps }))
+      tray: tray.map(t => ({ docId: t.docId, pageIndex: t.pageIndex, rot: t.rot, stamps: t.stamps, crop: t.crop || null }))
     })
   };
 })();
