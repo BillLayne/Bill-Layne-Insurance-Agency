@@ -742,6 +742,40 @@
     position: relative;
     box-shadow: 0 4px 18px rgba(0,0,0,.25);
     flex-shrink: 0;
+    overflow: hidden;
+  }
+  /* pending crop box: adjustable before confirming */
+  #cropBox {
+    position: absolute;
+    pointer-events: auto;
+    border: 2px dashed var(--gold);
+    background: rgba(200,168,78,.06);
+    box-shadow: 0 0 0 9999px rgba(2,6,23,.4);
+    cursor: move;
+    touch-action: none;
+    z-index: 3;
+  }
+  #cropBox .crop-actions {
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  #cropBox .crop-actions button { padding: 8px 14px; font-size: 12.5px; box-shadow: 0 2px 8px rgba(0,0,0,.3); }
+  #cropBox .crop-resize {
+    position: absolute;
+    bottom: -12px;
+    right: -12px;
+    width: 22px;
+    height: 22px;
+    background: var(--gold);
+    border: 2px solid #fff;
+    border-radius: 5px;
+    cursor: nwse-resize;
+    box-shadow: 0 1px 4px rgba(0,0,0,.4);
   }
   #editStack canvas { display: block; }
   #editOverlay {
@@ -1909,6 +1943,7 @@
 
   function setEditorMode(mode) {
     editorMode = mode;
+    if (mode !== 'crop') removePendingCrop();
     $('modeText').classList.toggle('active', mode === 'text');
     $('modeBox').classList.toggle('active', mode === 'box');
     $('modeSig').classList.toggle('active', mode === 'sig');
@@ -1923,7 +1958,7 @@
           ? 'Click the page where you want your signature. You can move and resize it after placing it.'
           : mode === 'img'
             ? 'Click the page where you want the picture. You can move and resize it after placing it.'
-            : 'Press and drag a box around the part of the page you want to KEEP — everything outside it is trimmed away. Drag again to re-crop; Remove crop brings the whole page back.';
+            : 'Press and drag a box around the part of the page you want to KEEP — then adjust it and press Apply crop. Nothing changes until you apply; Remove crop brings the whole page back.';
   }
 
   function openEditor(item) {
@@ -1934,6 +1969,7 @@
   }
 
   function closeEditor() {
+    removePendingCrop();
     $('editModal').classList.remove('open');
     editorItem = null;
     editorVp = null;
@@ -2032,9 +2068,11 @@
   }
 
   function syncStampLayer() {
+    const cropEl = document.getElementById('cropBox');   // keep a pending crop box alive
     stampLayer.innerHTML = '';
     if (!editorItem || !editorVp) return;
     for (const st of editorItem.stamps) stampLayer.appendChild(buildStampEl(st));
+    if (cropEl && pendingCrop) stampLayer.appendChild(cropEl);
     selectStamp(selectedStamp && editorItem.stamps.includes(selectedStamp) ? selectedStamp : null);
     scheduleAutosave();
   }
@@ -2200,7 +2238,7 @@
       const wasCrop = editorMode === 'crop';
       boxDrag = null;
       if (wasCrop) {
-        if (w > 24 && h > 24) applyCrop({ x, y, w, h });
+        if (w > 24 && h > 24) showPendingCrop({ x, y, w, h });
         else toast('Drag a bigger box around the part you want to keep.');
         return;
       }
@@ -2214,6 +2252,80 @@
     }
     boxDrag = null;
   });
+
+  /* pending crop: an adjustable gold box the user confirms before it applies */
+  let pendingCrop = null;
+  function removePendingCrop() {
+    pendingCrop = null;
+    const el = document.getElementById('cropBox');
+    if (el) el.remove();
+  }
+  function showPendingCrop(rect) {
+    removePendingCrop();
+    pendingCrop = rect;
+    const el = document.createElement('div');
+    el.id = 'cropBox';
+    el.innerHTML =
+      '<div class="crop-actions">' +
+        '<button class="teal" id="btnCropApply">&#10003; Apply crop</button>' +
+        '<button id="btnCropCancel">&#10005; Cancel</button>' +
+      '</div>' +
+      '<div class="crop-resize" title="Drag to resize"></div>';
+    stampLayer.appendChild(el);
+    positionBoxEl(el, pendingCrop);
+    // drag to move the kept area
+    el.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('button') || e.target.classList.contains('crop-resize')) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const sx = e.clientX, sy = e.clientY;
+      const sl = parseFloat(el.style.left), stp = parseFloat(el.style.top);
+      try { el.setPointerCapture(e.pointerId); } catch (_) {}
+      const mv = (ev) => {
+        el.style.left = (sl + ev.clientX - sx) + 'px';
+        el.style.top = (stp + ev.clientY - sy) + 'px';
+      };
+      const up = () => {
+        el.removeEventListener('pointermove', mv);
+        el.removeEventListener('pointerup', up);
+        commitBoxPos(el, pendingCrop);
+      };
+      el.addEventListener('pointermove', mv);
+      el.addEventListener('pointerup', up);
+    });
+    // corner handle resizes the kept area (free shape)
+    el.querySelector('.crop-resize').addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const rs = e.currentTarget;
+      const sx = e.clientX, sy = e.clientY;
+      const sw = parseFloat(el.style.width), sh = parseFloat(el.style.height);
+      try { rs.setPointerCapture(e.pointerId); } catch (_) {}
+      const mv = (ev) => {
+        el.style.width = Math.max(30, sw + ev.clientX - sx) + 'px';
+        el.style.height = Math.max(30, sh + ev.clientY - sy) + 'px';
+      };
+      const up = () => {
+        rs.removeEventListener('pointermove', mv);
+        rs.removeEventListener('pointerup', up);
+        commitBoxPos(el, pendingCrop);
+      };
+      rs.addEventListener('pointermove', mv);
+      rs.addEventListener('pointerup', up);
+    });
+    el.querySelector('#btnCropApply').addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const rect2 = pendingCrop;
+      removePendingCrop();
+      await applyCrop(rect2);
+    });
+    el.querySelector('#btnCropCancel').addEventListener('click', (e) => {
+      e.stopPropagation();
+      removePendingCrop();
+      toast('Crop cancelled — nothing changed.');
+    });
+    $('editHint').textContent = 'Adjust the gold box — drag it to move, pull the corner to resize, or drag a new box. Press Apply crop when it looks right.';
+  }
 
   async function applyCrop(rect) {
     editorItem.crop = rect;
@@ -2926,6 +3038,7 @@
     const typing = a && (a.isContentEditable || a.tagName === 'INPUT' || a.tagName === 'SELECT' || a.tagName === 'TEXTAREA');
     if (e.key === 'Escape') {
       if (a && a.isContentEditable) { a.blur(); return; }
+      if (pendingCrop) { removePendingCrop(); toast('Crop cancelled — nothing changed.'); return; }
       if ($('sigPanel').classList.contains('open')) { closeSigPanel(); return; }
       if ($('stampPanel').style.display === 'flex') { closeStampPanel(); return; }
       closeEditor();
