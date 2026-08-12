@@ -530,6 +530,83 @@
   .watch-btn.watching { background: var(--teal); border-color: var(--teal); color: #fff; }
   .watch-btn.resume { background: #fffbeb; border-color: var(--gold); color: #713f12; }
 
+  /* ── dropdown menus (condensed toolbars) ── */
+  .menu-wrap { position: relative; display: inline-block; }
+  .menu-panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(2,6,23,.2);
+    padding: 6px;
+    display: none;
+    z-index: 45;
+    min-width: 230px;
+  }
+  .menu-panel.up { top: auto; bottom: calc(100% + 6px); }
+  .menu-wrap.open .menu-panel { display: block; }
+  .menu-panel button, .menu-panel > label {
+    display: flex;
+    width: 100%;
+    text-align: left;
+    justify-content: flex-start;
+    border: 1px solid transparent;
+    background: none;
+    padding: 9px 10px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    gap: 8px;
+    align-items: center;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .menu-panel button:hover, .menu-panel > label:hover { background: #f1f5f9; }
+  .menu-panel .mode-btn.active { background: var(--navy); color: #fff; }
+  .opt-badge {
+    display: none;
+    background: var(--gold);
+    color: #1e293b;
+    font-size: 10px;
+    font-weight: 800;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    align-items: center;
+    justify-content: center;
+    margin-left: 5px;
+  }
+  .opt-badge.show { display: inline-flex; }
+
+  /* ── drop-anywhere overlay ── */
+  #dropOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15,118,110,.14);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 90;
+    pointer-events: none;
+  }
+  #dropOverlay.show { display: flex; }
+  #dropOverlay .drop-inner {
+    border: 3px dashed var(--teal);
+    border-radius: 18px;
+    background: rgba(255,255,255,.95);
+    padding: 34px 52px;
+    font-size: 21px;
+    font-weight: 800;
+    color: var(--teal);
+    box-shadow: 0 12px 40px rgba(2,6,23,.18);
+  }
+
+  /* ── thumbnail size (source pane) ── */
+  body.thumbs-sm .src-grid { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 9px; }
+  body.thumbs-lg .src-grid { grid-template-columns: repeat(auto-fill, minmax(188px, 1fr)); }
+
   /* search hits */
   .page-card.search-hit { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,168,78,.35); }
   .hit-badge {
@@ -789,8 +866,14 @@
       <button id="btnSearch">&#128269; Find</button>
       <button class="ghost" id="btnSearchClear" style="display:none">Clear</button>
       <button class="primary" id="btnAdd">+ Add PDFs</button>
-      <button class="watch-btn" id="btnWatch1">&#128424; Watch my print folder</button>
-      <button class="danger" id="btnReset">Start over</button>
+      <div class="menu-wrap" id="srcMenuWrap">
+        <button id="btnSrcMenu" title="More">&#8943;</button>
+        <div class="menu-panel">
+          <button id="btnThumbSize" data-keepopen>Thumbnail size: Medium</button>
+          <button class="watch-btn" id="btnWatch1">&#128424; Watch my print folder</button>
+          <button class="danger" id="btnReset">Start over</button>
+        </div>
+      </div>
     </div>
 
     <div id="restoreBar">
@@ -817,21 +900,31 @@
       <span class="tray-title">New document</span>
       <span class="tray-count" id="trayCount">0 pages</span>
       <span class="grow"></span>
-      <input type="text" id="nameInput" value="new-document" title="File name for the new PDF" style="width:160px">
-      <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:#475569;white-space:nowrap;cursor:pointer" title="Re-saves every page as a compact scan — much smaller file, ideal for emailing. (Text is no longer selectable in the shrunk copy.)">
-        <input type="checkbox" id="chkShrink" style="width:15px;height:15px;accent-color:var(--teal)"> Shrink for email
-      </label>
-      <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:#475569;white-space:nowrap;cursor:pointer" title="Stamps Page 1 of N at the bottom of every page">
-        <input type="checkbox" id="chkNumbers" style="width:15px;height:15px;accent-color:var(--teal)"> Page numbers
-      </label>
-      <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:#475569;white-space:nowrap;cursor:pointer" title="The PDF will require a password to open — you choose it when you create the file">
-        <input type="checkbox" id="chkLock" style="width:15px;height:15px;accent-color:var(--teal)"> &#128274; Lock with password
-      </label>
+      <input type="text" id="nameInput" value="new-document" title="File name for the new PDF" style="width:150px">
       <button class="teal" id="btnCreate">&#8681; Create PDF</button>
       <button id="btnPrint" title="Print the new document">&#128424; Print</button>
       <button id="btnEmail" title="Create a Gmail draft with this PDF attached">&#9993; Gmail draft</button>
-      <button id="btnEachPage" title="Download every page in the tray as its own one-page PDF">Split into single pages</button>
-      <button class="ghost" id="btnClearTray">Clear tray</button>
+      <div class="menu-wrap" id="optMenuWrap">
+        <button id="btnOptMenu" title="Output options">&#9881; Options<span class="opt-badge" id="optBadge"></span></button>
+        <div class="menu-panel up">
+          <label title="Re-saves every page as a compact scan — much smaller file, ideal for emailing. (Text is no longer selectable in the shrunk copy.)">
+            <input type="checkbox" id="chkShrink" style="width:15px;height:15px;accent-color:var(--teal)"> Shrink for email
+          </label>
+          <label title="Stamps Page 1 of N at the bottom of every page">
+            <input type="checkbox" id="chkNumbers" style="width:15px;height:15px;accent-color:var(--teal)"> Page numbers
+          </label>
+          <label title="The PDF will require a password to open — you choose it when you create the file">
+            <input type="checkbox" id="chkLock" style="width:15px;height:15px;accent-color:var(--teal)"> &#128274; Lock with password
+          </label>
+        </div>
+      </div>
+      <div class="menu-wrap" id="moreMenuWrap">
+        <button id="btnMoreMenu" title="More">&#8943;</button>
+        <div class="menu-panel up">
+          <button id="btnEachPage" title="Download every page in the tray as its own one-page PDF">Split into single pages</button>
+          <button class="danger" id="btnClearTray">Clear tray</button>
+        </div>
+      </div>
     </div>
     <div id="trayStrip">
       <div class="tray-empty">Click or drag pages here to build your new PDF.<br>Drag cards left / right to reorder &bull; &#8635; rotates &bull; &#10005; removes.</div>
@@ -847,15 +940,19 @@
 <div id="editModal">
   <div class="edit-panel">
     <div class="edit-head">
-      <span class="edit-title">Add text to page</span>
+      <span class="edit-title">Edit page</span>
       <button class="mode-btn active" id="modeText">T&nbsp; Add text</button>
-      <button class="mode-btn" id="modeBox">&#11036; White-out box</button>
-      <button class="mode-btn" id="modeSig">&#9997; Signature</button>
-      <button class="mode-btn" id="modeImg">&#128444; Image</button>
-      <button class="mode-btn" id="modeStamps">&#11088; Stamps</button>
+      <div class="menu-wrap" id="insMenuWrap">
+        <button id="btnInsMenu">&#10133; Insert &#9662;</button>
+        <div class="menu-panel">
+          <button class="mode-btn" id="modeBox">&#11036; White-out box</button>
+          <button class="mode-btn" id="modeSig">&#9997; Signature</button>
+          <button class="mode-btn" id="modeImg">&#128444; Image</button>
+          <button class="mode-btn" id="modeStamps">&#11088; Stamps</button>
+        </div>
+      </div>
       <button class="mode-btn" id="modeCrop">&#9986; Crop</button>
-      <button class="danger" id="btnUncrop" style="display:none">Remove crop</button>
-      <input type="text" id="stampText" placeholder="Type your text, then click the page" style="flex:1;min-width:170px">
+      <input type="text" id="stampText" placeholder="Type your text, then click the page" style="flex:1;min-width:150px">
       <select id="stampSize" title="Text size">
         <option value="10">10 pt</option>
         <option value="12">12 pt</option>
@@ -870,7 +967,13 @@
         <option value="blue">Blue</option>
       </select>
       <button id="btnUndoStamp">&#8630; Undo</button>
-      <button class="danger" id="btnClearStamps">Remove all</button>
+      <div class="menu-wrap" id="editMoreWrap">
+        <button id="btnEditMore" title="More">&#8943;</button>
+        <div class="menu-panel">
+          <button class="danger" id="btnClearStamps">Remove all added items</button>
+          <button class="danger" id="btnUncrop" style="display:none">Remove crop</button>
+        </div>
+      </div>
       <button class="teal" id="btnEditDone">&#10003; Done</button>
     </div>
     <div class="edit-hint" id="editHint">Type your text above, then click the page where it should go. Switch to White-out box to drag a white rectangle over anything you need to cover.</div>
@@ -1169,6 +1272,8 @@
 </html>
 </script>
 
+<div id="dropOverlay"><div class="drop-inner">&#11015; Drop to add PDFs &amp; photos</div></div>
+
 <input type="file" id="fileInput" accept="application/pdf,.pdf,image/*" multiple hidden>
 <input type="file" id="sigFileInput" accept="image/*" hidden>
 <input type="file" id="imgFileInput" accept="image/*" hidden>
@@ -1203,6 +1308,70 @@
     $('busy').textContent = msg || 'Working…';
     $('busy').classList.toggle('show', !!on);
   }
+  // toast with an action button (used for Undo after removals)
+  function toastAction(msg, label, fn) {
+    const t = $('toast');
+    t.innerHTML = '';
+    t.appendChild(document.createTextNode(msg));
+    const b = document.createElement('button');
+    b.textContent = label;
+    b.style.cssText = 'margin-left:12px;background:var(--gold);border:0;color:#1e293b;font-weight:800;border-radius:999px;padding:4px 14px;cursor:pointer;font-size:12px';
+    b.addEventListener('click', () => { t.classList.remove('show'); fn(); });
+    t.appendChild(b);
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 7000);
+  }
+
+  /* ── dropdown menus ── */
+  function wireMenu(btnId, wrapId) {
+    const wrap = $(wrapId);
+    $(btnId).addEventListener('click', (e) => {
+      e.stopPropagation();
+      document.querySelectorAll('.menu-wrap.open').forEach(w => { if (w !== wrap) w.classList.remove('open'); });
+      wrap.classList.toggle('open');
+    });
+    wrap.querySelector('.menu-panel').addEventListener('click', (e) => {
+      const b = e.target.closest('button');
+      if (b && !b.hasAttribute('data-keepopen')) wrap.classList.remove('open');
+    });
+  }
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.menu-wrap')) document.querySelectorAll('.menu-wrap.open').forEach(w => w.classList.remove('open'));
+  });
+  function closeAllMenus() {
+    document.querySelectorAll('.menu-wrap.open').forEach(w => w.classList.remove('open'));
+  }
+  wireMenu('btnSrcMenu', 'srcMenuWrap');
+  wireMenu('btnOptMenu', 'optMenuWrap');
+  wireMenu('btnMoreMenu', 'moreMenuWrap');
+  wireMenu('btnInsMenu', 'insMenuWrap');
+  wireMenu('btnEditMore', 'editMoreWrap');
+
+  // gold badge on ⚙ Options showing how many output options are on
+  function updateOptBadge() {
+    const n = ['chkShrink', 'chkNumbers', 'chkLock'].filter(id => $(id).checked).length;
+    const b = $('optBadge');
+    b.textContent = n;
+    b.classList.toggle('show', n > 0);
+  }
+  ['chkShrink', 'chkNumbers', 'chkLock'].forEach(id => $(id).addEventListener('change', updateOptBadge));
+
+  /* ── thumbnail size ── */
+  const THUMB_LABELS = { sm: 'Small', md: 'Medium', lg: 'Large' };
+  let thumbSize = localStorage.getItem('bliPdfThumbSize') || 'md';
+  function applyThumbSize() {
+    document.body.classList.remove('thumbs-sm', 'thumbs-md', 'thumbs-lg');
+    document.body.classList.add('thumbs-' + thumbSize);
+    $('btnThumbSize').textContent = 'Thumbnail size: ' + THUMB_LABELS[thumbSize];
+  }
+  $('btnThumbSize').addEventListener('click', () => {
+    const order = ['sm', 'md', 'lg'];
+    thumbSize = order[(order.indexOf(thumbSize) + 1) % 3];
+    localStorage.setItem('bliPdfThumbSize', thumbSize);
+    applyThumbSize();
+  });
+  applyThumbSize();
   function escapeHtml(s) {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
@@ -1424,11 +1593,18 @@
       rmBtn.className = 'danger';
       rmBtn.textContent = '✕ Remove file';
       rmBtn.addEventListener('click', () => {
+        const prevTray = tray.slice();
         tray = tray.filter(t => t.docId !== docId);
         doc.pages.forEach(p => srcIndex.delete(p.sid));
         docs.delete(docId);
         docTextCache.delete(docId);
         renderAll();
+        toastAction('Removed "' + doc.name + '".', 'Undo', () => {
+          docs.set(docId, doc);
+          doc.pages.forEach(p => srcIndex.set(p.sid, p));
+          tray = prevTray;
+          renderAll();
+        });
       });
       head.appendChild(addAllBtn);
       head.appendChild(rmBtn);
@@ -1531,8 +1707,10 @@
       });
       card.querySelector('.act-del').addEventListener('click', (e) => {
         e.stopPropagation();
+        const prevTray = tray.slice();
         tray = tray.filter(x => x.tid !== t.tid);
         renderAll();
+        toastAction('Page removed from the new document.', 'Undo', () => { tray = prevTray; renderAll(); });
       });
       card.addEventListener('dragstart', (e) => {
         dragData = { kind: 'tray', tid: t.tid };
@@ -2738,6 +2916,7 @@
   $('btnEditDone').addEventListener('click', closeEditor);
   $('editModal').addEventListener('click', (e) => { if (e.target === $('editModal')) closeEditor(); });
   document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.querySelector('.menu-wrap.open')) { closeAllMenus(); return; }
     if (e.key === 'Escape' && $('viewModal').classList.contains('open')) { closeViewer(); return; }
     if (e.key === 'Escape' && $('phoneModal').classList.contains('open')) { closePhoneModal(); return; }
     if (e.key === 'Escape' && $('emailModal').classList.contains('open')) { closeEmailModal(); return; }
@@ -2789,7 +2968,13 @@
     sessionDel().catch(() => {});
     renderAll();
   });
-  $('btnClearTray').addEventListener('click', () => { tray = []; renderAll(); });
+  $('btnClearTray').addEventListener('click', () => {
+    if (!tray.length) return;
+    const prevTray = tray.slice();
+    tray = [];
+    renderAll();
+    toastAction('Tray cleared (' + prevTray.length + ' page' + (prevTray.length === 1 ? '' : 's') + ').', 'Undo', () => { tray = prevTray; renderAll(); });
+  });
   /* "Shrink for email": re-save every page as a compact scan-style JPEG page */
   async function compressPdfBytes(bytes) {
     const src = await pdfjsLib.getDocument({ data: bytes.slice() }).promise;
@@ -3199,19 +3384,35 @@
   /* ── File input + drag/drop of files ── */
   $('fileInput').addEventListener('change', (e) => { addFiles(e.target.files); e.target.value = ''; });
   dropzone.addEventListener('click', () => $('fileInput').click());
-  ['dragover', 'dragenter'].forEach(ev => document.body.addEventListener(ev, (e) => {
+  // drop files anywhere — a full-page indicator shows while dragging over the window
+  let dragDepth = 0;
+  function hideDropOverlay() {
+    dragDepth = 0;
+    $('dropOverlay').classList.remove('show');
+    dropzone.classList.remove('dragover');
+  }
+  document.body.addEventListener('dragenter', (e) => {
     if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) {
       e.preventDefault();
+      dragDepth++;
+      $('dropOverlay').classList.add('show');
       dropzone.classList.add('dragover');
     }
-  }));
-  ['dragleave', 'drop'].forEach(ev => document.body.addEventListener(ev, (e) => {
-    if (ev === 'drop' && e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+  });
+  document.body.addEventListener('dragover', (e) => {
+    if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) e.preventDefault();
+  });
+  document.body.addEventListener('dragleave', () => {
+    dragDepth--;
+    if (dragDepth <= 0) hideDropOverlay();
+  });
+  document.body.addEventListener('drop', (e) => {
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
       e.preventDefault();
       addFiles(e.dataTransfer.files);
     }
-    dropzone.classList.remove('dragover');
-  }));
+    hideDropOverlay();
+  });
 
   /* ── Page viewer (zoom) ── */
   let viewDocId = null, viewPageIndex = 0;
