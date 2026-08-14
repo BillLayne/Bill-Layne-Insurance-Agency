@@ -3978,6 +3978,48 @@
         }
         busy(false);
       });
+      const renBtn = document.createElement('button');
+      renBtn.className = 'ghost';
+      renBtn.innerHTML = '&#9998;';
+      renBtn.title = 'Rename this form';
+      renBtn.addEventListener('click', () => {
+        const nameEl = row.querySelector('.fi-name');
+        if (!nameEl) return;
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = f.name;
+        input.style.cssText = 'width:100%;font:inherit;font-weight:700;font-size:13.5px;border:1px solid var(--teal);border-radius:6px;padding:4px 6px';
+        nameEl.replaceWith(input);
+        input.focus();
+        input.select();
+        let settled = false;
+        const commit = async () => {
+          if (settled) return;
+          settled = true;
+          const newName = input.value.trim();
+          if (!newName || newName === f.name) { renderFormsList(false); return; }
+          busy(true, 'Renaming…');
+          try {
+            const res = await formsApi('/rename/' + encodeURIComponent(f.key), {
+              method: 'POST',
+              headers: { 'x-name': encodeURIComponent(newName) }
+            });
+            const out = await res.json();
+            if (!out.ok) throw new Error(out.error || 'rename failed');
+            toast('Renamed to "' + newName + '".');
+          } catch (err) {
+            console.error(err);
+            toast('Could not rename — check your connection.');
+          }
+          busy(false);
+          renderFormsList(true);
+        };
+        input.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Enter') { ev.preventDefault(); commit(); }
+          if (ev.key === 'Escape') { ev.stopPropagation(); settled = true; renderFormsList(false); }
+        });
+        input.addEventListener('blur', commit);
+      });
       const delBtn = document.createElement('button');
       delBtn.className = 'danger';
       delBtn.innerHTML = '&#10005;';
@@ -4005,6 +4047,7 @@
         }
       });
       row.appendChild(openBtn);
+      row.appendChild(renBtn);
       row.appendChild(delBtn);
       listEl.appendChild(row);
     });
