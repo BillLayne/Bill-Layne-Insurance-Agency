@@ -372,13 +372,14 @@
     background: var(--card);
     border-radius: 14px;
     box-shadow: 0 20px 60px rgba(0,0,0,.35);
-    width: min(1040px, 100%);
-    height: min(760px, 100%);
+    width: min(1560px, 98vw);
+    height: 96vh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     position: relative;
   }
+  #editModal { padding: 8px; }
   /* signature stamps */
   .stamp-sig { cursor: move; }
   .stamp-sig img { width: 100%; height: 100%; display: block; pointer-events: none; }
@@ -496,7 +497,24 @@
   #customStampText { width: 100%; font: inherit; font-size: 13px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; resize: vertical; min-height: 54px; }
 
   /* form-fill modal */
-  #formModal, #emailModal, #phoneModal, #pwModal, #viewModal {
+  /* forms library */
+  #formsModal .form-card { width: min(760px, 100%); max-height: 92vh; }
+  .form-item {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+  }
+  .form-item:hover { border-color: var(--teal); }
+  .form-item .fi-icon { font-size: 20px; flex-shrink: 0; }
+  .form-item .fi-name { font-weight: 700; font-size: 13.5px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .form-item .fi-meta { font-size: 11.5px; color: var(--muted); }
+  .form-item .fi-body { flex: 1; min-width: 0; }
+
+  #formModal, #emailModal, #phoneModal, #pwModal, #viewModal, #formsModal {
     position: fixed;
     inset: 0;
     background: rgba(2,6,23,.55);
@@ -506,7 +524,7 @@
     z-index: 70;
     padding: 14px;
   }
-  #formModal.open, #emailModal.open, #phoneModal.open, #pwModal.open, #viewModal.open { display: flex; }
+  #formModal.open, #emailModal.open, #phoneModal.open, #pwModal.open, #viewModal.open, #formsModal.open { display: flex; }
   #phoneModal { z-index: 72; }
   #pwModal { z-index: 74; }
 
@@ -732,12 +750,11 @@
     flex: 1;
     overflow: auto;
     display: flex;
-    align-items: flex-start;
-    justify-content: center;
     padding: 12px;
     background: #e2e8f0;
     min-height: 0;
   }
+  #editStack { margin: auto; }   /* centers when small, scrolls when zoomed */
   #editStack {
     position: relative;
     box-shadow: 0 4px 18px rgba(0,0,0,.25);
@@ -870,7 +887,9 @@
     #trayPane { padding: 8px 10px 10px; }
     .tray-card { flex-basis: 96px; }
     #trayStrip { min-height: 148px; }
-    /* page editor: single scrollable toolbar row instead of a tall stack */
+    /* page editor: FULL SCREEN on phones + single scrollable toolbar row */
+    #editModal { padding: 0; }
+    .edit-panel { width: 100vw; height: 100vh; height: 100dvh; border-radius: 0; }
     .edit-head { flex-wrap: nowrap; overflow-x: auto; padding: 8px 10px; }
     .edit-head .edit-title { display: none; }
     .edit-head button, .edit-head select { font-size: 12px; padding: 6px 9px; flex-shrink: 0; }
@@ -886,6 +905,7 @@
 <header>
   <div class="brand">Bill Layne Insurance<small>Elkin, NC &bull; Since 2005</small></div>
   <span class="app-title">PDF Studio &mdash; Split &amp; Combine</span>
+  <button id="btnForms" style="font-size:12.5px;font-weight:700;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32);color:#fff;border-radius:999px;padding:7px 14px">&#128203; Forms Library</button>
   <span class="privacy-chip">&#128274; 100% private &mdash; files never leave this computer</span>
 </header>
 
@@ -921,7 +941,7 @@
       <h2>Drop PDFs or images here</h2>
       <p>or click to browse. Load PDFs to split or combine them &mdash; photos and scans (JPG, PNG) become PDF pages too.</p>
       <p class="hint">Every page shows as a thumbnail &mdash; click or drag pages into the New Document tray, then create your PDF.</p>
-      <p style="margin-top:14px"><button class="watch-btn" id="btnWatch2">&#128424; Watch my print folder</button></p>
+      <p style="margin-top:14px"><button id="btnForms2">&#128203; Open the Forms Library</button> <button class="watch-btn" id="btnWatch2">&#128424; Watch my print folder</button></p>
       <p class="hint" style="color:var(--muted);font-weight:500">Pick a folder once &mdash; then &ldquo;Print &rarr; Microsoft Print to PDF&rdquo; into it from any program and the file loads here automatically.</p>
     </div>
 
@@ -1001,6 +1021,9 @@
         <option value="blue">Blue</option>
       </select>
       <button id="btnUndoStamp">&#8630; Undo</button>
+      <button id="btnZoomOut" title="Zoom out">&#8722;</button>
+      <button class="ghost" id="btnZoomFit" title="Fit the whole page">Fit</button>
+      <button id="btnZoomIn" title="Zoom in">+</button>
       <div class="menu-wrap" id="editMoreWrap">
         <button id="btnEditMore" title="More">&#8943;</button>
         <div class="menu-panel">
@@ -1110,6 +1133,21 @@
     </div>
     <div class="form-foot">
       <button class="teal" id="btnPhoneDone">&#10003; Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Forms Library: frequently-used applications & insurance forms, stored in this browser -->
+<div id="formsModal">
+  <div class="form-card">
+    <div class="form-head">&#128203; Forms Library <span class="grow"></span><button class="ghost" id="btnFormsClose">&#10005;</button></div>
+    <div class="form-body">
+      <div class="sig-note">Your frequently-used applications and forms &mdash; ACORD, underwriting, carrier forms. Stored <strong>on this computer</strong>; tap <strong>Open</strong> to load one into your workspace (fillable forms keep their Fill&nbsp;form button).</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input type="text" id="formsSearch" placeholder="Search forms&hellip; e.g. ATV, exclusion, ACORD" style="flex:1;min-width:180px">
+        <button class="primary" id="btnFormsUpload">&#8682; Add forms</button>
+      </div>
+      <div id="formsList" style="display:flex;flex-direction:column;gap:8px"></div>
     </div>
   </div>
 </div>
@@ -1312,6 +1350,7 @@
 <input type="file" id="sigFileInput" accept="image/*" hidden>
 <input type="file" id="imgFileInput" accept="image/*" hidden>
 <input type="file" id="stampImgInput" accept="image/*" hidden>
+<input type="file" id="formsFileInput" accept="application/pdf,.pdf" multiple hidden>
 <div id="toast"></div>
 <div id="busy">Working&hellip;</div>
 
@@ -1961,8 +2000,18 @@
             : 'Press and drag a box around the part of the page you want to KEEP — then adjust it and press Apply crop. Nothing changes until you apply; Remove crop brings the whole page back.';
   }
 
+  let editorZoom = 1;
+  function setEditorZoom(z) {
+    editorZoom = Math.min(4, Math.max(0.5, z));
+    renderEditor();
+  }
+  $('btnZoomIn').addEventListener('click', () => setEditorZoom(editorZoom * 1.25));
+  $('btnZoomOut').addEventListener('click', () => setEditorZoom(editorZoom / 1.25));
+  $('btnZoomFit').addEventListener('click', () => setEditorZoom(1));
+
   function openEditor(item) {
     editorItem = item;
+    editorZoom = 1;
     setEditorMode('text');
     $('editModal').classList.add('open');
     renderEditor();
@@ -1990,7 +2039,7 @@
       const wrap = $('editCanvasWrap');
       const maxW = Math.max(280, wrap.clientWidth - 28);
       const maxH = Math.max(280, wrap.clientHeight - 28);
-      const fit = Math.min(maxW / vp1.width, maxH / vp1.height);
+      const fit = Math.min(maxW / vp1.width, maxH / vp1.height) * editorZoom;
       const vp = page.getViewport({ scale: fit * 2 });   // render 2x for crisp text
       editCanvas.width = Math.ceil(vp.width);
       editCanvas.height = Math.ceil(vp.height);
@@ -2005,6 +2054,9 @@
       editorFit = fit;
       pdoc.destroy();
       syncStampLayer();
+      // a pending crop box must follow the new zoom level too
+      const cropEl = document.getElementById('cropBox');
+      if (cropEl && pendingCrop) positionBoxEl(cropEl, pendingCrop);
     } catch (err) {
       console.error(err);
       toast('Sorry — could not render that page.');
@@ -3029,6 +3081,7 @@
   $('editModal').addEventListener('click', (e) => { if (e.target === $('editModal')) closeEditor(); });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && document.querySelector('.menu-wrap.open')) { closeAllMenus(); return; }
+    if (e.key === 'Escape' && $('formsModal').classList.contains('open')) { closeFormsModal(); return; }
     if (e.key === 'Escape' && $('viewModal').classList.contains('open')) { closeViewer(); return; }
     if (e.key === 'Escape' && $('phoneModal').classList.contains('open')) { closePhoneModal(); return; }
     if (e.key === 'Escape' && $('emailModal').classList.contains('open')) { closeEmailModal(); return; }
@@ -3640,15 +3693,40 @@
   /* ── Auto-save & restore (IndexedDB — stays on this computer) ── */
   function sdb() {
     return new Promise((res, rej) => {
-      const r = indexedDB.open('bliPdfStudio', 2);
+      const r = indexedDB.open('bliPdfStudio', 3);
       r.onupgradeneeded = () => {
         const db = r.result;
         if (!db.objectStoreNames.contains('session')) db.createObjectStore('session');
         if (!db.objectStoreNames.contains('settings')) db.createObjectStore('settings');
+        if (!db.objectStoreNames.contains('forms')) db.createObjectStore('forms');
       };
       r.onsuccess = () => res(r.result);
       r.onerror = () => rej(r.error);
     });
+  }
+  function formsPut(rec) {
+    return sdb().then(db => new Promise((res, rej) => {
+      const tx = db.transaction('forms', 'readwrite');
+      tx.objectStore('forms').put(rec, rec.id);
+      tx.oncomplete = res;
+      tx.onerror = () => rej(tx.error);
+    }));
+  }
+  function formsAll() {
+    return sdb().then(db => new Promise((res, rej) => {
+      const tx = db.transaction('forms', 'readonly');
+      const q = tx.objectStore('forms').getAll();
+      q.onsuccess = () => res(q.result || []);
+      q.onerror = () => rej(q.error);
+    }));
+  }
+  function formsDel(id) {
+    return sdb().then(db => new Promise((res, rej) => {
+      const tx = db.transaction('forms', 'readwrite');
+      tx.objectStore('forms').delete(id);
+      tx.oncomplete = res;
+      tx.onerror = () => rej(tx.error);
+    }));
   }
   function settingsPut(key, v) {
     return sdb().then(db => new Promise((res, rej) => {
@@ -3780,6 +3858,112 @@
     };
   }
   offerRestore();
+
+  /* ── Forms Library: frequently-used applications & forms, stored in IndexedDB ── */
+  function openFormsModal() {
+    $('formsSearch').value = '';
+    renderFormsList();
+    $('formsModal').classList.add('open');
+    setTimeout(() => $('formsSearch').focus(), 80);
+  }
+  function closeFormsModal() { $('formsModal').classList.remove('open'); }
+
+  async function addFormToLibrary(name, bytes) {
+    let pages = 0;
+    try { pages = (await PDFLib.PDFDocument.load(bytes, { ignoreEncryption: true })).getPageCount(); } catch (_) {}
+    const rec = {
+      id: 'f' + Date.now() + Math.random().toString(36).slice(2, 7),
+      name: name.replace(/\.pdf$/i, ''),
+      bytes,
+      size: bytes.length,
+      pages,
+      added: Date.now()
+    };
+    await formsPut(rec);
+    return rec;
+  }
+
+  async function renderFormsList() {
+    const listEl = $('formsList');
+    let forms = [];
+    try { forms = await formsAll(); } catch (_) {}
+    const q = $('formsSearch').value.trim().toLowerCase();
+    forms = forms
+      .filter(f => !q || f.name.toLowerCase().includes(q))
+      .sort((a, b) => a.name.localeCompare(b.name));
+    listEl.innerHTML = '';
+    if (!forms.length) {
+      const note = document.createElement('div');
+      note.className = 'sig-note';
+      note.textContent = q ? 'No forms match "' + q + '".' : 'No forms saved yet — click "Add forms" and upload the PDFs you use all the time.';
+      listEl.appendChild(note);
+      return;
+    }
+    forms.forEach(f => {
+      const row = document.createElement('div');
+      row.className = 'form-item';
+      row.innerHTML =
+        '<span class="fi-icon">&#128196;</span>' +
+        '<div class="fi-body"><div class="fi-name"></div>' +
+        '<div class="fi-meta">' + (f.pages ? f.pages + ' page' + (f.pages === 1 ? '' : 's') + ' · ' : '') +
+        fmtSize(f.size) + ' · added ' + new Date(f.added).toLocaleDateString() + '</div></div>';
+      row.querySelector('.fi-name').textContent = f.name;
+      const openBtn = document.createElement('button');
+      openBtn.className = 'teal';
+      openBtn.textContent = 'Open';
+      openBtn.title = 'Load this form into your workspace';
+      openBtn.addEventListener('click', async () => {
+        closeFormsModal();
+        busy(true, 'Opening "' + f.name + '"…');
+        try {
+          await addPdfData(f.name + '.pdf', f.bytes instanceof Uint8Array ? f.bytes : new Uint8Array(f.bytes));
+          renderAll();
+        } catch (err) {
+          console.error(err);
+          toast('Could not open that form.');
+        }
+        busy(false);
+      });
+      const delBtn = document.createElement('button');
+      delBtn.className = 'danger';
+      delBtn.innerHTML = '&#10005;';
+      delBtn.title = 'Delete this form from the library';
+      delBtn.addEventListener('click', async () => {
+        await formsDel(f.id);
+        renderFormsList();
+        toastAction('Deleted "' + f.name + '" from the library.', 'Undo', async () => {
+          await formsPut(f);
+          renderFormsList();
+        });
+      });
+      row.appendChild(openBtn);
+      row.appendChild(delBtn);
+      listEl.appendChild(row);
+    });
+  }
+
+  $('btnForms').addEventListener('click', openFormsModal);
+  $('btnForms2').addEventListener('click', (e) => { e.stopPropagation(); openFormsModal(); });
+  $('btnFormsClose').addEventListener('click', closeFormsModal);
+  $('formsModal').addEventListener('click', (e) => { if (e.target === $('formsModal')) closeFormsModal(); });
+  $('formsSearch').addEventListener('input', renderFormsList);
+  $('btnFormsUpload').addEventListener('click', () => $('formsFileInput').click());
+  $('formsFileInput').addEventListener('change', async (e) => {
+    const files = [...(e.target.files || [])].filter(f => /\.pdf$/i.test(f.name) || f.type === 'application/pdf');
+    e.target.value = '';
+    if (!files.length) { toast('Forms must be PDF files.'); return; }
+    busy(true, 'Saving to your library…');
+    let added = 0;
+    for (const file of files) {
+      try {
+        await addFormToLibrary(file.name, new Uint8Array(await file.arrayBuffer()));
+        added++;
+      } catch (err) { console.error(err); }
+    }
+    busy(false);
+    renderFormsList();
+    toast('Added ' + added + ' form' + (added === 1 ? '' : 's') + ' to your library.');
+  });
 
   /* ── Watch a folder for freshly printed PDFs ──
      Print from ANY program with "Microsoft Print to PDF" into the watched
@@ -3924,6 +4108,8 @@
     },
     buildPdfBytes,
     openEditorFor: (i) => { if (tray[i]) openEditor(tray[i]); },
+    formsAdd: addFormToLibrary,
+    formsList: formsAll,
     useSignature,
     getState: () => ({
       docs: [...docs.values()].map(d => ({ name: d.name, pages: d.pages.length })),
