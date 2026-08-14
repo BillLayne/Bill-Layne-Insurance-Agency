@@ -798,6 +798,8 @@
     cursor: crosshair;
   }
   #stampLayer { position: absolute; inset: 0; pointer-events: none; }
+  /* while the pen is active nothing on the page intercepts the stroke */
+  #stampLayer.drawing .stamp-el { pointer-events: none; }
   .stamp-el { position: absolute; pointer-events: auto; touch-action: none; }
   .stamp-text {
     font-family: Helvetica, Arial, sans-serif;
@@ -812,6 +814,11 @@
   .stamp-box {
     background: #fff;
     box-shadow: 0 0 0 1px rgba(2,6,23,.12);
+    cursor: move;
+  }
+  .stamp-hl {
+    background: rgba(250, 224, 46, .45);
+    mix-blend-mode: multiply;
     cursor: move;
   }
   .stamp-el.selected { outline: 2px dashed var(--teal); outline-offset: 3px; }
@@ -994,6 +1001,8 @@
       <div class="menu-wrap" id="insMenuWrap">
         <button id="btnInsMenu">&#10133; Insert &#9662;</button>
         <div class="menu-panel">
+          <button class="mode-btn" id="modeHl">&#128396; Highlight</button>
+          <button class="mode-btn" id="modeDraw">&#9998; Draw / pen</button>
           <button class="mode-btn" id="modeBox">&#11036; White-out box</button>
           <button class="mode-btn" id="modeSig">&#9997; Signature</button>
           <button class="mode-btn" id="modeImg">&#128444; Image</button>
@@ -1887,6 +1896,26 @@
     for (const st of stamps) {
       if (st.kind === 'box') {
         page.drawRectangle({ x: st.x, y: st.y, width: st.w, height: st.h, color: PDFLib.rgb(1, 1, 1) });
+      } else if (st.kind === 'hl') {
+        // translucent marker — the text underneath still reads through it
+        page.drawRectangle({
+          x: st.x, y: st.y, width: st.w, height: st.h,
+          color: PDFLib.rgb(0.98, 0.88, 0.18), opacity: 0.38
+        });
+      } else if (st.kind === 'ink') {
+        const c = STAMP_COLORS[st.color] || STAMP_COLORS.black;
+        const col = PDFLib.rgb(c[0], c[1], c[2]);
+        const cap = PDFLib.LineCapStyle ? PDFLib.LineCapStyle.Round : undefined;
+        for (let i = 1; i < st.pts.length; i++) {
+          page.drawLine({
+            start: { x: st.pts[i - 1][0], y: st.pts[i - 1][1] },
+            end: { x: st.pts[i][0], y: st.pts[i][1] },
+            thickness: st.size, color: col, lineCap: cap
+          });
+        }
+        if (st.pts.length === 1) {   // a single tap = a dot
+          page.drawCircle({ x: st.pts[0][0], y: st.pts[0][1], size: st.size / 2, color: col });
+        }
       } else if (st.kind === 'sig' || st.kind === 'img') {
         if (!fontRef.sigs) fontRef.sigs = new Map();
         const key = st.dataUrl + '|' + R;
@@ -1987,9 +2016,17 @@
     $('modeSig').classList.toggle('active', mode === 'sig');
     $('modeImg').classList.toggle('active', mode === 'img');
     $('modeCrop').classList.toggle('active', mode === 'crop');
+    $('modeHl').classList.toggle('active', mode === 'hl');
+    $('modeDraw').classList.toggle('active', mode === 'draw');
+    editOverlay.style.cursor = (mode === 'draw') ? 'cell' : 'crosshair';
+    stampLayer.classList.toggle('drawing', mode === 'draw');
     $('btnUncrop').style.display = (editorItem && editorItem.crop) ? '' : 'none';
     $('editHint').textContent = mode === 'text'
       ? 'Type your text above, then click the page to place it in a box you can move. Drag the box anywhere, drag the blue corner to make it bigger or smaller, double-click to edit the words.'
+      : mode === 'hl'
+        ? 'Press and drag across the words you want to highlight. Each highlight can be moved and resized afterwards, and the text still shows through.'
+      : mode === 'draw'
+        ? 'Draw right on the page with your mouse or trackpad — hold the button down and move. The pen uses the color box, and the size box sets how thick it is. Undo removes the last stroke.'
       : mode === 'box'
         ? 'Press and drag on the page to draw a white box over anything you need to cover. Boxes can be moved and resized after you draw them.'
         : mode === 'sig'
@@ -2122,7 +2159,9 @@
     const cropEl = document.getElementById('cropBox');   // keep a pending crop box alive
     stampLayer.innerHTML = '';
     if (!editorItem || !editorVp) return;
-    for (const st of editorItem.stamps) stampLayer.appendChild(buildStampEl(st));
+    // pen strokes live on the canvas overlay; everything else is a movable element
+    for (const st of editorItem.stamps) if (st.kind !== 'ink') stampLayer.appendChild(buildStampEl(st));
+    redrawInk();
     if (cropEl && pendingCrop) stampLayer.appendChild(cropEl);
     selectStamp(selectedStamp && editorItem.stamps.includes(selectedStamp) ? selectedStamp : null);
     scheduleAutosave();
@@ -2130,7 +2169,7 @@
 
   function buildStampEl(st) {
     const el = document.createElement('div');
-    el.className = 'stamp-el' + (st.kind === 'box' ? ' stamp-box' : '');
+    el.className = 'stamp-el' + (st.kind === 'box' ? ' stamp-box' : '') + (st.kind === 'hl' ? ' stamp-hl' : '');
     el.__stamp = st;
     if (st.kind === 'text') {
       const txt = document.createElement('div');
@@ -2261,32 +2300,105 @@
     return { cx, cy, px, py };
   }
 
+  /* ── pen strokes (kind:'ink') live on the overlay canvas ── */
+  function inkThickness() {
+    // reuse the text-size box: 10pt → thin, 36pt → bold marker line
+    return Math.max(1, (parseInt($('stampSize').value, 10) || 14) / 8);
+  }
+  function drawInkOn(ctx) {
+    if (!editorItem || !editorVp) return;
+    ctx.setLineDash([]);
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    for (const st of editorItem.stamps) {
+      if (st.kind !== 'ink' || !st.pts.length) continue;
+      const c = STAMP_COLORS[st.color] || STAMP_COLORS.black;
+      ctx.strokeStyle = 'rgb(' + c.map(v => Math.round(v * 255)).join(',') + ')';
+      ctx.lineWidth = st.size * editorFit * 2;   // pts → canvas px (canvas is 2×)
+      ctx.beginPath();
+      st.pts.forEach((p, i) => {
+        const v = editorVp.convertToViewportPoint(p[0], p[1]);
+        if (i === 0) ctx.moveTo(v[0], v[1]); else ctx.lineTo(v[0], v[1]);
+      });
+      if (st.pts.length === 1) {
+        const v = editorVp.convertToViewportPoint(st.pts[0][0], st.pts[0][1]);
+        ctx.lineTo(v[0] + 0.1, v[1]);
+      }
+      ctx.stroke();
+    }
+  }
+  function redrawInk() {
+    const ctx = editOverlay.getContext('2d');
+    ctx.clearRect(0, 0, editOverlay.width, editOverlay.height);
+    drawInkOn(ctx);
+  }
+
+  let inkStroke = null;
+  editOverlay.addEventListener('pointerdown', (e) => {
+    if (!editorItem || !editorVp || editorMode !== 'draw') return;
+    e.preventDefault();
+    try { editOverlay.setPointerCapture(e.pointerId); } catch (_) {}
+    const pt = overlayToPdfPoint(e);
+    inkStroke = { kind: 'ink', pts: [[pt.px, pt.py]], color: $('stampColor').value, size: inkThickness() };
+    const ctx = editOverlay.getContext('2d');
+    const c = STAMP_COLORS[inkStroke.color] || STAMP_COLORS.black;
+    ctx.setLineDash([]);
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = 'rgb(' + c.map(v => Math.round(v * 255)).join(',') + ')';
+    ctx.lineWidth = inkStroke.size * editorFit * 2;
+    ctx.beginPath();
+    ctx.moveTo(pt.cx, pt.cy);
+  });
+  editOverlay.addEventListener('pointermove', (e) => {
+    if (!inkStroke) return;
+    const pt = overlayToPdfPoint(e);
+    const last = inkStroke.pts[inkStroke.pts.length - 1];
+    // skip micro-moves so the stored path stays small
+    if (Math.abs(last[0] - pt.px) < 0.4 && Math.abs(last[1] - pt.py) < 0.4) return;
+    inkStroke.pts.push([pt.px, pt.py]);
+    const ctx = editOverlay.getContext('2d');
+    ctx.lineTo(pt.cx, pt.cy);
+    ctx.stroke();
+  });
+  function finishInkStroke() {
+    if (!inkStroke) return;
+    const st = inkStroke;
+    inkStroke = null;
+    editorItem.stamps.push(st);
+    syncStampLayer();
+  }
+  editOverlay.addEventListener('pointerup', finishInkStroke);
+  editOverlay.addEventListener('pointercancel', finishInkStroke);
+  editOverlay.addEventListener('pointerleave', finishInkStroke);
+
   editOverlay.addEventListener('mousedown', (e) => {
     if (!editorItem || !editorVp) return;
-    if (editorMode !== 'box' && editorMode !== 'crop') return;
+    if (editorMode !== 'box' && editorMode !== 'crop' && editorMode !== 'hl') return;
     boxDrag = overlayToPdfPoint(e);
   });
   editOverlay.addEventListener('mousemove', (e) => {
     if (!boxDrag) return;
     const now = overlayToPdfPoint(e);
     const ctx = editOverlay.getContext('2d');
-    ctx.clearRect(0, 0, editOverlay.width, editOverlay.height);
+    redrawInk();   // clears, then repaints existing pen strokes under the marquee
     ctx.strokeStyle = '#C8A84E';
     ctx.lineWidth = 3;
     ctx.setLineDash([8, 6]);
-    ctx.fillStyle = 'rgba(255,255,255,.65)';
+    ctx.fillStyle = editorMode === 'hl' ? 'rgba(250,224,46,.5)' : 'rgba(255,255,255,.65)';
     const x = Math.min(boxDrag.cx, now.cx), y = Math.min(boxDrag.cy, now.cy);
     const w = Math.abs(now.cx - boxDrag.cx), h = Math.abs(now.cy - boxDrag.cy);
     ctx.fillRect(x, y, w, h);
     ctx.strokeRect(x, y, w, h);
   });
   editOverlay.addEventListener('mouseup', (e) => {
-    if ((editorMode === 'box' || editorMode === 'crop') && boxDrag) {
+    if ((editorMode === 'box' || editorMode === 'crop' || editorMode === 'hl') && boxDrag) {
       const end = overlayToPdfPoint(e);
-      editOverlay.getContext('2d').clearRect(0, 0, editOverlay.width, editOverlay.height);
+      redrawInk();
       const x = Math.min(boxDrag.px, end.px), y = Math.min(boxDrag.py, end.py);
       const w = Math.abs(end.px - boxDrag.px), h = Math.abs(end.py - boxDrag.py);
       const wasCrop = editorMode === 'crop';
+      const kind = editorMode === 'hl' ? 'hl' : 'box';
       boxDrag = null;
       if (wasCrop) {
         if (w > 24 && h > 24) showPendingCrop({ x, y, w, h });
@@ -2294,7 +2406,7 @@
         return;
       }
       if (w > 2 && h > 2) {
-        const st = { kind: 'box', x, y, w, h };
+        const st = { kind, x, y, w, h };
         editorItem.stamps.push(st);
         selectedStamp = st;
         syncStampLayer();
@@ -3058,6 +3170,8 @@
   $('formModal').addEventListener('click', (e) => { if (e.target === $('formModal')) closeFormModal(); });
 
   $('modeText').addEventListener('click', () => setEditorMode('text'));
+  $('modeHl').addEventListener('click', () => setEditorMode('hl'));
+  $('modeDraw').addEventListener('click', () => setEditorMode('draw'));
   $('modeBox').addEventListener('click', () => setEditorMode('box'));
   $('modeSig').addEventListener('click', () => openSigPanel());
   $('modeImg').addEventListener('click', () => $('imgFileInput').click());
