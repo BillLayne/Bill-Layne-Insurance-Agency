@@ -545,9 +545,6 @@
   }
   #restoreBar.show { display: flex; }
 
-  .watch-btn.watching { background: var(--teal); border-color: var(--teal); color: #fff; }
-  .watch-btn.resume { background: #fffbeb; border-color: var(--gold); color: #713f12; }
-
   /* ── dropdown menus (condensed toolbars) ── */
   .menu-wrap { position: relative; display: inline-block; }
   .menu-panel {
@@ -924,7 +921,6 @@
         <button id="btnSrcMenu" title="More">&#8943;</button>
         <div class="menu-panel">
           <button id="btnThumbSize" data-keepopen>Thumbnail size: Medium</button>
-          <button class="watch-btn" id="btnWatch1">&#128424; Watch my print folder</button>
           <button class="danger" id="btnReset">Start over</button>
         </div>
       </div>
@@ -941,8 +937,7 @@
       <h2>Drop PDFs or images here</h2>
       <p>or click to browse. Load PDFs to split or combine them &mdash; photos and scans (JPG, PNG) become PDF pages too.</p>
       <p class="hint">Every page shows as a thumbnail &mdash; click or drag pages into the New Document tray, then create your PDF.</p>
-      <p style="margin-top:14px"><button id="btnForms2">&#128203; Open the Forms Library</button> <button class="watch-btn" id="btnWatch2">&#128424; Watch my print folder</button></p>
-      <p class="hint" style="color:var(--muted);font-weight:500">Pick a folder once &mdash; then &ldquo;Print &rarr; Microsoft Print to PDF&rdquo; into it from any program and the file loads here automatically.</p>
+      <p style="margin-top:14px"><button id="btnForms2">&#128203; Open the Forms Library</button></p>
     </div>
 
     <div id="docList"></div>
@@ -4087,140 +4082,11 @@
     toast('Added ' + added + ' form' + (added === 1 ? '' : 's') + ' to the online library.');
   });
 
-  /* ── Watch a folder for freshly printed PDFs ──
-     Print from ANY program with "Microsoft Print to PDF" into the watched
-     folder and the file loads here automatically. Chrome/Edge only. */
-  let watchHandle = null, pendingHandle = null, watchTimer = null;
-  const watchSeen = new Map();   // filename -> lastModified
-  const watchBusy = new Set();
-
-  function updateWatchUI() {
-    document.querySelectorAll('.watch-btn').forEach(b => {
-      b.classList.toggle('watching', !!watchHandle);
-      b.classList.toggle('resume', !watchHandle && !!pendingHandle);
-      if (watchHandle) {
-        b.innerHTML = '&#128424; Watching &ldquo;' + escapeHtml(watchHandle.name) + '&rdquo; &mdash; click to stop';
-      } else if (pendingHandle) {
-        b.innerHTML = '&#9654; Resume watching &ldquo;' + escapeHtml(pendingHandle.name) + '&rdquo;';
-      } else {
-        b.innerHTML = '&#128424; Watch my print folder';
-      }
-    });
-  }
-
-  async function baselineWatch() {
-    watchSeen.clear();
-    for await (const [name, h] of watchHandle.entries()) {
-      if (h.kind === 'file' && /\.pdf$/i.test(name)) {
-        try { watchSeen.set(name, (await h.getFile()).lastModified); } catch (_) {}
-      }
-    }
-  }
-
-  function startWatchLoop() {
-    clearInterval(watchTimer);
-    watchTimer = setInterval(async () => {
-      if (!watchHandle) return;
-      try {
-        for await (const [name, h] of watchHandle.entries()) {
-          if (h.kind !== 'file' || !/\.pdf$/i.test(name) || watchBusy.has(name)) continue;
-          let f;
-          try { f = await h.getFile(); } catch (_) { continue; }
-          const prev = watchSeen.get(name);
-          if (prev !== undefined && f.lastModified <= prev) continue;
-          watchBusy.add(name);
-          (async () => {
-            // give the printer driver a moment to finish writing the file
-            await new Promise(r => setTimeout(r, 1000));
-            try {
-              const f2 = await h.getFile();
-              watchSeen.set(name, f2.lastModified);
-              await addFiles([f2]);
-              renderAll();
-              toast('🖨 Loaded "' + name + '" from your print folder.');
-            } catch (_) {}
-            watchBusy.delete(name);
-          })();
-        }
-      } catch (err) {
-        // folder gone or permission revoked — stop quietly
-        clearInterval(watchTimer);
-        watchHandle = null;
-        updateWatchUI();
-      }
-    }, 2500);
-  }
-
-  function stopWatch(forget) {
-    clearInterval(watchTimer);
-    watchHandle = null;
-    if (forget) settingsDel('watchDir').catch(() => {});
-    updateWatchUI();
-    toast('Stopped watching the print folder.');
-  }
-
-  async function pickWatchFolder() {
-    try {
-      const h = await window.showDirectoryPicker({ id: 'bliPrintWatch', mode: 'read', startIn: 'documents' });
-      watchHandle = h;
-      pendingHandle = null;
-      await baselineWatch();
-      startWatchLoop();
-      settingsPut('watchDir', h).catch(() => {});
-      updateWatchUI();
-      toast('Watching "' + h.name + '" — print to PDF into that folder and it loads here automatically.');
-    } catch (_) { /* user cancelled the picker */ }
-  }
-
-  async function onWatchClick() {
-    if (watchHandle) { stopWatch(true); return; }
-    if (pendingHandle) {
-      try {
-        const p = await pendingHandle.requestPermission({ mode: 'read' });
-        if (p === 'granted') {
-          watchHandle = pendingHandle;
-          pendingHandle = null;
-          await baselineWatch();
-          startWatchLoop();
-          updateWatchUI();
-          toast('Watching "' + watchHandle.name + '" again.');
-          return;
-        }
-      } catch (_) {}
-      pendingHandle = null;
-    }
-    pickWatchFolder();
-  }
-
-  async function initWatch() {
-    if (!window.showDirectoryPicker) {
-      document.querySelectorAll('.watch-btn').forEach(b => b.style.display = 'none');
-      return;
-    }
-    document.querySelectorAll('.watch-btn').forEach(b => b.addEventListener('click', (e) => {
-      e.stopPropagation();
-      onWatchClick();
-    }));
-    try {
-      const h = await settingsGet('watchDir');
-      if (h) {
-        const p = await h.queryPermission({ mode: 'read' });
-        if (p === 'granted') {
-          watchHandle = h;
-          await baselineWatch();
-          startWatchLoop();
-        } else {
-          pendingHandle = h;
-        }
-      }
-    } catch (_) {}
-    updateWatchUI();
-  }
-  initWatch();
+  // tidy up the setting left behind by the retired watch-print-folder feature
+  settingsDel('watchDir').catch(() => {});
 
   // exposed for automated testing
   window.PDFStudio = {
-    _setWatchHandle: async (h) => { watchHandle = h; pendingHandle = null; await baselineWatch(); startWatchLoop(); updateWatchUI(); },
     addPdfData: async (name, bytes) => { await addPdfData(name, bytes); renderAll(); },
     addImageData: async (name, blob) => { await addImageData(name, blob); renderAll(); },
     addAllToTray: () => { for (const [, d] of docs) d.pages.forEach(p => trayAdd(p)); renderAll(); },
