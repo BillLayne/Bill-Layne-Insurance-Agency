@@ -1142,7 +1142,11 @@
   <div class="form-card">
     <div class="form-head">&#128203; Forms Library <span class="grow"></span><button class="ghost" id="btnFormsClose">&#10005;</button></div>
     <div class="form-body">
-      <div class="sig-note">Your frequently-used applications and forms &mdash; ACORD, underwriting, carrier forms. Stored <strong>on this computer</strong>; tap <strong>Open</strong> to load one into your workspace (fillable forms keep their Fill&nbsp;form button).</div>
+      <div class="sig-note">Your frequently-used applications and forms &mdash; ACORD, underwriting, carrier forms &mdash; stored in the agency&rsquo;s <strong>private online library</strong>, reachable from any device with the access code. Blank forms only &mdash; customer documents still never leave your computer. Fillable forms keep their Fill&nbsp;form button.</div>
+      <div id="formsSetup" style="display:none;gap:8px;flex-wrap:wrap;align-items:center">
+        <input type="password" id="formsCodeInput" placeholder="Access code" autocomplete="off" style="flex:1;min-width:140px">
+        <button class="primary" id="btnFormsConnect">Connect</button>
+      </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <input type="text" id="formsSearch" placeholder="Search forms&hellip; e.g. ATV, exclusion, ACORD" style="flex:1;min-width:180px">
         <button class="primary" id="btnFormsUpload">&#8682; Add forms</button>
@@ -3378,7 +3382,8 @@
       if (cfg && typeof cfg.u === 'string' && /^https:\/\/script\.google\.com\/macros\//.test(cfg.u) && cfg.s) {
         localStorage.setItem(GW_URL_KEY, cfg.u);
         localStorage.setItem(GW_SECRET_KEY, String(cfg.s));
-        setTimeout(() => toast('✅ Gmail drafts are now connected on this device.'), 400);
+        if (cfg.f) localStorage.setItem('bliFormsCode', String(cfg.f));
+        setTimeout(() => toast('✅ Gmail drafts' + (cfg.f ? ' and the Forms Library' : '') + ' are now connected on this device.'), 400);
       }
     } catch (_) {}
     history.replaceState(null, '', location.pathname + location.search);
@@ -3392,7 +3397,10 @@
       mailBanner(false, '⚠️ Set up the Mail Gateway in THIS browser first (open <a href="/mail-gateway/" target="_blank">the Mail Gateway page</a>), then use this button to copy the connection to your phone.');
       return;
     }
-    const b64 = btoa(JSON.stringify({ u: url, s: secret })).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    const payload = { u: url, s: secret };
+    const fc = localStorage.getItem('bliFormsCode');
+    if (fc) payload.f = fc;
+    const b64 = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     const link = 'https://www.billlayneinsurance.com/pdf-tools/#gw=' + b64;
     const box = $('qrBox');
     box.innerHTML = '';
@@ -3859,44 +3867,109 @@
   }
   offerRestore();
 
-  /* ── Forms Library: frequently-used applications & forms, stored in IndexedDB ── */
+  /* ── Forms Library: agency forms in the private BLI form host (Cloudflare R2)
+        — reachable from any device with the access code ── */
+  const FORMS_HOST = 'https://bli-form-host.bill-7e3.workers.dev';
+  const FORMS_CODE_KEY = 'bliFormsCode';
+  let formsCache = [];
+
+  function formsCode() { return localStorage.getItem(FORMS_CODE_KEY) || ''; }
+
+  async function formsApi(path, opts) {
+    const used = formsCode();
+    const o = opts || {};
+    o.headers = Object.assign({ 'x-forms-code': used }, o.headers || {});
+    const res = await fetch(FORMS_HOST + path, o);
+    if (res.status === 401) {
+      // only forget the code if it's still the one that just failed —
+      // a slow stale request must never wipe a freshly entered good code
+      if (formsCode() === used) localStorage.removeItem(FORMS_CODE_KEY);
+      throw new Error('bad-code');
+    }
+    return res;
+  }
+
   function openFormsModal() {
     $('formsSearch').value = '';
-    renderFormsList();
     $('formsModal').classList.add('open');
-    setTimeout(() => $('formsSearch').focus(), 80);
+    renderFormsList(true);
   }
   function closeFormsModal() { $('formsModal').classList.remove('open'); }
+
+  function formsNote(msg) {
+    const listEl = $('formsList');
+    listEl.innerHTML = '';
+    const note = document.createElement('div');
+    note.className = 'sig-note';
+    note.textContent = msg;
+    listEl.appendChild(note);
+  }
 
   async function addFormToLibrary(name, bytes) {
     let pages = 0;
     try { pages = (await PDFLib.PDFDocument.load(bytes, { ignoreEncryption: true })).getPageCount(); } catch (_) {}
-    const rec = {
-      id: 'f' + Date.now() + Math.random().toString(36).slice(2, 7),
-      name: name.replace(/\.pdf$/i, ''),
-      bytes,
-      size: bytes.length,
-      pages,
-      added: Date.now()
-    };
-    await formsPut(rec);
-    return rec;
+    const res = await formsApi('/upload', {
+      method: 'POST',
+      headers: { 'x-name': encodeURIComponent(name.replace(/\.pdf$/i, '')), 'x-pages': String(pages) },
+      body: bytes
+    });
+    const out = await res.json();
+    if (!out.ok) throw new Error(out.error || 'upload failed');
+    return out;
   }
 
-  async function renderFormsList() {
-    const listEl = $('formsList');
-    let forms = [];
-    try { forms = await formsAll(); } catch (_) {}
+  // one-time move of any forms saved locally before the online library existed
+  async function migrateLocalForms() {
+    let local = [];
+    try { local = await formsAll(); } catch (_) { return; }
+    if (!local.length) return;
+    busy(true, 'Moving ' + local.length + ' form' + (local.length === 1 ? '' : 's') + ' to the online library…');
+    for (const f of local) {
+      try {
+        await addFormToLibrary(f.name, f.bytes instanceof Uint8Array ? f.bytes : new Uint8Array(f.bytes));
+        await formsDel(f.id);
+      } catch (err) { console.error('migrate failed for', f.name, err); }
+    }
+    busy(false);
+    toast('Moved your saved forms to the online library — they now follow you to any device.');
+  }
+
+  async function renderFormsList(fetchFresh) {
+    const setup = $('formsSetup');
+    if (!formsCode()) {
+      setup.style.display = 'flex';
+      formsNote('Enter the access code once on this device to connect to the agency forms library.');
+      setTimeout(() => $('formsCodeInput').focus(), 80);
+      return;
+    }
+    setup.style.display = 'none';
+    try {
+      if (fetchFresh || !formsCache.length) {
+        formsNote('Loading the forms library…');
+        const res = await formsApi('/list');
+        const out = await res.json();
+        if (!out.ok) throw new Error(out.error || 'list failed');
+        formsCache = out.forms || [];
+        if (await formsAll().then(l => l.length).catch(() => 0)) {
+          await migrateLocalForms();
+          const res2 = await formsApi('/list');
+          formsCache = (await res2.json()).forms || [];
+        }
+      }
+    } catch (err) {
+      if (err.message === 'bad-code') { renderFormsList(); toast('That access code was not right — try again.'); return; }
+      console.error(err);
+      formsNote('Could not reach the forms library — check your internet connection and try again.');
+      return;
+    }
     const q = $('formsSearch').value.trim().toLowerCase();
-    forms = forms
+    const forms = formsCache
       .filter(f => !q || f.name.toLowerCase().includes(q))
       .sort((a, b) => a.name.localeCompare(b.name));
+    const listEl = $('formsList');
     listEl.innerHTML = '';
     if (!forms.length) {
-      const note = document.createElement('div');
-      note.className = 'sig-note';
-      note.textContent = q ? 'No forms match "' + q + '".' : 'No forms saved yet — click "Add forms" and upload the PDFs you use all the time.';
-      listEl.appendChild(note);
+      formsNote(q ? 'No forms match "' + q + '".' : 'No forms saved yet — click "Add forms" and upload the PDFs you use all the time.');
       return;
     }
     forms.forEach(f => {
@@ -3906,7 +3979,7 @@
         '<span class="fi-icon">&#128196;</span>' +
         '<div class="fi-body"><div class="fi-name"></div>' +
         '<div class="fi-meta">' + (f.pages ? f.pages + ' page' + (f.pages === 1 ? '' : 's') + ' · ' : '') +
-        fmtSize(f.size) + ' · added ' + new Date(f.added).toLocaleDateString() + '</div></div>';
+        fmtSize(f.size) + (f.added ? ' · added ' + new Date(f.added).toLocaleDateString() : '') + '</div></div>';
       row.querySelector('.fi-name').textContent = f.name;
       const openBtn = document.createElement('button');
       openBtn.className = 'teal';
@@ -3916,25 +3989,41 @@
         closeFormsModal();
         busy(true, 'Opening "' + f.name + '"…');
         try {
-          await addPdfData(f.name + '.pdf', f.bytes instanceof Uint8Array ? f.bytes : new Uint8Array(f.bytes));
+          const res = await formsApi('/file/' + encodeURIComponent(f.key));
+          if (!res.ok) throw new Error('download failed');
+          await addPdfData(f.name + '.pdf', new Uint8Array(await res.arrayBuffer()));
           renderAll();
         } catch (err) {
           console.error(err);
-          toast('Could not open that form.');
+          toast('Could not open that form — check your connection.');
         }
         busy(false);
       });
       const delBtn = document.createElement('button');
       delBtn.className = 'danger';
       delBtn.innerHTML = '&#10005;';
-      delBtn.title = 'Delete this form from the library';
+      delBtn.title = 'Delete this form from the library (for everyone)';
       delBtn.addEventListener('click', async () => {
-        await formsDel(f.id);
-        renderFormsList();
-        toastAction('Deleted "' + f.name + '" from the library.', 'Undo', async () => {
-          await formsPut(f);
-          renderFormsList();
-        });
+        busy(true, 'Deleting…');
+        try {
+          // grab the bytes first so Undo can put it back
+          const res = await formsApi('/file/' + encodeURIComponent(f.key));
+          const bytes = res.ok ? new Uint8Array(await res.arrayBuffer()) : null;
+          await formsApi('/file/' + encodeURIComponent(f.key), { method: 'DELETE' });
+          busy(false);
+          renderFormsList(true);
+          if (bytes) {
+            toastAction('Deleted "' + f.name + '" from the library.', 'Undo', async () => {
+              busy(true, 'Restoring…');
+              try { await addFormToLibrary(f.name, bytes); renderFormsList(true); } catch (_) { toast('Could not restore it.'); }
+              busy(false);
+            });
+          }
+        } catch (err) {
+          busy(false);
+          console.error(err);
+          toast('Could not delete that form — check your connection.');
+        }
       });
       row.appendChild(openBtn);
       row.appendChild(delBtn);
@@ -3942,17 +4031,28 @@
     });
   }
 
+  $('btnFormsConnect').addEventListener('click', () => {
+    const code = $('formsCodeInput').value.trim();
+    if (!code) { toast('Type the access code first.'); return; }
+    localStorage.setItem(FORMS_CODE_KEY, code);
+    $('formsCodeInput').value = '';
+    renderFormsList(true);
+  });
+  $('formsCodeInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('btnFormsConnect').click(); });
   $('btnForms').addEventListener('click', openFormsModal);
   $('btnForms2').addEventListener('click', (e) => { e.stopPropagation(); openFormsModal(); });
   $('btnFormsClose').addEventListener('click', closeFormsModal);
   $('formsModal').addEventListener('click', (e) => { if (e.target === $('formsModal')) closeFormsModal(); });
-  $('formsSearch').addEventListener('input', renderFormsList);
-  $('btnFormsUpload').addEventListener('click', () => $('formsFileInput').click());
+  $('formsSearch').addEventListener('input', () => renderFormsList(false));
+  $('btnFormsUpload').addEventListener('click', () => {
+    if (!formsCode()) { toast('Connect with the access code first.'); return; }
+    $('formsFileInput').click();
+  });
   $('formsFileInput').addEventListener('change', async (e) => {
     const files = [...(e.target.files || [])].filter(f => /\.pdf$/i.test(f.name) || f.type === 'application/pdf');
     e.target.value = '';
     if (!files.length) { toast('Forms must be PDF files.'); return; }
-    busy(true, 'Saving to your library…');
+    busy(true, 'Uploading to your library…');
     let added = 0;
     for (const file of files) {
       try {
@@ -3961,8 +4061,8 @@
       } catch (err) { console.error(err); }
     }
     busy(false);
-    renderFormsList();
-    toast('Added ' + added + ' form' + (added === 1 ? '' : 's') + ' to your library.');
+    renderFormsList(true);
+    toast('Added ' + added + ' form' + (added === 1 ? '' : 's') + ' to the online library.');
   });
 
   /* ── Watch a folder for freshly printed PDFs ──
@@ -4109,7 +4209,7 @@
     buildPdfBytes,
     openEditorFor: (i) => { if (tray[i]) openEditor(tray[i]); },
     formsAdd: addFormToLibrary,
-    formsList: formsAll,
+    formsList: async () => { const r = await formsApi('/list'); return (await r.json()).forms; },
     useSignature,
     getState: () => ({
       docs: [...docs.values()].map(d => ({ name: d.name, pages: d.pages.length })),
