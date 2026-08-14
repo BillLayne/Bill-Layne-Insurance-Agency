@@ -3918,22 +3918,6 @@
     return out;
   }
 
-  // one-time move of any forms saved locally before the online library existed
-  async function migrateLocalForms() {
-    let local = [];
-    try { local = await formsAll(); } catch (_) { return; }
-    if (!local.length) return;
-    busy(true, 'Moving ' + local.length + ' form' + (local.length === 1 ? '' : 's') + ' to the online library…');
-    for (const f of local) {
-      try {
-        await addFormToLibrary(f.name, f.bytes instanceof Uint8Array ? f.bytes : new Uint8Array(f.bytes));
-        await formsDel(f.id);
-      } catch (err) { console.error('migrate failed for', f.name, err); }
-    }
-    busy(false);
-    toast('Moved your saved forms to the online library — they now follow you to any device.');
-  }
-
   async function renderFormsList(fetchFresh) {
     const setup = $('formsSetup');
     if (!formsCode()) {
@@ -3950,11 +3934,6 @@
         const out = await res.json();
         if (!out.ok) throw new Error(out.error || 'list failed');
         formsCache = out.forms || [];
-        if (await formsAll().then(l => l.length).catch(() => 0)) {
-          await migrateLocalForms();
-          const res2 = await formsApi('/list');
-          formsCache = (await res2.json()).forms || [];
-        }
       }
     } catch (err) {
       if (err.message === 'bad-code') { renderFormsList(); toast('That access code was not right — try again.'); return; }
