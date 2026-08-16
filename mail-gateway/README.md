@@ -27,9 +27,10 @@ rules.
 | 3. `HANDOFF-STYLED-DRAFT-BODY.md` | **Put a fully styled branded email body in the draft** — template + `{{TOKENS}}` + conditional blocks pipeline |
 
 Working reference implementations: **PDF Studio** (`/pdf-tools/index.html` — all three layers,
-search `btnEmailGo`) and **CertGuard AI** (styled COI email + ACORD PDF). A future Claude
-prompt as simple as *"add a Gmail-draft button like PDF Studio's — read the three handoffs
-in mail-gateway/"* is enough to wire everything correctly.
+search `btnEmailGo`; the program itself is documented in `pdf-tools/HANDOFF-PDF-STUDIO.md`)
+and **CertGuard AI** (styled COI email + ACORD PDF). A future Claude prompt as simple as
+*"add a Gmail-draft button like PDF Studio's — read the three handoffs in mail-gateway/"*
+is enough to wire everything correctly.
 
 ## One-time deploy (about 3 minutes)
 
