@@ -3,7 +3,7 @@
 
 **Audience:** any future Claude/Codex session or developer changing, extending, or debugging PDF Studio.
 **Live:** https://www.billlayneinsurance.com/pdf-tools/ — `noindex`, and **deliberately not linked from any site nav** (Bill's rule: the homepage top nav is locked; new pages go in drawer/dock menus only, and this one is shared by URL).
-**Source:** `pdf-tools/index.html` — **one self-contained file** (~4,200 lines). No build step, no framework, no bundler. Edit it and push; GitHub Pages serves it.
+**Source:** `pdf-tools/index.html` — **one self-contained file** (~5,000 lines). No build step, no framework, no bundler. Edit it and push; GitHub Pages serves it.
 **Companion service:** `Documents\bli-form-host` (Cloudflare Worker + R2) — the online Forms Library. See §8.
 **Email layer:** documented separately in `mail-gateway/HANDOFF-GATEWAY-INTEGRATION.md`, `HANDOFF-ATTACH-PDF-TO-GMAIL.md`, `HANDOFF-STYLED-DRAFT-BODY.md`. See §9.
 
@@ -221,3 +221,43 @@ The "What is this delivering?" dropdown swaps `{{HEADLINE}}`/`{{INTRO_LINE}}`/su
 - `mail-gateway/HANDOFF-*.md` — the three email-layer handoffs (gateway, attachments, styled body).
 - Claude memory: `project_pdf_studio.md` (full build history, decisions, dated entries) and `project_bli_form_host.md`.
 - Related agency tooling that could reuse these patterns: Quote Template Studio, Letterhead PDF Generator, Card Generator.
+
+## 13. Premium staff interface (August 2026)
+
+The frontend was refined into a premium PDF workstation without changing the PDF engine, privacy model, storage model, integrations, or the one-file architecture.
+
+### Main workspace
+
+- Dark navy/gold agency header with a proper `h1`, concise product description, Forms Library action, and private-device trust badge.
+- Three-step workflow indicator: **Add files → Arrange & edit → Save or send**. `updateWorkflowState()` advances it from the real `docs` and `tray` state.
+- Device-status row reports local autosave, Forms Library connection, and Gmail connection. Never put secrets in these labels.
+- Opening state has one explicit primary action (`#btnBrowseFiles`), a secondary Forms Library action, supported-file guidance, and a short privacy promise.
+- Loaded documents remain in the proven top source area. The bottom horizontal tray remains the canonical final page order.
+- The bottom tray is now a finishing dock: filename, Save PDF, Print, Gmail draft, Export settings, page count, and selected-page strip.
+
+### Editor
+
+- Desktop editor uses one canonical left tool rail: Text, Highlight, Pen, White-out, Signature, Image, Stamps, Crop.
+- The top context bar changes through `setEditorMode()` and shows only controls relevant to the selected tool.
+- Undo, zoom, more actions, and Done stay in the dark editor header.
+- On phones the tool rail becomes a horizontally scrollable row; the editor remains full-screen.
+
+### Design system
+
+- Local system font stack only: `Segoe UI Variable`, Aptos, Segoe UI, system UI. Do not add an externally hosted font.
+- Navy is brand chrome, blue is the single primary-action/selection color, teal is privacy/success, gold is special status/search, and red is destructive only.
+- Standard controls are at least 38px high; tray-card controls are 32px; small operational text should not fall below 11.5–12px.
+- Core interface icons are inline SVG so they render consistently without another network request.
+- White documents stay on neutral surfaces; the editor canvas surround is dark to focus attention on the page.
+
+### Keyboard and accessibility
+
+- Source page cards are focusable: Enter/Space adds a page.
+- Tray cards are focusable: Left/Right reorders, Enter opens the editor, Delete/Backspace removes with Undo.
+- Visible 3px focus rings are intentional. Do not remove them.
+- Escape continues to close menus, panels, and modals in the established retreat order.
+- Keep actionable labels and `aria-label` text when changing icons; do not revert to emoji-only buttons.
+
+### Safety boundary
+
+The premium interface is a shell around the existing implementation. Keep `buildPdfBytes()` as the only visual/output build path, keep all existing element IDs unless every listener/test hook is updated, and verify a real PDF load → page select → editor open → reorder → Save PDF flow after any layout change.
