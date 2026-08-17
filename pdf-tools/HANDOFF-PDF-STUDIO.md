@@ -14,7 +14,7 @@
 | Area | Features |
 |---|---|
 | **Input** | Drop/browse PDFs and images (JPG/PNG/WebP/GIF/BMP → become PDF pages); password-protected PDFs (prompt + unlock); Forms Library (cloud); camera capture on phones (native file input) |
-| **Assemble** | Per-page thumbnails; click or drag pages into the New Document tray; reorder by drag **or ◀ ▶ buttons** (touch); rotate; remove; combine across many files |
+| **Assemble** | Per-page thumbnails; **click to select pages, then "Add N to Step 3" together** (shift-click ranges, double-click adds one, drag still works); reorder by drag **or ◀ ▶ buttons** (touch); rotate; remove; combine across many files |
 | **Edit a page** | Text boxes (movable, resizable, re-editable); white-out boxes; **highlighter**; **freehand pen**; signatures (draw or upload, saved); images; quick stamps (date, COPY/VOID/PAID, agency block, custom text + picture stamps); **crop** (adjustable, confirm before apply); zoom −/Fit/+ |
 | **Forms** | AcroForm detection → "Fill form" modal (text/checkbox/radio/dropdown) → values written back into the real fields |
 | **Find** | Full-text search across loaded pages, gold-highlighted matches; 🔍 zoom viewer with prev/next |
@@ -76,6 +76,31 @@ tray      : [{ tid, docId, pageIndex, rot, stamps:[], crop?:{x,y,w,h}, thumb }]
 
 `crop` lives on the **tray item**, not in stamps, because it changes the page box rather than painting on it.
 
+### Step 2 selection (source pages → tray)
+
+```js
+pickedSrc     : Set<sid>     // source pages selected but not yet sent to Step 3
+lastPickedSid : sid | null   // anchor for shift-click ranges
+```
+
+Clicking a source page **selects** it; it does not add it. A sticky `#pickBar`
+shows the count with Select all / Clear / **Add N to Step 3**, which calls
+`addPickedToTray()` → `trayAdd()` for each pick in on-screen order (document by
+document, page by page), then clears the selection. Shift-click ranges within a
+document; Enter/Space selects; **double-click adds that one page immediately**;
+dragging a card to the tray is unchanged.
+
+**Selection must repaint in place** — `paintPick(sid)` toggles the class on the
+card found by `card.dataset.sid`. Never call `renderSources()` from a click
+handler: it rebuilds every card, which (a) destroys the card between the two
+clicks of a double-click so `dblclick` never fires, and (b) makes a long page
+list jump while the user is picking. `renderSources()` prunes sids that no
+longer exist and calls `renderPickBar()` at the end.
+
+Badge corners on a source card are all spoken for: **used-badge** top-right,
+**hit-badge** (search match) top-left, **zoom-btn** bottom-right, **pick-check**
+bottom-left. Anything new needs its own space.
+
 ## 4. The editor coordinate system (the part that breaks if you're careless)
 
 The editor renders the page at **2× device resolution** and displays it at half size, so three coordinate spaces coexist:
@@ -107,7 +132,8 @@ Pen strokes are **canvas**, not elements (a path can't be a div). Consequence: *
 | Feature | Start here |
 |---|---|
 | Loading files / images / passwords | `addFiles`, `addImageData`, `addPdfData`, `askPassword` (~1466–1635) |
-| Source pane, search hits, zoom button | `renderSources` (~1638) |
+| Source pane, search hits, zoom button | `renderSources` |
+| **Step 2 page selection** | `togglePick`, `paintPick`, `pickedEntries`, `renderPickBar`, `addPickedToTray`; state = `pickedSrc` Set + `lastPickedSid`; markup `#pickBar` |
 | Tray, ◀▶ reorder, card buttons | `renderTray` (~1746) |
 | **Build engine** | `drawStamps` (~1892), `buildPdfBytes` (~1947) |
 | Editor shell, modes, zoom | `setEditorMode`, `setEditorZoom`, `openEditor`, `renderEditor` (~2011–2104) |
@@ -196,6 +222,8 @@ The "What is this delivering?" dropdown swaps `{{HEADLINE}}`/`{{INTRO_LINE}}`/su
 | 14 | GitHub Pages caches HTML ~10 min | When verifying a fresh deploy in an open tab, cache-bust with `?v=`; **verify data against the API, never a rendered list** |
 | 15 | Double quotes inside a PowerShell `@'…'@` commit message break arg parsing | Keep commit messages quote-free |
 | 16 | White-out, highlight, and crop **hide** content, they don't remove it | Never describe any of them as redaction |
+| 17 | Re-rendering a list inside a click handler kills the following `dblclick` (the element it fired on is gone) and scrolls the user's place away | Repaint in place — see `paintPick()` in §3 |
+| 18 | Two contributors edit `pdf-tools/index.html` (Claude here, Bill + Codex on GitHub) | **`git fetch` and check `HEAD..origin/main` before editing**; Codex works in worktrees under `Playground\`, never hand-delete one (`git worktree remove`, and its files are owned by the `CodexSandboxOffline` account so `takeown` is needed) |
 
 ## 11. Extending it safely
 
@@ -252,7 +280,7 @@ The frontend was refined into a premium PDF workstation without changing the PDF
 
 ### Keyboard and accessibility
 
-- Source page cards are focusable: Enter/Space adds a page.
+- Source page cards are focusable: Enter/Space **selects** a page (see §3); the pick bar adds the selection.
 - Tray cards are focusable: Left/Right reorders, Enter opens the editor, Delete/Backspace removes with Undo.
 - Visible 3px focus rings are intentional. Do not remove them.
 - Escape continues to close menus, panels, and modals in the established retreat order.

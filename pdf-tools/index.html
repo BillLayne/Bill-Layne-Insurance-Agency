@@ -665,6 +665,45 @@
   .page-card.picked .pick-check { background: var(--blue); border-color: var(--blue); color: #fff; }
   .page-card:hover .pick-check { border-color: var(--blue); }
 
+  /* ── full-page steps: one workspace on screen at a time ── */
+  #trayPane { display: none; }
+  body.step-3 #sourcePane { display: none; }
+  body.step-3 #trayPane {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    margin: 12px 18px;
+    border-top-width: 1px;
+    box-shadow: var(--shadow-md);
+  }
+  /* with the whole page to itself the tray becomes a wrapping grid, not a strip */
+  body.step-3 #trayStrip {
+    flex: 1;
+    min-height: 0;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    overflow-y: auto;
+    overflow-x: hidden;
+    gap: 14px;
+  }
+  body.step-3 .tray-card { flex: 0 0 176px; }
+  body.step-3 .tray-card .thumb-box { aspect-ratio: 3 / 4; }
+  .step-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-weight: 700;
+  }
+  .workflow-step { background: none; border: 0; font: inherit; text-align: left; }
+  .workflow-step[data-clickable="1"] { cursor: pointer; }
+  .workflow-step[data-clickable="1"]:hover strong { text-decoration: underline; }
+  .workflow-step[disabled] { cursor: default; opacity: .55; }
+  @media (max-width: 640px) {
+    body.step-3 #trayPane { margin: 8px 10px; }
+    body.step-3 .tray-card { flex: 0 0 122px; }
+  }
+
   #pickBar {
     position: sticky;
     top: 0;
@@ -1572,11 +1611,11 @@
 <main>
   <div class="workflow-shell">
     <nav class="workflow-steps" aria-label="PDF workflow">
-      <div class="workflow-step current" id="workflowStep1"><span>1</span><div><strong>Add files</strong><small>PDFs or photos</small></div></div>
+      <button type="button" class="workflow-step current" id="workflowStep1"><span>1</span><div><strong>Add files</strong><small>PDFs or photos</small></div></button>
       <div class="workflow-line" aria-hidden="true"></div>
-      <div class="workflow-step" id="workflowStep2"><span>2</span><div><strong>Arrange &amp; edit</strong><small>Choose and reorder pages</small></div></div>
+      <button type="button" class="workflow-step" id="workflowStep2"><span>2</span><div><strong>Arrange &amp; edit</strong><small>Choose and reorder pages</small></div></button>
       <div class="workflow-line" aria-hidden="true"></div>
-      <div class="workflow-step" id="workflowStep3"><span>3</span><div><strong>Save or send</strong><small>Finish your new PDF</small></div></div>
+      <button type="button" class="workflow-step" id="workflowStep3"><span>3</span><div><strong>Save or send</strong><small>Finish your new PDF</small></div></button>
     </nav>
     <div class="device-status" aria-label="Device connections">
       <span class="status-chip private"><i></i>Documents stay on this device</span>
@@ -1604,6 +1643,10 @@
         <button class="primary" id="btnAdd">
           <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
           Add files
+        </button>
+        <button class="step-nav" id="btnGoStep3" style="display:none" title="Go to your new PDF">
+          <span id="goStep3Label">Go to Step 3</span>
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </button>
         <div class="menu-wrap" id="srcMenuWrap">
           <button class="icon-button" id="btnSrcMenu" title="More source options" aria-label="More source options"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
@@ -1656,12 +1699,16 @@
   </section>
 
   <!-- New Document tray -->
-  <section id="trayPane" style="display:none">
+  <section id="trayPane">
     <div class="tray-head">
       <div class="tray-heading">
         <span class="section-step">Step 3</span>
         <div><span class="tray-title">Your new PDF</span><span class="tray-count" id="trayCount">0 pages</span></div>
-        <small>Drag pages left or right to set their final order</small>
+        <small>Drag pages to set their final order &bull; pencil to edit a page</small>
+        <button class="step-nav" id="btnBackStep2" title="Go back to your source pages to add more">
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+          Back to pages
+        </button>
       </div>
       <div class="output-controls">
         <label class="file-name-field" for="nameInput"><span>File name</span><input type="text" id="nameInput" value="new-document" title="File name for the new PDF"><b>.pdf</b></label>
@@ -2375,16 +2422,61 @@
   }
 
   /* ── Rendering: source pane ── */
+  /* ── Steps: each one gets the whole page ──
+     1 = add files (empty state) · 2 = pick pages · 3 = arrange & finish.
+     Steps 1 and 2 share #sourcePane (the dropzone IS step 1); step 3 hands the
+     page to #trayPane via body.step-3. */
+  let uiStep = 1;
+
+  function stepAvailable(n) {
+    if (n === 3) return tray.length > 0;
+    if (n === 2) return docs.size > 0;
+    return true;
+  }
+
+  function setStep(n, opts) {
+    if (!stepAvailable(n)) return;
+    uiStep = n;
+    document.body.classList.toggle('step-3', n === 3);
+    updateWorkflowState();
+    const pane = n === 3 ? $('trayPane') : $('sourcePane');
+    if (pane) pane.scrollTop = 0;
+    if (!opts || !opts.silent) {
+      const focus = n === 3 ? $('btnBackStep2') : (docs.size ? $('btnGoStep3') : $('btnBrowseFiles'));
+      if (focus && focus.offsetParent !== null) focus.focus({ preventScroll: true });
+    }
+  }
+
   function updateWorkflowState() {
-    const active = !docs.size ? 1 : (tray.length ? 3 : 2);
+    // where the work actually stands, so the user can't get stranded on a step
+    if (uiStep === 3 && !tray.length) uiStep = docs.size ? 2 : 1;
+    if (uiStep === 2 && !docs.size) uiStep = 1;
+    if (uiStep === 1 && docs.size) uiStep = 2;
+    document.body.classList.toggle('step-3', uiStep === 3);
     [1, 2, 3].forEach(n => {
       const el = $('workflowStep' + n);
       if (!el) return;
-      el.classList.toggle('current', n === active);
-      el.classList.toggle('complete', n < active);
-      el.setAttribute('aria-current', n === active ? 'step' : 'false');
+      el.classList.toggle('current', n === uiStep);
+      el.classList.toggle('complete', n < uiStep);
+      el.setAttribute('aria-current', n === uiStep ? 'step' : 'false');
+      const can = stepAvailable(n) && n !== uiStep;
+      el.disabled = !can;
+      el.dataset.clickable = can ? '1' : '0';
     });
+    // "Go to Step 3" only matters once something is waiting there
+    const go = $('btnGoStep3');
+    if (go) {
+      go.style.display = (uiStep !== 3 && tray.length) ? '' : 'none';
+      $('goStep3Label').textContent = 'Step 3 (' + tray.length + ')';
+    }
   }
+
+  [1, 2, 3].forEach(n => {
+    const el = $('workflowStep' + n);
+    if (el) el.addEventListener('click', () => setStep(n));
+  });
+  $('btnGoStep3').addEventListener('click', () => setStep(3));
+  $('btnBackStep2').addEventListener('click', () => setStep(2));
 
   function updateConnectionStatus() {
     const formsReady = !!localStorage.getItem('bliFormsCode');
@@ -2428,7 +2520,6 @@
     const has = docs.size > 0;
     dropzone.style.display = has ? 'none' : '';
     $('sourceTitle').style.display = has ? '' : 'none';
-    $('trayPane').style.display = has ? '' : 'none';
     docList.innerHTML = '';
     const usage = new Map();
     tray.forEach(t => {
@@ -2599,9 +2690,9 @@
     pickedSrc.clear();
     lastPickedSid = null;
     renderAll();
-    toast('Added ' + picks.length + ' page' + (picks.length === 1 ? '' : 's') + ' to Step 3 — arrange or edit them below.');
-    const strip = $('trayStrip');
-    if (strip) strip.scrollLeft = strip.scrollWidth;
+    setStep(3);   // hand the whole page over to the new document
+    toast('Added ' + picks.length + ' page' + (picks.length === 1 ? '' : 's') +
+      ' — arrange or edit them here, or go Back to pages for more.');
   }
 
   $('btnPickAdd').addEventListener('click', addPickedToTray);
@@ -2748,11 +2839,14 @@
     trayStrip.classList.remove('dragover');
     trayStrip.querySelectorAll('.tray-card').forEach(c => c.classList.remove('insert-before', 'insert-after'));
   }
-  function trayInsertIndex(clientX) {
+  // works for the single-row strip AND the wrapped grid used on step 3
+  function trayInsertIndex(clientX, clientY) {
     const cards = [...trayStrip.querySelectorAll('.tray-card')];
     for (let i = 0; i < cards.length; i++) {
       const r = cards[i].getBoundingClientRect();
-      if (clientX < r.left + r.width / 2) return i;
+      if (clientY != null && clientY < r.top) return i;              // pointer is on an earlier row
+      const sameRow = clientY == null || (clientY >= r.top && clientY <= r.bottom);
+      if (sameRow && clientX < r.left + r.width / 2) return i;       // left half of this card
     }
     return cards.length;
   }
@@ -2762,7 +2856,7 @@
     e.dataTransfer.dropEffect = dragData.kind === 'src' ? 'copy' : 'move';
     clearTrayMarks();
     trayStrip.classList.add('dragover');
-    const idx = trayInsertIndex(e.clientX);
+    const idx = trayInsertIndex(e.clientX, e.clientY);
     const cards = [...trayStrip.querySelectorAll('.tray-card')];
     if (cards.length) {
       if (idx < cards.length) cards[idx].classList.add('insert-before');
@@ -2775,7 +2869,7 @@
   trayStrip.addEventListener('drop', (e) => {
     if (!dragData) return;
     e.preventDefault();
-    const idx = trayInsertIndex(e.clientX);
+    const idx = trayInsertIndex(e.clientX, e.clientY);
     if (dragData.kind === 'src') {
       const src = srcIndex.get(dragData.sid);
       if (src) trayAdd(src, idx);
