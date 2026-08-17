@@ -1,44 +1,37 @@
 # Cloudflare Pages redirects file
 # Format: /from-path /to-path STATUS-CODE
+#
+# *** HARD CAP: ONLY THE FIRST 100 RULES APPLY ON THIS PROJECT. ***
+# Verified empirically 2026-08-17: rule #100 fired, rule #101+ were
+# silently ignored (the 2026-08-04 canonical block never worked because
+# it started at rule #100). COUNT RULES BEFORE ADDING — keep total <= 95:
+#   python -c "print(sum(1 for l in open('_redirects') if l.strip() and not l.strip().startswith('#')))"
 
-# ─────────────────────────────────────────────────────────
-# Legacy /post/* URLs (57 old articles, no slug overlap with
-# current /blog/blogs/*) — consolidate to /blog/ landing.
-# Google will re-crawl and update its index over ~2-6 weeks.
-# ─────────────────────────────────────────────────────────
+# Legacy /post/* URLs (57 old articles) -> /blog/ landing
 /post/* /blog/ 301
 
-# ─────────────────────────────────────────────────────────
-# /blog.html (old 34KB landing) → canonical /blog/ (new 310KB)
-# ─────────────────────────────────────────────────────────
+# Old blog landing + trailing-slash hygiene
 /blog.html /blog/ 301
-
-# ─────────────────────────────────────────────────────────
-# Trailing-slash hygiene — /blog (no slash) → /blog/
-# ─────────────────────────────────────────────────────────
 /blog /blog/ 301
 
 # Short high-intent auto URLs
 /auto /auto-center/ 301
 /auto/ /auto-center/ 301
 
-# Professional vanity link for the towing-bill upload page — texted/emailed
-# to customers ("billlayneinsurance.com/tow"). 302 (temporary) on purpose so
-# the destination stays changeable and browsers don't cache it permanently.
+# Vanity towing-upload link (302 on purpose - destination stays changeable)
 /tow https://www.sendbilldocs.com/towing/ 302
 /tow/ https://www.sendbilldocs.com/towing/ 302
 
 # Canonical quote URL hygiene
 /get-quote.html /get-quote 301
 /get-quote/ /get-quote 301
-# DO NOT add /auto-quote -> /auto-quote.html or /home-quote -> /home-quote.html rewrites here.
-# Cloudflare Pages already serves the .html files when those clean URLs are requested,
-# and adding explicit rewrites creates an infinite redirect loop with the default behavior.
-# Just leave Cloudflare Pages' clean-URL handling alone for these two paths.
+# DO NOT add /auto-quote -> /auto-quote.html or /home-quote -> /home-quote.html
+# rewrites here. Pages already serves the .html for those clean URLs; explicit
+# rewrites create an infinite redirect loop with that default behavior.
 /auto-quote/ /auto-quote 301
 /home-quote/ /home-quote 301
 
-# Explicit canonical redirects for Google Search Console redirect-error examples
+# Explicit canonical redirects for GSC redirect-error examples
 /auto-insurance.html /auto-insurance 301
 /insurance-charlotte-nc.html /insurance-charlotte-nc 301
 /insurance-jonesville-nc.html /insurance-jonesville-nc 301
@@ -65,24 +58,7 @@
 /blog/best-halloween-candy-nc-2025 /blog/blogs/nc-halloween-candy-guide-2025.html 301
 /blog/nc-teen-insurance-license /blog/blogs/nc-teen-driver-insurance-v2.html 301
 
-# Crawl hygiene cleanup - added 2026-05-13
-/Insurance-Contact-Information-main/Insurance-Contact-Information-main/ /contact-us/ 301
-/_frog/ / 301
-/bolt-performance/ / 301
-/carter-foster/ / 301
-/general-4/ / 301
-/image-hosting/ / 301
-/insurance-1/ /auto-insurance 301
-/services-1/ /services/ 301
-/toast / 301
-/toast.html / 301
-/blog/tag/business%20insurance%20elkin%20nc/ /business-insurance/ 301
-
-# Duplicate-page consolidation — independent audit 2026-07-30.
-# The named-storm and alamance-farmers.html URLs were noindex meta-refresh
-# stubs serving 200; these proper 301s replace them (Pages checks _redirects
-# before static assets). alamance-farmers-mutual-insurance was a full
-# duplicate of the canonical carrier page.
+# Duplicate-page consolidation - independent audit 2026-07-30
 /blog/named-storm-deductible /blog/blogs/deductible-guide-north-carolina-2026 301
 /blog/named-storm-deductible/ /blog/blogs/deductible-guide-north-carolina-2026 301
 /blog/named-storm-deductibles /blog/blogs/deductible-guide-north-carolina-2026 301
@@ -92,139 +68,36 @@
 /alamance-farmers-mutual-insurance /auto-center/carriers/alamance-north-carolina 301
 /alamance-farmers-mutual-insurance/ /auto-center/carriers/alamance-north-carolina 301
 
-# Renters: the naked /renters-insurance URL 404'd even though renters is a
-# promoted service. Send it (and future type-ins) to the real page.
+# Renters: naked /renters-insurance 404'd; send type-ins to the real page
 /renters-insurance /renters-insurance-surry-county-nc 301
 /renters-insurance/ /renters-insurance-surry-county-nc 301
 
-# Legacy carrier redirects - keep link equity on current carrier hub/pages.
+# Legacy carrier redirects. Exact clean names -> specific carrier pages;
+# every other variant (.html, -north-carolina, trailing slash) falls to the
+# wildcard -> carrier hub. (Compressed from 42 rules on 2026-08-17 to fit
+# the 100-rule cap.)
 /carriers /auto-center/carriers/ 301
 /carriers/ /auto-center/carriers/ 301
 /carriers/alamance /auto-center/carriers/alamance-north-carolina 301
-/carriers/alamance.html /auto-center/carriers/alamance-north-carolina 301
-/carriers/alamance-north-carolina /auto-center/carriers/alamance-north-carolina 301
-/carriers/alamance-north-carolina/ /auto-center/carriers/alamance-north-carolina 301
 /carriers/dairyland /auto-center/carriers/dairyland-north-carolina 301
-/carriers/dairyland.html /auto-center/carriers/dairyland-north-carolina 301
 /carriers/foremost /auto-center/carriers/foremost-north-carolina 301
-/carriers/foremost.html /auto-center/carriers/foremost-north-carolina 301
-/carriers/foremost-north-carolina /auto-center/carriers/foremost-north-carolina 301
-/carriers/foremost-north-carolina/ /auto-center/carriers/foremost-north-carolina 301
 /carriers/hagerty /auto-center/carriers/hagerty-north-carolina 301
-/carriers/hagerty.html /auto-center/carriers/hagerty-north-carolina 301
-/carriers/hagerty-north-carolina /auto-center/carriers/hagerty-north-carolina 301
-/carriers/hagerty-north-carolina/ /auto-center/carriers/hagerty-north-carolina 301
 /carriers/national-general /auto-center/carriers/national-general-north-carolina 301
-/carriers/national-general.html /auto-center/carriers/national-general-north-carolina 301
-/carriers/national-general-north-carolina /auto-center/carriers/national-general-north-carolina 301
-/carriers/national-general-north-carolina/ /auto-center/carriers/national-general-north-carolina 301
 /carriers/nationwide /auto-center/carriers/nationwide-north-carolina 301
-/carriers/nationwide.html /auto-center/carriers/nationwide-north-carolina 301
-/carriers/nationwide-north-carolina /auto-center/carriers/nationwide-north-carolina 301
-/carriers/nationwide-north-carolina/ /auto-center/carriers/nationwide-north-carolina 301
 /carriers/nc-grange /auto-center/carriers/nc-grange-north-carolina 301
-/carriers/nc-grange.html /auto-center/carriers/nc-grange-north-carolina 301
-/carriers/nc-grange-landing /auto-center/carriers/nc-grange-north-carolina 301
-/carriers/nc-grange-mutual /auto-center/carriers/nc-grange-north-carolina 301
-/carriers/nc-grange-mutual.html /auto-center/carriers/nc-grange-north-carolina 301
-/carriers/nc-grange-north-carolina /auto-center/carriers/nc-grange-north-carolina 301
-/carriers/nc-grange-north-carolina/ /auto-center/carriers/nc-grange-north-carolina 301
 /carriers/progressive /auto-center/carriers/progressive-north-carolina 301
-/carriers/progressive.html /auto-center/carriers/progressive-north-carolina 301
-/carriers/progressive-north-carolina /auto-center/carriers/progressive-north-carolina 301
-/carriers/progressive-north-carolina/ /auto-center/carriers/progressive-north-carolina 301
 /carriers/travelers /auto-center/carriers/travelers-north-carolina 301
-/carriers/travelers.html /auto-center/carriers/travelers-north-carolina 301
-/carriers/travelers-insurance /auto-center/carriers/travelers-north-carolina 301
-/carriers/travelers-insurance.html /auto-center/carriers/travelers-north-carolina 301
-/carriers/travelers-north-carolina /auto-center/carriers/travelers-north-carolina 301
-/carriers/travelers-north-carolina/ /auto-center/carriers/travelers-north-carolina 301
 /carriers/* /auto-center/carriers/ 301
 
-# ─────────────────────────────────────────────────────────
-# Short vanity link printed as the QR code on Bryson's business
-# card. Kept short on purpose — a 37-char URL fits in a 29-module
-# QR, which stays scannable at the 0.68in size printed on the card.
-# 302 so the destination stays changeable without cached redirects.
-# ─────────────────────────────────────────────────────────
+# Bryson's business-card QR (printed) - keep short, 302 = changeable
 /bryson /bryson-layne/ 302
 /bryson/ /bryson-layne/ 302
-
-# ─────────────────────────────────────────────────────────
-# Legacy /blog/<slug> URLs that were ADVERTISED AS CANONICAL until
-# 2026-08-04 (commit bb38ade) but never existed as pages — they hard-404.
-# AI search crawlers (Claude-SearchBot, PerplexityBot, ChatGPT-User) read
-# those canonical tags and were still requesting these; Cloudflare AI Crawl
-# Control showed 38 4xx responses to those three bots in 7 days.
-# Each 301 points at the post that actually owns the content.
-# ─────────────────────────────────────────────────────────
-/blog/add-friends-car-to-insurance-north-carolina-2026 /blog/blogs/add-friends-car-to-insurance-north-carolina-2026 301
-/blog/april-2026-events-surry-wilkes-yadkin-county-nc /blog/blogs/april-2026-events-surry-wilkes-yadkin-county-nc 301
-/blog/april-fools-day-origin-nc-insurance-rates-2026 /blog/blogs/april-fools-day-origin-nc-insurance-rates-2026 301
-/blog/best-small-towns-north-carolina-2026 /blog/blogs/best-small-towns-north-carolina-2026 301
-/blog/cheap-auto-insurance-risks-north-carolina-2026 /blog/blogs/cheap-auto-insurance-nc-2026 301
-/blog/classic-car-insurance-mt-airy-surry-county-nc /blog/blogs/classic-car-insurance-mt-airy 301
-/blog/cyber-insurance-nc-businesses-2026 /blog/blogs/cyber-insurance-nc-businesses-2026 301
-/blog/hit-by-stolen-car-nc-who-pays /blog/blogs/hit-by-stolen-car-nc-who-pays 301
-/blog/nc-veterans-day-auto-insurance-tips /blog/blogs/hitting-nc-veterans-day-events-quick-auto-insurance-tips-for-north-carolina-drivers 301
-/blog/mechanical-breakdown-coverage-nc-2026 /blog/blogs/mechanical-breakdown-coverage-nc-2026 301
-/blog/mount-airy-nc-auto-insurance-2026 /blog/blogs/mount-airy-nc-auto-insurance-2026 301
-/blog/mount-airy-turkey-day-run-2025 /blog/blogs/mount-airys-2025-turkey-day-fun-run-is-your-family-protected-on-the-course 301
-/blog/nc-at-fault-accident-dismiss-2026 /blog/blogs/nc-at-fault-citation-dismiss-2026 301
-/blog/nc-auto-insurance-increase /blog/blogs/nc-auto-insurance-increase-2025 301
-/blog/nc-auto-insurance-quote-shock-mvr-claims-trap-2026 /blog/blogs/nc-auto-insurance-quote-shock-mvr-claims-trap-2026 301
-/blog/nc-driver-iq-test /blog/blogs/nc-driver-iq-test-blog 301
-/blog/nc-homeowners-insurance-depreciated-check-2026 /blog/blogs/nc-homeowners-insurance-depreciated-check-2026 301
-/blog/nc-homeowners-rebuild-costs /blog/blogs/nc-homeowners-rebuild-costs-ultimate-gem 301
-/blog/nc-inexperienced-driver-law-2026 /blog/blogs/nc-inexperienced-driver-law-2026 301
-/blog/nc-insurance-myths-busted-2026 /blog/blogs/nc-insurance-myths-busted-2026 301
-/blog/nc-insurance-myths /blog/blogs/nc-insurance-myths-true-false-challenge 301
-/blog/nc-lake-safety-tips-2026 /blog/blogs/nc-lake-safety-tips-2026 301
-/blog/turn-in-nc-license-plates-before-canceling-insurance /blog/blogs/nc-plates-before-insurance 301
-/blog/nc-truck-left-lane-law /blog/blogs/nc-truck-left-lane-law 301
-/blog/negotiate-total-loss-settlement-north-carolina-2026 /blog/blogs/negotiate-total-loss-settlement-north-carolina-2026 301
-/blog/new-year-insurance-nc /blog/blogs/new-year-nc-insurance-2026 301
-/blog/personal-insurance-agent-still-matters-2026 /blog/blogs/personal-insurance-agent-2026 301
-/blog/surry-county-christmas-events /blog/blogs/surry-county-christmas-events-2025 301
-/blog/surry-county-november-2025-events /blog/blogs/surry-county-november-2025-events-blog 301
-/blog/uber-driver-claim-denied-nc-2026 /blog/blogs/uber-rideshare-claim-denied-nc-2026 301
-/blog/umbrella-insurance-north-carolina-2026 /blog/blogs/why-umbrella-insurance-essential-nc-drivers-homeowners-2026 301
-/blog/add-friends-car-to-insurance-north-carolina-2026/ /blog/blogs/add-friends-car-to-insurance-north-carolina-2026 301
-/blog/april-2026-events-surry-wilkes-yadkin-county-nc/ /blog/blogs/april-2026-events-surry-wilkes-yadkin-county-nc 301
-/blog/april-fools-day-origin-nc-insurance-rates-2026/ /blog/blogs/april-fools-day-origin-nc-insurance-rates-2026 301
-/blog/best-small-towns-north-carolina-2026/ /blog/blogs/best-small-towns-north-carolina-2026 301
-/blog/cheap-auto-insurance-risks-north-carolina-2026/ /blog/blogs/cheap-auto-insurance-nc-2026 301
-/blog/classic-car-insurance-mt-airy-surry-county-nc/ /blog/blogs/classic-car-insurance-mt-airy 301
-/blog/cyber-insurance-nc-businesses-2026/ /blog/blogs/cyber-insurance-nc-businesses-2026 301
-/blog/hit-by-stolen-car-nc-who-pays/ /blog/blogs/hit-by-stolen-car-nc-who-pays 301
-/blog/nc-veterans-day-auto-insurance-tips/ /blog/blogs/hitting-nc-veterans-day-events-quick-auto-insurance-tips-for-north-carolina-drivers 301
-/blog/mechanical-breakdown-coverage-nc-2026/ /blog/blogs/mechanical-breakdown-coverage-nc-2026 301
-/blog/mount-airy-nc-auto-insurance-2026/ /blog/blogs/mount-airy-nc-auto-insurance-2026 301
-/blog/mount-airy-turkey-day-run-2025/ /blog/blogs/mount-airys-2025-turkey-day-fun-run-is-your-family-protected-on-the-course 301
-/blog/nc-at-fault-accident-dismiss-2026/ /blog/blogs/nc-at-fault-citation-dismiss-2026 301
-/blog/nc-auto-insurance-increase/ /blog/blogs/nc-auto-insurance-increase-2025 301
-/blog/nc-auto-insurance-quote-shock-mvr-claims-trap-2026/ /blog/blogs/nc-auto-insurance-quote-shock-mvr-claims-trap-2026 301
-/blog/nc-driver-iq-test/ /blog/blogs/nc-driver-iq-test-blog 301
-/blog/nc-homeowners-insurance-depreciated-check-2026/ /blog/blogs/nc-homeowners-insurance-depreciated-check-2026 301
-/blog/nc-homeowners-rebuild-costs/ /blog/blogs/nc-homeowners-rebuild-costs-ultimate-gem 301
-/blog/nc-inexperienced-driver-law-2026/ /blog/blogs/nc-inexperienced-driver-law-2026 301
-/blog/nc-insurance-myths-busted-2026/ /blog/blogs/nc-insurance-myths-busted-2026 301
-/blog/nc-insurance-myths/ /blog/blogs/nc-insurance-myths-true-false-challenge 301
-/blog/nc-lake-safety-tips-2026/ /blog/blogs/nc-lake-safety-tips-2026 301
-/blog/turn-in-nc-license-plates-before-canceling-insurance/ /blog/blogs/nc-plates-before-insurance 301
-/blog/nc-truck-left-lane-law/ /blog/blogs/nc-truck-left-lane-law 301
-/blog/negotiate-total-loss-settlement-north-carolina-2026/ /blog/blogs/negotiate-total-loss-settlement-north-carolina-2026 301
-/blog/new-year-insurance-nc/ /blog/blogs/new-year-nc-insurance-2026 301
-/blog/personal-insurance-agent-still-matters-2026/ /blog/blogs/personal-insurance-agent-2026 301
-/blog/surry-county-christmas-events/ /blog/blogs/surry-county-christmas-events-2025 301
-/blog/surry-county-november-2025-events/ /blog/blogs/surry-county-november-2025-events-blog 301
-/blog/uber-driver-claim-denied-nc-2026/ /blog/blogs/uber-rideshare-claim-denied-nc-2026 301
-/blog/umbrella-insurance-north-carolina-2026/ /blog/blogs/why-umbrella-insurance-essential-nc-drivers-homeowners-2026 301
 
 # 404 fixes from GA4 review 2026-08-17 (all targets verified to exist)
 /blogs/* /blog/blogs/:splat 301
 /file-a-claim.html /claims-center/ 301
 /file-a-claim /claims-center/ 301
+/claims-inventory.html /claims-center/claims-inventory 301
 /commercial-insurance /business-insurance/ 301
 /business /business-insurance/ 301
 /p/auto-insurance.html /auto-insurance 301
@@ -234,3 +107,9 @@
 /images/Hagerty.webp /auto-center/images/Hagerty.webp 301
 /images/Foremost.webp /auto-center/images/Foremost.webp 301
 /images/Dairyland%20Logo.webp /auto-center/images/Dairyland%20Logo.webp 301
+
+# REMOVED 2026-08-17 (were rules #101-173, i.e. DEAD since 2026-08-04 - the
+# cap meant they never fired, so removing them changes nothing on the live
+# site): the 62-rule legacy /blog/<slug> canonical block (AI crawlers have
+# had 2 weeks of corrected canonical tags) and the 2026-05-13 crawl-hygiene
+# junk block (/_frog/, /bolt-performance/, etc). History in git if needed.
