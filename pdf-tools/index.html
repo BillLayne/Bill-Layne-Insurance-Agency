@@ -641,6 +641,68 @@
     pointer-events: none;
   }
 
+  /* ── click-to-select source pages, then add them together ── */
+  .pick-check {
+    position: absolute;
+    bottom: 24px;
+    left: 5px;
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.96);
+    border: 2px solid var(--line-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: transparent;
+    font-size: 13px;
+    font-weight: 900;
+    line-height: 1;
+    pointer-events: none;
+    transition: background .12s, border-color .12s, color .12s;
+  }
+  .page-card.picked { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(36,107,206,.24); }
+  .page-card.picked .pick-check { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .page-card:hover .pick-check { border-color: var(--blue); }
+
+  #pickBar {
+    position: sticky;
+    top: 0;
+    z-index: 14;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    background: var(--navy);
+    color: #fff;
+    border-radius: 14px;
+    padding: 11px 14px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow-md);
+  }
+  #pickBar.show { display: flex; }
+  #pickBar .pick-count { font-weight: 800; font-size: 14px; letter-spacing: .01em; }
+  #pickBar .pick-hint { font-size: 12px; color: rgba(255,255,255,.72); }
+  #pickBar .grow { flex: 1; }
+  #pickBar button {
+    background: rgba(255,255,255,.13);
+    border: 1px solid rgba(255,255,255,.28);
+    color: #fff;
+    font-weight: 700;
+  }
+  #pickBar button:hover { background: rgba(255,255,255,.22); }
+  #pickBar button.go {
+    background: var(--blue);
+    border-color: var(--blue);
+    box-shadow: 0 6px 16px rgba(36,107,206,.35);
+  }
+  #pickBar button.go:hover { background: var(--blue-dark); border-color: var(--blue-dark); }
+  @media (max-width: 640px) {
+    #pickBar { gap: 8px; padding: 10px; }
+    #pickBar .pick-hint { display: none; }
+    #pickBar button { flex: 1; justify-content: center; }
+  }
+
   /* zoom button on source cards */
   .zoom-btn {
     position: absolute;
@@ -1578,6 +1640,18 @@
       <div class="drop-privacy"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10V7a5 5 0 0 1 10 0v3M5 10h14v10H5z"/></svg>Customer documents never leave this browser.</div>
     </div>
 
+    <div id="pickBar" role="status" aria-live="polite">
+      <span class="pick-count" id="pickCount">0 pages selected</span>
+      <span class="pick-hint">Shift-click for a range &bull; double-click a page to add it on its own</span>
+      <span class="grow"></span>
+      <button id="btnPickAll">Select all</button>
+      <button id="btnPickClear">Clear</button>
+      <button class="go" id="btnPickAdd">
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Add to Step 3
+      </button>
+    </div>
+
     <div id="docList"></div>
   </section>
 
@@ -2025,6 +2099,8 @@
   const docs = new Map();   // docId -> { name, bytes, pages: [{sid, pageIndex, thumb}] }
   let tray = [];            // ordered [{tid, docId, pageIndex, rot, thumb}]
   const srcIndex = new Map(); // sid -> {docId, pageIndex, thumb}
+  const pickedSrc = new Set();  // sids selected in Step 2, waiting to be sent to Step 3
+  let lastPickedSid = null;     // anchor for shift-click ranges
   let nextDocId = 1, nextSid = 1, nextTid = 1;
 
   const $ = (id) => document.getElementById(id);
@@ -2416,24 +2492,35 @@
         card.tabIndex = 0;
         card.setAttribute('role', 'group');
         card.setAttribute('aria-roledescription', 'selectable PDF page');
-        card.setAttribute('aria-label', 'Page ' + (p.pageIndex + 1) + ' from ' + doc.name + '. Press Enter or Space to add it to the new PDF.');
-        card.title = 'Click to add to the new document';
+        const isPicked = pickedSrc.has(p.sid);
+        if (isPicked) card.classList.add('picked');
+        card.dataset.sid = p.sid;
+        card.setAttribute('aria-pressed', isPicked ? 'true' : 'false');
+        card.setAttribute('aria-label', 'Page ' + (p.pageIndex + 1) + ' from ' + doc.name +
+          '. Press Enter or Space to select it, then use Add to Step 3.');
+        card.title = 'Click to select · double-click to add this page on its own';
         card.innerHTML =
           (used ? '<div class="used-badge">' + (used > 1 ? '×' + used : '✓') + '</div>' : '') +
           (isHit ? '<div class="hit-badge">match</div>' : '') +
           '<div class="thumb-box"><img src="' + p.thumb + '" alt=""></div>' +
+          '<div class="pick-check" aria-hidden="true">&#10003;</div>' +
           '<button class="zoom-btn" title="View this page large" aria-label="View page ' + (p.pageIndex + 1) + ' large">' + uiIcon('search') + '</button>' +
           '<div class="page-label">Page ' + (p.pageIndex + 1) + '</div>';
-        card.addEventListener('click', () => {
+        // click SELECTS (so the source list stays put); double-click adds just this page
+        card.addEventListener('click', (e) => {
+          togglePick(p, doc, e.shiftKey);
+        });
+        card.addEventListener('dblclick', (e) => {
+          e.preventDefault();
+          pickedSrc.delete(p.sid);          // the first click of the double-click selected it
           trayAdd(p);
           renderAll();
+          toast('Added page ' + (p.pageIndex + 1) + ' to Step 3.');
         });
         card.addEventListener('keydown', (e) => {
           if (e.target !== card || (e.key !== 'Enter' && e.key !== ' ')) return;
           e.preventDefault();
-          trayAdd(p);
-          renderAll();
-          toast('Added page ' + (p.pageIndex + 1) + ' to your new PDF.');
+          togglePick(p, doc, e.shiftKey);
         });
         card.querySelector('.zoom-btn').addEventListener('click', (e) => {
           e.stopPropagation();
@@ -2451,7 +2538,90 @@
       block.appendChild(grid);
       docList.appendChild(block);
     }
+    // drop selections whose pages are gone (file removed / started over)
+    for (const sid of [...pickedSrc]) if (!srcIndex.has(sid)) pickedSrc.delete(sid);
+    renderPickBar();
   }
+
+  /* ── Selecting source pages before sending them to Step 3 ──
+     Selection paints cards in place (never a full re-render) so the list never
+     jumps, scroll position holds, and a double-click still reaches its card. */
+  function paintPick(sid) {
+    const card = docList.querySelector('.page-card[data-sid="' + sid + '"]');
+    if (!card) return;
+    const on = pickedSrc.has(sid);
+    card.classList.toggle('picked', on);
+    card.setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
+
+  function togglePick(p, doc, shiftKey) {
+    // shift-click selects the whole run between the last pick and this one
+    if (shiftKey && lastPickedSid != null) {
+      const list = doc.pages;
+      const a = list.findIndex(x => x.sid === lastPickedSid);
+      const b = list.findIndex(x => x.sid === p.sid);
+      if (a >= 0 && b >= 0) {
+        for (let i = Math.min(a, b); i <= Math.max(a, b); i++) {
+          pickedSrc.add(list[i].sid);
+          paintPick(list[i].sid);
+        }
+        lastPickedSid = p.sid;
+        renderPickBar();
+        return;
+      }
+    }
+    if (pickedSrc.has(p.sid)) pickedSrc.delete(p.sid);
+    else { pickedSrc.add(p.sid); lastPickedSid = p.sid; }
+    paintPick(p.sid);
+    renderPickBar();
+  }
+
+  function pickedEntries() {
+    // keep the on-screen order: document by document, page by page
+    const out = [];
+    for (const [, doc] of docs) for (const p of doc.pages) if (pickedSrc.has(p.sid)) out.push(p);
+    return out;
+  }
+
+  function renderPickBar() {
+    const n = pickedSrc.size;
+    $('pickBar').classList.toggle('show', n > 0);
+    $('pickCount').textContent = n + (n === 1 ? ' page selected' : ' pages selected');
+    $('btnPickAdd').innerHTML =
+      '<svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>' +
+      'Add ' + n + ' to Step 3';
+  }
+
+  function addPickedToTray() {
+    const picks = pickedEntries();
+    if (!picks.length) return;
+    picks.forEach(p => trayAdd(p));
+    pickedSrc.clear();
+    lastPickedSid = null;
+    renderAll();
+    toast('Added ' + picks.length + ' page' + (picks.length === 1 ? '' : 's') + ' to Step 3 — arrange or edit them below.');
+    const strip = $('trayStrip');
+    if (strip) strip.scrollLeft = strip.scrollWidth;
+  }
+
+  $('btnPickAdd').addEventListener('click', addPickedToTray);
+  $('btnPickClear').addEventListener('click', () => {
+    const was = [...pickedSrc];
+    pickedSrc.clear();
+    lastPickedSid = null;
+    was.forEach(paintPick);
+    renderPickBar();
+  });
+  $('btnPickAll').addEventListener('click', () => {
+    let all = true;
+    for (const [, doc] of docs) for (const p of doc.pages) if (!pickedSrc.has(p.sid)) { all = false; break; }
+    const touched = new Set(pickedSrc);
+    pickedSrc.clear();
+    if (!all) for (const [, doc] of docs) for (const p of doc.pages) { pickedSrc.add(p.sid); touched.add(p.sid); }
+    lastPickedSid = null;
+    touched.forEach(paintPick);
+    renderPickBar();
+  });
 
   /* ── Tray ── */
   function trayAdd(srcEntry, atIndex) {
