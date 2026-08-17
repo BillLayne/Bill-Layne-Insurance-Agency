@@ -76,6 +76,33 @@ tray      : [{ tid, docId, pageIndex, rot, stamps:[], crop?:{x,y,w,h}, thumb }]
 
 `crop` lives on the **tray item**, not in stamps, because it changes the page box rather than painting on it.
 
+### Full-page steps
+
+Only one workspace is on screen at a time — Bill asked for the room.
+
+```js
+uiStep : 1 | 2 | 3      // 1 add files · 2 pick pages · 3 arrange & finish
+```
+
+`setStep(n)` toggles `body.step-3`, which hides `#sourcePane` and lets
+`#trayPane` fill the page. Steps 1 and 2 both live in `#sourcePane` (the
+dropzone *is* step 1). Tray visibility is CSS-driven (`#trayPane{display:none}`
++ `body.step-3 #trayPane{display:flex}`) — **don't reintroduce inline
+`style.display` on the tray**, it would fight the step system.
+
+`updateWorkflowState()` re-derives `uiStep` from real state on every render, so
+clearing the tray, removing files, or Start over can never strand the user on an
+empty step. The workflow indicator items are `<button>`s that navigate;
+`stepAvailable(n)` disables the ones that aren't reachable yet. Navigation also
+exists as **Back to pages** (`#btnBackStep2`) and **Step 3 (n)**
+(`#btnGoStep3`, shown only when the tray has pages).
+
+On step 3 the tray strip becomes a **wrapping grid** of larger cards. That is
+why `trayInsertIndex(clientX, clientY)` is row-aware — it returns the insert
+position by checking the pointer's row first, then the left/right half of a
+card. Passing only X (the old behaviour) breaks reordering the moment the grid
+has more than one row.
+
 ### Step 2 selection (source pages → tray)
 
 ```js
