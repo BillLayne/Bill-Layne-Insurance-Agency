@@ -93,9 +93,9 @@ the prompt would not have caught:
    reading them the number — the single most important thing it does.
 5. It handed out a *claims* line to someone asking about a *payment*.
 
-All five are fixed. Final state: **16 of 16 completed runs passing**
-(6 tests x 3 repeats), claims number delivered in 6/6 claim-path runs, and
-no reasoning text leaking into speech across any run.
+All five are fixed. Final state: **18 of 18 runs passing** (6 tests x 3
+repeats), claims number delivered in 6/6 claim-path runs, and no reasoning
+text leaking into speech across any run.
 
 Re-run the whole suite after any prompt edit — several of these defects
 appeared in only 1 run out of 3, so a single pass is not evidence.
