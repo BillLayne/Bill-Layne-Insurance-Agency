@@ -16,7 +16,7 @@
 | **Input** | Drop/browse PDFs and images (JPG/PNG/WebP/GIF/BMP → become PDF pages); password-protected PDFs (prompt + unlock); Forms Library (cloud); camera capture on phones (native file input) |
 | **Assemble** | Per-page thumbnails; **click to select pages, then "Add N to Step 3" together** (shift-click ranges, double-click adds one, drag still works); reorder by drag **or ◀ ▶ buttons** (touch); rotate; remove; combine across many files |
 | **Edit a page** | Text boxes (movable, resizable, re-editable); white-out boxes; **highlighter**; **freehand pen**; signatures (draw or upload, saved); images; quick stamps (date, COPY/VOID/PAID, agency block, custom text + picture stamps); **crop** (adjustable, confirm before apply); zoom −/Fit/+ |
-| **Forms** | AcroForm detection → "Fill form" modal (text/checkbox/radio/dropdown) → values written back into the real fields |
+| **Forms** | AcroForm detection → "Fill form" modal (text/checkbox/radio/dropdown) → values written back into the real fields; forms **flatten automatically when you stamp on them** so the marks actually show (untouched forms stay fillable) |
 | **Find** | Full-text search across loaded pages, gold-highlighted matches; 🔍 zoom viewer with prev/next |
 | **Output** | Create PDF; Print; **Gmail draft with the PDF attached + styled email body**; split into single pages; page numbers; "shrink for email"; **lock with password** |
 | **Safety** | Auto-save + restore (IndexedDB); Undo toasts on removals; nothing uploaded except Forms Library (blank forms only) |
@@ -250,7 +250,8 @@ The "What is this delivering?" dropdown swaps `{{HEADLINE}}`/`{{INTRO_LINE}}`/su
 | 15 | Double quotes inside a PowerShell `@'…'@` commit message break arg parsing | Keep commit messages quote-free |
 | 16 | White-out, highlight, and crop **hide** content, they don't remove it | Never describe any of them as redaction |
 | 17 | Re-rendering a list inside a click handler kills the following `dblclick` (the element it fired on is gone) and scrolls the user's place away | Repaint in place — see `paintPick()` in §3 |
-| 18 | Two contributors edit `pdf-tools/index.html` (Claude here, Bill + Codex on GitHub) | **`git fetch` and check `HEAD..origin/main` before editing**; Codex works in worktrees under `Playground\`, never hand-delete one (`git worktree remove`, and its files are owned by the `CodexSandboxOffline` account so `takeown` is needed) |
+| 18 | **Stamps drawn over a fillable form field vanish from the saved/printed file** while the editor preview looks right — widgets are annotations and annotations paint ON TOP of page content | `buildPdfBytes` flattens the source form when any stamp/crop exists, then deletes the leftover `/Annots` on the copied page. Untouched forms stay fillable. Never "fix" this by drawing stamps earlier — order can't beat an annotation |
+| 19 | Two contributors edit `pdf-tools/index.html` (Claude here, Bill + Codex on GitHub) | **`git fetch` and check `HEAD..origin/main` before editing**; Codex works in worktrees under `Playground\`, never hand-delete one (`git worktree remove`, and its files are owned by the `CodexSandboxOffline` account so `takeown` is needed) |
 
 ## 11. Extending it safely
 
