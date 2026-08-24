@@ -2973,6 +2973,14 @@
     const out = await PDFLib.PDFDocument.create();
     const srcCache = new Map();
     const fontRef = { font: null };
+    // Form-field widgets are ANNOTATIONS, and annotations paint on top of page
+    // content — so a white-out (or any stamp) over a fillable field would sit
+    // underneath it and vanish in the saved/printed file even though the editor
+    // preview looked right. Flatten the source form first so the field becomes
+    // ordinary page content and stamps land above it. Only when something was
+    // actually drawn, so untouched forms stay fillable.
+    const anyStamps = list.some(p => (p.stamps && p.stamps.length) || p.crop);
+    const flattened = new Set();
     for (const p of list) {
       const doc = docs.get(p.docId);
       if (doc.kind === 'image') {
@@ -3000,9 +3008,25 @@
       let src = srcCache.get(p.docId);
       if (!src) {
         src = await PDFLib.PDFDocument.load(doc.bytes, { ignoreEncryption: true });
+        if (anyStamps && doc.formFields) {
+          try {
+            const f = src.getForm();
+            try { f.updateFieldAppearances(); } catch (_) {}
+            f.flatten();            // bakes each field's value into page content
+            flattened.add(p.docId);
+          } catch (err) {
+            console.warn('could not flatten form fields on "' + doc.name + '"', err);
+          }
+        }
         srcCache.set(p.docId, src);
       }
       const [copied] = await out.copyPages(src, [p.pageIndex]);
+      if (flattened.has(p.docId)) {
+        // flatten() leaves the now-redundant widget annotations behind, and
+        // annotations paint ON TOP of page content — they would cover the very
+        // stamps we just drew. The values are already in the content stream.
+        try { copied.node.delete(PDFLib.PDFName.of('Annots')); } catch (_) {}
+      }
       if (p.crop) {
         // the page becomes exactly the kept area (content outside is clipped
         // by the page boxes — a sizing fix, not redaction)
