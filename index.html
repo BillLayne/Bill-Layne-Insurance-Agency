@@ -3485,7 +3485,12 @@
                 if (!leadType) return;
                 window.bliTrackLead(leadType + '_click', {
                     lead_type: leadType,
-                    source: link.dataset.source || '',
+                    // MUST be cta_source, never "source": GA4 reads a bare
+                    // `source` param as manual attribution and rewrites the
+                    // session's source/medium (nav_desktop / (not set)),
+                    // stealing credit from Google organic and dumping the
+                    // session into the Unassigned channel.
+                    cta_source: link.dataset.source || '',
                     link_text: (link.textContent || '').trim().slice(0, 80),
                     link_url: link.href
                 });
@@ -3496,7 +3501,7 @@
                 form.addEventListener('submit', function() {
                     window.bliTrackLead('quote_click', {
                         lead_type: 'quote',
-                        source: form.dataset.source || 'hero_zip',
+                        cta_source: form.dataset.source || 'hero_zip',
                         link_text: 'zip_form'
                     });
                 });
