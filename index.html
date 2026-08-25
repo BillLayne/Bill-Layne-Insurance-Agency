@@ -3455,6 +3455,10 @@
             const href = (link.getAttribute('href') || '').toLowerCase();
             if (href.indexOf('tel:') === 0) return 'phone';
             if (href.indexOf('m.me/') > -1 || href.indexOf('messenger') > -1) return 'messenger';
+            // upload-policy must be tested BEFORE the quote patterns — its
+            // clicks were previously unclassified, so the homepage's
+            // "Upload or Snap My Policy" CTA fired no event at all.
+            if (href.indexOf('upload-policy') > -1) return 'policy_upload';
             if (href.indexOf('get-quote') > -1 || href.indexOf('/quote') > -1 || href.indexOf('quote.html') > -1) return 'quote';
             if (href.indexOf('contact-us') > -1 || href.indexOf('mailto:') === 0) return 'contact';
             return '';
