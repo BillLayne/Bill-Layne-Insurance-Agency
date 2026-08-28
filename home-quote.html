@@ -2008,11 +2008,22 @@
             span.textContent = city + ' ' + PRODUCT;
         }
         try {
-            const zip = new URLSearchParams(window.location.search).get('zip');
+            const params = new URLSearchParams(window.location.search);
+            const zip = params.get('zip');
             if (zip && /^[0-9]{5}$/.test(zip)) {
                 const field = document.getElementById('zip_code');
                 if (field && !field.value) field.value = zip;
                 personalizeHero(zip);
+            }
+            // Sent by the Find My Home Information tool, which already asked
+            // the customer for their address. Making them type it a second
+            // time is how a lead gets abandoned between the two pages.
+            // Capped and stripped of newlines so a crafted link cannot stuff
+            // the field; it is only ever set into .value, never into markup.
+            const addr = (params.get('address') || '').replace(/[\r\n]+/g, ' ').trim().slice(0, 200);
+            if (addr) {
+                const addrField = document.getElementById('property_address');
+                if (addrField && !addrField.value) addrField.value = addr;
             }
         } catch (e) {}
         // Live-update the hero as the customer types their ZIP
