@@ -100,7 +100,7 @@
           "@type": "WebApplication",
           "@id": "https://www.billlayneinsurance.com/home-insurance/find-my-home-information/#app",
           "name": "Find My Home Information",
-          "url": "https://find-my-home-information.pages.dev/",
+          "url": "https://homeinfo.billlayneinsurance.com/",
           "description": "Free address-based access to available North Carolina county property records, GIS parcel maps, aerial imagery and hazard resources.",
           "applicationCategory": "ReferenceApplication",
           "operatingSystem": "Any",
@@ -173,7 +173,7 @@
           <h1 class="mt-5 font-display text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight">Find North Carolina home information by address</h1>
           <p class="mt-5 max-w-2xl text-base sm:text-lg lg:text-xl leading-relaxed text-teal-50">Connect one address to available county GIS parcels, property cards, aerial maps, flood resources and public records. No account required.</p>
           <div class="mt-7 flex flex-col sm:flex-row gap-3">
-            <a href="https://find-my-home-information.pages.dev/" data-lookup-cta="hero" class="inline-flex items-center justify-center gap-3 rounded-xl bg-teal-400 px-6 py-4 font-extrabold text-slate-950 shadow-xl shadow-teal-950/30 hover:bg-teal-300 transition-colors">
+            <a href="https://homeinfo.billlayneinsurance.com/" data-lookup-cta="hero" class="inline-flex items-center justify-center gap-3 rounded-xl bg-teal-400 px-6 py-4 font-extrabold text-slate-950 shadow-xl shadow-teal-950/30 hover:bg-teal-300 transition-colors">
               <i class="fas fa-magnifying-glass-location" aria-hidden="true"></i> Look Up My Home
             </a>
             <a href="#what-you-can-find" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 px-6 py-4 font-bold text-white backdrop-blur-md hover:bg-white/15 transition-colors">
@@ -247,7 +247,7 @@
             <li class="flex gap-3 rounded-xl bg-slate-50 p-4"><i class="fas fa-check-circle mt-0.5 text-teal-600"></i><span>Roof and major updates</span></li>
           </ul>
           <div class="mt-7 flex flex-col sm:flex-row gap-3">
-            <a href="https://find-my-home-information.pages.dev/" data-lookup-cta="insurance" class="inline-flex items-center justify-center gap-2 rounded-xl bg-teal-600 px-5 py-3.5 text-sm font-extrabold text-white shadow-lg shadow-teal-600/20 hover:bg-teal-700 transition-colors">Find My Property Records <i class="fas fa-arrow-right text-xs"></i></a>
+            <a href="https://homeinfo.billlayneinsurance.com/" data-lookup-cta="insurance" class="inline-flex items-center justify-center gap-2 rounded-xl bg-teal-600 px-5 py-3.5 text-sm font-extrabold text-white shadow-lg shadow-teal-600/20 hover:bg-teal-700 transition-colors">Find My Property Records <i class="fas fa-arrow-right text-xs"></i></a>
             <a href="../" class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-3.5 text-sm font-extrabold text-slate-700 hover:border-teal-300 hover:text-teal-700 transition-colors">NC Home Insurance Guide</a>
           </div>
         </div>
@@ -318,7 +318,7 @@
         <h2 class="mt-3 font-display text-3xl md:text-5xl font-extrabold">Find the public home information available to you</h2>
         <p class="mt-4 max-w-2xl mx-auto text-slate-300 leading-relaxed">Open the free consumer tool, enter a North Carolina address and choose the property resources you need.</p>
         <div class="mt-7 flex flex-col sm:flex-row justify-center gap-3">
-          <a href="https://find-my-home-information.pages.dev/" data-lookup-cta="footer" class="inline-flex items-center justify-center gap-2 rounded-xl bg-teal-400 px-6 py-4 font-extrabold text-slate-950 hover:bg-teal-300 transition-colors"><i class="fas fa-magnifying-glass-location"></i> Open Find My Home Information</a>
+          <a href="https://homeinfo.billlayneinsurance.com/" data-lookup-cta="footer" class="inline-flex items-center justify-center gap-2 rounded-xl bg-teal-400 px-6 py-4 font-extrabold text-slate-950 hover:bg-teal-300 transition-colors"><i class="fas fa-magnifying-glass-location"></i> Open Find My Home Information</a>
           <a href="mailto:save@billlayneinsurance.com?subject=Help%20reviewing%20my%20home%20information" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-6 py-4 font-bold text-white hover:bg-white/15 transition-colors"><i class="fas fa-envelope"></i> Ask Our Team</a>
         </div>
       </div>
@@ -335,7 +335,26 @@
   </footer>
 
   <script>
+    // Carry ?address= through to the lookup app.
+    //
+    // Quote pages deep-link here with the customer's property address. This
+    // page has no search box of its own, so without this the address would die
+    // on arrival and the customer would have to retype it on the next screen.
+    // The app reads ?address= on mount, prefills the box and runs the lookup,
+    // so forwarding it keeps that one-tap path intact through the hand-off.
+    const forwardedAddress = new URLSearchParams(window.location.search).get('address');
+
     document.querySelectorAll('[data-lookup-cta]').forEach((link) => {
+      if (forwardedAddress && forwardedAddress.trim()) {
+        try {
+          const target = new URL(link.href);
+          target.searchParams.set('address', forwardedAddress.trim());
+          link.href = target.toString();
+        } catch (error) {
+          /* Malformed href: leave the link exactly as authored. */
+        }
+      }
+
       link.addEventListener('click', () => {
         if (typeof gtag === 'function') {
           gtag('event', 'find_home_information_click', {
