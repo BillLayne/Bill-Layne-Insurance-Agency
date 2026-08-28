@@ -232,6 +232,19 @@
         }
         .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
+        /* overflow-x: clip (not hidden) so position:sticky on #navbar keeps working;
+           !important needed to beat the html,body rule in css/mobile-dock.css */
+        html, body { overflow-x: clip !important; }
+        @media (prefers-reduced-motion: reduce) {
+            .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+            /* .animate-pulse uses an !important shorthand in compiled Tailwind, kill it explicitly */
+            .animate-pulse { animation: none !important; }
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
         .btn-shine { position: relative; overflow: hidden; }
         .btn-shine::after {
             content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
@@ -269,6 +282,8 @@
         @media (max-width: 768px) {
             .bg-vivid-hero { background-position: 58% center; }
             input, select, textarea { font-size: 16px !important; }
+            /* Keep footer content clear of the 65px fixed mobile dock (incl. safe-area) */
+            footer { padding-bottom: max(8rem, calc(65px + env(safe-area-inset-bottom))) !important; }
         }
 
         /* Expandable carrier panels */
@@ -318,9 +333,10 @@
             flex-shrink: 0;
         }
     </style>
+    <noscript><style>.reveal{opacity:1 !important;transform:none !important}</style></noscript>
     <link rel="stylesheet" href="css/mobile-dock.css">
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans selection:bg-primary-100 selection:text-primary-900 overflow-x-hidden">
+<body class="bg-slate-50 text-slate-800 font-sans selection:bg-primary-100 selection:text-primary-900">
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[9999] focus:bg-blue-700 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:text-sm focus:font-semibold focus:shadow-lg">Skip to main content</a>
 <main id="main-content">
     <!-- URGENCY TOP BAR -->
@@ -367,7 +383,7 @@
     <div id="menu-drawer" class="fixed top-0 right-0 w-[85vw] md:w-96 h-full bg-white z-[100] shadow-2xl transform translate-x-full transition-transform duration-500 flex flex-col">
         <div class="p-6 flex justify-between items-center border-b border-slate-100 bg-slate-50">
             <h3 class="text-lg font-display font-black text-slate-900">Agency Menu</h3>
-            <button id="menu-close" aria-label="Close menu" class="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-slate-200 text-slate-500 hover:text-red-500 transition-colors">
+            <button id="menu-close" aria-label="Close menu" class="w-11 h-11 flex items-center justify-center rounded-full bg-white border border-slate-200 text-slate-500 hover:text-red-500 transition-colors">
                 <i class="fas fa-times" aria-hidden="true"></i>
             </button>
         </div>
@@ -383,7 +399,7 @@
             <a href="community/" class="group block p-2.5 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform"><i class="fas fa-mountain-sun"></i></div> Community</a>
             <a href="service-center.html" class="group block p-2.5 rounded-xl bg-emerald-50 text-emerald-700 font-bold flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-white flex items-center justify-center text-emerald-600 shadow-sm"><i class="fas fa-concierge-bell"></i></div> Service Center</a>
             <a href="contact-us/" class="group block p-2.5 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 group-hover:scale-110 transition-transform"><i class="fas fa-envelope"></i></div> Contact Us</a>
-            <a href="espanol/" class="group block p-2.5 rounded-xl hover:bg-emerald-50 text-emerald-700 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform"><i class="fas fa-globe-americas"></i></div> Espa&ntilde;ol &#127474;&#127485;</a>
+            <a href="espanol/" class="group block p-2.5 rounded-xl hover:bg-emerald-50 text-emerald-700 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform"><i class="fas fa-globe-americas"></i></div> Espa&ntilde;ol</a>
         </div>
         <div class="p-3 border-t border-slate-100 bg-slate-50">
             <a href="tel:3368351993" class="block w-full py-3 bg-slate-900 text-white text-center rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-lg">Call Our Team</a>
@@ -424,7 +440,7 @@
     <section class="py-6 sm:py-16 md:py-24 bg-slate-50">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <figure class="service-photo-card mb-5 sm:mb-8 md:mb-10 reveal">
-                <img src="https://img.billlayneinsurance.com/i/2026/08/im-bs7ient-arvyrh.jpg" alt="Customer managing insurance bill pay, ID card requests, and policy service tasks on a laptop and phone" width="1536" height="1024" loading="lazy" decoding="async">
+                <img src="https://img.billlayneinsurance.com/i/2026/08/im-bs7ient-arvyrh.jpg" alt="Customer managing insurance bill pay, ID card requests, and policy service tasks on a laptop and phone" width="1536" height="1024" loading="eager" fetchpriority="high" decoding="async">
             </figure>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-8">
 
@@ -1049,7 +1065,6 @@
     <!-- Se Habla Espanol Banner -->
     <a href="espanol/" class="block bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-3 text-center hover:from-emerald-700 hover:to-teal-700 transition-all group">
         <div class="max-w-7xl mx-auto px-4 flex items-center justify-center gap-3 text-sm sm:text-base font-bold">
-            <span class="text-lg">&#127474;&#127485;</span>
             <span>Se Habla Espa&ntilde;ol &mdash; Oficina en Dobson, NC</span>
             <span class="text-emerald-200 text-xs font-medium hidden sm:inline">(336) 356-2200</span>
             <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
@@ -1136,17 +1151,17 @@
             <div>
                 <h4 class="text-white font-bold mb-4 sm:mb-6 text-sm uppercase tracking-widest">Connect</h4>
                 <ul class="space-y-4 text-sm">
-                    <li><a href="tel:3368351993" class="hover:text-primary-400 transition-colors"><i class="fas fa-phone-alt text-primary-500 mr-2"></i> (336) 835-1993</a></li>
-                    <li><a href="mailto:Save@BillLayneInsurance.com" class="hover:text-primary-400 transition-colors"><i class="fas fa-envelope text-primary-500 mr-2"></i> Save@BillLayneInsurance.com</a></li>
+                    <li><a href="tel:3368351993" class="inline-flex items-center py-2 hover:text-primary-400 transition-colors"><i class="fas fa-phone-alt text-primary-500 mr-2"></i> (336) 835-1993</a></li>
+                    <li><a href="mailto:Save@BillLayneInsurance.com" class="inline-flex items-center py-2 hover:text-primary-400 transition-colors"><i class="fas fa-envelope text-primary-500 mr-2"></i> Save@BillLayneInsurance.com</a></li>
                     <li><i class="fas fa-map-marker-alt text-primary-500 mr-2"></i> 1283 N Bridge St, Elkin, NC 28621</li>
                     <li><i class="fas fa-clock text-primary-500 mr-2"></i> Mon-Fri: 9am - 5pm</li>
                     <li class="pt-2 border-t border-white/10"><i class="fas fa-exclamation-triangle text-amber-400 mr-2"></i> <span class="text-amber-400/80 font-bold">After-Hours Claims?</span><br><span class="text-xs text-slate-400 ml-5">Call your carrier's 24/7 claims line on your insurance card, then call us the next business day.</span></li>
                 </ul>
             </div>
             <div>
-                <h4 class="text-white font-bold mb-4 sm:mb-6 tracking-wide">Dobson Office <span class="text-xs normal-case">&#127474;&#127485;</span></h4>
+                <h4 class="text-white font-bold mb-4 sm:mb-6 tracking-wide">Dobson Office</h4>
                 <ul class="space-y-3 text-sm">
-                    <li><a href="espanol/" class="hover:text-emerald-400 transition-colors font-bold">Se Habla Espa&ntilde;ol</a></li>
+                    <li><a href="espanol/" class="inline-flex items-center py-2 hover:text-emerald-400 transition-colors font-bold">Se Habla Espa&ntilde;ol</a></li>
                     <li><a href="tel:3363562200" class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-phone-alt text-emerald-500"></i> (336) 356-2200</a></li>
                     <li class="flex items-start gap-2"><i class="fas fa-map-marker-alt text-emerald-500 mt-1"></i> <span>209 S Main St<br>Dobson, NC 27017</span></li>
                 </ul>
@@ -1154,10 +1169,10 @@
             <div>
                 <h4 class="text-white font-bold mb-4 sm:mb-6 text-sm uppercase tracking-widest">Follow Us</h4>
                 <div class="flex gap-3 sm:gap-4">
-                    <a href="https://www.facebook.com/dollarbillagency/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-blue-600 transition-all text-white"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/ncautoandhome/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-purple-500 transition-all text-white"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.youtube.com/@ncautoandhome" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-red-600 transition-all text-white"><i class="fab fa-youtube"></i></a>
-                    <a href="https://x.com/shopsavecompare" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-slate-700 transition-all text-white"><i class="fab fa-x-twitter"></i></a>
+                    <a href="https://www.facebook.com/dollarbillagency/" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center hover:bg-blue-600 transition-all text-white"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+                    <a href="https://www.instagram.com/ncautoandhome/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center hover:bg-purple-500 transition-all text-white"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                    <a href="https://www.youtube.com/@ncautoandhome" target="_blank" rel="noopener noreferrer" aria-label="YouTube" class="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center hover:bg-red-600 transition-all text-white"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+                    <a href="https://x.com/shopsavecompare" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" class="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center hover:bg-slate-700 transition-all text-white"><i class="fab fa-x-twitter" aria-hidden="true"></i></a>
                 </div>
                 <!-- Footer Logo -->
                 <div class="mt-8">
@@ -1165,7 +1180,7 @@
                 </div>
             </div>
         </div>
-        <div class="text-center text-xs font-black uppercase tracking-[0.4em] mt-10 sm:mt-16 opacity-30">
+        <div class="text-center text-xs font-black uppercase tracking-[0.4em] mt-10 sm:mt-16">
             &copy; 2026 Bill Layne Insurance Agency &bull; Elkin, NC
         </div>
     </footer>
@@ -1205,7 +1220,7 @@
             <li><a href="https://www.billlayneinsurance.com/community/"><span class="menu-icon amber"><i class="fas fa-mountain-sun"></i></span> Community <i class="fas fa-chevron-right menu-arrow"></i></a></li>
             <li><a href="https://www.billlayneinsurance.com/service-center.html"><span class="menu-icon green"><i class="fas fa-concierge-bell"></i></span> Service Center <i class="fas fa-chevron-right menu-arrow"></i></a></li>
             <li><a href="https://www.billlayneinsurance.com/contact-us/"><span class="menu-icon blue"><i class="fas fa-envelope"></i></span> Contact Us <i class="fas fa-chevron-right menu-arrow"></i></a></li>
-            <li><a href="https://www.billlayneinsurance.com/espanol/"><span class="menu-icon green"><i class="fas fa-globe-americas"></i></span> Espa&ntilde;ol &#127474;&#127485; <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/espanol/"><span class="menu-icon green"><i class="fas fa-globe-americas"></i></span> Espa&ntilde;ol <i class="fas fa-chevron-right menu-arrow"></i></a></li>
         </ul>
     </div>
 

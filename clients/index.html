@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
@@ -83,7 +83,7 @@
         @media (max-width: 767px) {
             .bg-vivid-hero {
                 background:
-                    linear-gradient(180deg, rgba(15, 23, 42, 0.04) 0%, rgba(15, 23, 42, 0.08) 32%, rgba(15, 23, 42, 0.82) 56%, #0f172a 72%),
+                    linear-gradient(180deg, rgba(15, 23, 42, 0.5) 0%, rgba(15, 23, 42, 0.22) 16%, rgba(15, 23, 42, 0) 30%, rgba(15, 23, 42, 0.82) 56%, #0f172a 72%),
                     url("images/client-hub-hero-mobile.webp") center top/100% auto no-repeat #0f172a;
             }
 
@@ -97,6 +97,12 @@
         .reveal { opacity: 0; transform: translateY(20px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
+        /* Accessibility: honor reduced-motion — show reveal sections immediately and suppress motion */
+        @media (prefers-reduced-motion: reduce) {
+            .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+        }
+
         /* Scroll Progress Bar */
         #scroll-progress {
             position: fixed;
@@ -109,6 +115,7 @@
             transition: width 0.1s;
         }
     </style>
+    <noscript><style>.reveal{opacity:1 !important;transform:none !important}</style></noscript>
 </head>
 
 <body class="bg-slate-50 text-slate-800 font-sans overflow-x-hidden selection:bg-teal-200 selection:text-teal-900">
@@ -154,7 +161,7 @@
     <div id="menu-drawer" class="fixed top-0 right-0 w-80 max-w-full h-full bg-white z-[70] shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
         <div class="p-6 flex justify-between items-center border-b border-slate-100">
             <h3 class="text-lg font-display font-bold text-slate-900">Menu</h3>
-            <button id="menu-close" aria-label="Close menu" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 text-slate-500 hover:bg-slate-100 transition-colors">
+            <button id="menu-close" aria-label="Close menu" class="w-11 h-11 flex items-center justify-center rounded-full bg-slate-50 text-slate-500 hover:bg-slate-100 transition-colors">
                 <i class="fas fa-times" aria-hidden="true"></i>
             </button>
         </div>
@@ -169,7 +176,7 @@
             <a href="../blog/index.html" class="group block p-2.5 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-500 group-hover:scale-110 transition-transform"><i class="fas fa-blog"></i></div> Blog</a>
             <a href="../community/" class="group block p-2.5 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform"><i class="fas fa-mountain-sun"></i></div> Community</a>
             <a href="../contact-us/" class="group block p-2.5 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 group-hover:scale-110 transition-transform"><i class="fas fa-envelope"></i></div> Contact Us</a>
-            <a href="../espanol/" class="group block p-2.5 rounded-xl hover:bg-emerald-50 text-emerald-700 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform"><i class="fas fa-globe-americas"></i></div> Espa&ntilde;ol &#127474;&#127485;</a>
+            <a href="../espanol/" class="group block p-2.5 rounded-xl hover:bg-emerald-50 text-emerald-700 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform"><i class="fas fa-globe-americas"></i></div> Espa&ntilde;ol</a>
         </div>
         <div class="p-3 border-t border-slate-100 bg-slate-50">
             <a href="tel:3368351993" class="block w-full py-3 bg-slate-900 text-white text-center rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-lg">Call Our Team</a>
@@ -277,24 +284,28 @@
                     <div class="w-12 h-12 md:w-16 md:h-16 bg-white rounded-2xl flex items-center justify-center text-amber-500 text-xl md:text-3xl mx-auto mb-3 shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-camera"></i></div>
                     <h3 class="font-bold text-slate-900 text-xs md:text-sm mb-1">Send Photos</h3>
                     <p class="text-[10px] md:text-xs text-slate-500 hidden sm:block">Vehicle, home or damage pics</p>
+                    <p class="text-xs text-slate-400 mt-1"><span aria-hidden="true">&#8599;</span> Opens our secure photo upload site</p>
                 </a>
                 <!-- Send Documents -->
                 <a href="https://sendbilldocs.com" target="_blank" rel="noopener noreferrer" class="group bg-gradient-to-br from-violet-50 to-violet-100/50 p-4 md:p-6 rounded-2xl border-2 border-violet-100 hover:border-violet-300 hover:shadow-xl transition-all hover:-translate-y-1 text-center">
                     <div class="w-12 h-12 md:w-16 md:h-16 bg-white rounded-2xl flex items-center justify-center text-violet-500 text-xl md:text-3xl mx-auto mb-3 shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-file-upload"></i></div>
                     <h3 class="font-bold text-slate-900 text-xs md:text-sm mb-1">Send Documents</h3>
                     <p class="text-[10px] md:text-xs text-slate-500 hidden sm:block">Upload paperwork securely</p>
+                    <p class="text-xs text-slate-400 mt-1"><span aria-hidden="true">&#8599;</span> Opens our secure upload site</p>
                 </a>
                 <!-- No-Loss Statement -->
                 <a href="https://mynolossform.com/" target="_blank" rel="noopener noreferrer" class="group bg-gradient-to-br from-teal-50 to-teal-100/50 p-4 md:p-6 rounded-2xl border-2 border-teal-100 hover:border-teal-300 hover:shadow-xl transition-all hover:-translate-y-1 text-center">
                     <div class="w-12 h-12 md:w-16 md:h-16 bg-white rounded-2xl flex items-center justify-center text-teal-500 text-xl md:text-3xl mx-auto mb-3 shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-shield-alt"></i></div>
                     <h3 class="font-bold text-slate-900 text-xs md:text-sm mb-1">No-Loss Statement</h3>
                     <p class="text-[10px] md:text-xs text-slate-500 hidden sm:block">Reinstate a lapsed policy</p>
+                    <p class="text-xs text-slate-400 mt-1"><span aria-hidden="true">&#8599;</span> Opens our secure form site</p>
                 </a>
                 <!-- Request Cancellation -->
                 <a href="https://thecancellationform.com/" target="_blank" rel="noopener noreferrer" class="group bg-gradient-to-br from-slate-50 to-slate-100/70 p-4 md:p-6 rounded-2xl border-2 border-slate-200 hover:border-slate-300 hover:shadow-xl transition-all hover:-translate-y-1 text-center">
                     <div class="w-12 h-12 md:w-16 md:h-16 bg-white rounded-2xl flex items-center justify-center text-slate-500 text-xl md:text-3xl mx-auto mb-3 shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-file-circle-xmark"></i></div>
                     <h3 class="font-bold text-slate-900 text-xs md:text-sm mb-1">Request Cancellation</h3>
                     <p class="text-[10px] md:text-xs text-slate-500 hidden sm:block">Submit for agency review</p>
+                    <p class="text-xs text-slate-400 mt-1"><span aria-hidden="true">&#8599;</span> Opens our secure form site</p>
                 </a>
             </div>
 
@@ -535,39 +546,39 @@
                 <h3 class="text-white font-display font-bold text-xl mb-6">Bill Layne Insurance</h3>
                 <p class="text-sm leading-relaxed mb-6">Protecting families in North Carolina since 2005. We are your local, trusted, and independent agency.</p>
                 <div class="flex gap-3">
-                    <a href="https://www.facebook.com/dollarbillagency/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-blue-600 transition-all"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/ncautoandhome/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-purple-500 transition-all"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.youtube.com/@ncautoandhome" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-red-600 transition-all"><i class="fab fa-youtube"></i></a>
-                    <a href="https://x.com/shopsavecompare" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-600 transition-all"><i class="fab fa-x-twitter"></i></a>
+                    <a href="https://www.facebook.com/dollarbillagency/" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="w-11 h-11 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-blue-600 transition-all"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+                    <a href="https://www.instagram.com/ncautoandhome/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="w-11 h-11 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-purple-500 transition-all"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                    <a href="https://www.youtube.com/@ncautoandhome" target="_blank" rel="noopener noreferrer" aria-label="YouTube" class="w-11 h-11 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-red-600 transition-all"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+                    <a href="https://x.com/shopsavecompare" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" class="w-11 h-11 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-600 transition-all"><i class="fab fa-x-twitter" aria-hidden="true"></i></a>
                 </div>
             </div>
             <div>
                 <h5 class="text-white font-bold mb-6 tracking-wide">Contact</h5>
                 <ul class="space-y-4 text-sm">
-                    <li><a href="tel:3368351993" class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-phone-alt text-teal-500"></i> (336) 835-1993</a></li>
-                    <li><a href="mailto:Save@BillLayneInsurance.com" class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-envelope text-teal-500"></i> Save@BillLayneInsurance.com</a></li>
+                    <li><a href="tel:3368351993" class="hover:text-white transition-colors flex items-center gap-2 py-3"><i class="fas fa-phone-alt text-teal-500"></i> (336) 835-1993</a></li>
+                    <li><a href="mailto:Save@BillLayneInsurance.com" class="hover:text-white transition-colors flex items-center gap-2 py-3"><i class="fas fa-envelope text-teal-500"></i> Save@BillLayneInsurance.com</a></li>
                     <li class="flex items-start gap-2"><i class="fas fa-map-marker-alt text-teal-500 mt-1"></i> <span>1283 N Bridge St<br>Elkin, NC 28621</span></li>
                 </ul>
             </div>
             <div>
                 <h5 class="text-white font-bold mb-6 tracking-wide">Quick Links</h5>
                 <ul class="space-y-3 text-sm">
-                    <li><a href="../index.html" class="hover:text-teal-400 transition-colors">Home Page</a></li>
-                    <li><a href="../service-center.html" class="hover:text-teal-400 transition-colors">Service Center</a></li>
-                    <li><a href="../claims-center/" class="hover:text-teal-400 transition-colors">Claims Center</a></li>
-                    <li><a href="../resources/" class="hover:text-teal-400 transition-colors">Free Tools &amp; Resources</a></li>
+                    <li><a href="../index.html" class="inline-block py-3 hover:text-teal-400 transition-colors">Home Page</a></li>
+                    <li><a href="../service-center.html" class="inline-block py-3 hover:text-teal-400 transition-colors">Service Center</a></li>
+                    <li><a href="../claims-center/" class="inline-block py-3 hover:text-teal-400 transition-colors">Claims Center</a></li>
+                    <li><a href="../resources/" class="inline-block py-3 hover:text-teal-400 transition-colors">Free Tools &amp; Resources</a></li>
                 </ul>
             </div>
             <div>
                 <h5 class="text-white font-bold mb-4 sm:mb-6 tracking-wide">Dobson Office <span class="text-xs normal-case">ES</span></h5>
                 <ul class="space-y-3 text-sm">
-                    <li><a href="../espanol/" class="hover:text-emerald-400 transition-colors font-bold">Se Habla Espa&ntilde;ol</a></li>
-                    <li><a href="tel:3363562200" class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-phone-alt text-emerald-500"></i> (336) 356-2200</a></li>
+                    <li><a href="../espanol/" class="inline-block py-3 hover:text-emerald-400 transition-colors font-bold">Se Habla Espa&ntilde;ol</a></li>
+                    <li><a href="tel:3363562200" class="hover:text-white transition-colors flex items-center gap-2 py-3"><i class="fas fa-phone-alt text-emerald-500"></i> (336) 356-2200</a></li>
                     <li class="flex items-start gap-2"><i class="fas fa-map-marker-alt text-emerald-500 mt-1"></i> <span>209 S Main St<br>Dobson, NC 27017</span></li>
                 </ul>
             </div>
         </div>
-        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 border-t border-slate-800 pt-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400 border-t border-slate-800 pt-8">
             &copy; 2026 Bill Layne Insurance Agency. All Rights Reserved.
         </div>
     </footer>

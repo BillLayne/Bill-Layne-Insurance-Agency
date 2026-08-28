@@ -787,12 +787,17 @@ button { cursor: pointer; font-family: 'DM Sans', sans-serif; }
     background: white;
     border-radius: 20px 20px 0 0;
     transform: translateY(100%);
-    transition: transform 0.35s cubic-bezier(.4,0,.2,1);
+    visibility: hidden; /* keep closed drawer out of tab order / a11y tree */
+    transition: transform 0.35s cubic-bezier(.4,0,.2,1), visibility 0s 0.35s;
     max-height: 82vh;
     overflow-y: auto;
     padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
 }
-.menu-panel.open { transform: translateY(0); }
+.menu-panel.open {
+    transform: translateY(0);
+    visibility: visible;
+    transition: transform 0.35s cubic-bezier(.4,0,.2,1), visibility 0s;
+}
 .menu-handle {
     width: 40px; height: 4px;
     background: var(--g200);
@@ -813,7 +818,7 @@ button { cursor: pointer; font-family: 'DM Sans', sans-serif; }
     color: var(--navy);
 }
 .menu-close {
-    width: 32px; height: 32px;
+    width: 44px; height: 44px;
     background: var(--g100);
     border: none; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
@@ -1014,7 +1019,8 @@ button { cursor: pointer; font-family: 'DM Sans', sans-serif; }
 }
 
 /* -- DESKTOP: compact layout so quote cards are visible above the fold -- */
-@media(min-width: 769px) {
+/* Dock/menu is the only nav at <=1024px, so desktop overrides start at 1025px */
+@media(min-width: 1025px) {
     .carrier-strip { display: none; }
     .review-badge-strip { display: none; }
     .hero { padding: 18px 20px 16px; }
@@ -1063,6 +1069,54 @@ button { cursor: pointer; font-family: 'DM Sans', sans-serif; }
 }
 @media(max-width: 1024px) {
     .desktop-pay-banner { display: none; }
+}
+
+/* ============================================================
+   HOW IT WORKS + FAQ (visible companions to HowTo/FAQPage schema)
+   ============================================================ */
+.how-box,
+.faq-box {
+    background: white;
+    border-radius: 18px;
+    border: 2px solid var(--g200);
+    padding: 28px 24px;
+    margin-bottom: 28px;
+}
+.how-grid {
+    display: grid;
+    gap: 16px;
+}
+@media(min-width: 640px) { .how-grid { grid-template-columns: repeat(3, 1fr); } }
+.how-step { display: flex; align-items: flex-start; gap: 12px; }
+.how-num {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+.how-step-title { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+.how-step-sub   { font-size: 12px; color: var(--g600); line-height: 1.5; }
+
+.faq-item { padding: 16px 0; border-bottom: 1px solid var(--g100); }
+.faq-item:first-of-type { padding-top: 0; }
+.faq-item:last-child { border-bottom: none; padding-bottom: 0; }
+.faq-q { font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+.faq-a { font-size: 13px; color: var(--g600); line-height: 1.6; }
+
+/* -- REDUCED MOTION -- */
+@media (prefers-reduced-motion: reduce) {
+    .fade-up { animation: none; opacity: 1; transform: none; }
+    .delay-1, .delay-2, .delay-3, .delay-4 { animation-delay: 0s; }
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 </style>
 
@@ -1170,7 +1224,7 @@ button { cursor: pointer; font-family: 'DM Sans', sans-serif; }
                 <div class="card-icon-wrap"><i class="fas fa-car"></i></div>
                 <div class="card-time"><i class="fas fa-bolt"></i> Quick &amp; easy</div>
                 <div class="card-title">Auto Insurance</div>
-                <div class="card-desc">Compare your auto rate across 6 auto carriers in just a few minutes. Most NC drivers find a better rate.</div>
+                <div class="card-desc">Compare your auto rate across 6 auto carriers in just a few minutes. Many NC drivers find a better rate.</div>
                 <ul class="card-checks">
                     <li><div class="check-icon"><i class="fas fa-check"></i></div> Compare rates from 6 auto carriers</li>
                     <li><div class="check-icon"><i class="fas fa-check"></i></div> Liability, collision &amp; comprehensive</li>
@@ -1280,6 +1334,59 @@ button { cursor: pointer; font-family: 'DM Sans', sans-serif; }
         <p>Complete one quote now, then come back for the other - we'll match them up and maximize your savings.</p>
     </div>
 
+    <!-- HOW IT WORKS (visible companion to HowTo schema) -->
+    <div class="how-box fade-up delay-4">
+        <div class="why-title"><i class="fas fa-list-ol"></i> How It Works</div>
+        <div class="how-grid">
+            <div class="how-step">
+                <div class="how-num">1</div>
+                <div>
+                    <div class="how-step-title">Choose Your Coverage Type</div>
+                    <div class="how-step-sub">Select Auto Insurance or Home Insurance to begin your free quote.</div>
+                </div>
+            </div>
+            <div class="how-step">
+                <div class="how-num">2</div>
+                <div>
+                    <div class="how-step-title">Complete the Short Form</div>
+                    <div class="how-step-sub">Answer a few questions about yourself, your vehicle or property, and your current coverage. Takes 5-10 minutes.</div>
+                </div>
+            </div>
+            <div class="how-step">
+                <div class="how-num">3</div>
+                <div>
+                    <div class="how-step-title">Receive Your Quote</div>
+                    <div class="how-step-sub">Bill Layne shops the appropriate auto or home carrier options and contacts you within 1 business day with your best rate options.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ (visible companion to FAQPage schema) -->
+    <div class="faq-box fade-up delay-4">
+        <div class="why-title"><i class="fas fa-circle-question"></i> Frequently Asked Questions</div>
+        <div class="faq-item">
+            <div class="faq-q">How long does it take to get an insurance quote?</div>
+            <div class="faq-a">An auto insurance quote takes about 5-7 minutes. A home insurance quote takes 8-10 minutes. You'll hear back from Bill Layne within 1 business day with your rate options.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">Is the insurance quote really free?</div>
+            <div class="faq-a">Yes, absolutely free with no obligation. We shop multiple carriers and present your options - you only pay if you decide to move forward.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">What insurance carriers does Bill Layne Insurance compare?</div>
+            <div class="faq-a">We compare auto and home options through our trusted carrier network to find you the best rate.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">Can I bundle auto and home insurance for a discount?</div>
+            <div class="faq-a">Yes. Bundling auto and home insurance may qualify you for a multi-policy discount depending on the carrier, coverage, and underwriting details. Complete one quote now and then the other so we can compare options together.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">Does Bill Layne Insurance serve all of North Carolina?</div>
+            <div class="faq-a">Yes, we are licensed to serve all 100 counties in North Carolina. Our main office is in Elkin, NC, serving Surry County, Yadkin Valley, and the surrounding areas.</div>
+        </div>
+    </div>
+
 </div>
 </main>
 
@@ -1316,7 +1423,7 @@ button { cursor: pointer; font-family: 'DM Sans', sans-serif; }
     <div class="menu-handle"></div>
     <div class="menu-panel-header">
         <span class="menu-panel-title">Bill Layne Insurance</span>
-        <button class="menu-close" onclick="closeMenu()"><i class="fas fa-times"></i></button>
+        <button class="menu-close" onclick="closeMenu()" aria-label="Close menu"><i class="fas fa-times" aria-hidden="true"></i></button>
     </div>
     <ul class="menu-links">
         <li><a href="https://www.billlayneinsurance.com"><span class="menu-icon blue"><i class="fas fa-home"></i></span> Home <i class="fas fa-chevron-right menu-arrow"></i></a></li>

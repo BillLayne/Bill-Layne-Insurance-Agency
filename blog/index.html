@@ -1535,10 +1535,6 @@
                 </div>
                 </noscript>
 
-                <!-- Filters moved to bottom -->
-                <section id="blog-filters" class="blog-filters" aria-label="Blog post filters">
-                    <h3 class="filter-title">Filter by Category</h3>
-                </section>
             </div>
         </div>
     </main>
@@ -1548,6 +1544,14 @@
             <div class="footer-content">
                 <p class="footer-text">
                     &copy; 2026 Bill Layne Insurance. All rights reserved.
+                </p>
+                <p class="footer-contact">
+                    <a href="tel:3368351993" class="footer-link">(336) 835-1993</a>
+                    <span class="footer-sep" aria-hidden="true">&bull;</span>
+                    <a href="/get-quote" class="footer-link">Get a Free Quote</a>
+                </p>
+                <p class="footer-note">
+                    Elkin, NC &bull; NC License #1740293
                 </p>
                 <p class="footer-note">
                     Protecting families and businesses with comprehensive insurance solutions.
@@ -1621,6 +1625,15 @@
             // Function to filter blog posts
             function filterBlogPosts() {
                 const searchTerm = searchInput.value.toLowerCase().trim();
+
+                // Delegate to the blog app when available: Load More only
+                // renders 30 cards at a time, so the app filters the FULL
+                // dataset and re-renders the grid itself.
+                if (window.__blogApp && typeof window.__blogApp.applySearch === 'function') {
+                    window.__blogApp.applySearch(searchTerm);
+                    return;
+                }
+
                 const blogGrid = document.getElementById('blog-grid');
                 const blogPosts = blogGrid ? blogGrid.querySelectorAll('.blog-card') : [];
 
@@ -1741,21 +1754,6 @@
 
     <!-- Keep existing blog app.js -->
     <script src="app.js?v=3" defer></script>
-
-    <!-- MOBILE DOCK -->
-    <div class="md:hidden fixed bottom-0 left-0 w-full z-[60] glass-nav border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] pb-safe">
-        <div class="grid grid-cols-2 h-16 items-center">
-            <a href="tel:3368351993" class="flex flex-col items-center justify-center h-16 text-slate-600 hover:text-indigo-600 active:bg-slate-50">
-                <i class="fas fa-phone-alt text-lg mb-1"></i>
-                <span class="text-[10px] font-bold">Call</span>
-            </a>
-            <a href="/get-quote" class="flex flex-col items-center justify-center h-16 text-slate-600 hover:text-indigo-600 active:bg-slate-50">
-                <i class="fas fa-file-invoice-dollar text-lg mb-1"></i>
-                <span class="text-[10px] font-bold">Quote</span>
-            </a>
-        </div>
-    </div>
-
 
     <!-- DOCK SPACER (prevents content from hiding behind dock) -->
     <div class="dock-spacer md:hidden" style="height: 72px;"></div>

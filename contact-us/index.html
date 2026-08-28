@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
@@ -193,12 +193,54 @@
             }
 
             .contact-hero-overlay {
-                background: linear-gradient(180deg, rgba(15, 23, 42, 0.82) 0%, rgba(15, 23, 42, 0.72) 54%, rgba(15, 23, 42, 0.96) 100%);
+                background: linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.88) 54%, rgba(15, 23, 42, 0.96) 100%);
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 1023px) {
+            /* Tablet: hero text is centered and spans the subject's face, so use
+               a vertical scrim (like mobile) instead of the left-to-right one. */
+            .contact-hero-overlay {
+                background: linear-gradient(180deg, rgba(15, 23, 42, 0.82) 0%, rgba(15, 23, 42, 0.80) 45%, rgba(15, 23, 42, 0.94) 100%);
+            }
+        }
+
+        /* Accessibility: 44px touch targets in footer + menu drawers */
+        footer a[aria-label="Facebook"],
+        footer a[aria-label="Instagram"],
+        footer a[aria-label="YouTube"],
+        footer a[aria-label="X (Twitter)"] {
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        #menu-close {
+            width: 44px !important;
+            height: 44px !important;
+        }
+
+        #mobileDockPanel .menu-close {
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        @media (max-width: 767px) {
+            footer li a {
+                display: inline-flex;
+                align-items: center;
+                padding-top: 0.5rem;
+                padding-bottom: 0.5rem;
             }
         }
 
         .reveal { opacity: 0; transform: translateY(20px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Accessibility: honor reduced-motion — show reveal sections immediately and suppress motion */
+        @media (prefers-reduced-motion: reduce) {
+            .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+        }
 
         /* Form Inputs */
         .form-input {
@@ -233,6 +275,7 @@
         .toast-error { background: linear-gradient(135deg, #dc2626, #ef4444); }
         .toast i { font-size: 1.25rem; }
     </style>
+    <noscript><style>.reveal{opacity:1 !important;transform:none !important}</style></noscript>
 
     <!-- EmailJS SDK (deferred) -->
     <script defer src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" onload="emailjs.init('Av6wKxL6HR-FIMtgm')"></script>
@@ -354,7 +397,7 @@
             <a href="../community/" class="group block p-2.5 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform"><i class="fas fa-mountain-sun"></i></div> Community</a>
             <a href="../service-center" class="group block p-2.5 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform"><i class="fas fa-concierge-bell"></i></div> Service Center</a>
             <a href="../contact-us/" class="group block p-2.5 rounded-xl bg-slate-50 text-slate-700 font-bold flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-white flex items-center justify-center text-slate-600 shadow-sm"><i class="fas fa-envelope"></i></div> Contact Us</a>
-            <a href="../espanol/" class="group block p-2.5 rounded-xl hover:bg-emerald-50 text-emerald-700 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform"><i class="fas fa-globe-americas"></i></div> Espa&ntilde;ol &#127474;&#127485;</a>
+            <a href="../espanol/" class="group block p-2.5 rounded-xl hover:bg-emerald-50 text-emerald-700 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform"><i class="fas fa-globe-americas"></i></div> Espa&ntilde;ol</a>
         </div>
         <div class="p-3 border-t border-slate-100 bg-slate-50">
             <a href="tel:3368351993" class="block w-full py-3 bg-slate-900 text-white text-center rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-lg">Call Our Team</a>
@@ -392,7 +435,7 @@
                 <p class="text-base sm:text-lg md:text-xl text-indigo-100 mb-6 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed drop-shadow-lg">
                     Call, email, visit, or send a message to our Elkin team or bilingual Dobson office.
                 </p>
-                <p class="text-sm text-indigo-200/80 mb-12 max-w-xl mx-auto lg:mx-0">
+                <p class="text-sm text-indigo-100 mb-12 max-w-xl mx-auto lg:mx-0">
                     As an independent agency, we work for <strong class="text-white">you</strong> - not the insurance companies. That means honest advice and multiple options.
                 </p>
 
@@ -426,7 +469,6 @@
     <!-- Se Habla Español Banner -->
     <a href="../espanol/" class="block bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-3 text-center hover:from-emerald-700 hover:to-teal-700 transition-all group relative z-20">
         <div class="max-w-7xl mx-auto px-4 flex items-center justify-center gap-3 text-sm sm:text-base font-bold">
-            <span class="text-lg">&#127474;&#127485;</span>
             <span>Se Habla Espa&ntilde;ol &mdash; Oficina en Dobson, NC</span>
             <span class="text-emerald-200 text-xs font-medium hidden sm:inline">(336) 356-2200</span>
             <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
@@ -518,7 +560,7 @@
 
                     <!-- Dobson Office (Se Habla Español) -->
                     <div class="space-y-2 sm:space-y-4 reveal delay-200">
-                        <h3 class="font-display font-bold text-base sm:text-lg text-slate-900"><span class="text-lg mr-1">&#127474;&#127485;</span> Dobson Office &mdash; Se Habla Espa&ntilde;ol</h3>
+                        <h3 class="font-display font-bold text-base sm:text-lg text-slate-900">Dobson Office &mdash; Se Habla Espa&ntilde;ol</h3>
                         <a href="../espanol/" class="block bg-gradient-to-br from-emerald-50 to-teal-50 p-3 sm:p-6 rounded-xl sm:rounded-3xl shadow-sm border border-emerald-100 hover:shadow-md hover:border-emerald-200 transition-all group">
                             <div class="flex items-center gap-3 sm:gap-5 mb-2 sm:mb-3">
                                 <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg sm:text-2xl group-hover:scale-110 transition-transform"><i class="fas fa-map-marked-alt"></i></div>
@@ -616,7 +658,7 @@
                             <a href="mailto:jimenez.links@gmail.com" class="group bg-gradient-to-br from-emerald-50 to-teal-50 p-3 rounded-2xl shadow-sm border border-emerald-100 hover:shadow-md hover:border-emerald-200 transition-all flex items-center gap-3 sm:col-span-2">
                                 <img src="agents/rosa-jimenez.webp" alt="Rosa Jimenez bilingual insurance agent at Bill Layne Insurance" width="320" height="320" loading="lazy" decoding="async" class="w-14 h-14 rounded-2xl object-cover border-2 border-white ring-1 ring-emerald-200 flex-shrink-0">
                                 <div class="min-w-0">
-                                    <h4 class="font-bold text-slate-900 text-sm">Rosa Jimenez <span class="text-xs">&#127474;&#127485;</span></h4>
+                                    <h4 class="font-bold text-slate-900 text-sm">Rosa Jimenez</h4>
                                     <p class="text-[10px] text-emerald-600 font-bold uppercase tracking-wide">Agent &bull; Dobson &bull; Se Habla Espa&ntilde;ol</p>
                                     <p class="text-[11px] text-slate-500 truncate">jimenez.links@gmail.com</p>
                                 </div>
@@ -725,7 +767,7 @@
                     </div>
                 </div>
                 <div class="reveal delay-100">
-                    <h3 class="font-bold text-slate-900 text-center mb-4"><span class="text-base mr-1">&#127474;&#127485;</span> Dobson Office &mdash; Se Habla Espa&ntilde;ol</h3>
+                    <h3 class="font-bold text-slate-900 text-center mb-4">Dobson Office &mdash; Se Habla Espa&ntilde;ol</h3>
                     <p class="text-slate-500 text-sm text-center mb-4">209 S Main St, Dobson, NC 27017</p>
                     <div class="rounded-3xl overflow-hidden shadow-xl border border-emerald-200">
                         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3208.5!2d-80.7234!3d36.3957!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2s209+S+Main+St%2C+Dobson%2C+NC+27017!5e0!3m2!1sen!2sus"
@@ -745,10 +787,10 @@
                 <h3 class="text-white font-display font-bold text-base sm:text-xl mb-4 sm:mb-6">Bill Layne Insurance</h3>
                 <p class="text-sm leading-relaxed mb-6">Protecting families in North Carolina since 2005. We are your local, trusted, and independent agency.</p>
                 <div class="flex gap-3">
-                    <a href="https://www.facebook.com/dollarbillagency/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-blue-600 transition-all"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/ncautoandhome/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-purple-500 transition-all"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.youtube.com/@ncautoandhome" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-red-600 transition-all"><i class="fab fa-youtube"></i></a>
-                    <a href="https://x.com/shopsavecompare" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-600 transition-all"><i class="fab fa-x-twitter"></i></a>
+                    <a href="https://www.facebook.com/dollarbillagency/" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-blue-600 transition-all"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+                    <a href="https://www.instagram.com/ncautoandhome/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-purple-500 transition-all"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                    <a href="https://www.youtube.com/@ncautoandhome" target="_blank" rel="noopener noreferrer" aria-label="YouTube" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-red-600 transition-all"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+                    <a href="https://x.com/shopsavecompare" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-600 transition-all"><i class="fab fa-x-twitter" aria-hidden="true"></i></a>
                 </div>
             </div>
             <div>
@@ -769,7 +811,7 @@
                 </ul>
             </div>
             <div>
-                <h5 class="text-white font-bold mb-4 sm:mb-6 tracking-wide">Dobson Office <span class="text-xs normal-case">&#127474;&#127485;</span></h5>
+                <h5 class="text-white font-bold mb-4 sm:mb-6 tracking-wide">Dobson Office</h5>
                 <ul class="space-y-3 text-sm">
                     <li><a href="../espanol/" class="hover:text-emerald-400 transition-colors font-bold">Se Habla Espa&ntilde;ol</a></li>
                     <li><a href="tel:3363562200" class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-phone-alt text-emerald-500"></i> (336) 356-2200</a></li>
@@ -777,7 +819,7 @@
                 </ul>
             </div>
         </div>
-        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 border-t border-slate-800 pt-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400 border-t border-slate-800 pt-8">
             &copy; 2026 Bill Layne Insurance Agency &bull; Aseguranza Comunidad Unida &bull; Elkin &amp; Dobson, NC
         </div>
     </footer>
@@ -1017,7 +1059,7 @@
             <li><a href="https://www.billlayneinsurance.com/community/"><span class="menu-icon amber"><i class="fas fa-mountain-sun"></i></span> Community <i class="fas fa-chevron-right menu-arrow"></i></a></li>
             <li><a href="https://www.billlayneinsurance.com/service-center"><span class="menu-icon green"><i class="fas fa-concierge-bell"></i></span> Service Center <i class="fas fa-chevron-right menu-arrow"></i></a></li>
             <li><a href="https://www.billlayneinsurance.com/contact-us/"><span class="menu-icon blue"><i class="fas fa-envelope"></i></span> Contact Us <i class="fas fa-chevron-right menu-arrow"></i></a></li>
-            <li><a href="https://www.billlayneinsurance.com/espanol/"><span class="menu-icon green"><i class="fas fa-globe-americas"></i></span> Espa&ntilde;ol &#127474;&#127485; <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/espanol/"><span class="menu-icon green"><i class="fas fa-globe-americas"></i></span> Espa&ntilde;ol <i class="fas fa-chevron-right menu-arrow"></i></a></li>
         </ul>
     </div>
 

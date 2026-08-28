@@ -21,6 +21,13 @@ class EtherealBlog {
     this.blogContainer = null;
     this.loadingState = null;
     this.errorState = null;
+    this.allBlogs = [];
+    this.visibleCount = 0;
+    this.pageSize = 30;
+    this.searchTerm = '';
+    this.searchApplied = false;
+    this.loadMoreContainer = null;
+    this.loadMoreBtn = null;
     this.init();
   }
 
@@ -146,32 +153,144 @@ class EtherealBlog {
   }
 
   /**
-   * Render blog posts to the DOM
+   * Render blog posts to the DOM (first page only — Load More paginates)
    */
   renderBlogs(blogData) {
     if (!this.blogContainer) return;
 
+    this.allBlogs = blogData;
+    this.searchTerm = '';
+    this.searchApplied = false;
+    this.visibleCount = 0;
+
     this.blogContainer.innerHTML = '';
+    this.appendCards(blogData.slice(0, this.pageSize));
+    this.visibleCount = Math.min(this.pageSize, blogData.length);
 
+    this.setupLoadMore();
+    this.animateNewCards();
+  }
+
+  /**
+   * Append a batch of cards to the grid
+   */
+  appendCards(blogs) {
     const fragment = document.createDocumentFragment();
-
-    blogData.forEach((blog, index) => {
-      const blogCard = this.createBlogCard(blog, index);
-      fragment.appendChild(blogCard);
+    blogs.forEach((blog, index) => {
+      fragment.appendChild(this.createBlogCard(blog, index));
     });
-
     this.blogContainer.appendChild(fragment);
+  }
 
-    // Staggered fade-in (cap at 50ms per card for large sets)
-    const delay = blogData.length > 20 ? 50 : 150;
+  /**
+   * Staggered fade-in for newly rendered cards only
+   */
+  animateNewCards() {
     setTimeout(() => {
-      const cards = this.blogContainer.querySelectorAll('.blog-card');
+      const cards = this.blogContainer.querySelectorAll('.blog-card:not(.visible)');
       cards.forEach((card, index) => {
         setTimeout(() => {
           card.classList.add('visible');
-        }, index * delay);
+        }, Math.min(index * 50, 1000));
       });
     }, 100);
+  }
+
+  /**
+   * Create (once) and maintain the "Load more articles" button
+   */
+  setupLoadMore() {
+    if (!this.loadMoreContainer) {
+      this.loadMoreContainer = document.createElement('div');
+      this.loadMoreContainer.className = 'load-more-container';
+      this.loadMoreBtn = document.createElement('button');
+      this.loadMoreBtn.type = 'button';
+      this.loadMoreBtn.className = 'load-more-btn';
+      this.loadMoreBtn.textContent = 'Load more articles';
+      this.loadMoreBtn.addEventListener('click', () => this.loadMore());
+      this.loadMoreContainer.appendChild(this.loadMoreBtn);
+      this.blogContainer.insertAdjacentElement('afterend', this.loadMoreContainer);
+    }
+    this.updateLoadMoreVisibility();
+  }
+
+  /**
+   * Append the next page of articles
+   */
+  loadMore() {
+    const next = this.allBlogs.slice(this.visibleCount, this.visibleCount + this.pageSize);
+    this.appendCards(next);
+    this.visibleCount += next.length;
+    this.updateLoadMoreVisibility();
+    this.animateNewCards();
+  }
+
+  /**
+   * Show the button only when browsing (not searching) with more to load
+   */
+  updateLoadMoreVisibility() {
+    if (!this.loadMoreContainer) return;
+    const show = this.searchTerm === '' && this.visibleCount < this.allBlogs.length;
+    this.loadMoreContainer.classList.toggle('hidden', !show);
+  }
+
+  /**
+   * Filter the FULL dataset by search term. An empty term restores the
+   * paginated view; a non-empty term shows all matches (no cap).
+   */
+  applySearch(rawTerm) {
+    const term = (rawTerm || '').toLowerCase().trim();
+    // Guard against re-entrant calls (the page's MutationObserver re-fires
+    // the search handler whenever this method re-renders the grid)
+    if (term === this.searchTerm && this.searchApplied) return;
+    this.searchTerm = term;
+    this.searchApplied = true;
+
+    this.blogContainer.innerHTML = '';
+
+    if (term === '') {
+      this.appendCards(this.allBlogs.slice(0, this.pageSize));
+      this.visibleCount = Math.min(this.pageSize, this.allBlogs.length);
+    } else {
+      const matches = this.allBlogs.filter(blog => this.matchesSearch(blog, term));
+      this.visibleCount = matches.length;
+      if (matches.length > 0) {
+        this.appendCards(matches);
+      } else {
+        this.showNoResults(term);
+      }
+    }
+
+    this.updateLoadMoreVisibility();
+    this.animateNewCards();
+  }
+
+  /**
+   * Check a post against the search term
+   */
+  matchesSearch(blog, term) {
+    const haystack = [
+      blog.title,
+      blog.summary,
+      blog.category,
+      Array.isArray(blog.tags) ? blog.tags.join(' ') : ''
+    ].join(' ').toLowerCase();
+    return haystack.includes(term);
+  }
+
+  /**
+   * Show the "no results" message inside the grid
+   */
+  showNoResults(term) {
+    const msg = document.createElement('div');
+    msg.id = 'no-results-message';
+    msg.style.cssText = 'text-align: center; padding: 3rem; color: #6b7280; font-size: 1.125rem;';
+    msg.innerHTML = `
+      <i class="fas fa-search" style="font-size: 3rem; color: #d1d5db; margin-bottom: 1rem; display: block;"></i>
+      <p style="font-weight: 600; margin-bottom: 0.5rem;">No articles found for "${this.escapeHTML(term)}"</p>
+      <p style="font-size: 1rem;">Try searching for different keywords or browse all articles below</p>
+    `;
+    this.blogContainer.appendChild(msg);
   }
 
   /**
@@ -184,9 +303,10 @@ class EtherealBlog {
     // Internal links — no target="_blank" needed in unified site
     card.setAttribute('aria-label', `Read blog post: ${blog.title}`);
 
-    // Build image HTML with graceful fallback
+    // Build image HTML with graceful fallback. Card container is fixed 16:9,
+    // so 640x360 reserves the right layout box before the image loads.
     const imageHTML = blog.imageUrl
-      ? `<img src="${blog.imageUrl}" alt="${this.escapeHTML(blog.title)}" loading="lazy" onerror="this.parentElement.innerHTML='<span>Bill Layne Insurance</span>'">`
+      ? `<img src="${blog.imageUrl}" alt="${this.escapeHTML(blog.title)}" loading="lazy" width="640" height="360" onerror="this.parentElement.innerHTML='<span>Bill Layne Insurance</span>'">`
       : '<span>Bill Layne Insurance</span>';
 
     // Format date for display
@@ -199,7 +319,7 @@ class EtherealBlog {
         </div>
         <div class="blog-card-content">
           <div class="blog-card-tags" role="list" aria-label="Post tags">
-            ${this.createTagsHTML(blog.tags || [])}
+            ${this.createTagsHTML(blog.category, blog.tags || [])}
           </div>
           <h3 class="blog-card-title">${this.escapeHTML(blog.title)}</h3>
           <time class="blog-card-date" datetime="${this.formatDatetime(blog.date)}">${displayDate}</time>
@@ -214,11 +334,20 @@ class EtherealBlog {
   }
 
   /**
-   * Create tags HTML
+   * Create tags HTML — capped at the category plus at most 2 tags
    */
-  createTagsHTML(tags) {
-    if (!Array.isArray(tags)) return '';
-    return tags.map(tag =>
+  createTagsHTML(category, tags) {
+    const pills = [];
+    if (category) pills.push(category);
+    if (Array.isArray(tags)) {
+      for (const tag of tags) {
+        if (pills.length >= 3) break;
+        if (!pills.some(p => String(p).toLowerCase() === String(tag).toLowerCase())) {
+          pills.push(tag);
+        }
+      }
+    }
+    return pills.map(tag =>
       `<span class="blog-tag" role="listitem">${this.escapeHTML(tag)}</span>`
     ).join('');
   }
@@ -312,7 +441,7 @@ function initFocusManagement() {
  * Initialize the application when DOM is ready
  */
 document.addEventListener('DOMContentLoaded', () => {
-  new EtherealBlog();
+  window.__blogApp = new EtherealBlog();
   initSmoothScroll();
   initFocusManagement();
   console.log('Bill Layne Insurance Blog initialized successfully');

@@ -22,10 +22,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 
     <!-- LCP hero image preload: family photo fetched in parallel with HTML parse -->
-    <link rel="preload" as="image" type="image/avif"
-          href="../img/hero/espanol_hero_mobile.avif"
-          imagesrcset="../img/hero/espanol_hero_mobile.avif 768w, ../img/hero/espanol_hero_tablet.avif 1280w, ../img/hero/espanol_hero_full.avif 1672w"
+    <link rel="preload" as="image" type="image/webp"
+          href="../img/hero/espanol_hero_mobile_portrait.webp"
+          imagesrcset="../img/hero/espanol_hero_mobile_portrait.webp 768w"
           imagesizes="100vw"
+          media="(max-width: 767px)"
+          fetchpriority="high">
+    <link rel="preload" as="image" type="image/avif"
+          href="../img/hero/espanol_hero_tablet.avif"
+          imagesrcset="../img/hero/espanol_hero_tablet.avif 1280w, ../img/hero/espanol_hero_full.avif 1672w"
+          imagesizes="100vw"
+          media="(min-width: 768px)"
           fetchpriority="high">
 
     <!-- Primary Meta Tags -->
@@ -295,7 +302,29 @@
 
         .reveal { opacity: 0; transform: translateY(20px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Accessibility: honor reduced-motion — show reveal sections immediately and suppress motion */
+        @media (prefers-reduced-motion: reduce) {
+            .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+        }
+
+        /* Accessibility: footer tap targets reach ~44px on mobile */
+        @media (max-width: 767px) {
+            footer a {
+                display: inline-block;
+                padding-top: 12px;
+                padding-bottom: 12px;
+            }
+        }
+
+        /* Accessibility: 44px close target for the dock menu panel (page-local override of mobile-dock.css 36px) */
+        #mobileDockPanel .menu-close {
+            width: 44px;
+            height: 44px;
+        }
     </style>
+    <noscript><style>.reveal{opacity:1 !important;transform:none !important}</style></noscript>
     <link rel="stylesheet" href="../css/mobile-dock.css">
 </head>
 
@@ -339,8 +368,8 @@
     <div id="menu-drawer" class="fixed top-0 right-0 w-80 max-w-full h-full bg-white z-[70] shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
         <div class="p-6 flex justify-between items-center border-b border-slate-100">
             <h3 class="text-lg font-display font-bold text-slate-900">Men&uacute;</h3>
-            <button id="menu-close" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 text-slate-500 hover:bg-slate-100 transition-colors">
-                <i class="fas fa-times"></i>
+            <button id="menu-close" class="w-11 h-11 flex items-center justify-center rounded-full bg-slate-50 text-slate-500 hover:bg-slate-100 transition-colors" aria-label="Cerrar men&uacute;">
+                <i class="fas fa-times" aria-hidden="true"></i>
             </button>
         </div>
         <div class="flex-1 overflow-y-auto px-3 py-2 space-y-0">
@@ -357,7 +386,7 @@
             <a href="../community/" class="group block p-2.5 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform"><i class="fas fa-mountain-sun"></i></div> Community</a>
             <a href="../service-center.html" class="group block p-2.5 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform"><i class="fas fa-concierge-bell"></i></div> Service Center</a>
             <a href="../contact-us/" class="group block p-2.5 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 group-hover:scale-110 transition-transform"><i class="fas fa-envelope"></i></div> Contact Us</a>
-            <a href="../espanol/" class="group block p-2.5 rounded-xl hover:bg-emerald-50 text-emerald-700 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform"><i class="fas fa-globe-americas"></i></div> Espa&ntilde;ol &#127474;&#127485;</a>
+            <a href="../espanol/" class="group block p-2.5 rounded-xl hover:bg-emerald-50 text-emerald-700 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform"><i class="fas fa-globe-americas"></i></div> Espa&ntilde;ol</a>
         </div>
         <div class="p-3 border-t border-slate-100 bg-slate-50">
             <a href="tel:3368351993" class="block w-full py-3 bg-slate-900 text-white text-center rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-lg">Call Agent Now</a>
@@ -375,8 +404,9 @@
         <!-- BACKGROUND — Hispanic family at home, golden hour, NC foothills -->
         <div class="absolute inset-0 z-0 pointer-events-none">
             <picture>
-                <source type="image/avif" srcset="../img/hero/espanol_hero_mobile.avif 768w, ../img/hero/espanol_hero_tablet.avif 1280w, ../img/hero/espanol_hero_full.avif 1672w" sizes="100vw">
-                <source type="image/webp" srcset="../img/hero/espanol_hero_mobile.webp 768w, ../img/hero/espanol_hero_tablet.webp 1280w, ../img/hero/espanol_hero_full.webp 1672w" sizes="100vw">
+                <source media="(max-width: 767px)" type="image/webp" srcset="../img/hero/espanol_hero_mobile_portrait.webp 768w" sizes="100vw">
+                <source type="image/avif" srcset="../img/hero/espanol_hero_tablet.avif 1280w, ../img/hero/espanol_hero_full.avif 1672w" sizes="100vw">
+                <source type="image/webp" srcset="../img/hero/espanol_hero_tablet.webp 1280w, ../img/hero/espanol_hero_full.webp 1672w" sizes="100vw">
                 <img src="../img/hero/espanol_hero_full.webp" alt="Familia hispana feliz frente a su casa en Dobson, North Carolina, al atardecer" class="w-full h-full object-cover object-center" width="1672" height="941" fetchpriority="high" decoding="async">
             </picture>
         </div>
@@ -393,7 +423,7 @@
                     </ol>
                 </nav>
                 <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-sm font-bold uppercase tracking-wider mb-8 shadow-lg">
-                    <span class="text-lg">&#127474;&#127485;</span> Se Habla Espa&ntilde;ol
+                    Se Habla Espa&ntilde;ol
                 </div>
                 <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-display font-extrabold leading-[1.1] mb-6 drop-shadow-2xl">
                     Seguro de Auto y Casa<br>
@@ -555,6 +585,7 @@
                 <img src="https://img.billlayneinsurance.com/i/2026/08/im-rexcfeo-gcxf7t.png" alt="Alamance Farmers Mutual Insurance logo" class="h-10 sm:h-12 md:h-16 w-auto object-contain hover:scale-110 transition-transform" loading="lazy" decoding="async">
                 <img src="https://img.billlayneinsurance.com/i/2026/08/foremost-logo-eh5sta.jpg" alt="Foremost Insurance logo" class="h-10 sm:h-12 md:h-16 w-auto object-contain hover:scale-110 transition-transform" loading="lazy" decoding="async">
             </div>
+            <p class="text-slate-400 text-xs mt-6 reveal">Tambi&eacute;n comparamos: NC Grange Mutual, Universal Property y NCJUA/NCIUA. <span lang="en">Plus: NC Grange Mutual, Universal Property &amp; NCJUA/NCIUA.</span></p>
         </div>
     </section>
 
@@ -756,7 +787,7 @@
             <div>
                 <h4 class="text-white font-display font-bold text-base sm:text-xl mb-4 sm:mb-6">Aseguranza Comunidad Unida</h4>
                 <p class="text-sm leading-relaxed mb-4">Seguro de auto, casa y vida en espa&ntilde;ol. Parte de Bill Layne Insurance Agency.</p>
-                <p class="text-xs text-slate-500" lang="en">Auto, home &amp; life insurance in Spanish. Part of Bill Layne Insurance Agency.</p>
+                <p class="text-xs text-slate-400" lang="en">Auto, home &amp; life insurance in Spanish. Part of Bill Layne Insurance Agency.</p>
             </div>
             <div>
                 <h5 class="text-white font-bold mb-4 sm:mb-6 tracking-wide">Dobson Office</h5>
@@ -785,7 +816,7 @@
                 </ul>
             </div>
         </div>
-        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 border-t border-slate-800 pt-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400 border-t border-slate-800 pt-8">
             &copy; 2026 Bill Layne Insurance Agency &bull; Aseguranza Comunidad Unida &bull; Dobson &amp; Elkin, NC
         </div>
     </footer>
@@ -814,7 +845,7 @@
         <div class="menu-handle"></div>
         <div class="menu-panel-header">
             <span class="menu-panel-title">Aseguranza Comunidad Unida</span>
-            <button class="menu-close" onclick="toggleMobileDockMenu()"><i class="fas fa-times"></i></button>
+            <button class="menu-close" onclick="toggleMobileDockMenu()" aria-label="Cerrar men&uacute;"><i class="fas fa-times" aria-hidden="true"></i></button>
         </div>
         <ul class="menu-links">
             <li><a href="https://www.billlayneinsurance.com/espanol/"><span class="menu-icon green"><i class="fas fa-globe-americas"></i></span> Espa&ntilde;ol <i class="fas fa-chevron-right menu-arrow"></i></a></li>

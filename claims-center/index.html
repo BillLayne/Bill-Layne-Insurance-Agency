@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
@@ -64,6 +64,12 @@
 
     <style>
         body { -webkit-tap-highlight-color: transparent; }
+
+        /* Bump dock panel close button to 44px touch target (overrides mobile-dock.css) */
+        .menu-panel .menu-close {
+            width: 44px;
+            height: 44px;
+        }
 
         .glass-nav {
             background: rgba(255, 255, 255, 0.9);
@@ -180,6 +186,17 @@
         }
         #contacts .company-card {
             background: #ffffff;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+            .accordion-content { transition: none !important; }
+            .animate-pulse, .animate-pulse-glow { animation: none !important; }
+            *, *::before, *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+            }
         }
     </style>
     <!-- Structured Data: InsuranceAgency -->
@@ -414,6 +431,7 @@
     </script>
 
     <link rel="stylesheet" href="../css/mobile-dock.css">
+    <noscript><style>.reveal{opacity:1 !important;transform:none !important}</style></noscript>
 </head>
 
 <body class="bg-slate-50 text-slate-800 font-sans overflow-x-hidden selection:bg-indigo-200 selection:text-indigo-900">
@@ -453,7 +471,7 @@
     <div id="menu-drawer" class="fixed top-0 right-0 w-80 max-w-full h-full bg-white z-[70] shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
         <div class="p-6 flex justify-between items-center border-b border-slate-100">
             <h3 class="text-lg font-display font-bold text-slate-900">Menu</h3>
-            <button id="menu-close" aria-label="Close menu" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 text-slate-500 hover:bg-slate-100 transition-colors">
+            <button id="menu-close" aria-label="Close menu" class="w-11 h-11 flex items-center justify-center rounded-full bg-slate-50 text-slate-500 hover:bg-slate-100 transition-colors">
                 <i class="fas fa-times" aria-hidden="true"></i>
             </button>
         </div>
@@ -469,7 +487,7 @@
             <a href="../community/" class="group block p-2.5 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform"><i class="fas fa-mountain-sun"></i></div> Community</a>
             <a href="../service-center.html" class="group block p-2.5 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform"><i class="fas fa-concierge-bell"></i></div> Service Center</a>
             <a href="../contact-us/" class="group block p-2.5 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 group-hover:scale-110 transition-transform"><i class="fas fa-envelope"></i></div> Contact Us</a>
-            <a href="../espanol/" class="group block p-2.5 rounded-xl hover:bg-emerald-50 text-emerald-700 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform"><i class="fas fa-globe-americas"></i></div> Espa&ntilde;ol &#127474;&#127485;</a>
+            <a href="../espanol/" class="group block p-2.5 rounded-xl hover:bg-emerald-50 text-emerald-700 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform"><i class="fas fa-globe-americas"></i></div> Espa&ntilde;ol</a>
         </div>
         <div class="p-3 border-t border-slate-100 bg-slate-50">
             <a href="tel:3368351993" class="block w-full py-3 bg-slate-900 text-white text-center rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-lg">Call Agent Now</a>
@@ -492,7 +510,7 @@
                     </ol>
                 </nav>
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/20 backdrop-blur-md border border-red-400/30 text-white/90 text-xs font-bold uppercase tracking-wider mb-8 shadow-lg animate-pulse-glow">
-                    <i class="fas fa-exclamation-circle text-red-400"></i> 24/7 Claims Support Active
+                    <i class="fas fa-exclamation-circle text-red-400"></i> Carrier Claims Lines Open 24/7
                 </div>
                 <h1 class="text-3xl md:text-5xl lg:text-7xl font-display font-extrabold leading-[1.1] mb-6 drop-shadow-2xl">
                     North Carolina insurance claims help<br>
@@ -558,7 +576,6 @@
     <!-- Se Habla Español Banner -->
     <a href="../espanol/" class="block bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-3 text-center hover:from-emerald-700 hover:to-teal-700 transition-all group">
         <div class="max-w-7xl mx-auto px-4 flex items-center justify-center gap-3 text-sm sm:text-base font-bold">
-            <span class="text-lg">&#127474;&#127485;</span>
             <span>Se Habla Espa&ntilde;ol &mdash; Oficina en Dobson, NC</span>
             <span class="text-emerald-200 text-xs font-medium hidden sm:inline">(336) 356-2200</span>
             <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
@@ -588,7 +605,7 @@
                     <p class="text-[10px] md:text-xs text-slate-500 mt-0.5 hidden sm:block">Assessment</p>
                 </div>
                 <div class="relative z-10 text-center reveal delay-200">
-                    <div class="w-12 h-12 md:w-20 md:h-20 bg-gradient-to-br from-amber-500 to-amber-600 rounded-full flex items-center justify-center shadow-lg mx-auto mb-1.5 md:mb-4 text-white font-black text-[11px] md:text-lg">7-14d</div>
+                    <div class="w-12 h-12 md:w-20 md:h-20 bg-gradient-to-br from-amber-500 to-amber-600 rounded-full flex items-center justify-center shadow-lg mx-auto mb-1.5 md:mb-4 text-slate-900 font-black text-[11px] md:text-lg">7-14d</div>
                     <h3 class="font-bold text-slate-900 text-[11px] md:text-sm">Settlement</h3>
                     <p class="text-[10px] md:text-xs text-slate-500 mt-0.5 hidden sm:block">Review & negotiate</p>
                 </div>
@@ -1185,40 +1202,40 @@
                 <h3 class="text-white font-display font-bold text-xl mb-6">Bill Layne Insurance</h3>
                 <p class="text-sm leading-relaxed mb-6">Protecting families in North Carolina since 2005. We are your local, trusted, and independent agency.</p>
                 <div class="flex gap-3">
-                    <a href="https://www.facebook.com/dollarbillagency/" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-indigo-600 transition-all"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/ncautoandhome/" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-pink-600 transition-all"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.youtube.com/@ncautoandhome" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-red-600 transition-all"><i class="fab fa-youtube"></i></a>
-                    <a href="https://x.com/shopsavecompare" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-600 transition-all"><i class="fab fa-x-twitter"></i></a>
+                    <a href="https://www.facebook.com/dollarbillagency/" aria-label="Facebook" class="w-11 h-11 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-indigo-600 transition-all"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+                    <a href="https://www.instagram.com/ncautoandhome/" aria-label="Instagram" class="w-11 h-11 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-pink-600 transition-all"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                    <a href="https://www.youtube.com/@ncautoandhome" aria-label="YouTube" class="w-11 h-11 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-red-600 transition-all"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+                    <a href="https://x.com/shopsavecompare" aria-label="X (Twitter)" class="w-11 h-11 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-600 transition-all"><i class="fab fa-x-twitter" aria-hidden="true"></i></a>
                 </div>
             </div>
             <div>
                 <h5 class="text-white font-bold mb-6 tracking-wide">Contact</h5>
                 <ul class="space-y-4 text-sm">
-                    <li><a href="tel:3368351993" class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-phone-alt text-indigo-500"></i> (336) 835-1993</a></li>
+                    <li><a href="tel:3368351993" class="hover:text-white transition-colors flex items-center gap-2 py-3"><i class="fas fa-phone-alt text-indigo-500"></i> (336) 835-1993</a></li>
                     <li class="flex items-start gap-2"><i class="fas fa-map-marker-alt text-indigo-500 mt-1"></i> <span>1283 N Bridge St<br>Elkin, NC 28621</span></li>
                 </ul>
             </div>
             <div>
                 <h5 class="text-white font-bold mb-6 tracking-wide">Quick Links</h5>
                 <ul class="space-y-3 text-sm">
-                    <li><a href="../index.html" class="hover:text-indigo-400 transition-colors">Home Page</a></li>
-                    <li><a href="#points-calculator" class="hover:text-indigo-400 transition-colors">Points Calculator</a></li>
-                    <li><a href="#company-search" class="hover:text-indigo-400 transition-colors">Claims Contacts</a></li>
+                    <li><a href="../index.html" class="inline-block py-3 hover:text-indigo-400 transition-colors">Home Page</a></li>
+                    <li><a href="#points-calculator" class="inline-block py-3 hover:text-indigo-400 transition-colors">Points Calculator</a></li>
+                    <li><a href="#company-search" class="inline-block py-3 hover:text-indigo-400 transition-colors">Claims Contacts</a></li>
                 </ul>
             </div>
             <div>
-                <h5 class="text-white font-bold mb-4 sm:mb-6 tracking-wide">Dobson Office <span class="text-xs normal-case">&#127474;&#127485;</span></h5>
+                <h5 class="text-white font-bold mb-4 sm:mb-6 tracking-wide">Dobson Office</h5>
                 <ul class="space-y-3 text-sm">
-                    <li><a href="../espanol/" class="hover:text-emerald-400 transition-colors font-bold">Se Habla Espa&ntilde;ol</a></li>
-                    <li><a href="tel:3363562200" class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-phone-alt text-emerald-500"></i> (336) 356-2200</a></li>
+                    <li><a href="../espanol/" class="inline-block py-3 hover:text-emerald-400 transition-colors font-bold">Se Habla Espa&ntilde;ol</a></li>
+                    <li><a href="tel:3363562200" class="hover:text-white transition-colors flex items-center gap-2 py-3"><i class="fas fa-phone-alt text-emerald-500"></i> (336) 356-2200</a></li>
                     <li class="flex items-start gap-2"><i class="fas fa-map-marker-alt text-emerald-500 mt-1"></i> <span>209 S Main St<br>Dobson, NC 27017</span></li>
                 </ul>
             </div>
         </div>
-        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 border-t border-slate-800 pt-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400 border-t border-slate-800 pt-8">
             &copy; 2026 Bill Layne Insurance Agency. All Rights Reserved.
         </div>
-        <div class="max-w-4xl mx-auto px-4 mt-6 text-center text-[11px] text-slate-600 leading-relaxed">
+        <div class="max-w-4xl mx-auto px-4 mt-6 text-center text-[11px] text-slate-400 leading-relaxed">
             *Calculators and tools on this page provide estimates for informational purposes only and do not constitute legal, financial, or insurance advice. NC insurance point surcharges, deductible savings, and total loss thresholds may vary by carrier, policy, and individual circumstances. Always consult your insurance agent or carrier for specific claim guidance. Bill Layne Insurance Agency is a licensed independent insurance agency in North Carolina.
         </div>
     </footer>
@@ -1474,7 +1491,7 @@
             <li><a href="https://www.billlayneinsurance.com/community/"><span class="menu-icon amber"><i class="fas fa-mountain-sun"></i></span> Community <i class="fas fa-chevron-right menu-arrow"></i></a></li>
             <li><a href="https://www.billlayneinsurance.com/service-center.html"><span class="menu-icon green"><i class="fas fa-concierge-bell"></i></span> Service Center <i class="fas fa-chevron-right menu-arrow"></i></a></li>
             <li><a href="https://www.billlayneinsurance.com/contact-us/"><span class="menu-icon blue"><i class="fas fa-envelope"></i></span> Contact Us <i class="fas fa-chevron-right menu-arrow"></i></a></li>
-            <li><a href="https://www.billlayneinsurance.com/espanol/"><span class="menu-icon green"><i class="fas fa-globe-americas"></i></span> Espa&ntilde;ol &#127474;&#127485; <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/espanol/"><span class="menu-icon green"><i class="fas fa-globe-americas"></i></span> Espa&ntilde;ol <i class="fas fa-chevron-right menu-arrow"></i></a></li>
         </ul>
     </div>
 

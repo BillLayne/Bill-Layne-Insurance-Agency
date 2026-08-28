@@ -250,10 +250,18 @@
 
         /* Reduce motion for accessibility */
         @media (prefers-reduced-motion: reduce) {
-            .reveal { transition: none; opacity: 1; transform: none; }
-            .animate-blob, .animate-float, .animate-pulse-glow { animation: none; }
-            * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+            .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+            .animate-blob, .animate-float, .animate-pulse-glow, .animate-marquee, .animate-pulse { animation: none !important; }
+            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
         }
+
+        /* Featured guide CTA: compiled CSS lacks bg-teal-700/800, so the teal-700 fill is set here to keep white text at >= 4.5:1 contrast. */
+        .guide-cta { background-color: #0f766e !important; }
+        .guide-cta:hover { background-color: #115e59 !important; }
+
+        /* Featured guide image container: explicit min-height because arbitrary Tailwind min-h-* classes are not compiled. */
+        .guide-featured-image { min-height: 260px; }
+        @media (min-width: 768px) { .guide-featured-image { min-height: 340px; } }
 
         /* Focus visible styles for keyboard navigation */
         :focus-visible {
@@ -262,6 +270,7 @@
             border-radius: 4px;
         }
     </style>
+    <noscript><style>.reveal{opacity:1 !important;transform:none !important}</style></noscript>
     <link rel="stylesheet" href="../css/mobile-dock.css">
     <script type="application/ld+json">
     {
@@ -412,7 +421,7 @@
     <div id="menu-drawer" class="fixed top-0 right-0 w-80 max-w-full h-full bg-white z-[70] shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
         <div class="p-6 flex justify-between items-center border-b border-slate-100">
             <div class="text-lg font-display font-bold text-slate-900" role="presentation">Menu</div>
-            <button id="menu-close" aria-label="Close menu" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 text-slate-500 hover:bg-slate-100 transition-colors">
+            <button id="menu-close" aria-label="Close menu" class="w-11 h-11 flex items-center justify-center rounded-full bg-slate-50 text-slate-500 hover:bg-slate-100 transition-colors">
                 <i class="fas fa-times" aria-hidden="true"></i>
             </button>
         </div>
@@ -428,7 +437,7 @@
             <a href="../community/" class="group block p-2.5 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform"><i class="fas fa-mountain-sun"></i></div> Community</a>
             <a href="../service-center.html" class="group block p-2.5 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform"><i class="fas fa-concierge-bell"></i></div> Service Center</a>
             <a href="../contact-us/" class="group block p-2.5 rounded-xl hover:bg-slate-50 text-slate-600 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 group-hover:scale-110 transition-transform"><i class="fas fa-envelope"></i></div> Contact Us</a>
-            <a href="../espanol/" class="group block p-2.5 rounded-xl hover:bg-emerald-50 text-emerald-700 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform"><i class="fas fa-globe-americas"></i></div> Espa&ntilde;ol &#127474;&#127485;</a>
+            <a href="../espanol/" class="group block p-2.5 rounded-xl hover:bg-emerald-50 text-emerald-700 font-bold flex items-center gap-3 transition-colors"><div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform"><i class="fas fa-globe-americas"></i></div> Espa&ntilde;ol</a>
         </div>
         <div class="p-3 border-t border-slate-100 bg-slate-50">
             <a href="tel:3368351993" class="block w-full py-3 bg-slate-900 text-white text-center rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-lg">Call Agent Now</a>
@@ -464,7 +473,7 @@
                 </div>
                 <h1 class="auto-hero-title text-3xl md:text-5xl lg:text-6xl font-display font-extrabold leading-[1.1] mb-4 md:mb-6 drop-shadow-2xl">
                     Stop overpaying for NC auto insurance<br>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent-400 via-accent-300 to-accent-200" style="-webkit-background-clip: text; background-clip: text;">when we check multiple for you?</span>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent-400 via-accent-300 to-accent-200" style="-webkit-background-clip: text; background-clip: text;">when we check multiple carriers for you.</span>
                 </h1>
                 <p class="auto-hero-summary text-base md:text-xl text-blue-100 mb-3 max-w-2xl mx-auto font-medium leading-relaxed drop-shadow-lg">
                     We compare 6 auto insurance carriers for North Carolina drivers, then help you choose the coverage that fits your budget, vehicle, and risk.
@@ -522,7 +531,6 @@
     <!-- Se Habla Español Banner -->
     <a href="../espanol/" class="block bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-3 text-center hover:from-emerald-700 hover:to-teal-700 transition-all group">
         <div class="max-w-7xl mx-auto px-4 flex items-center justify-center gap-3 text-sm sm:text-base font-bold">
-            <span class="text-lg">&#127474;&#127485;</span>
             <span>Se Habla Espa&ntilde;ol &mdash; Oficina en Dobson, NC</span>
             <span class="text-emerald-200 text-xs font-medium hidden sm:inline">(336) 356-2200</span>
             <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
@@ -951,7 +959,7 @@
             </figure>
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 sm:p-6 text-center hover:bg-white/10 transition-colors reveal">
-                    <div class="text-3xl sm:text-4xl font-display font-extrabold text-yellow-400 mb-2">7</div>
+                    <div class="text-3xl sm:text-4xl font-display font-extrabold text-yellow-400 mb-2">6</div>
                     <p class="text-sm font-bold text-white mb-1">Carriers</p>
                     <p class="text-xs text-slate-400">We shop multiple companies so you don't have to</p>
                 </div>
@@ -1072,8 +1080,8 @@
 
             <!-- Featured auto insurance shopping guide -->
             <article class="bg-gradient-to-br from-white via-teal-50 to-amber-50 rounded-2xl sm:rounded-[2.5rem] border border-teal-200 shadow-xl overflow-hidden mb-8 md:mb-12 reveal">
-                <div class="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr]">
-                    <div class="relative min-h-[260px] md:min-h-[340px]">
+                <div class="grid grid-cols-1 lg:grid-cols-2">
+                    <div class="relative guide-featured-image">
                         <img src="/auto-center/how-to-shop-for-auto-insurance/assets/auto-shopping-hero-1024.webp" srcset="/auto-center/how-to-shop-for-auto-insurance/assets/auto-shopping-hero-640.webp 640w, /auto-center/how-to-shop-for-auto-insurance/assets/auto-shopping-hero-1024.webp 1024w" sizes="(max-width: 1024px) 100vw, 44vw" alt="Driver looking toward the North Carolina foothills while preparing to shop for auto insurance" width="1024" height="538" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover">
                         <div class="absolute top-4 left-4 inline-flex items-center gap-2 bg-white/95 text-teal-700 px-3 py-2 rounded-full text-xs font-bold shadow-sm">
                             <i class="fas fa-book-open" aria-hidden="true"></i> New plain-English guide
@@ -1090,7 +1098,7 @@
                             <li class="flex items-center gap-2"><i class="fas fa-circle-check text-teal-600" aria-hidden="true"></i> Safe switching checklist</li>
                         </ul>
                         <div>
-                            <a href="/auto-center/how-to-shop-for-auto-insurance/" onclick="if(window.gtag){gtag('event','auto_shopping_guide_click',{'location':'Auto Center featured guide'});}" class="inline-flex items-center justify-center gap-2 bg-teal-700 hover:bg-teal-800 text-white font-bold px-7 py-3.5 rounded-full shadow-lg shadow-teal-600/20 transition-all hover:-translate-y-0.5">
+                            <a href="/auto-center/how-to-shop-for-auto-insurance/" onclick="if(window.gtag){gtag('event','auto_shopping_guide_click',{'location':'Auto Center featured guide'});}" class="guide-cta inline-flex items-center justify-center gap-2 text-white font-bold px-7 py-3.5 rounded-full shadow-lg shadow-teal-600/20 transition-all hover:-translate-y-0.5">
                                 Read the Free Guide <i class="fas fa-arrow-right" aria-hidden="true"></i>
                             </a>
                         </div>
@@ -1464,43 +1472,43 @@
                 <h3 class="text-white font-display font-bold text-xl mb-6">Bill Layne Insurance</h3>
                 <p class="text-sm leading-relaxed mb-6">Protecting families in North Carolina since 2005. We are your local, trusted, and independent agency.</p>
                 <div class="flex gap-3">
-                    <a href="https://www.facebook.com/dollarbillagency/" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-blue-600 transition-all"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/ncautoandhome/" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-purple-500 transition-all"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.youtube.com/@ncautoandhome" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-red-600 transition-all"><i class="fab fa-youtube"></i></a>
-                    <a href="https://x.com/shopsavecompare" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-600 transition-all"><i class="fab fa-x-twitter"></i></a>
+                    <a href="https://www.facebook.com/dollarbillagency/" target="_blank" aria-label="Facebook" class="w-11 h-11 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-blue-600 transition-all"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+                    <a href="https://www.instagram.com/ncautoandhome/" target="_blank" aria-label="Instagram" class="w-11 h-11 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-purple-500 transition-all"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                    <a href="https://www.youtube.com/@ncautoandhome" target="_blank" aria-label="YouTube" class="w-11 h-11 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-red-600 transition-all"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+                    <a href="https://x.com/shopsavecompare" target="_blank" aria-label="X (Twitter)" class="w-11 h-11 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-600 transition-all"><i class="fab fa-x-twitter" aria-hidden="true"></i></a>
                 </div>
             </div>
             <div>
                 <h5 class="text-white font-bold mb-6 tracking-wide">Contact</h5>
                 <ul class="space-y-4 text-sm">
-                    <li><a href="tel:3368351993" class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-phone-alt text-blue-500"></i> (336) 835-1993</a></li>
+                    <li><a href="tel:3368351993" class="hover:text-white transition-colors flex items-center gap-2 py-3"><i class="fas fa-phone-alt text-blue-500" aria-hidden="true"></i> (336) 835-1993</a></li>
                     <li class="flex items-start gap-2"><i class="fas fa-map-marker-alt text-blue-500 mt-1"></i> <span>1283 N Bridge St<br>Elkin, NC 28621</span></li>
                 </ul>
             </div>
             <div>
                 <h5 class="text-white font-bold mb-6 tracking-wide">Quick Links</h5>
                 <ul class="space-y-3 text-sm">
-                    <li><a href="../index.html" class="hover:text-blue-400 transition-colors">Home Page</a></li>
-                    <li><a href="#coverage" class="hover:text-blue-400 transition-colors">Coverage</a></li>
-                    <li><a href="#discounts" class="hover:text-blue-400 transition-colors">Discounts</a></li>
-                    <li><a href="sdip-points-calculator/" class="hover:text-red-400 transition-colors">SDIP Calculator</a></li>
-                    <li class="pt-2 border-t border-slate-700"><a href="https://www.ncdoi.gov/consumers/automobile-insurance" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition-colors">NC Auto Insurance Guide <i class="fas fa-external-link-alt text-xs ml-1"></i></a></li>
-                    <li><a href="https://www.ncdmv.gov/" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition-colors">NC DMV <i class="fas fa-external-link-alt text-xs ml-1"></i></a></li>
-                    <li><a href="https://www.iihs.org/" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition-colors">IIHS Safety Ratings <i class="fas fa-external-link-alt text-xs ml-1"></i></a></li>
+                    <li><a href="../index.html" class="hover:text-blue-400 transition-colors inline-block py-3">Home Page</a></li>
+                    <li><a href="#coverage" class="hover:text-blue-400 transition-colors inline-block py-3">Coverage</a></li>
+                    <li><a href="#discounts" class="hover:text-blue-400 transition-colors inline-block py-3">Discounts</a></li>
+                    <li><a href="sdip-points-calculator/" class="hover:text-red-400 transition-colors inline-block py-3">SDIP Calculator</a></li>
+                    <li class="pt-2 border-t border-slate-700"><a href="https://www.ncdoi.gov/consumers/automobile-insurance" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition-colors inline-block py-3">NC Auto Insurance Guide <i class="fas fa-external-link-alt text-xs ml-1" aria-hidden="true"></i></a></li>
+                    <li><a href="https://www.ncdmv.gov/" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition-colors inline-block py-3">NC DMV <i class="fas fa-external-link-alt text-xs ml-1" aria-hidden="true"></i></a></li>
+                    <li><a href="https://www.iihs.org/" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition-colors inline-block py-3">IIHS Safety Ratings <i class="fas fa-external-link-alt text-xs ml-1" aria-hidden="true"></i></a></li>
                 </ul>
             </div>
             <div>
-                <h5 class="text-white font-bold mb-4 sm:mb-6 tracking-wide">Dobson Office <span class="text-xs normal-case">&#127474;&#127485;</span></h5>
+                <h5 class="text-white font-bold mb-4 sm:mb-6 tracking-wide">Dobson Office</h5>
                 <ul class="space-y-3 text-sm">
-                    <li><a href="../espanol/" class="hover:text-emerald-400 transition-colors font-bold">Se Habla Espa&ntilde;ol</a></li>
-                    <li><a href="tel:3363562200" class="hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-phone-alt text-emerald-500"></i> (336) 356-2200</a></li>
+                    <li><a href="../espanol/" class="hover:text-emerald-400 transition-colors font-bold inline-block py-3">Se Habla Espa&ntilde;ol</a></li>
+                    <li><a href="tel:3363562200" class="hover:text-white transition-colors flex items-center gap-2 py-3"><i class="fas fa-phone-alt text-emerald-500" aria-hidden="true"></i> (336) 356-2200</a></li>
                     <li class="flex items-start gap-2"><i class="fas fa-map-marker-alt text-emerald-500 mt-1"></i> <span>209 S Main St<br>Dobson, NC 27017</span></li>
                 </ul>
             </div>
         </div>
-        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 border-t border-slate-800 pt-8 space-y-3">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400 border-t border-slate-800 pt-8 space-y-3">
             <p>&copy; 2026 Bill Layne Insurance Agency. All Rights Reserved. Licensed in North Carolina.</p>
-            <p class="text-slate-600 leading-relaxed max-w-3xl mx-auto">*Savings and discount claims are not guaranteed. Individual premiums are determined by the insurance carrier based on underwriting factors including driving record, vehicle type, location, credit history, and coverage selected. Discount availability and amounts vary by carrier. Estimates provided on this site are for informational purposes only and do not constitute a quote, binder, or guarantee of coverage or premium. Bill Layne Insurance Agency is a licensed independent insurance agency in North Carolina.</p>
+            <p class="text-slate-400 leading-relaxed max-w-3xl mx-auto">*Savings and discount claims are not guaranteed. Individual premiums are determined by the insurance carrier based on underwriting factors including driving record, vehicle type, location, credit history, and coverage selected. Discount availability and amounts vary by carrier. Estimates provided on this site are for informational purposes only and do not constitute a quote, binder, or guarantee of coverage or premium. Bill Layne Insurance Agency is a licensed independent insurance agency in North Carolina.</p>
         </div>
     </footer>
 
@@ -2250,7 +2258,7 @@
             <li><a href="https://www.billlayneinsurance.com/community/"><span class="menu-icon amber"><i class="fas fa-mountain-sun"></i></span> Community <i class="fas fa-chevron-right menu-arrow"></i></a></li>
             <li><a href="https://www.billlayneinsurance.com/service-center.html"><span class="menu-icon green"><i class="fas fa-concierge-bell"></i></span> Service Center <i class="fas fa-chevron-right menu-arrow"></i></a></li>
             <li><a href="https://www.billlayneinsurance.com/contact-us/"><span class="menu-icon blue"><i class="fas fa-envelope"></i></span> Contact Us <i class="fas fa-chevron-right menu-arrow"></i></a></li>
-            <li><a href="https://www.billlayneinsurance.com/espanol/"><span class="menu-icon green"><i class="fas fa-globe-americas"></i></span> Espa&ntilde;ol &#127474;&#127485; <i class="fas fa-chevron-right menu-arrow"></i></a></li>
+            <li><a href="https://www.billlayneinsurance.com/espanol/"><span class="menu-icon green"><i class="fas fa-globe-americas"></i></span> Espa&ntilde;ol <i class="fas fa-chevron-right menu-arrow"></i></a></li>
         </ul>
     </div>
 
