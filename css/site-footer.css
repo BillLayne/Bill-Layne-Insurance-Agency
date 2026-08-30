@@ -1,0 +1,63 @@
+/* ==========================================================================
+   site-footer.css — Canonical shared footer styles
+   Bill Layne Insurance Agency (billlayneinsurance.com)
+
+   Single source of truth for the dark Tailwind footers used across the site.
+   Scoped to `footer.bg-slate-900` / `footer.bg-slate-950` via :where() so:
+     - selectors keep near-zero specificity and never beat Tailwind utilities
+       (e.g. hover:text-primary-400, py-2, w-11, flex all still win);
+     - self-contained footers (get-quote.html, blog/index.html `.site-footer`)
+       and any light footer are completely unaffected.
+
+   Canonical markup is documented in templates/site-footer-canonical.html.
+   ========================================================================== */
+
+/* ---- Dark-footer token defaults -----------------------------------------
+   Fallbacks only — every production footer already carries these as utility
+   classes (text-slate-400 body, text-white/slate-300 headings, per-link
+   hover accents). These defaults keep future footer markup on-token even if
+   a utility is forgotten. */
+footer:where(.bg-slate-900, .bg-slate-950) {
+    color: #94a3b8; /* slate-400 body text */
+}
+footer:where(.bg-slate-900, .bg-slate-950) :is(h1, h2, h3, h4, h5, h6) {
+    color: #cbd5e1; /* slate-300 heading default (text-white utilities win) */
+}
+footer:where(.bg-slate-900, .bg-slate-950) a {
+    color: inherit; /* links default to the slate-400 body color */
+}
+footer:where(.bg-slate-900, .bg-slate-950) a:hover {
+    color: #f1f5f9; /* slate-100 default hover; accent hover utilities win */
+}
+
+/* ---- Focus visible -------------------------------------------------------
+   One consistent keyboard focus ring for all dark-footer links. */
+footer:where(.bg-slate-900, .bg-slate-950) a:focus-visible {
+    outline: 2px solid #38bdf8; /* sky-400 — visible on slate-900/950 */
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* ---- Social icon tap targets --------------------------------------------
+   44x44 minimum (WCAG 2.5.5 / Apple HIG). New footer markup should prefer
+   the `w-11 h-11` utilities; `.footer-social` is the legacy hook used on the
+   homepage where w-11/h-11 are not in the compiled homepage CSS. */
+footer:where(.bg-slate-900, .bg-slate-950) .footer-social {
+    width: 44px;
+    height: 44px;
+}
+
+/* ---- Mobile link tap targets --------------------------------------------
+   At <=767px, footer list/paragraph links get ~44px pitch via padding
+   (text-sm line ~20px + 2 x 12px). inline-block lets vertical padding add
+   layout height on otherwise-inline links. Tailwind display/padding
+   utilities (flex, inline-flex, block, py-2, py-3, ...) have higher
+   specificity and are untouched. */
+@media (max-width: 767px) {
+    footer:where(.bg-slate-900, .bg-slate-950) ul a,
+    footer:where(.bg-slate-900, .bg-slate-950) p a {
+        display: inline-block;
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+    }
+}

@@ -706,18 +706,18 @@
     }
     </script>
 
-    <!-- LCP image preload: hero AVIF gets fetched in parallel with HTML parse (saves 100-300ms LCP) -->
-    <!-- Mobile (<768px): Bill Layne trust photo is the LCP candidate -->
-    <link rel="preload" as="image" type="image/avif"
-          href="img/hero/homepage_hero_mobile.avif"
-          imagesrcset="img/hero/homepage_hero_mobile.avif 640w, img/hero/homepage_hero_mobile_lg.avif 1112w"
+    <!-- LCP image preload: hero WebP gets fetched in parallel with HTML parse (saves 100-300ms LCP) -->
+    <!-- Mobile (<768px): office trust photo is the LCP candidate -->
+    <link rel="preload" as="image" type="image/webp"
+          href="img/hero/homepage_hero_office_mobile.webp"
+          imagesrcset="img/hero/homepage_hero_office_mobile_sm.webp 640w, img/hero/homepage_hero_office_mobile.webp 1112w"
           imagesizes="100vw"
           media="(max-width: 767px)"
           fetchpriority="high">
-    <!-- Desktop (>=768px): advisor background hero is the LCP candidate -->
-    <link rel="preload" as="image" type="image/avif"
-          href="img/hero/homepage_hero_full_v2.avif"
-          imagesrcset="img/hero/homepage_hero_tablet_v2.avif 1100w, img/hero/homepage_hero_full_v2.avif 1672w"
+    <!-- Desktop (>=768px): office background hero is the LCP candidate -->
+    <link rel="preload" as="image" type="image/webp"
+          href="img/hero/homepage_hero_office_full.webp"
+          imagesrcset="img/hero/homepage_hero_office_tablet.webp 1100w, img/hero/homepage_hero_office_full.webp 1672w"
           imagesizes="100vw"
           media="(min-width: 768px)"
           fetchpriority="high">
@@ -767,6 +767,7 @@
     <!-- Other pages still use tailwind-output.css. Rebuild homepage CSS via build-css-index.bat. -->
     <link rel="stylesheet" href="css/mobile-dock.css?v=20260702">
     <link rel="stylesheet" href="css/tailwind-index.css?v=20260810">
+    <link rel="stylesheet" href="css/site-footer.css?v=20260830">
 
     <style>
         /* ==============================================
@@ -1072,6 +1073,59 @@
             margin-bottom: 0;
             cursor: pointer;
         }
+        /* Jump-link strip: sticky quick actions for the long mobile scroll.
+           Sits under the shrunken (h-16) navbar; hidden on md+ via .md:hidden. */
+        .jump-links {
+            position: sticky;
+            top: 64px;
+            z-index: 40;
+            display: flex;
+            gap: 8px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 4px 14px rgba(12, 26, 46, 0.06);
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .jump-links::-webkit-scrollbar { display: none; }
+        .jump-link {
+            flex: 1 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 44px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1.5px solid #e2e8f0;
+            background: #f8fafc;
+            color: #0c1a2e;
+            font-size: 12px;
+            font-weight: 800;
+            line-height: 1;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .jump-link i { flex: 0 0 12px; font-size: 12px; text-align: center; color: #2563eb; }
+        .jump-link:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+        .jump-link-gold {
+            background: linear-gradient(135deg, #facc15, #f59e0b);
+            border-color: #f59e0b;
+            color: #07172d;
+        }
+        .jump-link-gold i { color: #07172d; }
+        @media (max-width: 389px) {
+            .jump-links { gap: 6px; padding: 8px 10px; }
+            .jump-link { gap: 5px; padding: 6px 8px; font-size: 11px; }
+            .jump-link i { flex-basis: 11px; font-size: 11px; }
+        }
+        @media (max-width: 767px) {
+            /* Navbar (64px) + strip (~62px) must not cover the anchored section */
+            #policy-review { scroll-margin-top: 132px; }
+        }
         @media (min-width: 768px) and (max-width: 1023px) {
             #navbar:not(.glass-nav) {
                 background: linear-gradient(to right, rgb(15 23 42), rgb(30 58 138));
@@ -1273,7 +1327,7 @@
             <!-- Trust image — first thing visitors see (clean photo + HTML trust chip) -->
             <div class="hero-photo-wrap">
                 <picture>
-                    <source type="image/webp" srcset="img/hero/homepage_hero_office_mobile.webp 1112w" sizes="100vw">
+                    <source type="image/webp" srcset="img/hero/homepage_hero_office_mobile_sm.webp 640w, img/hero/homepage_hero_office_mobile.webp 1112w" sizes="100vw">
                     <img src="img/hero/homepage_hero_office_mobile.jpg" alt="Bill Layne Insurance Agency office in Elkin, North Carolina at dusk, lights on and open" loading="eager" decoding="async" width="1112" height="626" fetchpriority="high">
                 </picture>
                 <div class="hero-trust-chip" aria-label="4.9 Google Rating from over 127 reviews, over 2,000 NC families served">
@@ -1301,6 +1355,22 @@
             </a>
         </div>
     </section>
+
+    <!-- JUMP-LINK STRIP — sticky quick actions for the long mobile scroll (mobile only) -->
+    <nav class="jump-links md:hidden" aria-label="Quick actions">
+        <a href="/get-quote" data-source="jumplink_quote" class="jump-link jump-link-gold" aria-label="Get a free insurance quote" onclick="typeof gtag!=='undefined'&&gtag('event','jump_link_click',{'target':'get_quote'})">
+            <i class="fas fa-bolt" aria-hidden="true"></i> Get Quote
+        </a>
+        <a href="#policy-review" data-source="jumplink_upload" class="jump-link" aria-label="Upload your policy for a free review" onclick="typeof gtag!=='undefined'&&gtag('event','jump_link_click',{'target':'upload_policy'})">
+            <i class="fas fa-file-arrow-up" aria-hidden="true"></i> Upload
+        </a>
+        <a href="tel:3368351993" data-source="jumplink_call" class="jump-link" aria-label="Call (336) 835-1993" onclick="typeof gtag!=='undefined'&&gtag('event','jump_link_click',{'target':'call'})">
+            <i class="fas fa-phone" aria-hidden="true"></i> Call
+        </a>
+        <a href="service-center.html" data-source="jumplink_service" class="jump-link" aria-label="Visit the Service Center" onclick="typeof gtag!=='undefined'&&gtag('event','jump_link_click',{'target':'service_center'})">
+            <i class="fas fa-concierge-bell" aria-hidden="true"></i> Service
+        </a>
+    </nav>
 
 
     <!-- CARRIER LOGOS - Mobile (right under hero stats) -->
@@ -1415,14 +1485,16 @@
             background: linear-gradient(135deg, #fbbf24, #d97706);
             box-shadow: 0 18px 40px rgba(245, 158, 11, 0.45);
         }
-        /* Accessibility: 44px footer social targets + menu close buttons
-           (w-11/h-11 not in the compiled homepage CSS) */
-        .footer-social { width: 44px; height: 44px; }
+        /* Accessibility: 44px menu close buttons (dock panels).
+           Footer social 44px sizing + mobile footer-link tap targets now
+           live in css/site-footer.css. */
         .menu-panel .menu-close, #menu-close { width: 44px; height: 44px; }
-        /* Accessibility: taller footer link touch targets (~44px pitch) */
-        footer ul a:not(.inline-flex) { display: inline-block; padding-top: 8px; padding-bottom: 8px; }
-        footer ul a.inline-flex { padding-top: 12px; padding-bottom: 12px; }
-        footer p a { padding-top: 6px; padding-bottom: 6px; }
+        /* Desktop-only footer link pitch; mobile tap targets come from css/site-footer.css */
+        @media (min-width: 768px) {
+            footer ul a:not(.inline-flex) { display: inline-block; padding-top: 8px; padding-bottom: 8px; }
+            footer ul a.inline-flex { padding-top: 12px; padding-bottom: 12px; }
+            footer p a { padding-top: 6px; padding-bottom: 6px; }
+        }
     </style>
     <section class="hidden md:block pt-6 pb-8 md:py-8 bg-white border-b border-slate-100 overflow-hidden relative">
         <div class="marquee-mask w-full">
