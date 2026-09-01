@@ -708,8 +708,18 @@
 
     <!-- LCP image preload: hero WebP gets fetched in parallel with HTML parse (saves 100-300ms LCP) -->
     <!-- Mobile (<768px): auto and home trust photo is the LCP candidate -->
-    <link rel="preload" as="image" type="image/webp"
-          href="https://img.billlayneinsurance.com/i/2026/09/updated-mobile-hero-6af3jg.webp"
+    <!-- Widths are Cloudflare transforms of the same source file, so nothing is
+         re-uploaded. The wrap is 16/9 capped at 240px tall, so a phone paints
+         roughly 358x201 CSS px and never needs the 1536px original — serving it
+         cost ~189KB on the one image mobile LCP is measured against.
+         No type= here: format=auto negotiates avif/webp per browser, so pinning
+         a type would misdeclare what comes back. imagesrcset/imagesizes must
+         mirror the <source> in the mobile hero exactly, or the browser preloads
+         one candidate and then downloads a different one. -->
+    <link rel="preload" as="image"
+          href="https://img.billlayneinsurance.com/cdn-cgi/image/width=640,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp"
+          imagesrcset="https://img.billlayneinsurance.com/cdn-cgi/image/width=480,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp 480w, https://img.billlayneinsurance.com/cdn-cgi/image/width=640,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp 640w, https://img.billlayneinsurance.com/cdn-cgi/image/width=828,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp 828w, https://img.billlayneinsurance.com/cdn-cgi/image/width=1112,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp 1112w"
+          imagesizes="calc(100vw - 32px)"
           media="(max-width: 767px)"
           fetchpriority="high">
     <!-- Desktop (>=768px): auto and home background hero is the LCP candidate -->
@@ -1320,8 +1330,13 @@
             <!-- Trust image — first thing visitors see (clean photo + HTML trust chip) -->
             <div class="hero-photo-wrap">
                 <picture>
-                    <source type="image/webp" srcset="https://img.billlayneinsurance.com/i/2026/09/updated-mobile-hero-6af3jg.webp">
-                    <img src="https://img.billlayneinsurance.com/i/2026/09/updated-mobile-hero-6af3jg.webp" alt="North Carolina home and two family vehicles at dusk representing auto and home insurance from Bill Layne Insurance Agency in Elkin, NC" loading="eager" decoding="async" width="1536" height="1024" fetchpriority="high">
+                    <!-- Same photo as before, just sized to the box. sizes matches the
+                         section's 16px side padding; candidates and sizes are duplicated
+                         in the <link rel=preload> above and must stay identical to it.
+                         width/height below stay at the 1536x1024 source ratio: the
+                         transforms are width-only, so every candidate is still 3:2. -->
+                    <source srcset="https://img.billlayneinsurance.com/cdn-cgi/image/width=480,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp 480w, https://img.billlayneinsurance.com/cdn-cgi/image/width=640,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp 640w, https://img.billlayneinsurance.com/cdn-cgi/image/width=828,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp 828w, https://img.billlayneinsurance.com/cdn-cgi/image/width=1112,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp 1112w" sizes="calc(100vw - 32px)">
+                    <img src="https://img.billlayneinsurance.com/cdn-cgi/image/width=640,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp" alt="North Carolina home and two family vehicles at dusk representing auto and home insurance from Bill Layne Insurance Agency in Elkin, NC" loading="eager" decoding="async" width="1536" height="1024" fetchpriority="high">
                 </picture>
                 <div class="hero-trust-chip" aria-label="4.9 Google Rating from over 127 reviews, over 2,000 NC families served">
                     <span class="chip-star" aria-hidden="true">&#9733;</span> 4.9 Google &middot; 127+ Reviews
