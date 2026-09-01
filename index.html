@@ -719,7 +719,7 @@
     <link rel="preload" as="image"
           href="https://img.billlayneinsurance.com/cdn-cgi/image/width=640,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp"
           imagesrcset="https://img.billlayneinsurance.com/cdn-cgi/image/width=480,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp 480w, https://img.billlayneinsurance.com/cdn-cgi/image/width=640,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp 640w, https://img.billlayneinsurance.com/cdn-cgi/image/width=828,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp 828w, https://img.billlayneinsurance.com/cdn-cgi/image/width=1112,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp 1112w"
-          imagesizes="calc(100vw - 32px)"
+          imagesizes="(min-width: 768px) 1px, calc(100vw - 32px)"
           media="(max-width: 767px)"
           fetchpriority="high">
     <!-- Desktop (>=768px): auto and home background hero is the LCP candidate -->
@@ -1330,12 +1330,19 @@
             <!-- Trust image — first thing visitors see (clean photo + HTML trust chip) -->
             <div class="hero-photo-wrap">
                 <picture>
-                    <!-- Same photo as before, just sized to the box. sizes matches the
-                         section's 16px side padding; candidates and sizes are duplicated
-                         in the <link rel=preload> above and must stay identical to it.
+                    <!-- Same photo as before, just sized to the box. Below 768px that is
+                         the viewport less the section's 16px side padding.
+                         The 1px branch is not a hack for its own sake: at >=768px this
+                         whole section is display:none, and display:none does NOT stop an
+                         <img> from downloading. Without it the browser measures against
+                         the full window, picks the 1112w candidate and spends ~105KB on a
+                         photo no desktop visitor ever sees; declaring the real occupied
+                         width sends it to the 480w candidate (~25KB) instead.
+                         Candidates and sizes are duplicated in the <link rel=preload>
+                         above and must stay byte-identical to it.
                          width/height below stay at the 1536x1024 source ratio: the
                          transforms are width-only, so every candidate is still 3:2. -->
-                    <source srcset="https://img.billlayneinsurance.com/cdn-cgi/image/width=480,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp 480w, https://img.billlayneinsurance.com/cdn-cgi/image/width=640,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp 640w, https://img.billlayneinsurance.com/cdn-cgi/image/width=828,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp 828w, https://img.billlayneinsurance.com/cdn-cgi/image/width=1112,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp 1112w" sizes="calc(100vw - 32px)">
+                    <source srcset="https://img.billlayneinsurance.com/cdn-cgi/image/width=480,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp 480w, https://img.billlayneinsurance.com/cdn-cgi/image/width=640,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp 640w, https://img.billlayneinsurance.com/cdn-cgi/image/width=828,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp 828w, https://img.billlayneinsurance.com/cdn-cgi/image/width=1112,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp 1112w" sizes="(min-width: 768px) 1px, calc(100vw - 32px)">
                     <img src="https://img.billlayneinsurance.com/cdn-cgi/image/width=640,format=auto,quality=82/i/2026/09/updated-mobile-hero-6af3jg.webp" alt="North Carolina home and two family vehicles at dusk representing auto and home insurance from Bill Layne Insurance Agency in Elkin, NC" loading="eager" decoding="async" width="1536" height="1024" fetchpriority="high">
                 </picture>
                 <div class="hero-trust-chip" aria-label="4.9 Google Rating from over 127 reviews, over 2,000 NC families served">
