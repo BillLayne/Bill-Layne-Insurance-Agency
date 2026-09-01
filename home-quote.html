@@ -486,6 +486,40 @@
         }
         @media(max-width:400px) { .step-subtitle { padding-left: 0; } }
 
+        /* ── "Quoting <address>" continuity line ──
+           Shown only when the customer arrived from Find My Home Information
+           with an address already typed. property_address is prefilled, but it
+           sits on step 3, so on arrival there is nothing on screen telling them
+           we kept what they gave us and the handoff reads as starting over.
+           Hidden by default: a direct visitor never sees it, and [hidden] needs
+           an explicit rule here because display:flex would otherwise win.
+           Left margin matches .step-subtitle so it lines up under the heading
+           text rather than under the icon. */
+        .quoting-for {
+            display: flex;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: -14px 0 22px 54px;
+            padding: 10px 14px;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-left: 3px solid var(--green);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--navy);
+        }
+        .quoting-for[hidden] { display: none; }
+        .quoting-for-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: var(--green);
+        }
+        .quoting-for-address { font-weight: 600; word-break: break-word; }
+        @media(max-width:400px) { .quoting-for { margin-left: 0; } }
+
         /* ── FORM FIELDS ── */
         .field-group { margin-bottom: 16px; }
         .field-row { display: grid; gap: 12px; margin-bottom: 16px; }
@@ -1107,6 +1141,13 @@
                                 <h2 class="step-title">Let's get started</h2>
                             </div>
                             <p class="step-subtitle">Your basic contact information to personalize your quote.</p>
+
+                            <!-- Filled and revealed by the ?address= handler at the bottom
+                                 of this file. Stays hidden for a direct visitor. -->
+                            <div class="quoting-for" id="quoting-for" hidden>
+                                <span class="quoting-for-label">Quoting</span>
+                                <span class="quoting-for-address" id="quoting-for-address"></span>
+                            </div>
 
                             <div class="field-row field-row-2">
                                 <div class="field-group">
@@ -2024,6 +2065,16 @@
             if (addr) {
                 const addrField = document.getElementById('property_address');
                 if (addrField && !addrField.value) addrField.value = addr;
+                // Say so on arrival. The field above is on step 3, so without
+                // this the customer lands on step 1 with no sign we kept the
+                // address they just typed, and the handoff reads as starting
+                // over. textContent, not innerHTML -- same rule as the field.
+                const note = document.getElementById('quoting-for');
+                const noteAddr = document.getElementById('quoting-for-address');
+                if (note && noteAddr) {
+                    noteAddr.textContent = addr;
+                    note.hidden = false;
+                }
             }
         } catch (e) {}
         // Live-update the hero as the customer types their ZIP
