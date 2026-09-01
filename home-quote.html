@@ -1133,6 +1133,13 @@
                 <div class="form-body">
                     <form id="home-quote-form" novalidate>
                         <input type="hidden" name="form_type" value="home_insurance">
+                        <!-- Filled by the ?address=/?county= handler at the bottom of this
+                             file. county is a hint from the lookup tool's parcel match, not
+                             a verified fact -- zip_code stays the authoritative field.
+                             lead_source answers a question nothing else on this form could:
+                             where the lead came from. -->
+                        <input type="hidden" name="county" id="lead_county" value="">
+                        <input type="hidden" name="lead_source" id="lead_source" value="">
 
                         <!-- ── STEP 1: Contact Info ── -->
                         <div class="form-step active" data-step="1">
@@ -1886,6 +1893,8 @@
                 liability_items:         formData.get('liability_items'),
                 security_system:         formData.get('security_system'),
                 additional_notes:        formData.get('additional_notes'),
+                county:                  formData.get('county'),
+                lead_source:             formData.get('lead_source'),
                 metadata:                getMetadata()
             };
 
@@ -2042,6 +2051,33 @@
             '27610':'Raleigh','27612':'Raleigh','27613':'Raleigh','27615':'Raleigh','27616':'Raleigh'
         };
         const PRODUCT = 'Home';
+
+        /**
+         * Where this lead came from.
+         *
+         * getMetadata() records the device -- userAgent, platform, screen,
+         * timezone -- but nothing recorded the origin, so a quote arriving in
+         * the inbox gave no way to tell whether the Find My Home Information
+         * tool actually produces business.
+         *
+         * This is a payload field only. It is deliberately NOT a UTM on the
+         * handoff link: an internal UTM restarts the GA4 session and corrupts
+         * attribution, which is a worse problem than the one it would solve.
+         */
+        function detectLeadSource(params) {
+            let ref = '';
+            try {
+                ref = document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, '') : '';
+            } catch (e) { /* opaque or malformed referrer */ }
+            // The lookup tool is the only thing that hands off ?address=/?county=,
+            // and it also shows up as the referrer. Either signal is enough.
+            if (ref === 'homeinfo.billlayneinsurance.com' || params.get('address') || params.get('county')) {
+                return 'find-my-home';
+            }
+            if (!ref) return 'direct';
+            if (ref === 'billlayneinsurance.com') return 'site';
+            return ref.slice(0, 60);
+        }
         function personalizeHero(z) {
             const span = document.querySelector('.hero-title span');
             if (!span) return;
@@ -2076,6 +2112,19 @@
                     note.hidden = false;
                 }
             }
+
+            // County from the lookup tool's parcel match. Anyone can put
+            // ?county= in a URL, so it is stripped to letters and separators,
+            // length-capped, and recorded as a hint next to the lead -- never
+            // trusted for rating. zip_code remains the authoritative field.
+            const county = (params.get('county') || '').replace(/[^A-Za-z \-'.]/g, '').trim().slice(0, 40);
+            const countyField = document.getElementById('lead_county');
+            if (countyField && county) countyField.value = county;
+
+            // Always set, on every visit -- a lead with no recorded source is
+            // the gap this closes, so 'direct' is a real answer, not a blank.
+            const sourceField = document.getElementById('lead_source');
+            if (sourceField) sourceField.value = detectLeadSource(params);
         } catch (e) {}
         // Live-update the hero as the customer types their ZIP
         const zipField = document.getElementById('zip_code');
