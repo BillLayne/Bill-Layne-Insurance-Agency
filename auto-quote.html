@@ -18,7 +18,7 @@
       })(window, document, "clarity", "script", "vo5s3jhhub");
     </script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <title>Get Auto Insurance Quote - Bill Layne Insurance | Elkin, NC</title>
     <meta name="description" content="Get your free NC auto insurance quote in 5 minutes. We compare Progressive, Travelers, Nationwide, National General & more. Independent Elkin agent serving all 100 NC counties. Call (336) 835-1993.">
@@ -491,7 +491,10 @@
             border: 2px solid var(--gray-200);
             border-radius: 10px;
             font-family: 'DM Sans', sans-serif;
-            font-size: 15px;
+            /* 16px is the iOS Safari threshold -- anything smaller makes the
+               browser zoom the page in on every field focus, and the customer
+               has to pinch back out to see the form. */
+            font-size: 16px;
             color: var(--gray-800);
             background: white;
             transition: border-color .2s, box-shadow .2s;
@@ -614,7 +617,21 @@
             user-select: none;
         }
         .coverage-check:hover { border-color: var(--blue-lt); background: rgba(59,130,246,.04); }
-        .coverage-check input[type="checkbox"] { display: none; }
+        /* Visually hidden but still focusable. display:none removed these from
+           the tab order outright, so the question could not be answered by
+           keyboard at all -- and with no focus style there was nothing to see
+           even if it could. */
+        .coverage-check input[type="checkbox"] {
+            position: absolute;
+            width: 1px; height: 1px;
+            opacity: 0;
+            margin: 0;
+            pointer-events: none;
+        }
+        .coverage-check:has(input:focus-visible) {
+            outline: 2px solid var(--blue);
+            outline-offset: 2px;
+        }
         .check-box {
             width: 20px;
             height: 20px;
@@ -649,8 +666,22 @@
         }
 
         /* ── YES/NO PILLS ── */
-        .pill-group { display: flex; gap: 10px; margin-top: 6px; }
-        .pill-option { display: none; }
+        .pill-group { display: flex; gap: 10px; margin-top: 6px; position: relative; }
+        /* Visually hidden but still focusable. display:none removed these from
+           the tab order outright, so the question could not be answered by
+           keyboard at all -- and with no focus style there was nothing to see
+           even if it could. */
+        .pill-option {
+            position: absolute;
+            width: 1px; height: 1px;
+            opacity: 0;
+            margin: 0;
+            pointer-events: none;
+        }
+        .pill-option:focus-visible + .pill-label {
+            outline: 2px solid var(--blue);
+            outline-offset: 2px;
+        }
         .pill-label {
             flex: 1;
             text-align: center;
