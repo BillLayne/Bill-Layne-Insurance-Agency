@@ -130,18 +130,14 @@ All base64 images must be extracted, uploaded, and replaced with hosted URLs. Th
 - Update the homepage `Latest from Our Blog` static cards in `index.html` when the newest post should appear on the homepage.
 - This is important because search engines and AI crawlers should see the newest blog titles and summaries in raw HTML/schema, not only inside `window.__BLOG_DATA__` or JavaScript-rendered cards.
 
-### Step 6B: Add to sitemap.xml (REQUIRED — this step was missing before 2026-08-04 and 10 published posts never got indexed via the sitemap)
-- Open `sitemap.xml` in the repo root
-- Add a `<url>` block before `</urlset>`, using the **extensionless** URL:
-  ```xml
-  <url>
-    <loc>https://www.billlayneinsurance.com/blog/blogs/[slug]</loc>
-    <lastmod>YYYY-MM-DD</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
+### Step 6B: Rebuild the sitemaps (REQUIRED — since 2026-09-02 the sitemaps are GENERATED, never hand-edited)
+- `sitemap.xml` is now a sitemap **index** pointing at `sitemap-pages.xml`, `sitemap-blog.xml`, and `sitemap-images.xml`. Do not add `<url>` blocks by hand.
+- After the post is committed (lastmod comes from the file's last git commit), run from the repo root:
+  ```bash
+  python tools/build-sitemaps.py
   ```
-- Also bump the `<lastmod>` on the `https://www.billlayneinsurance.com/blog/` entry to today
+- The generator lists a post only if it has a `<link rel="canonical">` that matches its own extensionless `www` URL and no `noindex` tag, so a post that fails Step 5A silently stays out. Run `python tools/build-sitemaps.py --check` to see what was skipped and why.
+- Commit the three regenerated XML files with the post.
 - Do NOT touch `sitemap-images.xml` — it covers landing pages only, never blog posts
 
 ### Step 7: Verify (ALL must pass)
@@ -156,7 +152,7 @@ All base64 images must be extracted, uploaded, and replaced with hosted URLs. Th
 - [ ] `window.__BLOG_DATA__` in `blog/index.html` has the **same number of entries** as `blogs.json` (count `"id":` occurrences in both — they must match)
 - [ ] The new blog's `id` appears in both `blogs.json` AND the embedded data script
 - [ ] The newest blog appears in the raw HTML "Latest NC Insurance Guides" section and in the blog JSON-LD schema
-- [ ] `sitemap.xml` has the new post (extensionless URL) and the `/blog/` lastmod is bumped
+- [ ] `python tools/build-sitemaps.py` was run after the commit and `sitemap-blog.xml` lists the new post (extensionless URL)
 - [ ] After pushing: Search Console → URL Inspection → Request Indexing on the new URL
 
 ---

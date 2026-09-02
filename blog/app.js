@@ -169,6 +169,15 @@ class EtherealBlog {
 
     this.setupLoadMore();
     this.animateNewCards();
+
+    // /blog/?q=term deep-links a search (the 404 page's search box and
+    // "search the site" links use it). Applied once the data is in.
+    const q = new URLSearchParams(window.location.search).get('q');
+    if (q && q.trim()) {
+      const input = document.getElementById('searchInput');
+      if (input) input.value = q;
+      this.applySearch(q);
+    }
   }
 
   /**

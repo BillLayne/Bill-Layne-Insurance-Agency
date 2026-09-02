@@ -12,9 +12,13 @@
     <!-- Microsoft Clarity -->
     <script type="text/javascript">
       (function(c,l,a,r,i,t,y){
+        // Microsoft Clarity, loaded after the page has painted so the recorder
+        // never competes with the hero image, fonts, or first input (INP).
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        function load(){ if(t)return; t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y); }
+        function idle(){ ('requestIdleCallback' in window)?requestIdleCallback(load,{timeout:4000}):setTimeout(load,1500); }
+        (l.readyState==='complete')?idle():window.addEventListener('load',idle,{once:true});
       })(window, document, "clarity", "script", "vo5s3jhhub");
     </script>
     <meta charset="UTF-8">
@@ -407,7 +411,7 @@
                     <div class="w-12 h-12 rounded-2xl bg-green-100 flex items-center justify-center text-green-600 text-xl mb-4"><i class="fas fa-store"></i></div>
                     <h3 class="font-display font-bold text-slate-900 mb-1">Elkin Markets &amp; Festivals</h3>
                     <p class="text-amber-700 font-bold text-sm mb-2">Seasonal</p>
-                    <p class="text-sm text-slate-500 leading-relaxed">The Elkin Farmers Market, Pumpkin Festival, and Reeves Theater shows. <a href="/save-in-elkin-nc/" class="text-amber-700 font-semibold underline underline-offset-2">See Elkin savings &amp; events</a>.</p>
+                    <p class="text-sm text-slate-500 leading-relaxed">The Elkin Farmers Market, Pumpkin Festival, and Reeves Theater shows. <a href="/insurance-elkin-nc" class="text-amber-700 font-semibold underline underline-offset-2">See Elkin savings &amp; events</a>.</p>
                 </div>
             </div>
         </div>
@@ -495,7 +499,7 @@
                     <p class="text-sm text-slate-500 mb-3 leading-relaxed">Tour the Yadkin Valley wine trail, then find local grocery, gas, and restaurant deals in Elkin.</p>
                     <div class="flex flex-wrap gap-x-3 gap-y-1 text-sm font-bold text-amber-700">
                         <a href="wineries.html" class="hover:underline">Wineries</a>
-                        <a href="/save-in-elkin-nc/" class="hover:underline">Save in Elkin</a>
+                        <a href="/insurance-elkin-nc" class="hover:underline">Save in Elkin</a>
                     </div>
                 </div>
                 <div class="bg-white rounded-2xl p-6 shadow-md border border-slate-100 reveal">

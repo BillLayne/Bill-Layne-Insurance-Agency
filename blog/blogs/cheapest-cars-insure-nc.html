@@ -12,9 +12,13 @@
     <!-- Microsoft Clarity -->
     <script type="text/javascript">
       (function(c,l,a,r,i,t,y){
+        // Microsoft Clarity, loaded after the page has painted so the recorder
+        // never competes with the hero image, fonts, or first input (INP).
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        function load(){ if(t)return; t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y); }
+        function idle(){ ('requestIdleCallback' in window)?requestIdleCallback(load,{timeout:4000}):setTimeout(load,1500); }
+        (l.readyState==='complete')?idle():window.addEventListener('load',idle,{once:true});
       })(window, document, "clarity", "script", "vo5s3jhhub");
     </script>
     <meta charset="UTF-8">
@@ -1206,7 +1210,7 @@
             <a href="../../auto-center/index.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-car w-6 text-blue-500"></i> Auto Insurance</a>
             <a href="../../areas-we-serve.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-map-marked-alt w-6 text-purple-500"></i> Areas We Serve</a>
             <a href="../../index.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-home w-6 text-primary-500"></i> Home</a>
-                        <li><a href="../../contact" class="hover:text-blue-400">Contact</a></li>
+                        <li><a href="/contact-us/" class="hover:text-blue-400">Contact</a></li>
                     </ul>
                 </div>
             </div>

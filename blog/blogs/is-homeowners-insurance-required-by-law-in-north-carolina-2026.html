@@ -14,9 +14,13 @@
     <!-- Microsoft Clarity -->
     <script type="text/javascript">
       (function(c,l,a,r,i,t,y){
+        // Microsoft Clarity, loaded after the page has painted so the recorder
+        // never competes with the hero image, fonts, or first input (INP).
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        function load(){ if(t)return; t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y); }
+        function idle(){ ('requestIdleCallback' in window)?requestIdleCallback(load,{timeout:4000}):setTimeout(load,1500); }
+        (l.readyState==='complete')?idle():window.addEventListener('load',idle,{once:true});
       })(window, document, "clarity", "script", "vo5s3jhhub");
     </script>
     <title>Is Homeowners Insurance Required by Law in North Carolina in 2026? The Brutal Truth Your Lender Won't Tell You</title>

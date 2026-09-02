@@ -12,9 +12,13 @@
     <!-- Microsoft Clarity -->
     <script type="text/javascript">
       (function(c,l,a,r,i,t,y){
+        // Microsoft Clarity, loaded after the page has painted so the recorder
+        // never competes with the hero image, fonts, or first input (INP).
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        function load(){ if(t)return; t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y); }
+        function idle(){ ('requestIdleCallback' in window)?requestIdleCallback(load,{timeout:4000}):setTimeout(load,1500); }
+        (l.readyState==='complete')?idle():window.addEventListener('load',idle,{once:true});
       })(window, document, "clarity", "script", "vo5s3jhhub");
     </script>
     <meta charset="UTF-8">
@@ -1244,8 +1248,8 @@
             <div class="border-t border-slate-800 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
                 <p>&copy; 2026 Bill Layne Insurance Agency. All rights reserved.</p>
                 <div class="flex gap-4">
-                    <a href="../../privacy" class="hover:text-white transition-colors">Privacy Policy</a>
-                    <a href="../../terms" class="hover:text-white transition-colors">Terms of Service</a>
+                    <a href="/privacy-policy/" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="/terms/" class="hover:text-white transition-colors">Terms of Service</a>
                 </div>
             </div>
         </div>

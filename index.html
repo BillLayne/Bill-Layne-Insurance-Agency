@@ -24,10 +24,14 @@
           document.head.appendChild(gtagScript);
 
           (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-          })(window, document, "clarity", "script", "vo5s3jhhub");
+        // Microsoft Clarity, loaded after the page has painted so the recorder
+        // never competes with the hero image, fonts, or first input (INP).
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        function load(){ if(t)return; t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y); }
+        function idle(){ ('requestIdleCallback' in window)?requestIdleCallback(load,{timeout:4000}):setTimeout(load,1500); }
+        (l.readyState==='complete')?idle():window.addEventListener('load',idle,{once:true});
+      })(window, document, "clarity", "script", "vo5s3jhhub");
         }
 
         window.addEventListener('load', function(){
@@ -80,613 +84,551 @@
     <meta name="twitter:image" content="https://www.billlayneinsurance.com/img/og-share-card.jpg">
 
     <!-- Structured Data: Unified @graph (InsuranceAgency, Service, WebSite, WebPage, FAQPage, HowTo, BreadcrumbList, VideoObject) -->
-    <script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@graph": [
+    <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "InsuranceAgency",
+      "@id": "https://www.billlayneinsurance.com/#agency",
+      "name": "Bill Layne Insurance Agency",
+      "alternateName": "Bill Layne Insurance",
+      "legalName": "Bill Layne Insurance Agency LLC",
+      "url": "https://www.billlayneinsurance.com",
+      "logo": "https://www.billlayneinsurance.com/img/og-image.png",
+      "image": "https://www.billlayneinsurance.com/img/agency-photo.jpg",
+      "description": "Independent insurance agency in Elkin, NC comparing quotes from Progressive, Travelers, Nationwide, National General and more. Licensed in all 100 North Carolina counties since 2005.",
+      "telephone": "+1-336-835-1993",
+      "email": "Save@BillLayneInsurance.com",
+      "slogan": "One Call. Trusted Carriers Compete.",
+      "naics": "524210",
+      "knowsLanguage": [
+        "en",
+        "es"
+      ],
+      "paymentAccepted": [
+        "Credit Card",
+        "Debit Card",
+        "Check",
+        "Bank Draft",
+        "EFT"
+      ],
+      "currenciesAccepted": "USD",
+      "priceRange": "$$",
+      "foundingDate": "2005",
+      "numberOfEmployees": {
+        "@type": "QuantitativeValue",
+        "minValue": 2,
+        "maxValue": 10
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "1283 N Bridge St",
+        "addressLocality": "Elkin",
+        "addressRegion": "NC",
+        "postalCode": "28621",
+        "addressCountry": "US"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 36.244,
+        "longitude": -80.8487
+      },
+      "openingHoursSpecification": [
         {
-            "@type": "InsuranceAgency",
-            "@id": "https://www.billlayneinsurance.com/#agency",
-            "name": "Bill Layne Insurance Agency",
-            "alternateName": "Bill Layne Insurance",
-            "legalName": "Bill Layne Insurance Agency LLC",
-            "url": "https://www.billlayneinsurance.com",
-            "logo": "https://www.billlayneinsurance.com/img/og-image.png",
-            "image": "https://www.billlayneinsurance.com/img/agency-photo.jpg",
-            "description": "Independent insurance agency in Elkin, NC comparing quotes from Progressive, Travelers, Nationwide, National General and more. Licensed in all 100 North Carolina counties since 2005.",
-            "telephone": "+1-336-835-1993",
-            "email": "Save@BillLayneInsurance.com",
-            "slogan": "One Call. Trusted Carriers Compete.",
-            "naics": "524210",
-            "knowsLanguage": [
-                "en",
-                "es"
-            ],
-            "paymentAccepted": [
-                "Credit Card",
-                "Debit Card",
-                "Check",
-                "Bank Draft",
-                "EFT"
-            ],
-            "currenciesAccepted": "USD",
-            "priceRange": "$$",
-            "foundingDate": "2005",
-            "numberOfEmployees": {
-                "@type": "QuantitativeValue",
-                "minValue": 2,
-                "maxValue": 10
-            },
-            "address": {
-                "@type": "PostalAddress",
-                "streetAddress": "1283 N Bridge St",
-                "addressLocality": "Elkin",
-                "addressRegion": "NC",
-                "postalCode": "28621",
-                "addressCountry": "US"
-            },
-            "geo": {
-                "@type": "GeoCoordinates",
-                "latitude": 36.244,
-                "longitude": -80.8487
-            },
-            "openingHoursSpecification": [
-                {
-                    "@type": "OpeningHoursSpecification",
-                    "dayOfWeek": [
-                        "Monday",
-                        "Tuesday",
-                        "Wednesday",
-                        "Thursday",
-                        "Friday"
-                    ],
-                    "opens": "09:00",
-                    "closes": "17:00"
-                }
-            ],
-            "hasCredential": [
-                {
-                    "@type": "EducationalOccupationalCredential",
-                    "name": "North Carolina Insurance License",
-                    "credentialCategory": "license",
-                    "url": "https://sbs.naic.org/solar-external-lookup/",
-                    "recognizedBy": {
-                        "@type": "Organization",
-                        "name": "North Carolina Department of Insurance"
-                    }
-                }
-            ],
-            "memberOf": [
-                {
-                    "@type": "Organization",
-                    "name": "Independent Insurance Agents of North Carolina (IIANC)"
-                }
-            ],
-            "contactPoint": [
-                {
-                    "@type": "ContactPoint",
-                    "telephone": "+1-336-835-1993",
-                    "contactType": "customer service",
-                    "availableLanguage": [
-                        "English",
-                        "Spanish"
-                    ],
-                    "areaServed": "NC"
-                },
-                {
-                    "@type": "ContactPoint",
-                    "telephone": "+1-336-356-2200",
-                    "contactType": "customer service",
-                    "availableLanguage": [
-                        "English",
-                        "Spanish"
-                    ],
-                    "areaServed": "NC"
-                },
-                {
-                    "@type": "ContactPoint",
-                    "telephone": "+1-336-835-1993",
-                    "contactType": "claims"
-                }
-            ],
-            "department": {
-                "@type": "InsuranceAgency",
-                "name": "Aseguranza Comunidad Unida",
-                "telephone": "+1-336-356-2200",
-                "email": "jimenez.links@gmail.com",
-                "availableLanguage": [
-                    "es",
-                    "en"
-                ],
-                "address": {
-                    "@type": "PostalAddress",
-                    "streetAddress": "209 S Main St",
-                    "addressLocality": "Dobson",
-                    "addressRegion": "NC",
-                    "postalCode": "27017",
-                    "addressCountry": "US"
-                },
-                "openingHoursSpecification": [
-                    {
-                        "@type": "OpeningHoursSpecification",
-                        "dayOfWeek": [
-                            "Monday",
-                            "Tuesday",
-                            "Wednesday",
-                            "Thursday",
-                            "Friday"
-                        ],
-                        "opens": "09:00",
-                        "closes": "17:00"
-                    }
-                ],
-                "employee": {
-                    "@type": "Person",
-                    "name": "Rosa Jimenez"
-                }
-            },
-            "founder": {
-                "@type": "Person",
-                "@id": "https://www.billlayneinsurance.com/#founder",
-                "name": "Bill Layne",
-                "jobTitle": "Owner & Licensed Insurance Agent",
-                "hasCredential": {
-                    "@type": "EducationalOccupationalCredential",
-                    "credentialCategory": "license",
-                    "name": "North Carolina Department of Insurance License",
-                    "url": "https://sbs.naic.org/solar-external-lookup/"
-                },
-                "knowsAbout": [
-                    "Auto Insurance",
-                    "Home Insurance",
-                    "NC SDIP",
-                    "DL-123 Filing (NC High-Risk)",
-                    "Independent Insurance Agency"
-                ],
-                "worksFor": {
-                    "@id": "https://www.billlayneinsurance.com/#agency"
-                }
-            },
-            "areaServed": [
-                {
-                    "@type": "AdministrativeArea",
-                    "name": "North Carolina"
-                },
-                {
-                    "@type": "City",
-                    "name": "Elkin",
-                    "containedInPlace": {
-                        "@type": "AdministrativeArea",
-                        "name": "North Carolina"
-                    }
-                },
-                {
-                    "@type": "City",
-                    "name": "Mount Airy",
-                    "containedInPlace": {
-                        "@type": "AdministrativeArea",
-                        "name": "North Carolina"
-                    }
-                },
-                {
-                    "@type": "City",
-                    "name": "Jonesville",
-                    "containedInPlace": {
-                        "@type": "AdministrativeArea",
-                        "name": "North Carolina"
-                    }
-                },
-                {
-                    "@type": "City",
-                    "name": "Dobson",
-                    "containedInPlace": {
-                        "@type": "AdministrativeArea",
-                        "name": "North Carolina"
-                    }
-                },
-                {
-                    "@type": "City",
-                    "name": "Pilot Mountain",
-                    "containedInPlace": {
-                        "@type": "AdministrativeArea",
-                        "name": "North Carolina"
-                    }
-                },
-                {
-                    "@type": "City",
-                    "name": "Yadkinville",
-                    "containedInPlace": {
-                        "@type": "AdministrativeArea",
-                        "name": "North Carolina"
-                    }
-                },
-                {
-                    "@type": "City",
-                    "name": "Wilkesboro",
-                    "containedInPlace": {
-                        "@type": "AdministrativeArea",
-                        "name": "North Carolina"
-                    }
-                },
-                {
-                    "@type": "AdministrativeArea",
-                    "name": "Surry County, NC"
-                },
-                {
-                    "@type": "AdministrativeArea",
-                    "name": "Yadkin County, NC"
-                },
-                {
-                    "@type": "AdministrativeArea",
-                    "name": "Wilkes County, NC"
-                },
-                {
-                    "@type": "AdministrativeArea",
-                    "name": "Stokes County, NC"
-                }
-            ],
-            "hasOfferCatalog": {
-                "@type": "OfferCatalog",
-                "name": "Insurance Products",
-                "itemListElement": [
-                    {
-                        "@type": "Offer",
-                        "itemOffered": {
-                            "@type": "Service",
-                            "name": "Auto Insurance"
-                        }
-                    },
-                    {
-                        "@type": "Offer",
-                        "itemOffered": {
-                            "@type": "Service",
-                            "name": "Home Insurance"
-                        }
-                    },
-                    {
-                        "@type": "Offer",
-                        "itemOffered": {
-                            "@type": "Service",
-                            "name": "Renters Insurance"
-                        }
-                    },
-                    {
-                        "@type": "Offer",
-                        "itemOffered": {
-                            "@type": "Service",
-                            "name": "DL-123 Filing (NC High-Risk)"
-                        }
-                    },
-                    {
-                        "@type": "Offer",
-                        "itemOffered": {
-                            "@type": "Service",
-                            "name": "Business Insurance"
-                        }
-                    },
-                    {
-                        "@type": "Offer",
-                        "itemOffered": {
-                            "@type": "Service",
-                            "name": "Motorcycle Insurance"
-                        }
-                    },
-                    {
-                        "@type": "Offer",
-                        "itemOffered": {
-                            "@type": "Service",
-                            "name": "Flood Insurance"
-                        }
-                    },
-                    {
-                        "@type": "Offer",
-                        "itemOffered": {
-                            "@type": "Service",
-                            "name": "Umbrella Insurance"
-                        }
-                    },
-                    {
-                        "@type": "Offer",
-                        "itemOffered": {
-                            "@type": "Service",
-                            "name": "Life Insurance"
-                        }
-                    }
-                ]
-            },
-            "sameAs": [
-                "https://www.facebook.com/dollarbillagency/",
-                "https://www.instagram.com/ncautoandhome/",
-                "https://www.youtube.com/@ncautoandhome",
-                "https://www.tiktok.com/@ncautoandhome",
-                "https://x.com/shopsavecompare",
-                "https://maps.google.com/?cid=13492628883969206897"
-            ],
-            "potentialAction": [
-                {
-                    "@type": "QuoteAction",
-                    "name": "Get a Free Insurance Quote",
-                    "target": "https://www.billlayneinsurance.com/get-quote"
-                },
-                {
-                    "@type": "ReserveAction",
-                    "name": "Schedule an Appointment",
-                    "target": "https://www.billlayneinsurance.com/contact-us/"
-                }
-            ]
-        },
-        {
-            "@type": "Service",
-            "@id": "https://www.billlayneinsurance.com/#insurance-service",
-            "name": "Independent Insurance Comparison",
-            "description": "We compare quotes through our trusted carrier network to find competitive auto, home, and business insurance rates in North Carolina.",
-            "serviceType": "Insurance Brokerage",
-            "provider": {
-                "@id": "https://www.billlayneinsurance.com/#agency"
-            },
-            "areaServed": {
-                "@type": "AdministrativeArea",
-                "name": "North Carolina"
-            },
-            "offers": {
-                "@type": "Offer",
-                "price": "0",
-                "priceCurrency": "USD",
-                "description": "Free insurance quote comparison — no obligation"
-            }
-        },
-        {
-            "@type": "WebSite",
-            "@id": "https://www.billlayneinsurance.com/#website",
-            "name": "Bill Layne Insurance Agency",
-            "url": "https://www.billlayneinsurance.com/",
-            "description": "Independent insurance agency in Elkin, NC comparing multiple carriers for auto, home, and business insurance.",
-            "inLanguage": [
-                "en-US",
-                "es-US"
-            ],
-            "copyrightYear": "2026",
-            "copyrightHolder": {
-                "@id": "https://www.billlayneinsurance.com/#agency"
-            },
-            "publisher": {
-                "@id": "https://www.billlayneinsurance.com/#agency"
-            },
-            "potentialAction": {
-                "@type": "SearchAction",
-                "target": {
-                    "@type": "EntryPoint",
-                    "urlTemplate": "https://www.billlayneinsurance.com/blog/?q={search_term_string}"
-                },
-                "query-input": "required name=search_term_string"
-            }
-        },
-        {
-            "@type": "WebPage",
-            "@id": "https://www.billlayneinsurance.com/#webpage",
-            "name": "Bill Layne Insurance Agency - Independent Insurance in Elkin, NC",
-            "url": "https://www.billlayneinsurance.com/",
-            "datePublished": "2005-06-01",
-            "dateModified": "2026-07-02",
-            "reviewedBy": {
-                "@id": "https://www.billlayneinsurance.com/#founder"
-            },
-            "isPartOf": {
-                "@id": "https://www.billlayneinsurance.com/#website"
-            },
-            "about": {
-                "@id": "https://www.billlayneinsurance.com/#agency"
-            },
-            "speakable": {
-                "@type": "SpeakableSpecification",
-                "cssSelector": [
-                    "#home h1",
-                    ".accordion-btn",
-                    ".accordion-content"
-                ]
-            }
-        },
-        {
-            "@type": "FAQPage",
-            "@id": "https://www.billlayneinsurance.com/#faq",
-            "mainEntity": [
-                {
-                    "@type": "Question",
-                    "name": "How much can I save on car insurance in North Carolina?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "As an independent agency, Bill Layne Insurance compares rates from multiple trusted carriers to help find you a competitive rate. Your savings depend on your driving record, vehicle, and coverage needs."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "Do you handle DL-123 filings in Elkin NC?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Yes! North Carolina uses Form DL-123 instead of SR-22. The DL-123 proves to the NC DMV that you carry minimum liability insurance. We handle same-day DL-123 filings for license reinstatement after DWI, lapse, or suspension."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "What is the best way to bundle auto and home insurance in NC?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Bundling auto and home insurance is one of the easiest ways to save. Many of our carriers offer multi-policy discounts of 5-25% when you combine auto and home policies. We compare bundle rates across all carriers to maximize your potential savings."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "What should I do if I have an insurance claim in North Carolina?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Call us first at (336) 835-1993. As your advocate, we advise on the claims process, help file the claim with the carrier, and ensure it is handled fairly and promptly. That is the advantage of a local agent."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "Do you offer business insurance in Surry County NC?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Yes, we provide comprehensive commercial insurance for Elkin and Surry County businesses, including General Liability, Workers Compensation, Commercial Auto, and Business Owners Policies (BOP)."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "What is the cheapest car insurance in North Carolina?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "The cheapest car insurance in NC depends on your driving record, age, vehicle, and coverage needs. Bill Layne Insurance compares rates from Progressive, Travelers, and National General to find competitive pricing. NC minimum liability is 50/100/50."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "How much does home insurance cost in Surry County NC?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Home insurance costs in Surry County vary based on your home value, age, construction type, claims history, and coverage level. We shop multiple carriers to find a competitive rate and ensure your home is insured for full replacement cost."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "What is a DL-123 form in North Carolina?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "North Carolina does not use SR-22 forms. Instead, NC uses Form DL-123, a certificate proving you carry at least the state minimum liability insurance (50/100/50). It is required for license reinstatement after DWI, driving without insurance, or suspension. Unlike SR-22, the DL-123 is valid for only 30 days. We handle same-day DL-123 filings."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "What is the difference between an independent agent and a captive agent?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "A captive agent like State Farm or Allstate can only sell one company's policies. An independent agent like Bill Layne Insurance represents multiple carriers, comparing rates and coverage across companies to find the best fit for your needs and budget."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "Do I need renters insurance in North Carolina?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "While not legally required in NC, renters insurance is highly recommended. Your landlord's policy does NOT cover your personal belongings in a fire, theft, or water damage. Policies are surprisingly affordable and can be bundled with auto for extra savings."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "How often should I review my NC insurance policy?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Review your insurance at least once a year or after major life changes like buying a home, adding a teen driver, getting married, or starting a business. Rate changes and new discounts happen regularly across carriers."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "Can I get insurance with a bad driving record in North Carolina?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Yes. We work with carriers that specialize in high-risk and non-standard coverage in NC. Whether you have DWI convictions, at-fault accidents, or multiple violations, we shop multiple carriers to find you a policy with same-day DL-123 filing."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "What happens if I let my NC car insurance lapse?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "In North Carolina, driving without insurance is a Class 1 misdemeanor. If coverage lapses, the NC DMV can revoke your registration and plates. You may also face higher premiums when reinstating because carriers view a lapse as a risk factor."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "Does my credit score affect my insurance rate in North Carolina?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Yes, most NC carriers use a credit-based insurance score to help determine your premium. This differs from your lending credit score. Because each carrier weighs credit differently, shopping through an independent agent can help find a better rate."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "What is the NC Safe Driver Incentive Plan (SDIP)?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "The SDIP is North Carolina's unique points system that directly affects your insurance premiums. Points are assigned for at-fault accidents and moving violations and remain on your record for 3 years. Even one speeding ticket can increase your rate."
-                    }
-                }
-            ]
-        },
-        {
-            "@type": "HowTo",
-            "@id": "https://www.billlayneinsurance.com/#howto",
-            "name": "How to Compare Auto Insurance Rates in North Carolina",
-            "description": "Save time by letting an independent agent shop multiple NC insurance carriers for you in 3 simple steps.",
-            "step": [
-                {
-                    "@type": "HowToStep",
-                    "name": "Start Your Savings Analysis",
-                    "text": "Enter your zip code or share your current policy details with Bill Layne Insurance Agency in Elkin, NC. A licensed professional reviews your information personally.",
-                    "position": 1
-                },
-                {
-                    "@type": "HowToStep",
-                    "name": "We Shop Multiple Carriers",
-                    "text": "As an independent agency, we compare rates from carriers like Progressive, Travelers, Nationwide, and more to find you a competitive rate.",
-                    "position": 2
-                },
-                {
-                    "@type": "HowToStep",
-                    "name": "Review and Sign Digitally",
-                    "text": "Review your personalized quote, e-sign from your phone, and we handle the rest including canceling your old policy and notifying your mortgage lender.",
-                    "position": 3
-                }
-            ],
-            "totalTime": "PT5M"
-        },
-        {
-            "@type": "BreadcrumbList",
-            "@id": "https://www.billlayneinsurance.com/#breadcrumb",
-            "itemListElement": [
-                {
-                    "@type": "ListItem",
-                    "position": 1,
-                    "name": "Home",
-                    "item": "https://www.billlayneinsurance.com/"
-                }
-            ]
-        },
-        {
-            "@type": "VideoObject",
-            "@id": "https://www.billlayneinsurance.com/#video",
-            "name": "1-800 Number vs Independent Agent - There is a Clear Winner",
-            "description": "See the real difference between calling a faceless 1-800 number and working with a local independent insurance agent who fights for you.",
-            "thumbnailUrl": "https://img.youtube.com/vi/4hJT_wMCcCg/maxresdefault.jpg",
-            "uploadDate": "2025-01-01T00:00:00-05:00",
-            "duration": "PT2M4S",
-            "contentUrl": "https://www.youtube.com/watch?v=4hJT_wMCcCg",
-            "embedUrl": "https://www.youtube.com/embed/4hJT_wMCcCg",
-            "publisher": {
-                "@id": "https://www.billlayneinsurance.com/#agency"
-            }
-        },
-        {
-            "@type": "Quiz",
-            "name": "Insurance IQ Challenge",
-            "description": "Test your insurance knowledge with 10 questions about auto, home, and North Carolina insurance basics. Learn NC-specific tips about liability, comprehensive, collision, deductibles, and DL-123 filings.",
-            "url": "https://www.billlayneinsurance.com/insurance-iq/",
-            "about": [
-                {"@type": "Thing", "name": "Auto Insurance"},
-                {"@type": "Thing", "name": "Home Insurance"},
-                {"@type": "Thing", "name": "North Carolina Insurance Law"}
-            ],
-            "educationalLevel": "beginner",
-            "learningResourceType": "quiz",
-            "interactivityType": "active",
-            "numberOfQuestions": 10,
-            "timeRequired": "PT2M",
-            "inLanguage": "en",
-            "isAccessibleForFree": true,
-            "provider": {"@id": "https://www.billlayneinsurance.com/#agency"}
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "opens": "09:00",
+          "closes": "17:00"
         }
-    ]
-}
-    </script>
+      ],
+      "hasCredential": [
+        {
+          "@type": "EducationalOccupationalCredential",
+          "name": "North Carolina Insurance License",
+          "credentialCategory": "license",
+          "url": "https://sbs.naic.org/solar-external-lookup/",
+          "recognizedBy": {
+            "@type": "Organization",
+            "name": "North Carolina Department of Insurance"
+          }
+        }
+      ],
+      "memberOf": [
+        {
+          "@type": "Organization",
+          "name": "Independent Insurance Agents of North Carolina (IIANC)"
+        }
+      ],
+      "contactPoint": [
+        {
+          "@type": "ContactPoint",
+          "telephone": "+1-336-835-1993",
+          "contactType": "customer service",
+          "availableLanguage": [
+            "English",
+            "Spanish"
+          ],
+          "areaServed": "NC"
+        },
+        {
+          "@type": "ContactPoint",
+          "telephone": "+1-336-356-2200",
+          "contactType": "customer service",
+          "availableLanguage": [
+            "English",
+            "Spanish"
+          ],
+          "areaServed": "NC"
+        },
+        {
+          "@type": "ContactPoint",
+          "telephone": "+1-336-835-1993",
+          "contactType": "claims"
+        }
+      ],
+      "department": {
+        "@type": "InsuranceAgency",
+        "name": "Aseguranza Comunidad Unida",
+        "telephone": "+1-336-356-2200",
+        "email": "jimenez.links@gmail.com",
+        "availableLanguage": [
+          "es",
+          "en"
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "209 S Main St",
+          "addressLocality": "Dobson",
+          "addressRegion": "NC",
+          "postalCode": "27017",
+          "addressCountry": "US"
+        },
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday"
+            ],
+            "opens": "09:00",
+            "closes": "17:00"
+          }
+        ],
+        "employee": {
+          "@type": "Person",
+          "name": "Rosa Jimenez"
+        }
+      },
+      "founder": {
+        "@type": "Person",
+        "@id": "https://www.billlayneinsurance.com/#founder",
+        "name": "Bill Layne",
+        "jobTitle": "Owner & Licensed Insurance Agent",
+        "hasCredential": {
+          "@type": "EducationalOccupationalCredential",
+          "credentialCategory": "license",
+          "name": "North Carolina Department of Insurance License",
+          "url": "https://sbs.naic.org/solar-external-lookup/"
+        },
+        "knowsAbout": [
+          "Auto Insurance",
+          "Home Insurance",
+          "NC SDIP",
+          "DL-123 Filing (NC High-Risk)",
+          "Independent Insurance Agency"
+        ],
+        "worksFor": {
+          "@id": "https://www.billlayneinsurance.com/#agency"
+        }
+      },
+      "areaServed": [
+        {
+          "@type": "AdministrativeArea",
+          "name": "North Carolina"
+        },
+        {
+          "@type": "City",
+          "name": "Elkin",
+          "containedInPlace": {
+            "@type": "AdministrativeArea",
+            "name": "North Carolina"
+          }
+        },
+        {
+          "@type": "City",
+          "name": "Mount Airy",
+          "containedInPlace": {
+            "@type": "AdministrativeArea",
+            "name": "North Carolina"
+          }
+        },
+        {
+          "@type": "City",
+          "name": "Jonesville",
+          "containedInPlace": {
+            "@type": "AdministrativeArea",
+            "name": "North Carolina"
+          }
+        },
+        {
+          "@type": "City",
+          "name": "Dobson",
+          "containedInPlace": {
+            "@type": "AdministrativeArea",
+            "name": "North Carolina"
+          }
+        },
+        {
+          "@type": "City",
+          "name": "Pilot Mountain",
+          "containedInPlace": {
+            "@type": "AdministrativeArea",
+            "name": "North Carolina"
+          }
+        },
+        {
+          "@type": "City",
+          "name": "Yadkinville",
+          "containedInPlace": {
+            "@type": "AdministrativeArea",
+            "name": "North Carolina"
+          }
+        },
+        {
+          "@type": "City",
+          "name": "Wilkesboro",
+          "containedInPlace": {
+            "@type": "AdministrativeArea",
+            "name": "North Carolina"
+          }
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "Surry County, NC"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "Yadkin County, NC"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "Wilkes County, NC"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "Stokes County, NC"
+        }
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Insurance Products",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Auto Insurance"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Home Insurance"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Renters Insurance"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "DL-123 Filing (NC High-Risk)"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Business Insurance"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Motorcycle Insurance"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Flood Insurance"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Umbrella Insurance"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Life Insurance"
+            }
+          }
+        ]
+      },
+      "sameAs": [
+        "https://www.facebook.com/dollarbillagency/",
+        "https://www.instagram.com/ncautoandhome/",
+        "https://www.youtube.com/@ncautoandhome",
+        "https://www.tiktok.com/@ncautoandhome",
+        "https://x.com/shopsavecompare",
+        "https://maps.google.com/?cid=13492628883969206897"
+      ],
+      "potentialAction": [
+        {
+          "@type": "QuoteAction",
+          "name": "Get a Free Insurance Quote",
+          "target": "https://www.billlayneinsurance.com/get-quote"
+        },
+        {
+          "@type": "ReserveAction",
+          "name": "Schedule an Appointment",
+          "target": "https://www.billlayneinsurance.com/contact-us/"
+        }
+      ]
+    },
+    {
+      "@type": "Service",
+      "@id": "https://www.billlayneinsurance.com/#insurance-service",
+      "name": "Independent Insurance Comparison",
+      "description": "We compare quotes through our trusted carrier network to find competitive auto, home, and business insurance rates in North Carolina.",
+      "serviceType": "Insurance Brokerage",
+      "provider": {
+        "@id": "https://www.billlayneinsurance.com/#agency"
+      },
+      "areaServed": {
+        "@type": "AdministrativeArea",
+        "name": "North Carolina"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.billlayneinsurance.com/#website",
+      "name": "Bill Layne Insurance Agency",
+      "url": "https://www.billlayneinsurance.com/",
+      "description": "Independent insurance agency in Elkin, NC comparing multiple carriers for auto, home, and business insurance.",
+      "inLanguage": [
+        "en-US",
+        "es-US"
+      ],
+      "copyrightYear": "2026",
+      "copyrightHolder": {
+        "@id": "https://www.billlayneinsurance.com/#agency"
+      },
+      "publisher": {
+        "@id": "https://www.billlayneinsurance.com/#agency"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://www.billlayneinsurance.com/#webpage",
+      "name": "Bill Layne Insurance Agency - Independent Insurance in Elkin, NC",
+      "url": "https://www.billlayneinsurance.com/",
+      "datePublished": "2005-06-01",
+      "dateModified": "2026-07-02",
+      "reviewedBy": {
+        "@id": "https://www.billlayneinsurance.com/#founder"
+      },
+      "isPartOf": {
+        "@id": "https://www.billlayneinsurance.com/#website"
+      },
+      "about": {
+        "@id": "https://www.billlayneinsurance.com/#agency"
+      },
+      "speakable": {
+        "@type": "SpeakableSpecification",
+        "cssSelector": [
+          "#home h1",
+          ".accordion-btn",
+          ".accordion-content"
+        ]
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://www.billlayneinsurance.com/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How much can I save on car insurance in North Carolina?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "As an independent agency, Bill Layne Insurance compares rates from multiple trusted carriers to help find you a competitive rate. Your savings depend on your driving record, vehicle, and coverage needs."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you handle DL-123 filings in Elkin NC?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes! North Carolina uses Form DL-123 instead of SR-22. The DL-123 proves to the NC DMV that you carry minimum liability insurance. We handle same-day DL-123 filings for license reinstatement after DWI, lapse, or suspension."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the best way to bundle auto and home insurance in NC?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Bundling auto and home insurance is one of the easiest ways to save. Many of our carriers offer multi-policy discounts when you combine auto and home policies. We compare bundle rates across all carriers to maximize your potential savings."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What should I do if I have an insurance claim in North Carolina?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Call us first at (336) 835-1993. As your advocate, we advise on the claims process, help file the claim with the carrier, and ensure it is handled fairly and promptly. That is the advantage of a local agent."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you offer business insurance in Surry County NC?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, we provide comprehensive commercial insurance for Elkin and Surry County businesses, including General Liability, Workers Compensation, Commercial Auto, and Business Owners Policies (BOP)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the cheapest car insurance in North Carolina?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The cheapest car insurance in NC depends on your driving record, age, vehicle, and coverage needs. Bill Layne Insurance compares rates from Progressive, Travelers, and National General to find competitive pricing. NC minimum liability is 50/100/50."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much does home insurance cost in Surry County NC?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Home insurance costs in Surry County vary based on your home value, age, construction type, claims history, and coverage level. We shop multiple carriers to find a competitive rate and ensure your home is insured for full replacement cost."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is a DL-123 form in North Carolina?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "North Carolina does not use SR-22 forms. Instead, NC uses Form DL-123, a certificate proving you carry at least the state minimum liability insurance (50/100/50). It is required for license reinstatement after DWI, driving without insurance, or suspension. Unlike SR-22, the DL-123 is valid for only 30 days. We handle same-day DL-123 filings."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between an independent agent and a captive agent?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A captive agent like State Farm or Allstate can only sell one company's policies. An independent agent like Bill Layne Insurance represents multiple carriers, comparing rates and coverage across companies to find the best fit for your needs and budget."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need renters insurance in North Carolina?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "While not legally required in NC, renters insurance is highly recommended. Your landlord's policy does NOT cover your personal belongings in a fire, theft, or water damage. Policies are surprisingly affordable and can be bundled with auto for extra savings."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How often should I review my NC insurance policy?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Review your insurance at least once a year or after major life changes like buying a home, adding a teen driver, getting married, or starting a business. Rate changes and new discounts happen regularly across carriers."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I get insurance with a bad driving record in North Carolina?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. We work with carriers that specialize in high-risk and non-standard coverage in NC. Whether you have DWI convictions, at-fault accidents, or multiple violations, we shop multiple carriers to find you a policy with same-day DL-123 filing."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens if I let my NC car insurance lapse?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "In North Carolina, driving without insurance is a Class 1 misdemeanor. If coverage lapses, the NC DMV can revoke your registration and plates. You may also face higher premiums when reinstating because carriers view a lapse as a risk factor."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does my credit score affect my insurance rate in North Carolina?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, most NC carriers use a credit-based insurance score to help determine your premium. This differs from your lending credit score. Because each carrier weighs credit differently, shopping through an independent agent can help find a better rate."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the NC Safe Driver Incentive Plan (SDIP)?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The SDIP is North Carolina's unique points system that directly affects your insurance premiums. Points are assigned for at-fault accidents and moving violations and remain on your record for 3 years. Even one speeding ticket can increase your rate."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://www.billlayneinsurance.com/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://www.billlayneinsurance.com/"
+        }
+      ]
+    },
+    {
+      "@type": "VideoObject",
+      "@id": "https://www.billlayneinsurance.com/#video",
+      "name": "1-800 Number vs Independent Agent - There is a Clear Winner",
+      "description": "See the real difference between calling a faceless 1-800 number and working with a local independent insurance agent who fights for you.",
+      "thumbnailUrl": "https://img.youtube.com/vi/4hJT_wMCcCg/maxresdefault.jpg",
+      "uploadDate": "2025-01-01T00:00:00-05:00",
+      "duration": "PT2M4S",
+      "contentUrl": "https://www.youtube.com/watch?v=4hJT_wMCcCg",
+      "embedUrl": "https://www.youtube.com/embed/4hJT_wMCcCg",
+      "publisher": {
+        "@id": "https://www.billlayneinsurance.com/#agency"
+      }
+    }
+  ]
+}</script>
 
     <!-- Resource Hints (Performance/LCP) -->
     <link rel="preload" href="css/tailwind-index.css?v=20260810" as="style">
@@ -775,466 +717,7 @@
     <link rel="stylesheet" href="css/tailwind-index.css?v=20260810">
     <link rel="stylesheet" href="css/site-footer.css?v=20260830">
 
-    <style>
-        /* ==============================================
-           VIEW TRANSITIONS API — Cross-document smooth nav
-           Chrome 126+, Safari 18+. Browsers without support
-           silently ignore. Same-origin only.
-           ============================================== */
-        @view-transition { navigation: auto; }
-        ::view-transition-old(root),
-        ::view-transition-new(root) {
-            animation-duration: 0.22s;
-            animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        /* Disable view transitions for users who prefer reduced motion */
-        @media (prefers-reduced-motion: reduce) {
-            ::view-transition-group(*),
-            ::view-transition-old(*),
-            ::view-transition-new(*) { animation: none !important; }
-        }
-
-        /* Mobile Touch Fixes */
-
-        /* Accessibility: Reduced Motion */
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
-            }
-            .reveal { opacity: 1 !important; transform: none !important; }
-            .btn-shine::after { display: none !important; }
-        }
-
-        a, button, input[type="submit"], [role="button"] {
-            -webkit-tap-highlight-color: rgba(59, 130, 246, 0.2);
-            touch-action: manipulation;
-            cursor: pointer;
-        }
-
-        /* Testimonial Carousel - Hide scrollbar */
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-
-        @media (max-width: 768px) {
-            a, button { min-height: 44px; }
-        }
-
-        .glass-nav {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
-        /* Mobile/tablet: navbar needs dark bg so white logo text is visible */
-        @media (max-width: 767px) {
-            #navbar:not(.glass-nav) {
-                background: linear-gradient(to right, rgb(15 23 42), rgb(30 58 138));
-            }
-            .tablet-nav-quote {
-                display: none !important;
-            }
-        }
-        .bg-vivid-hero {
-            background: radial-gradient(circle at top right, rgb(30 64 175), rgb(2 6 23));
-            position: relative;
-        }
-        .bg-vivid-hero::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
-            opacity: 0.4;
-            mix-blend-mode: overlay;
-            pointer-events: none;
-        }
-        @media (min-width: 768px) {
-            #home.homepage-hero-2026 {
-                min-height: 600px !important;
-                padding-top: 104px !important;
-                padding-bottom: 58px !important;
-            }
-            #home.homepage-hero-2026 .homepage-hero-bg {
-                object-position: center;
-            }
-            #home.homepage-hero-2026 .homepage-hero-scrim {
-                background:
-                    radial-gradient(circle at 20% 18%, rgba(37, 99, 235, 0.35), transparent 28%),
-                    linear-gradient(90deg, rgba(3, 12, 27, 0.96) 0%, rgba(7, 23, 45, 0.83) 38%, rgba(7, 23, 45, 0.36) 62%, rgba(7, 23, 45, 0.08) 100%),
-                    linear-gradient(0deg, rgba(3, 12, 27, 0.74), rgba(3, 12, 27, 0) 44%);
-            }
-            .homepage-hero-copy {
-                max-width: 800px;
-            }
-            .homepage-hero-eyebrow {
-                display: block;
-                margin-bottom: 1rem;
-                color: #dbeafe;
-                font-size: clamp(0.95rem, 1.2vw, 1.1rem);
-                line-height: 1.45;
-                font-weight: 900;
-                letter-spacing: 0.18em;
-                text-transform: uppercase;
-                text-wrap: balance;
-                text-shadow: 0 4px 18px rgba(0, 0, 0, 0.28);
-            }
-            .homepage-hero-eyebrow i {
-                color: #fbbf24;
-                font-size: 1.05rem;
-                letter-spacing: 0;
-                margin-right: 0.65rem;
-            }
-            .homepage-hero-title {
-                margin: 0;
-                max-width: 850px;
-                color: #ffffff;
-                font-size: clamp(3.6rem, 5.7vw, 4.8rem);
-                line-height: 0.98;
-                font-weight: 900;
-                letter-spacing: -0.01em;
-                text-shadow: 0 7px 24px rgba(0, 0, 0, 0.42);
-            }
-            .homepage-hero-title .homepage-hero-gold {
-                color: #fbbf24;
-                letter-spacing: -0.02em;
-            }
-            .homepage-hero-title sup {
-                color: #fbbf24;
-                cursor: help;
-                font-size: 0.34em;
-                font-weight: 800;
-                margin-left: 0.08em;
-                vertical-align: super;
-            }
-            .homepage-hero-subhead {
-                max-width: 790px;
-                margin: 1.1rem 0 0;
-                color: rgba(255, 255, 255, 0.88);
-                font-size: clamp(1.25rem, 2vw, 1.5rem);
-                line-height: 1.43;
-                font-weight: 800;
-                letter-spacing: -0.03em;
-                text-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
-            }
-            .homepage-hero-ctas {
-                display: flex;
-                gap: 1.125rem;
-                max-width: 760px;
-                margin-top: 1.15rem;
-            }
-            .homepage-hero-ctas a {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                gap: 0.75rem;
-                min-height: 64px;
-                flex: 1;
-                border-radius: 18px;
-                padding: 0 2rem;
-                font-size: clamp(1.15rem, 1.8vw, 1.45rem);
-                font-weight: 950;
-                letter-spacing: -0.035em;
-                transition: transform 180ms ease, box-shadow 180ms ease;
-            }
-            .homepage-hero-ctas a:hover {
-                transform: translateY(-1px) scale(1.01);
-            }
-            /* ZIP capture form — mirrors the CTA button styling */
-            .homepage-hero-zip {
-                flex: 1.35;
-                display: flex;
-                gap: 0.6rem;
-                min-width: 0;
-            }
-            .homepage-hero-zip input[type="text"] {
-                width: clamp(6.75rem, 12vw, 10rem);
-                min-height: 64px;
-                border-radius: 18px;
-                border: 2px solid rgba(255, 255, 255, 0.9);
-                background: rgba(255, 255, 255, 0.96);
-                color: #0f172a;
-                font-size: 1.2rem;
-                font-weight: 800;
-                text-align: center;
-                letter-spacing: 0.06em;
-                box-shadow: 0 10px 26px rgba(0, 0, 0, 0.25);
-                transition: border-color 160ms ease, background 160ms ease;
-            }
-            .homepage-hero-zip input[type="text"]::placeholder {
-                color: rgba(15, 23, 42, 0.45);
-                font-weight: 700;
-                letter-spacing: 0;
-                font-size: 1.05rem;
-            }
-            .homepage-hero-zip input[type="text"]:focus {
-                outline: none;
-                border-color: #fbbf24;
-                background: #ffffff;
-            }
-            .homepage-hero-zip button {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                gap: 0.6rem;
-                min-height: 64px;
-                flex: 1;
-                border: none;
-                cursor: pointer;
-                border-radius: 18px;
-                padding: 0 1.1rem;
-                font-family: inherit;
-                font-size: clamp(1.1rem, 1.6vw, 1.35rem);
-                font-weight: 950;
-                letter-spacing: -0.035em;
-                white-space: nowrap;
-                transition: transform 180ms ease, box-shadow 180ms ease;
-            }
-            .homepage-hero-zip button:hover {
-                transform: translateY(-1px) scale(1.01);
-            }
-            .homepage-hero-primary {
-                color: #07172d;
-                background: linear-gradient(135deg, #facc15, #f59e0b);
-                box-shadow: 0 20px 42px rgba(245, 158, 11, 0.3);
-            }
-            .homepage-hero-secondary {
-                color: #12316a;
-                background: #ffffff;
-                box-shadow: 0 18px 40px rgba(0, 0, 0, 0.2);
-            }
-            .homepage-hero-micro {
-                margin-top: 0.75rem;
-                color: rgba(255, 255, 255, 0.62);
-                font-size: 0.9rem;
-                font-weight: 800;
-            }
-            .homepage-trust-strip {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 1rem 1.35rem;
-                margin-top: 1rem;
-                color: rgba(255, 255, 255, 0.68);
-                font-size: 0.92rem;
-                font-weight: 900;
-                letter-spacing: 0.04em;
-                text-transform: uppercase;
-            }
-            .homepage-trust-strip span,
-            .homepage-trust-strip a {
-                display: inline-flex;
-                align-items: center;
-                gap: 0.45rem;
-                text-shadow: 0 3px 12px rgba(0, 0, 0, 0.28);
-            }
-            .homepage-hero-disclaimer {
-                margin-top: 0.85rem;
-                color: rgba(255, 255, 255, 0.45);
-                font-size: 0.78rem;
-                font-weight: 600;
-                letter-spacing: 0.015em;
-                text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            }
-        }
-        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-        .reveal.active { opacity: 1; transform: translateY(0); }
-        @media (max-width: 767px) {
-            section { scroll-margin-top: 60px; }
-            .reveal { transform: translateY(20px); }
-        }
-        /* Mobile hero ZIP capture form */
-        .hero-zip-form {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-        .hero-zip-form input[type="text"] {
-            flex: 0 0 34%;
-            min-width: 0;
-            height: 52px;
-            border-radius: 14px;
-            border: 2px solid rgba(255, 255, 255, 0.9);
-            background: rgba(255, 255, 255, 0.96);
-            color: #0f172a;
-            font-size: 16px; /* >=16px prevents iOS auto-zoom */
-            font-weight: 800;
-            text-align: center;
-            letter-spacing: 0.04em;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-        }
-        .hero-zip-form input[type="text"]::placeholder {
-            color: rgba(15, 23, 42, 0.45);
-            font-weight: 700;
-            letter-spacing: 0;
-        }
-        .hero-zip-form input[type="text"]:focus {
-            outline: none;
-            border-color: #fbbf24;
-            background: #ffffff;
-        }
-        .hero-zip-form .hero-cta {
-            flex: 1;
-            margin-bottom: 0;
-            cursor: pointer;
-        }
-        /* Jump-link strip: sticky quick actions for the long mobile scroll.
-           Sits under the shrunken (h-16) navbar; hidden on md+ via .md:hidden. */
-        .jump-links {
-            position: sticky;
-            top: 64px;
-            z-index: 40;
-            display: flex;
-            gap: 8px;
-            padding: 8px 12px;
-            background: rgba(255, 255, 255, 0.97);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-bottom: 1px solid #e2e8f0;
-            box-shadow: 0 4px 14px rgba(12, 26, 46, 0.06);
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-        .jump-links::-webkit-scrollbar { display: none; }
-        .jump-link {
-            flex: 1 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            min-height: 44px;
-            padding: 6px 12px;
-            border-radius: 999px;
-            border: 1.5px solid #e2e8f0;
-            background: #f8fafc;
-            color: #0c1a2e;
-            font-size: 12px;
-            font-weight: 800;
-            line-height: 1;
-            text-decoration: none;
-            white-space: nowrap;
-        }
-        .jump-link i { flex: 0 0 12px; font-size: 12px; text-align: center; color: #2563eb; }
-        .jump-link:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
-        /* No gold chips in this strip on purpose: gold = quote action only
-           (hero + dock Check Savings). An Upload chip was gold 08-27..08-31
-           and it made gold mean two things on the first mobile screen. */
-        @media (max-width: 389px) {
-            .jump-links { gap: 6px; padding: 8px 10px; }
-            .jump-link { gap: 5px; padding: 6px 8px; font-size: 11px; }
-            .jump-link i { flex-basis: 11px; font-size: 11px; }
-        }
-        @media (max-width: 767px) {
-            /* Navbar (64px) + strip (~62px) must not cover the anchored section */
-            #policy-review { scroll-margin-top: 132px; }
-        }
-        @media (min-width: 768px) and (max-width: 1023px) {
-            #navbar:not(.glass-nav) {
-                background: linear-gradient(to right, rgb(15 23 42), rgb(30 58 138));
-            }
-            #home {
-                min-height: auto !important;
-                padding-top: 112px !important;
-                padding-bottom: 42px !important;
-            }
-            #home .max-w-7xl {
-                max-width: 860px;
-            }
-            #home .grid {
-                gap: 1.25rem;
-            }
-            #home h1 span.hidden.md\:block {
-                font-size: clamp(2.35rem, 5.2vw, 3rem) !important;
-                line-height: 1.02;
-            }
-            #home p.hidden.md\:block {
-                font-size: 1.05rem;
-                max-width: 42rem;
-            }
-            #home.homepage-hero-2026 {
-                min-height: 540px !important;
-                padding-top: 88px !important;
-                padding-bottom: 48px !important;
-            }
-            #home.homepage-hero-2026 .homepage-hero-copy {
-                max-width: 650px;
-            }
-            #home.homepage-hero-2026 .homepage-hero-title {
-                max-width: 650px;
-                font-size: clamp(3rem, 6vw, 3.55rem);
-                line-height: 0.98;
-            }
-            #home.homepage-hero-2026 .homepage-hero-subhead {
-                max-width: 610px;
-                font-size: 1.05rem;
-            }
-            #home.homepage-hero-2026 .homepage-hero-ctas {
-                max-width: 760px;
-            }
-        }
-        @media (min-width: 1280px) {
-            .desktop-nav-links {
-                display: flex !important;
-            }
-            .tablet-nav-quote {
-                display: none !important;
-            }
-            .desktop-nav-quote {
-                display: block !important;
-            }
-        }
-        .glass-dark { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-
-        /* Desktop Nav Link Styles */
-        .nav-link-item {
-            position: relative;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
-        .nav-link-item::after {
-            content: '';
-            position: absolute;
-            bottom: 2px;
-            left: 50%;
-            transform: translateX(-50%) scaleX(0);
-            width: 60%;
-            height: 2px;
-            border-radius: 2px;
-            background: linear-gradient(90deg, rgb(251 191 36), rgb(245 158 11));
-            transition: transform 0.3s ease;
-        }
-        .nav-link-item:hover::after {
-            transform: translateX(-50%) scaleX(1);
-        }
-        .nav-link-item.scrolled::after {
-            background: linear-gradient(90deg, rgb(37 99 235), rgb(30 64 175));
-        }
-        .btn-shine { position: relative; overflow: hidden; }
-        .btn-shine::after {
-            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.5), transparent);
-            transform: skewX(-25deg); animation: shine 6s infinite;
-        }
-        @keyframes shine { 0%, 50% { left: -100%; } 100% { left: 200%; } }
-
-        .messenger-float{position:fixed;bottom:24px;right:20px;z-index:60;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#0078FF,#00C6FF);color:#fff;display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 4px 20px rgba(0,120,255,0.4);text-decoration:none;transition:all 0.25s;cursor:pointer}
-        .messenger-float:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(0,120,255,0.5)}
-        .messenger-float:active{transform:scale(0.95)}
-        .messenger-float .pulse-ring{position:absolute;width:100%;height:100%;border-radius:50%;border:2px solid rgba(0,120,255,0.4);animation:msgPulse 2.5s ease-out infinite}
-        @keyframes msgPulse{0%{transform:scale(1);opacity:0.6}100%{transform:scale(1.6);opacity:0}}
-        @media(max-width:768px){.messenger-float{display:none}}
-        .accordion-content { transition: max-height 0.3s ease, opacity 0.3s ease; max-height: 0; opacity: 0; overflow: hidden; }
-        .accordion-content.open { opacity: 1; }
-        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
-        .marquee-mask {
-            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-            -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-        }
-        /* overflow-x: clip (not hidden) keeps sticky #navbar working;
-           !important beats mobile-dock.css html,body{overflow-x:hidden} */
-        html, body { overflow-x: clip !important; }
-    </style>
+    <link rel="stylesheet" href="css/index-extras.css?v=20260902">
 
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans selection:bg-primary-100 selection:text-primary-900">
@@ -2030,635 +1513,9 @@
             <div id="blCoverageWidget" class="hidden md:block reveal"></div>
         </div>
 
-        <style>
-            #blCoverageWidget {
-                --bl-primary: #1e40af;
-                --bl-primary-dark: #1e3a8a;
-                --bl-primary-bright: #2563eb;
-                --bl-blue-soft: #dbeafe;
-                --bl-text: #0f172a;
-                --bl-muted: #64748b;
-                --bl-card-bg: #ffffff;
-                --bl-border: #e2e8f0;
-                --bl-border-soft: #f1f5f9;
-                --bl-radius: 1.5rem;
-                --bl-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-            }
+        
 
-            .bl-widget {
-                display: grid;
-                grid-template-columns: 1.2fr .8fr;
-                gap: 24px;
-                align-items: start;
-                font-family: 'Inter', sans-serif;
-            }
-
-            .bl-graphic-card {
-                background: var(--bl-card-bg);
-                border-radius: var(--bl-radius);
-                box-shadow: var(--bl-shadow);
-                overflow: hidden;
-                position: relative;
-                border: 1px solid rgb(226 232 240 / 0.8);
-            }
-
-            .bl-graphic-topbar {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 16px 20px;
-                border-bottom: 1px solid var(--bl-border-soft);
-                background: var(--bl-card-bg);
-            }
-
-            .bl-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
-
-            .bl-tab {
-                border: 1px solid var(--bl-border);
-                background: #f8fafc;
-                color: var(--bl-muted);
-                border-radius: 999px;
-                padding: 8px 16px;
-                font-size: 13px;
-                font-weight: 700;
-                cursor: pointer;
-                transition: all 0.2s ease;
-            }
-            .bl-tab:hover { background: var(--bl-card-bg); border-color: var(--bl-primary-bright); color: var(--bl-primary-bright); }
-            .bl-tab[aria-pressed="true"] {
-                background: var(--bl-primary);
-                border-color: var(--bl-primary);
-                color: #fff;
-                box-shadow: 0 4px 6px -1px rgb(30 64 175 / 0.3);
-            }
-
-            .bl-graphic-wrap {
-                position: relative;
-                width: 100%;
-                aspect-ratio: 16/10;
-                background: var(--bl-border-soft);
-                overflow: hidden;
-            }
-
-            .bl-graphic-bg {
-                position: absolute;
-                inset: 0;
-                background-size: cover;
-                background-position: center;
-                transition: opacity 0.4s ease;
-            }
-
-            .bg-home { background-image: url("/img/coverage/home.webp"); }
-            .bg-auto { background-image: url("/img/coverage/auto.webp"); }
-            .bg-business { background-image: url("/img/coverage/business.webp"); }
-
-            .bl-overlay {
-                position: absolute; inset: 0;
-                background: linear-gradient(to top, rgb(15 23 42 / 0.4), transparent);
-            }
-
-            .bl-hotspot {
-                position: absolute;
-                transform: translate(-50%, -50%);
-                width: 44px; height: 44px;
-                border-radius: 999px;
-                border: 2.5px solid #fff;
-                background: rgb(30 64 175 / 0.88);
-                backdrop-filter: blur(4px);
-                box-shadow: 0 4px 14px rgb(0 0 0 / 0.35), 0 0 0 0 rgb(37 99 235 / 0.45);
-                display: grid;
-                place-items: center;
-                cursor: pointer;
-                transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-                animation: bl-pulse 2.5s infinite;
-            }
-            .bl-hotspot i {
-                color: #fff;
-                font-size: 16px;
-                filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
-                transition: color 0.2s;
-            }
-            .bl-hotspot:hover {
-                transform: translate(-50%, -50%) scale(1.2);
-                background: var(--bl-card-bg);
-                border-color: #fff;
-                box-shadow: 0 6px 20px rgb(37 99 235 / 0.45);
-            }
-            .bl-hotspot:hover i { color: var(--bl-primary); }
-            .bl-hotspot-active {
-                background: var(--bl-card-bg) !important;
-                box-shadow: 0 6px 20px rgb(37 99 235 / 0.45) !important;
-                animation: none !important;
-                transform: translate(-50%, -50%) scale(1.15);
-            }
-            .bl-hotspot-active i { color: var(--bl-primary) !important; }
-            @keyframes bl-pulse {
-                0% { box-shadow: 0 4px 14px rgb(0 0 0 / 0.35), 0 0 0 0 rgb(37 99 235 / 0.45); }
-                70% { box-shadow: 0 4px 14px rgb(0 0 0 / 0.35), 0 0 0 12px rgb(37 99 235 / 0); }
-                100% { box-shadow: 0 4px 14px rgb(0 0 0 / 0.35), 0 0 0 0 rgb(37 99 235 / 0); }
-            }
-
-            .bl-panel {
-                background: var(--bl-card-bg);
-                border-radius: var(--bl-radius);
-                box-shadow: var(--bl-shadow);
-                overflow: hidden;
-                border: 1px solid rgb(226 232 240 / 0.8);
-                height: 100%;
-                min-height: 400px;
-                display: flex;
-                flex-direction: column;
-            }
-
-            .bl-panel-header {
-                padding: 20px;
-                background: linear-gradient(to right, #f8fafc, var(--bl-card-bg));
-                border-bottom: 1px solid var(--bl-border-soft);
-            }
-            .bl-panel-header h3 {
-                margin: 0;
-                font-family: 'Outfit', sans-serif;
-                font-weight: 800;
-                font-size: 1.25rem;
-                color: var(--bl-primary);
-            }
-            .bl-panel-header p {
-                margin: 4px 0 0 0;
-                font-size: 0.875rem;
-                color: var(--bl-muted);
-            }
-
-            .bl-panel-body { padding: 20px; flex: 1; }
-
-            .bl-info-row { margin-bottom: 16px; }
-            .bl-label {
-                font-size: 0.7rem;
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
-                font-weight: 800;
-                color: #94a3b8;
-                margin-bottom: 4px;
-            }
-            .bl-value {
-                font-size: 0.95rem;
-                color: #334155;
-                line-height: 1.5;
-                font-weight: 500;
-            }
-
-            .bl-btn-group {
-                margin-top: auto;
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .bl-action-btn {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 12px;
-                border-radius: 12px;
-                font-weight: 700;
-                font-size: 0.9rem;
-                text-decoration: none;
-                transition: all 0.2s;
-            }
-            .bl-btn-solid {
-                background: var(--bl-primary);
-                color: white;
-                box-shadow: 0 4px 6px -1px rgb(37 99 235 / 0.2);
-            }
-            .bl-btn-solid:hover { background: var(--bl-primary-dark); transform: translateY(-1px); }
-
-            .bl-btn-outline {
-                background: white;
-                border: 1px solid var(--bl-border);
-                color: #475569;
-            }
-            .bl-btn-outline:hover { background: #f8fafc; border-color: #cbd5e1; }
-
-            .bl-close { display: none; }
-
-            .bl-mobile-guide {
-                background: #fff;
-                border: 1px solid rgb(226 232 240 / 0.9);
-                border-radius: 1.5rem;
-                overflow: hidden;
-                box-shadow: 0 18px 35px rgb(15 23 42 / 0.08);
-            }
-            .bl-mobile-tabs {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 8px;
-                padding: 12px;
-                background: #f8fafc;
-                border-bottom: 1px solid #e2e8f0;
-            }
-            .bl-mobile-tab {
-                border: 1px solid #e2e8f0;
-                border-radius: 14px;
-                background: #fff;
-                color: #475569;
-                min-height: 52px;
-                font-size: 12px;
-                font-weight: 900;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 6px;
-            }
-            .bl-mobile-tab[aria-pressed="true"] {
-                background: #1e40af;
-                border-color: #1e40af;
-                color: #fff;
-                box-shadow: 0 10px 18px rgb(30 64 175 / 0.22);
-            }
-            .bl-mobile-body { padding: 14px; background: linear-gradient(180deg, #ffffff, #f8fafc); }
-            .bl-mobile-visual {
-                position: relative;
-                min-height: 190px;
-                border-radius: 20px;
-                overflow: hidden;
-                margin-bottom: 12px;
-                border: 1px solid rgb(219 234 254 / 0.9);
-                box-shadow: 0 18px 28px rgb(15 23 42 / 0.14);
-                isolation: isolate;
-            }
-            .bl-mobile-visual-bg {
-                position: absolute;
-                inset: 0;
-                background-size: cover;
-                background-position: center;
-                transform: scale(1.02);
-            }
-            .bl-mobile-visual::after {
-                content: "";
-                position: absolute;
-                inset: 0;
-                background: linear-gradient(180deg, rgb(15 23 42 / 0.12), rgb(15 23 42 / 0.78));
-                z-index: 1;
-            }
-            .bl-mobile-visual-content {
-                position: absolute;
-                inset: auto 14px 14px 14px;
-                z-index: 2;
-                color: #fff;
-            }
-            .bl-mobile-visual-kicker {
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-                border-radius: 999px;
-                background: rgb(255 255 255 / 0.16);
-                border: 1px solid rgb(255 255 255 / 0.25);
-                padding: 6px 9px;
-                font-size: 0.68rem;
-                font-weight: 900;
-                letter-spacing: 0.08em;
-                text-transform: uppercase;
-                backdrop-filter: blur(8px);
-            }
-            .bl-mobile-visual h3 {
-                margin: 10px 0 0;
-                font-family: 'Outfit', sans-serif;
-                font-size: 1.35rem;
-                line-height: 1.05;
-                font-weight: 900;
-                text-shadow: 0 2px 10px rgb(0 0 0 / 0.35);
-            }
-            .bl-mobile-visual-chips {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 7px;
-                margin-top: 10px;
-            }
-            .bl-mobile-visual-chip {
-                display: inline-flex;
-                align-items: center;
-                gap: 5px;
-                border-radius: 999px;
-                background: rgb(255 255 255 / 0.92);
-                color: #1e40af;
-                padding: 5px 8px;
-                font-size: 0.7rem;
-                font-weight: 900;
-                box-shadow: 0 8px 15px rgb(15 23 42 / 0.18);
-            }
-            .bl-mobile-intro {
-                border-radius: 18px;
-                background: linear-gradient(135deg, #eff6ff, #ffffff);
-                border: 1px solid #dbeafe;
-                padding: 14px;
-                margin-bottom: 12px;
-            }
-            .bl-mobile-intro h3 {
-                margin: 0;
-                font-family: 'Outfit', sans-serif;
-                font-size: 1.15rem;
-                font-weight: 900;
-                color: #0f172a;
-            }
-            .bl-mobile-intro p {
-                margin: 4px 0 0;
-                color: #475569;
-                font-size: 0.88rem;
-                line-height: 1.45;
-            }
-            .bl-mobile-card {
-                border: 1px solid #e2e8f0;
-                border-radius: 18px;
-                background: #fff;
-                overflow: hidden;
-                margin-top: 10px;
-            }
-            .bl-mobile-toggle {
-                width: 100%;
-                border: 0;
-                background: #fff;
-                color: #0f172a;
-                padding: 14px;
-                text-align: left;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 12px;
-                font-weight: 900;
-            }
-            .bl-mobile-toggle span {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
-            .bl-mobile-toggle i {
-                color: #1e40af;
-            }
-            .bl-mobile-chevron {
-                color: #94a3b8 !important;
-                transition: transform 0.2s ease;
-            }
-            .bl-mobile-toggle[aria-expanded="true"] .bl-mobile-chevron {
-                transform: rotate(180deg);
-            }
-            .bl-mobile-content {
-                display: none;
-                border-top: 1px solid #f1f5f9;
-                padding: 0 14px 14px;
-            }
-            .bl-mobile-toggle[aria-expanded="true"] + .bl-mobile-content {
-                display: block;
-            }
-            .bl-mobile-row {
-                border-radius: 14px;
-                padding: 12px;
-                margin-top: 10px;
-                background: #f8fafc;
-                border: 1px solid #e2e8f0;
-            }
-            .bl-mobile-row strong {
-                display: block;
-                color: #0f172a;
-                font-size: 0.78rem;
-                text-transform: uppercase;
-                letter-spacing: 0.08em;
-                margin-bottom: 4px;
-            }
-            .bl-mobile-row p {
-                color: #475569;
-                font-size: 0.88rem;
-                line-height: 1.45;
-                margin: 0;
-            }
-            .bl-mobile-actions {
-                display: grid;
-                grid-template-columns: 1fr;
-                gap: 10px;
-                margin-top: 14px;
-            }
-
-            @media (max-width: 768px) {
-                .bl-widget { grid-template-columns: 1fr; gap: 0; }
-                .bl-graphic-card { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom: none; }
-                .bl-panel {
-                    border-top-left-radius: 0; border-top-right-radius: 0;
-                    border-top: 1px solid var(--bl-border-soft);
-                    min-height: auto;
-                }
-                .bl-tabs { justify-content: center; width: 100%; }
-                .bl-tab { flex: 1; text-align: center; }
-            }
-            @media (min-width: 769px) {
-                .bl-hotspot { width: 48px; height: 48px; }
-                .bl-hotspot i { font-size: 18px; }
-            }
-        </style>
-
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                const CONFIG = {
-                    cta: {
-                        quote: "get-quote.html",
-                        learn: "tel:3368351993"
-                    }
-                };
-
-                const DATA = {
-                    home: {
-                        label: "Home",
-                        icon: "fas fa-home",
-                        bgClass: "bg-home",
-                        title: "Home Insurance",
-                        subtitle: "Plain-English examples from common NC home coverage conversations.",
-                        hotspots: [
-                            { x: 50, y: 45, icon: "fas fa-home", title: "Dwelling Coverage", text: "Pays to rebuild the house after covered damage such as fire, wind, or hail.", gap: "The limit should reflect rebuild cost, not what the home might sell for. Older estimates can leave a family short after a major claim.", example: "Example: A kitchen fire damages walls, cabinets, flooring, and smoke cleanup. The dwelling limit is what pays to repair the structure.", cta: "Check My Limit" },
-                            { x: 25, y: 65, icon: "fas fa-shield-alt", title: "Liability Protection", text: "Protects your savings if someone is hurt on your property or you are legally responsible for injury or damage.", gap: "Many households carry basic limits that may not fit their assets, pets, pool, trampoline, or teen-driver exposure.", example: "Example: A guest falls on icy steps and needs surgery. Liability coverage can help with legal defense and settlement costs.", cta: "Review Liability" },
-                            { x: 75, y: 30, icon: "fas fa-cloud-showers-heavy", title: "Roof & Storms", text: "Helps with covered wind or hail roof damage, depending on the deductible and roof settlement terms.", gap: "In NC, wind/hail deductibles and older-roof ACV rules can surprise people. A roof claim may not pay like a full replacement check.", example: "Example: A hailstorm damages shingles. The difference between replacement cost and ACV can change what you pay out of pocket.", cta: "Roof Check" },
-                            { x: 85, y: 55, icon: "fas fa-warehouse", title: "Detached Garages & Sheds", text: "Covers structures not attached to the home, such as detached garages, sheds, fences, and some outbuildings.", gap: "The automatic limit may be too low for a large garage, pole barn, workshop, or building with equipment inside.", example: "Example: A tree falls on a detached garage. Other Structures coverage is the bucket that may respond.", cta: "Check Detached" },
-                            { x: 40, y: 65, icon: "fas fa-couch", title: "Personal Property", text: "Covers belongings such as furniture, clothes, electronics, tools, and household items.", gap: "Replacement cost, special limits, receipts, and a home inventory matter. Jewelry, guns, tools, and collectibles may need extra scheduling.", example: "Example: Smoke ruins furniture and electronics. A room-by-room inventory helps prove what you owned.", cta: "Protect Stuff" }
-                        ]
-                    },
-                    auto: {
-                        label: "Auto",
-                        icon: "fas fa-car",
-                        bgClass: "bg-auto",
-                        title: "Auto Insurance",
-                        subtitle: "Common auto coverage choices that affect NC drivers after a claim.",
-                        hotspots: [
-                            { x: 30, y: 55, icon: "fas fa-user-shield", title: "Liability Limits", text: "Pays others when you cause injury or property damage in an accident.", gap: "Minimum liability can be quickly exhausted in a serious crash. Higher limits and umbrella coverage may be worth reviewing.", example: "Example: You rear-end a vehicle with multiple passengers. Liability limits determine how much protection you have before personal assets are exposed.", cta: "Check Limits" },
-                            { x: 65, y: 60, icon: "fas fa-car-crash", title: "Collision", text: "Helps repair your vehicle when you hit another car or object, subject to your deductible.", gap: "Deductible choice changes both monthly premium and claim-day cost. Some older vehicles may not justify full coverage.", example: "Example: You slide into a guardrail. Collision is the coverage that can help repair your own car.", cta: "Compare Deductibles" },
-                            { x: 70, y: 35, icon: "fas fa-tree", title: "Comprehensive", text: "Covers non-collision losses such as deer, theft, vandalism, falling objects, fire, and glass.", gap: "Rural NC drivers often think only about collision, but deer and falling limbs are common comprehensive losses.", example: "Example: A deer runs into the front of your car on a dark road. Comprehensive is usually the coverage involved.", cta: "Add Deer Coverage" },
-                            { x: 20, y: 40, icon: "fas fa-key", title: "Rental Reimbursement", text: "Helps pay for a rental while your car is repaired after a covered claim.", gap: "It is easy to skip because it looks small on the quote, but being without a car for two weeks can be expensive.", example: "Example: Your car sits at the body shop waiting on parts. Rental coverage can keep you driving.", cta: "Add Rental" },
-                            { x: 85, y: 70, icon: "fas fa-truck-pickup", title: "Towing & Labor", text: "Helps with towing, jump starts, lockouts, and roadside service depending on the carrier.", gap: "It is not the same with every company. Mileage limits and service rules matter.", example: "Example: Your car will not start after work. Towing and labor can help avoid a large unexpected tow bill.", cta: "Add Roadside" }
-                        ]
-                    },
-                    business: {
-                        label: "Business",
-                        icon: "fas fa-briefcase",
-                        bgClass: "bg-business",
-                        title: "Business Owners",
-                        subtitle: "Simple coverage examples for local shops, contractors, offices, and service businesses.",
-                        hotspots: [
-                            { x: 35, y: 60, icon: "fas fa-balance-scale", title: "General Liability", text: "Helps protect against injury or property-damage claims tied to your business operations.", gap: "A certificate requirement is not the same as having the right limits or endorsements for your actual work.", example: "Example: A customer trips in your office or you damage a client's property while working. General liability is the starting point.", cta: "Get Liability Quote" },
-                            { x: 60, y: 50, icon: "fas fa-tools", title: "Property, Tools & Inventory", text: "Helps cover business property such as equipment, tools, stock, furniture, and sometimes the building.", gap: "Tools in transit, rented equipment, outdoor signs, and stock at a jobsite may need special attention.", example: "Example: A fire damages inventory and shop equipment. Property coverage helps keep one loss from wiping out years of work.", cta: "Protect Assets" },
-                            { x: 75, y: 25, icon: "fas fa-laptop-code", title: "Cyber & Data Risk", text: "Helps when a business is hit by a data breach, ransomware, phishing, or payment-card problem.", gap: "Small businesses are targets too. Taking cards, storing client info, or using email invoices creates exposure.", example: "Example: An employee clicks a phishing email and customer data is exposed. Cyber coverage can help with response costs.", cta: "Ask About Cyber" }
-                        ]
-                    }
-                };
-
-                const mount = document.getElementById("blCoverageWidget");
-                const mobileMount = document.getElementById("blCoverageMobile");
-                let activeTab = "home";
-                let selectedHotspot = null;
-                let activeMobileTab = "home";
-                let openMobileIndex = 0;
-
-                function trackCoverageGuide(action, params = {}) {
-                    if (typeof gtag === "function") {
-                        gtag("event", "homepage_coverage_guide_" + action, {
-                            event_category: "homepage",
-                            ...params
-                        });
-                    }
-                }
-
-                function render() {
-                    if (!mount) return;
-                    const topic = DATA[activeTab];
-                    const displayData = selectedHotspot || { title: topic.title, text: topic.subtitle, cta: "Start Quote" };
-
-                    let hotspotsHtml = topic.hotspots.map((h, i) => `
-                        <button class="bl-hotspot${selectedHotspot === h ? ' bl-hotspot-active' : ''}" style="left:${h.x}%; top:${h.y}%;" onclick="window.selectHotspot(${i})" aria-label="${h.title}">
-                            <i class="${h.icon}"></i>
-                        </button>
-                    `).join('');
-
-                    let tabsHtml = Object.keys(DATA).map(key => `
-                        <button class="bl-tab" aria-pressed="${activeTab === key}" onclick="window.selectTab('${key}')"><i class="${DATA[key].icon}" style="margin-right:6px;" aria-hidden="true"></i>${DATA[key].label}</button>
-                    `).join('');
-
-                    mount.innerHTML = `
-                        <div class="bl-widget">
-                            <div class="bl-graphic-card">
-                                <div class="bl-graphic-topbar">
-                                    <div class="bl-tabs">${tabsHtml}</div>
-                                </div>
-                                <div class="bl-graphic-wrap">
-                                    <div class="bl-graphic-bg ${topic.bgClass}"></div>
-                                    <div class="bl-overlay"></div>
-                                    ${hotspotsHtml}
-                                </div>
-                            </div>
-                            <div class="bl-panel">
-                                <div class="bl-panel-header">
-                                    <h3>${displayData.title}</h3>
-                                    <p>${selectedHotspot ? "Coverage Details" : "Overview"}</p>
-                                </div>
-                                <div class="bl-panel-body">
-                                    <div class="bl-info-row">
-                                        <div class="bl-label">${selectedHotspot ? "What it covers" : "How to use it"}</div>
-                                        <div class="bl-value">${displayData.text}</div>
-                                    </div>
-                                    ${selectedHotspot ? `<div class="bl-info-row"><div class="bl-label">Common gap</div><div class="bl-value">${displayData.gap}</div></div>` : ''}
-                                    ${selectedHotspot ? `<div class="bl-info-row"><div class="bl-label">Example claim</div><div class="bl-value">${displayData.example}</div></div>` : ''}
-
-                                    <div class="bl-btn-group">
-                                        <a href="${CONFIG.cta.quote}" class="bl-action-btn bl-btn-solid">${selectedHotspot ? displayData.cta : "Compare My Coverage"}</a>
-                                        <a href="${CONFIG.cta.learn}" class="bl-action-btn bl-btn-outline">Call Agent (336) 835-1993</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                function renderMobile() {
-                    if (!mobileMount) return;
-                    const topic = DATA[activeMobileTab];
-                    const tabsHtml = Object.keys(DATA).map(key => `
-                        <button class="bl-mobile-tab" type="button" aria-pressed="${activeMobileTab === key}" onclick="window.selectMobileCoverageTab('${key}')">
-                            <i class="${DATA[key].icon}" aria-hidden="true"></i>${DATA[key].label}
-                        </button>
-                    `).join('');
-
-                    const cardsHtml = topic.hotspots.map((h, i) => {
-                        const isOpen = openMobileIndex === i;
-                        return `
-                            <div class="bl-mobile-card">
-                                <button class="bl-mobile-toggle" type="button" aria-expanded="${isOpen}" onclick="window.toggleMobileCoverage(${i})">
-                                    <span><i class="${h.icon}" aria-hidden="true"></i>${h.title}</span>
-                                    <i class="fas fa-chevron-down bl-mobile-chevron" aria-hidden="true"></i>
-                                </button>
-                                <div class="bl-mobile-content">
-                                    <div class="bl-mobile-row"><strong>What it covers</strong><p>${h.text}</p></div>
-                                    <div class="bl-mobile-row"><strong>Common gap</strong><p>${h.gap}</p></div>
-                                    <div class="bl-mobile-row"><strong>Example claim</strong><p>${h.example}</p></div>
-                                    <div class="bl-mobile-actions">
-                                        <a href="${CONFIG.cta.quote}" class="bl-action-btn bl-btn-solid">${h.cta}</a>
-                                        <a href="${CONFIG.cta.learn}" class="bl-action-btn bl-btn-outline">Call Us</a>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-                    const visualChips = topic.hotspots.slice(0, 3).map(h => `
-                        <span class="bl-mobile-visual-chip"><i class="${h.icon}" aria-hidden="true"></i>${h.title}</span>
-                    `).join('');
-
-                    mobileMount.innerHTML = `
-                        <div class="bl-mobile-guide">
-                            <div class="bl-mobile-tabs">${tabsHtml}</div>
-                            <div class="bl-mobile-body">
-                                <div class="bl-mobile-visual" role="img" aria-label="${topic.title} coverage illustration">
-                                    <div class="bl-mobile-visual-bg ${topic.bgClass}"></div>
-                                    <div class="bl-mobile-visual-content">
-                                        <span class="bl-mobile-visual-kicker"><i class="${topic.icon}" aria-hidden="true"></i> Coverage snapshot</span>
-                                        <h3>${topic.title}</h3>
-                                        <div class="bl-mobile-visual-chips">${visualChips}</div>
-                                    </div>
-                                </div>
-                                <div class="bl-mobile-intro">
-                                    <h3>${topic.title}</h3>
-                                    <p>${topic.subtitle}</p>
-                                </div>
-                                ${cardsHtml}
-                            </div>
-                        </div>
-                    `;
-                }
-
-                window.selectTab = (key) => {
-                    activeTab = key;
-                    selectedHotspot = null;
-                    render();
-                    trackCoverageGuide("tab", { coverage_type: key, viewport: "desktop" });
-                };
-
-                window.selectHotspot = (index) => {
-                    selectedHotspot = DATA[activeTab].hotspots[index];
-                    render();
-                    trackCoverageGuide("hotspot", { coverage_type: activeTab, hotspot: selectedHotspot.title, viewport: "desktop" });
-                };
-
-                window.selectMobileCoverageTab = (key) => {
-                    activeMobileTab = key;
-                    openMobileIndex = 0;
-                    renderMobile();
-                    trackCoverageGuide("tab", { coverage_type: key, viewport: "mobile" });
-                };
-
-                window.toggleMobileCoverage = (index) => {
-                    const topic = DATA[activeMobileTab];
-                    openMobileIndex = openMobileIndex === index ? -1 : index;
-                    renderMobile();
-                    if (openMobileIndex >= 0) {
-                        trackCoverageGuide("accordion", { coverage_type: activeMobileTab, hotspot: topic.hotspots[index].title, viewport: "mobile" });
-                    }
-                };
-
-                render();
-                renderMobile();
-            });
-        </script>
+        <script defer src="js/index-app.js?v=20260902"></script>
     </section>
 
     <!-- INTERACTIVE TOOLS — Homepage Lead Magnets (visible desktop + mobile) -->
@@ -2908,7 +1765,7 @@
                 <div class="bg-slate-50 rounded-2xl overflow-hidden border border-slate-100">
                     <button class="accordion-btn w-full px-5 sm:px-6 md:px-8 py-4 md:py-5 text-left flex justify-between font-bold text-slate-800 text-sm md:text-base">What is the best way to bundle auto and home insurance in NC?<i class="fas fa-chevron-down transition-transform"></i></button>
                     <div class="accordion-content px-5 sm:px-6 md:px-8">
-                        <div class="pb-6 pt-4 border-t text-slate-600 leading-relaxed">Bundling auto and home insurance is one of the easiest ways to save. Many of our carriers offer multi-policy discounts, <strong>typically ranging from 5-25%</strong>, when you combine auto and home (or renters) policies. Actual discounts vary by carrier and individual circumstances. We'll compare bundle rates across all our carriers to help maximize your potential savings.</div>
+                        <div class="pb-6 pt-4 border-t text-slate-600 leading-relaxed">Bundling auto and home insurance is one of the easiest ways to save. Many of our carriers offer <strong>multi-policy discounts</strong> when you combine auto and home (or renters) policies. The size of the discount varies by carrier and individual circumstances. We'll compare bundle rates across all our carriers to help maximize your potential savings.</div>
                     </div>
                 </div>
                 <div class="bg-slate-50 rounded-2xl overflow-hidden border border-slate-100">
@@ -3197,6 +2054,7 @@
         </div>
         <div class="max-w-4xl mx-auto px-4 mt-8 sm:mt-12 mb-8">
             <p class="text-xs text-slate-400 leading-relaxed text-center">Savings are not guaranteed. Individual savings will vary depending on coverage, driving record, vehicle, location, and other underwriting factors. Discounts and their availability vary by carrier and are subject to eligibility requirements. Not all applicants will qualify for the lowest rates. All insurance products are subject to the terms, conditions, and exclusions of the applicable insurance policy. Bill Layne Insurance Agency is a licensed independent insurance agency in North Carolina.</p>
+            <p class="text-xs text-slate-400 text-center mt-3"><a href="/about/" class="hover:text-white">About Bill</a> &middot; <a href="/about/editorial-policy/" class="hover:text-white">Editorial Policy</a> &middot; <a href="/about/advertising-disclosure/" class="hover:text-white">Advertising Disclosure</a> &middot; <a href="/privacy-policy/" class="hover:text-white">Privacy Policy</a> &middot; <a href="/terms/" class="hover:text-white">Terms of Use</a> &middot; <a href="/contact-us/" class="hover:text-white">Contact</a></p>
             <p class="mt-4 text-xs text-slate-400 leading-relaxed text-center">
                 <span class="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2">
                     <i class="fas fa-shield-halved text-emerald-300" aria-hidden="true"></i>
@@ -3260,265 +2118,7 @@
     </a>
 
     <!-- UI SCRIPTS (Must run even if AI fails) -->
-    <script data-cfasync="false" src="cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Dynamic Date
-            const dateEl = document.getElementById('current-date-display');
-            if(dateEl) {
-                const now = new Date();
-                const month = now.toLocaleString('default', { month: 'long' });
-                const year = now.getFullYear();
-                dateEl.textContent = `${month} ${year}`;
-            }
-
-            const navbar = document.getElementById('navbar');
-            const menuBtn = document.getElementById('menu-btn');
-            const menuClose = document.getElementById('menu-close');
-            const menuDrawer = document.getElementById('menu-drawer');
-            const menuOverlay = document.getElementById('menu-overlay');
-
-            // Scroll Effects - Handle Sticky Header Appearance
-            window.addEventListener('scroll', () => {
-                const scrolled = window.scrollY > 50;
-
-                // Add glass background
-                navbar.classList.toggle('glass-nav', scrolled);
-                navbar.classList.toggle('bg-transparent', !scrolled);
-
-                // Adjust height
-                navbar.classList.toggle('h-16', scrolled);
-                navbar.classList.toggle('h-20', !scrolled);
-
-                // Change text colors for contrast on white background
-                const logoText = document.getElementById('nav-logo-text');
-                const logoAccent = document.getElementById('nav-logo-accent');
-                const tagline = document.getElementById('nav-tagline');
-                const phoneBtn = document.getElementById('nav-phone-btn');
-                const hamburgerLines = document.querySelectorAll('.nav-hamburger-line');
-
-                if (logoText) {
-                    logoText.classList.toggle('text-white', !scrolled);
-                    logoText.classList.toggle('text-slate-900', scrolled);
-                }
-                if (logoAccent) {
-                    logoAccent.classList.toggle('text-accent-400', !scrolled);
-                    logoAccent.classList.toggle('text-primary-600', scrolled);
-                }
-                if (tagline) {
-                    tagline.classList.toggle('text-indigo-200', !scrolled);
-                    tagline.classList.toggle('text-slate-500', scrolled);
-                }
-
-                if (phoneBtn) {
-                    phoneBtn.classList.toggle('border-slate-100', !scrolled);
-                    phoneBtn.classList.toggle('border-slate-200', scrolled);
-                }
-
-                // Hamburger lines color
-                hamburgerLines.forEach(line => {
-                    line.classList.toggle('bg-white', !scrolled);
-                    line.classList.toggle('bg-slate-900', scrolled);
-                });
-
-                // Desktop nav links color
-                const navLinks = document.querySelectorAll('.nav-link-item');
-                navLinks.forEach(link => {
-                    link.classList.toggle('text-white', !scrolled);
-                    link.classList.toggle('hover:text-accent-300', !scrolled);
-                    link.classList.toggle('text-slate-700', scrolled);
-                    link.classList.toggle('hover:text-primary-600', scrolled);
-                    link.classList.toggle('scrolled', scrolled);
-                });
-            });
-
-            // Mobile Menu Logic
-            const toggleMenu = (show) => {
-                menuDrawer.classList.toggle('translate-x-full', !show);
-                menuOverlay.classList.toggle('opacity-0', !show);
-                menuOverlay.classList.toggle('pointer-events-none', !show);
-                document.body.style.overflow = show ? 'hidden' : '';
-            };
-            if(menuBtn) menuBtn.addEventListener('click', () => toggleMenu(true));
-            if(menuClose) menuClose.addEventListener('click', () => toggleMenu(false));
-            if(menuOverlay) menuOverlay.addEventListener('click', () => toggleMenu(false));
-
-            // Auto-close menu when any link inside drawer is clicked
-            if(menuDrawer) {
-                menuDrawer.querySelectorAll('a').forEach(link => {
-                    link.addEventListener('click', () => toggleMenu(false));
-                });
-            }
-
-            // Accordion Logic
-            document.querySelectorAll('.accordion-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const content = btn.nextElementSibling;
-                    const icon = btn.querySelector('.fa-chevron-down');
-                    const isOpen = content.classList.contains('open');
-
-                    content.classList.toggle('open');
-                    content.style.maxHeight = isOpen ? '0' : content.scrollHeight + 'px';
-                    content.style.opacity = isOpen ? '0' : '1';
-                    if(icon) icon.style.transform = isOpen ? 'rotate(0)' : 'rotate(180deg)';
-                });
-            });
-
-            // Reveal animations
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
-            }, { threshold: 0.05, rootMargin: '0px 0px 200px 0px' });
-            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-            // Load heavier below-fold images only when a visitor is close to them.
-            const deferredImageObserver = 'IntersectionObserver' in window ? new IntersectionObserver((entries, imageObserver) => {
-                entries.forEach(entry => {
-                    if (!entry.isIntersecting) return;
-                    const image = entry.target;
-                    if (image.dataset.src) {
-                        image.src = image.dataset.src;
-                        image.removeAttribute('data-src');
-                    }
-                    imageObserver.unobserve(image);
-                });
-            }, { rootMargin: '500px 0px' }) : null;
-            document.querySelectorAll('img[data-src]').forEach(image => {
-                if (deferredImageObserver) {
-                    deferredImageObserver.observe(image);
-                } else {
-                    image.src = image.dataset.src;
-                    image.removeAttribute('data-src');
-                }
-            });
-
-            // Testimonial Auto-Rotation (mobile only)
-            if (window.innerWidth < 768) {
-                const carousel = document.getElementById('testimonial-carousel');
-                const dots = document.querySelectorAll('.testimonial-dot');
-                if (carousel && dots.length === 3) {
-                    const cards = carousel.querySelectorAll(':scope > div');
-                    let currentIndex = 0;
-                    let autoTimer = null;
-                    let pauseTimer = null;
-
-                    const updateDots = (activeIdx) => {
-                        dots.forEach((dot, i) => {
-                            dot.className = i === activeIdx
-                                ? 'testimonial-dot w-8 h-1.5 rounded-full bg-white/40'
-                                : 'testimonial-dot w-2 h-1.5 rounded-full bg-white/20';
-                        });
-                    };
-
-                    const cardObserver = new IntersectionObserver((entries) => {
-                        entries.forEach(entry => {
-                            if (entry.isIntersecting) {
-                                const idx = Array.from(cards).indexOf(entry.target);
-                                if (idx !== -1) { currentIndex = idx; updateDots(idx); }
-                            }
-                        });
-                    }, { root: carousel, threshold: 0.6 });
-                    cards.forEach(card => cardObserver.observe(card));
-
-                    const scrollToCard = (idx) => {
-                        if (cards[idx]) carousel.scrollTo({ left: cards[idx].offsetLeft - carousel.offsetLeft, behavior: 'smooth' });
-                    };
-                    const startAuto = () => { stopAuto(); autoTimer = setInterval(() => { currentIndex = (currentIndex + 1) % cards.length; scrollToCard(currentIndex); }, 5000); };
-                    const stopAuto = () => { if (autoTimer) { clearInterval(autoTimer); autoTimer = null; } };
-                    const pauseAndResume = () => { stopAuto(); if (pauseTimer) clearTimeout(pauseTimer); pauseTimer = setTimeout(startAuto, 10000); };
-
-                    carousel.addEventListener('touchstart', pauseAndResume, { passive: true });
-                    carousel.addEventListener('pointerdown', pauseAndResume);
-                    startAuto();
-                }
-            }
-
-            // Blog Preview Cards — load after the hero is settled so mobile LCP stays clean.
-            const blogGrid = document.getElementById('blog-preview-grid');
-            if (blogGrid) {
-                const loadBlogPreview = () => {
-                    if (blogGrid.dataset.loaded === 'true') return;
-                    blogGrid.dataset.loaded = 'true';
-                    fetch('blog/data/blogs.json', { cache: 'no-cache' })
-                        .then(r => r.json())
-                        .then(posts => {
-                            // Homepage authority slot: insurance-expertise posts only.
-                            // Community/lifestyle posts still live on the blog index + social.
-                            const lifestyleCats = ['Community Life', 'Community Safety'];
-                            const lifestyleIds = ['hwy-21-road-market-2026', 'surry-county-july-4th-events-2026',
-                                                  '2025-07-surry-fall-festivals', '2025-07-highway-21-treasure-hunt'];
-                            const featuredHomepageId = 'how-to-insure-street-legal-side-by-side-north-carolina';
-                            const eligiblePosts = posts.filter(p => !lifestyleCats.includes(p.category) && !lifestyleIds.includes(p.id));
-                            const featuredPost = eligiblePosts.find(p => p.id === featuredHomepageId);
-                            const latest = featuredPost
-                                ? [featuredPost, ...eligiblePosts.filter(p => p.id !== featuredHomepageId).slice(0, 2)]
-                                : eligiblePosts.slice(0, 3);
-                            blogGrid.innerHTML = latest.map(post => {
-                                const d = new Date(post.date + 'T12:00:00');
-                                const dateStr = post.id === featuredHomepageId
-                                    ? 'Updated Aug 3, 2026'
-                                    : d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
-                                const href = post.url.replace('./', '/blog/').replace(/\.html$/, '');
-                                return `<a href="${href}" class="group block bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all reveal">
-                                    <div class="aspect-video overflow-hidden" style="background:linear-gradient(135deg,#1e3a5f,#f59e0b)">
-                                        <img src="${post.imageUrl}" alt="${post.title}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" loading="lazy" fetchpriority="low" width="400" height="225">
-                                    </div>
-                                    <div class="p-5">
-                                        <div class="flex items-center gap-2 text-xs text-slate-400 mb-2">
-                                            <span>${dateStr}</span>
-                                            <span>&bull;</span>
-                                            <span>${post.readTime}</span>
-                                        </div>
-                                        <h3 class="font-bold text-slate-900 mb-2 group-hover:text-primary-600 transition-colors line-clamp-2">${post.title}</h3>
-                                        <p class="text-sm text-slate-500 line-clamp-2">${post.summary}</p>
-                                    </div>
-                                </a>`;
-                            }).join('');
-                            blogGrid.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-                            const viewAll = document.getElementById('blog-view-all');
-                            if (viewAll) viewAll.innerHTML = 'View All ' + posts.length + ' Articles <i class="fas fa-arrow-right text-sm"></i>';
-                        })
-                        .catch(() => {});
-                };
-                const blogObserver = new IntersectionObserver((entries) => {
-                    if (entries.some(entry => entry.isIntersecting)) {
-                        loadBlogPreview();
-                        blogObserver.disconnect();
-                    }
-                }, { rootMargin: '600px 0px' });
-                blogObserver.observe(blogGrid);
-                window.addEventListener('load', () => setTimeout(loadBlogPreview, 5000), { once: true });
-            }
-
-            // Business Hours Indicator
-            const checkHours = () => {
-                const now = new Date();
-                const est = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
-                const day = est.getDay();
-                const hour = est.getHours();
-                const isOpen = (day >= 1 && day <= 5) && (hour >= 9 && hour < 17);
-                const dot = document.getElementById('status-dot');
-                if(dot) dot.classList.toggle('hidden', !isOpen);
-            };
-            checkHours(); setInterval(checkHours, 60000);
-
-        });
-
-        // Zero-Weight Video Loader
-        const YOUTUBE_VIDEO_ID = "4hJT_wMCcCg";
-
-        window.loadYoutubeVideo = (container) => {
-            const iframe = document.createElement('iframe');
-            iframe.src = `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1`;
-            iframe.title = "YouTube video player";
-            iframe.frameBorder = "0";
-            iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-            iframe.allowFullscreen = true;
-            iframe.className = "w-full h-full absolute top-0 left-0";
-
-            // Clear container and append iframe
-            container.innerHTML = '';
-            container.appendChild(iframe);
-        };
-    </script>
+    <script data-cfasync="false" src="cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 
     <script defer src="js/mobile-dock.js"></script>
     <!-- GEO-PERSONALIZATION -->

@@ -12,9 +12,13 @@
     <!-- Microsoft Clarity -->
     <script type="text/javascript">
       (function(c,l,a,r,i,t,y){
+        // Microsoft Clarity, loaded after the page has painted so the recorder
+        // never competes with the hero image, fonts, or first input (INP).
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        function load(){ if(t)return; t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y); }
+        function idle(){ ('requestIdleCallback' in window)?requestIdleCallback(load,{timeout:4000}):setTimeout(load,1500); }
+        (l.readyState==='complete')?idle():window.addEventListener('load',idle,{once:true});
       })(window, document, "clarity", "script", "vo5s3jhhub");
     </script>
     <meta charset="UTF-8">
@@ -22,7 +26,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <title>Get Auto Insurance Quote - Bill Layne Insurance | Elkin, NC</title>
     <meta name="description" content="Get your free NC auto insurance quote in 5 minutes. We compare Progressive, Travelers, Nationwide, National General & more. Independent Elkin agent serving all 100 NC counties. Call (336) 835-1993.">
-    <link rel="canonical" href="/auto-quote">
+    <link rel="canonical" href="https://www.billlayneinsurance.com/auto-quote">
     <meta name="robots" content="index, follow">
     <meta http-equiv="Cache-Control" content="max-age=3600, must-revalidate">
 
@@ -47,131 +51,208 @@
     <meta name="twitter:image" content="https://img.billlayneinsurance.com/i/2026/08/bli-og-image-cfpd46.png">
 
     <!-- Schema: InsuranceAgency (rich) -->
-    <script type="application/ld+json">
+    <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "InsuranceAgency",
+  "name": "Bill Layne Insurance Agency",
+  "url": "https://www.billlayneinsurance.com",
+  "telephone": "+1-336-835-1993",
+  "email": "Save@BillLayneInsurance.com",
+  "foundingDate": "2005",
+  "priceRange": "$$",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "1283 N Bridge St",
+    "addressLocality": "Elkin",
+    "addressRegion": "NC",
+    "postalCode": "28621",
+    "addressCountry": "US"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 36.2554,
+    "longitude": -80.8479
+  },
+  "openingHoursSpecification": [
     {
-      "@context": "https://schema.org",
-      "@type": "InsuranceAgency",
-      "name": "Bill Layne Insurance Agency",
-      "url": "https://www.billlayneinsurance.com",
-      "telephone": "+1-336-835-1993",
-      "email": "Save@BillLayneInsurance.com",
-      "foundingDate": "2005",
-      "priceRange": "$$",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "1283 N Bridge St",
-        "addressLocality": "Elkin",
-        "addressRegion": "NC",
-        "postalCode": "28621",
-        "addressCountry": "US"
-      },
-      "geo": {"@type":"GeoCoordinates","latitude":36.2554,"longitude":-80.8479},
-      "openingHoursSpecification": [
-        {"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"09:00","closes":"17:00"}
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
       ],
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.9",
-        "reviewCount": "127",
-        "bestRating": "5"
-      },
-      "areaServed": [
-        {"@type":"City","name":"Elkin"},{"@type":"City","name":"Mount Airy"},
-        {"@type":"City","name":"Jonesville"},{"@type":"City","name":"Wilkesboro"},
-        {"@type":"State","name":"North Carolina"}
-      ],
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "Auto Insurance Products",
-        "itemListElement": [
-          {"@type":"Offer","itemOffered":{"@type":"Service","name":"Auto Liability Insurance"}},
-          {"@type":"Offer","itemOffered":{"@type":"Service","name":"Collision Coverage"}},
-          {"@type":"Offer","itemOffered":{"@type":"Service","name":"Comprehensive Coverage"}},
-          {"@type":"Offer","itemOffered":{"@type":"Service","name":"Uninsured Motorist Coverage"}},
-          {"@type":"Offer","itemOffered":{"@type":"Service","name":"Medical Payments Coverage"}},
-          {"@type":"Offer","itemOffered":{"@type":"Service","name":"Roadside Assistance"}}
-        ]
-      },
-      "sameAs": [
-        "https://www.facebook.com/dollarbillagency/",
-        "https://www.youtube.com/@ncautoandhome",
-        "https://www.instagram.com/ncautoandhome/",
-        "https://www.tiktok.com/@ncautoandhome.com"
-      ]
+      "opens": "09:00",
+      "closes": "17:00"
     }
-    </script>
+  ],
+  "areaServed": [
+    {
+      "@type": "City",
+      "name": "Elkin"
+    },
+    {
+      "@type": "City",
+      "name": "Mount Airy"
+    },
+    {
+      "@type": "City",
+      "name": "Jonesville"
+    },
+    {
+      "@type": "City",
+      "name": "Wilkesboro"
+    },
+    {
+      "@type": "State",
+      "name": "North Carolina"
+    }
+  ],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Auto Insurance Products",
+    "itemListElement": [
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Auto Liability Insurance"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Collision Coverage"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Comprehensive Coverage"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Uninsured Motorist Coverage"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Medical Payments Coverage"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Roadside Assistance"
+        }
+      }
+    ]
+  },
+  "sameAs": [
+    "https://www.facebook.com/dollarbillagency/",
+    "https://www.youtube.com/@ncautoandhome",
+    "https://www.instagram.com/ncautoandhome/",
+    "https://www.tiktok.com/@ncautoandhome.com"
+  ]
+}</script>
 
     <!-- Schema: WebPage + BreadcrumbList -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      "name": "Free Auto Insurance Quote - Bill Layne Insurance",
-      "url": "https://www.billlayneinsurance.com/auto-quote",
-      "description": "Get a free NC auto insurance quote in 5 minutes. Bill Layne Insurance compares 6 auto insurance carriers.",
-      "inLanguage": "en-US",
-      "isPartOf": {"@type":"WebSite","name":"Bill Layne Insurance Agency","url":"https://www.billlayneinsurance.com"},
-      "breadcrumb": {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          {"@type":"ListItem","position":1,"name":"Home","item":"https://www.billlayneinsurance.com"},
-          {"@type":"ListItem","position":2,"name":"Get a Quote","item":"https://www.billlayneinsurance.com/get-quote"},
-          {"@type":"ListItem","position":3,"name":"Auto Insurance Quote","item":"https://www.billlayneinsurance.com/auto-quote"}
-        ]
+    <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Free Auto Insurance Quote - Bill Layne Insurance",
+  "url": "https://www.billlayneinsurance.com/auto-quote",
+  "description": "Get a free NC auto insurance quote in 5 minutes. Bill Layne Insurance compares 6 auto insurance carriers.",
+  "inLanguage": "en-US",
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "Bill Layne Insurance Agency",
+    "url": "https://www.billlayneinsurance.com"
+  },
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.billlayneinsurance.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Get a Quote",
+        "item": "https://www.billlayneinsurance.com/get-quote"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Auto Insurance Quote",
+        "item": "https://www.billlayneinsurance.com/auto-quote"
       }
-    }
-    </script>
+    ]
+  }
+}</script>
 
     <!-- Schema: FAQPage -->
-    <script type="application/ld+json">
+    <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
     {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "How much does auto insurance cost in North Carolina?",
-          "acceptedAnswer": {"@type":"Answer","text":"NC auto insurance rates vary based on your driving record, vehicle, age, and coverage level. As an independent agent, Bill Layne Insurance compares 6 auto insurance carriers to find you the lowest rate for your situation."}
-        },
-        {
-          "@type": "Question",
-          "name": "What is the minimum auto insurance required in North Carolina?",
-          "acceptedAnswer": {"@type":"Answer","text":"North Carolina requires minimum liability coverage of 50/100/50 — $50,000 bodily injury per person, $100,000 per accident, and $50,000 property damage — plus uninsured motorist coverage of the same limits."}
-        },
-        {
-          "@type": "Question",
-          "name": "How long does an auto insurance quote take?",
-          "acceptedAnswer": {"@type":"Answer","text":"Our online auto quote form takes about 5–7 minutes to complete. Once submitted, Bill Layne will contact you within 1 business day with rate comparisons from multiple carriers."}
-        },
-        {
-          "@type": "Question",
-          "name": "Can I save money by bundling auto and home insurance?",
-          "acceptedAnswer": {"@type":"Answer","text":"Yes! Bundling your auto and home insurance with the same carrier usually lowers the premium on both policies. Ask us about multi-policy discounts when you get your quote."}
-        },
-        {
-          "@type": "Question",
-          "name": "What information do I need to get an auto insurance quote?",
-          "acceptedAnswer": {"@type":"Answer","text":"You'll need: your name, address, and date of birth; driver's license number; vehicle year, make, model, and VIN (helpful but not required); current insurance carrier and expiration date; and information about any drivers on the policy."}
-        }
-      ]
+      "@type": "Question",
+      "name": "How much does auto insurance cost in North Carolina?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "NC auto insurance rates vary based on your driving record, vehicle, age, and coverage level. As an independent agent, Bill Layne Insurance compares 6 auto insurance carriers to find you the lowest rate for your situation."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the minimum auto insurance required in North Carolina?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "North Carolina requires minimum liability coverage of 50/100/50 — $50,000 bodily injury per person, $100,000 per accident, and $50,000 property damage — plus uninsured motorist coverage of the same limits."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How long does an auto insurance quote take?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our online auto quote form takes about 5–7 minutes to complete. Once submitted, Bill Layne will contact you within 1 business day with rate comparisons from multiple carriers."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I save money by bundling auto and home insurance?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Bundling your auto and home insurance with the same carrier usually lowers the premium on both policies. Ask us about multi-policy discounts when you get your quote."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What information do I need to get an auto insurance quote?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You'll need: your name, address, and date of birth; driver's license number; vehicle year, make, model, and VIN (helpful but not required); current insurance carrier and expiration date; and information about any drivers on the policy."
+      }
     }
-    </script>
+  ]
+}</script>
 
     <!-- Schema: HowTo -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "HowTo",
-      "name": "How to Get a Free Auto Insurance Quote in NC",
-      "description": "Get a free auto insurance quote from Bill Layne Insurance in 3 easy steps.",
-      "totalTime": "PT7M",
-      "step": [
-        {"@type":"HowToStep","position":1,"name":"Enter Contact & Driver Info","text":"Provide your name, address, date of birth, and details about all drivers on the policy."},
-        {"@type":"HowToStep","position":2,"name":"Add Your Vehicle(s)","text":"Enter the year, make, model, and details for each vehicle you want covered."},
-        {"@type":"HowToStep","position":3,"name":"Select Coverage Options","text":"Choose your desired coverage types and deductibles. Bill Layne shops 6 auto insurance carriers and gets back to you within 1 business day."}
-      ]
-    }
-    </script>
+    
 
     <!-- Cloudflare Turnstile (spam protection) - replace TURNSTILE_SITE_KEY with your real key once issued in Cloudflare dashboard -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>

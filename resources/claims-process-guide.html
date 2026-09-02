@@ -12,9 +12,13 @@
     <!-- Microsoft Clarity -->
     <script type="text/javascript">
       (function(c,l,a,r,i,t,y){
+        // Microsoft Clarity, loaded after the page has painted so the recorder
+        // never competes with the hero image, fonts, or first input (INP).
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        function load(){ if(t)return; t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y); }
+        function idle(){ ('requestIdleCallback' in window)?requestIdleCallback(load,{timeout:4000}):setTimeout(load,1500); }
+        (l.readyState==='complete')?idle():window.addEventListener('load',idle,{once:true});
       })(window, document, "clarity", "script", "vo5s3jhhub");
     </script>
     <meta charset="UTF-8">
@@ -23,7 +27,7 @@
     <meta name="description" content="Complete step-by-step guide to filing insurance claims in North Carolina. Learn what to do immediately after an incident, documentation requirements, and how to maximize your settlement.">
 
     <!-- SEO Meta Tags -->
-    <link rel="canonical" href="../resources/claims_process_guide.html">
+    <link rel="canonical" href="https://www.billlayneinsurance.com/resources/claims-process-guide">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
 
     <!-- Open Graph / Social Sharing -->

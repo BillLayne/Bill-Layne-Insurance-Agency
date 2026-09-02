@@ -12,9 +12,13 @@
     <!-- Microsoft Clarity -->
     <script type="text/javascript">
       (function(c,l,a,r,i,t,y){
+        // Microsoft Clarity, loaded after the page has painted so the recorder
+        // never competes with the hero image, fonts, or first input (INP).
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        function load(){ if(t)return; t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y); }
+        function idle(){ ('requestIdleCallback' in window)?requestIdleCallback(load,{timeout:4000}):setTimeout(load,1500); }
+        (l.readyState==='complete')?idle():window.addEventListener('load',idle,{once:true});
       })(window, document, "clarity", "script", "vo5s3jhhub");
     </script>
     <meta charset="UTF-8">
@@ -66,7 +70,7 @@
     <link rel="icon" href="https://fav.farm/🛡️" />
 
     <!-- CSS -->
-    <link rel="stylesheet" href="style.css?v=2024.12.13.1">
+    <link rel="stylesheet" href="/style.css?v=2024.12.13.1">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <!-- Development Cache Busting handled by SITE_VERSION above -->
@@ -124,6 +128,11 @@
             font-family: 'Open Sans', sans-serif;
         }
 
+        .error-search { display:flex; gap:8px; max-width:520px; margin:0 auto 22px; }
+        .error-search input { flex:1; min-width:0; padding:12px 14px; border:2px solid #cbd5e1; border-radius:10px; font-size:16px; }
+        .error-search input:focus { outline:none; border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.15); }
+        .error-search button { padding:12px 18px; border:0; border-radius:10px; background:#1d4ed8; color:#fff; font-weight:700; cursor:pointer; }
+        .error-search button:hover { background:#1e40af; }
         .error-actions {
             display: flex;
             gap: 1rem;
@@ -202,7 +211,7 @@
             font-size: 1.5rem;
         }
     </style>
-    <link rel="stylesheet" href="css/mobile-dock.css">
+    <link rel="stylesheet" href="/css/mobile-dock.css">
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -216,37 +225,43 @@
                 We couldn't find the page you're looking for. It might have been moved, deleted, or the URL might be incorrect.
             </p>
 
+            <form class="error-search" action="/blog/" method="get" role="search" aria-label="Search the site">
+                <label for="site-search" class="sr-only">Search articles and guides</label>
+                <input id="site-search" type="search" name="q" placeholder="Search guides, e.g. consent to rate, DL-123, deer strike" required>
+                <button type="submit">Search</button>
+            </form>
+
             <div class="error-actions">
-                <a href="index.html" class="error-btn error-btn--primary">Go to Homepage</a>
-            <a href="contact-us/" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-envelope w-6 text-slate-500"></i> Contact Us</a>
-            <a href="service-center.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-concierge-bell w-6 text-emerald-500"></i> Service Center</a>
-            <a href="videos/index.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-video w-6 text-teal-500"></i> Videos</a>
-            <a href="community/" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-mountain-sun w-6 text-amber-500"></i> Community</a>
-            <a href="blog/index.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-blog w-6 text-indigo-500"></i> Blog</a>
-            <a href="resources/index.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-book w-6 text-orange-500"></i> Resources</a>
-            <a href="claims-center/index.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-file-medical-alt w-6 text-red-500"></i> Claims Center</a>
-            <a href="home-insurance/index.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-house w-6 text-green-500"></i> Home Insurance</a>
-            <a href="auto-center/index.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-car w-6 text-blue-500"></i> Auto Insurance</a>
-            <a href="areas-we-serve.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-map-marked-alt w-6 text-purple-500"></i> Areas We Serve</a>
+                <a href="/" class="error-btn error-btn--primary">Go to Homepage</a>
+            <a href="/contact-us/" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-envelope w-6 text-slate-500"></i> Contact Us</a>
+            <a href="/service-center.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-concierge-bell w-6 text-emerald-500"></i> Service Center</a>
+            <a href="/videos/index.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-video w-6 text-teal-500"></i> Videos</a>
+            <a href="/community/" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-mountain-sun w-6 text-amber-500"></i> Community</a>
+            <a href="/blog/index.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-blog w-6 text-indigo-500"></i> Blog</a>
+            <a href="/resources/index.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-book w-6 text-orange-500"></i> Resources</a>
+            <a href="/claims-center/index.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-file-medical-alt w-6 text-red-500"></i> Claims Center</a>
+            <a href="/home-insurance/index.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-house w-6 text-green-500"></i> Home Insurance</a>
+            <a href="/auto-center/index.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-car w-6 text-blue-500"></i> Auto Insurance</a>
+            <a href="/areas-we-serve.html" class="block p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium flex items-center gap-3"><i class="fas fa-map-marked-alt w-6 text-purple-500"></i> Areas We Serve</a>
                 <a href="tel:3368351993" class="error-btn error-btn--secondary">Call Us: (336) 835-1993</a>
             </div>
 
             <div class="helpful-links">
                 <h3>Looking for something specific?</h3>
                 <div class="link-grid">
-                    <a href="auto-coverage-checkup.html" class="link-item">
+                    <a href="/auto-coverage-checkup.html" class="link-item">
                         <span class="link-icon">🚗</span>
                         <span>Auto Coverage Checkup</span>
                     </a>
-                    <a href="home-insurance-evaluator.html" class="link-item">
+                    <a href="/home-insurance-evaluator.html" class="link-item">
                         <span class="link-icon">🏠</span>
                         <span>Home Insurance Evaluator</span>
                     </a>
-                    <a href="umbrella-policy-calculator.html" class="link-item">
+                    <a href="/umbrella-policy-calculator.html" class="link-item">
                         <span class="link-icon">☂️</span>
                         <span>Umbrella Calculator</span>
                     </a>
-                    <a href="insurance-quiz.html" class="link-item">
+                    <a href="/insurance-quiz.html" class="link-item">
                         <span class="link-icon">📝</span>
                         <span>Insurance IQ Quiz</span>
                     </a>
@@ -497,7 +512,7 @@
     </script>
 
     <!-- Main JavaScript with Version -->
-    <script src="app.js?v=2024.12.13.1" defer></script>
+    <script src="/app.js?v=2024.12.13.1" defer></script>
 
     <!-- DOCK SPACER (prevents content from hiding behind dock) -->
     <div class="dock-spacer md:hidden" style="height: 72px;"></div>
@@ -540,7 +555,7 @@
         </ul>
     </div>
 
-    <script src="js/mobile-dock.js"></script>
+    <script src="/js/mobile-dock.js"></script>
     </main>
 </body>
 </html>

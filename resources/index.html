@@ -14,9 +14,13 @@
     <!-- Microsoft Clarity -->
     <script type="text/javascript">
       (function(c,l,a,r,i,t,y){
+        // Microsoft Clarity, loaded after the page has painted so the recorder
+        // never competes with the hero image, fonts, or first input (INP).
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        function load(){ if(t)return; t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y); }
+        function idle(){ ('requestIdleCallback' in window)?requestIdleCallback(load,{timeout:4000}):setTimeout(load,1500); }
+        (l.readyState==='complete')?idle():window.addEventListener('load',idle,{once:true});
       })(window, document, "clarity", "script", "vo5s3jhhub");
     </script>
     <link rel="preload" as="image" href="https://img.billlayneinsurance.com/i/2026/08/im-aw4mwta-9ffz7u.jpg" type="image/jpeg" fetchpriority="high">
@@ -945,7 +949,7 @@
                                 <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-green-50 flex items-center justify-center text-green-600 group-hover:translate-x-1 transition-transform text-xs md:text-base hidden md:flex"><i class="fas fa-chevron-right"></i></div>
                             </a>
 
-                            <a href="/north-wilkesboro.html" target="_blank" rel="noopener noreferrer" class="resource-card group bg-gradient-to-br from-green-50 to-emerald-100/60 p-3 md:p-6 rounded-xl md:rounded-[2rem] border-2 border-green-200 hover:border-green-400 hover:shadow-lg hover:-translate-y-1 transition-all flex flex-row items-center gap-3 md:gap-6" data-name="wilkesboro savings deals">
+                            <a href="/areas-we-serve" target="_blank" rel="noopener noreferrer" class="resource-card group bg-gradient-to-br from-green-50 to-emerald-100/60 p-3 md:p-6 rounded-xl md:rounded-[2rem] border-2 border-green-200 hover:border-green-400 hover:shadow-lg hover:-translate-y-1 transition-all flex flex-row items-center gap-3 md:gap-6" data-name="wilkesboro savings deals">
                                 <div class="flex-shrink-0 w-10 h-10 md:w-16 md:h-16 bg-white rounded-xl md:rounded-2xl flex items-center justify-center text-green-600 text-lg md:text-3xl shadow-sm"><i class="fas fa-music"></i></div>
                                 <div class="flex-1 text-left">
                                     <div class="flex items-center justify-start gap-2 md:gap-3 mb-1 md:mb-2">

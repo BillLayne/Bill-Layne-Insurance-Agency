@@ -14,9 +14,13 @@
     <!-- Microsoft Clarity -->
     <script type="text/javascript">
       (function(c,l,a,r,i,t,y){
+        // Microsoft Clarity, loaded after the page has painted so the recorder
+        // never competes with the hero image, fonts, or first input (INP).
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        function load(){ if(t)return; t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y); }
+        function idle(){ ('requestIdleCallback' in window)?requestIdleCallback(load,{timeout:4000}):setTimeout(load,1500); }
+        (l.readyState==='complete')?idle():window.addEventListener('load',idle,{once:true});
       })(window, document, "clarity", "script", "vo5s3jhhub");
     </script>
     <title>The 3 Cheapest Months to Switch Car Insurance in North Carolina (Most Agents Won’t Tell You This)</title>
@@ -511,8 +515,8 @@
 
     <div class="internal-links" style="margin-top: 2rem; font-size: 0.9rem; color: #64748b;">
         <p>Related Resources: 
-            <a href="/search/label/NC-Auto-Insurance-Requirements">Understanding NC Minimum Limits</a> | 
-            <a href="/search/label/Save-On-Insurance">10 Ways to Lower Your Monthly Premium</a> | 
+            <a href="/auto-center/">Understanding NC Minimum Limits</a> | 
+            <a href="/blog/">10 Ways to Lower Your Monthly Premium</a> | 
             <a href="/search/label/Elkin-NC-Insurance">Local Insurance Tips for Surry County Residents</a>
         </p>
     </div>
