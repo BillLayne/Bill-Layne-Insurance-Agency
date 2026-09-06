@@ -1522,16 +1522,22 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; }
     // Escape key
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 
-    // -- ZIP HANDOFF ------------------------------------------------
+    // -- QUOTE HANDOFF ----------------------------------------------
     // Homepage hero ZIP form lands here with ?zip=XXXXX. Forward it onto
     // the auto/home quote links so their zip_code field can prefill.
+    // Keep the internal src label with the visitor without adding UTMs.
     (function() {
         try {
-            const zip = new URLSearchParams(window.location.search).get('zip');
-            if (!zip || !/^[0-9]{5}$/.test(zip)) return;
+            const params = new URLSearchParams(window.location.search);
+            const zip = params.get('zip');
+            const src = params.get('src');
+            const validZip = zip && /^[0-9]{5}$/.test(zip);
+            const validSrc = src && /^[a-z0-9_-]{1,80}$/i.test(src);
+            if (!validZip && !validSrc) return;
             document.querySelectorAll('a[href^="auto-quote.html"], a[href^="home-quote.html"]').forEach(a => {
                 const u = new URL(a.getAttribute('href'), window.location.origin);
-                u.searchParams.set('zip', zip);
+                if (validZip) u.searchParams.set('zip', zip);
+                if (validSrc) u.searchParams.set('src', src);
                 a.href = u.pathname.replace(/^\//, '') + u.search;
             });
         } catch (e) {}
