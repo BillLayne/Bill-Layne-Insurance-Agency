@@ -328,6 +328,20 @@
             .animate-pulse { animation: none !important; }
             *, *::before, *::after { transition-duration: 0.01ms !important; }
         }
+
+        .resource-browse { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.25rem; }
+        .resource-browse a { display: inline-flex; align-items: center; min-height: 44px; padding: .65rem 1rem; border: 1px solid #e2e8f0; border-radius: .75rem; color: #1e40af; background: #f8fafc; font-size: .875rem; font-weight: 600; }
+        .resource-browse a:hover { background: #eff6ff; border-color: #93c5fd; }
+        .resource-browse a:focus-visible, .resources-reset:focus-visible { outline: 3px solid #2563eb; outline-offset: 3px; }
+        .resources-reset { min-height: 44px; }
+        #resource-tool-grid { scroll-margin-top: 7rem; }
+        @media (max-width: 767px) {
+            .intent-card { display: grid; grid-template-columns: 2rem 1fr; gap: .25rem .6rem; padding: .85rem; }
+            .intent-card > span:first-child { grid-row: 1 / span 2; width: 2rem !important; height: 2rem !important; }
+            .intent-card > span:nth-child(2), .intent-card > span:nth-child(3) { grid-column: 2; }
+            .intent-card > span:nth-child(3) { font-size: .7rem; line-height: 1.45; }
+        }
+        .resource-card[hidden], section[hidden], #resource-tool-grid[hidden] { display: none !important; }
     </style>
     <link rel="stylesheet" href="../css/mobile-dock.css">
     <noscript><style>.reveal{opacity:1 !important;transform:none !important}</style></noscript>
@@ -535,14 +549,21 @@
 
             <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5 reveal">
                 <div>
-                    <h3 class="text-xl md:text-2xl font-display font-extrabold text-slate-900">All free insurance tools</h3>
-                    <p class="text-sm text-slate-500">Every tool remains available as a direct link—no account required.</p>
+                    <h3 class="text-xl md:text-2xl font-display font-extrabold text-slate-900">Tools &amp; quick guides</h3>
+                    <p class="text-sm text-slate-500">Open a tool below, or browse the in-depth guides and life-stage resources.</p>
                 </div>
-                <button type="button" id="showAllTools" class="hidden text-sm font-bold text-blue-700 bg-blue-50 border border-blue-200 rounded-xl px-4 py-2 hover:bg-blue-100 transition-colors">Show all tools</button>
+                <button type="button" id="showAllTools" class="hidden resources-reset text-sm font-bold text-blue-700 bg-blue-50 border border-blue-200 rounded-xl px-4 py-2 hover:bg-blue-100 transition-colors">Show all resources</button>
             </div>
+            <nav class="resource-browse" aria-label="Browse resource sections">
+                <a href="#resource-tool-grid" data-browse>Tools &amp; calculators</a>
+                <a href="#guides" data-browse>In-depth guides</a>
+                <a href="#life-stages" data-browse>Life stages</a>
+                <a href="#savings" data-browse>Local resources</a>
+            </nav>
             <p id="searchStatus" class="search-status text-sm font-semibold text-blue-800 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 mb-5" role="status" aria-live="polite"></p>
 
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
+            <div id="calculators" class="section-container" aria-hidden="true"></div>
+            <div id="resource-tool-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
                 <!-- Dec Page Decoder -->
                 <a href="https://dec-page-decoder.pages.dev/" target="_blank" rel="noopener noreferrer" class="resource-card group bg-gradient-to-br from-blue-50 to-indigo-100/50 p-4 md:p-6 rounded-2xl border-2 border-blue-100 hover:border-blue-300 hover:shadow-xl transition-all hover:-translate-y-1 text-center relative" data-category="coverage" data-name="explain my insurance policy dec page decoder declaration page endorsements coverage limits" data-tool="dec-page-decoder">
                     <span class="absolute -top-1.5 -right-1.5 text-[8px] font-black bg-blue-600 text-white px-2 py-0.5 rounded-full shadow">FEATURED</span>
@@ -561,7 +582,7 @@
                     <p class="text-[10px] md:text-xs text-slate-500 hidden sm:block">NC Grange endorsement explained</p>
                 </a>
                 <!-- Roof Health Audit -->
-                <a href="../roof-health-audit.html" class="resource-card group bg-gradient-to-br from-teal-50 to-teal-100/50 p-4 md:p-6 rounded-2xl border-2 border-teal-100 hover:border-teal-300 hover:shadow-xl transition-all hover:-translate-y-1 text-center relative" data-category="home" data-name="roof health audit ai roof condition score home insurance" data-tool="roof-health-audit">
+                <a href="../roof-health-audit.html" class="resource-card group bg-gradient-to-br from-teal-50 to-teal-100/50 p-4 md:p-6 rounded-2xl border-2 border-teal-100 hover:border-teal-300 hover:shadow-xl transition-all hover:-translate-y-1 text-center relative" data-category="home" data-name="roof health audit ai roof condition score home insurance roof health audit ai myroofage inspector score grade condition" data-tool="roof-health-audit">
                     <span class="absolute -top-1.5 -right-1.5 text-[8px] font-black bg-teal-500 text-white px-2 py-0.5 rounded-full shadow">AI</span>
                     <div class="w-12 h-12 md:w-16 md:h-16 bg-white rounded-2xl flex items-center justify-center text-teal-500 text-xl md:text-3xl mx-auto mb-3 shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-house-chimney"></i></div>
                     <h3 class="font-bold text-slate-900 text-xs md:text-sm mb-1">Roof Health Audit</h3>
@@ -575,19 +596,19 @@
                     <p class="text-[10px] md:text-xs text-slate-500 hidden sm:block">GIS, property cards and maps</p>
                 </a>
                 <!-- SDIP Points Calculator -->
-                <a href="../auto-center/sdip-points-calculator/" class="resource-card group bg-gradient-to-br from-red-50 to-red-100/50 p-4 md:p-6 rounded-2xl border-2 border-red-100 hover:border-red-300 hover:shadow-xl transition-all hover:-translate-y-1 text-center relative" data-category="dmv" data-name="sdip points calculator ticket accident surcharge north carolina" data-tool="sdip-points-calculator">
+                <a href="../auto-center/sdip-points-calculator/" class="resource-card group bg-gradient-to-br from-red-50 to-red-100/50 p-4 md:p-6 rounded-2xl border-2 border-red-100 hover:border-red-300 hover:shadow-xl transition-all hover:-translate-y-1 text-center relative" data-category="dmv" data-name="sdip points calculator ticket accident surcharge north carolina sdip points calculator nc insurance surcharge ticket accident" data-tool="sdip-points-calculator">
                     <div class="w-12 h-12 md:w-16 md:h-16 bg-white rounded-2xl flex items-center justify-center text-red-500 text-xl md:text-3xl mx-auto mb-3 shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-gauge-high"></i></div>
                     <h3 class="font-bold text-slate-900 text-xs md:text-sm mb-1">SDIP Points Calculator</h3>
                     <p class="text-[10px] md:text-xs text-slate-500 hidden sm:block">See how tickets affect your rate</p>
                 </a>
                 <!-- Auto Coverage Analyzer -->
-                <a href="auto-coverage-analyzer.html" class="resource-card group bg-gradient-to-br from-blue-50 to-blue-100/50 p-4 md:p-6 rounded-2xl border-2 border-blue-100 hover:border-blue-300 hover:shadow-xl transition-all hover:-translate-y-1 text-center" data-category="coverage" data-name="auto coverage analyzer liability limits uninsured motorist collision comprehensive" data-tool="auto-coverage-analyzer">
+                <a href="auto-coverage-analyzer.html" class="resource-card group bg-gradient-to-br from-blue-50 to-blue-100/50 p-4 md:p-6 rounded-2xl border-2 border-blue-100 hover:border-blue-300 hover:shadow-xl transition-all hover:-translate-y-1 text-center" data-category="coverage" data-name="auto coverage analyzer liability limits uninsured motorist collision comprehensive auto coverage analyzer calculator" data-tool="auto-coverage-analyzer">
                     <div class="w-12 h-12 md:w-16 md:h-16 bg-white rounded-2xl flex items-center justify-center text-blue-500 text-xl md:text-3xl mx-auto mb-3 shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-car"></i></div>
                     <h3 class="font-bold text-slate-900 text-xs md:text-sm mb-1">Auto Analyzer</h3>
                     <p class="text-[10px] md:text-xs text-slate-500 hidden sm:block">Find the right coverage levels</p>
                 </a>
                 <!-- Homeowners Estimator -->
-                <a href="homeowners-estimator.html" class="resource-card group bg-gradient-to-br from-green-50 to-green-100/50 p-4 md:p-6 rounded-2xl border-2 border-green-100 hover:border-green-300 hover:shadow-xl transition-all hover:-translate-y-1 text-center" data-category="home" data-name="homeowners replacement cost estimator dwelling rebuild personal property" data-tool="homeowners-estimator">
+                <a href="homeowners-estimator.html" class="resource-card group bg-gradient-to-br from-green-50 to-green-100/50 p-4 md:p-6 rounded-2xl border-2 border-green-100 hover:border-green-300 hover:shadow-xl transition-all hover:-translate-y-1 text-center" data-category="home" data-name="homeowners replacement cost estimator dwelling rebuild personal property homeowners estimator calculator" data-tool="homeowners-estimator">
                     <div class="w-12 h-12 md:w-16 md:h-16 bg-white rounded-2xl flex items-center justify-center text-green-500 text-xl md:text-3xl mx-auto mb-3 shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-home"></i></div>
                     <h3 class="font-bold text-slate-900 text-xs md:text-sm mb-1">Home Estimator</h3>
                     <p class="text-[10px] md:text-xs text-slate-500 hidden sm:block">Estimate replacement costs</p>
@@ -658,19 +679,19 @@
                     <p class="text-[10px] md:text-xs text-slate-500 hidden sm:block">Submit for agency review</p>
                 </a>
                 <!-- Pay DMV Fine -->
-                <a href="../auto-center/pay-dmv-fine/" class="resource-card group bg-gradient-to-br from-red-50 to-red-100/50 p-4 md:p-6 rounded-2xl border-2 border-red-100 hover:border-red-300 hover:shadow-xl transition-all hover:-translate-y-1 text-center" data-category="dmv" data-name="nc dmv insurance lapse fine penalty registration reinstatement" data-tool="dmv-lapse-fine">
+                <a href="../auto-center/pay-dmv-fine/" class="resource-card group bg-gradient-to-br from-red-50 to-red-100/50 p-4 md:p-6 rounded-2xl border-2 border-red-100 hover:border-red-300 hover:shadow-xl transition-all hover:-translate-y-1 text-center" data-category="dmv" data-name="nc dmv insurance lapse fine penalty registration reinstatement pay nc dmv fine insurance lapse penalty 2026 reinstatement" data-tool="dmv-lapse-fine">
                     <div class="w-12 h-12 md:w-16 md:h-16 bg-white rounded-2xl flex items-center justify-center text-red-600 text-xl md:text-3xl mx-auto mb-3 shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-file-invoice-dollar"></i></div>
                     <h3 class="font-bold text-slate-900 text-xs md:text-sm mb-1">Pay DMV Fine</h3>
                     <p class="text-[10px] md:text-xs text-slate-500 hidden sm:block">NC lapse penalties &amp; fees</p>
                 </a>
                 <!-- NC Laws Guide -->
-                <a href="nc-insurance-laws-guide.html" class="resource-card group bg-gradient-to-br from-purple-50 to-purple-100/50 p-4 md:p-6 rounded-2xl border-2 border-purple-100 hover:border-purple-300 hover:shadow-xl transition-all hover:-translate-y-1 text-center" data-category="dmv coverage" data-name="north carolina insurance laws minimum limits consumer rights" data-tool="nc-insurance-laws">
+                <a href="nc-insurance-laws-guide.html" class="resource-card group bg-gradient-to-br from-purple-50 to-purple-100/50 p-4 md:p-6 rounded-2xl border-2 border-purple-100 hover:border-purple-300 hover:shadow-xl transition-all hover:-translate-y-1 text-center" data-category="dmv coverage" data-name="north carolina insurance laws minimum limits consumer rights nc insurance laws guide" data-tool="nc-insurance-laws">
                     <div class="w-12 h-12 md:w-16 md:h-16 bg-white rounded-2xl flex items-center justify-center text-purple-500 text-xl md:text-3xl mx-auto mb-3 shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-gavel"></i></div>
                     <h3 class="font-bold text-slate-900 text-xs md:text-sm mb-1">NC Laws Guide</h3>
                     <p class="text-[10px] md:text-xs text-slate-500 hidden sm:block">State minimums &amp; rights</p>
                 </a>
                 <!-- NC DMV Guide -->
-                <a href="nc-dmv-guide.html" class="resource-card group bg-gradient-to-br from-amber-50 to-amber-100/50 p-4 md:p-6 rounded-2xl border-2 border-amber-100 hover:border-amber-300 hover:shadow-xl transition-all hover:-translate-y-1 text-center" data-category="dmv" data-name="north carolina dmv guide tags real id insurance lapse fees" data-tool="nc-dmv-guide">
+                <a href="nc-dmv-guide.html" class="resource-card group bg-gradient-to-br from-amber-50 to-amber-100/50 p-4 md:p-6 rounded-2xl border-2 border-amber-100 hover:border-amber-300 hover:shadow-xl transition-all hover:-translate-y-1 text-center" data-category="dmv" data-name="north carolina dmv guide tags real id insurance lapse fees nc dmv guide resource center tags license real id insurance lapse" data-tool="nc-dmv-guide">
                     <div class="w-12 h-12 md:w-16 md:h-16 bg-white rounded-2xl flex items-center justify-center text-amber-600 text-xl md:text-3xl mx-auto mb-3 shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-id-card"></i></div>
                     <h3 class="font-bold text-slate-900 text-xs md:text-sm mb-1">NC DMV Guide</h3>
                     <p class="text-[10px] md:text-xs text-slate-500 hidden sm:block">Tags, REAL ID &amp; more</p>
@@ -705,63 +726,6 @@
         </div>
     </section>
 
-    <!-- CALCULATORS SECTION -->
-    <section class="py-8 md:py-16 bg-slate-50">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <!-- Calculators Section -->
-                    <div id="calculators" class="reveal section-container">
-                        <div class="flex items-center gap-3 mb-4 md:mb-8">
-                            <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600 text-lg md:text-2xl shadow-sm"><i class="fas fa-calculator"></i></div>
-                            <div>
-                                <h2 class="text-xl sm:text-3xl font-display font-bold text-slate-900">Interactive Calculators</h2>
-                                <p class="text-slate-500 text-xs md:text-base">Get personalized insurance numbers.</p>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-6">
-                            <a href="../roof-health-audit.html" class="resource-card group bg-gradient-to-br from-cyan-50 to-teal-100/60 p-3 sm:p-5 md:p-8 rounded-xl md:rounded-[2rem] shadow-sm border-2 border-teal-200 hover:border-teal-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden" data-name="roof health audit ai myroofage inspector score grade condition">
-                                <div class="absolute top-0 right-0 w-32 h-32 bg-teal-100 rounded-bl-full opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                                <div class="relative z-10">
-                                    <div class="inline-block bg-teal-200 text-teal-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider mb-3">New &mdash; AI Powered</div>
-                                    <div class="w-10 h-10 md:w-14 md:h-14 bg-white rounded-xl md:rounded-2xl flex items-center justify-center text-teal-600 text-lg md:text-2xl mb-3 md:mb-6 shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-house-chimney"></i></div>
-                                    <h3 class="text-sm md:text-xl font-bold text-slate-900 mb-1 md:mb-2">Roof Health Audit</h3>
-                                    <p class="text-slate-600 text-[11px] md:text-sm leading-relaxed mb-2 md:mb-4 hidden sm:block">Upload roof photos for an instant AI condition score and NC carrier eligibility assessment.</p>
-                                    <span class="text-teal-600 font-bold text-sm flex items-center gap-2 group-hover:gap-3 transition-all">Audit My Roof <i class="fas fa-arrow-right"></i></span>
-                                </div>
-                            </a>
-                            <a href="../auto-center/sdip-points-calculator/" class="resource-card group bg-gradient-to-br from-red-50 to-red-100/60 p-3 sm:p-5 md:p-8 rounded-xl md:rounded-[2rem] shadow-sm border-2 border-red-200 hover:border-red-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden" data-name="sdip points calculator nc insurance surcharge ticket accident">
-                                <div class="absolute top-0 right-0 w-32 h-32 bg-red-100 rounded-bl-full opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                                <div class="relative z-10">
-                                    <div class="inline-block bg-red-200 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider mb-3">Popular</div>
-                                    <div class="w-10 h-10 md:w-14 md:h-14 bg-white rounded-xl md:rounded-2xl flex items-center justify-center text-red-600 text-lg md:text-2xl mb-3 md:mb-6 shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-gauge-high"></i></div>
-                                    <h3 class="text-sm md:text-xl font-bold text-slate-900 mb-1 md:mb-2">SDIP Points Calculator</h3>
-                                    <p class="text-slate-600 text-[11px] md:text-sm leading-relaxed mb-2 md:mb-4 hidden sm:block">See how much your NC insurance jumps after a ticket or accident. Updated for 2026 rules.</p>
-                                    <span class="text-red-600 font-bold text-sm flex items-center gap-2 group-hover:gap-3 transition-all">Calculate Now <i class="fas fa-arrow-right"></i></span>
-                                </div>
-                            </a>
-                            <a href="auto-coverage-analyzer.html" class="resource-card group bg-gradient-to-br from-blue-50 to-blue-100/60 p-3 sm:p-5 md:p-8 rounded-xl md:rounded-[2rem] shadow-sm border-2 border-blue-200 hover:border-blue-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden" data-name="auto coverage analyzer calculator">
-                                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-100 rounded-bl-full opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                                <div class="relative z-10">
-                                    <div class="w-10 h-10 md:w-14 md:h-14 bg-white rounded-xl md:rounded-2xl flex items-center justify-center text-blue-600 text-lg md:text-2xl mb-3 md:mb-6 shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-car"></i></div>
-                                    <h3 class="text-sm md:text-xl font-bold text-slate-900 mb-1 md:mb-2">Auto Coverage Analyzer</h3>
-                                    <p class="text-slate-600 text-[11px] md:text-sm leading-relaxed mb-2 md:mb-4 hidden sm:block">Find the right coverage levels for your vehicles based on NC requirements.</p>
-                                    <span class="text-blue-600 font-bold text-sm flex items-center gap-2 group-hover:gap-3 transition-all">Analyze Now <i class="fas fa-arrow-right"></i></span>
-                                </div>
-                            </a>
-                            <a href="homeowners-estimator.html" class="resource-card group bg-gradient-to-br from-green-50 to-green-100/60 p-3 sm:p-5 md:p-8 rounded-xl md:rounded-[2rem] shadow-sm border-2 border-green-200 hover:border-green-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden" data-name="homeowners estimator calculator">
-                                <div class="absolute top-0 right-0 w-32 h-32 bg-green-100 rounded-bl-full opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                                <div class="relative z-10">
-                                    <div class="w-10 h-10 md:w-14 md:h-14 bg-white rounded-xl md:rounded-2xl flex items-center justify-center text-green-600 text-lg md:text-2xl mb-3 md:mb-6 shadow-sm group-hover:scale-110 transition-transform"><i class="fas fa-home"></i></div>
-                                    <h3 class="text-sm md:text-xl font-bold text-slate-900 mb-1 md:mb-2">Homeowners Estimator</h3>
-                                    <p class="text-slate-600 text-[11px] md:text-sm leading-relaxed mb-2 md:mb-4 hidden sm:block">Estimate replacement costs and personal property valuation for your home.</p>
-                                    <span class="text-green-600 font-bold text-sm flex items-center gap-2 group-hover:gap-3 transition-all">Estimate Now <i class="fas fa-arrow-right"></i></span>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-        </div>
-    </section>
-
     <!-- GUIDES SECTION -->
     <section class="py-8 md:py-16 bg-white">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -775,7 +739,7 @@
                         </div>
 
                         <div class="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-6">
-                            <a href="../auto-center/how-to-shop-for-auto-insurance/" class="resource-card group bg-gradient-to-br from-teal-50 to-amber-50 p-3 md:p-6 rounded-xl md:rounded-3xl border-2 border-teal-200 hover:border-teal-400 hover:shadow-lg hover:-translate-y-1 transition-all col-span-2" data-name="how to shop for auto car insurance north carolina compare quotes checklist coverage plain english">
+                            <a href="../auto-center/how-to-shop-for-auto-insurance/" class="resource-card group bg-gradient-to-br from-teal-50 to-amber-50 p-3 md:p-6 rounded-xl md:rounded-3xl border-2 border-teal-200 hover:border-teal-400 hover:shadow-lg hover:-translate-y-1 transition-all col-span-2" data-name="how to shop for auto car insurance north carolina compare quotes checklist coverage plain english" data-category="coverage">
                                 <div class="flex items-start gap-2 md:gap-4">
                                     <div class="w-9 h-9 md:w-12 md:h-12 rounded-full bg-white text-teal-700 flex items-center justify-center flex-shrink-0 shadow-sm"><i class="fas fa-route"></i></div>
                                     <div>
@@ -786,17 +750,8 @@
                                     </div>
                                 </div>
                             </a>
-                            <a href="nc-insurance-laws-guide.html" class="resource-card group bg-gradient-to-br from-purple-50 to-purple-100/60 p-3 md:p-6 rounded-xl md:rounded-3xl border-2 border-purple-200 hover:border-purple-300 hover:shadow-lg hover:-translate-y-1 transition-all" data-name="nc insurance laws guide">
-                                <div class="flex items-start gap-2 md:gap-4">
-                                    <div class="w-9 h-9 md:w-12 md:h-12 rounded-full bg-white text-purple-600 flex items-center justify-center flex-shrink-0 shadow-sm"><i class="fas fa-gavel"></i></div>
-                                    <div>
-                                        <h3 class="font-bold text-slate-900 mb-0.5 md:mb-1 text-xs md:text-base">NC Laws Guide</h3>
-                                        <p class="text-[10px] md:text-sm text-slate-500 mb-1 md:mb-2 hidden sm:block">State minimums &amp; rights.</p>
-                                        <span class="text-[10px] md:text-xs font-bold text-purple-600 uppercase tracking-wide">Read Guide <i class="fas fa-arrow-right ml-1"></i></span>
-                                    </div>
-                                </div>
-                            </a>
-                            <a href="claims-process-guide.html" class="resource-card group bg-gradient-to-br from-orange-50 to-orange-100/60 p-3 md:p-6 rounded-xl md:rounded-3xl border-2 border-orange-200 hover:border-orange-300 hover:shadow-lg hover:-translate-y-1 transition-all" data-name="claims process guide">
+
+                            <a href="claims-process-guide.html" class="resource-card group bg-gradient-to-br from-orange-50 to-orange-100/60 p-3 md:p-6 rounded-xl md:rounded-3xl border-2 border-orange-200 hover:border-orange-300 hover:shadow-lg hover:-translate-y-1 transition-all" data-name="claims process guide" data-category="claims">
                                 <div class="flex items-start gap-2 md:gap-4">
                                     <div class="w-9 h-9 md:w-12 md:h-12 rounded-full bg-white text-orange-600 flex items-center justify-center flex-shrink-0 shadow-sm"><i class="fas fa-clipboard-list"></i></div>
                                     <div>
@@ -806,7 +761,7 @@
                                     </div>
                                 </div>
                             </a>
-                            <a href="guides/hwy-21-yard-sales/index.html" class="resource-card group bg-gradient-to-br from-indigo-50 to-indigo-100/60 p-3 md:p-6 rounded-xl md:rounded-3xl border-2 border-indigo-200 hover:border-indigo-300 hover:shadow-lg hover:-translate-y-1 transition-all" data-name="hwy 21 yard sales guide">
+                            <a href="guides/hwy-21-yard-sales/index.html" class="resource-card group bg-gradient-to-br from-indigo-50 to-indigo-100/60 p-3 md:p-6 rounded-xl md:rounded-3xl border-2 border-indigo-200 hover:border-indigo-300 hover:shadow-lg hover:-translate-y-1 transition-all" data-name="hwy 21 yard sales guide" data-category="local">
                                 <div class="flex items-start gap-2 md:gap-4">
                                     <div class="w-9 h-9 md:w-12 md:h-12 rounded-full bg-white text-indigo-600 flex items-center justify-center flex-shrink-0 shadow-sm"><i class="fas fa-road"></i></div>
                                     <div>
@@ -816,7 +771,7 @@
                                     </div>
                                 </div>
                             </a>
-                            <a href="guides/auto-insurance-changes/index.html" class="resource-card group bg-gradient-to-br from-red-50 to-red-100/60 p-3 md:p-6 rounded-xl md:rounded-3xl border-2 border-red-200 hover:border-red-300 hover:shadow-lg hover:-translate-y-1 transition-all" data-name="auto insurance changes law">
+                            <a href="guides/auto-insurance-changes/index.html" class="resource-card group bg-gradient-to-br from-red-50 to-red-100/60 p-3 md:p-6 rounded-xl md:rounded-3xl border-2 border-red-200 hover:border-red-300 hover:shadow-lg hover:-translate-y-1 transition-all" data-name="auto insurance changes law" data-category="coverage dmv">
                                 <div class="flex items-start gap-2 md:gap-4">
                                     <div class="w-9 h-9 md:w-12 md:h-12 rounded-full bg-white text-red-600 flex items-center justify-center flex-shrink-0 shadow-sm"><i class="fas fa-car-burst"></i></div>
                                     <div>
@@ -826,7 +781,7 @@
                                     </div>
                                 </div>
                             </a>
-                            <a href="../auto-center/surry-county-accident-hotspots/" class="resource-card group bg-gradient-to-br from-slate-50 to-slate-100/60 p-3 md:p-6 rounded-xl md:rounded-3xl border-2 border-slate-200 hover:border-slate-300 hover:shadow-lg hover:-translate-y-1 transition-all" data-name="surry county accident hot spots dangerous roads crash data elkin mount airy">
+                            <a href="../auto-center/surry-county-accident-hotspots/" class="resource-card group bg-gradient-to-br from-slate-50 to-slate-100/60 p-3 md:p-6 rounded-xl md:rounded-3xl border-2 border-slate-200 hover:border-slate-300 hover:shadow-lg hover:-translate-y-1 transition-all" data-name="surry county accident hot spots dangerous roads crash data elkin mount airy" data-category="claims dmv">
                                 <div class="flex items-start gap-2 md:gap-4">
                                     <div class="w-9 h-9 md:w-12 md:h-12 rounded-full bg-white text-slate-700 flex items-center justify-center flex-shrink-0 shadow-sm"><i class="fas fa-map-marked-alt"></i></div>
                                     <div>
@@ -837,18 +792,8 @@
                                     </div>
                                 </div>
                             </a>
-                            <a href="../auto-center/pay-dmv-fine/" class="resource-card group bg-gradient-to-br from-red-50 to-rose-100/60 p-3 md:p-6 rounded-xl md:rounded-3xl border-2 border-red-200 hover:border-red-300 hover:shadow-lg hover:-translate-y-1 transition-all" data-name="pay nc dmv fine insurance lapse penalty 2026 reinstatement">
-                                <div class="flex items-start gap-2 md:gap-4">
-                                    <div class="w-9 h-9 md:w-12 md:h-12 rounded-full bg-white text-red-600 flex items-center justify-center flex-shrink-0 shadow-sm"><i class="fas fa-file-invoice-dollar"></i></div>
-                                    <div>
-                                        <div class="inline-block bg-red-200 text-red-700 text-[8px] md:text-[10px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider mb-1">2026</div>
-                                        <h3 class="font-bold text-slate-900 mb-0.5 md:mb-1 text-xs md:text-base">Pay DMV Lapse Fine</h3>
-                                        <p class="text-[10px] md:text-sm text-slate-500 mb-1 md:mb-2 hidden sm:block">Penalties, steps &amp; new rules.</p>
-                                        <span class="text-[10px] md:text-xs font-bold text-red-600 uppercase tracking-wide">Pay &amp; Learn <i class="fas fa-arrow-right ml-1"></i></span>
-                                    </div>
-                                </div>
-                            </a>
-                            <a href="nc-drivers-license-guide.html" class="resource-card group bg-gradient-to-br from-blue-50 to-sky-100/60 p-3 md:p-6 rounded-xl md:rounded-3xl border-2 border-blue-200 hover:border-blue-300 hover:shadow-lg hover:-translate-y-1 transition-all" data-name="nc drivers license guide documents fees real id dmv insurance proof dl-123 2026">
+
+                            <a href="nc-drivers-license-guide.html" class="resource-card group bg-gradient-to-br from-blue-50 to-sky-100/60 p-3 md:p-6 rounded-xl md:rounded-3xl border-2 border-blue-200 hover:border-blue-300 hover:shadow-lg hover:-translate-y-1 transition-all" data-name="nc drivers license guide documents fees real id dmv insurance proof dl-123 2026" data-category="dmv">
                                 <div class="flex items-start gap-2 md:gap-4">
                                     <div class="w-9 h-9 md:w-12 md:h-12 rounded-full bg-white text-blue-600 flex items-center justify-center flex-shrink-0 shadow-sm"><i class="fas fa-address-card"></i></div>
                                     <div>
@@ -859,16 +804,7 @@
                                     </div>
                                 </div>
                             </a>
-                            <a href="nc-dmv-guide.html" class="resource-card group bg-gradient-to-br from-amber-50 to-amber-100/60 p-3 md:p-6 rounded-xl md:rounded-3xl border-2 border-amber-200 hover:border-amber-400 hover:shadow-lg hover:-translate-y-1 transition-all col-span-2" data-name="nc dmv guide resource center tags license real id insurance lapse">
-                                <div class="flex items-start gap-2 md:gap-4">
-                                    <div class="w-9 h-9 md:w-12 md:h-12 rounded-full bg-white text-amber-600 flex items-center justify-center flex-shrink-0 shadow-sm"><i class="fas fa-id-card"></i></div>
-                                    <div>
-                                        <h3 class="font-bold text-slate-900 mb-0.5 md:mb-1 text-xs md:text-base">NC DMV &amp; Insurance Resource Center</h3>
-                                        <p class="text-[10px] md:text-sm text-slate-500 mb-1 md:mb-2 hidden sm:block">Complete 2026 guide — DMV, tags, REAL ID, insurance lapses, fees &amp; more.</p>
-                                        <span class="text-[10px] md:text-xs font-bold text-amber-600 uppercase tracking-wide"><i class="fas fa-star mr-1"></i> Featured Guide <i class="fas fa-arrow-right ml-1"></i></span>
-                                    </div>
-                                </div>
-                            </a>
+
                         </div>
                     </div>
         </div>
@@ -887,15 +823,15 @@
                         </div>
 
                         <div class="grid grid-cols-3 gap-3 md:gap-4">
-                            <a href="life-stages/new-parents/index.html" class="resource-card bg-gradient-to-br from-pink-50 to-pink-100/60 p-3 md:p-6 rounded-xl md:rounded-2xl border-2 border-pink-200 hover:border-pink-300 text-center hover:shadow-lg transition-all hover:-translate-y-1" data-name="new parents family">
+                            <a href="life-stages/new-parents/index.html" class="resource-card bg-gradient-to-br from-pink-50 to-pink-100/60 p-3 md:p-6 rounded-xl md:rounded-2xl border-2 border-pink-200 hover:border-pink-300 text-center hover:shadow-lg transition-all hover:-translate-y-1" data-name="new parents family" data-category="coverage">
                                 <div class="w-10 h-10 md:w-14 md:h-14 bg-white rounded-full flex items-center justify-center text-pink-500 mx-auto mb-2 md:mb-3 text-base md:text-xl shadow-sm"><i class="fas fa-baby"></i></div>
                                 <h4 class="font-bold text-slate-800 text-xs md:text-base">New Parents</h4>
                             </a>
-                            <a href="life-stages/first-time-buyers/index.html" class="resource-card bg-gradient-to-br from-yellow-50 to-yellow-100/60 p-3 md:p-6 rounded-xl md:rounded-2xl border-2 border-yellow-200 hover:border-yellow-300 text-center hover:shadow-lg transition-all hover:-translate-y-1" data-name="first time home buyers">
+                            <a href="life-stages/first-time-buyers/index.html" class="resource-card bg-gradient-to-br from-yellow-50 to-yellow-100/60 p-3 md:p-6 rounded-xl md:rounded-2xl border-2 border-yellow-200 hover:border-yellow-300 text-center hover:shadow-lg transition-all hover:-translate-y-1" data-name="first time home buyers" data-category="home coverage">
                                 <div class="w-10 h-10 md:w-14 md:h-14 bg-white rounded-full flex items-center justify-center text-yellow-500 mx-auto mb-2 md:mb-3 text-base md:text-xl shadow-sm"><i class="fas fa-key"></i></div>
                                 <h4 class="font-bold text-slate-800 text-xs md:text-base">Home Buyers</h4>
                             </a>
-                            <a href="life-stages/small-business/index.html" class="resource-card bg-gradient-to-br from-indigo-50 to-indigo-100/60 p-3 md:p-6 rounded-xl md:rounded-2xl border-2 border-indigo-200 hover:border-indigo-300 text-center hover:shadow-lg transition-all hover:-translate-y-1" data-name="small business owners">
+                            <a href="life-stages/small-business/index.html" class="resource-card bg-gradient-to-br from-indigo-50 to-indigo-100/60 p-3 md:p-6 rounded-xl md:rounded-2xl border-2 border-indigo-200 hover:border-indigo-300 text-center hover:shadow-lg transition-all hover:-translate-y-1" data-name="small business owners" data-category="coverage">
                                 <div class="w-10 h-10 md:w-14 md:h-14 bg-white rounded-full flex items-center justify-center text-indigo-500 mx-auto mb-2 md:mb-3 text-base md:text-xl shadow-sm"><i class="fas fa-briefcase"></i></div>
                                 <h4 class="font-bold text-slate-800 text-xs md:text-base">Business Owners</h4>
                             </a>
@@ -917,7 +853,7 @@
                         </div>
 
                         <div class="grid gap-3 md:gap-6">
-                            <a href="/insurance-elkin-nc.html" target="_blank" rel="noopener noreferrer" class="resource-card group bg-gradient-to-br from-green-50 to-emerald-100/60 p-3 md:p-6 rounded-xl md:rounded-[2rem] border-2 border-green-200 hover:border-green-400 hover:shadow-lg hover:-translate-y-1 transition-all flex flex-row items-center gap-3 md:gap-6" data-name="elkin savings deals">
+                            <a href="/insurance-elkin-nc.html" target="_blank" rel="noopener noreferrer" class="resource-card group bg-gradient-to-br from-green-50 to-emerald-100/60 p-3 md:p-6 rounded-xl md:rounded-[2rem] border-2 border-green-200 hover:border-green-400 hover:shadow-lg hover:-translate-y-1 transition-all flex flex-row items-center gap-3 md:gap-6" data-name="elkin savings deals" data-category="local">
                                 <div class="flex-shrink-0 w-10 h-10 md:w-16 md:h-16 bg-white rounded-xl md:rounded-2xl flex items-center justify-center text-green-600 text-lg md:text-3xl shadow-sm"><i class="fas fa-map-marker-alt"></i></div>
                                 <div class="flex-1 text-left">
                                     <div class="flex items-center justify-start gap-2 md:gap-3 mb-1 md:mb-2">
@@ -933,7 +869,7 @@
                                 <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-green-50 flex items-center justify-center text-green-600 group-hover:translate-x-1 transition-transform text-xs md:text-base hidden md:flex"><i class="fas fa-chevron-right"></i></div>
                             </a>
 
-                            <a href="/insurance-mount-airy-nc.html" target="_blank" rel="noopener noreferrer" class="resource-card group bg-gradient-to-br from-green-50 to-emerald-100/60 p-3 md:p-6 rounded-xl md:rounded-[2rem] border-2 border-green-200 hover:border-green-400 hover:shadow-lg hover:-translate-y-1 transition-all flex flex-row items-center gap-3 md:gap-6" data-name="mount airy savings deals">
+                            <a href="/insurance-mount-airy-nc.html" target="_blank" rel="noopener noreferrer" class="resource-card group bg-gradient-to-br from-green-50 to-emerald-100/60 p-3 md:p-6 rounded-xl md:rounded-[2rem] border-2 border-green-200 hover:border-green-400 hover:shadow-lg hover:-translate-y-1 transition-all flex flex-row items-center gap-3 md:gap-6" data-name="mount airy savings deals" data-category="local">
                                 <div class="flex-shrink-0 w-10 h-10 md:w-16 md:h-16 bg-white rounded-xl md:rounded-2xl flex items-center justify-center text-green-600 text-lg md:text-3xl shadow-sm"><i class="fas fa-mountain"></i></div>
                                 <div class="flex-1 text-left">
                                     <div class="flex items-center justify-start gap-2 md:gap-3 mb-1 md:mb-2">
@@ -949,7 +885,7 @@
                                 <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-green-50 flex items-center justify-center text-green-600 group-hover:translate-x-1 transition-transform text-xs md:text-base hidden md:flex"><i class="fas fa-chevron-right"></i></div>
                             </a>
 
-                            <a href="/areas-we-serve" target="_blank" rel="noopener noreferrer" class="resource-card group bg-gradient-to-br from-green-50 to-emerald-100/60 p-3 md:p-6 rounded-xl md:rounded-[2rem] border-2 border-green-200 hover:border-green-400 hover:shadow-lg hover:-translate-y-1 transition-all flex flex-row items-center gap-3 md:gap-6" data-name="wilkesboro savings deals">
+                            <a href="/areas-we-serve" target="_blank" rel="noopener noreferrer" class="resource-card group bg-gradient-to-br from-green-50 to-emerald-100/60 p-3 md:p-6 rounded-xl md:rounded-[2rem] border-2 border-green-200 hover:border-green-400 hover:shadow-lg hover:-translate-y-1 transition-all flex flex-row items-center gap-3 md:gap-6" data-name="wilkesboro savings deals" data-category="local">
                                 <div class="flex-shrink-0 w-10 h-10 md:w-16 md:h-16 bg-white rounded-xl md:rounded-2xl flex items-center justify-center text-green-600 text-lg md:text-3xl shadow-sm"><i class="fas fa-music"></i></div>
                                 <div class="flex-1 text-left">
                                     <div class="flex items-center justify-start gap-2 md:gap-3 mb-1 md:mb-2">
@@ -1215,7 +1151,10 @@
             const searchStatus = document.getElementById('searchStatus');
             const showAllTools = document.getElementById('showAllTools');
             const intentButtons = Array.from(document.querySelectorAll('[data-intent]'));
-            const quickToolCards = Array.from(document.querySelectorAll('#tools [data-category]'));
+            const resourceCards = Array.from(document.querySelectorAll('.resource-card'));
+            const resourceSections = [...new Set(resourceCards.map(card => card.closest('section')))];
+            const toolGrid = document.getElementById('resource-tool-grid');
+            let activeIntent = '';
             let searchAnalyticsTimer;
 
             const trackResourceEvent = (eventName, parameters = {}) => {
@@ -1228,31 +1167,53 @@
                 intentButtons.forEach(button => button.setAttribute('aria-pressed', 'false'));
             };
 
+            const applyResourceFilters = () => {
+                const query = searchInput ? searchInput.value.trim() : '';
+                const term = query.toLowerCase();
+                const queryWords = term.match(/[a-z0-9]+/g) || [];
+                let count = 0;
+                resourceCards.forEach(card => {
+                    const text = `${card.dataset.name || ''} ${card.textContent}`.toLowerCase();
+                    const categories = (card.dataset.category || '').split(/\s+/);
+                    const words = text.match(/[a-z0-9]+/g) || [];
+                    const matchesSearch = queryWords.every(word => words.some(entry => entry.startsWith(word)));
+                    const matches = matchesSearch && (!activeIntent || categories.includes(activeIntent));
+                    card.hidden = !matches;
+                    if (matches) count += 1;
+                });
+                resourceSections.forEach(section => {
+                    // Keep the search status, reset button, and category controls available.
+                    if (section.id !== 'tools') section.hidden = !Array.from(section.querySelectorAll('.resource-card')).some(card => !card.hidden);
+                });
+                if (toolGrid) toolGrid.hidden = !Array.from(toolGrid.querySelectorAll('.resource-card')).some(card => !card.hidden);
+                if (showAllTools) showAllTools.classList.toggle('hidden', !term && !activeIntent);
+                if (searchStatus) {
+                    const button = intentButtons.find(item => item.dataset.intent === activeIntent);
+                    const label = button ? button.querySelector('.font-bold').textContent.trim() : '';
+                    searchStatus.textContent = !term && !activeIntent ? '' : count === 0
+                        ? 'No matching resources. Try another search or choose Show all resources.'
+                        : `Showing ${count} resource${count === 1 ? '' : 's'}${term ? ` for “${query}”` : ` for ${label}`}.`;
+                }
+                return count;
+            };
+
             const showEveryTool = () => {
+                activeIntent = '';
+                if (searchInput) searchInput.value = '';
                 clearIntentState();
-                quickToolCards.forEach(card => { card.style.display = ''; });
-                if (showAllTools) showAllTools.classList.add('hidden');
-                if (searchStatus) searchStatus.textContent = '';
+                window.clearTimeout(searchAnalyticsTimer);
+                applyResourceFilters();
             };
 
             intentButtons.forEach(button => {
                 button.addEventListener('click', () => {
-                    const intent = button.dataset.intent;
+                    activeIntent = button.dataset.intent;
                     if (searchInput) searchInput.value = '';
+                    window.clearTimeout(searchAnalyticsTimer);
                     clearIntentState();
                     button.setAttribute('aria-pressed', 'true');
-
-                    let visibleCount = 0;
-                    quickToolCards.forEach(card => {
-                        const categories = (card.dataset.category || '').split(/\s+/);
-                        const matches = categories.includes(intent);
-                        card.style.display = matches ? '' : 'none';
-                        if (matches) visibleCount += 1;
-                    });
-
-                    if (showAllTools) showAllTools.classList.remove('hidden');
-                    if (searchStatus) searchStatus.textContent = `Showing ${visibleCount} tools for ${button.innerText.trim().split('\n')[0]}.`;
-                    trackResourceEvent('resource_intent_selected', { resource_intent: intent, visible_tools: visibleCount });
+                    const count = applyResourceFilters();
+                    trackResourceEvent('resource_intent_selected', { resource_intent: activeIntent, visible_tools: count });
                 });
             });
 
@@ -1262,42 +1223,20 @@
                     trackResourceEvent('resource_show_all_tools');
                 });
             }
+            document.querySelectorAll('[data-browse]').forEach(link => {
+                link.addEventListener('click', showEveryTool);
+            });
 
             if (searchInput) {
-                searchInput.addEventListener('input', function(e) {
-                    const term = e.target.value.trim().toLowerCase();
-                    const resourceCards = document.querySelectorAll('.resource-card, #tools .grid > a');
-                    const sections = [
-                        document.getElementById('tools'),
-                        ...Array.from(document.querySelectorAll('.section-container')).map(section => section.closest('section') || section)
-                    ].filter(Boolean);
-                    let matchCount = 0;
-
+                searchInput.addEventListener('input', () => {
+                    activeIntent = '';
                     clearIntentState();
-                    if (showAllTools) showAllTools.classList.toggle('hidden', term.length === 0);
-
-                    resourceCards.forEach(card => {
-                        const name = card.dataset.name ? card.dataset.name.toLowerCase() : '';
-                        const titleNode = card.querySelector('h3, h4');
-                        const title = titleNode ? titleNode.innerText.toLowerCase() : '';
-                        const matches = !term || name.includes(term) || title.includes(term);
-                        card.style.display = matches ? '' : 'none';
-                        if (matches) matchCount += 1;
-                    });
-
-                    sections.forEach(section => {
-                        const visibleCards = section.querySelectorAll('.resource-card:not([style*="display: none"]), #tools .grid > a:not([style*="display: none"])');
-                        section.style.display = visibleCards.length === 0 && term ? 'none' : '';
-                    });
-
-                    if (searchStatus) {
-                        searchStatus.textContent = term ? `${matchCount} resource${matchCount === 1 ? '' : 's'} found for “${e.target.value.trim()}”.` : '';
-                    }
-
+                    const count = applyResourceFilters();
+                    const term = searchInput.value.trim().toLowerCase();
                     window.clearTimeout(searchAnalyticsTimer);
                     if (term.length >= 2) {
                         searchAnalyticsTimer = window.setTimeout(() => {
-                            trackResourceEvent('resource_search', { search_term: term, result_count: matchCount });
+                            trackResourceEvent('resource_search', { search_term: term, result_count: count });
                         }, 700);
                     }
                 });
