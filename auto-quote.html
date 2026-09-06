@@ -25,7 +25,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <title>Get Auto Insurance Quote - Bill Layne Insurance | Elkin, NC</title>
-    <meta name="description" content="Get your free NC auto insurance quote in 5 minutes. We compare Progressive, Travelers, Nationwide, National General & more. Independent Elkin agent serving all 100 NC counties. Call (336) 835-1993.">
+    <meta name="description" content="Get your free NC auto insurance quote in about 5–7 minutes. We compare Progressive, Travelers, Nationwide, National General & more. Independent Elkin agent serving all 100 NC counties. Call (336) 835-1993.">
     <link rel="canonical" href="https://www.billlayneinsurance.com/auto-quote">
     <meta name="robots" content="index, follow">
     <meta http-equiv="Cache-Control" content="max-age=3600, must-revalidate">
@@ -41,13 +41,13 @@
     <meta property="og:site_name" content="Bill Layne Insurance Agency">
     <meta property="og:url" content="https://www.billlayneinsurance.com/auto-quote">
     <meta property="og:title" content="Free Auto Insurance Quote - Bill Layne Insurance | Elkin, NC">
-    <meta property="og:description" content="Get your free NC auto insurance quote in 5 minutes. We compare our 6 auto insurance carriers to find your best rate. Local Elkin independent agent.">
+    <meta property="og:description" content="Get your free NC auto insurance quote in about 5–7 minutes. We compare our 6 auto insurance carriers to find your best rate. Local Elkin independent agent.">
     <meta property="og:image" content="https://img.billlayneinsurance.com/i/2026/08/bli-og-image-cfpd46.png">
     <meta property="og:locale" content="en_US">
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Free Auto Insurance Quote - Bill Layne Insurance">
-    <meta name="twitter:description" content="Compare NC auto insurance rates in 5 minutes. Progressive, Travelers, Nationwide & more. Local Elkin independent agent. Free, no obligation.">
+    <meta name="twitter:description" content="Compare NC auto insurance rates in about 5–7 minutes. Progressive, Travelers, Nationwide & more. Local Elkin independent agent. Free, no obligation.">
     <meta name="twitter:image" content="https://img.billlayneinsurance.com/i/2026/08/bli-og-image-cfpd46.png">
 
     <!-- Schema: InsuranceAgency (rich) -->
@@ -171,7 +171,7 @@
   "@type": "WebPage",
   "name": "Free Auto Insurance Quote - Bill Layne Insurance",
   "url": "https://www.billlayneinsurance.com/auto-quote",
-  "description": "Get a free NC auto insurance quote in 5 minutes. Bill Layne Insurance compares 6 auto insurance carriers.",
+  "description": "Get a free NC auto insurance quote in about 5–7 minutes. Bill Layne Insurance compares 6 auto insurance carriers.",
   "inLanguage": "en-US",
   "isPartOf": {
     "@type": "WebSite",
@@ -1401,6 +1401,9 @@
 
         /* ── TURNSTILE: reserve space so the widget loading doesn't cause layout shift ── */
         #turnstile-container { min-height: 65px; }
+        .dock-quote { border: 0; cursor: pointer; font-family: inherit; }
+        @media (prefers-reduced-motion: reduce) { .form-step { animation: none; } }
+        .dock-quote:focus-visible, .step-title:focus-visible { outline: 3px solid #2563eb; outline-offset: 4px; }
     </style>
 </head>
 <body>
@@ -1433,7 +1436,7 @@
                     <div class="next-steps-title"><i class="fas fa-route"></i> What happens next?</div>
                     <div class="next-step-item"><span class="step-num">1</span> We're shopping our 6 auto insurance carriers now</div>
                     <div class="next-step-item"><span class="step-num">2</span> Bill will personally compare your best options</div>
-                    <div class="next-step-item"><span class="step-num">3</span> Expect a call or email <strong>today or by 10am tomorrow</strong></div>
+                    <div class="next-step-item"><span class="step-num">3</span> Expect a call or email <strong>within 1 business day</strong></div>
                 </div>
 
                 <!-- Bundle Cross-Sell -->
@@ -1603,7 +1606,7 @@
                             <div class="field-group">
                                 <label class="field-label" for="phone">Phone Number <span class="req">*</span></label>
                                 <input type="tel" id="phone" name="phone" required autocomplete="tel" placeholder="(336) 555-1234">
-                                <div class="field-error" id="err-phone">Please enter a valid phone number.</div>
+                                <div class="field-error" id="err-phone">Please enter a 10-digit phone number, including area code.</div>
                             </div>
 
                             <div class="field-group">
@@ -2001,10 +2004,10 @@
             <i class="fas fa-phone-alt"></i>
             <span>Call</span>
         </a>
-        <a href="/get-quote" class="dock-btn dock-quote">
+        <button type="button" class="dock-btn dock-quote" onclick="focusQuoteStep()">
             <i class="fas fa-bolt"></i>
-            <span>Compare Rates</span>
-        </a>
+            <span>Continue My Quote</span>
+        </button>
         <button class="dock-btn dock-menu" onclick="toggleMobileDockMenu()">
             <i class="fas fa-bars"></i>
             <span>Menu</span>
@@ -2110,6 +2113,36 @@
             }
         }
 
+        // Keep the current step below the sticky header for keyboard and mobile users.
+        function focusQuoteStep() {
+            const heading = document.querySelector('.form-step.active .step-title');
+            if (!heading) return;
+            heading.setAttribute('tabindex', '-1');
+            heading.focus({ preventScroll: true });
+            const headerHeight = document.querySelector('.site-header')?.getBoundingClientRect().height || 0;
+            window.scrollTo({
+                top: Math.max(0, heading.getBoundingClientRect().top + window.scrollY - headerHeight - 20),
+                behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'
+            });
+        }
+
+        function quoteFieldError(field) {
+            const group = field.closest('.field-group');
+            if (!group) return null;
+            let err = group.querySelector('.field-error');
+            if (!err) {
+                err = document.createElement('div');
+                err.className = 'field-error';
+                err.textContent = 'Please complete this field.';
+                group.appendChild(err);
+            }
+            if (!err.id) err.id = 'err-' + (field.id || field.name);
+            const describedBy = new Set((field.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean));
+            describedBy.add(err.id);
+            field.setAttribute('aria-describedby', [...describedBy].join(' '));
+            return err;
+        }
+
         function showStep(step) {
             document.querySelectorAll('.form-step').forEach(el => el.classList.remove('active'));
             document.querySelector(`[data-step="${step}"]`).classList.add('active');
@@ -2124,7 +2157,7 @@
 
             updateProgress();
             syncPrimaryDriver();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            focusQuoteStep();
         }
 
         // ─── INLINE VALIDATION ─────────────────────────────────────────
@@ -2134,11 +2167,13 @@
             let valid = true;
 
             required.forEach(field => {
-                const err = field.closest('.field-group')?.querySelector('.field-error');
+                const err = quoteFieldError(field);
                 let fieldValid = true;
 
                 if (field.type === 'email') {
                     fieldValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value.trim());
+                } else if (field.type === 'tel') {
+                    fieldValid = /^[+()\d\s.-]+$/.test(field.value.trim()) && /^(1)?[0-9]{10}$/.test(field.value.replace(/\D/g, ''));
                 } else if (field.name === 'zip_code') {
                     fieldValid = /^[0-9]{5}$/.test(field.value.trim());
                 } else {
@@ -2147,16 +2182,20 @@
 
                 if (!fieldValid) {
                     field.classList.add('error');
+                    field.setAttribute('aria-invalid', 'true');
                     if (err) err.classList.add('show');
                     valid = false;
                 } else {
                     field.classList.remove('error');
+                    field.removeAttribute('aria-invalid');
                     if (err) err.classList.remove('show');
                 }
             });
 
             if (!valid) {
-                stepEl.querySelector('.error')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                const firstError = stepEl.querySelector('.error');
+                firstError?.focus({ preventScroll: true });
+                firstError?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'center' });
             }
             return valid;
         }
@@ -2165,6 +2204,7 @@
         document.addEventListener('input', e => {
             if (e.target.matches('input, select, textarea')) {
                 e.target.classList.remove('error');
+                e.target.removeAttribute('aria-invalid');
                 const err = e.target.closest('.field-group')?.querySelector('.field-error');
                 if (err) err.classList.remove('show');
             }
@@ -2190,17 +2230,17 @@
                     </button>
                     <div class="entry-card-title"><i class="fas fa-user" style="color:var(--blue)"></i> Additional Driver ${driverCount}</div>
                     <div class="field-group">
-                        <label class="field-label" for="f-driver_--driverCount-_name">Full Name <span class="req">*</span></label>
-                        <input id="f-driver_--driverCount-_name" type="text" name="driver_${driverCount}_name" required placeholder="Full name">
+                        <label class="field-label" for="f-driver_${driverCount}_name">Full Name <span class="req">*</span></label>
+                        <input id="f-driver_${driverCount}_name" type="text" name="driver_${driverCount}_name" required placeholder="Full name">
                     </div>
                     <div class="field-row field-row-2">
                         <div class="field-group">
-                            <label class="field-label" for="f-driver_--driverCount-_dob">Date of Birth <span class="req">*</span></label>
-                            <input id="f-driver_--driverCount-_dob" type="date" name="driver_${driverCount}_dob" required autocomplete="bday">
+                            <label class="field-label" for="f-driver_${driverCount}_dob">Date of Birth <span class="req">*</span></label>
+                            <input id="f-driver_${driverCount}_dob" type="date" name="driver_${driverCount}_dob" required autocomplete="bday">
                         </div>
                         <div class="field-group">
-                            <label class="field-label" for="f-driver_--driverCount-_gender">Gender</label>
-                            <select id="f-driver_--driverCount-_gender" name="driver_${driverCount}_gender">
+                            <label class="field-label" for="f-driver_${driverCount}_gender">Gender</label>
+                            <select id="f-driver_${driverCount}_gender" name="driver_${driverCount}_gender">
                                 <option value="">Select</option>
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
@@ -2208,8 +2248,8 @@
                         </div>
                     </div>
                     <div class="field-group">
-                        <label class="field-label" for="f-driver_--driverCount-_marital">Marital Status</label>
-                        <select id="f-driver_--driverCount-_marital" name="driver_${driverCount}_marital">
+                        <label class="field-label" for="f-driver_${driverCount}_marital">Marital Status</label>
+                        <select id="f-driver_${driverCount}_marital" name="driver_${driverCount}_marital">
                             <option value="">Select</option>
                             <option value="single">Single</option>
                             <option value="married">Married</option>
@@ -2237,17 +2277,17 @@
                             <select name="vehicle_${vehicleCount}_year" id="${selectId}" required></select>
                         </div>
                         <div class="field-group">
-                            <label class="field-label" for="f-vehicle_--vehicleCount-_make">Make <span class="req">*</span></label>
-                            <input id="f-vehicle_--vehicleCount-_make" type="text" name="vehicle_${vehicleCount}_make" required placeholder="Toyota">
+                            <label class="field-label" for="f-vehicle_${vehicleCount}_make">Make <span class="req">*</span></label>
+                            <input id="f-vehicle_${vehicleCount}_make" type="text" name="vehicle_${vehicleCount}_make" required placeholder="Toyota">
                         </div>
                         <div class="field-group">
-                            <label class="field-label" for="f-vehicle_--vehicleCount-_model">Model <span class="req">*</span></label>
-                            <input id="f-vehicle_--vehicleCount-_model" type="text" name="vehicle_${vehicleCount}_model" required placeholder="Camry">
+                            <label class="field-label" for="f-vehicle_${vehicleCount}_model">Model <span class="req">*</span></label>
+                            <input id="f-vehicle_${vehicleCount}_model" type="text" name="vehicle_${vehicleCount}_model" required placeholder="Camry">
                         </div>
                     </div>
                     <div class="field-group">
-                        <label class="field-label" for="f-vehicle_--vehicleCount-_vin">VIN <span style="font-weight:400;color:var(--gray-400)">(Optional)</span></label>
-                        <input id="f-vehicle_--vehicleCount-_vin" type="text" name="vehicle_${vehicleCount}_vin" placeholder="17-character VIN" maxlength="17">
+                        <label class="field-label" for="f-vehicle_${vehicleCount}_vin">VIN <span style="font-weight:400;color:var(--gray-400)">(Optional)</span></label>
+                        <input id="f-vehicle_${vehicleCount}_vin" type="text" name="vehicle_${vehicleCount}_vin" placeholder="17-character VIN" maxlength="17">
                     </div>
                 </div>`;
             document.getElementById('vehicles-container').insertAdjacentHTML('beforeend', html);
@@ -2261,6 +2301,7 @@
         // ─── SUCCESS MODAL ─────────────────────────────────────────────
         function closeSuccessModal() {
             const modal = document.getElementById('successModal');
+            if (!modal.classList.contains('active')) return;
             modal.classList.remove('active');
             modal.style.display = 'none';
             document.getElementById('auto-quote-form').reset();

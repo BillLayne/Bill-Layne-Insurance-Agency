@@ -1084,6 +1084,9 @@
 
         /* ── TURNSTILE: reserve space so the widget loading doesn't cause layout shift ── */
         #turnstile-container { min-height: 65px; }
+        .dock-quote { border: 0; cursor: pointer; font-family: inherit; }
+        @media (prefers-reduced-motion: reduce) { .form-step { animation: none; } }
+        .dock-quote:focus-visible, .step-title:focus-visible { outline: 3px solid #2563eb; outline-offset: 4px; }
     </style>
 </head>
 <body>
@@ -1116,7 +1119,7 @@
                     <div class="next-steps-title"><i class="fas fa-route"></i> What happens next?</div>
                     <div class="next-step-item"><span class="step-num">1</span> We're shopping Nationwide, Travelers, National General &amp; more now</div>
                     <div class="next-step-item"><span class="step-num">2</span> Bill will personally compare your best coverage options</div>
-                    <div class="next-step-item"><span class="step-num">3</span> Expect a call or email <strong>today or by 10am tomorrow</strong></div>
+                    <div class="next-step-item"><span class="step-num">3</span> Expect a call or email <strong>within 1 business day</strong></div>
                 </div>
 
                 <!-- Bundle Cross-Sell -->
@@ -1306,7 +1309,7 @@
                             <div class="field-group">
                                 <label class="field-label" for="phone">Phone Number <span class="req">*</span></label>
                                 <input type="tel" id="phone" name="phone" required autocomplete="tel" placeholder="(336) 555-1234">
-                                <div class="field-error" id="err-phone">Please enter a valid phone number.</div>
+                                <div class="field-error" id="err-phone">Please enter a 10-digit phone number, including area code.</div>
                             </div>
 
                             <div class="field-group">
@@ -1637,7 +1640,7 @@
                                     <input type="radio" name="bundle_auto" id="bundle-no" value="no" class="pill-option">
                                     <label for="bundle-no" class="pill-label">No, just home</label>
                                 </div>
-                                <div class="field-hint">Bundling auto + home typically saves an additional 10–20%.</div>
+                                <div class="field-hint">Ask us to compare bundled auto and home options. Discounts vary by carrier and eligibility.</div>
                             </div>
                         </div>
 
@@ -1783,7 +1786,7 @@
                         <div class="trust-icon green"><i class="fas fa-link"></i></div>
                         <div>
                             <div class="trust-text-title">Bundle & Save</div>
-                            <div class="trust-text-sub">Add auto insurance and most clients save 10–20% on both policies.</div>
+                            <div class="trust-text-sub">Compare auto and home together to see which eligible bundle discounts fit your needs.</div>
                         </div>
                     </div>
                 </div>
@@ -1802,7 +1805,7 @@
     <!-- Mobile Dock -->
     <div class="mobile-dock">
         <a href="tel:3368351993" class="dock-btn dock-call"><i class="fas fa-phone-alt"></i> Call</a>
-        <a href="/get-quote" class="dock-btn dock-quote"><i class="fas fa-bolt"></i> Compare Rates</a>
+        <button type="button" class="dock-btn dock-quote" onclick="focusQuoteStep()"><i class="fas fa-bolt"></i> Continue My Quote</button>
         <button class="dock-btn dock-menu" onclick="toggleMobileDockMenu()"><i class="fas fa-bars"></i> Menu</button>
     </div>
     <div class="menu-overlay" id="mobileDockOverlay" onclick="toggleMobileDockMenu()"></div>
@@ -1885,6 +1888,36 @@
             }
         }
 
+        // Keep the current step below the sticky header for keyboard and mobile users.
+        function focusQuoteStep() {
+            const heading = document.querySelector('.form-step.active .step-title');
+            if (!heading) return;
+            heading.setAttribute('tabindex', '-1');
+            heading.focus({ preventScroll: true });
+            const headerHeight = document.querySelector('.site-header')?.getBoundingClientRect().height || 0;
+            window.scrollTo({
+                top: Math.max(0, heading.getBoundingClientRect().top + window.scrollY - headerHeight - 20),
+                behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'
+            });
+        }
+
+        function quoteFieldError(field) {
+            const group = field.closest('.field-group');
+            if (!group) return null;
+            let err = group.querySelector('.field-error');
+            if (!err) {
+                err = document.createElement('div');
+                err.className = 'field-error';
+                err.textContent = 'Please complete this field.';
+                group.appendChild(err);
+            }
+            if (!err.id) err.id = 'err-' + (field.id || field.name);
+            const describedBy = new Set((field.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean));
+            describedBy.add(err.id);
+            field.setAttribute('aria-describedby', [...describedBy].join(' '));
+            return err;
+        }
+
         function showStep(step) {
             document.querySelectorAll('.form-step').forEach(el => el.classList.remove('active'));
             document.querySelector(`[data-step="${step}"]`).classList.add('active');
@@ -1895,7 +1928,7 @@
             if (step === totalSteps) { nextBtn.classList.add('hidden'); submitBtn.classList.remove('hidden'); }
             else { nextBtn.classList.remove('hidden'); submitBtn.classList.add('hidden'); }
             updateProgress();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            focusQuoteStep();
         }
 
         // ─── VALIDATION ────────────────────────────────────────────────
@@ -1904,27 +1937,35 @@
             const required = stepEl.querySelectorAll('[required]');
             let valid = true;
             required.forEach(field => {
-                const err = field.closest('.field-group')?.querySelector('.field-error');
+                const err = quoteFieldError(field);
                 let fieldValid = true;
                 if (field.type === 'email') fieldValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value.trim());
+                else if (field.type === 'tel') fieldValid = /^[+()\d\s.-]+$/.test(field.value.trim()) && /^(1)?[0-9]{10}$/.test(field.value.replace(/\D/g, ''));
                 else if (field.name === 'zip_code') fieldValid = /^[0-9]{5}$/.test(field.value.trim());
                 else fieldValid = field.value.trim() !== '';
                 if (!fieldValid) {
                     field.classList.add('error');
+                    field.setAttribute('aria-invalid', 'true');
                     if (err) err.classList.add('show');
                     valid = false;
                 } else {
                     field.classList.remove('error');
+                    field.removeAttribute('aria-invalid');
                     if (err) err.classList.remove('show');
                 }
             });
-            if (!valid) stepEl.querySelector('.error')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (!valid) {
+                const firstError = stepEl.querySelector('.error');
+                firstError?.focus({ preventScroll: true });
+                firstError?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'center' });
+            }
             return valid;
         }
 
         document.addEventListener('input', e => {
             if (e.target.matches('input, select, textarea')) {
                 e.target.classList.remove('error');
+                e.target.removeAttribute('aria-invalid');
                 const err = e.target.closest('.field-group')?.querySelector('.field-error');
                 if (err) err.classList.remove('show');
             }
@@ -1943,6 +1984,7 @@
         // ─── SUCCESS MODAL ─────────────────────────────────────────────
         function closeSuccessModal() {
             const modal = document.getElementById('successModal');
+            if (!modal.classList.contains('active')) return;
             modal.classList.remove('active');
             modal.style.display = 'none';
             document.getElementById('home-quote-form').reset();
