@@ -1180,6 +1180,17 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; }
         transition-duration: 0.01ms !important;
     }
 }
+
+.mobile-policy-shortcut { display: block; padding: 14px; margin-top: 16px; border: 1px solid #93c5fd; border-radius: 12px; background: #eff6ff; color: #0f172a; text-decoration: none; text-align: left; }
+.mobile-policy-shortcut strong, .mobile-policy-shortcut span, .mobile-policy-shortcut b { display: block; }
+.mobile-policy-shortcut span { font-size: 14px; line-height: 1.5; color: #475569; margin: 4px 0 8px; }
+.mobile-policy-shortcut b { color: #1d4ed8; font-size: 14px; }
+.mobile-policy-shortcut:focus-visible, .dock-quote:focus-visible { outline: 3px solid #2563eb; outline-offset: 3px; }
+.dock-quote { border: 0; font-family: inherit; cursor: pointer; }
+@media(max-width: 1024px) {
+ .desktop-policy-shortcut { display: none !important; }
+ .m-card-cta { font-size: 12px; letter-spacing: 0; text-transform: none; flex-wrap: wrap; }
+}
 </style>
 
 </head>
@@ -1245,16 +1256,21 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; }
             <div class="m-card-title">Auto</div>
             <div class="m-card-type">Insurance</div>
             <div class="m-card-time"><i class="fas fa-bolt"></i> Quick &amp; easy</div>
-            <div class="m-card-cta">Get Quote <i class="fas fa-arrow-right"></i></div>
+            <div class="m-card-cta">Start Auto Quote <i class="fas fa-arrow-right"></i></div>
         </a>
         <a href="home-quote.html" class="m-card">
             <div class="m-card-icon"><i class="fas fa-home" style="color:white;"></i></div>
             <div class="m-card-title">Home</div>
             <div class="m-card-type">Insurance</div>
             <div class="m-card-time"><i class="fas fa-bolt"></i> Quick &amp; easy</div>
-            <div class="m-card-cta">Get Quote <i class="fas fa-arrow-right"></i></div>
+            <div class="m-card-cta">Start Home Quote <i class="fas fa-arrow-right"></i></div>
         </a>
     </div>
+    <a href="/upload-policy?src=get_quote_shortcut" data-source="get_quote_shortcut" class="mobile-policy-shortcut">
+        <strong>Already insured?</strong>
+        <span>Upload your current policy for us to compare.</span>
+        <b>Upload My Policy <i class="fas fa-arrow-right" aria-hidden="true"></i></b>
+    </a>
     <div class="mobile-trust">
         <span class="mobile-trust-item"><i class="fas fa-check-circle"></i> 100% Free</span>
         <span class="mobile-trust-item"><i class="fas fa-star"></i> 4.9 Rating</span>
@@ -1323,7 +1339,7 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; }
     <!-- ALREADY-INSURED SHORTCUT — routes switchers to the policy-upload flow
          instead of a 6-step form. Added 2026-08-25: /upload-policy had 1 real
          visitor in 30 days because almost nothing linked to it. -->
-    <a href="/upload-policy?src=get_quote_shortcut" data-source="get_quote_shortcut" class="fade-up delay-2"
+    <a href="/upload-policy?src=get_quote_shortcut" data-source="get_quote_shortcut" class="desktop-policy-shortcut fade-up delay-2"
        style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;max-width:900px;margin:22px auto 0;padding:20px 24px;background:#fff;border:2px solid #e2e8f0;border-left:6px solid #1d4ed8;border-radius:14px;text-decoration:none;box-shadow:0 6px 20px rgba(15,23,42,.06)">
         <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#1d4ed8,#1e3a8a);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">
             <i class="fas fa-file-arrow-up"></i>
@@ -1467,10 +1483,10 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; }
         <i class="fas fa-phone-alt"></i>
         <span>Call</span>
     </a>
-    <a href="auto-quote.html" class="dock-btn dock-quote">
+    <button type="button" class="dock-btn dock-quote" onclick="focusQuoteChoices()">
         <i class="fas fa-bolt"></i>
-        <span>Compare Rates</span>
-    </a>
+        <span>Choose Coverage</span>
+    </button>
     <button class="dock-btn dock-menu" onclick="openMenu()" aria-label="Open menu">
         <i class="fas fa-bars"></i>
         <span>Menu</span>
@@ -1522,6 +1538,13 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 
     // -- QUOTE HANDOFF ----------------------------------------------
+    function focusQuoteChoices() {
+        const card = [...document.querySelectorAll('.m-card, .quote-card')].find(el => el.getBoundingClientRect().height > 0);
+        if (!card) return;
+        card.focus({ preventScroll: true });
+        card.parentElement.scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+    }
+
     // Homepage hero ZIP form lands here with ?zip=XXXXX. Forward it onto
     // the auto/home quote links so their zip_code field can prefill.
     // Keep the internal src label with the visitor without adding UTMs.
