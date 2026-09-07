@@ -1088,6 +1088,7 @@
         @media (prefers-reduced-motion: reduce) { .form-step { animation: none; } }
         .dock-quote:focus-visible, .step-title:focus-visible { outline: 3px solid #2563eb; outline-offset: 4px; }
     </style>
+    <link rel="stylesheet" href="/css/quote-review.css">
 </head>
 <body>
     <a href="#main-content" class="sr-only focus:not-sr-only">Skip to main content</a>
@@ -1688,6 +1689,12 @@
                                 <textarea id="f-additional_notes" name="additional_notes" placeholder="Special situations, recent renovations, questions for our team, or anything that might help us find your best rate..."></textarea>
                             </div>
 
+                            <section class="quote-review" aria-labelledby="quote-review-title" data-clarity-mask="true">
+                                <h3 id="quote-review-title">Review your answers</h3>
+                                <p>Check your earlier answers below. Use Edit to make a correction, then return here to send your request.</p>
+                                <div id="quote-review-sections"></div>
+                            </section>
+
                             <div style="background:var(--gray-50);border:2px solid var(--gray-200);border-radius:10px;padding:14px;margin-top:4px;display:flex;align-items:center;gap:10px;">
                                 <i class="fas fa-lock" style="color:var(--green);font-size:18px;flex-shrink:0"></i>
                                 <p style="font-size:12px;color:var(--gray-600);line-height:1.5;">Your information is <strong>secure and private</strong>. We never sell your data. This quote request goes directly to Bill Layne Insurance only.</p>
@@ -1928,7 +1935,14 @@
             if (step === totalSteps) { nextBtn.classList.add('hidden'); submitBtn.classList.remove('hidden'); }
             else { nextBtn.classList.remove('hidden'); submitBtn.classList.add('hidden'); }
             updateProgress();
-            focusQuoteStep();
+            const returningToReview = quoteReviewEditing && step === totalSteps;
+            if (step === totalSteps) {
+                quoteReviewEditing = false;
+                renderQuoteReview();
+            }
+            nextBtn.textContent = quoteReviewEditing ? 'Save & Return to Review' : 'Continue';
+            if (returningToReview) focusQuoteReview();
+            else focusQuoteStep();
         }
 
         // ─── VALIDATION ────────────────────────────────────────────────
@@ -1973,11 +1987,12 @@
 
         function nextStep() {
             if (validateStep(currentStep) && currentStep < totalSteps) {
-                currentStep++;
+                currentStep = quoteReviewEditing ? totalSteps : currentStep + 1;
                 showStep(currentStep);
             }
         }
         function previousStep() {
+            quoteReviewEditing = false;
             if (currentStep > 1) { currentStep--; showStep(currentStep); }
         }
 
@@ -1985,6 +2000,7 @@
         function closeSuccessModal() {
             const modal = document.getElementById('successModal');
             if (!modal.classList.contains('active')) return;
+            quoteReviewEditing = false;
             modal.classList.remove('active');
             modal.style.display = 'none';
             document.getElementById('home-quote-form').reset();
@@ -2310,5 +2326,6 @@
     })();
     </script>
     <script defer src="js/conversion-tracking.js"></script>
+    <script src="/js/quote-review.js"></script>
 </body>
 </html>
