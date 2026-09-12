@@ -260,7 +260,7 @@
 
     <script>
         window.SITE_VERSION = '2025.01.17.2';
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8Ewng1HqFoK31Ch7Ytn6Ux_V5KNDrtPjK9bthB21NSaWStmpj3Q-8mJUNm-meccihNQ/exec';
+        const SCRIPT_URL = '/api/quote-submit';
         // TURNSTILE: replace with real site key from Cloudflare dashboard (Turnstile > Add site)
         // Test key "0x4AAAAAADs4upS36xby4dVi" always passes - safe placeholder until you create the real site.
         const TURNSTILE_SITE_KEY = '0x4AAAAAADs4upS36xby4dVi';
@@ -1169,11 +1169,11 @@
             <div class="modal-header" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">
                 <div class="checkmark-wrap" style="background: #fbbf24;"><i class="fas fa-exclamation" style="color: #92400e;"></i></div>
                 <div class="modal-title">Submission Issue</div>
-                <div class="modal-subtitle">Don't worry — we can still get your quote</div>
+                <div class="modal-subtitle">We couldn't confirm your submission</div>
             </div>
             <div class="modal-body">
                 <div class="next-steps">
-                    <div class="next-steps-title">Try one of these options:</div>
+                    <div class="next-steps-title">Your request may already have arrived. Please contact us before submitting again:</div>
                     <div class="next-step-item"><i class="fas fa-envelope"></i> We can email your quote details directly to Bill</div>
                     <div class="next-step-item"><i class="fas fa-phone-alt"></i> Or call us and we'll take your info over the phone</div>
                 </div>
@@ -2005,6 +2005,7 @@
             modal.classList.remove('active');
             modal.style.display = 'none';
             document.getElementById('home-quote-form').reset();
+            document.getElementById('submit-btn').disabled = false;
             currentStep = 1;
             showStep(1);
         }
@@ -2046,6 +2047,7 @@
             if (!validateStep(currentStep)) return;
 
             const submitBtn = document.getElementById('submit-btn');
+            if (submitBtn.disabled) return;
             const loadingOverlay = document.getElementById('loadingOverlay');
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
@@ -2099,8 +2101,7 @@
             data.turnstile_token     = turnstileToken; // spam-protection token (verify server-side when ready)
 
             // localStorage safety net: persist the submission attempt so Bill can recover any
-            // lead that the Apps Script silently dropped (fetch uses mode:'no-cors' so we
-            // can't tell server-side whether it landed). Pending submissions are flushed
+            // submission whose backend acknowledgment was not received. Pending submissions are flushed
             // 7 days after the fact to avoid filling browser storage.
             try {
                 const pendingKey = `bli_pending_${confirmationNumber}`;
@@ -2125,15 +2126,21 @@
             }
 
             try {
-                await fetch(SCRIPT_URL, {
+                const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
+                const receipt = await response.json();
+                if (!response.ok || receipt.ok !== true || receipt.quoteType !== 'HOME' ||
+                    !/^HOME-[0-9]{6}-[A-Z0-9]{4}$/.test(receipt.confirmationNumber || '')) {
+                    throw new Error('Submission could not be confirmed');
+                }
+                const acceptedConfirmation = receipt.confirmationNumber;
+                try { localStorage.removeItem(`bli_pending_${confirmationNumber}`); } catch {}
 
                 setTimeout(() => {
-                    document.getElementById('modal-confirmation-number').textContent = confirmationNumber;
+                    document.getElementById('modal-confirmation-number').textContent = acceptedConfirmation;
                     document.getElementById('customer-email').textContent = data.email;
 
                     loadingOverlay.classList.remove('active');
@@ -2145,23 +2152,22 @@
                     modal.style.display = 'flex';
                     modal.classList.add('active');
 
-                    // GA4 conversion event: fires only when the quote actually completes
-                    // (success modal shown). This is the completion metric that was missing.
+                    // Count only an explicit successful response from the existing backend.
                     if (typeof gtag !== 'undefined') {
                         gtag('event', 'form_submit', {
                             form_type: 'home_insurance',
-                            confirmation_number: confirmationNumber
+                            confirmation_number: acceptedConfirmation
                         });
                         gtag('event', 'generate_lead', {
                             lead_type: 'quote',
                             service_line: 'home',
                             form_name: 'home_quote',
-                            method: 'web_form'
+                            method: 'backend_acknowledged'
                         });
                     }
 
-                    sessionStorage.setItem('lastQuoteConfirmation', confirmationNumber);
-                    submitBtn.disabled = false;
+                    try { sessionStorage.setItem('lastQuoteConfirmation', acceptedConfirmation); } catch {}
+                    submitBtn.disabled = true;
                     submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Get My Free Quote';
                 }, 1500);
 
