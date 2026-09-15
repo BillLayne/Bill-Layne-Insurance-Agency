@@ -1,0 +1,283 @@
+/* ==========================================================================
+   bli-nav — self-contained site navigation for pages that have no menu.
+
+   Everything here is namespaced .blinav-* on purpose. These styles get loaded
+   onto pages built with five different CSS approaches (inline <style> only,
+   custom stylesheets, compiled Tailwind), so nothing may leak out of the
+   component and nothing may depend on Tailwind utilities or Font Awesome
+   existing on the page. Icons are inline SVG in the markup for the same
+   reason.
+
+   Generated markup lives between <!-- BLI-NAV:START --> and
+   <!-- BLI-NAV:END -->. Source: tools/nav.json + tools/build-nav.py.
+   ========================================================================== */
+
+.blinav-footer,
+.blinav-dock,
+.blinav-panel {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+}
+.blinav-footer *,
+.blinav-dock *,
+.blinav-panel * { box-sizing: border-box; }
+
+/* --------------------------------------------------------------------------
+   Footer site nav — the crawlable, always-present layer. No JS.
+   -------------------------------------------------------------------------- */
+.blinav-footer {
+  background: #0f172a;
+  color: #94a3b8;
+  border-top: 3px solid #C8A84E;
+  padding: 2.5rem 1rem 2rem;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.blinav-footer-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+.blinav-brand {
+  display: inline-block;
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  margin-bottom: 1.25rem;
+}
+.blinav-brand:hover { color: #C8A84E; }
+
+.blinav-footer-links {
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.15rem 1.25rem;
+}
+.blinav-footer-links li { margin: 0; }
+.blinav-footer-links a {
+  display: block;
+  color: #cbd5e1;
+  text-decoration: none;
+  font-weight: 600;
+  /* 44px tap target without a fixed height, so long labels can wrap */
+  padding: 0.7rem 0;
+  transition: color 0.15s ease;
+}
+.blinav-footer-links a:hover { color: #ffffff; }
+.blinav-footer-links a:focus-visible {
+  outline: 2px solid #C8A84E;
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+.blinav-footer-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 1.25rem;
+}
+.blinav-call,
+.blinav-quote {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.6rem 1.15rem;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.blinav-call {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.blinav-call:hover { background: rgba(255, 255, 255, 0.14); }
+.blinav-quote {
+  background: #C8A84E;
+  color: #1a1a1a;
+}
+.blinav-quote:hover { background: #d8b962; }
+.blinav-call:focus-visible,
+.blinav-quote:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+.blinav-footer-legal {
+  margin: 1.25rem 0 0;
+  font-size: 0.78rem;
+  color: #64748b;
+}
+.blinav-footer-legal a { color: #94a3b8; }
+
+/* --------------------------------------------------------------------------
+   Mobile dock — matches the pattern the rest of the site already uses.
+   Bottom-anchored so it can never collide with a page's own fixed header.
+   -------------------------------------------------------------------------- */
+.blinav-dock,
+.blinav-dock-spacer { display: none; }
+
+@media (max-width: 767px) {
+  .blinav-dock-spacer { display: block; height: 68px; }
+
+  .blinav-dock {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr 1fr;
+    gap: 1px;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2147483000;
+    background: #0f172a;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  .blinav-dock-btn {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 0;
+    background: transparent;
+    color: #e2e8f0;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+  }
+  .blinav-dock-btn svg { width: 18px; height: 18px; fill: currentColor; }
+  .blinav-dock-quote { background: #C8A84E; color: #1a1a1a; }
+  .blinav-dock-btn:focus-visible { outline: 2px solid #C8A84E; outline-offset: -3px; }
+}
+
+/* --------------------------------------------------------------------------
+   Slide-up panel + overlay
+   -------------------------------------------------------------------------- */
+.blinav-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  z-index: 2147483001;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.blinav-overlay.blinav-open { opacity: 1; }
+
+.blinav-panel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2147483002;
+  max-height: 82vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: #ffffff;
+  border-radius: 18px 18px 0 0;
+  box-shadow: 0 -12px 40px rgba(15, 23, 42, 0.28);
+  transform: translateY(100%);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.blinav-panel.blinav-open { transform: translateY(0); }
+
+/* The panel is bottom-anchored on phones; on larger screens it becomes a
+   right-hand drawer so the component still works if a page ever shows the
+   toggle above 768px. */
+@media (min-width: 768px) {
+  .blinav-panel {
+    top: 0;
+    left: auto;
+    width: 360px;
+    max-width: 90vw;
+    max-height: none;
+    border-radius: 0;
+    transform: translateX(100%);
+  }
+  .blinav-panel.blinav-open { transform: translateX(0); }
+}
+
+.blinav-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border-radius: 18px 18px 0 0;
+}
+@media (min-width: 768px) {
+  .blinav-panel-header { border-radius: 0; }
+}
+.blinav-panel-title {
+  font-weight: 800;
+  color: #0f172a;
+  font-size: 0.95rem;
+}
+.blinav-close {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #475569;
+  border-radius: 999px;
+  width: 44px;
+  height: 44px;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+.blinav-close:hover { color: #b91c1c; }
+.blinav-close:focus-visible { outline: 2px solid #C8A84E; outline-offset: 2px; }
+
+.blinav-panel-links {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem 0 1.25rem;
+}
+.blinav-panel-links li { margin: 0; }
+.blinav-panel-links a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 0.75rem 1.25rem;
+  color: #1e293b;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border-bottom: 1px solid #f1f5f9;
+}
+.blinav-panel-links a::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid #cbd5e1;
+  border-bottom: 2px solid #cbd5e1;
+  transform: rotate(-45deg);
+  flex: none;
+}
+.blinav-panel-links a:hover { background: #f8fafc; color: #003f87; }
+.blinav-panel-links a:focus-visible { outline: 2px solid #C8A84E; outline-offset: -2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .blinav-overlay,
+  .blinav-panel { transition: none; }
+}
