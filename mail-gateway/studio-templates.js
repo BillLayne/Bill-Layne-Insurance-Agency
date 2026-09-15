@@ -67,13 +67,14 @@ window.BLI_STUDIO = (function () {
       '<!-- 600px ANTI-FIT SPACER -->\n' +
       '<div style="display:none;white-space:nowrap;font:15px courier;color:#ffffff;line-height:0;width:600px!important;min-width:600px!important;max-width:600px!important;">' +
       new Array(31).join('&nbsp;') + '</div>\n' +
+      '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" width="600" height="1" alt="" style="display:block;width:600px!important;min-width:600px!important;max-width:600px!important;height:1px!important;line-height:1px;font-size:0;border:0;">\n' +
       '<!-- PREHEADER -->\n' +
       '<div style="display:none;font-size:1px;color:#f1f5f9;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">' +
       preheader + '&nbsp;&#847;&nbsp;&#847;&nbsp;&#847;&nbsp;&#847;&nbsp;&#847;&nbsp;&#847;&nbsp;&#847;</div>\n' +
       '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#f1f5f9" style="background-color:#f1f5f9;">\n' +
       '<tr><td align="center" style="padding:24px 16px;">\n' +
       '<!--[if mso]>\n<table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;"><tr><td width="600" style="width:600px;">\n<![endif]-->\n' +
-      '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" class="email-container" style="width:100%;max-width:600px;margin:0 auto;">\n';
+      '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" class="email-container" style="max-width:600px;margin:0 auto;">\n';
   }
 
   function shellClose() {
