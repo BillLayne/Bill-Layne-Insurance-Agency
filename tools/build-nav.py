@@ -312,13 +312,147 @@ def transform_families(src, cfg, rel):
 
 
 # ---------------------------------------------------------------------------
+# header mode - the old #main-header pages (town pages, auto-insurance.html,
+# three auto-center guides). Markup copied verbatim from insurance-elkin-nc.html
+# so every Tailwind class already exists in the compiled site-wide CSS.
+# ---------------------------------------------------------------------------
+CHEVRON = ('<svg class="ml-2 w-3 h-3 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">'
+           '<path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>'
+           '</svg>')
+DESK_LINK = '<a href="%s" class="nav-link px-3 py-2 rounded-md text-gray-700 hover:text-blue-600">%s</a>'
+DESK_DD_ITEM = '<a href="%s" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">%s</a>'
+MOBILE_ITEM = '<a href="%s" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">%s</a>'
+
+
+def by_label(cfg, *labels):
+    want = list(labels)
+    got = {l['label']: l for l in cfg['links']}
+    missing = [w for w in want if w not in got]
+    if missing:
+        raise ValueError('nav.json is missing links: %s' % missing)
+    return [got[w] for w in want]
+
+
+def desk_dropdown(label, items, ind):
+    out = [ind + '<div class="relative group">',
+           ind + '    <button class="nav-link px-3 py-2 rounded-md flex items-center text-gray-700 hover:text-blue-600">',
+           ind + '        %s' % label,
+           ind + '        ' + CHEVRON,
+           ind + '    </button>',
+           ind + '    <div class="dropdown-menu absolute hidden group-hover:block bg-white shadow-lg rounded-md py-2 w-48 opacity-0 group-hover:opacity-100">']
+    out += [ind + '        ' + DESK_DD_ITEM % (i['href'], i['label']) for i in items]
+    out += [ind + '    </div>', ind + '</div>']
+    return out
+
+
+def items_desktop_header(cfg, ind):
+    home = cfg['links'][0]
+    services = by_label(cfg, 'Auto Insurance', 'Home Insurance', 'Claims Center', 'Service Center', 'Client Hub')
+    more = by_label(cfg, 'Videos', 'Community', 'Espa&ntilde;ol')
+    resources, blog, contact = by_label(cfg, 'Resources', 'Blog', 'Contact Us')
+    out = [ind + DESK_LINK % (home['href'], 'Home')]
+    out += desk_dropdown('Services', services, ind)
+    out += desk_dropdown('Areas We Serve', cfg['towns'], ind)
+    out += [ind + DESK_LINK % (resources['href'], 'Resources'),
+            ind + DESK_LINK % (blog['href'], 'Blog')]
+    out += desk_dropdown('More', more, ind)
+    out += [ind + DESK_LINK % (contact['href'], 'Contact')]
+    return out
+
+
+def cta_anchors(inner):
+    """The page's own Call / Quote buttons inside a nav, verbatim and in order."""
+    keep = []
+    pos = 0
+    while True:
+        found = find_element(inner, ['a'], lambda a: a.get('href', '').startswith('tel:')
+                             or 'quote' in a.get('href', '').lower(), start=pos)
+        if not found:
+            break
+        o, c, _ = found
+        # walk back to the "<a" that opened this element
+        start = inner.rfind('<a', 0, o)
+        keep.append(inner[start:c + len('</a>')])
+        pos = c + 4
+    return keep
+
+
+def replace_inner(out, c_open, c_close, lines, ctas, indent):
+    body = '\n' + '\n'.join(lines + [indent + k for k in ctas]) + '\n' + indent[:-4]
+    return out[:c_open] + body + out[c_close:]
+
+
+def transform_header(src, cfg, rel):
+    out = src
+    notes = []
+    hdr = find_element(out, ['header'], lambda a: a.get('id') == 'main-header')
+    if not hdr:
+        raise ValueError('no #main-header')
+    h_open, h_close, _ = hdr
+
+    # ---- desktop row --------------------------------------------------------
+    inner = out[h_open:h_close]
+    desk = find_element(inner, ['nav'], lambda a: a.get('class', '').startswith('hidden md:flex'))
+    if not desk:
+        raise ValueError('no desktop <nav class="hidden md:flex">')
+    d_open, d_close, _ = desk
+    d_inner = inner[d_open:d_close]
+    ctas = cta_anchors(d_inner)
+    if not 1 <= len(ctas) <= 2:
+        raise ValueError('desktop nav: expected 1-2 CTA anchors, found %d' % len(ctas))
+    m = re.search(r'\n([ \t]*)<a\b', d_inner)
+    indent = m.group(1) if m else '                '
+    new_lines = items_desktop_header(cfg, indent)
+    new_out = replace_inner(out, h_open + d_open, h_open + d_close, new_lines, ctas, indent)
+    if new_out != out:
+        out = new_out
+        notes.append('desktop header')
+
+    # ---- mobile menu --------------------------------------------------------
+    hdr = find_element(out, ['header'], lambda a: a.get('id') == 'main-header')
+    h_open, h_close, _ = hdr
+    inner = out[h_open:h_close]
+    mm = find_element(inner, ['div'], lambda a: a.get('id') == 'mobile-menu')
+    if not mm:
+        raise ValueError('no #mobile-menu')
+    m_open, m_close, _ = mm
+    m_inner = inner[m_open:m_close]
+    ctas = cta_anchors(m_inner)
+    if not 1 <= len(ctas) <= 2:
+        raise ValueError('mobile menu: expected 1-2 CTA anchors, found %d' % len(ctas))
+    m = re.search(r'\n([ \t]*)<a\b', m_inner)
+    indent = m.group(1) if m else '        '
+    new_lines = [indent + MOBILE_ITEM % (l['href'], l['label']) for l in cfg['links']]
+    new_out = replace_inner(out, h_open + m_open, h_open + m_close, new_lines, ctas, indent)
+    if new_out != out:
+        out = new_out
+        notes.append('mobile menu')
+    return out, notes
+
+
+# ---------------------------------------------------------------------------
 def load_cfg():
     with open(NAV_JSON, encoding='utf-8') as f:
         return json.load(f)
 
 
-def discover_family_pages(cfg):
+def discover_family_pages(cfg, blog=False):
+    """Every page carrying a family container. blog=False walks the site and
+    skips blog/blogs/; blog=True walks only blog/blogs/."""
     ids = [cid for ids, *_ in FAMILIES for cid in ids]
+    if blog:
+        d = os.path.join(ROOT, 'blog', 'blogs')
+        out = []
+        for fn in sorted(os.listdir(d)):
+            if not fn.endswith('.html'):
+                continue
+            rel = 'blog/blogs/' + fn
+            if rel in cfg.get('exclude', []):
+                continue
+            s = open(os.path.join(d, fn), encoding='utf-8', errors='replace').read()
+            if any(('id="%s"' % cid) in s for cid in ids):
+                out.append(rel)
+        return out
     skip_dirs = {'.git', 'node_modules', '.claude', 'output', '__pycache__', '.playwright-cli',
                  '_ul-MSI', 'vendor', 'fonts', 'css', 'js', 'data', 'email-assets', 'functions',
                  'ds-bundle', 'templates', 'tools', 'Blog Folders stored'}
@@ -357,11 +491,17 @@ def main():
     if not wave:
         sys.exit('no wave %r in nav.json' % args.wave)
     mode = wave.get('mode', 'standalone')
-    transform = transform_standalone if mode == 'standalone' else transform_families
+    transform = {'standalone': transform_standalone,
+                 'families': transform_families,
+                 'header': transform_header}.get(mode)
+    if transform is None:
+        sys.exit('unknown mode %r for wave %s' % (mode, args.wave))
     if args.pages:
         pages = args.pages
     elif wave['pages'] == 'auto':
         pages = discover_family_pages(cfg)
+    elif wave['pages'] == 'auto-blog':
+        pages = discover_family_pages(cfg, blog=True)
     else:
         pages = wave['pages']
     pages = [p for p in pages if p not in cfg.get('exclude', [])]
