@@ -1,13 +1,23 @@
 {
   "_comment": [
-    "CANONICAL SITE NAVIGATION — single source of truth.",
-    "Edit this file, then run:  python tools/build-nav.py --apply",
-    "Never hand-edit the generated block in a page; it sits between",
-    "<!-- BLI-NAV:START --> and <!-- BLI-NAV:END --> and will be overwritten.",
+    "CANONICAL SITE NAVIGATION - single source of truth.",
+    "Edit this file, then run:  python tools/build-nav.py --wave N --apply",
     "",
-    "The link list below mirrors the homepage drawer (#menu-drawer in index.html).",
+    "Two modes, chosen per wave:",
+    "  standalone - pages with NO menu get a self-contained footer nav + mobile",
+    "               dock between <!-- BLI-NAV:START --> / <!-- BLI-NAV:END -->.",
+    "  families   - pages that already have one of the site's menu containers",
+    "               (#mobileDockPanel, #menu-drawer, #navigation-menu,",
+    "               #mobile-menu, #menuPanel) get the link list inside each",
+    "               container re-rendered in canonical order. The wrapper and",
+    "               its classes are left alone; only the items change.",
+    "",
+    "The link list mirrors the homepage drawer (#menu-drawer in index.html).",
     "index.html itself is NOT generated - it is the reference. If you change the",
-    "homepage drawer, change this file to match in the same commit."
+    "homepage drawer, change this file to match in the same commit.",
+    "",
+    "Spanish pages (espanol/, auto-center/pay-dmv-fine/es/) keep Spanish labels",
+    "and are excluded from every wave on purpose."
   ],
 
   "css_href": "/css/bli-nav.css",
@@ -19,28 +29,40 @@
   "quote_href": "/get-quote",
   "brand": "Bill Layne Insurance",
 
+  "_link_fields": [
+    "icon   = Font Awesome class used by the drawer, dock and navigation-menu",
+    "dock   = .menu-icon colour in css/mobile-dock.css (amber|blue|green|purple|red)",
+    "tw     = Tailwind colour family for the #menu-drawer icon tile (bg-{tw}-50 / text-{tw}-500)",
+    "tw_a   = optional extra classes on the drawer <a> (homepage gives Espanol an emerald hover)"
+  ],
   "links": [
-    { "label": "Home",           "href": "/" },
-    { "label": "Areas We Serve", "href": "/areas-we-serve" },
-    { "label": "Auto Insurance", "href": "/auto-center/" },
-    { "label": "Home Insurance", "href": "/home-insurance/" },
-    { "label": "Claims Center",  "href": "/claims-center/" },
-    { "label": "Resources",      "href": "/resources/" },
-    { "label": "Blog",           "href": "/blog/" },
-    { "label": "Videos",         "href": "/videos/" },
-    { "label": "Community",      "href": "/community/" },
-    { "label": "Service Center", "href": "/service-center" },
-    { "label": "Client Hub",     "href": "/clients/" },
-    { "label": "Contact Us",     "href": "/contact-us/" },
-    { "label": "Espa&ntilde;ol", "href": "/espanol/" }
+    { "label": "Home",           "href": "/",                "icon": "fa-home",             "dock": "blue",   "tw": "primary" },
+    { "label": "Areas We Serve", "href": "/areas-we-serve",  "icon": "fa-map-marked-alt",   "dock": "purple", "tw": "purple" },
+    { "label": "Auto Insurance", "href": "/auto-center/",    "icon": "fa-car",              "dock": "blue",   "tw": "blue" },
+    { "label": "Home Insurance", "href": "/home-insurance/", "icon": "fa-house",            "dock": "green",  "tw": "green" },
+    { "label": "Claims Center",  "href": "/claims-center/",  "icon": "fa-file-medical-alt", "dock": "red",    "tw": "red" },
+    { "label": "Resources",      "href": "/resources/",      "icon": "fa-book",             "dock": "amber",  "tw": "orange" },
+    { "label": "Blog",           "href": "/blog/",           "icon": "fa-blog",             "dock": "purple", "tw": "indigo" },
+    { "label": "Videos",         "href": "/videos/",         "icon": "fa-video",            "dock": "red",    "tw": "teal" },
+    { "label": "Community",      "href": "/community/",      "icon": "fa-mountain-sun",     "dock": "amber",  "tw": "amber" },
+    { "label": "Service Center", "href": "/service-center",  "icon": "fa-concierge-bell",   "dock": "green",  "tw": "emerald" },
+    { "label": "Client Hub",     "href": "/clients/",        "icon": "fa-toolbox",          "dock": "blue",   "tw": "teal" },
+    { "label": "Contact Us",     "href": "/contact-us/",     "icon": "fa-envelope",         "dock": "blue",   "tw": "slate", "tw_tile": "bg-slate-100" },
+    { "label": "Espa&ntilde;ol", "href": "/espanol/",        "icon": "fa-globe-americas",   "dock": "green",  "tw": "emerald", "tw_a": "hover:bg-emerald-50 text-emerald-700" }
+  ],
+
+  "exclude": [
+    "index.html",
+    "espanol/index.html",
+    "auto-center/pay-dmv-fine/es/index.html"
   ],
 
   "waves": {
     "1": {
+      "mode": "standalone",
       "_comment": [
-        "Wave 1 - public, indexable content pages that had NO site menu at all.",
-        "These are dead ends: a visitor arriving from Google has only a logo and",
-        "a phone number. Excluded on purpose: bryson-layne/, mail-gateway/*,",
+        "Wave 1 (shipped ffb91ad) - public, indexable content pages that had NO",
+        "site menu at all. Excluded on purpose: bryson-layne/, mail-gateway/*,",
         "shared/outreach-link-kit.html, social-media/reports/*, and",
         "home-insurance/rates/methodology/ - all noindex or internal-only."
       ],
@@ -66,6 +88,30 @@
         "terms/index.html",
         "upload-policy.html",
         "what-we-need-to-quote-you/index.html"
+      ]
+    },
+    "2": {
+      "mode": "families",
+      "_comment": [
+        "Wave 2 - every page that already carries a site menu container.",
+        "The page list is discovered automatically (any page under the repo",
+        "with one of the family container ids, minus 'exclude' and blog/blogs/).",
+        "Pass --pages to restrict."
+      ],
+      "pages": "auto"
+    },
+    "2b": {
+      "mode": "standalone",
+      "_comment": [
+        "Wave 2b - bespoke one-off pages with a custom header but no site menu",
+        "and no mobile dock. Same treatment as wave 1."
+      ],
+      "pages": [
+        "auto-center/free-vin-decoder.html",
+        "home-insurance/find-my-home-information/index.html",
+        "resources/forms/index.html",
+        "resources/guides/auto-insurance-changes/index.html",
+        "resources/guides/hwy-21-yard-sales/index.html"
       ]
     }
   }
