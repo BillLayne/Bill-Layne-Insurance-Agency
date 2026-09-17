@@ -1090,6 +1090,7 @@
     </style>
     <link rel="stylesheet" href="/css/quote-review.css">
     <link rel="stylesheet" href="/css/quote-chrome.css">
+    <link rel="stylesheet" href="/css/home-property-lookup.css?v=20260917">
 </head>
 <body class="quote-flow">
     <a href="#main-content" class="sr-only focus:not-sr-only">Skip to main content</a>
@@ -1361,8 +1362,32 @@
                                 </div>
                             </div>
 
+                            <section id="home-property-lookup" class="home-lookup" aria-labelledby="lookup-title" data-clarity-mask="true" hidden>
+                                <p class="lookup-kicker">Optional · Stay right here</p>
+                                <h3 id="lookup-title">Let’s find your home details</h3>
+                                <p>Use the address above to find available county records. You can always enter your details yourself.</p>
+                                <div class="lookup-actions">
+                                    <button type="button" id="lookup-find">Find my home details</button>
+                                    <button type="button" id="lookup-manual" class="lookup-secondary">Enter details myself</button>
+                                </div>
+                                <p id="lookup-status" role="status" aria-live="polite" aria-atomic="true"></p>
+                                <div id="lookup-choices" hidden>
+                                    <label for="lookup-choice" class="field-label">Choose the matching property</label>
+                                    <select id="lookup-choice"></select>
+                                </div>
+                                <div id="lookup-result" class="lookup-result" hidden>
+                                    <p class="lookup-kicker">From public records</p>
+                                    <p id="lookup-address" class="lookup-address"></p>
+                                    <p id="lookup-parcel"></p>
+                                    <p id="lookup-mismatch" class="lookup-warning" hidden>The county address differs from your entry. Confirm this is the correct home and parcel, or enter your details yourself.</p>
+                                    <dl id="lookup-facts"></dl>
+                                    <p>County records can be outdated. Confirm your home below to fill available year and area fields. Roof age and coverage amounts still need your input.</p>
+                                    <button type="button" id="lookup-apply">This is my home — use available details</button>
+                                </div>
+                            </section>
+
                             <div class="field-group">
-                                <label class="field-label" for="year_built">What type of property? <span class="req">*</span></label>
+                                <label class="field-label">What type of property? <span class="req">*</span></label>
                                 <div class="tile-grid tile-grid-3">
                                     <div class="tile-option">
                                         <input type="radio" name="property_type" id="type-house" value="single_family" checked>
@@ -1433,7 +1458,7 @@
                             </div>
 
                             <div class="field-group">
-                                <label class="field-label" for="f-roof_type">Primary Construction</label>
+                                <label class="field-label">Primary Construction</label>
                                 <div class="tile-grid">
                                     <div class="tile-option">
                                         <input type="radio" name="construction_type" id="const-frame" value="frame" checked>
@@ -1468,7 +1493,7 @@
 
                             <div class="field-row field-row-2">
                                 <div class="field-group">
-                                    <label class="field-label">Roof Type</label>
+                                    <label class="field-label" for="f-roof_type">Roof Type</label>
                                     <select id="f-roof_type" name="roof_type">
                                         <option value="">Select type</option>
                                         <option value="asphalt_shingle">Asphalt Shingle</option>
@@ -1694,6 +1719,7 @@
                                 <h3 id="quote-review-title">Review your answers</h3>
                                 <p>Check your earlier answers below. Use Edit to make a correction, then return here to send your request.</p>
                                 <div id="quote-review-sections"></div>
+                                <div id="lookup-review" class="lookup-review" data-clarity-mask="true" hidden></div>
                             </section>
 
                             <div style="background:var(--gray-50);border:2px solid var(--gray-200);border-radius:10px;padding:14px;margin-top:4px;display:flex;align-items:center;gap:10px;">
@@ -2088,7 +2114,7 @@
                 has_pool:                formData.get('has_pool'),
                 liability_items:         formData.get('liability_items'),
                 security_system:         formData.get('security_system'),
-                additional_notes:        formData.get('additional_notes'),
+                additional_notes:        window.homePropertyLookup?.submissionNotes(formData.get('additional_notes')) ?? formData.get('additional_notes'),
                 county:                  formData.get('county'),
                 lead_source:             formData.get('lead_source'),
                 metadata:                getMetadata()
@@ -2334,5 +2360,6 @@
     </script>
     <script defer src="js/conversion-tracking.js"></script>
     <script src="/js/quote-review.js"></script>
+    <script src="/js/home-property-lookup.js?v=20260917"></script>
 </body>
 </html>
