@@ -82,7 +82,9 @@ TOGGLE_JS = (
 )
 
 
-def render_block(cfg):
+def render_block(cfg, dock=True):
+    """dock=False -> footer nav only (editorial blog posts keep their reading
+    experience free of a fixed bottom bar)."""
     links = cfg['links']
     items = '\n'.join('      <li><a href="%s">%s</a></li>' % (l['href'], l['label']) for l in links)
     return '\n'.join([
@@ -101,6 +103,7 @@ def render_block(cfg):
         '<a href="/privacy-policy/">Privacy</a> &middot; <a href="/terms/">Terms</a></p>',
         '  </div>',
         '</nav>',
+    ] + ([] if not dock else [
         '',
         '<div class="blinav-dock-spacer" aria-hidden="true"></div>',
         '<div class="blinav-dock">',
@@ -119,6 +122,7 @@ def render_block(cfg):
         '  </ul>',
         '</div>',
         '<script>%s</script>' % TOGGLE_JS,
+    ]) + [
         END,
     ])
 
@@ -127,7 +131,7 @@ def render_css_link(cfg):
     return '%s<link rel="stylesheet" href="%s?v=%s">%s' % (CSS_START, cfg['css_href'], cfg['css_version'], CSS_END)
 
 
-def transform_standalone(src, cfg, rel):
+def transform_standalone(src, cfg, rel, dock=True):
     notes = []
     out = src
     css_link = render_css_link(cfg)
@@ -144,7 +148,7 @@ def transform_standalone(src, cfg, rel):
         out = out[:m.start()] + '    ' + css_link + '\n' + out[m.start():]
         notes.append('css link added')
 
-    block = render_block(cfg)
+    block = render_block(cfg, dock=dock)
     if BLOCK_RE.search(out):
         out, n = BLOCK_RE.subn(lambda m: block, out)
         if n != 1:
@@ -515,6 +519,26 @@ def discover_family_pages(cfg, blog=False):
     return sorted(found)
 
 
+def discover_menuless_blog(cfg):
+    """Blog posts with no site menu of any kind: no family container, no
+    standalone block. These are the v4 editorial posts and the old
+    minimal-nav posts."""
+    ids = [cid for ids, *_ in FAMILIES for cid in ids]
+    d = os.path.join(ROOT, 'blog', 'blogs')
+    out = []
+    for fn in sorted(os.listdir(d)):
+        if not fn.endswith('.html'):
+            continue
+        rel = 'blog/blogs/' + fn
+        if rel in cfg.get('exclude', []):
+            continue
+        s = open(os.path.join(d, fn), encoding='utf-8', errors='replace').read()
+        if 'BLI-NAV:START' in s or any(container_present(s, cid) for cid in ids):
+            continue
+        out.append(rel)
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--wave', default='1')
@@ -540,6 +564,8 @@ def main():
         pages = discover_family_pages(cfg)
     elif wave['pages'] == 'auto-blog':
         pages = discover_family_pages(cfg, blog=True)
+    elif wave['pages'] == 'auto-blog-nomenu':
+        pages = discover_menuless_blog(cfg)
     else:
         pages = wave['pages']
     pages = [p for p in pages if p not in cfg.get('exclude', [])]
@@ -552,7 +578,10 @@ def main():
             continue
         src = open(path, encoding='utf-8').read()
         try:
-            new, notes = transform(src, cfg, rel)
+            if mode == 'standalone':
+                new, notes = transform(src, cfg, rel, dock=wave.get('dock', True))
+            else:
+                new, notes = transform(src, cfg, rel)
         except ValueError as e:
             failed.append((rel, str(e)))
             continue
