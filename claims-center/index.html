@@ -172,8 +172,80 @@
             background: white;
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
         }
+        /* Carrier directory cards */
+        #contacts .company-card {
+            background: #fff !important;
+            border: 1px solid #cbd5e1 !important;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08) !important;
+            transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease !important;
+        }
+        @media (hover: hover) and (pointer: fine) {
+            #contacts .company-card:hover {
+                transform: translateY(-3px) !important;
+                border-color: #003f87 !important;
+                box-shadow: 0 14px 30px rgba(15, 23, 42, 0.13) !important;
+            }
+        }
+        #contacts .company-card:focus-within {
+            border-color: #003f87 !important;
+        }
+        #contacts .company-card a:focus-visible {
+            outline: 3px solid #2563eb !important;
+            outline-offset: 2px !important;
+        }
+
+        /* Agency-represented carriers float to the front and get a navy accent */
+        #contacts .company-card[data-agency="true"] {
+            order: -1;
+            border-top: 3px solid #003f87 !important;
+            box-shadow: 0 4px 14px rgba(0, 63, 135, 0.12) !important;
+        }
+
+        /* Monogram tile (decorative) */
+        #contacts .company-mono {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: .75rem;
+            background: #eaf1f9;
+            color: #003f87;
+            font-size: 1.05rem;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+        #contacts .company-card[data-agency="true"] .company-mono {
+            background: #003f87;
+            color: #fff;
+        }
+
+        /* Quiet 24/7 caption replaces the repeated emerald pill */
+        #contacts .company-sub {
+            font-size: 12px;
+            line-height: 1.3;
+            color: #64748b;
+            margin-top: 1px;
+        }
+        #contacts .company-sub i { color: #059669; }
+
+        /* "Our Carrier" pill */
+        #contacts .agency-pill {
+            flex-shrink: 0;
+            background: #eaf1f9;
+            color: #003f87;
+            border: 1px solid #c3d5ec;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 9999px;
+        }
+
+        /* Call button: brand navy instead of bright blue */
         #contacts .company-card a[href^="tel:"] {
-            background: #2563eb !important;
+            background: #003f87 !important;
             color: #ffffff !important;
         }
         #contacts .company-card a[href^="tel:"] span,
@@ -181,16 +253,13 @@
             color: #ffffff !important;
         }
         #contacts .company-card a[href^="tel:"]:hover {
-            background: #1d4ed8 !important;
+            background: #002c5e !important;
         }
         #contacts .company-card a[target="_blank"] {
             color: #334155 !important;
         }
         #contacts .company-card a[target="_blank"] i {
-            color: #2563eb !important;
-        }
-        #contacts .company-card {
-            background: #ffffff;
+            color: #003f87 !important;
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -968,134 +1037,294 @@
 
             <div id="companies-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
                 <!-- HARDCODED CARDS for reliability -->
-                <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="Progressive">
-                    <div class="flex items-start justify-between gap-3 mb-4"><h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Progressive</h3><span class="shrink-0 bg-emerald-50 text-emerald-700 text-[10px] font-black px-2.5 py-1 rounded-full uppercase border border-emerald-100">24/7</span></div>
+                <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="Progressive" data-agency="true">
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="company-mono" aria-hidden="true">P</span>
+                            <div>
+                                <h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Progressive</h3>
+                                <p class="company-sub"><i class="fas fa-clock" aria-hidden="true"></i> 24/7 claims line</p>
+                            </div>
+                        </div>
+                        <span class="agency-pill">Our Carrier</span>
+                    </div>
                     <div class="space-y-2">
                         <a href="tel:8007764737" class="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary-700 px-4 py-3 text-white shadow-sm transition-all hover:bg-primary-800"><i class="fas fa-phone text-sm"></i><span class="text-base font-black tracking-tight">1-800-776-4737</span></a>
                         <a href="https://www.progressive.com/claims/" target="_blank" rel="noopener noreferrer" class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-200 hover:bg-blue-50 hover:text-primary-800"><i class="fas fa-globe text-primary-600"></i><span>File Online</span></a>
                     </div>
                 </div>
-                <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="Travelers">
-                    <div class="flex items-start justify-between gap-3 mb-4"><h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Travelers</h3><span class="shrink-0 bg-emerald-50 text-emerald-700 text-[10px] font-black px-2.5 py-1 rounded-full uppercase border border-emerald-100">24/7</span></div>
+                <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="Travelers" data-agency="true">
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="company-mono" aria-hidden="true">T</span>
+                            <div>
+                                <h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Travelers</h3>
+                                <p class="company-sub"><i class="fas fa-clock" aria-hidden="true"></i> 24/7 claims line</p>
+                            </div>
+                        </div>
+                        <span class="agency-pill">Our Carrier</span>
+                    </div>
                     <div class="space-y-2">
                         <a href="tel:8002524633" class="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary-700 px-4 py-3 text-white shadow-sm transition-all hover:bg-primary-800"><i class="fas fa-phone text-sm"></i><span class="text-base font-black tracking-tight">1-800-252-4633</span></a>
                         <a href="https://www.travelers.com/claims" target="_blank" rel="noopener noreferrer" class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-200 hover:bg-blue-50 hover:text-primary-800"><i class="fas fa-globe text-primary-600"></i><span>File Online</span></a>
                     </div>
                 </div>
-                <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="Nationwide">
-                    <div class="flex items-start justify-between gap-3 mb-4"><h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Nationwide</h3><span class="shrink-0 bg-emerald-50 text-emerald-700 text-[10px] font-black px-2.5 py-1 rounded-full uppercase border border-emerald-100">24/7</span></div>
+                <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="Nationwide" data-agency="true">
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="company-mono" aria-hidden="true">N</span>
+                            <div>
+                                <h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Nationwide</h3>
+                                <p class="company-sub"><i class="fas fa-clock" aria-hidden="true"></i> 24/7 claims line</p>
+                            </div>
+                        </div>
+                        <span class="agency-pill">Our Carrier</span>
+                    </div>
                     <div class="space-y-2">
                         <a href="tel:8004213535" class="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary-700 px-4 py-3 text-white shadow-sm transition-all hover:bg-primary-800"><i class="fas fa-phone text-sm"></i><span class="text-base font-black tracking-tight">1-800-421-3535</span></a>
                         <a href="https://www.nationwide.com/personal/insurance-claims" target="_blank" rel="noopener noreferrer" class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-200 hover:bg-blue-50 hover:text-primary-800"><i class="fas fa-globe text-primary-600"></i><span>File Online</span></a>
                     </div>
                 </div>
-                 <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="National General">
-                    <div class="flex items-start justify-between gap-3 mb-4"><h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">National General</h3><span class="shrink-0 bg-emerald-50 text-emerald-700 text-[10px] font-black px-2.5 py-1 rounded-full uppercase border border-emerald-100">24/7</span></div>
+                 <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="National General" data-agency="true">
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="company-mono" aria-hidden="true">N</span>
+                            <div>
+                                <h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">National General</h3>
+                                <p class="company-sub"><i class="fas fa-clock" aria-hidden="true"></i> 24/7 claims line</p>
+                            </div>
+                        </div>
+                        <span class="agency-pill">Our Carrier</span>
+                    </div>
                     <div class="space-y-2">
                         <a href="tel:8004683466" class="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary-700 px-4 py-3 text-white shadow-sm transition-all hover:bg-primary-800"><i class="fas fa-phone text-sm"></i><span class="text-base font-black tracking-tight">1-800-468-3466</span></a>
                         <a href="https://claims.nationalgeneral.com/" target="_blank" rel="noopener noreferrer" class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-200 hover:bg-blue-50 hover:text-primary-800"><i class="fas fa-globe text-primary-600"></i><span>File Online</span></a>
                     </div>
                 </div>
                  <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="Allstate">
-                    <div class="flex items-start justify-between gap-3 mb-4"><h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Allstate</h3><span class="shrink-0 bg-emerald-50 text-emerald-700 text-[10px] font-black px-2.5 py-1 rounded-full uppercase border border-emerald-100">24/7</span></div>
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="company-mono" aria-hidden="true">A</span>
+                            <div>
+                                <h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Allstate</h3>
+                                <p class="company-sub"><i class="fas fa-clock" aria-hidden="true"></i> 24/7 claims line</p>
+                            </div>
+                        </div>
+                    </div>
                     <div class="space-y-2">
                         <a href="tel:8002557828" class="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary-700 px-4 py-3 text-white shadow-sm transition-all hover:bg-primary-800"><i class="fas fa-phone text-sm"></i><span class="text-base font-black tracking-tight">1-800-255-7828</span></a>
                         <a href="https://www.allstate.com/claims" target="_blank" rel="noopener noreferrer" class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-200 hover:bg-blue-50 hover:text-primary-800"><i class="fas fa-globe text-primary-600"></i><span>File Online</span></a>
                     </div>
                 </div>
                  <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="State Farm">
-                    <div class="flex items-start justify-between gap-3 mb-4"><h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">State Farm</h3><span class="shrink-0 bg-emerald-50 text-emerald-700 text-[10px] font-black px-2.5 py-1 rounded-full uppercase border border-emerald-100">24/7</span></div>
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="company-mono" aria-hidden="true">S</span>
+                            <div>
+                                <h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">State Farm</h3>
+                                <p class="company-sub"><i class="fas fa-clock" aria-hidden="true"></i> 24/7 claims line</p>
+                            </div>
+                        </div>
+                    </div>
                     <div class="space-y-2">
                         <a href="tel:8007325246" class="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary-700 px-4 py-3 text-white shadow-sm transition-all hover:bg-primary-800"><i class="fas fa-phone text-sm"></i><span class="text-base font-black tracking-tight">1-800-732-5246</span></a>
                         <a href="https://www.statefarm.com/claims" target="_blank" rel="noopener noreferrer" class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-200 hover:bg-blue-50 hover:text-primary-800"><i class="fas fa-globe text-primary-600"></i><span>File Online</span></a>
                     </div>
                 </div>
                 <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="Erie Insurance">
-                    <div class="flex items-start justify-between gap-3 mb-4"><h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Erie Insurance</h3><span class="shrink-0 bg-emerald-50 text-emerald-700 text-[10px] font-black px-2.5 py-1 rounded-full uppercase border border-emerald-100">24/7</span></div>
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="company-mono" aria-hidden="true">E</span>
+                            <div>
+                                <h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Erie Insurance</h3>
+                                <p class="company-sub"><i class="fas fa-clock" aria-hidden="true"></i> 24/7 claims line</p>
+                            </div>
+                        </div>
+                    </div>
                     <div class="space-y-2">
                         <a href="tel:8003673743" class="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary-700 px-4 py-3 text-white shadow-sm transition-all hover:bg-primary-800"><i class="fas fa-phone text-sm"></i><span class="text-base font-black tracking-tight">1-800-367-3743</span></a>
                         <a href="https://www.erieinsurance.com/claims" target="_blank" rel="noopener noreferrer" class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-200 hover:bg-blue-50 hover:text-primary-800"><i class="fas fa-globe text-primary-600"></i><span>File Online</span></a>
                     </div>
                 </div>
                  <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="GEICO">
-                    <div class="flex items-start justify-between gap-3 mb-4"><h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">GEICO</h3><span class="shrink-0 bg-emerald-50 text-emerald-700 text-[10px] font-black px-2.5 py-1 rounded-full uppercase border border-emerald-100">24/7</span></div>
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="company-mono" aria-hidden="true">G</span>
+                            <div>
+                                <h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">GEICO</h3>
+                                <p class="company-sub"><i class="fas fa-clock" aria-hidden="true"></i> 24/7 claims line</p>
+                            </div>
+                        </div>
+                    </div>
                     <div class="space-y-2">
                         <a href="tel:8008413000" class="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary-700 px-4 py-3 text-white shadow-sm transition-all hover:bg-primary-800"><i class="fas fa-phone text-sm"></i><span class="text-base font-black tracking-tight">1-800-841-3000</span></a>
                         <a href="https://www.geico.com/claims" target="_blank" rel="noopener noreferrer" class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-200 hover:bg-blue-50 hover:text-primary-800"><i class="fas fa-globe text-primary-600"></i><span>File Online</span></a>
                     </div>
                 </div>
                  <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="Liberty Mutual">
-                    <div class="flex items-start justify-between gap-3 mb-4"><h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Liberty Mutual</h3><span class="shrink-0 bg-emerald-50 text-emerald-700 text-[10px] font-black px-2.5 py-1 rounded-full uppercase border border-emerald-100">24/7</span></div>
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="company-mono" aria-hidden="true">L</span>
+                            <div>
+                                <h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Liberty Mutual</h3>
+                                <p class="company-sub"><i class="fas fa-clock" aria-hidden="true"></i> 24/7 claims line</p>
+                            </div>
+                        </div>
+                    </div>
                     <div class="space-y-2">
                         <a href="tel:8002252467" class="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary-700 px-4 py-3 text-white shadow-sm transition-all hover:bg-primary-800"><i class="fas fa-phone text-sm"></i><span class="text-base font-black tracking-tight">1-800-225-2467</span></a>
                         <a href="https://www.libertymutual.com/claims" target="_blank" rel="noopener noreferrer" class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-200 hover:bg-blue-50 hover:text-primary-800"><i class="fas fa-globe text-primary-600"></i><span>File Online</span></a>
                     </div>
                 </div>
                  <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="The Hartford">
-                    <div class="flex items-start justify-between gap-3 mb-4"><h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">The Hartford</h3><span class="shrink-0 bg-emerald-50 text-emerald-700 text-[10px] font-black px-2.5 py-1 rounded-full uppercase border border-emerald-100">24/7</span></div>
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="company-mono" aria-hidden="true">T</span>
+                            <div>
+                                <h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">The Hartford</h3>
+                                <p class="company-sub"><i class="fas fa-clock" aria-hidden="true"></i> 24/7 claims line</p>
+                            </div>
+                        </div>
+                    </div>
                     <div class="space-y-2">
                         <a href="tel:8002435860" class="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary-700 px-4 py-3 text-white shadow-sm transition-all hover:bg-primary-800"><i class="fas fa-phone text-sm"></i><span class="text-base font-black tracking-tight">1-800-243-5860</span></a>
                         <a href="https://www.thehartford.com/claims" target="_blank" rel="noopener noreferrer" class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-200 hover:bg-blue-50 hover:text-primary-800"><i class="fas fa-globe text-primary-600"></i><span>File Online</span></a>
                     </div>
                 </div>
-                 <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="Foremost">
-                    <div class="flex items-start justify-between gap-3 mb-4"><h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Foremost</h3><span class="shrink-0 bg-emerald-50 text-emerald-700 text-[10px] font-black px-2.5 py-1 rounded-full uppercase border border-emerald-100">24/7</span></div>
+                 <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="Foremost" data-agency="true">
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="company-mono" aria-hidden="true">F</span>
+                            <div>
+                                <h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Foremost</h3>
+                                <p class="company-sub"><i class="fas fa-clock" aria-hidden="true"></i> 24/7 claims line</p>
+                            </div>
+                        </div>
+                        <span class="agency-pill">Our Carrier</span>
+                    </div>
                     <div class="space-y-2">
                         <a href="tel:8005273907" class="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary-700 px-4 py-3 text-white shadow-sm transition-all hover:bg-primary-800"><i class="fas fa-phone text-sm"></i><span class="text-base font-black tracking-tight">1-800-527-3907</span></a>
                         <a href="https://www.foremost.com/claims/" target="_blank" rel="noopener noreferrer" class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-200 hover:bg-blue-50 hover:text-primary-800"><i class="fas fa-globe text-primary-600"></i><span>File Online</span></a>
                     </div>
                 </div>
-                 <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="Dairyland">
-                    <div class="flex items-start justify-between gap-3 mb-4"><h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Dairyland</h3><span class="shrink-0 bg-emerald-50 text-emerald-700 text-[10px] font-black px-2.5 py-1 rounded-full uppercase border border-emerald-100">24/7</span></div>
+                 <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="Dairyland" data-agency="true">
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="company-mono" aria-hidden="true">D</span>
+                            <div>
+                                <h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Dairyland</h3>
+                                <p class="company-sub"><i class="fas fa-clock" aria-hidden="true"></i> 24/7 claims line</p>
+                            </div>
+                        </div>
+                        <span class="agency-pill">Our Carrier</span>
+                    </div>
                     <div class="space-y-2">
                         <a href="tel:8003340090" class="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary-700 px-4 py-3 text-white shadow-sm transition-all hover:bg-primary-800"><i class="fas fa-phone text-sm"></i><span class="text-base font-black tracking-tight">1-800-334-0090</span></a>
                         <a href="https://www.dairylandinsurance.com/claims" target="_blank" rel="noopener noreferrer" class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-200 hover:bg-blue-50 hover:text-primary-800"><i class="fas fa-globe text-primary-600"></i><span>File Online</span></a>
                     </div>
                 </div>
                  <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="American Modern">
-                    <div class="flex items-start justify-between gap-3 mb-4"><h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">American Modern</h3><span class="shrink-0 bg-emerald-50 text-emerald-700 text-[10px] font-black px-2.5 py-1 rounded-full uppercase border border-emerald-100">24/7</span></div>
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="company-mono" aria-hidden="true">A</span>
+                            <div>
+                                <h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">American Modern</h3>
+                                <p class="company-sub"><i class="fas fa-clock" aria-hidden="true"></i> 24/7 claims line</p>
+                            </div>
+                        </div>
+                    </div>
                     <div class="space-y-2">
                         <a href="tel:8003752075" class="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary-700 px-4 py-3 text-white shadow-sm transition-all hover:bg-primary-800"><i class="fas fa-phone text-sm"></i><span class="text-base font-black tracking-tight">1-800-375-2075</span></a>
                         <a href="https://www.americanmodern.com/claims/" target="_blank" rel="noopener noreferrer" class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-200 hover:bg-blue-50 hover:text-primary-800"><i class="fas fa-globe text-primary-600"></i><span>File Online</span></a>
                     </div>
                 </div>
                  <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="Chubb">
-                    <div class="flex items-start justify-between gap-3 mb-4"><h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Chubb</h3><span class="shrink-0 bg-emerald-50 text-emerald-700 text-[10px] font-black px-2.5 py-1 rounded-full uppercase border border-emerald-100">24/7</span></div>
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="company-mono" aria-hidden="true">C</span>
+                            <div>
+                                <h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Chubb</h3>
+                                <p class="company-sub"><i class="fas fa-clock" aria-hidden="true"></i> 24/7 claims line</p>
+                            </div>
+                        </div>
+                    </div>
                     <div class="space-y-2">
                         <a href="tel:8002524670" class="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary-700 px-4 py-3 text-white shadow-sm transition-all hover:bg-primary-800"><i class="fas fa-phone text-sm"></i><span class="text-base font-black tracking-tight">1-800-252-4670</span></a>
                         <a href="https://www.chubb.com/us-en/claims/" target="_blank" rel="noopener noreferrer" class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-200 hover:bg-blue-50 hover:text-primary-800"><i class="fas fa-globe text-primary-600"></i><span>File Online</span></a>
                     </div>
                 </div>
                  <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="Universal Property">
-                    <div class="flex items-start justify-between gap-3 mb-4"><h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Universal Property</h3><span class="shrink-0 bg-emerald-50 text-emerald-700 text-[10px] font-black px-2.5 py-1 rounded-full uppercase border border-emerald-100">24/7</span></div>
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="company-mono" aria-hidden="true">U</span>
+                            <div>
+                                <h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Universal Property</h3>
+                                <p class="company-sub"><i class="fas fa-clock" aria-hidden="true"></i> 24/7 claims line</p>
+                            </div>
+                        </div>
+                    </div>
                     <div class="space-y-2">
                         <a href="tel:8884387734" class="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary-700 px-4 py-3 text-white shadow-sm transition-all hover:bg-primary-800"><i class="fas fa-phone text-sm"></i><span class="text-base font-black tracking-tight">1-888-438-7734</span></a>
                         <a href="https://universalproperty.com/claims" target="_blank" rel="noopener noreferrer" class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-200 hover:bg-blue-50 hover:text-primary-800"><i class="fas fa-globe text-primary-600"></i><span>File Online</span></a>
                     </div>
                 </div>
                  <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="USAA">
-                    <div class="flex items-start justify-between gap-3 mb-4"><h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">USAA</h3><span class="shrink-0 bg-emerald-50 text-emerald-700 text-[10px] font-black px-2.5 py-1 rounded-full uppercase border border-emerald-100">24/7</span></div>
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="company-mono" aria-hidden="true">U</span>
+                            <div>
+                                <h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">USAA</h3>
+                                <p class="company-sub"><i class="fas fa-clock" aria-hidden="true"></i> 24/7 claims line</p>
+                            </div>
+                        </div>
+                    </div>
                     <div class="space-y-2">
                         <a href="tel:8005318722" class="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary-700 px-4 py-3 text-white shadow-sm transition-all hover:bg-primary-800"><i class="fas fa-phone text-sm"></i><span class="text-base font-black tracking-tight">1-800-531-8722</span></a>
                         <a href="https://www.usaa.com/inet/wc/insurance-claims-center" target="_blank" rel="noopener noreferrer" class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-200 hover:bg-blue-50 hover:text-primary-800"><i class="fas fa-globe text-primary-600"></i><span>File Online</span></a>
                     </div>
                 </div>
                  <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="Farmers">
-                    <div class="flex items-start justify-between gap-3 mb-4"><h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Farmers</h3><span class="shrink-0 bg-emerald-50 text-emerald-700 text-[10px] font-black px-2.5 py-1 rounded-full uppercase border border-emerald-100">24/7</span></div>
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="company-mono" aria-hidden="true">F</span>
+                            <div>
+                                <h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Farmers</h3>
+                                <p class="company-sub"><i class="fas fa-clock" aria-hidden="true"></i> 24/7 claims line</p>
+                            </div>
+                        </div>
+                    </div>
                     <div class="space-y-2">
                         <a href="tel:8004357764" class="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary-700 px-4 py-3 text-white shadow-sm transition-all hover:bg-primary-800"><i class="fas fa-phone text-sm"></i><span class="text-base font-black tracking-tight">1-800-435-7764</span></a>
                         <a href="https://www.farmers.com/claims/" target="_blank" rel="noopener noreferrer" class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-200 hover:bg-blue-50 hover:text-primary-800"><i class="fas fa-globe text-primary-600"></i><span>File Online</span></a>
                     </div>
                 </div>
-                 <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="Alamance Farmers">
-                    <div class="flex items-start justify-between gap-3 mb-4"><h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Alamance Farmers</h3><span class="shrink-0 bg-emerald-50 text-emerald-700 text-[10px] font-black px-2.5 py-1 rounded-full uppercase border border-emerald-100">24/7</span></div>
+                 <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="Alamance Farmers" data-agency="true">
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="company-mono" aria-hidden="true">A</span>
+                            <div>
+                                <h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">Alamance Farmers</h3>
+                                <p class="company-sub"><i class="fas fa-clock" aria-hidden="true"></i> 24/7 claims line</p>
+                            </div>
+                        </div>
+                        <span class="agency-pill">Our Carrier</span>
+                    </div>
                     <div class="space-y-2">
                         <a href="tel:3362267959" class="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary-700 px-4 py-3 text-white shadow-sm transition-all hover:bg-primary-800"><i class="fas fa-phone text-sm"></i><span class="text-base font-black tracking-tight">1-336-226-7959</span></a>
                         <a href="https://www.alamancefarmers.com/claims" target="_blank" rel="noopener noreferrer" class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-200 hover:bg-blue-50 hover:text-primary-800"><i class="fas fa-globe text-primary-600"></i><span>File Online</span></a>
                     </div>
                 </div>
-                 <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="NC Grange Mutual">
-                    <div class="flex items-start justify-between gap-3 mb-4"><h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">NC Grange Mutual</h3><span class="shrink-0 bg-emerald-50 text-emerald-700 text-[10px] font-black px-2.5 py-1 rounded-full uppercase border border-emerald-100">24/7</span></div>
+                 <div class="company-card group bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-primary-300 hover:shadow-lg hover:-translate-y-0.5 transition-all reveal" data-company="NC Grange Mutual" data-agency="true">
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="company-mono" aria-hidden="true">N</span>
+                            <div>
+                                <h3 class="text-base md:text-xl font-black text-slate-900 leading-tight">NC Grange Mutual</h3>
+                                <p class="company-sub"><i class="fas fa-clock" aria-hidden="true"></i> 24/7 claims line</p>
+                            </div>
+                        </div>
+                        <span class="agency-pill">Our Carrier</span>
+                    </div>
                     <div class="space-y-2">
                         <a href="tel:8008497775" class="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary-700 px-4 py-3 text-white shadow-sm transition-all hover:bg-primary-800"><i class="fas fa-phone text-sm"></i><span class="text-base font-black tracking-tight">1-800-849-7775</span></a>
                         <a href="https://www.grange-ins.com/claims" target="_blank" rel="noopener noreferrer" class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-200 hover:bg-blue-50 hover:text-primary-800"><i class="fas fa-globe text-primary-600"></i><span>File Online</span></a>
@@ -1350,7 +1579,7 @@
                         }
                     });
                     const noResults = document.getElementById('no-results');
-                    if(noResults) noResults.style.display = hasResults ? 'none' : 'block';
+                    if(noResults) noResults.classList.toggle('hidden', hasResults);
                 });
             }
 
