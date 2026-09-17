@@ -211,6 +211,13 @@ def find_element(s, names, pred, start=0):
 # mobileDockPanel page; drawer: index.html; navigation-menu: carrier pages;
 # mobile-menu: auto-center/coverage-comparison.html)
 # ---------------------------------------------------------------------------
+def label_for(cfg, link, rel):
+    """Canonical label, or the Spanish one for pages listed in nav.json 'lang'."""
+    if cfg.get('lang', {}).get(rel) == 'es':
+        return cfg['labels_es'][link['href']]
+    return link['label']
+
+
 def page_href(rel):
     """Canonical href for a page path, so the drawer can mark it active."""
     h = '/' + rel.replace(os.sep, '/')
@@ -224,7 +231,7 @@ def items_dock(cfg, rel, indent):
     for l in cfg['links']:
         out.append('%s<li><a href="%s"><span class="menu-icon %s"><i class="fas %s"></i></span> %s '
                    '<i class="fas fa-chevron-right menu-arrow"></i></a></li>'
-                   % (indent, l['href'], l['dock'], l['icon'], l['label']))
+                   % (indent, l['href'], l['dock'], l['icon'], label_for(cfg, l, rel)))
     return '\n' + '\n'.join(out) + '\n' + indent[:-4]
 
 
@@ -243,7 +250,7 @@ def items_drawer(cfg, rel, indent):
             tile = ('w-7 h-7 rounded-lg %s flex items-center justify-center text-%s-500 '
                     'group-hover:scale-110 transition-transform' % (l.get('tw_tile', 'bg-%s-50' % tw), tw))
         out.append('%s<a href="%s" class="%s"><div class="%s"><i class="fas %s"></i></div> %s</a>'
-                   % (indent, l['href'], a_cls, tile, l['icon'], l['label']))
+                   % (indent, l['href'], a_cls, tile, l['icon'], label_for(cfg, l, rel)))
     return '\n' + '\n'.join(out) + '\n' + indent[:-4]
 
 
@@ -252,12 +259,25 @@ def items_navmenu(cfg, rel, indent):
     for l in cfg['links']:
         out.append('%s<a href="%s" class="block py-3 px-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 '
                    'font-medium border-b border-gray-200 rounded transition-all">\n%s    <i class="fas %s mr-3 w-5"></i>%s\n%s</a>'
-                   % (indent, l['href'], indent, l['icon'], l['label'], indent))
+                   % (indent, l['href'], indent, l['icon'], label_for(cfg, l, rel), indent))
     return '\n' + '\n'.join(out) + '\n' + indent[:-4]
 
 
 def items_mobilemenu(cfg, rel, indent):
-    out = ['%s<a href="%s" class="nav-link">%s</a>' % (indent, l['href'], l['label']) for l in cfg['links']]
+    out = ['%s<a href="%s" class="nav-link">%s</a>' % (indent, l['href'], label_for(cfg, l, rel)) for l in cfg['links']]
+    return '\n' + '\n'.join(out) + '\n' + indent[:-4]
+
+
+def items_forms_drawer(cfg, rel, indent):
+    """resources/forms/index.html - a bespoke Tailwind drawer, class-matched."""
+    out = []
+    for l in cfg['links']:
+        tw = l['tw']
+        tile = l.get('tw_tile', 'bg-%s-50' % tw)
+        out.append('%s<a href="%s" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-50 '
+                   'transition-colors text-slate-600 text-sm font-medium"><div class="w-8 h-8 rounded-lg %s flex '
+                   'items-center justify-center"><i class="fas %s text-%s-500 text-xs"></i></div>%s</a>'
+                   % (indent, l['href'], tile, l['icon'], tw, label_for(cfg, l, rel)))
     return '\n' + '\n'.join(out) + '\n' + indent[:-4]
 
 
@@ -267,7 +287,25 @@ FAMILIES = [
     (('menu-drawer',), ('div',), lambda a: 'overflow-y-auto' in a.get('class', ''), items_drawer, 'drawer'),
     (('navigation-menu',), ('nav',), lambda a: True, items_navmenu, 'navigation-menu'),
     (('mobile-menu',), ('nav',), lambda a: 'navbar-menu-nav' in a.get('class', ''), items_mobilemenu, 'mobile-menu'),
+    # class-matched: the wrapper has no id. Marker string is what discovery and
+    # the presence test look for; the predicate matches the element.
+    (('@class=menu-drawer',), ('div',), lambda a: 'space-y-1' in a.get('class', ''), items_forms_drawer, 'forms-drawer'),
 ]
+
+
+def container_marker(cid):
+    return ('class="%s' % cid[7:]) if cid.startswith('@class=') else ('id="%s"' % cid)
+
+
+def container_present(s, cid):
+    return container_marker(cid) in s
+
+
+def container_pred(cid):
+    if cid.startswith('@class='):
+        name = cid[7:]
+        return lambda a: a.get('class', '').split()[:1] == [name]
+    return lambda a: a.get('id') == cid
 
 
 def indent_of(s, pos):
@@ -281,9 +319,9 @@ def transform_families(src, cfg, rel):
     notes = []
     for ids, list_tags, pred, renderer, note in FAMILIES:
         for cid in ids:
-            if ('id="%s"' % cid) not in out:
+            if not container_present(out, cid):
                 continue
-            found = find_element(out, ['div', 'nav', 'ul'], lambda a: a.get('id') == cid)
+            found = find_element(out, ['div', 'nav', 'ul'], container_pred(cid))
             if not found:
                 raise ValueError('#%s present but not parseable' % cid)
             c_open, c_close, _ = found
@@ -306,7 +344,7 @@ def transform_families(src, cfg, rel):
             if out[abs_open:abs_close] != new_items:
                 out = out[:abs_open] + new_items + out[abs_close:]
                 notes.append(note)
-    if not notes and not any(('id="%s"' % cid) in src for ids, *_ in FAMILIES for cid in ids):
+    if not notes and not any(container_present(src, cid) for ids, *_ in FAMILIES for cid in ids):
         raise ValueError('no family container on this page')
     return out, notes
 
@@ -450,7 +488,7 @@ def discover_family_pages(cfg, blog=False):
             if rel in cfg.get('exclude', []):
                 continue
             s = open(os.path.join(d, fn), encoding='utf-8', errors='replace').read()
-            if any(('id="%s"' % cid) in s for cid in ids):
+            if any(container_present(s, cid) for cid in ids):
                 out.append(rel)
         return out
     skip_dirs = {'.git', 'node_modules', '.claude', 'output', '__pycache__', '.playwright-cli',
@@ -472,7 +510,7 @@ def discover_family_pages(cfg, blog=False):
                 s = open(os.path.join(dirpath, fn), encoding='utf-8').read()
             except UnicodeDecodeError:
                 continue
-            if any(('id="%s"' % cid) in s for cid in ids):
+            if any(container_present(s, cid) for cid in ids):
                 found.append(rel)
     return sorted(found)
 
