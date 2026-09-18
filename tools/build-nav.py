@@ -82,7 +82,7 @@ TOGGLE_JS = (
 )
 
 
-def render_block(cfg, dock=True):
+def render_block(cfg, dock=True, footer_cta=True):
     """dock=False -> footer nav only (editorial blog posts keep their reading
     experience free of a fixed bottom bar)."""
     links = cfg['links']
@@ -95,10 +95,12 @@ def render_block(cfg, dock=True):
         '    <ul class="blinav-footer-links">',
         items,
         '    </ul>',
+    ] + ([] if not footer_cta else [
         '    <div class="blinav-footer-cta">',
         '      <a class="blinav-call" href="%s">%s%s</a>' % (cfg['phone_href'], ICON_PHONE, cfg['phone_display']),
         '      <a class="blinav-quote" href="%s">%s%s</a>' % (cfg['quote_href'], ICON_BOLT, cfg['quote_label']),
         '    </div>',
+    ]) + [
         '    <p class="blinav-footer-legal">Bill Layne Insurance Agency &middot; 1283 N Bridge St, Elkin, NC 28621 &middot; '
         '<a href="/privacy-policy/">Privacy</a> &middot; <a href="/terms/">Terms</a></p>',
         '  </div>',
@@ -148,7 +150,7 @@ def transform_standalone(src, cfg, rel, dock=True):
         out = out[:m.start()] + '    ' + css_link + '\n' + out[m.start():]
         notes.append('css link added')
 
-    block = render_block(cfg, dock=dock)
+    block = render_block(cfg, dock=dock, footer_cta=rel not in cfg.get('footer_cta_exclude', []))
     if BLOCK_RE.search(out):
         out, n = BLOCK_RE.subn(lambda m: block, out)
         if n != 1:
@@ -520,9 +522,12 @@ def discover_family_pages(cfg, blog=False):
 
 
 def discover_menuless_blog(cfg):
-    """Blog posts with no site menu of any kind: no family container, no
-    standalone block. These are the v4 editorial posts and the old
-    minimal-nav posts."""
+    """Discover new and already-generated footer-only blogs for wave 7.
+    Explicit assignments to other waves retain their own dock settings.
+    Existing blocks must remain discoverable for updates and drift checks.
+    """
+    assigned = {p for key, wave in cfg['waves'].items() if key != '7'
+                and isinstance(wave['pages'], list) for p in wave['pages']}
     ids = [cid for ids, *_ in FAMILIES for cid in ids]
     d = os.path.join(ROOT, 'blog', 'blogs')
     out = []
@@ -532,8 +537,10 @@ def discover_menuless_blog(cfg):
         rel = 'blog/blogs/' + fn
         if rel in cfg.get('exclude', []):
             continue
-        s = open(os.path.join(d, fn), encoding='utf-8', errors='replace').read()
-        if 'BLI-NAV:START' in s or any(container_present(s, cid) for cid in ids):
+        with open(os.path.join(d, fn), encoding='utf-8', errors='replace') as source:
+            s = source.read()
+        footer_only = 'BLI-NAV:START' in s and 'id="blinavToggle"' not in s
+        if rel in assigned or (not footer_only and any(container_present(s, cid) for cid in ids)):
             continue
         out.append(rel)
     return out
@@ -576,7 +583,8 @@ def main():
         if not os.path.exists(path):
             failed.append((rel, 'file not found'))
             continue
-        src = open(path, encoding='utf-8').read()
+        with open(path, encoding='utf-8') as source:
+            src = source.read()
         try:
             if mode == 'standalone':
                 new, notes = transform(src, cfg, rel, dock=wave.get('dock', True))
