@@ -15,10 +15,10 @@
 |---|---|
 | **Input** | Drop/browse PDFs and images (JPG/PNG/WebP/GIF/BMP → become PDF pages); password-protected PDFs (prompt + unlock); Forms Library (cloud); camera capture on phones (native file input) |
 | **Assemble** | Per-page thumbnails; **click to select pages, then "Add N to Step 3" together** (shift-click ranges, double-click adds one, drag still works); reorder by drag **or ◀ ▶ buttons** (touch); rotate; remove; combine across many files |
-| **Edit a page** | Text boxes (movable, resizable, re-editable); white-out boxes; **highlighter**; **freehand pen**; signatures (draw or upload, saved); images; quick stamps (date, COPY/VOID/PAID, agency block, custom text + picture stamps); **crop** (adjustable, confirm before apply); zoom −/Fit/+ |
-| **Forms** | AcroForm detection → "Fill form" modal (text/checkbox/radio/dropdown) → values written back into the real fields; forms **flatten automatically when you stamp on them** so the marks actually show (untouched forms stay fillable) |
-| **Find** | Full-text search across loaded pages, gold-highlighted matches; 🔍 zoom viewer with prev/next |
-| **Output** | Create PDF; Print; **Gmail draft with the PDF attached + styled email body**; split into single pages; page numbers; "shrink for email"; **lock with password** |
+| **Edit a page** | Text boxes (movable, resizable, re-editable); white-out boxes (**permanent** option in Settings); **highlighter**; **freehand pen**; signatures **and initials** (draw or upload, saved per device); images; quick stamps (date, COPY/VOID/PAID, agency block, custom text + picture stamps, **stamp every page**, **agency-shared stamps**); **crop** (adjustable, confirm before apply); zoom −/Fit/+; Page-jump field + PageUp/PageDown; OCR of the page |
+| **Forms** | AcroForm detection → "Fill form" modal (text/checkbox/radio/dropdown) → values written back into the real fields; forms **flatten automatically when you stamp on them** so the marks actually show (untouched forms stay fillable); Forms Library **packets** (ordered sets of library forms with reminders, shared by the office) |
+| **Find** | Full-text search across loaded pages, gold-highlighted matches; 🔍 zoom viewer with prev/next; **OCR text counts** (per page from the editor, or "Read scanned pages" for every scan/photo) |
+| **Output** | Save PDF; Preview; Send ▾ (Gmail draft with the PDF attached + styled body, **Text via SMS** hand-off, Print); Export ▾ (split by page ranges, single pages as ZIP, all new PDFs as ZIP); Settings (shrink for email, page numbers, lock with password, **permanent white-out**); several **new PDFs per project**; named **Projects** (local) |
 | **Safety** | Auto-save + restore (IndexedDB); Undo toasts on removals; nothing uploaded except Forms Library (blank forms only) |
 
 **The privacy promise, stated on the page:** customer documents never leave the browser. The **only** network calls are (a) the three CDN libraries, (b) the Forms Library API (blank agency forms), (c) the Mail Gateway when Bill clicks Gmail draft. Keep it that way — it is the reason the tool is trusted with client files.
@@ -161,6 +161,14 @@ Pen strokes are **canvas**, not elements (a path can't be a div). Consequence: *
 | Loading files / images / passwords | `addFiles`, `addImageData`, `addPdfData`, `askPassword` (~1466–1635) |
 | Source pane, search hits, zoom button | `renderSources` |
 | **Step 2 page selection** | `togglePick`, `paintPick`, `pickedEntries`, `renderPickBar`, `addPickedToTray`; state = `pickedSrc` Set + `lastPickedSid`; markup `#pickBar` |
+| New PDFs (outputs), Projects, workspace history | `outputs`/`activeOutput`, `switchOutput`, `saveActiveOutput`, `packedOutputs`; `projectStore` (IndexedDB `bliPdfProjects`), `saveProject`, `openProjects`; `captureHistory`/`travelHistory` (30 snapshots, Ctrl+Z/Y, also the editor's Undo) — Codex block near the end of the script |
+| Delivery surface (Step 3 header) | markup `.output-actions`: `#btnCreate`, `#btnPreviewFinal`, `#sendMenuWrap` (Gmail / SMS / Print), `#moreMenuWrap` (Export), `#optMenuWrap` (Settings); menus self-position in `wireMenu` |
+| Permanent white-out | `rasterizePages(bytes, indexes)`; wired in `buildFinalBytes` before numbering; option `permanent` in `exportOptions()` |
+| OCR (tesseract.js, on demand) | `loadOCR`, editor `#btnOCR` dialog, bulk `#btnOcrAll`; `rememberOcr` → `doc.ocr[pageIndex]` → merged in `getDocTexts` |
+| Packets + agency stamps | `sharedGet/sharedPut` (`/shared/<name>`), `renderPackets`, `openPacket`, `libraryDocsInOrder`, `tagLibraryDoc`; `loadSharedStamps`, `renderSharedStamps`, `shareStamp` |
+| Initials | `sigKind` ('sig' \| 'ini'), `INI_KEY`, `setSigKind`; placement width `currentSigW` (60 vs 150 pt) |
+| Editor page jump / tips | `jumpEditor`, `#editorPageJump`, PageUp/PageDown in the editor keydown; `HINTS_KEY` + `applyHintPref` |
+| Gmail memory | `applyMailType` (type + file name → subject), `rememberRecipient`/`renderRecentTo` (`bliPdfRecentTo`, datalist `#mailToList`) |
 | Tray, ◀▶ reorder, card buttons | `renderTray` (~1746) |
 | **Build engine** | `drawStamps` (~1892), `buildPdfBytes` (~1947) |
 | Editor shell, modes, zoom | `setEditorMode`, `setEditorZoom`, `openEditor`, `renderEditor` (~2011–2104) |
@@ -214,7 +222,7 @@ Shared library of **blank agency forms** (ACORD, underwriting, carrier). **Never
   ```bash
   printf 'new-code' | npx wrangler secret put FORMS_CODE
   ```
-- API: `GET /list` · `GET|DELETE /file/<key>` · `POST /upload` (body = bytes, headers `x-name` urlencoded, `x-pages`; 30 MB cap) · `POST /rename/<key>` (`x-name`).
+- API: `GET /list` · `GET|DELETE /file/<key>` · `POST /upload` (body = bytes, headers `x-name` urlencoded, `x-pages`; 30 MB cap) · `POST /rename/<key>` (`x-name`) · **`GET|PUT|DELETE /shared/<name>`** — small agency-wide JSON documents stored at `_shared/<name>.json` (hidden from `/list`, 2 MB cap): `packets` and `stamps`. Same access code; never customer data.
 - CORS allowlist: www + apex billlayneinsurance.com + `localhost:8080`. Workers *can* answer `OPTIONS` (unlike Apps Script — that's why this one takes normal JSON-ish requests while the Mail Gateway needs `text/plain`).
 - Client: one-time code entry per device; `formsApi()` clears a bad code **only if it's still the code that failed** (prevents a slow stale request from wiping a freshly typed good one).
 - Deploy: `cd Documents\bli-form-host && npx wrangler deploy`.
@@ -248,10 +256,15 @@ The "What is this delivering?" dropdown swaps `{{HEADLINE}}`/`{{INTRO_LINE}}`/su
 | 13 | Stamp elements swallow pointer events while drawing | `#stampLayer.drawing .stamp-el { pointer-events: none }` |
 | 14 | GitHub Pages caches HTML ~10 min | When verifying a fresh deploy in an open tab, cache-bust with `?v=`; **verify data against the API, never a rendered list** |
 | 15 | Double quotes inside a PowerShell `@'…'@` commit message break arg parsing | Keep commit messages quote-free |
-| 16 | White-out, highlight, and crop **hide** content, they don't remove it | Never describe any of them as redaction |
+| 16 | White-out, highlight, and crop **hide** content by default — the text is still in the file | Only **Permanent white-out** (Settings) removes it, and only on pages that carry a white-out, by re-saving that page as a picture. Never call the default a redaction |
 | 17 | Re-rendering a list inside a click handler kills the following `dblclick` (the element it fired on is gone) and scrolls the user's place away | Repaint in place — see `paintPick()` in §3 |
 | 18 | **Stamps drawn over a fillable form field vanish from the saved/printed file** while the editor preview looks right — widgets are annotations and annotations paint ON TOP of page content | `buildPdfBytes` flattens the source form when any stamp/crop exists, then deletes the leftover `/Annots` on the copied page. Untouched forms stay fillable. Never "fix" this by drawing stamps earlier — order can't beat an annotation |
 | 19 | Two contributors edit `pdf-tools/index.html` (Claude here, Bill + Codex on GitHub) | **`git fetch` and check `HEAD..origin/main` before editing**; Codex works in worktrees under `Playground\`, never hand-delete one (`git worktree remove`, and its files are owned by the `CodexSandboxOffline` account so `takeown` is needed) |
+| 20 | A `.menu-panel` anchored by CSS (`right:0`) lands off-screen the moment its button sits in a different grid column or the tray moves to the top of the page | `wireMenu` measures the panel when it opens and adds `flip` (right-anchored) or `unflip` (left-anchored); Step 3 panels open **downward** (no `up` class) because the tray header is at the top now |
+| 21 | Codex's mobile CSS reset `.save-button` to `grid-column:auto`, so Save stopped spanning the phone row | Removed; `.output-actions > #btnCreate {grid-column:1/-1}` is the rule that spans it |
+| 22 | pdf.js `annotationMode: 2` (ENABLE_FORMS) does **not** paint form widgets onto the canvas | When testing whether something is visually covered, render with the default mode |
+| 23 | `tagLibraryDoc` tags the **last** document in `docs` after `addPdfData` | It checks the name matches and no key is set; if `addPdfData` ever becomes concurrent, return the docId from it instead |
+| 24 | Shared stamps and packets are agency-wide behind ONE code; signatures/initials are deliberately per device | Do not "complete the feature" by sharing signatures — that would let anyone apply anyone's signature |
 
 ## 11. Extending it safely
 
@@ -317,3 +330,42 @@ The frontend was refined into a premium PDF workstation without changing the PDF
 ### Safety boundary
 
 The premium interface is a shell around the existing implementation. Keep `buildPdfBytes()` as the only visual/output build path, keep all existing element IDs unless every listener/test hook is updated, and verify a real PDF load → page select → editor open → reorder → Save PDF flow after any layout change.
+
+
+## 14. Review follow-up — September 2026
+
+Bill asked for a review of the whole program and then for every recommendation to be built ("do what you would do"). Shipped in three phases, each verified in the dev preview with `window.PDFStudio` hooks before pushing.
+
+### Phase A — flow and surface (commit 1273133)
+- **Progressive disclosure.** `body.has-files` / `body.multi-output` (set in `updateWorkflowState` and `renderOutputSelect`) hide the output shelf and the connection chips until a file exists; with one new PDF the shelf is just Undo/Redo until Step 3. Landing went from 12 visible controls to 6.
+- **One delivery surface** on Step 3: Save PDF · Preview · Send ▾ · Export ▾ · Settings. Codex's "More save & send options" and "Manage documents" dialogs were deleted (they duplicated these). Phone: Save spans the row, the other four share one row (`.output-actions` 4-column grid ≤600px, icons hidden).
+- **Menus self-position** (gotcha 20). Phone shelf: label/select and Remove hidden for single-PDF projects, Duplicate hidden.
+- Renames: shelf label "New PDF", "+ Another PDF", "Remove this PDF"; "Text via SMS". The ✓ badge in Step 2 counts every new PDF (`usage` map over `tray` + other `outputs`), outlined + tooltip when the page lives elsewhere.
+- Tray: rotate both ways (`act-rotl` = +270°); Move page has an icon.
+- Editor: `Page [n] of N` jump + PageUp/PageDown; tips bar dismissible (`bliPdfHintsOff`, "Show tips again" in the ⋯ menu); compact context bar (`.edit-context.compact`, 40 px) for tools without settings.
+- Autosave/projects report `QuotaExceededError` ("Autosave paused — too large for this browser") instead of "Saving…" forever.
+
+### Phase B — features (commit 12cbb6e)
+- **Permanent white-out** (`chkPermanent`, `exportOptions().permanent`): in `buildFinalBytes`, before page numbers, every list item with a `box` stamp is rasterized by `rasterizePages` (pdf.js render ≤2400 px → JPEG 0.88 → `insertPage(i)` + `removePage(i+1)`), so the covered text leaves the file. Verified: the page has zero text items and a white pixel under the box; other pages untouched. Editor white-out hint points to it.
+- **OCR feeds Find**: `rememberOcr` stores `doc.ocr[pageIndex]`, invalidates `docTextCache`; `getDocTexts` merges it (image docs become searchable too). Bulk "Read scanned pages (OCR)" in the ⋯ source menu reads every page with <20 chars of text, with progress + Stop. `ocr` rides along in autosave/restore/projects.
+- **Stamp every page** checkbox in the stamp panel: `placeCenteredText` copies the stamp to every other tray item (same coordinates).
+- **Initials**: second saved list (`bliPdfStudioInitials`), toggle in the signature panel, placed at 60 pt wide.
+- **Gmail memory**: subject = type default + file name (kept when the user typed their own — `lastAutoSubject`); last 10 recipients in a datalist.
+
+### Phase C — agency-wide extras (commit 7dc6fbf; Worker commits 75f24dd, e02aa12)
+- Forms host: `GET|PUT|DELETE /shared/<name>` (see §8).
+- **Packets** in the Forms Library modal (`#packetsBox`): "Save current forms as a packet" takes the library docs in the workspace (ordered by first appearance in the tray — `libraryDocsInOrder`) plus reminders; "Open packet" loads each form, tags it, places every page in Step 3 in packet order, then lists reminders/missing forms in a dialog. Library docs carry `libKey`/`libName` (autosaved).
+- **Agency stamps** in the stamp panel (`#sharedStamps`): ↑ on a local text/picture chip shares it; shared chips have a dashed ring and a two-click remove. 5-minute cache. Signatures stay local (gotcha 24).
+
+### Storage added this session
+localStorage `bliPdfHintsOff`, `bliPdfStudioInitials`, `bliPdfRecentTo`; doc fields `ocr`, `libKey`, `libName`; R2 `_shared/packets.json`, `_shared/stamps.json`.
+
+### Not done, on purpose
+- Cloud projects (customer documents off-device) — would break the privacy promise that makes staff trust the tool.
+- Reformatting Codex's one-line-per-feature block: semantics-preserving but it would bury their authorship in the diff; leave it until a real edit is needed there.
+
+## 15. Integration release — 2026-09-07 (Codex's note)
+
+Bill approved all PDF Studio review recommendations. Implemented and locally verified. Publishing authorized by Bill (push please); both main branches pushed. PDF branch `codex/pdf-studio-workflow`, commit `90e249c`, checkout `C:/Users/bill/OneDrive/Documents/Playground/pdf-studio-workflow`. Companion SMS branch `codex/pdf-studio-import`, commit `85aaa35`, checkout `C:/Users/bill/OneDrive/Documents/Playground/sms-pdf-studio-import`. SMS published first: Worker version ff8a1f4c-b740-4a65-b58e-c8017dfec83e. Website GitHub Pages run 34166401502 succeeded. Production PDF HTML matches commit 90e249c after line-ending normalization; production SMS serves index-Cjms5Fxj.js. Live PDF UI and Connections dialog checked at desktop/mobile widths without horizontal overflow. Existing browser recovery data preserved; no production customer upload, Gmail draft, or SMS send was performed. Read `C:/Users/bill/OneDrive/Documents/Playground/pdf-review-samples/INTEGRATION.md` for full scope, tests, limits, and release steps. One-file PDF architecture retained; original service-center work untouched.
+
+
