@@ -563,6 +563,8 @@
     min-width: 230px;
   }
   .menu-panel.up { top: auto; bottom: calc(100% + 6px); }
+  .menu-panel.flip { left: auto !important; right: 0 !important; transform: none !important; }
+  .menu-panel.unflip { left: 0 !important; right: auto !important; transform: none !important; }
   .menu-wrap.open .menu-panel { display: block; }
   .menu-panel button, .menu-panel > label {
     display: flex;
@@ -1672,7 +1674,6 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
  .output-actions > .save-button { grid-column:1/-1; }
  .output-actions .menu-wrap { min-width:0; }
  .output-actions .menu-panel { min-width:240px; max-width:90vw; }
- #moreMenuWrap .menu-panel { right:0; }
  .edit-head { padding:6px 8px; min-height:0; }
  .edit-title-wrap { display:none; }
  .edit-utility { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); width:100%; gap:4px; }
@@ -1701,22 +1702,53 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
 }
 @media(prefers-reduced-motion:reduce) { *, *::before, *::after { scroll-behavior:auto !important; transition:none !important; } }
 
-#btnDeliveryMenu { display:none; }
-@media(max-width:600px){#btnDeliveryMenu { display:block; grid-column:1/-1; } .output-actions > #btnSms,.output-actions > #btnEmail,.output-actions > #btnPrint,.output-actions > .menu-wrap { display:none; } .output-actions > #btnPreviewFinal { grid-column:1/-1; } .document-shelf { display:grid;grid-template-columns:1fr auto auto; } .document-shelf label {grid-column:1/-1;} .document-shelf #btnRemoveOutput{grid-column:1;} .brand {white-space:nowrap;font-size:12px;} .app-header {display:flex;flex-direction:column;align-items:stretch;} .header-actions {display:flex;justify-content:space-between;} }
-#btnManageDocuments {display:none;}
+@media(max-width:600px){ .brand {white-space:nowrap;font-size:12px;} .app-header {display:flex;flex-direction:column;align-items:stretch;} .header-actions {display:flex;justify-content:space-between;} }
+/* ── progressive disclosure: no output shelf or connection chips until there are files;
+      with a single new PDF the shelf is just Undo/Redo until Step 3 ── */
+body:not(.has-files) .document-shelf, body:not(.has-files) .device-status { display: none; }
+body:not(.step-3):not(.multi-output) .document-shelf > label,
+body:not(.step-3):not(.multi-output) #btnNewOutput,
+body:not(.step-3):not(.multi-output) #btnDuplicateOutput,
+body:not(.step-3):not(.multi-output) #btnRemoveOutput { display: none; }
+/* source page placed in ANOTHER new PDF: outlined check instead of solid */
+.used-badge.elsewhere { background: #fff; color: var(--teal); border: 2px solid var(--teal); }
+.act-rotl svg { transform: scaleX(-1); }
+/* editor: "Page [ 7 ] of 40" jump field */
+.page-jump { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: #fff; white-space: nowrap; }
+.page-jump input { width: 54px; text-align: center; padding: 4px 2px; font: inherit; font-size: 12.5px; border-radius: 6px; border: 1px solid rgba(255,255,255,.3); background: rgba(255,255,255,.1); color: #fff; }
+.page-jump input::-webkit-outer-spin-button, .page-jump input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+/* editor: dismissible tips bar + a tighter context bar for tools without settings */
+.edit-hint { display: flex; align-items: center; gap: 12px; }
+#editHintText { flex: 1; }
+#btnHideHints { flex: 0 0 auto; font-size: 11.5px; padding: 3px 9px; min-height: 0; }
+body.hints-off .editor-main > #editHint { display: none; }
+.edit-context.compact { min-height: 40px; padding: 5px 14px; }
+.edit-context.compact .context-label { flex-direction: row; align-items: baseline; gap: 8px; min-width: 0; }
+.edit-context.compact .context-label small { margin-top: 0; }
 @media(max-width:600px){
- .document-shelf {grid-template-columns:minmax(0,1fr) auto;}
- .document-shelf label {grid-column:1;min-width:0;font-size:12px;}
- .document-shelf #btnManageDocuments {display:block;grid-column:2;}
- .document-shelf > button:not(#btnManageDocuments) {display:none;}
+ .document-shelf label {min-width:0;font-size:12px;}
+ /* phone: Save on its own line, then Preview / Send / Export / Settings in one row */
+ .output-actions {grid-template-columns:repeat(4,minmax(0,1fr));}
+ .output-actions > #btnCreate {grid-column:1/-1;width:100%;}
+ .output-actions > button:not(.save-button) svg, .output-actions .menu-wrap > button svg {display:none;}
+ .output-actions button {font-size:12px !important;padding:7px 3px;}
+ .file-name-field {display:flex;align-items:center;gap:6px;flex-wrap:nowrap;}
+ .file-name-field input {flex:1;min-width:0;}
+ /* phone with a single new PDF: the shelf is just Another / Undo / Redo */
+ body:not(.multi-output) .document-shelf > label, body:not(.multi-output) #btnRemoveOutput {display:none;}
+ /* phone: a lighter shelf - select on its own line, then Another / Remove / Undo / Redo */
+ .document-shelf {padding:6px 8px;gap:6px;}
+ .document-shelf button {min-height:34px;padding:5px 8px;font-size:12px;}
+ #btnDuplicateOutput {display:none;}
+ .tray-heading small {display:none;}
+ .output-actions {gap:6px;}
+ .output-actions button {padding:7px 6px;}
  .workflow-shell {gap:2px;}
  .tray-heading {position:relative;width:100%;min-height:40px;padding-right:110px;justify-content:center;}
  .tray-heading .section-step,.tray-heading small {display:none;}
  .tray-heading #btnBackStep2 {position:absolute;right:0;top:0;min-width:0;width:104px;font-size:12px;margin:0;height:38px;padding:6px;}
  .tray-heading > div {gap:4px;flex-wrap:wrap;}
  .tray-head {gap:8px;}
- .output-actions > .save-button,.output-actions > #btnPreviewFinal {grid-column:auto;}
- .output-actions > #btnDeliveryMenu {grid-column:1/-1;}
 }
 @media(max-width:600px){.brand::after{content:" · PDF Studio";color:#e5c66f;font-size:11px;}}
 </style>
@@ -1759,8 +1791,8 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
   </div>
 
   <div class="document-shelf" aria-label="Output documents">
-    <label>Document <select id="outputSelect" aria-label="Active output document"></select></label>
-    <button id="btnManageDocuments">Manage</button><button id="btnNewOutput">+ New document</button><button id="btnDuplicateOutput">Duplicate</button><button id="btnRemoveOutput">Remove document</button>
+    <label>New PDF <select id="outputSelect" aria-label="Which new PDF you are building"></select></label>
+    <button id="btnNewOutput" title="Start another new PDF from the same source files">+ Another PDF</button><button id="btnDuplicateOutput" title="Copy this new PDF, pages and edits included">Duplicate</button><button id="btnRemoveOutput">Remove this PDF</button>
     <button id="btnWorkspaceUndo" aria-label="Undo workspace change">Undo</button><button id="btnWorkspaceRedo" aria-label="Redo workspace change">Redo</button>
     <span id="projectLabel">Local workspace</span>
   </div>
@@ -1856,11 +1888,29 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
             <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 4h12l2 2v14H5zM8 4v6h8V4M8 17h8"/></svg>
             Save PDF
           </button>
-          <button id="btnPreviewFinal">Preview PDF</button><button id="btnDeliveryMenu">More save &amp; send options</button><button id="btnSms">Prepare text</button><button id="btnPrint" title="Print the new document"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 9V3h10v6M7 17H4V9h16v8h-3M7 14h10v7H7z"/></svg>Print</button>
-          <button id="btnEmail" title="Create a Gmail draft with this PDF attached"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 5h18v14H3zM3 6l9 7 9-7"/></svg>Gmail draft</button>
+          <button id="btnPreviewFinal" title="See the finished PDF before you save or send it"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>Preview</button>
+          <div class="menu-wrap" id="sendMenuWrap">
+            <button id="btnSendMenu" title="Send or print this PDF"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>Send &#9662;</button>
+            <div class="menu-panel">
+              <div class="menu-label">Send this PDF</div>
+              <button id="btnEmail" title="Create a Gmail draft with this PDF attached"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 5h18v14H3zM3 6l9 7 9-7"/></svg>Gmail draft</button>
+              <button id="btnSms" title="Hand this PDF to SMS Command Center to text it to a customer"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 4h16v12H8l-4 4z"/></svg>Text via SMS</button>
+              <button id="btnPrint" title="Print the new document"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 9V3h10v6M7 17H4V9h16v8h-3M7 14h10v7H7z"/></svg>Print</button>
+            </div>
+          </div>
+          <div class="menu-wrap" id="moreMenuWrap">
+            <button id="btnMoreMenu" title="Split or bundle this work"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 17v4h16v-4"/></svg>Export &#9662;</button>
+            <div class="menu-panel">
+              <div class="menu-label">Export</div>
+              <button id="btnSplitRanges" title="Cut this PDF into several named PDFs by page ranges">Split by page ranges</button>
+              <button id="btnEachPage" title="Download every page in the tray as its own one-page PDF">Single pages as ZIP</button>
+              <button id="btnZipOutputs" title="Every new PDF in this project, in one ZIP">All new PDFs as ZIP</button>
+              <button class="danger" id="btnClearTray">Clear tray</button>
+            </div>
+          </div>
           <div class="menu-wrap" id="optMenuWrap">
-            <button id="btnOptMenu" title="Export settings"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>Export settings<span class="opt-badge" id="optBadge"></span></button>
-            <div class="menu-panel up">
+            <button id="btnOptMenu" title="Finish settings for every save and send"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>Settings<span class="opt-badge" id="optBadge"></span></button>
+            <div class="menu-panel">
               <div class="menu-label">Finish options</div><p class="option-help">These settings apply to Save, Gmail, SMS and ZIP exports. Print uses an unlocked copy.</p>
               <label title="Re-saves every page as a compact scan — much smaller file, ideal for emailing. (Text is no longer selectable in the shrunk copy.)">
                 <input type="checkbox" id="chkShrink" style="width:17px;height:17px;accent-color:var(--teal)"> Shrink for email
@@ -1871,13 +1921,6 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
               <label title="The PDF will require a password to open — you choose it when you save the file">
                 <input type="checkbox" id="chkLock" style="width:17px;height:17px;accent-color:var(--teal)"> Lock with password
               </label>
-            </div>
-          </div>
-          <div class="menu-wrap" id="moreMenuWrap">
-            <button class="icon-button" id="btnMoreMenu" title="More output actions" aria-label="More output actions"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
-            <div class="menu-panel up">
-              <button id="btnSplitRanges">Split by page ranges</button><button id="btnZipOutputs">Download documents as ZIP</button><button id="btnEachPage" title="Download every page in the tray as its own one-page PDF">Single pages as ZIP</button>
-              <button class="danger" id="btnClearTray">Clear tray</button>
             </div>
           </div>
         </div>
@@ -1902,7 +1945,7 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
         <span class="edit-title">Edit page</span>
       </div>
       <div class="edit-utility">
-        <button id="btnPrevEdit" aria-label="Previous page">Previous</button><span id="editorPageCount" aria-live="polite"></span><button id="btnNextEdit" aria-label="Next page">Next</button><button id="btnRedoStamp">Redo</button><button id="btnUndoStamp"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 7 4 12l5 5M5 12h8a6 6 0 0 1 6 6"/></svg>Undo</button>
+        <button id="btnPrevEdit" aria-label="Previous page">Previous</button><span id="editorPageCount" class="page-jump" aria-live="polite">Page <input type="number" id="editorPageJump" min="1" step="1" value="1" aria-label="Go to page number"> of <b id="editorPageTotal">0</b></span><button id="btnNextEdit" aria-label="Next page">Next</button><button id="btnRedoStamp">Redo</button><button id="btnUndoStamp"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 7 4 12l5 5M5 12h8a6 6 0 0 1 6 6"/></svg>Undo</button>
         <div class="zoom-group" aria-label="Page zoom">
           <button class="icon-button" id="btnZoomOut" title="Zoom out" aria-label="Zoom out">&minus;</button>
           <button class="ghost" id="btnZoomFit" title="Fit the whole page">Fit</button>
@@ -1911,6 +1954,7 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
         <div class="menu-wrap" id="editMoreWrap">
           <button class="icon-button" id="btnEditMore" title="More editing actions" aria-label="More editing actions"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
           <div class="menu-panel">
+            <button id="btnShowHints" style="display:none">Show tips again</button>
             <button class="danger" id="btnClearStamps">Remove all added items</button>
             <button class="danger" id="btnUncrop" style="display:none">Remove crop</button>
           </div>
@@ -1928,7 +1972,7 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
         <button class="mode-btn" id="modeSig"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 17c3-5 4-9 6-9 3 0-2 9 1 9 2 0 3-4 5-4 1 0 1 4 3 4 1 0 2-1 3-2M3 21h18"/></svg><span>Signature</span></button>
         <button class="mode-btn" id="modeImg"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 4h16v16H4zM7 16l4-4 3 3 2-2 3 3M8 8h.01"/></svg><span>Image</span></button>
         <button class="mode-btn" id="modeStamps"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg><span>Stamps</span></button>
-        <button class="mode-btn" id="modePan">Move page</button><button class="mode-btn" id="modeCrop"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 3v14h14M3 7h14v14"/></svg><span>Crop</span></button>
+        <button class="mode-btn" id="modePan"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M8 7l4-4 4 4M8 17l4 4 4-4M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg><span>Move page</span></button><button class="mode-btn" id="modeCrop"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 3v14h14M3 7h14v14"/></svg><span>Crop</span></button>
       </aside>
 
       <div class="editor-main">
@@ -1949,7 +1993,7 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
             <option value="blue">Blue</option>
           </select></label>
         </div>
-        <div class="edit-hint" id="editHint">Type your text above, then click the page where it should go. Switch to White-out to draw a white rectangle over anything you need to cover.</div>
+        <div class="edit-hint" id="editHint"><span id="editHintText">Type your text above, then click the page where it should go.</span><button class="ghost" id="btnHideHints" title="Hide these tips. Tool settings still explain each tool.">Hide tips</button></div>
         <div id="editCanvasWrap">
           <div id="editStack">
             <canvas id="editCanvas"></canvas>
@@ -2345,6 +2389,14 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
       e.stopPropagation();
       document.querySelectorAll('.menu-wrap.open').forEach(w => { if (w !== wrap) w.classList.remove('open'); });
       wrap.classList.toggle('open');
+      if (wrap.classList.contains('open')) {
+        // open to the left only when the panel would run off the screen
+        const panel = wrap.querySelector('.menu-panel');
+        panel.classList.remove('flip', 'unflip');
+        let r = panel.getBoundingClientRect();
+        if (r.right > innerWidth - 4) { panel.classList.add('flip'); r = panel.getBoundingClientRect(); }
+        if (r.left < 4) { panel.classList.remove('flip'); panel.classList.add('unflip'); }
+      }
     });
     wrap.querySelector('.menu-panel').addEventListener('click', (e) => {
       const b = e.target.closest('button');
@@ -2360,6 +2412,7 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
   wireMenu('btnSrcMenu', 'srcMenuWrap');
   wireMenu('btnOptMenu', 'optMenuWrap');
   wireMenu('btnMoreMenu', 'moreMenuWrap');
+  wireMenu('btnSendMenu', 'sendMenuWrap');
   wireMenu('btnEditMore', 'editMoreWrap');
 
   // gold badge on ⚙ Options showing how many output options are on
@@ -2597,6 +2650,8 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
     if (uiStep === 2 && !docs.size) uiStep = 1;
     if (uiStep === 1 && docs.size) uiStep = 2;
     document.body.classList.toggle('step-3', uiStep === 3);
+    document.body.classList.toggle('has-files', docs.size > 0);
+    document.body.classList.toggle('multi-output', outputs.length > 1);
     [1, 2, 3].forEach(n => {
       const el = $('workflowStep' + n);
       if (!el) return;
@@ -2665,11 +2720,17 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
     dropzone.style.display = has ? 'none' : '';
     $('sourceTitle').style.display = has ? '' : 'none';
     docList.innerHTML = '';
-    const usage = new Map();
-    tray.forEach(t => {
+    // which source pages are already placed — in THIS new PDF or in another one
+    const usage = new Map();   // 'docId:pageIndex' -> { n, here, others:Set<name> }
+    const mark = (t, here, name) => {
       const k = t.docId + ':' + t.pageIndex;
-      usage.set(k, (usage.get(k) || 0) + 1);
-    });
+      const u = usage.get(k) || { n: 0, here: false, others: new Set() };
+      u.n++;
+      if (here) u.here = true; else u.others.add(name);
+      usage.set(k, u);
+    };
+    tray.forEach(t => mark(t, true));
+    outputs.forEach(o => { if (o.id !== activeOutput) o.pages.forEach(t => mark(t, false, o.name)); });
     for (const [docId, doc] of docs) {
       const block = document.createElement('div');
       block.className = 'doc-block';
@@ -2720,7 +2781,7 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
       const grid = document.createElement('div');
       grid.className = 'src-grid';
       doc.pages.forEach(p => {
-        const used = usage.get(p.docId + ':' + p.pageIndex) || 0;
+        const used = usage.get(p.docId + ':' + p.pageIndex);
         const isHit = searchHits.has(p.docId + ':' + p.pageIndex);
         const card = document.createElement('div');
         card.className = 'page-card' + (isHit ? ' search-hit' : '');
@@ -2736,7 +2797,9 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
           '. Press Enter or Space to select it, then choose Use selected pages.');
         card.title = 'Click to select · double-click to add this page on its own';
         card.innerHTML =
-          (used ? '<div class="used-badge">' + (used > 1 ? '×' + used : '✓') + '</div>' : '') +
+          (used ? '<div class="used-badge' + (used.here ? '' : ' elsewhere') + '" title="' +
+            escapeHtml(used.here ? 'In this new PDF' + (used.others.size ? ' and in ' + [...used.others].join(', ') : '') : 'In ' + [...used.others].join(', ')) +
+            '">' + (used.n > 1 ? '×' + used.n : '✓') + '</div>' : '') +
           (isHit ? '<div class="hit-badge">match</div>' : '') +
           '<div class="thumb-box"><img src="' + p.thumb + '" alt=""></div>' +
           '<div class="pick-check" aria-hidden="true">&#10003;</div>' +
@@ -2898,7 +2961,8 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
         '<div class="order-badge">' + (i + 1) + '</div>' +
         '<div class="card-actions">' +
           '<button class="act-edit" title="Edit this page" aria-label="Edit output page ' + (i + 1) + '">' + uiIcon('edit') + '</button>' +
-          '<button class="act-rot" title="Rotate 90 degrees" aria-label="Rotate output page ' + (i + 1) + '">' + uiIcon('rotate') + '</button>' +
+          '<button class="act-rotl" title="Rotate left" aria-label="Rotate output page ' + (i + 1) + ' counter-clockwise">' + uiIcon('rotate') + '</button>' +
+          '<button class="act-rot" title="Rotate right" aria-label="Rotate output page ' + (i + 1) + ' clockwise">' + uiIcon('rotate') + '</button>' +
           '<button class="act-del" title="Remove from new PDF" aria-label="Remove output page ' + (i + 1) + '">' + uiIcon('close') + '</button>' +
         '</div>' +
         '<div class="thumb-box"><img' + rotCls + ' src="' + t.thumb + '" alt=""></div>' +
@@ -2928,6 +2992,12 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
         t.rot = (t.rot + 90) % 360;
         renderAll();
         requestAnimationFrame(() => trayStrip.querySelector('[data-tid="' + t.tid + '"] .act-rot')?.focus());
+      });
+      card.querySelector('.act-rotl').addEventListener('click', (e) => {
+        e.stopPropagation();
+        t.rot = (t.rot + 270) % 360;
+        renderAll();
+        requestAnimationFrame(() => trayStrip.querySelector('[data-tid="' + t.tid + '"] .act-rotl')?.focus());
       });
       card.querySelector('.act-del').addEventListener('click', (e) => {
         e.stopPropagation();
@@ -3236,7 +3306,7 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
       text: ['Text controls', 'Type first, then click the page'],
       draw: ['Pen controls', 'Choose a width and color, then draw'],
       hl: ['Highlight tool', 'Drag across the words you want to highlight'],
-      box: ['White-out tool', 'Drag a box over content you want to cover'],
+      box: ['White-out', 'Drag over what to cover — the text underneath stays in the file'],
       sig: ['Signature tool', 'Choose a signature, then click the page'],
       img: ['Image tool', 'Choose an image, then click the page'],
       pan: ['Move page', 'Drag to move the zoomed page'],
@@ -3247,7 +3317,7 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
     textField.style.display = mode === 'text' ? '' : 'none';
     contextSelects.forEach(label => { label.style.display = (mode === 'text' || mode === 'draw') ? '' : 'none'; });
     context.classList.toggle('compact', mode !== 'text' && mode !== 'draw');
-    $('editHint').textContent = mode === 'text'
+    $('editHintText').textContent = mode === 'text'
       ? 'Add a new text box: type above, then tap the page. Move or resize it; double-click to edit your added text. Original PDF text is unchanged.'
       : mode === 'hl'
         ? 'Press and drag across the words you want to highlight. Each highlight can be moved and resized afterwards, and the text still shows through.'
@@ -3270,6 +3340,24 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
   $('btnZoomIn').addEventListener('click', () => setEditorZoom(editorZoom * 1.25));
   $('btnZoomOut').addEventListener('click', () => setEditorZoom(editorZoom / 1.25));
   $('btnZoomFit').addEventListener('click', () => setEditorZoom(1));
+
+  // tips bar: staff can hide it once they know the tools (Tool settings still explains each one)
+  const HINTS_KEY = 'bliPdfHintsOff';
+  function applyHintPref() {
+    const off = localStorage.getItem(HINTS_KEY) === '1';
+    document.body.classList.toggle('hints-off', off);
+    $('btnShowHints').style.display = off ? '' : 'none';
+  }
+  $('btnHideHints').addEventListener('click', () => {
+    try { localStorage.setItem(HINTS_KEY, '1'); } catch (_) {}
+    applyHintPref();
+    toast('Tips hidden. Bring them back any time from the ⋯ menu in the editor.');
+  });
+  $('btnShowHints').addEventListener('click', () => {
+    try { localStorage.removeItem(HINTS_KEY); } catch (_) {}
+    applyHintPref();
+  });
+  applyHintPref();
 
   function openEditor(item) {
     editorItem = item;
@@ -3719,7 +3807,7 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
       removePendingCrop();
       toast('Crop cancelled — nothing changed.');
     });
-    $('editHint').textContent = 'Adjust the gold box — drag it to move, pull the corner to resize, or drag a new box. Press Apply crop when it looks right.';
+    $('editHintText').textContent = 'Adjust the gold box — drag it to move, pull the corner to resize, or drag a new box. Press Apply crop when it looks right.';
   }
 
   async function applyCrop(rect) {
@@ -4429,6 +4517,11 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
     if (!$('editModal').classList.contains('open')) return;
     const a = document.activeElement;
     const typing = a && (a.isContentEditable || a.tagName === 'INPUT' || a.tagName === 'SELECT' || a.tagName === 'TEXTAREA');
+    if (!typing && (e.key === 'PageDown' || e.key === 'PageUp')) {
+      e.preventDefault();
+      moveEditor(e.key === 'PageDown' ? 1 : -1);
+      return;
+    }
     if (e.key === 'Escape') {
       if (a && a.isContentEditable) { a.blur(); return; }
       if (pendingCrop) { removePendingCrop(); toast('Crop cancelled — nothing changed.'); return; }
@@ -5114,7 +5207,7 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
     }));
   }
 
-  let autosaveTimer = null;
+  let autosaveTimer = null, quotaWarned = false;
   function scheduleAutosave() {
     captureHistory();
     clearTimeout(autosaveTimer);
@@ -5140,7 +5233,16 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
       }).then(() => {
         const at = new Date(when).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
         setAutosaveStatus('Saved at ' + at, 'saved');
-      }).catch(() => setAutosaveStatus('Autosave unavailable', 'warning'));
+      }).catch((e) => {
+        // IndexedDB refuses the write when the browser's storage is full — say so
+        // instead of quietly showing "Saving…" forever
+        const full = !!e && (e.name === 'QuotaExceededError' || /quota/i.test(String(e.message || e)));
+        setAutosaveStatus(full ? 'Autosave paused — too large for this browser' : 'Autosave unavailable', 'warning');
+        if (full && !quotaWarned) {
+          quotaWarned = true;
+          toast('Autosave paused: this project is too big to keep a copy in the browser. Everything still works — just Save your PDF before closing.');
+        }
+      });
     }, 1200);
   }
 
@@ -5478,15 +5580,19 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
   function renderOutputSelect(){
     $('outputSelect').replaceChildren(...outputs.map(o=>{const el=document.createElement('option');el.value=o.id;el.textContent=o.id===activeOutput?$('nameInput').value:o.name;return el;})); $('outputSelect').value=activeOutput;
     $('projectLabel').textContent=projectName||'Local workspace';
+    document.body.classList.toggle('multi-output',outputs.length>1);
   }
   function saveActiveOutput(){const o=outputs.find(o=>o.id===activeOutput);if(o){o.name=$('nameInput').value;o.pages=copyPages(tray);}}
   function switchOutput(id){saveActiveOutput();const o=outputs.find(o=>o.id===id);if(!o)return;activeOutput=id;tray=copyPages(o.pages);$('nameInput').value=o.name;renderOutputSelect();renderAll();if(tray.length)setStep(3);}
-  $('btnRemoveOutput').onclick=()=>{if(outputs.length===1){toast('Keep at least one output document. Use Clear tray to remove its pages.');return;}showDialog('Remove output document?','<p>The source files and other documents will be kept.</p><div class="studio-row"><button id="removeOutputConfirm">Remove document</button><button id="removeOutputCancel">Keep it</button></div>');$('removeOutputCancel').onclick=closeStudioDialog;$('removeOutputConfirm').onclick=()=>{outputs=outputs.filter(o=>o.id!==activeOutput);const next=outputs[0];activeOutput=next.id;tray=copyPages(next.pages);$('nameInput').value=next.name;renderOutputSelect();renderAll();closeStudioDialog();};};
+  $('btnRemoveOutput').onclick=()=>{if(outputs.length===1){toast('Keep at least one new PDF — use Clear tray to empty it instead.');return;}showDialog('Remove this new PDF?','<p>Your source files and any other new PDFs are kept.</p><div class="studio-row"><button id="removeOutputConfirm">Remove it</button><button id="removeOutputCancel">Keep it</button></div>');$('removeOutputCancel').onclick=closeStudioDialog;$('removeOutputConfirm').onclick=()=>{outputs=outputs.filter(o=>o.id!==activeOutput);const next=outputs[0];activeOutput=next.id;tray=copyPages(next.pages);$('nameInput').value=next.name;renderOutputSelect();renderAll();closeStudioDialog();};};
   $('outputSelect').onchange=e=>switchOutput(e.target.value);
   $('nameInput').addEventListener('change',()=>{saveActiveOutput();renderOutputSelect();scheduleAutosave();});
-  $('btnNewOutput').onclick=()=>{saveActiveOutput();const id=crypto.randomUUID();outputs.push({id,name:'Document '+(outputs.length+1),pages:[]});switchOutput(id);toast('Select source pages for this new document.');};
+  $('btnNewOutput').onclick=()=>{saveActiveOutput();const id=crypto.randomUUID();outputs.push({id,name:'New PDF '+(outputs.length+1),pages:[]});switchOutput(id);toast('Pick source pages for this new PDF.');};
   $('btnDuplicateOutput').onclick=()=>{saveActiveOutput();const id=crypto.randomUUID();outputs.push({id,name:$('nameInput').value+' copy',pages:copyPages(tray).map(t=>({...t,tid:nextTid++}))});switchOutput(id);};
-  function updateEditorPage(){const i=tray.findIndex(t=>t===editorItem);$('editorPageCount').textContent='Page '+(i+1)+' of '+tray.length;$('btnPrevEdit').disabled=i<=0;$('btnNextEdit').disabled=i<0||i>=tray.length-1;}
+  function updateEditorPage(){const i=tray.findIndex(t=>t===editorItem);const j=$('editorPageJump');j.value=i+1;j.max=tray.length;$('editorPageTotal').textContent=tray.length;$('btnPrevEdit').disabled=i<=0;$('btnNextEdit').disabled=i<0||i>=tray.length-1;}
+  function jumpEditor(n){const i=Math.min(tray.length,Math.max(1,Math.round(Number(n)||1)))-1;if(tray[i]&&tray[i]!==editorItem){scheduleAutosave();removePendingCrop();openEditor(tray[i]);}else updateEditorPage();}
+  $('editorPageJump').addEventListener('change',e=>jumpEditor(e.target.value));
+  $('editorPageJump').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();jumpEditor(e.target.value);e.target.blur();}});
   function moveEditor(d){const i=tray.indexOf(editorItem)+d;if(i>=0&&i<tray.length){scheduleAutosave();removePendingCrop();openEditor(tray[i]);}}
   $('btnPrevEdit').onclick=()=>moveEditor(-1);$('btnNextEdit').onclick=()=>moveEditor(1);
   $('mobileTool').onchange=e=>$(e.target.value).click();$('modePan').onclick=()=>setEditorMode('pan');
@@ -5506,8 +5612,8 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
     showDialog('Saved projects',`<p>Named workspaces stay in this browser on this device, including source files, edits and output documents. They are not cloud backups.</p><label for="projectNameInput">Project name</label><input id="projectNameInput" placeholder="Customer or project name"><div class="studio-row"><button id="saveProjectNow" class="primary">Save project</button><button id="newProjectNow">New empty project</button></div><p id="projectNotice" role="status"></p><div id="projectList"></div>`);
     $('projectNameInput').value=projectName;
     const list=await projectStore('getAll');
-    for(const p of list.sort((a,b)=>b.when-a.when)){const row=document.createElement('div');row.className='studio-card';const title=document.createElement('strong');title.textContent=p.name;const note=document.createElement('p');note.textContent=new Date(p.when).toLocaleString()+' • '+p.data.outputs.length+' document(s)';const load=document.createElement('button');load.textContent='Open project';load.onclick=async()=>{try{if(docs.size)await saveProject(projectName||'Recovered workspace '+new Date().toLocaleString());restoreWorkspace(p.data);resetHistory();closeStudioDialog();}catch(e){$('projectNotice').textContent='Could not save the current workspace. It has been kept open.';}};const del=document.createElement('button');del.textContent='Delete saved copy';del.onclick=()=>{del.textContent='Confirm delete';del.onclick=async()=>{await projectStore('delete',p.id);if(projectId===p.id){projectId=null;projectName='';renderOutputSelect();}openProjects();};};row.append(title,note,load,del);$('projectList').append(row);}
-    $('saveProjectNow').onclick=async()=>{try{const name=$('projectNameInput').value.trim();if(!name)throw Error('Enter a project name.');await saveProject(name);openProjects();}catch(e){$('projectNotice').textContent=e.message;}};
+    for(const p of list.sort((a,b)=>b.when-a.when)){const row=document.createElement('div');row.className='studio-card';const title=document.createElement('strong');title.textContent=p.name;const note=document.createElement('p');note.textContent=new Date(p.when).toLocaleString()+' • '+p.data.outputs.length+' new PDF'+(p.data.outputs.length===1?'':'s');const load=document.createElement('button');load.textContent='Open project';load.onclick=async()=>{try{if(docs.size)await saveProject(projectName||'Recovered workspace '+new Date().toLocaleString());restoreWorkspace(p.data);resetHistory();closeStudioDialog();}catch(e){$('projectNotice').textContent='Could not save the current workspace. It has been kept open.';}};const del=document.createElement('button');del.textContent='Delete saved copy';del.onclick=()=>{del.textContent='Confirm delete';del.onclick=async()=>{await projectStore('delete',p.id);if(projectId===p.id){projectId=null;projectName='';renderOutputSelect();}openProjects();};};row.append(title,note,load,del);$('projectList').append(row);}
+    $('saveProjectNow').onclick=async()=>{try{const name=$('projectNameInput').value.trim();if(!name)throw Error('Enter a project name.');await saveProject(name);openProjects();}catch(e){$('projectNotice').textContent=(e&&e.name==='QuotaExceededError')?'This project is too large to store in this browser. Save the PDFs instead.':e.message;}};
     $('newProjectNow').onclick=async()=>{try{if(docs.size)await saveProject(projectName||'Recovered workspace '+new Date().toLocaleString());restoreWorkspace({docs:[],tray:[],name:'new-document',nextDocId:1,nextSid:1,nextTid:1});resetHistory();closeStudioDialog();}catch(e){$('projectNotice').textContent='Could not save your current work. New project was not started.';}};
   }
   $('btnProjects').onclick=()=>openProjects().catch(e=>toast('Project storage unavailable: '+e.message));
@@ -5523,10 +5629,10 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
   }
   $('btnZipOutputs').onclick=()=>exportZip(packedOutputs().map(o=>({name:o.name,pages:o.pages})));
   $('btnSplitRanges').onclick=()=>{
-    showDialog('Split into named PDFs',`<p>Use the current document’s ${tray.length} pages. Put one filename and page selection on each line.</p><label for="splitInput">Filename | pages</label><textarea id="splitInput" rows="6" placeholder="Application | 1-3\nSupporting documents | 4, 5-7"></textarea><p class="studio-note">All finish settings apply to each PDF. Page numbering starts at 1 in each document. Password protection uses the same password for the bundle.</p><div class="studio-row"><button id="saveSplit" class="primary">Download ZIP</button><button id="keepSplit">Create output documents</button></div><p id="splitError" role="alert"></p>`);
+    showDialog('Split into named PDFs',`<p>Use the current document’s ${tray.length} pages. Put one filename and page selection on each line.</p><label for="splitInput">Filename | pages</label><textarea id="splitInput" rows="6" placeholder="Application | 1-3\nSupporting documents | 4, 5-7"></textarea><p class="studio-note">All finish settings apply to each PDF. Page numbering starts at 1 in each document. Password protection uses the same password for the bundle.</p><div class="studio-row"><button id="saveSplit" class="primary">Download ZIP</button><button id="keepSplit">Keep as separate new PDFs</button></div><p id="splitError" role="alert"></p>`);
     function groups(){return $('splitInput').value.trim().split(/\n/).map(line=>{const sep=line.indexOf('|');if(sep<1)throw Error('Each line needs a filename | pages.');return {name:line.slice(0,sep).trim(),pages:parseRanges(line.slice(sep+1),tray.length).map(i=>tray[i])};});}
     $('saveSplit').onclick=async()=>{try{await exportZip(groups());}catch(e){$('splitError').textContent=e.message;}};
-    $('keepSplit').onclick=()=>{try{const gs=groups();saveActiveOutput();for(const g of gs)outputs.push({id:crypto.randomUUID(),name:g.name,pages:copyPages(g.pages).map(t=>({...t,tid:nextTid++}))});renderOutputSelect();scheduleAutosave();closeStudioDialog();toast('Created '+gs.length+' output documents.');}catch(e){$('splitError').textContent=e.message;}};
+    $('keepSplit').onclick=()=>{try{const gs=groups();saveActiveOutput();for(const g of gs)outputs.push({id:crypto.randomUUID(),name:g.name,pages:copyPages(g.pages).map(t=>({...t,tid:nextTid++}))});renderOutputSelect();scheduleAutosave();closeStudioDialog();toast('Created '+gs.length+' new PDFs — switch between them at the top.');}catch(e){$('splitError').textContent=e.message;}};
   };
   async function renderPdfPreview(bytes,container){
     const task=await pdfjsLib.getDocument({data:bytes.slice()}).promise;
@@ -5539,13 +5645,11 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
     previous.onclick=()=>{if(!rendering&&current>1){current--;void render();}};next.onclick=()=>{if(!rendering&&current<task.numPages){current++;void render();}};await render();
   }
   async function previewFinal(email=false){if(!tray.length){toast('Choose pages first.');return;}busy(true,'Building preview…');try{const options=exportOptions(),r=await buildFinalBytes(tray,{...options,lock:false});const filename=cleanName();showDialog(email?'Review email and attachment':'Preview finished PDF',`<p id="previewSummary"></p><p class="studio-note">${options.lock?'Password protection is selected. Choose the password when saving or creating the draft.':'No password protection selected.'}</p>${email?'<iframe class="email-preview" id="emailBodyPreview" title="Email body preview" sandbox></iframe>':''}<div class="studio-row"><button id="savePreview" class="primary">Save this PDF</button></div><div id="finalPages" class="studio-preview"></div>`);$('previewSummary').textContent=filename+' • '+tray.length+' pages • '+fmtSize(r.bytes.length)+(options.lock?' before locking':'')+(options.numbers?' • Numbered':'')+(r.note||'');if(email)$('emailBodyPreview').srcdoc=buildEmailHtml();$('savePreview').onclick=async()=>{let bytes=r.bytes;if(options.lock){const pw=await askExportPassword();if(!pw)return;bytes=await lockPdfBytes(bytes,pw);}download(bytes,filename);};await renderPdfPreview(r.bytes,$('finalPages'));}catch(e){toast('Could not preview PDF: '+e.message);}finally{busy(false);}}
-  $('btnManageDocuments').onclick=()=>{showDialog('Manage documents','<div class="studio-row" id="documentActions"></div><p>Each document has its own page order and edits. Source files are shared across this project.</p>');for(const [label,id] of [['New document','btnNewOutput'],['Duplicate current document','btnDuplicateOutput'],['Remove current document','btnRemoveOutput'],['Undo last change','btnWorkspaceUndo'],['Redo change','btnWorkspaceRedo']]){const b=document.createElement('button');b.textContent=label;b.disabled=$(id).disabled;b.onclick=()=>{closeStudioDialog();$(id).click();};$('documentActions').append(b);}};
-  $('btnDeliveryMenu').onclick=()=>{showDialog('Save and send options','<p>Choose an action for the current document.</p><div id="deliveryActions" class="studio-row"></div><div id="deliveryOptions"></div>');const actions=[['Print','btnPrint'],['Gmail draft','btnEmail'],['Prepare text','btnSms'],['Split by page ranges','btnSplitRanges'],['Single pages as ZIP','btnEachPage'],['All documents as ZIP','btnZipOutputs']];for(const [label,id] of actions){const b=document.createElement('button');b.textContent=label;b.onclick=()=>{closeStudioDialog();$(id).click();};$('deliveryActions').append(b);}for(const [label,id] of [['Shrink for email','chkShrink'],['Page numbers','chkNumbers'],['Lock with password','chkLock']]){const l=document.createElement('label'),i=document.createElement('input');i.type='checkbox';i.checked=$(id).checked;i.onchange=()=>{$(id).checked=i.checked;$(id).dispatchEvent(new Event('change'));scheduleAutosave();};l.append(i,' '+label);$('deliveryOptions').append(l);}const note=document.createElement('p');note.className='studio-note';note.textContent='Shrink creates image pages if smaller, removing selectable text and interactive form fields. Finish settings apply to every exported PDF; print uses an unlocked copy.';$('deliveryOptions').append(note);};
-  $('btnPreviewFinal').onclick=()=>previewFinal();$('btnEmailPreview').onclick=()=>previewFinal(true);
+      $('btnPreviewFinal').onclick=()=>previewFinal();$('btnEmailPreview').onclick=()=>previewFinal(true);
   const retry=document.createElement('div');retry.id='mailRetryCheck';retry.hidden=!mailUncertain;retry.innerHTML='<p>A previous draft request has an uncertain outcome. Check Gmail Drafts before retrying.</p><a href="https://mail.google.com/mail/u/0/#drafts" target="_blank" rel="noopener">Open Gmail Drafts</a> <button id="mailRetryAllow">I checked Gmail — allow another attempt</button>';$('btnEmailGo').parentElement.before(retry);
   $('mailRetryAllow').onclick=()=>{mailUncertain=false;localStorage.removeItem('bliPdfMailUncertain');retry.hidden=true;$('btnEmailGo').disabled=false;};$('btnEmailGo').disabled=mailUncertain;
   $('btnConnections').onclick=()=>{
-    showDialog('Connections',`<p>Editing and project storage stay on this device. Gmail draft creation uploads the finished PDF to your mail gateway. Preparing a text transfers it to SMS Command Center; you choose the customer before uploading.</p><section class="studio-card"><h3>Forms Library</h3><p>Shared blank agency forms.</p><div class="studio-row"><button id="setupForms">Open setup</button><button id="testForms">Test connection</button></div><p id="formsTestStatus" role="status"></p></section><section class="studio-card"><h3>Gmail</h3><p>Creates a draft for your review, with the agency record BCC shown in the email window.</p><a href="/mail-gateway/" target="_blank" rel="noopener">Open Mail Gateway setup</a><div class="studio-row"><button id="testMail">Test gateway</button></div><p id="mailTestStatus" role="status"></p></section><section class="studio-card"><h3>SMS Command Center</h3><p>Sign in there using the existing staff access. No SMS credentials are stored in PDF Studio.</p></section>`);
+    showDialog('Connections',`<p>Editing and project storage stay on this device. Gmail draft creation uploads the finished PDF to your mail gateway. Text via SMS hands it to SMS Command Center; you choose the customer there before anything uploads.</p><section class="studio-card"><h3>Forms Library</h3><p>Shared blank agency forms.</p><div class="studio-row"><button id="setupForms">Open setup</button><button id="testForms">Test connection</button></div><p id="formsTestStatus" role="status"></p></section><section class="studio-card"><h3>Gmail</h3><p>Creates a draft for your review, with the agency record BCC shown in the email window.</p><a href="/mail-gateway/" target="_blank" rel="noopener">Open Mail Gateway setup</a><div class="studio-row"><button id="testMail">Test gateway</button></div><p id="mailTestStatus" role="status"></p></section><section class="studio-card"><h3>SMS Command Center</h3><p>Sign in there using the existing staff access. No SMS credentials are stored in PDF Studio.</p></section>`);
     $('setupForms').onclick=()=>{closeStudioDialog();openFormsModal();};
     $('testForms').onclick=async()=>{const el=$('formsTestStatus');if(!formsCode()){el.textContent='Set up the access code first.';return;}el.textContent='Checking…';try{const r=await formsApi('/list');const data=await r.json();if(!r.ok||!Array.isArray(data.forms))throw Error('Access was not accepted.');el.textContent='Verified: '+data.forms.length+' forms available.';}catch(e){el.textContent='Connection failed. Check the access code and network.';}};
     $('testMail').onclick=async()=>{const el=$('mailTestStatus'),url=localStorage.getItem(GW_URL_KEY),secret=localStorage.getItem(GW_SECRET_KEY);if(!url||!secret){el.textContent='Complete Mail Gateway setup on this device first.';return;}el.textContent='Checking…';try{const r=await fetch(url,{signal:AbortSignal.timeout(15000)}),data=await r.json();if(!data.ok||data.service!=='BLI Mail Gateway')throw Error();el.textContent='Gateway reachable (version '+data.version+'). Saved credentials are configured; authentication and attachment delivery are checked when a draft is created. No draft was created by this test.';}catch(e){el.textContent='Could not reach the gateway. Check setup and network; no draft was created.';}};
@@ -5555,7 +5659,7 @@ dialog#studioDialog { width:min(960px,96vw); max-height:94dvh; padding:0; border
   const SMS_ORIGIN=location.hostname==='127.0.0.1' ? 'http://127.0.0.1:5174' : 'https://agency-sms-command-center.bill-7e3.workers.dev';
   $('btnSms').onclick=async()=>{
     if(!tray.length){toast('Choose pages first.');return;}
-    showDialog('Prepare text in SMS Command Center',`<p>Build the finished PDF, then open SMS Command Center. Choose the customer there and attach the document to a draft. Sending remains a separate action.</p><div class="studio-row"><button id="buildSms" class="primary">Prepare PDF</button><button id="openSms" disabled>Open SMS Command Center</button></div><p id="smsStatus" role="status"></p>`);
+    showDialog('Text via SMS (SMS Command Center)',`<p>Build the finished PDF, then open SMS Command Center. Choose the customer there and attach the document to a draft. Sending remains a separate action.</p><div class="studio-row"><button id="buildSms" class="primary">Build the PDF</button><button id="openSms" disabled>Open SMS Command Center</button></div><p id="smsStatus" role="status"></p>`);
     dialogCleanup=()=>{clearInterval(smsTimer);smsTransfer=null;};
     $('buildSms').onclick=async()=>{try{$('buildSms').disabled=true;const r=await buildFinalBytes();if(!r){$('buildSms').disabled=false;return;}if(r.bytes.length>5*1024*1024)throw Error('The SMS attachment limit is 5 MB. Use Shrink for email or fewer pages.');smsTransfer={id:crypto.randomUUID(),name:cleanName(),bytes:r.bytes};$('smsStatus').textContent=smsTransfer.name+' • '+fmtSize(r.bytes.length)+' • ready to transfer';$('openSms').disabled=false;}catch(e){$('smsStatus').textContent=e.message;$('buildSms').disabled=false;}finally{busy(false);}};
     $('openSms').onclick=()=>{smsWindow=window.open(SMS_ORIGIN+'/#pdf-import','_blank');if(!smsWindow){$('smsStatus').textContent='Allow the new tab, then try again.';return;}$('smsStatus').textContent='Waiting for SMS Command Center. The PDF has not been uploaded.';clearInterval(smsTimer);let attempts=0;smsTimer=setInterval(()=>{if(!smsTransfer||smsWindow.closed||attempts++>60){clearInterval(smsTimer);if($('smsStatus'))$('smsStatus').textContent='Connection timed out. Keep the PDF prepared and try opening SMS again.';return;}smsWindow.postMessage({type:'bli-pdf-hello',id:smsTransfer.id},SMS_ORIGIN);},1000);};
