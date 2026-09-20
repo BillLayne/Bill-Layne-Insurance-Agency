@@ -169,6 +169,12 @@ Pen strokes are **canvas**, not elements (a path can't be a div). Consequence: *
 | Initials | `sigKind` ('sig' \| 'ini'), `INI_KEY`, `setSigKind`; placement width `currentSigW` (60 vs 150 pt) |
 | Editor page jump / tips | `jumpEditor`, `#editorPageJump`, PageUp/PageDown in the editor keydown; `HINTS_KEY` + `applyHintPref` |
 | Gmail memory | `applyMailType` (type + file name → subject), `rememberRecipient`/`renderRecentTo` (`bliPdfRecentTo`, datalist `#mailToList`) |
+| Auto-named PDF | `suggestName(base, force)` — called from `addPdfData`/`addImageData` (first file wins) and `openPacket` (force: overrides an auto name, never a typed one); `lastAutoName` |
+| "Add every page (N)" | `#btnAddEverything` (Step 2 header), `sourcePageTotal`; visibility in `updateWorkflowState`; skips pages already in the tray |
+| Status chips → setup | `#formsConnection` → `openFormsModal`, `#mailConnection` → Connections dialog (`#btnConnections` now lives in the source ⋯ menu) |
+| Ctrl+S / Ctrl+P | document keydown after `modalNames`; guarded by dialog/modal open |
+| Compact chrome | `body.has-files` rules on `header.app-header`, `.workflow-shell`, `.workflow-step`; phone: icon-only header buttons (`font-size:0` + aria-labels), only `.workflow-step.current strong` shown |
+| Dialog language | `.form-card`/`.form-head`/`.form-body` restyled to match `dialog#studioDialog`; `button.dialog-close` on every close button; phone bottom sheet for both |
 | Tray, ◀▶ reorder, card buttons | `renderTray` (~1746) |
 | **Build engine** | `drawStamps` (~1892), `buildPdfBytes` (~1947) |
 | Editor shell, modes, zoom | `setEditorMode`, `setEditorZoom`, `openEditor`, `renderEditor` (~2011–2104) |
@@ -266,6 +272,9 @@ The "What is this delivering?" dropdown swaps `{{HEADLINE}}`/`{{INTRO_LINE}}`/su
 | 22 | pdf.js `annotationMode: 2` (ENABLE_FORMS) does **not** paint form widgets onto the canvas | When testing whether something is visually covered, render with the default mode |
 | 23 | `tagLibraryDoc` tags the **last** document in `docs` after `addPdfData` | It checks the name matches and no key is set; if `addPdfData` ever becomes concurrent, return the docId from it instead |
 | 24 | Shared stamps and packets are agency-wide behind ONE code; signatures/initials are deliberately per device | Do not "complete the feature" by sharing signatures — that would let anyone apply anyone's signature |
+| 25 | Codex's phone CSS gives `.workflow-step` `flex:1` and `.device-status` `width:100%` — any attempt to put the steps and a chip on one row silently fails | Override both (`flex:0 0 auto`, `width:auto`) under `body.has-files`; measure with `getBoundingClientRect`, never assume |
+| 26 | There are two dialog systems (`.form-card` modals and `dialog#studioDialog`). They now LOOK the same; they are still two code paths | New dialogs: use `showDialog(title, html)`; when touching an old modal keep `button.dialog-close` and the bottom-sheet rules |
+| 27 | `suggestName` tags the PDF after the first file only; the packet path uses `force`. If a future feature renames PDFs automatically, respect `lastAutoName` so typed names are never overwritten | See §14 Phase D |
 
 ## 11. Extending it safely
 
@@ -314,6 +323,8 @@ The frontend was refined into a premium PDF workstation without changing the PDF
 
 ### Design system
 
+> Update 2026-09-20: **gold means "you're finished"** — Save PDF (Step 3) and Done (editor) are gold; blue remains selection/progress (pick bar, selected cards); navy is the ordinary `.primary`. Dialogs share one look (see §14 Phase E).
+
 - Local system font stack only: `Segoe UI Variable`, Aptos, Segoe UI, system UI. Do not add an externally hosted font.
 - Navy is brand chrome, blue is the single primary-action/selection color, teal is privacy/success, gold is special status/search, and red is destructive only.
 - Standard controls are at least 38px high; tray-card controls are 32px; small operational text should not fall below 11.5–12px.
@@ -357,6 +368,20 @@ Bill asked for a review of the whole program and then for every recommendation t
 - Forms host: `GET|PUT|DELETE /shared/<name>` (see §8).
 - **Packets** in the Forms Library modal (`#packetsBox`): "Save current forms as a packet" takes the library docs in the workspace (ordered by first appearance in the tray — `libraryDocsInOrder`) plus reminders; "Open packet" loads each form, tags it, places every page in Step 3 in packet order, then lists reminders/missing forms in a dialog. Library docs carry `libKey`/`libName` (autosaved).
 - **Agency stamps** in the stamp panel (`#sharedStamps`): ↑ on a local text/picture chip shares it; shared chips have a dashed ring and a two-click remove. 5-minute cache. Signatures stay local (gotcha 24).
+
+### Phase D — quick flow wins (commit d75444e)
+- **Auto-named PDF**: `suggestName` runs after every `addPdfData`/`addImageData` — the first file names the PDF (extension and illegal characters stripped, 80 chars); later files never rename it; `openPacket` renames only an auto-set name (`force`). A typed name is never touched.
+- **Add every page (N)** in the Step 2 header: everything in file order into Step 3, skipping pages already there; hidden on Step 3 and when nothing is left to add.
+- **Status chips are buttons**: Forms → Forms Library modal (code entry lives there), Gmail → Connections dialog. `#btnConnections` moved into the source ⋯ menu (`updateConnectionStatus` writes `lastChild.textContent`, which still works on a `<button>`).
+- **Ctrl+S / Ctrl+P** on Step 3 (jumps to Step 3 first; ignored while the editor or any dialog is open; toast when the tray is empty).
+- **Gold = "you're finished"**: `.output-actions .save-button.primary` is `var(--gold)` to match the editor's Done and the website's gold-CTA rule; the pick bar's "Add N to Step 3" stays blue (progress, not finish).
+- Remove file is inside a per-file ⋯ menu (built in `renderSources`, same flip/unflip logic as `wireMenu`); Projects has an icon.
+
+### Phase E — one dialog language (commit with F)
+CSS only: the six older modals (`.form-card`) adopt `dialog#studioDialog`'s look — 16 px radius, `#cbd5e1` border, `#0b1e38a6` backdrop, white 20 px title (18 px on phones for both), `.form-body` 18/20 px padding — and every close button is `button.dialog-close` reading "✕ Close" (eight of them, including the editor's stamp and signature panels and `#studioDialogClose`). Phones: the older modals become bottom sheets (`align-items:flex-end`, `100vw`, `96dvh`, top radius only) exactly like the studio dialog.
+
+### Phase F — the header gets out of the way (commit with E)
+`body.has-files` shrinks `header.app-header` (tagline and brand subtitle hidden, 16 px h1, 30 px buttons) and `.workflow-shell` (24 px circles, step captions hidden). Measured at 1366×768: 147 → 100 px above the work. Phones (375): 179 → 92 px — header buttons icon-only (`font-size:0`, icons 18 px, `aria-label`s), `.brand::after` suffix off, only the current step's label shown, steps `flex:0 0 auto` and `.device-status{width:auto}` so the autosave chip shares the row (Codex's mobile CSS had `.workflow-step{flex:1}` and `.device-status{width:100%}`, which forced two rows). Autosave label is "Saving…" — "on this device" is already in the header chip. Step 3 pages on a phone: 22 % → 47 % of the screen across the day.
 
 ### Storage added this session
 localStorage `bliPdfHintsOff`, `bliPdfStudioInitials`, `bliPdfRecentTo`; doc fields `ocr`, `libKey`, `libName`; R2 `_shared/packets.json`, `_shared/stamps.json`.
