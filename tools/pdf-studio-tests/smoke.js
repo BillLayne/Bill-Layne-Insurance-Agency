@@ -16,6 +16,7 @@
 'use strict';
 const { chromium } = require('playwright-core');
 const http = require('http');
+const https = require('https');
 const path = require('path');
 const { spawn } = require('child_process');
 
@@ -27,7 +28,7 @@ const ok = (name, pass, info) => { results.push({ name, pass: !!pass, info }); c
 
 function isUp(url) {
   return new Promise(res => {
-    const r = http.get(url, x => { res(x.statusCode === 200); x.resume(); });
+    const r = (url.startsWith('https:') ? https : http).get(url, x => { res(x.statusCode === 200); x.resume(); });
     r.on('error', () => res(false));
     r.setTimeout(2000, () => { r.destroy(); res(false); });
   });
