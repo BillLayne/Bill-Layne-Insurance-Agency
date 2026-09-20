@@ -175,6 +175,15 @@ Pen strokes are **canvas**, not elements (a path can't be a div). Consequence: *
 | Ctrl+S / Ctrl+P | document keydown after `modalNames`; guarded by dialog/modal open |
 | Compact chrome | `body.has-files` rules on `header.app-header`, `.workflow-shell`, `.workflow-step`; phone: icon-only header buttons (`font-size:0` + aria-labels), only `.workflow-step.current strong` shown |
 | Dialog language | `.form-card`/`.form-head`/`.form-body` restyled to match `dialog#studioDialog`; `button.dialog-close` on every close button; phone bottom sheet for both |
+| Smoke test | `tools/pdf-studio-tests/smoke.js` (+ `tools/test-pdf-studio.bat`); hooks it relies on are listed at the end of the script under `window.PDFStudio` |
+| Autosave (bytes once) | `storeDocBytes`, `bytesGet`, `bytesTx`, `savedBytes` (WeakSet of byte arrays); IndexedDB v4 store `docbytes`; records carry `stored:true` and `bytes:null`; `btnRestore` falls back to inline bytes for older records |
+| Step 3 multi-select | `pickedTray`, `togglePickTray`, `paintPickTray`, `rotatePickedTray`, `removePickedTray`, `#trayPickBar` (rules generated from `#pickBar`'s at build time) |
+| Menus that always fit | `wireMenu`: `flip`/`unflip` sideways, `upward` when it fits above, else `style.maxHeight` capped to the space below + scroll |
+| Version stamp | `APP_VERSION` (top of script), `#appVersion` in the footer, `body[data-version]`, `PDFStudio.version` |
+| Office undo | `sharedRestore(name)` → `POST /shared/<name>/restore`; `#btnPacketsUndo`, `#btnStampsUndo` |
+| Help | `openHelp()`, `#btnHelp` (header), `#linkHelp` (landing) |
+| Recent projects | `renderRecentProjects()` — landing only, last three from `bliPdfProjects`; refreshed by `saveProject`, project delete and `restoreWorkspace` |
+| Find highlight in the viewer | inside `renderViewer`: `pdfjsLib.Util.transform(vp.transform, item.transform)` → yellow rects; title shows the match count |
 | Tray, ◀▶ reorder, card buttons | `renderTray` (~1746) |
 | **Build engine** | `drawStamps` (~1892), `buildPdfBytes` (~1947) |
 | Editor shell, modes, zoom | `setEditorMode`, `setEditorZoom`, `openEditor`, `renderEditor` (~2011–2104) |
@@ -229,7 +238,7 @@ Shared library of **blank agency forms** (ACORD, underwriting, carrier). **Never
   ```bash
   printf 'new-code' | npx wrangler secret put FORMS_CODE
   ```
-- API: `GET /list` · `GET|DELETE /file/<key>` · `POST /upload` (body = bytes, headers `x-name` urlencoded, `x-pages`; 30 MB cap) · `POST /rename/<key>` (`x-name`) · **`GET|PUT|DELETE /shared/<name>`** — small agency-wide JSON documents stored at `_shared/<name>.json` (hidden from `/list`, 2 MB cap): `packets` and `stamps`. Same access code; never customer data.
+- API: `GET /list` · `GET|DELETE /file/<key>` · `POST /upload` (body = bytes, headers `x-name` urlencoded, `x-pages`; 30 MB cap) · `POST /rename/<key>` (`x-name`) · **`GET|PUT|DELETE /shared/<name>`** — small agency-wide JSON documents stored at `_shared/<name>.json` (hidden from `/list`, 2 MB cap): `packets` and `stamps`. Same access code; never customer data. Every PUT keeps the version it replaces at `_shared/<name>.prev.json`; **`GET /shared/<name>/previous`** reads it and **`POST /shared/<name>/restore`** swaps current and previous (the office's one-step undo). DELETE removes both.
 - CORS allowlist: www + apex billlayneinsurance.com + `localhost:8080`. Workers *can* answer `OPTIONS` (unlike Apps Script — that's why this one takes normal JSON-ish requests while the Mail Gateway needs `text/plain`).
 - Client: one-time code entry per device; `formsApi()` clears a bad code **only if it's still the code that failed** (prevents a slow stale request from wiping a freshly typed good one).
 - Deploy: `cd Documents\bli-form-host && npx wrangler deploy`.
@@ -275,8 +284,13 @@ The "What is this delivering?" dropdown swaps `{{HEADLINE}}`/`{{INTRO_LINE}}`/su
 | 25 | Codex's phone CSS gives `.workflow-step` `flex:1` and `.device-status` `width:100%` — any attempt to put the steps and a chip on one row silently fails | Override both (`flex:0 0 auto`, `width:auto`) under `body.has-files`; measure with `getBoundingClientRect`, never assume |
 | 26 | There are two dialog systems (`.form-card` modals and `dialog#studioDialog`). They now LOOK the same; they are still two code paths | New dialogs: use `showDialog(title, html)`; when touching an old modal keep `button.dialog-close` and the bottom-sheet rules |
 | 27 | `suggestName` tags the PDF after the first file only; the packet path uses `force`. If a future feature renames PDFs automatically, respect `lastAutoName` so typed names are never overwritten | See §14 Phase D |
+| 28 | Flipping a menu sideways is not enough on a phone — the tall Settings panel ran off the bottom | `wireMenu` also adds `upward` when the panel fits above, otherwise caps `style.maxHeight` to the space below and lets it scroll. The smoke test checks all three panels on 375×812 |
+| 29 | Autosave records are now `stored:true` with `bytes:null`; putting bytes back inline would silently double storage again | Read bytes with `bytesGet(docId)`; `savedBytes` is keyed by the byte ARRAY, so a re-created document with a reused id is written again (correct) |
+| 30 | In the smoke test every `evalIn` block returns a fresh `r`; a check inserted between a block and its assertions reads the wrong result (this bit the author once) | Keep each block's `ok(...)` lines directly under it |
 
 ## 11. Extending it safely
+
+**Run the smoke test before you push:** `tools\test-pdf-studio.bat` (29 checks, about a minute, drives the Chrome or Edge already on the PC through `window.PDFStudio`; `set FORMS_CODE=…` first to include the Forms-host checks, `set PDF_STUDIO_URL=https://www.billlayneinsurance.com/pdf-tools/` to test the live site). Add a check when you add a feature — `tools/pdf-studio-tests/smoke.js`, one `evalIn` block per feature, each block returns its own `r`. Bump `APP_VERSION` at the top of the script on every release.
 
 1. **Add to `buildPdfBytes`/`drawStamps`, not around them** — that's what keeps preview, print, and output identical.
 2. **Store coordinates in PDF points**, captured via `overlayToPdfPoint()`.
@@ -383,8 +397,19 @@ CSS only: the six older modals (`.form-card`) adopt `dialog#studioDialog`'s look
 ### Phase F — the header gets out of the way (commit with E)
 `body.has-files` shrinks `header.app-header` (tagline and brand subtitle hidden, 16 px h1, 30 px buttons) and `.workflow-shell` (24 px circles, step captions hidden). Measured at 1366×768: 147 → 100 px above the work. Phones (375): 179 → 92 px — header buttons icon-only (`font-size:0`, icons 18 px, `aria-label`s), `.brand::after` suffix off, only the current step's label shown, steps `flex:0 0 auto` and `.device-status{width:auto}` so the autosave chip shares the row (Codex's mobile CSS had `.workflow-step{flex:1}` and `.device-status{width:100%}`, which forced two rows). Autosave label is "Saving…" — "on this device" is already in the header chip. Step 3 pages on a phone: 22 % → 47 % of the screen across the day.
 
+### Round three — reliability, speed, adoption (commits ed800d6, 45dc6cf, and the items 4–8 commit)
+1. **Smoke test** — see §11. 29 checks, phone and desktop, including an autosave round trip across a reload and (with `FORMS_CODE`) packets and agency stamps against the live host, cleaning up after itself.
+2. **Autosave writes file bytes once.** `bliPdfStudio` is v4 with a `docbytes` store; `storeDocBytes()` writes each file's bytes the first time it sees that byte array (WeakSet), prunes bytes for files no longer loaded, and the per-change record carries only the light state. A 30 MB scan packet no longer re-writes itself after every edit. `sessionDel` clears both. Older records with inline bytes still restore.
+3. **Step 3 multi-select** — click cards (not their buttons) to select, shift-click a range; the bar rotates or removes the selection (with Undo); Delete on a selected card removes the whole selection.
+4. **Version stamp** — `APP_VERSION`; "which version are you on?" is answered by the footer or the Help dialog.
+5. **Office-wide undo** for packets and agency stamps (Worker keeps the previous version; see §8).
+6. **Help** — six-point "How PDF Studio works" + keys, from the header and the landing page.
+7. **Recent projects** — the last three named projects as one-click chips on the landing page.
+8. **Find highlight** — the zoom viewer paints matched words and counts them in its title.
+Also: menus cap their height to the space below when neither sideways nor upward flipping fits (the phone Settings panel).
+
 ### Storage added this session
-localStorage `bliPdfHintsOff`, `bliPdfStudioInitials`, `bliPdfRecentTo`; doc fields `ocr`, `libKey`, `libName`; R2 `_shared/packets.json`, `_shared/stamps.json`.
+localStorage `bliPdfHintsOff`, `bliPdfStudioInitials`, `bliPdfRecentTo`; doc fields `ocr`, `libKey`, `libName`; IndexedDB `bliPdfStudio` v4 store `docbytes` (file bytes, keyed by docId); R2 `_shared/packets.json`, `_shared/stamps.json` and their `.prev.json` twins.
 
 ### Not done, on purpose
 - Cloud projects (customer documents off-device) — would break the privacy promise that makes staff trust the tool.
