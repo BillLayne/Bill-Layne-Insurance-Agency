@@ -189,6 +189,7 @@ Pen strokes are **canvas**, not elements (a path can't be a div). Consequence: *
 - **Shrink for email** (`compressPdfBytes`) — re-renders every page to a ~150dpi JPEG page. **Flattens text** (no longer selectable). Keeps the original if compression wouldn't help, and reports before/after.
 - **Lock with password** (`lockPdfBytes`) — stock pdf-lib **cannot encrypt**, so the `@cantoo/pdf-lib` fork is loaded on demand and **immediately removed from `window.PDFLib`** (`getCantoo()`), because the rest of the app must keep running on stock pdf-lib. Don't "simplify" that restore line.
 - **Poster-page guard** (inside `buildPdfBytes`) — some scanners write pixel counts as page points (a real case: 2400×3181pt = 33×44in), which prints partially. Any page over ~1450pt on its long side is scaled to letter, orientation preserved.
+- **Permanent white-out** (ON by default) — `rasterizePages` in `buildFinalBytes`, before page numbers: each page whose stamps include a `box` is rendered by pdf.js (≤2400 px), re-embedded as a JPEG page of the same size, and the original page removed, so the covered text leaves the file. Other pages are untouched. Applies to Save, Preview, Gmail, SMS, Print and ZIP. With it off, white-out merely hides (never call that redaction).
 
 ## 7. Storage map
 
