@@ -88,6 +88,15 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
         permanentOn: document.getElementById('chkPermanent').checked, badgeShown: document.getElementById('optBadge').classList.contains('show') };`);
     ok('landing: shelf and chips hidden, few controls', r.shelfHidden && r.chipsHidden && r.controls <= 8, r);
     ok('permanent white-out is ON by default, no badge', r.permanentOn && !r.badgeShown, r);
+    r = await evalIn(page, `
+      const out = { version: P.version, footer: document.getElementById('appVersion').textContent, bodyVersion: document.body.dataset.version };
+      document.getElementById('btnHelp').click(); await wait(200);
+      out.helpTitle = document.getElementById('studioDialogTitle').textContent;
+      out.helpMentionsWhiteout = /permanent/i.test(document.getElementById('studioDialogBody').textContent);
+      document.getElementById('studioDialogClose').click(); await wait(100);
+      return out;`);
+    ok('version stamp in footer + body; Help dialog opens', /^\d{4}-\d{2}-\d{2}/.test(r.version) && r.footer === 'v' + r.version && r.bodyVersion === r.version && r.helpTitle === 'How PDF Studio works' && r.helpMentionsWhiteout, r);
+    console.log('  info  PDF Studio version ' + r.version);
 
     // 2. files, naming, step 2
     r = await evalIn(page, `
@@ -201,6 +210,40 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
       document.getElementById('btnSearchClear').click(); await wait(100);
       return { hits };`);
     ok('OCR text is searchable with Find', r.hits === 1, r);
+
+    // 7b. the viewer paints the matched words
+    r = await evalIn(page, `
+      document.getElementById('searchInput').value = 'sensitive'; document.getElementById('btnSearch').click();
+      await waitFor(() => document.querySelectorAll('#docList .page-card.search-hit').length > 0, 8000);
+      document.querySelector('#docList .page-card.search-hit .zoom-btn').click();
+      await waitFor(() => document.getElementById('viewModal').classList.contains('open') && /match/.test(document.getElementById('viewTitle').textContent), 12000);
+      const out = { title: document.getElementById('viewTitle').textContent };
+      const c = document.getElementById('viewCanvas'), x = c.getContext('2d', { willReadFrequently: true });
+      const d = x.getImageData(0, 0, c.width, Math.min(c.height, 400)).data; let yellow = 0;
+      for (let i = 0; i < d.length; i += 16) if (d[i] > 200 && d[i+1] > 170 && d[i+2] < 150) yellow++;
+      out.yellowPixels = yellow;
+      document.getElementById('btnViewClose').click(); await wait(100);
+      document.getElementById('btnSearchClear').click(); await wait(100);
+      return out;`);
+    ok('viewer highlights the Find match', /1 match for "sensitive"/.test(r.title) && r.yellowPixels > 50, r);
+
+    // 7c. projects: save one, start over, resume it from the landing page
+    r = await evalIn(page, `
+      document.getElementById('btnProjects').click(); await wait(300);
+      document.getElementById('projectNameInput').value = 'zz-smoke project'; document.getElementById('saveProjectNow').click();
+      await waitFor(() => (document.getElementById('projectList').textContent || '').includes('zz-smoke project'), 8000);
+      document.getElementById('studioDialogClose').click(); await wait(150);
+      const docsBefore = S().docs.length;
+      document.getElementById('btnReset').click(); await wait(300);
+      document.getElementById('confirmReset').click(); await wait(600);
+      const out = { cleared: S().docs.length === 0 };
+      await waitFor(() => vis(document.getElementById('recentProjects')), 6000);
+      const chip = [...document.querySelectorAll('#recentList .recent-chip')].find(b => b.textContent.includes('zz-smoke project'));
+      out.chipShown = !!chip;
+      if (chip) { chip.click(); await waitFor(() => S().docs.length === docsBefore, 8000); }
+      out.resumed = S().docs.length === docsBefore;
+      return out;`);
+    ok('recent projects: save → start over → resume from the landing page', r.cleared && r.chipShown && r.resumed, r);
 
     // 8. Gmail modal: subject from type + file name, recent recipients
     r = await evalIn(page, `

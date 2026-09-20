@@ -1860,6 +1860,17 @@ body.hints-off .editor-main > #editHint { display: none; }
  #btnTrayRemove { flex:1; }
 }
 .tray-card.picked { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(36,107,206,.24); }
+.app-version { opacity: .7; margin-left: 6px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.recent-head { margin-top: 16px; font-size: 11.5px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+#recentList { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+.recent-chip { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 12px; border: 1px solid var(--line-strong); border-radius: 12px; background: #fff; text-align: left; min-height: 0; }
+.recent-chip:hover { border-color: var(--blue); }
+.recent-chip strong { font-size: 13px; color: var(--ink); }
+.recent-chip small { color: var(--muted); font-size: 11px; }
+#studioDialogBody .help h3 { margin: 14px 0 4px; font-size: 15px; }
+#studioDialogBody .help p, #studioDialogBody .help li { margin: 0; font-size: 14px; line-height: 1.5; }
+#studioDialogBody .help ul { margin: 4px 0 0 18px; padding: 0; }
+#studioDialogBody .help kbd { font: inherit; font-size: 12px; padding: 1px 6px; border: 1px solid #bac6d2; border-radius: 6px; background: #f8fafc; }
 #trayPickBar button.go { background: #b91c1c; border-color: #b91c1c; box-shadow: none; }
 #trayPickBar button.go:hover { background: #991b1b; border-color: #991b1b; }
 </style>
@@ -1872,7 +1883,7 @@ body.hints-off .editor-main > #editHint { display: none; }
     <h1>PDF Studio</h1>
     <p>Build, edit and send professional PDFs</p>
   </div>
-  <div class="header-actions"><button id="btnProjects" class="header-button" title="Saved projects" aria-label="Projects"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 7h6l2 2h10v10H3z"/></svg>Projects</button>
+  <div class="header-actions"><button id="btnHelp" class="header-button" title="How PDF Studio works" aria-label="How it works"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/></svg>Help</button><button id="btnProjects" class="header-button" title="Saved projects" aria-label="Projects"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 7h6l2 2h10v10H3z"/></svg>Projects</button>
     <button id="btnForms" class="header-button" title="Forms Library" aria-label="Forms Library">
       <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 4h10v16H7zM9 2h6v4H9zM9.5 10h5M9.5 14h5"/></svg>
       Forms Library
@@ -1964,8 +1975,9 @@ body.hints-off .editor-main > #editHint { display: none; }
           Open Forms Library
         </button>
       </div>
-      <p class="hint">Or drag files here &bull; PDF, JPG, PNG, WebP and more</p>
+      <p class="hint">Or drag files here &bull; PDF, JPG, PNG, WebP and more &bull; <a href="#" id="linkHelp">How it works</a></p>
       <div class="drop-privacy"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10V7a5 5 0 0 1 10 0v3M5 10h14v10H5z"/></svg>Files are edited on this device. Only delivery actions upload your finished PDF.</div>
+      <div id="recentProjects" style="display:none"><div class="recent-head">Pick up where you left off</div><div id="recentList"></div></div>
     </div>
 
     <div id="pickBar" role="status" aria-live="polite">
@@ -2059,7 +2071,7 @@ body.hints-off .editor-main > #editHint { display: none; }
 </main>
 
 <footer>
-  Bill Layne Insurance Agency internal tool &bull; <strong>Private by design</strong> &mdash; files are edited locally; Gmail and SMS delivery upload the finished PDF.
+  Bill Layne Insurance Agency internal tool &bull; <strong>Private by design</strong> &mdash; files are edited locally; Gmail and SMS delivery upload the finished PDF. <span class="app-version" id="appVersion"></span>
 </footer>
 
 <!-- Page editor: add text / white-out to a tray page -->
@@ -2148,7 +2160,7 @@ body.hints-off .editor-main > #editHint { display: none; }
         <div class="sig-row">
           <button class="primary" id="btnStampImgUpload">&#8682; Upload a picture stamp</button>
         </div>
-        <div class="sig-note" style="margin-top:4px;"><strong>Agency stamps</strong> &mdash; shared with everyone who uses PDF Studio here (press &#8593; on one of your own stamps to share it): <span id="sharedStampsNote"></span></div>
+        <div class="sig-note" style="margin-top:4px;"><strong>Agency stamps</strong> &mdash; shared with everyone who uses PDF Studio here (press &#8593; on one of your own stamps to share it): <span id="sharedStampsNote"></span> <button class="ghost" id="btnStampsUndo" title="Put the agency stamps back the way they were before the last change (for everyone)">Undo last change</button></div>
         <div id="sharedStamps" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
       </div>
     </div>
@@ -2247,7 +2259,7 @@ body.hints-off .editor-main > #editHint { display: none; }
         <button class="primary" id="btnFormsUpload">&#8682; Add forms</button>
       </div>
       <div id="packetsBox" style="display:none;flex-direction:column;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--warm)">
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><strong>&#128230; Packets</strong><span class="sig-note" style="margin:0;flex:1;min-width:160px">forms you send together, in order &mdash; open one and every page lands in Step 3</span><button id="btnSavePacket" title="Save the library forms in this workspace, in their Step 3 order, as a packet for the whole office">+ Save current forms as a packet</button></div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><strong>&#128230; Packets</strong><span class="sig-note" style="margin:0;flex:1;min-width:160px">forms you send together, in order &mdash; open one and every page lands in Step 3</span><button id="btnSavePacket" title="Save the library forms in this workspace, in their Step 3 order, as a packet for the whole office">+ Save current forms as a packet</button><button class="ghost" id="btnPacketsUndo" title="Put the packets back the way they were before the last change (for everyone)">Undo last change</button></div>
         <div id="packetsList" style="display:flex;flex-direction:column;gap:6px"></div>
       </div>
       <div id="formsList" style="display:flex;flex-direction:column;gap:8px"></div>
@@ -2461,6 +2473,7 @@ body.hints-off .editor-main > #editHint { display: none; }
 <script>
 (function () {
   'use strict';
+  const APP_VERSION = '2026-09-20.3';   // bump on every release — shown in the footer, the Help dialog and the console
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -5359,8 +5372,27 @@ body.hints-off .editor-main > #editHint { display: none; }
       canvas.style.width = Math.ceil(vp.width / 2) + 'px';
       canvas.style.height = Math.ceil(vp.height / 2) + 'px';
       await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp, intent: 'print' }).promise;
+      // paint the words that matched Find, so the eye lands on them
+      let matches = 0;
+      const q = ($('searchInput').value || '').trim().toLowerCase();
+      if (q) {
+        const tc = await page.getTextContent();
+        const ctx = canvas.getContext('2d');
+        ctx.save();
+        ctx.fillStyle = 'rgba(250, 204, 21, .45)';
+        for (const it of tc.items) {
+          if (!it.str || !it.str.toLowerCase().includes(q)) continue;
+          const m = pdfjsLib.Util.transform(vp.transform, it.transform);   // canvas space: m[4], m[5] = baseline start
+          const h = Math.hypot(m[2], m[3]) || (it.height * vp.scale);
+          const w = it.width * vp.scale;
+          ctx.fillRect(m[4] - 2, m[5] - h, w + 4, h * 1.15);
+          matches++;
+        }
+        ctx.restore();
+      }
       pdoc.destroy();
-      $('viewTitle').textContent = doc.name + ' — page ' + (viewPageIndex + 1) + ' of ' + doc.pages.length;
+      $('viewTitle').textContent = doc.name + ' — page ' + (viewPageIndex + 1) + ' of ' + doc.pages.length +
+        (q ? (matches ? ' · ' + matches + ' match' + (matches === 1 ? '' : 'es') + ' for "' + $('searchInput').value.trim() + '"' : ' · no match on this page') : '');
       $('btnViewPrev').disabled = viewPageIndex <= 0;
       $('btnViewNext').disabled = viewPageIndex >= doc.pages.length - 1;
     } catch (err) {
@@ -5933,6 +5965,7 @@ body.hints-off .editor-main > #editHint { display: none; }
     if(!editorItem) $('editModal').classList.remove('open');
     renderAll(); if(editorItem){selectedStamp=null;updateEditorPage();renderEditor();}
     historyPaused=false;
+    if(!docs.size)renderRecentProjects(); else $('recentProjects').style.display='none';
   }
   // References to immutable PDF byte arrays avoid copying whole PDFs for every edit.
   function historyKey(v) { const clean=pages=>pages.map(({thumb,...p})=>p); return JSON.stringify({tray:clean(v.tray),outputs:v.outputs.map(o=>({...o,pages:clean(o.pages)})),name:v.name,active:v.activeOutput,options:v.options,docs:v.docs.map(d=>[d.id,d.name,d.bytes.length])}); }
@@ -5978,12 +6011,12 @@ body.hints-off .editor-main > #editHint { display: none; }
   $('studioDialogClose').onclick=closeStudioDialog;dlg.addEventListener('cancel',()=>{dialogCleanup();dialogCleanup=()=>{};});
   function showDialog(title,html){dialogCleanup();dialogCleanup=()=>{};$('studioDialogTitle').textContent=title;$('studioDialogBody').innerHTML=html;if(!dlg.open)dlg.showModal();}
   async function projectStore(method,value){return new Promise((resolve,reject)=>{const r=indexedDB.open('bliPdfProjects',1);r.onupgradeneeded=()=>r.result.createObjectStore('projects',{keyPath:'id'});r.onerror=()=>reject(r.error);r.onsuccess=()=>{const db=r.result;const tx=db.transaction('projects',method==='getAll'?'readonly':'readwrite');const q=tx.objectStore('projects')[method](value);tx.oncomplete=()=>{resolve(q.result);db.close();};tx.onerror=()=>{reject(tx.error);db.close();};};});}
-  async function saveProject(name){const id=projectId||crypto.randomUUID();const data=snapshotWorkspace();data.projectId=id;data.projectName=name;await projectStore('put',{id,name,when:Date.now(),data});projectId=id;projectName=name;renderOutputSelect();scheduleAutosave();}
+  async function saveProject(name){const id=projectId||crypto.randomUUID();const data=snapshotWorkspace();data.projectId=id;data.projectName=name;await projectStore('put',{id,name,when:Date.now(),data});projectId=id;projectName=name;renderOutputSelect();scheduleAutosave();renderRecentProjects();}
   async function openProjects(){
     showDialog('Saved projects',`<p>Named workspaces stay in this browser on this device, including source files, edits and output documents. They are not cloud backups.</p><label for="projectNameInput">Project name</label><input id="projectNameInput" placeholder="Customer or project name"><div class="studio-row"><button id="saveProjectNow" class="primary">Save project</button><button id="newProjectNow">New empty project</button></div><p id="projectNotice" role="status"></p><div id="projectList"></div>`);
     $('projectNameInput').value=projectName;
     const list=await projectStore('getAll');
-    for(const p of list.sort((a,b)=>b.when-a.when)){const row=document.createElement('div');row.className='studio-card';const title=document.createElement('strong');title.textContent=p.name;const note=document.createElement('p');note.textContent=new Date(p.when).toLocaleString()+' • '+p.data.outputs.length+' new PDF'+(p.data.outputs.length===1?'':'s');const load=document.createElement('button');load.textContent='Open project';load.onclick=async()=>{try{if(docs.size)await saveProject(projectName||'Recovered workspace '+new Date().toLocaleString());restoreWorkspace(p.data);resetHistory();closeStudioDialog();}catch(e){$('projectNotice').textContent='Could not save the current workspace. It has been kept open.';}};const del=document.createElement('button');del.textContent='Delete saved copy';del.onclick=()=>{del.textContent='Confirm delete';del.onclick=async()=>{await projectStore('delete',p.id);if(projectId===p.id){projectId=null;projectName='';renderOutputSelect();}openProjects();};};row.append(title,note,load,del);$('projectList').append(row);}
+    for(const p of list.sort((a,b)=>b.when-a.when)){const row=document.createElement('div');row.className='studio-card';const title=document.createElement('strong');title.textContent=p.name;const note=document.createElement('p');note.textContent=new Date(p.when).toLocaleString()+' • '+p.data.outputs.length+' new PDF'+(p.data.outputs.length===1?'':'s');const load=document.createElement('button');load.textContent='Open project';load.onclick=async()=>{try{if(docs.size)await saveProject(projectName||'Recovered workspace '+new Date().toLocaleString());restoreWorkspace(p.data);resetHistory();closeStudioDialog();}catch(e){$('projectNotice').textContent='Could not save the current workspace. It has been kept open.';}};const del=document.createElement('button');del.textContent='Delete saved copy';del.onclick=()=>{del.textContent='Confirm delete';del.onclick=async()=>{await projectStore('delete',p.id);if(projectId===p.id){projectId=null;projectName='';renderOutputSelect();}openProjects();renderRecentProjects();};};row.append(title,note,load,del);$('projectList').append(row);}
     $('saveProjectNow').onclick=async()=>{try{const name=$('projectNameInput').value.trim();if(!name)throw Error('Enter a project name.');await saveProject(name);openProjects();}catch(e){$('projectNotice').textContent=(e&&e.name==='QuotaExceededError')?'This project is too large to store in this browser. Save the PDFs instead.':e.message;}};
     $('newProjectNow').onclick=async()=>{try{if(docs.size)await saveProject(projectName||'Recovered workspace '+new Date().toLocaleString());restoreWorkspace({docs:[],tray:[],name:'new-document',nextDocId:1,nextSid:1,nextTid:1});resetHistory();closeStudioDialog();}catch(e){$('projectNotice').textContent='Could not save your current work. New project was not started.';}};
   }
@@ -6331,6 +6364,71 @@ body.hints-off .editor-main > #editHint { display: none; }
   $('formsConnection').addEventListener('click', () => openFormsModal());
   $('mailConnection').addEventListener('click', () => $('btnConnections').click());
 
+  // ── version stamp (item 4) ──
+  $('appVersion').textContent = 'v' + APP_VERSION;
+  document.body.dataset.version = APP_VERSION;
+  console.info('PDF Studio ' + APP_VERSION);
+
+  // ── one-step undo for the office's shared documents (item 5) ──
+  async function sharedRestore(name) {
+    const r = await formsApi('/shared/' + name + '/restore', { method: 'POST' });
+    const out = await r.json();
+    return !!out.ok;
+  }
+  $('btnPacketsUndo').addEventListener('click', async () => {
+    try {
+      if (!(await sharedRestore('packets'))) { toast('Nothing to undo yet.'); return; }
+      packetsCache = null;
+      renderPackets();
+      toast('Packets put back the way they were before the last change.');
+    } catch (_) { toast('Could not undo — check your connection.'); }
+  });
+  $('btnStampsUndo').addEventListener('click', async () => {
+    try {
+      if (!(await sharedRestore('stamps'))) { toast('Nothing to undo yet.'); return; }
+      renderSharedStamps(true);
+      toast('Agency stamps put back the way they were before the last change.');
+    } catch (_) { toast('Could not undo — check your connection.'); }
+  });
+
+  // ── How it works (item 6) ──
+  function openHelp() {
+    showDialog('How PDF Studio works', '<div class="help">' +
+      '<h3>1 · Three steps</h3><p><strong>Add files</strong> (PDFs, photos, scans, or a Forms Library form) → <strong>Choose pages</strong> (click to select, shift-click for a range, or <em>Add every page</em>) → <strong>Arrange &amp; finish</strong> (drag to reorder, pencil to edit a page).</p>' +
+      '<h3>2 · Finishing</h3><p><strong>Save PDF</strong> downloads it. <strong>Send</strong> makes a Gmail draft with the PDF attached, hands it to SMS Command Center, or prints. <strong>Export</strong> splits or bundles. <strong>Settings</strong> holds shrink-for-email, page numbers, password lock and permanent white-out.</p>' +
+      '<h3>3 · White-out is permanent by default</h3><p>A page with a white-out is saved as a picture, so the covered text is truly gone from the file. Turn it off in Settings only if that page must keep typed text. Highlight and crop just hide.</p>' +
+      '<h3>4 · Packets and agency stamps</h3><p>In the Forms Library, save the forms you send together as a <strong>packet</strong>; anyone in the office opens it in one tap. Press ↑ on one of your stamps to share it with the agency. Signatures and initials stay on your own device.</p>' +
+      '<h3>5 · Your phone</h3><p>Open a Gmail draft on your computer and choose <em>Set up my phone</em> — scan the code once and the phone can create drafts too.</p>' +
+      '<h3>6 · Private by design</h3><p>Files never leave this device except when you send. Autosave keeps a copy in this browser; <strong>Projects</strong> saves named copies you can reopen.</p>' +
+      '<h3>Keys</h3><ul><li><kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Y</kbd> undo and redo anything, including edits on a page</li><li><kbd>Ctrl</kbd>+<kbd>S</kbd> save · <kbd>Ctrl</kbd>+<kbd>P</kbd> print (Step 3)</li><li><kbd>PageUp</kbd> / <kbd>PageDown</kbd> move between pages in the editor · <kbd>Delete</kbd> removes a selected page</li><li><kbd>Esc</kbd> closes whatever is open</li></ul>' +
+      '<p style="margin-top:14px;color:var(--muted);font-size:12px">PDF Studio v' + APP_VERSION + ' &bull; questions: Bill</p></div>');
+  }
+  $('btnHelp').addEventListener('click', openHelp);
+  $('linkHelp').addEventListener('click', (e) => { e.preventDefault(); openHelp(); });
+
+  // ── recent projects on the landing (item 7) ──
+  async function renderRecentProjects() {
+    const box = $('recentProjects');
+    if (docs.size) { box.style.display = 'none'; return; }
+    let list = [];
+    try { list = await projectStore('getAll'); } catch (_) {}
+    list = (list || []).sort((a, b) => b.when - a.when).slice(0, 3);
+    if (!list.length || docs.size) { box.style.display = 'none'; return; }
+    $('recentList').replaceChildren(...list.map(pr => {
+      const b = document.createElement('button');
+      b.className = 'recent-chip';
+      b.type = 'button';
+      const n = (pr.data && pr.data.outputs ? pr.data.outputs.length : 1);
+      b.innerHTML = '<strong></strong><small></small>';
+      b.querySelector('strong').textContent = pr.name;
+      b.querySelector('small').textContent = new Date(pr.when).toLocaleDateString() + ' · ' + n + ' PDF' + (n === 1 ? '' : 's');
+      b.addEventListener('click', () => { restoreWorkspace(pr.data); resetHistory(); toast('Opened project "' + pr.name + '".'); });
+      return b;
+    }));
+    box.style.display = '';
+  }
+  renderRecentProjects();
+
   const modalNames={editModal:'Edit PDF page',emailModal:'Email as Gmail draft',formsModal:'Forms Library',phoneModal:'Phone setup',formModal:'Fill PDF form',viewModal:'PDF page preview',sigPanel:'Signature'};
   for(const [id,name] of Object.entries(modalNames)){const el=$(id);if(el){el.setAttribute('role','dialog');el.setAttribute('aria-label',name);el.setAttribute('aria-modal','true');}}
   // Step 3 shortcuts: Ctrl+S saves the PDF, Ctrl+P prints it (the editor and dialogs keep their own keys)
@@ -6365,7 +6463,7 @@ body.hints-off .editor-main > #editHint { display: none; }
       if (doc) { trayAdd(doc.pages[pageIndex]); renderAll(); }
     },
     buildPdfBytes, buildFinalBytes, parseRanges, zipBytes, rasterizePages, rememberOcr, getDocTexts, applyMailType,
-    sharedGet, sharedPut, renderPackets, openPacket, libraryDocsInOrder, renderSharedStamps, shareStamp, loadSharedStamps, suggestName, sessionGet, bytesGet, snapshotWorkspace, restoreWorkspace, travelHistory, exportOptions,
+    sharedGet, sharedPut, renderPackets, openPacket, libraryDocsInOrder, renderSharedStamps, shareStamp, loadSharedStamps, suggestName, sessionGet, bytesGet, renderRecentProjects, version: APP_VERSION, snapshotWorkspace, restoreWorkspace, travelHistory, exportOptions,
     openEditorFor: (i) => { if (tray[i]) openEditor(tray[i]); },
     formsAdd: addFormToLibrary,
     formsList: async () => { const r = await formsApi('/list'); return (await r.json()).forms; },
