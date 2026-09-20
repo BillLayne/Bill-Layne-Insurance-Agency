@@ -1928,8 +1928,8 @@ body.hints-off .editor-main > #editHint { display: none; }
                 <input type="checkbox" id="chkLock" style="width:17px;height:17px;accent-color:var(--teal)"> Lock with password
               </label>
               <label title="Pages that carry a white-out are re-saved as pictures, so whatever was under the white box is gone from the file — not just hidden. Those pages lose selectable text.">
-                <input type="checkbox" id="chkPermanent" style="width:17px;height:17px;accent-color:var(--teal)"> Permanent white-out
-              </label><p class="option-help">Only pages with a white-out become pictures; the covered text is removed from the file, not just hidden.</p>
+                <input type="checkbox" id="chkPermanent" checked style="width:17px;height:17px;accent-color:var(--teal)"> Permanent white-out
+              </label><p class="option-help">On by default. Only pages with a white-out become pictures; the covered text is removed from the file, not just hidden. Turn it off if a whited-out page must keep selectable text.</p>
             </div>
           </div>
         </div>
@@ -2437,7 +2437,9 @@ body.hints-off .editor-main > #editHint { display: none; }
 
   // gold badge on ⚙ Options showing how many output options are on
   function updateOptBadge() {
-    const n = ['chkShrink', 'chkNumbers', 'chkLock', 'chkPermanent'].filter(id => $(id).checked).length;
+    // count settings that differ from the defaults (permanent white-out is ON by default)
+    const defaults = { chkShrink: false, chkNumbers: false, chkLock: false, chkPermanent: true };
+    const n = Object.keys(defaults).filter(id => $(id).checked !== defaults[id]).length;
     const b = $('optBadge');
     b.textContent = n;
     b.classList.toggle('show', n > 0);
@@ -3326,7 +3328,7 @@ body.hints-off .editor-main > #editHint { display: none; }
       text: ['Text controls', 'Type first, then click the page'],
       draw: ['Pen controls', 'Choose a width and color, then draw'],
       hl: ['Highlight tool', 'Drag across the words you want to highlight'],
-      box: ['White-out', 'Drag over what to cover — make it permanent in Settings (Step 3)'],
+      box: ['White-out', 'Drag over what to cover — it is removed from the file when you save'],
       sig: ['Signature tool', 'Choose a signature, then click the page'],
       img: ['Image tool', 'Choose an image, then click the page'],
       pan: ['Move page', 'Drag to move the zoomed page'],
@@ -3344,7 +3346,7 @@ body.hints-off .editor-main > #editHint { display: none; }
       : mode === 'draw'
         ? 'Draw right on the page with your mouse or trackpad — hold the button down and move. The pen uses the color box, and the size box sets how thick it is. Undo removes the last stroke.'
       : mode === 'box'
-        ? 'Covers what is under it. By default the text stays in the file — turn on Permanent white-out in Settings (Step 3) and this page is saved as a picture with the covered text removed.'
+        ? 'Permanent white-out is on (Settings, Step 3): when you save or send, this page becomes a picture and the covered text is removed from the file. Turn it off there if the page must keep selectable text.'
         : mode === 'sig'
           ? 'Click the page where you want your signature. You can move and resize it after placing it.'
           : mode === 'img'
@@ -5668,7 +5670,7 @@ body.hints-off .editor-main > #editHint { display: none; }
     outputs = saved.outputs?.length ? saved.outputs.map(o=>({...o,pages:copyPages(o.pages||[])})) : [{id:'output-1',name:saved.name||'new-document',pages:copyPages(tray)}];
     activeOutput = outputs.some(o=>o.id===saved.activeOutput) ? saved.activeOutput : outputs[0].id;
     projectId=saved.projectId||null; projectName=saved.projectName||'';
-    const options=saved.options||{}; $('chkNumbers').checked=!!options.numbers; $('chkShrink').checked=!!options.shrink; $('chkLock').checked=!!options.lock; $('chkPermanent').checked=!!options.permanent;
+    const options=saved.options||{}; $('chkNumbers').checked=!!options.numbers; $('chkShrink').checked=!!options.shrink; $('chkLock').checked=!!options.lock; $('chkPermanent').checked=options.permanent!==false;
     updateOptBadge(); renderOutputSelect();
   }
   function restoreWorkspace(saved) {
