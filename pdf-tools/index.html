@@ -565,6 +565,8 @@
   .menu-panel.up { top: auto; bottom: calc(100% + 6px); }
   .menu-panel.flip { left: auto !important; right: 0 !important; transform: none !important; }
   .menu-panel.unflip { left: 0 !important; right: auto !important; transform: none !important; }
+  .menu-panel.upward { top: auto !important; bottom: calc(100% + 6px) !important; }
+  .menu-panel { max-height: min(72vh, 560px); overflow-y: auto; }
   .menu-wrap.open .menu-panel { display: block; }
   .menu-panel button, .menu-panel > label {
     display: flex;
@@ -1812,6 +1814,54 @@ body.hints-off .editor-main > #editHint { display: none; }
  .tray-head {gap:8px;}
 }
 @media(max-width:600px){.brand::after{content:" · PDF Studio";color:#e5c66f;font-size:11px;}}
+
+/* ── Step 3 selection bar: same look as the Step 2 pick bar (generated from its rules) ── */
+#trayPickBar {
+    position: sticky;
+    top: 0;
+    z-index: 14;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    background: var(--navy);
+    color: #fff;
+    border-radius: 14px;
+    padding: 11px 14px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow-md);
+  }
+#trayPickBar.show { display: flex; }
+#trayPickBar .pick-count { font-weight: 800; font-size: 14px; letter-spacing: .01em; }
+#trayPickBar .pick-hint { font-size: 12px; color: rgba(255,255,255,.72); }
+#trayPickBar .grow { flex: 1; }
+#trayPickBar button {
+    background: rgba(255,255,255,.13);
+    border: 1px solid rgba(255,255,255,.28);
+    color: #fff;
+    font-weight: 700;
+  }
+#trayPickBar button:hover { background: rgba(255,255,255,.22); }
+#trayPickBar button.go {
+    background: var(--blue);
+    border-color: var(--blue);
+    box-shadow: 0 6px 16px rgba(36,107,206,.35);
+  }
+#trayPickBar button.go:hover { background: var(--blue-dark); border-color: var(--blue-dark); }
+#trayPickBar button { flex: 1; justify-content: center; }
+#trayPickBar { position:sticky; top:0; z-index:12; background:#e9f4ff; border:1px solid #a9c9eb; }
+@media (max-width: 640px) {
+ #trayPickBar { gap: 8px; padding: 10px; }
+ #trayPickBar .pick-hint { display: none; }
+}
+@media(max-width:600px) {
+ #trayPickBar { gap:6px; flex-wrap:wrap; padding:8px; }
+ #trayPickBar .pick-hint { display:none; }
+ #btnTrayRemove { flex:1; }
+}
+.tray-card.picked { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(36,107,206,.24); }
+#trayPickBar button.go { background: #b91c1c; border-color: #b91c1c; box-shadow: none; }
+#trayPickBar button.go:hover { background: #991b1b; border-color: #991b1b; }
 </style>
 </head>
 <body>
@@ -1992,6 +2042,15 @@ body.hints-off .editor-main > #editHint { display: none; }
           </div>
         </div>
       </div>
+    </div>
+    <div id="trayPickBar" role="status" aria-live="polite">
+      <span class="pick-count" id="trayPickCount">0 pages selected</span>
+      <span class="pick-hint">Click pages to select &bull; shift-click for a range</span>
+      <span class="grow"></span>
+      <button id="btnTrayRotL" title="Rotate the selected pages left">&#8634; Rotate left</button>
+      <button id="btnTrayRotR" title="Rotate the selected pages right">&#8635; Rotate right</button>
+      <button id="btnTrayPickClear">Clear</button>
+      <button class="go" id="btnTrayRemove">Remove selected</button>
     </div>
     <div id="trayStrip">
       <div class="tray-empty"><strong>Your selected pages will appear here.</strong><br>Click a source page above or drag it into this tray.</div>
@@ -2413,6 +2472,8 @@ body.hints-off .editor-main > #editHint { display: none; }
   let tray = [];            // ordered [{tid, docId, pageIndex, rot, thumb}]
   const srcIndex = new Map(); // sid -> {docId, pageIndex, thumb}
   const pickedSrc = new Set();  // sids selected in Step 2, waiting to be sent to Step 3
+  const pickedTray = new Set(); // tids selected in Step 3 (remove / rotate together)
+  let lastPickedTid = null;
   let lastPickedSid = null;     // anchor for shift-click ranges
   let nextDocId = 1, nextSid = 1, nextTid = 1;
 
@@ -2474,6 +2535,14 @@ body.hints-off .editor-main > #editHint { display: none; }
         let r = panel.getBoundingClientRect();
         if (r.right > innerWidth - 4) { panel.classList.add('flip'); r = panel.getBoundingClientRect(); }
         if (r.left < 4) { panel.classList.remove('flip'); panel.classList.add('unflip'); }
+        panel.classList.remove('upward');
+        panel.style.maxHeight = '';
+        r = panel.getBoundingClientRect();
+        if (r.bottom > innerHeight - 4) {
+          // open upward when that fits, otherwise cap the height to the space below and scroll
+          if (r.height < r.top - 8) panel.classList.add('upward');
+          else panel.style.maxHeight = Math.max(160, innerHeight - r.top - 8) + 'px';
+        }
       }
     });
     wrap.querySelector('.menu-panel').addEventListener('click', (e) => {
@@ -2995,6 +3064,52 @@ body.hints-off .editor-main > #editHint { display: none; }
     renderPickBar();
   }
 
+  /* ── Step 3 selection: remove or rotate several pages at once ── */
+  function paintPickTray(tid) {
+    const card = trayStrip.querySelector('.tray-card[data-tid="' + tid + '"]');
+    if (!card) return;
+    const on = pickedTray.has(tid);
+    card.classList.toggle('picked', on);
+    card.setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
+  function togglePickTray(t, shiftKey) {
+    if (shiftKey && lastPickedTid != null) {
+      const a = tray.findIndex(x => x.tid === lastPickedTid), b = tray.findIndex(x => x.tid === t.tid);
+      if (a >= 0 && b >= 0) {
+        for (let i = Math.min(a, b); i <= Math.max(a, b); i++) { pickedTray.add(tray[i].tid); paintPickTray(tray[i].tid); }
+        lastPickedTid = t.tid;
+        renderTrayPickBar();
+        return;
+      }
+    }
+    if (pickedTray.has(t.tid)) pickedTray.delete(t.tid);
+    else { pickedTray.add(t.tid); lastPickedTid = t.tid; }
+    paintPickTray(t.tid);
+    renderTrayPickBar();
+  }
+  function renderTrayPickBar() {
+    const n = pickedTray.size;
+    $('trayPickBar').classList.toggle('show', n > 0);
+    $('trayPickCount').textContent = n + (n === 1 ? ' page selected' : ' pages selected');
+    $('btnTrayRemove').textContent = 'Remove ' + n + (n === 1 ? ' page' : ' pages');
+  }
+  function rotatePickedTray(delta) {
+    tray.forEach(t => { if (pickedTray.has(t.tid)) t.rot = ((t.rot + delta) % 360 + 360) % 360; });
+    renderAll();
+  }
+  function removePickedTray() {
+    const prevTray = tray.slice(), n = pickedTray.size;
+    tray = tray.filter(t => !pickedTray.has(t.tid));
+    pickedTray.clear();
+    lastPickedTid = null;
+    renderAll();
+    toastAction('Removed ' + n + ' page' + (n === 1 ? '' : 's') + ' from the new PDF.', 'Undo', () => { tray = prevTray; renderAll(); });
+  }
+  $('btnTrayRotL').addEventListener('click', () => rotatePickedTray(270));
+  $('btnTrayRotR').addEventListener('click', () => rotatePickedTray(90));
+  $('btnTrayRemove').addEventListener('click', removePickedTray);
+  $('btnTrayPickClear').addEventListener('click', () => { const was = [...pickedTray]; pickedTray.clear(); lastPickedTid = null; was.forEach(paintPickTray); renderTrayPickBar(); });
+
   function pickedEntries() {
     // keep the on-screen order: document by document, page by page
     const out = [];
@@ -3068,6 +3183,8 @@ body.hints-off .editor-main > #editHint { display: none; }
       card.draggable = true;
       card.tabIndex = 0;
       card.dataset.tid = t.tid;
+      if (pickedTray.has(t.tid)) card.classList.add('picked');
+      card.setAttribute('aria-pressed', pickedTray.has(t.tid) ? 'true' : 'false');
       card.setAttribute('role', 'group');
       card.setAttribute('aria-label', 'Output page ' + (i + 1) + ', ' + (doc ? doc.name : 'document') + ' page ' + (t.pageIndex + 1) + '. Use Left and Right arrows to reorder, Enter to edit, or Delete to remove.');
       const rotCls = t.rot ? ' class="r' + t.rot + '"' : '';
@@ -3100,6 +3217,11 @@ body.hints-off .editor-main > #editHint { display: none; }
       card.querySelector('.act-edit').addEventListener('click', (e) => {
         e.stopPropagation();
         openEditor(t);
+      });
+      // click the card itself (not its buttons) to select it; shift-click for a range
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('button')) return;
+        togglePickTray(t, e.shiftKey);
       });
       card.querySelector('.act-rot').addEventListener('click', (e) => {
         e.stopPropagation();
@@ -3143,6 +3265,7 @@ body.hints-off .editor-main > #editHint { display: none; }
         }
         if (e.key === 'Delete' || e.key === 'Backspace') {
           e.preventDefault();
+          if (pickedTray.size > 1 && pickedTray.has(t.tid)) { removePickedTray(); return; }
           const prevTray = tray.slice();
           tray = tray.filter(x => x.tid !== t.tid);
           renderAll();
@@ -3159,6 +3282,8 @@ body.hints-off .editor-main > #editHint { display: none; }
       card.addEventListener('dragend', () => { dragData = null; card.classList.remove('drag-src'); clearTrayMarks(); });
       trayStrip.appendChild(card);
     });
+    for (const tid of [...pickedTray]) if (!tray.some(t => t.tid === tid)) pickedTray.delete(tid);
+    renderTrayPickBar();
     const n = tray.length;
     $('trayCount').textContent = n + ' page' + (n === 1 ? '' : 's');
     $('btnCreate').disabled = !n;
@@ -5330,12 +5455,13 @@ body.hints-off .editor-main > #editHint { display: none; }
   /* ── Auto-save & restore (IndexedDB — stays on this computer) ── */
   function sdb() {
     return new Promise((res, rej) => {
-      const r = indexedDB.open('bliPdfStudio', 3);
+      const r = indexedDB.open('bliPdfStudio', 4);
       r.onupgradeneeded = () => {
         const db = r.result;
         if (!db.objectStoreNames.contains('session')) db.createObjectStore('session');
         if (!db.objectStoreNames.contains('settings')) db.createObjectStore('settings');
         if (!db.objectStoreNames.contains('forms')) db.createObjectStore('forms');
+        if (!db.objectStoreNames.contains('docbytes')) db.createObjectStore('docbytes');   // v4: file bytes, written once
       };
       r.onsuccess = () => res(r.result);
       r.onerror = () => rej(r.error);
@@ -5407,11 +5533,36 @@ body.hints-off .editor-main > #editHint { display: none; }
   }
   function sessionDel() {
     return sdb().then(db => new Promise((res, rej) => {
-      const tx = db.transaction('session', 'readwrite');
+      const tx = db.transaction(['session', 'docbytes'], 'readwrite');
       tx.objectStore('session').delete('current');
+      tx.objectStore('docbytes').clear();
       tx.oncomplete = res;
       tx.onerror = () => rej(tx.error);
     }));
+  }
+  /* File bytes are written to their own store ONCE per file (a WeakSet remembers
+     which byte arrays are already there), so the autosave that runs after every
+     change only carries the light state - page order, edits, thumbnails - instead
+     of re-writing a 30 MB scan packet each time. Orphaned bytes are pruned. */
+  const savedBytes = new WeakSet();
+  function bytesTx(mode, fn) {
+    return sdb().then(db => new Promise((res, rej) => {
+      const tx = db.transaction('docbytes', mode);
+      const q = fn(tx.objectStore('docbytes'));
+      tx.oncomplete = () => res(q && q.result);
+      tx.onerror = () => rej(tx.error);
+    }));
+  }
+  const bytesGet = id => bytesTx('readonly', st => st.get(id));
+  async function storeDocBytes() {
+    const live = new Set(docs.keys());
+    const keys = await bytesTx('readonly', st => st.getAllKeys());
+    for (const k of keys || []) if (!live.has(k)) await bytesTx('readwrite', st => st.delete(k));
+    for (const [id, d] of docs) {
+      if (savedBytes.has(d.bytes)) continue;
+      await bytesTx('readwrite', st => st.put(d.bytes, id));
+      savedBytes.add(d.bytes);
+    }
   }
 
   let autosaveTimer = null, quotaWarned = false;
@@ -5424,25 +5575,27 @@ body.hints-off .editor-main > #editHint { display: none; }
       return;
     }
     setAutosaveStatus('Saving…', 'saving');
-    autosaveTimer = setTimeout(() => {
+    autosaveTimer = setTimeout(async () => {
       const when = Date.now();
-      sessionPut({
-        when, outputs: packedOutputs(), activeOutput, projectId, projectName, options: exportOptions(),
-        nextDocId, nextSid, nextTid,
-        name: $('nameInput').value,
-        docs: [...docs.entries()].map(([id, d]) => ({
-          id, name: d.name, kind: d.kind || 'pdf', bytes: d.bytes,
-          imgType: d.imgType || null, imgW: d.imgW || 0, imgH: d.imgH || 0,
+      try {
+        await storeDocBytes();                       // only files not stored yet
+        await sessionPut({
+          when, stored: true, outputs: packedOutputs(), activeOutput, projectId, projectName, options: exportOptions(),
+          nextDocId, nextSid, nextTid,
+          name: $('nameInput').value,
+          docs: [...docs.entries()].map(([id, d]) => ({
+            id, name: d.name, kind: d.kind || 'pdf', bytes: null,   // bytes live in the docbytes store
+            imgType: d.imgType || null, imgW: d.imgW || 0, imgH: d.imgH || 0,
             formFields: d.formFields || 0,
             ocr: d.ocr || null,
-          libKey: d.libKey || null, libName: d.libName || null,
-          pages: d.pages.map(p => ({ sid: p.sid, pageIndex: p.pageIndex, thumb: p.thumb }))
-        })),
-        tray: tray.map(t => ({ tid: t.tid, docId: t.docId, pageIndex: t.pageIndex, rot: t.rot, stamps: t.stamps, crop: t.crop || null, thumb: t.thumb }))
-      }).then(() => {
+            libKey: d.libKey || null, libName: d.libName || null,
+            pages: d.pages.map(p => ({ sid: p.sid, pageIndex: p.pageIndex, thumb: p.thumb }))
+          })),
+          tray: tray.map(t => ({ tid: t.tid, docId: t.docId, pageIndex: t.pageIndex, rot: t.rot, stamps: t.stamps, crop: t.crop || null, thumb: t.thumb }))
+        });
         const at = new Date(when).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
         setAutosaveStatus('Saved at ' + at, 'saved');
-      }).catch((e) => {
+      } catch (e) {
         // IndexedDB refuses the write when the browser's storage is full — say so
         // instead of quietly showing "Saving…" forever
         const full = !!e && (e.name === 'QuotaExceededError' || /quota/i.test(String(e.message || e)));
@@ -5451,7 +5604,7 @@ body.hints-off .editor-main > #editHint { display: none; }
           quotaWarned = true;
           toast('Autosave paused: this project is too big to keep a copy in the browser. Everything still works — just Save your PDF before closing.');
         }
-      });
+      }
     }, 1200);
   }
 
@@ -5465,15 +5618,18 @@ body.hints-off .editor-main > #editHint { display: none; }
       pageCount + ' page' + (pageCount === 1 ? '' : 's') + ', saved ' +
       at.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) + ')';
     $('restoreBar').classList.add('show');
-    $('btnRestore').onclick = () => {
+    $('btnRestore').onclick = async () => {
       try {
         docs.clear();
         srcIndex.clear();
         tray = [];
-        saved.docs.forEach(d => {
+        const missing = [];
+        for (const d of saved.docs) {
+          const raw = d.bytes || await bytesGet(d.id);   // newer autosaves keep file bytes in their own store
+          if (!raw) { missing.push(d.name); continue; }
           const doc = {
             name: d.name,
-            bytes: d.bytes instanceof Uint8Array ? d.bytes : new Uint8Array(d.bytes),
+            bytes: raw instanceof Uint8Array ? raw : new Uint8Array(raw),
             pages: [],
             formFields: d.formFields || 0,
             ocr: d.ocr || null,
@@ -5491,7 +5647,8 @@ body.hints-off .editor-main > #editHint { display: none; }
             doc.pages.push(entry);
             srcIndex.set(entry.sid, entry);
           });
-        });
+          savedBytes.add(doc.bytes);   // already in the store - no need to write it again
+        }
         tray = (saved.tray || []).map(t => {
           const item = {
             tid: t.tid, docId: t.docId, pageIndex: t.pageIndex,
@@ -5499,7 +5656,7 @@ body.hints-off .editor-main > #editHint { display: none; }
           };
           if (t.crop) item.crop = t.crop;
           return item;
-        });
+        }).filter(t => docs.has(t.docId));
         nextDocId = saved.nextDocId || (Math.max(0, ...docs.keys()) + 1);
         nextSid = saved.nextSid || 1;
         nextTid = saved.nextTid || 1;
@@ -5508,7 +5665,7 @@ body.hints-off .editor-main > #editHint { display: none; }
         resetHistory();
         $('restoreBar').classList.remove('show');
         renderAll();
-        toast('Restored your earlier work.');
+        toast(missing.length ? 'Restored your earlier work — ' + missing.length + ' file' + (missing.length === 1 ? '' : 's') + ' could not be recovered.' : 'Restored your earlier work.');
       } catch (err) {
         console.error(err);
         toast('Sorry — could not restore the earlier work.');
@@ -6208,7 +6365,7 @@ body.hints-off .editor-main > #editHint { display: none; }
       if (doc) { trayAdd(doc.pages[pageIndex]); renderAll(); }
     },
     buildPdfBytes, buildFinalBytes, parseRanges, zipBytes, rasterizePages, rememberOcr, getDocTexts, applyMailType,
-    sharedGet, sharedPut, renderPackets, openPacket, libraryDocsInOrder, renderSharedStamps, shareStamp, loadSharedStamps, suggestName, snapshotWorkspace, restoreWorkspace, travelHistory, exportOptions,
+    sharedGet, sharedPut, renderPackets, openPacket, libraryDocsInOrder, renderSharedStamps, shareStamp, loadSharedStamps, suggestName, sessionGet, bytesGet, snapshotWorkspace, restoreWorkspace, travelHistory, exportOptions,
     openEditorFor: (i) => { if (tray[i]) openEditor(tray[i]); },
     formsAdd: addFormToLibrary,
     formsList: async () => { const r = await formsApi('/list'); return (await r.json()).forms; },
