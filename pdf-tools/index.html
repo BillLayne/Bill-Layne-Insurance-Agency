@@ -1713,6 +1713,11 @@ body:not(.step-3):not(.multi-output) #btnRemoveOutput { display: none; }
 /* source page placed in ANOTHER new PDF: outlined check instead of solid */
 .used-badge.elsewhere { background: #fff; color: var(--teal); border: 2px solid var(--teal); }
 .act-rotl svg { transform: scaleX(-1); }
+/* stamps shared with the whole office: share arrow on your own chips, dashed ring on shared ones */
+.chip-share { position: absolute; left: 4px; top: 4px; width: 20px; height: 20px; border-radius: 999px; border: 1px solid var(--line-strong); background: #fff; color: var(--teal); font-size: 12px; font-weight: 800; line-height: 1; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.chip-share:hover { background: var(--teal); border-color: var(--teal); color: #fff; }
+.shared-chip { outline: 2px dashed rgba(15,118,110,.45); outline-offset: 2px; }
+.text-chip, .sig-chip { position: relative; }
 /* editor: "Page [ 7 ] of 40" jump field */
 .page-jump { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: #fff; white-space: nowrap; }
 .page-jump input { width: 54px; text-align: center; padding: 4px 2px; font: inherit; font-size: 12.5px; border-radius: 6px; border: 1px solid rgba(255,255,255,.3); background: rgba(255,255,255,.1); color: #fff; }
@@ -2026,6 +2031,8 @@ body.hints-off .editor-main > #editHint { display: none; }
         <div class="sig-row">
           <button class="primary" id="btnStampImgUpload">&#8682; Upload a picture stamp</button>
         </div>
+        <div class="sig-note" style="margin-top:4px;"><strong>Agency stamps</strong> &mdash; shared with everyone who uses PDF Studio here (press &#8593; on one of your own stamps to share it): <span id="sharedStampsNote"></span></div>
+        <div id="sharedStamps" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
       </div>
     </div>
 
@@ -2121,6 +2128,10 @@ body.hints-off .editor-main > #editHint { display: none; }
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <input type="text" id="formsSearch" placeholder="Search forms&hellip; e.g. ATV, exclusion, ACORD" style="flex:1;min-width:180px">
         <button class="primary" id="btnFormsUpload">&#8682; Add forms</button>
+      </div>
+      <div id="packetsBox" style="display:none;flex-direction:column;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--warm)">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><strong>&#128230; Packets</strong><span class="sig-note" style="margin:0;flex:1;min-width:160px">forms you send together, in order &mdash; open one and every page lands in Step 3</span><button id="btnSavePacket" title="Save the library forms in this workspace, in their Step 3 order, as a packet for the whole office">+ Save current forms as a packet</button></div>
+        <div id="packetsList" style="display:flex;flex-direction:column;gap:6px"></div>
       </div>
       <div id="formsList" style="display:flex;flex-direction:column;gap:8px"></div>
     </div>
@@ -4194,6 +4205,7 @@ body.hints-off .editor-main > #editHint { display: none; }
   function openStampPanel() {
     renderStampChips();
     renderImgStampChips();
+    renderSharedStamps();
     $('stampPanel').style.display = 'flex';
   }
   function closeStampPanel() { $('stampPanel').style.display = 'none'; }
@@ -4246,6 +4258,7 @@ body.hints-off .editor-main > #editHint { display: none; }
         renderStampChips();
       });
       chip.appendChild(del);
+      chip.appendChild(shareButton('text', s));
       chip.addEventListener('click', () => { closeStampPanel(); placeCenteredText(s, 14, 'black'); });
       wrap.appendChild(chip);
     });
@@ -4319,6 +4332,7 @@ body.hints-off .editor-main > #editHint { display: none; }
         renderImgStampChips();
       });
       chip.appendChild(del);
+      chip.appendChild(shareButton('img', s));
       chip.addEventListener('click', () => { closeStampPanel(); placeCenteredImage(s); });
       wrap.appendChild(chip);
     });
@@ -5327,6 +5341,7 @@ body.hints-off .editor-main > #editHint { display: none; }
           imgType: d.imgType || null, imgW: d.imgW || 0, imgH: d.imgH || 0,
             formFields: d.formFields || 0,
             ocr: d.ocr || null,
+          libKey: d.libKey || null, libName: d.libName || null,
           pages: d.pages.map(p => ({ sid: p.sid, pageIndex: p.pageIndex, thumb: p.thumb }))
         })),
         tray: tray.map(t => ({ tid: t.tid, docId: t.docId, pageIndex: t.pageIndex, rot: t.rot, stamps: t.stamps, crop: t.crop || null, thumb: t.thumb }))
@@ -5367,7 +5382,8 @@ body.hints-off .editor-main > #editHint { display: none; }
             bytes: d.bytes instanceof Uint8Array ? d.bytes : new Uint8Array(d.bytes),
             pages: [],
             formFields: d.formFields || 0,
-            ocr: d.ocr || null
+            ocr: d.ocr || null,
+            libKey: d.libKey || null, libName: d.libName || null
           };
           if (d.kind === 'image') {
             doc.kind = 'image';
@@ -5469,11 +5485,13 @@ body.hints-off .editor-main > #editHint { display: none; }
     const setup = $('formsSetup');
     if (!formsCode()) {
       setup.style.display = 'flex';
+      $('packetsBox').style.display = 'none';
       formsNote('Enter the access code once on this device to connect to the agency forms library.');
       setTimeout(() => $('formsCodeInput').focus(), 80);
       return;
     }
     setup.style.display = 'none';
+    if (fetchFresh || !packetsCache) renderPackets();
     try {
       if (fetchFresh || !formsCache.length) {
         formsNote('Loading the forms library…');
@@ -5518,6 +5536,7 @@ body.hints-off .editor-main > #editHint { display: none; }
           const res = await formsApi('/file/' + encodeURIComponent(f.key));
           if (!res.ok) throw new Error('download failed');
           await addPdfData(f.name + '.pdf', new Uint8Array(await res.arrayBuffer()));
+          tagLibraryDoc(f);
           renderAll();
         } catch (err) {
           console.error(err);
@@ -5833,6 +5852,205 @@ body.hints-off .editor-main > #editHint { display: none; }
     };
   };
 
+  /* ── Agency-wide extras on the Forms host: packet presets + shared stamps.
+     Small JSON documents behind the same access code — never customer data. ── */
+  async function sharedGet(name) {
+    const r = await formsApi('/shared/' + name);
+    const out = await r.json();
+    if (!out.ok) throw new Error(out.error || 'shared read failed');
+    return out.data;
+  }
+  async function sharedPut(name, data) {
+    const body = JSON.stringify(data);
+    if (body.length > 1.9 * 1048576) throw new Error('too-large');
+    const r = await formsApi('/shared/' + name, { method: 'PUT', body, headers: { 'content-type': 'application/json' } });
+    const out = await r.json();
+    if (!out.ok) throw new Error(out.error || 'shared write failed');
+  }
+  // remember which library form a workspace document came from (so packets can be built from it)
+  function tagLibraryDoc(f) {
+    const doc = [...docs.values()].at(-1);
+    if (doc && doc.name === f.name + '.pdf' && !doc.libKey) { doc.libKey = f.key; doc.libName = f.name; }
+  }
+
+  // ── packets: library forms that go out together, in order ──
+  let packetsCache = null;
+  function libraryDocsInOrder() {
+    // ordered by first appearance in the new PDF, then any library form not placed yet
+    const seen = new Set(), out = [];
+    const push = d => { if (d && d.libKey && !seen.has(d.libKey)) { seen.add(d.libKey); out.push({ key: d.libKey, name: d.libName || d.name }); } };
+    tray.forEach(t => push(docs.get(t.docId)));
+    docs.forEach(d => push(d));
+    return out;
+  }
+  async function renderPackets() {
+    const box = $('packetsBox'), list = $('packetsList');
+    if (!formsCode()) { box.style.display = 'none'; return; }
+    box.style.display = 'flex';
+    $('btnSavePacket').disabled = !libraryDocsInOrder().length;
+    list.innerHTML = '<div class="sig-note">Loading packets…</div>';
+    let data;
+    try { data = (await sharedGet('packets')) || { packets: [] }; }
+    catch (e) { list.innerHTML = '<div class="sig-note">Could not load packets right now.</div>'; return; }
+    data.packets = data.packets || [];
+    packetsCache = data;
+    list.innerHTML = '';
+    if (!data.packets.length) {
+      list.innerHTML = '<div class="sig-note">No packets yet — open the forms you send together, put them in order in Step 3, then save them as a packet.</div>';
+      return;
+    }
+    data.packets.forEach(pk => {
+      const row = document.createElement('div');
+      row.className = 'form-item';
+      row.innerHTML = '<span class="fi-icon">' + uiIcon('file') + '</span><div class="fi-body"><div class="fi-name"></div><div class="fi-meta"></div></div>';
+      row.querySelector('.fi-name').textContent = pk.name;
+      row.querySelector('.fi-meta').textContent = pk.items.map(i => i.name).join(' → ') +
+        (pk.notes && pk.notes.length ? ' · ' + pk.notes.length + ' reminder' + (pk.notes.length === 1 ? '' : 's') : '');
+      const open = document.createElement('button');
+      open.className = 'teal';
+      open.textContent = 'Open packet';
+      open.addEventListener('click', () => openPacket(pk));
+      const del = document.createElement('button');
+      del.className = 'ghost';
+      del.textContent = 'Delete';
+      del.addEventListener('click', async () => {
+        if (del.dataset.armed !== '1') { del.dataset.armed = '1'; del.textContent = 'Sure? Delete for everyone'; return; }
+        try { data.packets = data.packets.filter(x => x.id !== pk.id); await sharedPut('packets', data); renderPackets(); }
+        catch (e) { toast('Could not delete that packet — check your connection.'); }
+      });
+      row.append(open, del);
+      list.appendChild(row);
+    });
+  }
+  async function openPacket(pk) {
+    closeFormsModal();
+    busy(true, 'Opening packet "' + pk.name + '"…');
+    const missing = [], loaded = [];
+    try {
+      const forms = formsCache.length ? formsCache : ((await (await formsApi('/list')).json()).forms || []);
+      for (const item of pk.items) {
+        const f = forms.find(x => x.key === item.key);
+        if (!f) { missing.push(item.name); continue; }
+        busy(true, 'Opening "' + f.name + '"…');
+        const res = await formsApi('/file/' + encodeURIComponent(f.key));
+        if (!res.ok) { missing.push(item.name); continue; }
+        await addPdfData(f.name + '.pdf', new Uint8Array(await res.arrayBuffer()));
+        tagLibraryDoc(f);
+        const doc = [...docs.values()].at(-1);
+        if (doc && doc.libKey === f.key) loaded.push(doc);
+      }
+      loaded.forEach(doc => doc.pages.forEach(pg => trayAdd(pg)));
+      renderAll();
+      if (tray.length) setStep(3);
+      const notes = (pk.notes || []).filter(Boolean);
+      if (notes.length || missing.length) {
+        showDialog('Packet "' + pk.name + '"',
+          '<p>' + (loaded.length ? loaded.length + ' form' + (loaded.length === 1 ? '' : 's') + ' loaded and placed in Step 3 in packet order.' : 'No forms could be loaded.') + '</p>' +
+          (notes.length ? '<p><strong>Still to add by hand:</strong></p><ul>' + notes.map(n => '<li>' + escapeHtml(n) + '</li>').join('') + '</ul>' : '') +
+          (missing.length ? '<p class="studio-note">No longer in the library: ' + escapeHtml(missing.join(', ')) + '</p>' : ''));
+      } else {
+        toast('Packet "' + pk.name + '" is in Step 3 — ' + loaded.length + ' form' + (loaded.length === 1 ? '' : 's') + '.');
+      }
+    } catch (e) { console.error(e); toast('Could not open that packet — check your connection.'); }
+    busy(false);
+  }
+  $('btnSavePacket').addEventListener('click', () => {
+    const items = libraryDocsInOrder();
+    if (!items.length) { toast('Open one or more library forms first, then save them as a packet.'); return; }
+    closeFormsModal();
+    showDialog('Save as a packet', '<p>These library forms, in this order, become a packet anyone in the office can open in one tap.</p><ol id="packetItems"></ol><label for="packetName">Packet name</label><input id="packetName" placeholder="e.g. New Business Home"><label for="packetNotes">Reminders — things to add by hand, one per line (optional)</label><textarea id="packetNotes" rows="3" placeholder="Customer&#39;s signed application&#10;Photos of the roof"></textarea><div class="studio-row"><button id="packetSave" class="primary">Save packet</button></div><p id="packetError" role="alert"></p>');
+    items.forEach(i => { const li = document.createElement('li'); li.textContent = i.name; $('packetItems').appendChild(li); });
+    $('packetSave').onclick = async () => {
+      const name = $('packetName').value.trim();
+      if (!name) { $('packetError').textContent = 'Give the packet a name.'; return; }
+      try {
+        const data = (await sharedGet('packets')) || { packets: [] };
+        data.packets = data.packets || [];
+        const notes = $('packetNotes').value.split(/\n/).map(x => x.trim()).filter(Boolean);
+        const existing = data.packets.findIndex(x => x.name.toLowerCase() === name.toLowerCase());
+        const pk = { id: existing >= 0 ? data.packets[existing].id : crypto.randomUUID(), name, items, notes, when: Date.now() };
+        if (existing >= 0) data.packets[existing] = pk; else data.packets.push(pk);
+        await sharedPut('packets', data);
+        packetsCache = null;
+        closeStudioDialog();
+        toast('Packet "' + name + '" saved for the whole office.');
+      } catch (e) {
+        $('packetError').textContent = e.message === 'bad-code' ? 'The Forms Library access code was not accepted.' : 'Could not save the packet — check your connection.';
+      }
+    };
+  });
+
+  // ── shared stamps (text + pictures): the agency's, not personal.
+  //    Signatures and initials deliberately stay on each device. ──
+  let sharedStampsCache = null, sharedStampsAt = 0;
+  async function loadSharedStamps(force) {
+    if (!force && sharedStampsCache && Date.now() - sharedStampsAt < 5 * 60000) return sharedStampsCache;
+    const data = (await sharedGet('stamps')) || { text: [], img: [] };
+    data.text = data.text || []; data.img = data.img || [];
+    sharedStampsCache = data; sharedStampsAt = Date.now();
+    return data;
+  }
+  async function renderSharedStamps(force) {
+    const wrap = $('sharedStamps'), note = $('sharedStampsNote');
+    wrap.innerHTML = '';
+    if (!formsCode()) { note.textContent = 'enter the Forms Library access code (Forms Library button) to see them.'; return; }
+    note.textContent = 'loading…';
+    let data;
+    try { data = await loadSharedStamps(force); } catch (e) { note.textContent = 'could not load right now.'; return; }
+    note.textContent = (data.text.length + data.img.length) ? '' : 'none yet.';
+    const removeBtn = (onConfirm) => {
+      const del = document.createElement('button');
+      del.className = 'chip-del';
+      del.innerHTML = '&#10005;';
+      del.title = 'Remove from the agency stamps (everyone)';
+      del.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        if (del.dataset.armed !== '1') { del.dataset.armed = '1'; del.textContent = '?'; del.title = 'Click again to remove it for everyone'; return; }
+        try { await onConfirm(); } catch (_) { toast('Could not update the shared stamps — check your connection.'); }
+      });
+      return del;
+    };
+    data.text.forEach(t => {
+      const chip = document.createElement('div');
+      chip.className = 'text-chip shared-chip';
+      chip.textContent = t;
+      chip.appendChild(removeBtn(async () => { const d = await loadSharedStamps(true); d.text = d.text.filter(x => x !== t); await sharedPut('stamps', d); renderSharedStamps(true); }));
+      chip.addEventListener('click', () => { closeStampPanel(); placeCenteredText(t, 14, 'black'); });
+      wrap.appendChild(chip);
+    });
+    data.img.forEach(u => {
+      const chip = document.createElement('div');
+      chip.className = 'sig-chip shared-chip';
+      chip.title = 'Tap to place this stamp';
+      const img = document.createElement('img'); img.src = u; chip.appendChild(img);
+      const use = document.createElement('div'); use.className = 'use-label'; use.textContent = 'Tap to use'; chip.appendChild(use);
+      chip.appendChild(removeBtn(async () => { const d = await loadSharedStamps(true); d.img = d.img.filter(x => x !== u); await sharedPut('stamps', d); renderSharedStamps(true); }));
+      chip.addEventListener('click', () => { closeStampPanel(); placeCenteredImage(u); });
+      wrap.appendChild(chip);
+    });
+  }
+  async function shareStamp(kind, value) {
+    if (!formsCode()) { toast('Sharing needs the Forms Library access code — open the Forms Library once on this device.'); return; }
+    try {
+      const d = await loadSharedStamps(true);
+      const list = kind === 'img' ? d.img : d.text;
+      if (!list.includes(value)) list.push(value);
+      await sharedPut('stamps', d);
+      renderSharedStamps(true);
+      toast('Shared with the agency — everyone with the Forms Library code can use it now.');
+    } catch (e) {
+      toast(e.message === 'too-large' ? 'That would make the shared stamps too large (2 MB limit) — try a smaller picture.' : 'Could not share that stamp — check your connection.');
+    }
+  }
+  function shareButton(kind, value) {
+    const b = document.createElement('button');
+    b.className = 'chip-share';
+    b.innerHTML = '&#8593;';
+    b.title = 'Share with the agency';
+    b.addEventListener('click', (e) => { e.stopPropagation(); shareStamp(kind, value); });
+    return b;
+  }
+
   const modalNames={editModal:'Edit PDF page',emailModal:'Email as Gmail draft',formsModal:'Forms Library',phoneModal:'Phone setup',formModal:'Fill PDF form',viewModal:'PDF page preview',sigPanel:'Signature'};
   for(const [id,name] of Object.entries(modalNames)){const el=$(id);if(el){el.setAttribute('role','dialog');el.setAttribute('aria-label',name);el.setAttribute('aria-modal','true');}}
   document.addEventListener('keydown',e=>{if(e.key!=='Tab'||dlg.open)return;const opened=Object.keys(modalNames).map($).filter(el=>el&&el.classList.contains('open'));const active=opened.at(-1);if(!active)return;const controls=[...active.querySelectorAll('button,input,select,textarea,[tabindex="0"],[contenteditable="true"],a[href]')].filter(el=>!el.disabled&&el.getClientRects().length);if(!controls.length)return;const first=controls[0],last=controls.at(-1);if(e.shiftKey&&(document.activeElement===first||!active.contains(document.activeElement))){e.preventDefault();last.focus();}else if(!e.shiftKey&&(document.activeElement===last||!active.contains(document.activeElement))){e.preventDefault();first.focus();}},true);
@@ -5855,7 +6073,8 @@ body.hints-off .editor-main > #editHint { display: none; }
       const doc = [...docs.values()][docNo];
       if (doc) { trayAdd(doc.pages[pageIndex]); renderAll(); }
     },
-    buildPdfBytes, buildFinalBytes, parseRanges, zipBytes, rasterizePages, rememberOcr, getDocTexts, applyMailType, snapshotWorkspace, restoreWorkspace, travelHistory, exportOptions,
+    buildPdfBytes, buildFinalBytes, parseRanges, zipBytes, rasterizePages, rememberOcr, getDocTexts, applyMailType,
+    sharedGet, sharedPut, renderPackets, openPacket, libraryDocsInOrder, renderSharedStamps, shareStamp, loadSharedStamps, snapshotWorkspace, restoreWorkspace, travelHistory, exportOptions,
     openEditorFor: (i) => { if (tray[i]) openEditor(tray[i]); },
     formsAdd: addFormToLibrary,
     formsList: async () => { const r = await formsApi('/list'); return (await r.json()).forms; },
