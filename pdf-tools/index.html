@@ -1823,6 +1823,7 @@ body.hints-off .editor-main > #editHint { display: none; }
           <button class="icon-button" id="btnSrcMenu" title="More source options" aria-label="More source options"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
           <div class="menu-panel">
             <button id="btnThumbSize" data-keepopen>Thumbnail size: Medium</button>
+            <button id="btnOcrAll" title="Read every scan or photo on this device so Find can search it">Read scanned pages (OCR)</button>
             <button class="danger" id="btnReset">Start over</button>
           </div>
         </div>
@@ -1921,6 +1922,9 @@ body.hints-off .editor-main > #editHint { display: none; }
               <label title="The PDF will require a password to open — you choose it when you save the file">
                 <input type="checkbox" id="chkLock" style="width:17px;height:17px;accent-color:var(--teal)"> Lock with password
               </label>
+              <label title="Pages that carry a white-out are re-saved as pictures, so whatever was under the white box is gone from the file — not just hidden. Those pages lose selectable text.">
+                <input type="checkbox" id="chkPermanent" style="width:17px;height:17px;accent-color:var(--teal)"> Permanent white-out
+              </label><p class="option-help">Only pages with a white-out become pictures; the covered text is removed from the file, not just hidden.</p>
             </div>
           </div>
         </div>
@@ -2009,6 +2013,7 @@ body.hints-off .editor-main > #editHint { display: none; }
       <div class="sig-card">
         <h3>Quick stamps <span class="grow"></span><button class="ghost" id="btnStampsClose">&#10005; Close</button></h3>
         <div class="sig-note">Tap a stamp — it lands in the middle of the page, already selected, so you just drag it into place.</div>
+        <label class="sig-note" style="display:flex;align-items:center;gap:8px;margin:2px 0 6px;cursor:pointer"><input type="checkbox" id="stampAllPages" style="width:17px;height:17px;accent-color:var(--teal)"> Put it on <strong>every page</strong> of this new PDF (same spot on each page)</label>
         <div id="quickStamps" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
         <div class="sig-note" style="margin-top:4px;"><strong>Your saved text stamps</strong> &mdash; save text you use all the time (kept only on this computer):</div>
         <div id="customStamps" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
@@ -2027,9 +2032,13 @@ body.hints-off .editor-main > #editHint { display: none; }
     <!-- signature setup panel -->
     <div id="sigPanel">
       <div class="sig-card">
-        <h3>Your signature <span class="grow"></span><button class="ghost" id="btnSigClose">&#10005; Close</button></h3>
+        <h3>Your signature &amp; initials <span class="grow"></span><button class="ghost" id="btnSigClose">&#10005; Close</button></h3>
+        <div role="group" aria-label="Signature or initials" style="display:flex;gap:6px;margin:2px 0 8px">
+          <button type="button" class="primary" id="sigKindSig">Signature</button>
+          <button type="button" id="sigKindIni">Initials</button>
+        </div>
         <div class="sig-saved-box">
-          <div class="sig-saved-head">&#11088; Saved signatures &mdash; tap one to use it (no need to draw or upload again)</div>
+          <div class="sig-saved-head" id="sigSavedHead">&#11088; Saved signatures &mdash; tap one to use it (no need to draw or upload again)</div>
           <div id="sigSaved"></div>
         </div>
         <div class="sig-note" style="margin-top:2px"><strong>Add a new one:</strong> draw below or upload an image &mdash; it saves to your list automatically.</div>
@@ -2053,7 +2062,7 @@ body.hints-off .editor-main > #editHint { display: none; }
     <div class="form-body">
       <div class="form-row">
         <label>To (optional &mdash; you can add it in Gmail)</label>
-        <input type="text" id="mailTo" placeholder="customer@example.com">
+        <input type="text" id="mailTo" placeholder="customer@example.com" list="mailToList" autocomplete="off"><datalist id="mailToList"></datalist>
       </div>
       <div class="form-row">
         <label>What is this email delivering?</label>
@@ -2417,12 +2426,12 @@ body.hints-off .editor-main > #editHint { display: none; }
 
   // gold badge on ⚙ Options showing how many output options are on
   function updateOptBadge() {
-    const n = ['chkShrink', 'chkNumbers', 'chkLock'].filter(id => $(id).checked).length;
+    const n = ['chkShrink', 'chkNumbers', 'chkLock', 'chkPermanent'].filter(id => $(id).checked).length;
     const b = $('optBadge');
     b.textContent = n;
     b.classList.toggle('show', n > 0);
   }
-  ['chkShrink', 'chkNumbers', 'chkLock'].forEach(id => $(id).addEventListener('change', updateOptBadge));
+  ['chkShrink', 'chkNumbers', 'chkLock', 'chkPermanent'].forEach(id => $(id).addEventListener('change', updateOptBadge));
 
   /* ── thumbnail size ── */
   const THUMB_LABELS = { sm: 'Small', md: 'Medium', lg: 'Large' };
@@ -3306,7 +3315,7 @@ body.hints-off .editor-main > #editHint { display: none; }
       text: ['Text controls', 'Type first, then click the page'],
       draw: ['Pen controls', 'Choose a width and color, then draw'],
       hl: ['Highlight tool', 'Drag across the words you want to highlight'],
-      box: ['White-out', 'Drag over what to cover — the text underneath stays in the file'],
+      box: ['White-out', 'Drag over what to cover — make it permanent in Settings (Step 3)'],
       sig: ['Signature tool', 'Choose a signature, then click the page'],
       img: ['Image tool', 'Choose an image, then click the page'],
       pan: ['Move page', 'Drag to move the zoomed page'],
@@ -3324,7 +3333,7 @@ body.hints-off .editor-main > #editHint { display: none; }
       : mode === 'draw'
         ? 'Draw right on the page with your mouse or trackpad — hold the button down and move. The pen uses the color box, and the size box sets how thick it is. Undo removes the last stroke.'
       : mode === 'box'
-        ? 'Visual cover only: the original text remains in the PDF and may still be copied or searched. Do not use white-out to remove confidential information.'
+        ? 'Covers what is under it. By default the text stays in the file — turn on Permanent white-out in Settings (Step 3) and this page is saved as a picture with the covered text removed.'
         : mode === 'sig'
           ? 'Click the page where you want your signature. You can move and resize it after placing it.'
           : mode === 'img'
@@ -3869,7 +3878,7 @@ body.hints-off .editor-main > #editHint { display: none; }
     if (!editorItem || !editorVp) return;
     if (editorMode === 'sig') {
       if (!currentSig) { openSigPanel(); return; }
-      placeImageStamp(e, 'sig', currentSig, currentSigDim, 150);
+      placeImageStamp(e, 'sig', currentSig, currentSigDim, currentSigW);
       return;
     }
     if (editorMode === 'img') {
@@ -3915,17 +3924,29 @@ body.hints-off .editor-main > #editHint { display: none; }
   });
 
   /* ── Signatures: draw pad, upload, save on this computer ── */
-  const SIG_KEY = 'bliPdfStudioSigs';
-  let currentSig = null, currentSigDim = { w: 1, h: 1 }, padDirty = false, padStroke = null;
+  const SIG_KEY = 'bliPdfStudioSigs', INI_KEY = 'bliPdfStudioInitials';
+  let sigKind = 'sig';                       // 'sig' | 'ini' — which saved list the panel shows
+  let currentSig = null, currentSigDim = { w: 1, h: 1 }, currentSigW = 150, padDirty = false, padStroke = null;
   const sigPad = $('sigPad');
 
   function loadSigs() {
-    try { return JSON.parse(localStorage.getItem(SIG_KEY)) || []; } catch (_) { return []; }
+    try { return JSON.parse(localStorage.getItem(sigKind === 'ini' ? INI_KEY : SIG_KEY)) || []; } catch (_) { return []; }
   }
   function saveSigs(list) {
-    try { localStorage.setItem(SIG_KEY, JSON.stringify(list.slice(0, 6))); }
+    try { localStorage.setItem(sigKind === 'ini' ? INI_KEY : SIG_KEY, JSON.stringify(list.slice(0, 6))); }
     catch (_) { toast('Could not save the signature on this computer (storage full?). You can still use it now.'); }
   }
+  function setSigKind(kind) {
+    sigKind = kind;
+    $('sigKindSig').classList.toggle('primary', kind === 'sig');
+    $('sigKindIni').classList.toggle('primary', kind === 'ini');
+    $('sigSavedHead').innerHTML = kind === 'ini'
+      ? '&#11088; Saved initials &mdash; tap one to use it (placed small, ready to drag onto the line)'
+      : '&#11088; Saved signatures &mdash; tap one to use it (no need to draw or upload again)';
+    renderSigList();
+  }
+  $('sigKindSig').addEventListener('click', () => setSigKind('sig'));
+  $('sigKindIni').addEventListener('click', () => setSigKind('ini'));
 
   function openSigPanel() {
     $('sigPanel').classList.add('open');
@@ -3977,6 +3998,7 @@ body.hints-off .editor-main > #editHint { display: none; }
     img.onload = () => {
       currentSig = dataUrl;
       currentSigDim = { w: img.naturalWidth || 1, h: img.naturalHeight || 1 };
+      currentSigW = sigKind === 'ini' ? 60 : 150;   // initials land small
       closeSigPanel();
       setEditorMode('sig');
     };
@@ -4160,6 +4182,13 @@ body.hints-off .editor-main > #editHint { display: none; }
     selectedStamp = st;
     syncStampLayer();
     setEditorMode('text');
+    if ($('stampAllPages').checked && tray.length > 1) {
+      // the same stamp, same spot, on every other page of the new PDF
+      let n = 0;
+      tray.forEach(t => { if (t !== editorItem) { t.stamps = t.stamps || []; t.stamps.push({ ...st }); n++; } });
+      renderTray();
+      toast('Stamped this page and ' + n + ' other' + (n === 1 ? '' : 's') + ' — move it here and the others keep their copy.');
+    }
   }
 
   function openStampPanel() {
@@ -4600,6 +4629,32 @@ body.hints-off .editor-main > #editHint { display: none; }
     return n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB';
   }
 
+  /* Permanent white-out: re-save the given pages (0-based positions in the
+     built PDF) as pictures, so what sits under a white box leaves the file. */
+  async function rasterizePages(bytes, indexes) {
+    const src = await pdfjsLib.getDocument({ data: bytes.slice() }).promise;
+    const out = await PDFLib.PDFDocument.load(bytes);
+    for (const i of indexes) {
+      const page = await src.getPage(i + 1);
+      const vp1 = page.getViewport({ scale: 1 });          // display orientation, rotation applied
+      const scale = Math.min(3, 2400 / Math.max(vp1.width, vp1.height));
+      const vp = page.getViewport({ scale });
+      const c = document.createElement('canvas');
+      c.width = Math.ceil(vp.width);
+      c.height = Math.ceil(vp.height);
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, c.width, c.height);
+      await page.render({ canvasContext: ctx, viewport: vp, intent: 'print' }).promise;
+      const jpg = await out.embedJpg(dataUrlToBytes(c.toDataURL('image/jpeg', 0.88)));
+      const fresh = out.insertPage(i, [vp1.width, vp1.height]);   // no /Rotate: the picture is already upright
+      fresh.drawImage(jpg, { x: 0, y: 0, width: vp1.width, height: vp1.height });
+      out.removePage(i + 1);                                       // the original, shifted by the insert
+    }
+    src.destroy();
+    return new Uint8Array(await out.save());
+  }
+
   // stamp "Page N of M" at the display-bottom-center of each page (rotation-aware)
   async function addPageNumbers(bytes) {
     const src = await pdfjsLib.getDocument({ data: bytes.slice() }).promise;
@@ -4688,6 +4743,17 @@ body.hints-off .editor-main > #editHint { display: none; }
   async function buildFinalBytes(list = tray, options = exportOptions(), password) {
     let bytes = await buildPdfBytes(list);
     let note = '';
+    if (options.permanent) {
+      // every page that carries a white-out becomes a picture: the covered
+      // text is removed from the file, not merely painted over
+      const idx = [];
+      list.forEach((p, i) => { if (p.stamps && p.stamps.some(st => st.kind === 'box')) idx.push(i); });
+      if (idx.length) {
+        busy(true, 'Making white-out permanent…');
+        bytes = await rasterizePages(bytes, idx);
+        note += ' — ' + idx.length + ' page' + (idx.length === 1 ? '' : 's') + ' made permanent';
+      }
+    }
     if (options.numbers) {
       busy(true, 'Adding page numbers…');
       bytes = await addPageNumbers(bytes);
@@ -4849,11 +4915,30 @@ body.hints-off .editor-main > #editHint { display: none; }
     signed:  { h: 'Your signed forms are attached', i: 'Here’s a copy of what you signed, for your records.', s: 'your signed forms for your records' },
     photos:  { h: 'The photos you requested are attached', i: 'The photos are combined into the attached PDF for easy viewing and printing.', s: 'the photos you requested are attached' }
   };
+  let lastAutoSubject = '';
   function applyMailType() {
     const t = MAIL_TYPES[$('mailDocType').value] || MAIL_TYPES.general;
     const subj = $('mailSubject');
     const defaults = Object.values(MAIL_TYPES).map(x => x.s);
-    if (!subj.value.trim() || defaults.includes(subj.value.trim())) subj.value = t.s;
+    // subject follows the document type AND the file name ("your policy documents — Smith Home Policy")
+    const raw = ($('nameInput').value || '').trim().replace(/\.pdf$/i, '');
+    const title = (!raw || /^new-document$/i.test(raw)) ? '' : raw.replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
+    const auto = t.s + (title ? ' — ' + title : '');
+    const cur = subj.value.trim();
+    if (!cur || defaults.includes(cur) || cur === lastAutoSubject) subj.value = auto;
+    lastAutoSubject = auto;
+  }
+  // the last ten addresses this browser sent to, offered as you type
+  const RECENT_TO_KEY = 'bliPdfRecentTo';
+  function loadRecentTo() { try { return JSON.parse(localStorage.getItem(RECENT_TO_KEY)) || []; } catch (_) { return []; } }
+  function rememberRecipient(to) {
+    const v = (to || '').trim();
+    if (!v) return;
+    const list = [v, ...loadRecentTo().filter(x => x.toLowerCase() !== v.toLowerCase())].slice(0, 10);
+    try { localStorage.setItem(RECENT_TO_KEY, JSON.stringify(list)); } catch (_) {}
+  }
+  function renderRecentTo() {
+    $('mailToList').replaceChildren(...loadRecentTo().map(v => { const o = document.createElement('option'); o.value = v; return o; }));
   }
   $('mailDocType').addEventListener('change', applyMailType);
 
@@ -4887,6 +4972,7 @@ body.hints-off .editor-main > #editHint { display: none; }
   function openEmailModal() {
     if (!tray.length) { toast('Put some pages in the New Document tray first.'); return; }
     $('mailBanner').className = 'mail-banner';
+    renderRecentTo();
     applyMailType();
     $('mailShrinkNote').textContent = $('chkShrink').checked ? ', shrunk for email' : '';
     $('emailModal').classList.add('open');
@@ -4958,6 +5044,7 @@ body.hints-off .editor-main > #editHint { display: none; }
       const out = await res.json();
       if (out && out.ok) {
         if (out.attached === 1) {
+          rememberRecipient($('mailTo').value);
           mailBanner(true, '✅ Draft created with <strong>' + cleanName() + '</strong> attached' + r.note +
             ' — <a href="https://mail.google.com/mail/u/0/#drafts" target="_blank">open Gmail Drafts</a> to review and send.' +
             (out.remainingQuota != null ? ' (' + out.remainingQuota + ' sends left today)' : ''));
@@ -5074,16 +5161,28 @@ body.hints-off .editor-main > #editHint { display: none; }
   async function getDocTexts(docId) {
     if (docTextCache.has(docId)) return docTextCache.get(docId);
     const doc = docs.get(docId);
-    if (!doc || doc.kind === 'image') { docTextCache.set(docId, []); return []; }
-    const pdoc = await pdfjsLib.getDocument({ data: doc.bytes.slice() }).promise;
+    if (!doc) { docTextCache.set(docId, []); return []; }
     const texts = [];
-    for (let i = 1; i <= pdoc.numPages; i++) {
-      const tc = await (await pdoc.getPage(i)).getTextContent();
-      texts.push(tc.items.map(it => it.str).join(' ').toLowerCase());
+    if (doc.kind !== 'image') {
+      const pdoc = await pdfjsLib.getDocument({ data: doc.bytes.slice() }).promise;
+      for (let i = 1; i <= pdoc.numPages; i++) {
+        const tc = await (await pdoc.getPage(i)).getTextContent();
+        texts.push(tc.items.map(it => it.str).join(' ').toLowerCase());
+      }
+      pdoc.destroy();
     }
-    pdoc.destroy();
+    // text read by OCR joins the searchable text of its page (scans, photos)
+    if (doc.ocr) for (const [i, t] of Object.entries(doc.ocr)) texts[i] = ((texts[i] || '') + ' ' + String(t).toLowerCase()).trim();
     docTextCache.set(docId, texts);
     return texts;
+  }
+  function rememberOcr(docId, pageIndex, text) {
+    const doc = docs.get(docId);
+    if (!doc || !text || !text.trim()) return;
+    doc.ocr = doc.ocr || {};
+    doc.ocr[pageIndex] = text;
+    docTextCache.delete(docId);
+    scheduleAutosave();
   }
 
   $('btnSearch').addEventListener('click', async () => {
@@ -5104,7 +5203,7 @@ body.hints-off .editor-main > #editHint { display: none; }
         const first = document.querySelector('.page-card.search-hit');
         if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
       } else {
-        toast('No pages contain that text. (Photos and scanned pages cannot be searched.)');
+        toast('No pages contain that text. Scans and photos need "Read scanned pages" first — it is in the ⋯ menu above.');
       }
     } catch (err) {
       console.error(err);
@@ -5226,7 +5325,8 @@ body.hints-off .editor-main > #editHint { display: none; }
         docs: [...docs.entries()].map(([id, d]) => ({
           id, name: d.name, kind: d.kind || 'pdf', bytes: d.bytes,
           imgType: d.imgType || null, imgW: d.imgW || 0, imgH: d.imgH || 0,
-          formFields: d.formFields || 0,
+            formFields: d.formFields || 0,
+            ocr: d.ocr || null,
           pages: d.pages.map(p => ({ sid: p.sid, pageIndex: p.pageIndex, thumb: p.thumb }))
         })),
         tray: tray.map(t => ({ tid: t.tid, docId: t.docId, pageIndex: t.pageIndex, rot: t.rot, stamps: t.stamps, crop: t.crop || null, thumb: t.thumb }))
@@ -5266,7 +5366,8 @@ body.hints-off .editor-main > #editHint { display: none; }
             name: d.name,
             bytes: d.bytes instanceof Uint8Array ? d.bytes : new Uint8Array(d.bytes),
             pages: [],
-            formFields: d.formFields || 0
+            formFields: d.formFields || 0,
+            ocr: d.ocr || null
           };
           if (d.kind === 'image') {
             doc.kind = 'image';
@@ -5538,7 +5639,7 @@ body.hints-off .editor-main > #editHint { display: none; }
 
   /* Named documents, project storage, consistent exports and delivery review. */
   async function askExportPassword(){const reopen=dlg.open;if(reopen)dlg.close();try{return await askSetPassword();}finally{if(reopen)dlg.showModal();}}
-  function exportOptions() { return {numbers:$('chkNumbers').checked,shrink:$('chkShrink').checked,lock:$('chkLock').checked}; }
+  function exportOptions() { return {numbers:$('chkNumbers').checked,shrink:$('chkShrink').checked,lock:$('chkLock').checked,permanent:$('chkPermanent').checked}; }
   const copyPages = pages => JSON.parse(JSON.stringify(pages));
   function packedOutputs() { return outputs.map(o => ({...o,name:o.id===activeOutput?$('nameInput').value:o.name,pages:copyPages(o.id===activeOutput?tray:o.pages)})); }
   function snapshotWorkspace() {
@@ -5548,7 +5649,7 @@ body.hints-off .editor-main > #editHint { display: none; }
     outputs = saved.outputs?.length ? saved.outputs.map(o=>({...o,pages:copyPages(o.pages||[])})) : [{id:'output-1',name:saved.name||'new-document',pages:copyPages(tray)}];
     activeOutput = outputs.some(o=>o.id===saved.activeOutput) ? saved.activeOutput : outputs[0].id;
     projectId=saved.projectId||null; projectName=saved.projectName||'';
-    const options=saved.options||{}; $('chkNumbers').checked=!!options.numbers; $('chkShrink').checked=!!options.shrink; $('chkLock').checked=!!options.lock;
+    const options=saved.options||{}; $('chkNumbers').checked=!!options.numbers; $('chkShrink').checked=!!options.shrink; $('chkLock').checked=!!options.lock; $('chkPermanent').checked=!!options.permanent;
     updateOptBadge(); renderOutputSelect();
   }
   function restoreWorkspace(saved) {
@@ -5644,7 +5745,7 @@ body.hints-off .editor-main > #editHint { display: none; }
     async function render(){if(rendering||closed)return;rendering=true;previous.disabled=true;next.disabled=true;try{const page=await task.getPage(current);if(closed)return;const vp=page.getViewport({scale:Math.min(1.5,900/page.getViewport({scale:1}).width)});canvas.width=vp.width;canvas.height=vp.height;canvas.setAttribute('aria-label','Preview page '+current);label.textContent='Page '+current+' of '+task.numPages;await page.render({canvasContext:canvas.getContext('2d'),viewport:vp,intent:'print'}).promise;}catch(e){if(!closed)label.textContent='Could not preview page '+current;}finally{rendering=false;previous.disabled=current===1;next.disabled=current===task.numPages;}}
     previous.onclick=()=>{if(!rendering&&current>1){current--;void render();}};next.onclick=()=>{if(!rendering&&current<task.numPages){current++;void render();}};await render();
   }
-  async function previewFinal(email=false){if(!tray.length){toast('Choose pages first.');return;}busy(true,'Building preview…');try{const options=exportOptions(),r=await buildFinalBytes(tray,{...options,lock:false});const filename=cleanName();showDialog(email?'Review email and attachment':'Preview finished PDF',`<p id="previewSummary"></p><p class="studio-note">${options.lock?'Password protection is selected. Choose the password when saving or creating the draft.':'No password protection selected.'}</p>${email?'<iframe class="email-preview" id="emailBodyPreview" title="Email body preview" sandbox></iframe>':''}<div class="studio-row"><button id="savePreview" class="primary">Save this PDF</button></div><div id="finalPages" class="studio-preview"></div>`);$('previewSummary').textContent=filename+' • '+tray.length+' pages • '+fmtSize(r.bytes.length)+(options.lock?' before locking':'')+(options.numbers?' • Numbered':'')+(r.note||'');if(email)$('emailBodyPreview').srcdoc=buildEmailHtml();$('savePreview').onclick=async()=>{let bytes=r.bytes;if(options.lock){const pw=await askExportPassword();if(!pw)return;bytes=await lockPdfBytes(bytes,pw);}download(bytes,filename);};await renderPdfPreview(r.bytes,$('finalPages'));}catch(e){toast('Could not preview PDF: '+e.message);}finally{busy(false);}}
+  async function previewFinal(email=false){if(!tray.length){toast('Choose pages first.');return;}busy(true,'Building preview…');try{const options=exportOptions(),r=await buildFinalBytes(tray,{...options,lock:false});const filename=cleanName();showDialog(email?'Review email and attachment':'Preview finished PDF',`<p id="previewSummary"></p><p class="studio-note">${options.lock?'Password protection is selected. Choose the password when saving or creating the draft.':'No password protection selected.'}</p>${email?'<iframe class="email-preview" id="emailBodyPreview" title="Email body preview" sandbox></iframe>':''}<div class="studio-row"><button id="savePreview" class="primary">Save this PDF</button></div><div id="finalPages" class="studio-preview"></div>`);$('previewSummary').textContent=filename+' • '+tray.length+' pages • '+fmtSize(r.bytes.length)+(options.lock?' before locking':'')+(options.numbers?' • Numbered':'')+(options.permanent?' • Permanent white-out':'')+(r.note||'');if(email)$('emailBodyPreview').srcdoc=buildEmailHtml();$('savePreview').onclick=async()=>{let bytes=r.bytes;if(options.lock){const pw=await askExportPassword();if(!pw)return;bytes=await lockPdfBytes(bytes,pw);}download(bytes,filename);};await renderPdfPreview(r.bytes,$('finalPages'));}catch(e){toast('Could not preview PDF: '+e.message);}finally{busy(false);}}
       $('btnPreviewFinal').onclick=()=>previewFinal();$('btnEmailPreview').onclick=()=>previewFinal(true);
   const retry=document.createElement('div');retry.id='mailRetryCheck';retry.hidden=!mailUncertain;retry.innerHTML='<p>A previous draft request has an uncertain outcome. Check Gmail Drafts before retrying.</p><a href="https://mail.google.com/mail/u/0/#drafts" target="_blank" rel="noopener">Open Gmail Drafts</a> <button id="mailRetryAllow">I checked Gmail — allow another attempt</button>';$('btnEmailGo').parentElement.before(retry);
   $('mailRetryAllow').onclick=()=>{mailUncertain=false;localStorage.removeItem('bliPdfMailUncertain');retry.hidden=true;$('btnEmailGo').disabled=false;};$('btnEmailGo').disabled=mailUncertain;
@@ -5678,9 +5779,58 @@ body.hints-off .editor-main > #editHint { display: none; }
     $('runOCR').onclick=async()=>{
       const status=$('ocrStatus'),result=$('ocrResult'),run=$('runOCR'),cancel=$('cancelOCR'),save=$('saveOCR'),lang=$('ocrLanguage').value;
       cancelled=false;run.disabled=true;cancel.disabled=false;save.disabled=true;status.textContent='Preparing page…';
-      try{const lib=await loadOCR();if(cancelled)return;worker=await lib.createWorker(lang,1,{logger:m=>{if(!cancelled)status.textContent=m.status+(m.progress!=null?' '+Math.round(m.progress*100)+'%':'');}});if(cancelled)return;const bytes=await buildPdfBytes(page),pdf=await pdfjsLib.getDocument({data:bytes}).promise;try{const p=await pdf.getPage(1),base=p.getViewport({scale:1}),vp=p.getViewport({scale:Math.min(3,2200/Math.max(base.width,base.height))}),c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;await p.render({canvasContext:c.getContext('2d'),viewport:vp,intent:'print'}).promise;const output=await worker.recognize(c);if(!cancelled){result.value=output.data.text;status.textContent='Text extracted. Review names, numbers and dates carefully.';save.disabled=false;}}finally{pdf.destroy();}}catch(e){if(!cancelled)status.textContent='Could not read this page: '+e.message;}finally{if(worker){await worker.terminate();worker=null;}run.disabled=false;cancel.disabled=true;}
+      try{const lib=await loadOCR();if(cancelled)return;worker=await lib.createWorker(lang,1,{logger:m=>{if(!cancelled)status.textContent=m.status+(m.progress!=null?' '+Math.round(m.progress*100)+'%':'');}});if(cancelled)return;const bytes=await buildPdfBytes(page),pdf=await pdfjsLib.getDocument({data:bytes}).promise;try{const p=await pdf.getPage(1),base=p.getViewport({scale:1}),vp=p.getViewport({scale:Math.min(3,2200/Math.max(base.width,base.height))}),c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;await p.render({canvasContext:c.getContext('2d'),viewport:vp,intent:'print'}).promise;const output=await worker.recognize(c);if(!cancelled){result.value=output.data.text;rememberOcr(page[0].docId,page[0].pageIndex,output.data.text);status.textContent='Text extracted and added to Find — this page is searchable now. Review names, numbers and dates carefully.';save.disabled=false;}}finally{pdf.destroy();}}catch(e){if(!cancelled)status.textContent='Could not read this page: '+e.message;}finally{if(worker){await worker.terminate();worker=null;}run.disabled=false;cancel.disabled=true;}
     };
     $('saveOCR').onclick=()=>downloadBlob(new Blob([$('ocrResult').value],{type:'text/plain;charset=utf-8'}),'extracted-page-text.txt');
+  };
+
+  // bulk OCR: every page with no selectable text becomes searchable
+  $('btnOcrAll').onclick = async () => {
+    closeAllMenus();
+    if (!docs.size) { toast('Load a PDF or photo first.'); return; }
+    showDialog('Read scanned pages', '<p>Pages with no selectable text (scans and photos) are read on this device so Find can search them. Nothing is uploaded and your PDFs are not changed.</p><label for="ocrAllLang">Language</label><select id="ocrAllLang"><option value="eng">English</option><option value="spa">Spanish</option></select><div class="studio-row"><button id="ocrAllRun" class="primary">Start</button><button id="ocrAllStop" disabled>Stop</button></div><p id="ocrAllStatus" role="status"></p>');
+    let cancelled = false, worker = null;
+    const stop = async () => { cancelled = true; if (worker) { const w = worker; worker = null; await w.terminate(); } };
+    dialogCleanup = () => void stop();
+    $('ocrAllStop').onclick = () => void stop();
+    $('ocrAllRun').onclick = async () => {
+      const status = $('ocrAllStatus'), run = $('ocrAllRun'), stopBtn = $('ocrAllStop');
+      run.disabled = true; stopBtn.disabled = false; cancelled = false;
+      let done = 0;
+      try {
+        const todo = [];
+        for (const [docId, doc] of docs) {
+          const texts = await getDocTexts(docId);
+          doc.pages.forEach(pg => {
+            const already = doc.ocr && doc.ocr[pg.pageIndex];
+            if (!already && (texts[pg.pageIndex] || '').replace(/\s+/g, '').length < 20) todo.push({ docId, pageIndex: pg.pageIndex, name: doc.name });
+          });
+        }
+        if (!todo.length) { status.textContent = 'Every page already has searchable text.'; return; }
+        status.textContent = 'Loading the reader…';
+        const lib = await loadOCR();
+        if (cancelled) return;
+        worker = await lib.createWorker($('ocrAllLang').value, 1);
+        for (const t of todo) {
+          if (cancelled || !worker) break;
+          status.textContent = 'Reading ' + t.name + ' page ' + (t.pageIndex + 1) + ' (' + (done + 1) + ' of ' + todo.length + ')…';
+          const bytes = await buildPdfBytes([{ docId: t.docId, pageIndex: t.pageIndex, rot: 0, stamps: [] }]);
+          const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+          try {
+            const pg = await pdf.getPage(1), base = pg.getViewport({ scale: 1 });
+            const vp = pg.getViewport({ scale: Math.min(3, 2200 / Math.max(base.width, base.height)) });
+            const c = document.createElement('canvas'); c.width = vp.width; c.height = vp.height;
+            await pg.render({ canvasContext: c.getContext('2d'), viewport: vp, intent: 'print' }).promise;
+            if (cancelled || !worker) break;
+            const r = await worker.recognize(c);
+            rememberOcr(t.docId, t.pageIndex, r.data.text);
+            done++;
+          } finally { pdf.destroy(); }
+        }
+        status.textContent = (cancelled ? 'Stopped after ' : 'Done — ') + done + ' page' + (done === 1 ? '' : 's') + ' now searchable with Find.';
+      } catch (e) { status.textContent = 'Could not read pages: ' + e.message; }
+      finally { if (worker) { const w = worker; worker = null; await w.terminate(); } run.disabled = false; stopBtn.disabled = true; }
+    };
   };
 
   const modalNames={editModal:'Edit PDF page',emailModal:'Email as Gmail draft',formsModal:'Forms Library',phoneModal:'Phone setup',formModal:'Fill PDF form',viewModal:'PDF page preview',sigPanel:'Signature'};
@@ -5705,7 +5855,7 @@ body.hints-off .editor-main > #editHint { display: none; }
       const doc = [...docs.values()][docNo];
       if (doc) { trayAdd(doc.pages[pageIndex]); renderAll(); }
     },
-    buildPdfBytes, buildFinalBytes, parseRanges, zipBytes, snapshotWorkspace, restoreWorkspace, travelHistory, exportOptions,
+    buildPdfBytes, buildFinalBytes, parseRanges, zipBytes, rasterizePages, rememberOcr, getDocTexts, applyMailType, snapshotWorkspace, restoreWorkspace, travelHistory, exportOptions,
     openEditorFor: (i) => { if (tray[i]) openEditor(tray[i]); },
     formsAdd: addFormToLibrary,
     formsList: async () => { const r = await formsApi('/list'); return (await r.json()).forms; },
