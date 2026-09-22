@@ -9,7 +9,7 @@ const equal = (a,b) => {if(a.length!==b.length)return false;let difference=0;for
 async function sign(value,secret) {const key=await crypto.subtle.importKey('raw',encoder.encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);return hex(await crypto.subtle.sign('HMAC',key,encoder.encode(value)));}
 const flags=`Path=${ROOT}; HttpOnly; Secure; SameSite=Strict`;
 const escape = value => String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-function protect(response) {const result=new Response(response.body,response);result.headers.set('Cache-Control','private, no-store');result.headers.set('X-Robots-Tag','noindex, nofollow');result.headers.set('Referrer-Policy','same-origin');result.headers.set('X-Content-Type-Options','nosniff');result.headers.set('X-Frame-Options','DENY');return result;}
+function protect(response) {const result=new Response(response.body,response);result.headers.set('Cache-Control','private, no-store');result.headers.set('X-Toolkit-Release','20260922-3');result.headers.set('X-Robots-Tag','noindex, nofollow');result.headers.set('Referrer-Policy','same-origin');result.headers.set('X-Content-Type-Options','nosniff');result.headers.set('X-Frame-Options','DENY');return result;}
 function redirect(path,cookies=[]) {const headers=new Headers({Location:path});for(const cookie of cookies)headers.append('Set-Cookie',cookie);return protect(new Response(null,{status:303,headers}));}
 const readCookie=(request,name)=>(request.headers.get('Cookie')||'').split(';').map(p=>p.trim()).find(p=>p.startsWith(name+'='))?.slice(name.length+1)||'';
 async function token(payload,secret){return payload+'.'+await sign(payload,secret);}
@@ -42,12 +42,15 @@ export async function onRequest(context) {
    // Never resend the state-changing POST or forward its secret to a redirect.
    const signal=AbortSignal.timeout(45000);
    let res=await fetch(authURL.href,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...data,ipHash,secret:env.CLIENT_TOOLKIT_AUTH_SECRET}),redirect:'manual',signal});
+   console.log('Toolkit service response status',res.status);
    if([301,302,303].includes(res.status)){
     const target=new URL(res.headers.get('Location'));
     if(target.protocol!=='https:'||target.hostname!=='script.googleusercontent.com')throw Error();
-    await res.body?.cancel();
+    // Cancellation must not block following Google's response URL.
+    res.body?.cancel().catch(()=>{});
     res=await fetch(target.href,{method:'GET',redirect:'error',signal});
    }
+   console.log('Toolkit service result status',res.status);
    if(!res.ok)throw Error();const result=await res.json();if(!result||typeof result.ok!=='boolean')throw Error();return result;
   }
   try {
