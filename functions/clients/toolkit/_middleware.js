@@ -1,3 +1,4 @@
+import {permit,issue,consume} from './_auth-store.js';
 // Email one-time-code sign-in. All secrets and approved addresses are server-side.
 const ROOT = '/clients/toolkit';
 const COOKIE = '__Secure-bli_toolkit_email';
@@ -9,7 +10,7 @@ const equal = (a,b) => {if(a.length!==b.length)return false;let difference=0;for
 async function sign(value,secret) {const key=await crypto.subtle.importKey('raw',encoder.encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);return hex(await crypto.subtle.sign('HMAC',key,encoder.encode(value)));}
 const flags=`Path=${ROOT}; HttpOnly; Secure; SameSite=Strict`;
 const escape = value => String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-function protect(response) {const result=new Response(response.body,response);result.headers.set('Cache-Control','private, no-store');result.headers.set('X-Toolkit-Release','20260922-3');result.headers.set('X-Robots-Tag','noindex, nofollow');result.headers.set('Referrer-Policy','same-origin');result.headers.set('X-Content-Type-Options','nosniff');result.headers.set('X-Frame-Options','DENY');return result;}
+function protect(response) {const result=new Response(response.body,response);result.headers.set('Cache-Control','private, no-store');result.headers.set('X-Toolkit-Release','20260922-4');result.headers.set('X-Robots-Tag','noindex, nofollow');result.headers.set('Referrer-Policy','same-origin');result.headers.set('X-Content-Type-Options','nosniff');result.headers.set('X-Frame-Options','DENY');return result;}
 function redirect(path,cookies=[]) {const headers=new Headers({Location:path});for(const cookie of cookies)headers.append('Set-Cookie',cookie);return protect(new Response(null,{status:303,headers}));}
 const readCookie=(request,name)=>(request.headers.get('Cookie')||'').split(';').map(p=>p.trim()).find(p=>p.startsWith(name+'='))?.slice(name.length+1)||'';
 async function token(payload,secret){return payload+'.'+await sign(payload,secret);}
@@ -22,7 +23,7 @@ function page({message='',status=200,verify=false,local=false}={}) {
 function newCode(){let value;do{value=crypto.getRandomValues(new Uint32Array(1))[0];}while(value>=4294000000);return String(value%1000000).padStart(6,'0');}
 export async function onRequest(context) {
  const {request,env}=context,url=new URL(request.url);let emails,authURL,local=false;
- try {emails=JSON.parse(env.CLIENT_TOOLKIT_APPROVED_EMAILS||'null');authURL=new URL(env.CLIENT_TOOLKIT_AUTH_URL);local=['127.0.0.1','localhost'].includes(url.hostname)&&authURL.hostname==='127.0.0.1'&&authURL.port==='8098';if(!Array.isArray(emails)||!emails.length||emails.some(e=>typeof e!=='string'||e.length>254||e!==e.trim().toLowerCase()||!/^\S+@\S+\.\S+$/.test(e))||typeof env.CLIENT_TOOLKIT_SESSION_SECRET!=='string'||env.CLIENT_TOOLKIT_SESSION_SECRET.length<32||typeof env.CLIENT_TOOLKIT_AUTH_SECRET!=='string'||env.CLIENT_TOOLKIT_AUTH_SECRET.length<32||(!local&&(authURL.protocol!=='https:'||authURL.hostname!=='script.google.com'||!/^\/macros\/s\/[^/]+\/exec$/.test(authURL.pathname))))throw Error();}
+ try {emails=JSON.parse(env.CLIENT_TOOLKIT_APPROVED_EMAILS||'null');authURL=new URL(env.CLIENT_TOOLKIT_AUTH_URL);local=['127.0.0.1','localhost'].includes(url.hostname)&&authURL.hostname==='127.0.0.1'&&authURL.port==='8098';if(!env.CLIENT_TOOLKIT_DB||!Array.isArray(emails)||!emails.length||emails.some(e=>typeof e!=='string'||e.length>254||e!==e.trim().toLowerCase()||!/^\S+@\S+\.\S+$/.test(e))||typeof env.CLIENT_TOOLKIT_SESSION_SECRET!=='string'||env.CLIENT_TOOLKIT_SESSION_SECRET.length<32||typeof env.CLIENT_TOOLKIT_AUTH_SECRET!=='string'||env.CLIENT_TOOLKIT_AUTH_SECRET.length<32||(!local&&(authURL.protocol!=='https:'||authURL.hostname!=='script.google.com'||!/^\/macros\/s\/[^/]+\/exec$/.test(authURL.pathname))))throw Error();}
  catch{return page({message:'Client sign-in is not ready yet. Please call our team for help.',status:503});}
  const secret=env.CLIENT_TOOLKIT_SESSION_SECRET,now=Math.floor(Date.now()/1000),hashes=await Promise.all(emails.map(digest));
  const atAccess=/^\/clients\/toolkit\/access\/?$/.test(url.pathname),atLogout=/^\/clients\/toolkit\/logout\/?$/.test(url.pathname);
@@ -42,23 +43,28 @@ export async function onRequest(context) {
    // Never resend the state-changing POST or forward its secret to a redirect.
    const signal=AbortSignal.timeout(45000);
    let res=await fetch(authURL.href,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...data,ipHash,secret:env.CLIENT_TOOLKIT_AUTH_SECRET}),redirect:'manual',signal});
-   console.log('Toolkit service response status',res.status);
+
    for(let hop=0;hop<3&&[301,302,303,307,308].includes(res.status);hop++){
     const target=new URL(res.headers.get('Location'));
-    console.log('Toolkit service redirect host',target.hostname);
+
     if(target.protocol!=='https:'||target.hostname!=='script.googleusercontent.com')throw Error();
-    try {res=await fetch(target.href,{method:'GET',redirect:'manual',signal});}
-    catch(error){console.log('Toolkit response fetch error',error.name,String(error.message).split('https:')[0].slice(0,120));throw error;}
+    res=await fetch(target.href,{method:'GET',redirect:'manual',signal});
    }
-   console.log('Toolkit service result status',res.status);
+
    if(!res.ok)throw Error();const result=await res.json();if(!result||typeof result.ok!=='boolean')throw Error();return result;
   }
   try {
    if(form.get('action')==='request') {
     const email=(form.get('email')||'').trim().toLowerCase();if(email.length>254||!/^\S+@\S+\.\S+$/.test(email))return show('Enter a valid email address.',400,false);
     const emailHash=await digest(email),id=hex(crypto.getRandomValues(new Uint8Array(16))),code=newCode(),codeHash=await sign(`${id}|${emailHash}|${code}`,env.CLIENT_TOOLKIT_AUTH_SECRET);
-    const result=await service({action:'issue',id,email,emailHash,code,codeHash,approved:emails.includes(email)});
-    if(!result.ok)return show(['limited','cooldown'].includes(result.reason)?'Please wait before requesting another code. Try again later or call our team.':'Email sign-in is temporarily unavailable. Please try again later.',result.reason==='limited'||result.reason==='cooldown'?429:503,false);
+    const db=env.CLIENT_TOOLKIT_DB;
+    if(!await permit(db,'total',100,86400,now)||!await permit(db,'ip:'+ipHash,40,900,now)||!await permit(db,'cool:'+emailHash,1,60,now)||!await permit(db,'email:'+emailHash,5,3600,now))return show('Please wait before requesting another code. Try again later or call our team.',429,false);
+    if(emails.includes(email)){
+     await issue(db,id,emailHash,codeHash,now);
+     // Mail delivery runs after the response; verification never depends on Google.
+     // An uncertain delivery is never automatically retried.
+     context.waitUntil(service({action:'issue',id,email,emailHash,code,codeHash,approved:true}).then(result=>{if(!result.ok)console.warn('Toolkit email delivery was not confirmed');}).catch(()=>console.warn('Toolkit email delivery response unavailable')));
+    }
     const value=await token(`${id}.${emailHash}.${now+600}.${form.get('remember')==='yes'?'1':'0'}`,secret);
     return redirect(ROOT+'/access',[`${CHALLENGE}=${value}; ${flags}; Max-Age=600`]);
    }
@@ -67,9 +73,9 @@ export async function onRequest(context) {
     const code=(form.get('code')||'').trim();
     // Even malformed codes consume an attempt rather than bypassing the limit.
     const codeHash=await sign(`${challenge[0]}|${challenge[1]}|${/^\d{6}$/.test(code)?code:'invalid'}`,env.CLIENT_TOOLKIT_AUTH_SECRET);
-    const result=await service({action:'verify',id:challenge[0],emailHash:challenge[1],codeHash});
-    if(!result.ok)return show(result.reason==='limited'?'Too many attempts. Please try again later.':'Sign-in is temporarily unavailable. Please try again later.',result.reason==='limited'?429:503);
-    if(!result.verified||!hashes.includes(challenge[1]))return show('That code is incorrect, expired or already used. Try again or request a new code.',401);
+    if(!await permit(env.CLIENT_TOOLKIT_DB,'verify:'+ipHash,40,900,now))return show('Too many attempts. Please try again later.',429);
+    const accepted=hashes.includes(challenge[1])&&await consume(env.CLIENT_TOOLKIT_DB,challenge[0],challenge[1],codeHash,now,equal);
+    if(!accepted)return show('That code is incorrect, expired or already used. Try again or request a new code.',401);
     const remember=challenge[3]==='1',ttl=remember?30*86400:8*3600;
     const session=await token(`${challenge[1]}.${now}.${now+ttl}.${remember?'1':'0'}`,secret);
     return redirect(ROOT+'/',[`${COOKIE}=${session}; ${flags}${remember?`; Max-Age=${ttl}`:''}`,`${CHALLENGE}=; ${flags}; Max-Age=0`,`__Secure-bli_toolkit=; ${flags}; Max-Age=0`]);
