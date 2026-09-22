@@ -37,7 +37,19 @@ export async function onRequest(context) {
   if(Number(request.headers.get('Content-Length')||0)>2048)return show('Please check your entry.',413);
   const raw=await request.text();if(raw.length>2048)return show('Please check your entry.',413);const form=new URLSearchParams(raw);
   const ipHash=await sign('ip|'+(request.headers.get('CF-Connecting-IP')||'unknown'),env.CLIENT_TOOLKIT_AUTH_SECRET);
-  async function service(data){const res=await fetch(authURL.href,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({...data,ipHash,secret:env.CLIENT_TOOLKIT_AUTH_SECRET}),redirect:'follow',signal:AbortSignal.timeout(20000)});if(!res.ok)throw Error();const result=await res.json();if(!result||typeof result.ok!=='boolean')throw Error();return result;}
+  async function service(data){
+   // Apps Script serves ContentService replies through a separate GET URL.
+   // Never resend the state-changing POST or forward its secret to a redirect.
+   const signal=AbortSignal.timeout(45000);
+   let res=await fetch(authURL.href,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...data,ipHash,secret:env.CLIENT_TOOLKIT_AUTH_SECRET}),redirect:'manual',signal});
+   if([301,302,303].includes(res.status)){
+    const target=new URL(res.headers.get('Location'));
+    if(target.protocol!=='https:'||target.hostname!=='script.googleusercontent.com')throw Error();
+    await res.body?.cancel();
+    res=await fetch(target.href,{method:'GET',redirect:'error',signal});
+   }
+   if(!res.ok)throw Error();const result=await res.json();if(!result||typeof result.ok!=='boolean')throw Error();return result;
+  }
   try {
    if(form.get('action')==='request') {
     const email=(form.get('email')||'').trim().toLowerCase();if(email.length>254||!/^\S+@\S+\.\S+$/.test(email))return show('Enter a valid email address.',400,false);
