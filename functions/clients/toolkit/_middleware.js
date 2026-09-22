@@ -43,13 +43,12 @@ export async function onRequest(context) {
    const signal=AbortSignal.timeout(45000);
    let res=await fetch(authURL.href,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...data,ipHash,secret:env.CLIENT_TOOLKIT_AUTH_SECRET}),redirect:'manual',signal});
    console.log('Toolkit service response status',res.status);
-   if([301,302,303].includes(res.status)){
+   for(let hop=0;hop<3&&[301,302,303,307,308].includes(res.status);hop++){
     const target=new URL(res.headers.get('Location'));
     console.log('Toolkit service redirect host',target.hostname);
     if(target.protocol!=='https:'||target.hostname!=='script.googleusercontent.com')throw Error();
-    // Cancellation must not block following Google's response URL.
-    res.body?.cancel().catch(()=>{});
-    res=await fetch(target.href,{method:'GET',redirect:'error',signal});
+    try {res=await fetch(target.href,{method:'GET',redirect:'manual',signal});}
+    catch(error){console.log('Toolkit response fetch error',error.name,String(error.message).split('https:')[0].slice(0,120));throw error;}
    }
    console.log('Toolkit service result status',res.status);
    if(!res.ok)throw Error();const result=await res.json();if(!result||typeof result.ok!=='boolean')throw Error();return result;
