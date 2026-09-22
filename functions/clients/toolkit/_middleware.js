@@ -45,6 +45,7 @@ export async function onRequest(context) {
    console.log('Toolkit service response status',res.status);
    if([301,302,303].includes(res.status)){
     const target=new URL(res.headers.get('Location'));
+    console.log('Toolkit service redirect host',target.hostname);
     if(target.protocol!=='https:'||target.hostname!=='script.googleusercontent.com')throw Error();
     // Cancellation must not block following Google's response URL.
     res.body?.cancel().catch(()=>{});
