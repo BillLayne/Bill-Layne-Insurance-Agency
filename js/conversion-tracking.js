@@ -6,6 +6,7 @@
 
     function pageType() {
         var path = window.location.pathname.toLowerCase();
+        if (path.indexOf('/auto-renters-insurance-nc') === 0) return 'auto_renters';
         if (path.indexOf('/auto-center') === 0) return 'auto';
         if (path.indexOf('/home-insurance') === 0) return 'home';
         if (path.indexOf('/claims-center') === 0) return 'claims';
