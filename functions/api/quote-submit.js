@@ -12,7 +12,7 @@ export async function onRequest({ request }) {
     const raw = await request.text();
     if (new TextEncoder().encode(raw).length > 100000) return reply({ ok: false }, 413);
     data = JSON.parse(raw);
-    if (!data || !['auto_insurance', 'home_insurance'].includes(data.form_type)) return reply({ ok: false }, 400);
+    if (!data || !['auto_insurance', 'home_insurance', 'renters_insurance'].includes(data.form_type)) return reply({ ok: false }, 400);
   } catch { return reply({ ok: false }, 400); }
 
   try {
@@ -21,7 +21,7 @@ export async function onRequest({ request }) {
       body: JSON.stringify(data), redirect: 'follow', signal: AbortSignal.timeout(45000)
     });
     const result = await upstream.json();
-    const type = data.form_type === 'auto_insurance' ? 'AUTO' : 'HOME';
+    const type = data.form_type === 'auto_insurance' ? 'AUTO' : data.form_type === 'renters_insurance' ? 'RENTERS' : 'HOME';
     if (!upstream.ok || result.ok !== true || result.quoteType !== type ||
         typeof result.confirmationNumber !== 'string' ||
         !new RegExp('^' + type + '-[0-9]{6}-[A-Z0-9]{4}$').test(result.confirmationNumber)) {
