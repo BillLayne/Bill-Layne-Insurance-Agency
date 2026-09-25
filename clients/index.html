@@ -88,7 +88,7 @@
         }
     </style>
     <noscript><style>.reveal{opacity:1 !important;transform:none !important}</style></noscript>
-    <link rel="stylesheet" href="/clients/hero.css?v=20260925-3">
+    <link rel="stylesheet" href="/clients/hero.css?v=20260925-4">
 </head>
 
 <body class="bg-slate-50 text-slate-800 font-sans overflow-x-hidden selection:bg-teal-200 selection:text-teal-900">
@@ -534,6 +534,13 @@
         </div>
     </footer>
 
+    <!-- Mobile quick actions, matching the Service Center dock. -->
+    <nav class="hub-mobile-dock" aria-label="Mobile quick actions">
+        <a href="tel:3368351993" class="hub-dock-btn hub-dock-call"><i class="fas fa-phone-alt" aria-hidden="true"></i> Call</a>
+        <a href="#actions" class="hub-dock-btn hub-dock-help"><i class="fas fa-comment-dots" aria-hidden="true"></i> Get Help</a>
+        <button type="button" id="hub-dock-menu" class="hub-dock-btn hub-dock-menu" aria-controls="menu-drawer" aria-expanded="false"><i class="fas fa-bars" aria-hidden="true"></i> Menu</button>
+    </nav>
+
     <!-- SCRIPTS -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -547,12 +554,15 @@
 
             // Mobile Menu
             const menuToggle = document.getElementById('menu-toggle');
+            const dockMenu = document.getElementById('hub-dock-menu');
             const menuClose = document.getElementById('menu-close');
             const menuDrawer = document.getElementById('menu-drawer');
             const menuOverlay = document.getElementById('menu-overlay');
             const body = document.body;
 
             function toggleMenu(show) {
+                menuToggle.setAttribute('aria-expanded', String(show));
+                dockMenu.setAttribute('aria-expanded', String(show));
                 if (show) {
                     menuDrawer.classList.remove('translate-x-full');
                     menuOverlay.classList.remove('opacity-0', 'pointer-events-none');
@@ -564,6 +574,10 @@
                 }
             }
             if(menuToggle) menuToggle.addEventListener('click', () => toggleMenu(true));
+            dockMenu.addEventListener('click', () => toggleMenu(true));
+            document.addEventListener('keydown', event => {
+                if (event.key === 'Escape') toggleMenu(false);
+            });
             if(menuClose) menuClose.addEventListener('click', () => toggleMenu(false));
             if(menuOverlay) menuOverlay.addEventListener('click', () => toggleMenu(false));
 
