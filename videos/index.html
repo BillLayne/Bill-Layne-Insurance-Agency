@@ -386,18 +386,481 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
-        .bg-vivid-hero {
-            background: linear-gradient(rgba(15, 23, 42, 0.65), rgba(30, 58, 138, 0.6)), url("https://img.billlayneinsurance.com/i/2026/08/im-ddgmv4c-4k7nvz.png") center/cover no-repeat;
-            position: relative;
+        /* ------------------------------------------------------------
+           Video Hub header + hero (2026-09 redesign): cream header,
+           solid navy hero with gold accents, featured video card on the
+           right (desktop) or between the copy and the buttons (mobile),
+           cream Auto | Home | Claims strip underneath.
+           ------------------------------------------------------------ */
+        :root {
+            --vh-navy: #0b1f3f;
+            --vh-cream: #f7f3ea;
+            --vh-gold: #f5c542;
+            --vh-gold-dark: #e6b32e;
+            --vh-ink: #10214a;
+            --vh-blue: #1d5cf5;
         }
-        .bg-vivid-hero::before {
+
+        .vh-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: var(--vh-cream);
+            border-bottom: 1px solid rgba(16, 33, 74, 0.08);
+        }
+
+        .vh-header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 5rem;
+        }
+
+        .vh-brand {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+            text-decoration: none;
+            color: var(--vh-ink);
+        }
+
+        .vh-brand-name {
+            font-family: 'Outfit', 'Inter', sans-serif;
+            font-size: 1.55rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+        }
+
+        .vh-brand-name span {
+            color: var(--vh-blue);
+        }
+
+        .vh-brand-sub {
+            margin-top: 0.3rem;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: #3b4a73;
+        }
+
+        .vh-nav {
+            display: none;
+            align-items: center;
+            gap: 2.25rem;
+        }
+
+        .vh-nav a {
+            color: var(--vh-ink);
+            font-weight: 600;
+            font-size: 1.05rem;
+            text-decoration: none;
+            padding: 0.5rem 0;
+            border-bottom: 2px solid transparent;
+            min-height: 0;
+        }
+
+        .vh-nav a:hover,
+        .vh-nav a[aria-current="page"] {
+            border-bottom-color: var(--vh-gold);
+        }
+
+        .vh-header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.75rem;
+        }
+
+        .vh-menu-btn {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            width: 44px;
+            height: 44px;
+            padding: 0 6px;
+            background: none;
+            border: 0;
+            border-radius: 8px;
+        }
+
+        .vh-menu-btn span {
+            display: block;
+            height: 3px;
+            border-radius: 2px;
+            background: var(--vh-ink);
+        }
+
+        @media (min-width: 768px) {
+            .vh-brand-name {
+                font-size: 1.9rem;
+            }
+
+            .vh-brand-sub {
+                font-size: 0.74rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .vh-nav {
+                display: flex;
+            }
+        }
+
+        .vh-hero {
+            background: var(--vh-navy);
+            color: #fff;
+            padding: 2.5rem 0 2.75rem;
+        }
+
+        .vh-grid {
+            display: grid;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .vh-kicker {
+            margin: 0 0 1rem;
+            color: var(--vh-gold);
+            font-size: 0.82rem;
+            font-weight: 800;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+        }
+
+        .vh-kicker .dot {
+            margin: 0 0.5rem;
+        }
+
+        .vh-hero h1 {
+            margin: 0 0 1rem;
+            font-family: 'Outfit', 'Inter', sans-serif;
+            font-size: clamp(2.5rem, 4vw, 4rem);
+            font-weight: 900;
+            line-height: 1.0;
+            letter-spacing: -0.03em;
+            color: #fff;
+        }
+
+        .vh-hero h1 .line {
+            display: block;
+        }
+
+        .vh-hero h1 .gold {
+            color: var(--vh-gold);
+        }
+
+        .vh-lede {
+            margin: 0 0 0.35rem;
+            font-size: clamp(1.1rem, 1.6vw, 1.45rem);
+            font-weight: 600;
+            line-height: 1.35;
+            color: #fff;
+        }
+
+        .vh-sub {
+            margin: 0;
+            font-size: clamp(1rem, 1.35vw, 1.25rem);
+            line-height: 1.4;
+            color: #b9c6e2;
+        }
+
+        .vh-media {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 18px;
+            overflow: hidden;
+            background: #1b2b4e;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+        }
+
+        .vh-media-btn {
+            position: absolute;
+            inset: 0;
+            display: block;
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            border: 0;
+            background: none;
+            text-align: left;
+        }
+
+        .vh-media-btn img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .vh-media-btn::after {
             content: '';
             position: absolute;
             inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
-            opacity: 0.4;
-            mix-blend-mode: overlay;
-            pointer-events: none;
+            background: linear-gradient(180deg, rgba(11, 31, 63, 0) 45%, rgba(11, 31, 63, 0.78) 100%);
+        }
+
+        .vh-play {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            z-index: 2;
+            width: 4.5rem;
+            height: 4.5rem;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #fff;
+            color: var(--vh-navy);
+            font-size: 1.6rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            transition: transform 0.2s ease;
+        }
+
+        .vh-play i {
+            margin-left: 4px;
+        }
+
+        .vh-media-btn:hover .vh-play {
+            transform: translate(-50%, -50%) scale(1.08);
+        }
+
+        .vh-media-caption {
+            position: absolute;
+            left: 1.25rem;
+            right: 1.25rem;
+            bottom: 1.1rem;
+            z-index: 2;
+            color: #fff;
+            line-height: 1.2;
+        }
+
+        .vh-media-caption strong {
+            display: block;
+            font-family: 'Outfit', 'Inter', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 800;
+        }
+
+        .vh-media-caption span {
+            display: block;
+            margin-top: 0.2rem;
+            font-size: 1.05rem;
+            color: #d5deef;
+        }
+
+        .vh-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+
+        .vh-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            width: 100%;
+            min-height: 64px;
+            padding: 0.9rem 1.5rem;
+            border-radius: 14px;
+            font-family: 'Outfit', 'Inter', sans-serif;
+            font-size: 1.45rem;
+            font-weight: 800;
+            text-decoration: none;
+            transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .vh-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .vh-btn-gold {
+            background: var(--vh-gold);
+            color: var(--vh-ink);
+            box-shadow: 0 12px 30px rgba(245, 197, 66, 0.28);
+        }
+
+        .vh-btn-gold:hover {
+            background: var(--vh-gold-dark);
+        }
+
+        .vh-btn-gold .vh-btn-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: var(--vh-navy);
+            color: #fff;
+            font-size: 0.95rem;
+        }
+
+        .vh-btn-gold .vh-btn-icon i {
+            margin-left: 3px;
+        }
+
+        .vh-btn-outline {
+            border: 2px solid rgba(255, 255, 255, 0.85);
+            color: #fff;
+            background: transparent;
+        }
+
+        .vh-btn-outline:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .vh-btn-outline .vh-btn-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.6rem;
+            height: 1.85rem;
+            border-radius: 8px;
+            background: #ff0000;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .vh-note {
+            margin: 0.2rem 0 0;
+            text-align: center;
+            color: #9fb0d2;
+            font-size: 0.98rem;
+        }
+
+        .vh-note .dot {
+            margin: 0 0.6rem;
+            color: var(--vh-gold);
+        }
+
+        @media (min-width: 1024px) {
+            .vh-hero {
+                padding: 4.5rem 0 4.5rem;
+            }
+
+            .vh-grid {
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+                grid-template-areas:
+                    "copy media"
+                    "actions media";
+                column-gap: 3.5rem;
+                row-gap: 1.75rem;
+                align-items: center;
+            }
+
+            .vh-copy {
+                grid-area: copy;
+                align-self: end;
+            }
+
+            .vh-media {
+                grid-area: media;
+                border-radius: 22px;
+            }
+
+            .vh-actions {
+                grid-area: actions;
+                align-self: start;
+                max-width: 34rem;
+            }
+
+            .vh-media-caption strong {
+                font-size: 1.7rem;
+            }
+
+            .vh-media-caption span {
+                font-size: 1.25rem;
+            }
+
+            .vh-play {
+                width: 5.5rem;
+                height: 5.5rem;
+                font-size: 2rem;
+            }
+        }
+
+        /* Cream strip: Auto | Home | Claims */
+        .vh-strip {
+            background: var(--vh-cream);
+            border-bottom: 1px solid rgba(16, 33, 74, 0.08);
+            padding: 1.5rem 1rem 1.6rem;
+        }
+
+        .vh-strip-links {
+            display: flex;
+            justify-content: center;
+            margin: 0 auto;
+            max-width: 1100px;
+        }
+
+        .vh-strip-link {
+            flex: 1 1 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            min-height: 48px;
+            padding: 0.25rem 0.5rem;
+            color: var(--vh-ink);
+            font-family: 'Outfit', 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 1.15rem;
+            text-decoration: none;
+            border-left: 1px solid rgba(16, 33, 74, 0.18);
+            transition: color 0.2s ease;
+        }
+
+        .vh-strip-link:first-child {
+            border-left: 0;
+        }
+
+        .vh-strip-link i {
+            font-size: 2rem;
+        }
+
+        .vh-strip-link:hover {
+            color: var(--vh-blue);
+        }
+
+        @media (min-width: 768px) {
+            .vh-strip {
+                padding: 2rem 1rem;
+            }
+
+            .vh-strip-link {
+                font-size: 1.5rem;
+                gap: 0.7rem;
+            }
+
+            .vh-strip-link i {
+                font-size: 2.6rem;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .vh-hero h1 {
+                font-size: clamp(2.2rem, 11vw, 2.9rem);
+            }
+
+            .vh-kicker {
+                font-size: 0.74rem;
+                letter-spacing: 0.18em;
+            }
+
+            .vh-media {
+                border-radius: 14px;
+            }
+
+            .vh-btn {
+                font-size: 1.3rem;
+                min-height: 60px;
+            }
         }
 
         .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -505,42 +968,24 @@
 <body class="bg-slate-50 text-slate-800 font-sans selection:bg-primary-100 selection:text-primary-900 overflow-x-clip">
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[9999] focus:bg-blue-700 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:text-sm focus:font-semibold focus:shadow-lg">Skip to main content</a>
 
-    <!-- URGENCY TOP BAR -->
-    <div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white text-[10px] md:text-xs font-bold py-2 text-center tracking-wide relative z-[60]">
-        <span class="text-youtube-red mr-1"><i class="fab fa-youtube"></i></span> NEW: Weekly Insurance Tips every Tuesday!
-        <a href="https://www.youtube.com/@ncautoandhome?sub_confirmation=1" target="_blank" class="underline decoration-accent-400 decoration-2 underline-offset-2 hover:text-accent-300 ml-1">Subscribe Now &rarr;</a>
-    </div>
-
-    <!-- NAVIGATION -->
-    <nav id="navbar" class="sticky top-0 w-full z-50 h-20 glass-nav transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex justify-between items-center">
-            <a href="../index.html" class="flex flex-col leading-none group relative z-50">
-                <span class="text-xl md:text-2xl font-display font-black tracking-tight text-slate-900">
-                    Bill Layne <span class="text-primary-600">Insurance</span>
-                </span>
-                <div class="flex items-center gap-1">
-                    <div class="flex text-[8px] text-amber-400">
-                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                    </div>
-                    <span class="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-slate-500">
-                        Video Hub
-                    </span>
-                </div>
+    <!-- NAVIGATION - cream Video Hub bar (2026-09 redesign) -->
+    <nav id="navbar" class="vh-header" aria-label="Site header">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 vh-header-inner">
+            <a href="/" class="vh-brand">
+                <span class="vh-brand-name">Bill Layne <span>Insurance</span></span>
+                <span class="vh-brand-sub">Video Hub</span>
             </a>
 
-            <div class="flex items-center gap-3 md:gap-6">
-                <a href="https://www.youtube.com/@ncautoandhome?sub_confirmation=1" target="_blank" class="hidden sm:flex items-center font-bold text-white hover:bg-red-700 transition-all bg-youtube-red px-5 py-2.5 rounded-full shadow-lg text-xs md:text-sm">
-                    <i class="fab fa-youtube mr-2"></i>Subscribe
-                </a>
-                <a href="/get-quote" class="hidden md:block bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 text-white px-7 py-3 rounded-full text-xs font-black shadow-xl shadow-primary-500/30 transition-all hover:scale-105 hover:shadow-primary-500/50 btn-shine">
-                    GET FREE QUOTE
-                </a>
-                <button id="menu-btn" class="hidden md:block p-2 rounded-full transition-colors focus:outline-none hover:bg-slate-100 text-slate-600" aria-label="Open Menu">
-                    <div class="w-7 h-5 flex flex-col justify-between relative">
-                        <span class="nav-hamburger-line w-full h-0.5 rounded-full bg-slate-900 transition-all origin-right"></span>
-                        <span class="nav-hamburger-line w-full h-0.5 rounded-full bg-slate-900 transition-all origin-right"></span>
-                        <span class="nav-hamburger-line w-full h-0.5 rounded-full bg-slate-900 transition-all origin-right"></span>
-                    </div>
+            <div class="vh-header-right">
+                <div class="vh-nav">
+                    <a href="/">Home</a>
+                    <a href="#videos" aria-current="page">Videos</a>
+                    <a href="/contact-us/">Contact</a>
+                </div>
+                <button id="menu-btn" class="vh-menu-btn" aria-label="Open menu" aria-controls="menu-drawer" aria-expanded="false">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </button>
             </div>
         </div>
@@ -581,81 +1026,57 @@
         </div>
     </div>
 
-    <!-- HERO SECTION -->
-    <header class="relative pt-12 pb-16 md:pt-20 md:pb-24 bg-vivid-hero text-white overflow-hidden min-h-[60vh] md:min-h-[70vh] flex items-center">
-        <!-- BACKGROUND -->
-        <div class="absolute inset-0 z-0 pointer-events-none">
-            <div class="absolute inset-0 bg-gradient-to-b from-slate-900/90 to-slate-900/95"></div>
-        </div>
-
-        <!-- SHAPES -->
-        <div class="absolute top-[-10%] left-[-10%] w-[100%] h-[50%] bg-red-600/20 rounded-full blur-[120px] animate-blob"></div>
-        <div class="absolute bottom-[0%] right-[-10%] w-[80%] h-[50%] bg-primary-500/20 rounded-full blur-[100px] animate-blob" style="animation-delay: 2s;"></div>
-
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-            <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-
-                <div class="text-center lg:text-left">
-                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white text-[10px] md:text-xs font-black uppercase tracking-widest mb-6 shadow-lg">
-                        <i class="fab fa-youtube text-red-500"></i>
-                        <span class="opacity-90">Free Insurance Education</span>
-                    </div>
-
-                    <h1 class="text-4xl xs:text-5xl md:text-6xl lg:text-7xl font-display font-black leading-[1.0] mb-6 tracking-tight drop-shadow-2xl">
-                        NC Insurance Tips:<br>
-                        <span class="gradient-text">Save Money</span><br>
-                        <span class="text-white/90 text-3xl md:text-4xl lg:text-5xl">on Auto & Home.</span>
+    <!-- HERO SECTION - NC Insurance Explained (2026-09 redesign) -->
+    <header class="vh-hero" aria-labelledby="video-hero-heading">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div class="vh-grid">
+                <div class="vh-copy">
+                    <p class="vh-kicker">NC Insurance<span class="dot" aria-hidden="true">&bull;</span>Explained</p>
+                    <h1 id="video-hero-heading">
+                        <span class="line">Clear answers.</span>
+                        <span class="line gold">Smarter coverage.</span>
                     </h1>
+                    <p class="vh-lede">Quick videos about auto, home, claims, and ways to save.</p>
+                    <p class="vh-sub">With Bill Layne, your local NC insurance agent.</p>
+                </div>
 
-                    <p class="text-base md:text-xl text-slate-200 mb-8 max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed">
-                        Free expert tips, policy breakdowns, and money-saving strategies from Bill Layne, your local Elkin, North Carolina insurance agent. <strong class="text-accent-400">No sales pitch, just real advice.</strong>
-                    </p>
-
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start max-w-lg mx-auto lg:mx-0">
-                        <a href="https://www.youtube.com/@ncautoandhome?sub_confirmation=1" target="_blank" class="flex-1 h-16 px-6 rounded-2xl bg-youtube-red hover:bg-red-700 text-white text-lg font-black flex items-center justify-center shadow-2xl shadow-red-500/30 transition-all hover:scale-[1.02]">
-                            <i class="fab fa-youtube mr-3 text-2xl"></i> Subscribe Free
-                        </a>
-                        <a href="#videos" class="flex-1 h-16 px-6 rounded-2xl bg-white hover:bg-slate-50 text-primary-900 text-lg font-bold flex items-center justify-center shadow-xl transition-all hover:scale-[1.02]">
-                            <i class="fas fa-play-circle mr-2 text-primary-600"></i> Watch Now
-                        </a>
-                    </div>
-
-                    <div class="mt-8 flex flex-wrap justify-center lg:justify-start gap-4 text-[10px] text-slate-400 uppercase tracking-widest font-bold">
-                        <span><i class="fas fa-check-circle mr-1 text-green-400"></i> 100% Free</span>
-                        <span><i class="fas fa-check-circle mr-1 text-green-400"></i> No Sign-Up</span>
-                        <span><i class="fas fa-check-circle mr-1 text-green-400"></i> New Videos Weekly</span>
+                <!-- Featured video: thumbnail first, swapped for the YouTube embed on tap -->
+                <div class="vh-media">
+                    <div id="featured-video-wrapper" class="absolute inset-0">
+                        <button type="button" id="featured-thumbnail" class="vh-media-btn" onclick="playFeaturedVideo()" aria-label="Play featured video: Comprehensive vs Collision Coverage Explained">
+                            <img src="https://img.youtube.com/vi/n1HXga1IoME/maxresdefault.jpg" alt="Featured video: comprehensive vs collision coverage explained" width="1280" height="720" fetchpriority="high" onerror="this.src='https://img.youtube.com/vi/n1HXga1IoME/hqdefault.jpg'">
+                            <span class="vh-play" aria-hidden="true"><i class="fas fa-play"></i></span>
+                            <span class="vh-media-caption" aria-hidden="true">
+                                <strong>Auto &amp; Home Insurance</strong>
+                                <span>Made simple.</span>
+                            </span>
+                        </button>
                     </div>
                 </div>
 
-                <!-- Featured Video Preview -->
-                <div class="relative hidden lg:block">
-                    <div class="relative w-full aspect-video max-w-lg mx-auto">
-                        <div class="absolute inset-0 bg-gradient-to-tr from-accent-400 to-red-600 rounded-[2rem] rotate-3 opacity-30 blur-lg"></div>
-                        <div id="featured-video-wrapper" class="relative rounded-[2rem] shadow-2xl border-4 border-white/10 overflow-hidden aspect-video">
-                            <!-- Thumbnail (shown initially) -->
-                            <button type="button" id="featured-thumbnail" class="absolute inset-0 cursor-pointer group" onclick="playFeaturedVideo()" aria-label="Play: Comprehensive vs Collision Coverage Explained">
-                                <img src="https://img.youtube.com/vi/n1HXga1IoME/maxresdefault.jpg" alt="Featured Video Thumbnail" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" onerror="this.src='https://img.youtube.com/vi/n1HXga1IoME/hqdefault.jpg'">
-                                <span class="absolute inset-0 bg-slate-900/40 group-hover:bg-slate-900/20 transition-colors flex items-center justify-center">
-                                    <span class="w-20 h-20 bg-white/90 rounded-full flex items-center justify-center shadow-2xl backdrop-blur-sm group-hover:scale-110 transition-transform">
-                                        <i class="fas fa-play text-red-600 text-2xl ml-1"></i>
-                                    </span>
-                                </span>
-                            </button>
-                        </div>
-
-                        <!-- Floating Badge -->
-                        <div class="absolute -top-4 -right-4 glass-dark px-4 py-2 rounded-xl flex items-center gap-2 animate-float border border-accent-400/30">
-                            <div class="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center text-white text-sm"><i class="fab fa-youtube"></i></div>
-                            <div>
-                                <p class="text-[9px] text-slate-300 font-bold uppercase">Featured</p>
-                                <p class="text-xs font-black text-white">Watch Now</p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="vh-actions">
+                    <a href="#videos" class="vh-btn vh-btn-gold">
+                        <span class="vh-btn-icon" aria-hidden="true"><i class="fas fa-play"></i></span>
+                        <span>Watch Videos</span>
+                    </a>
+                    <a href="https://www.youtube.com/@ncautoandhome?sub_confirmation=1" target="_blank" rel="noopener" class="vh-btn vh-btn-outline">
+                        <span class="vh-btn-icon" aria-hidden="true"><i class="fab fa-youtube"></i></span>
+                        <span>Subscribe Free</span>
+                    </a>
+                    <p class="vh-note">Free to watch<span class="dot" aria-hidden="true">&bull;</span>No sign-up needed</p>
                 </div>
             </div>
         </div>
     </header>
+
+    <!-- Cream strip: quick topic links -->
+    <div class="vh-strip">
+        <nav class="vh-strip-links" aria-label="Browse by topic">
+            <a href="/auto-center/" class="vh-strip-link"><i class="fas fa-car" aria-hidden="true"></i><span>Auto</span></a>
+            <a href="/home-insurance/" class="vh-strip-link"><i class="fas fa-house" aria-hidden="true"></i><span>Home</span></a>
+            <a href="/claims-center/" class="vh-strip-link"><i class="fas fa-file-lines" aria-hidden="true"></i><span>Claims</span></a>
+        </nav>
+    </div>
 
     <!-- STATS BAR -->
     <main id="main-content">
@@ -1089,6 +1510,7 @@
                 menuOverlay.classList.toggle('opacity-0', !show);
                 menuOverlay.classList.toggle('pointer-events-none', !show);
                 document.body.style.overflow = show ? 'hidden' : '';
+                if (menuBtn) menuBtn.setAttribute('aria-expanded', show ? 'true' : 'false');
             };
             if(menuBtn) menuBtn.addEventListener('click', () => toggleMenu(true));
             if(menuClose) menuClose.addEventListener('click', () => toggleMenu(false));
