@@ -78,6 +78,8 @@ tray      : [{ tid, docId, pageIndex, rot, stamps:[], crop?:{x,y,w,h}, thumb }]
 
 ### Full-page steps
 
+> **Since 2026-10-01 the step INDICATOR shows three stages, not three screens:** 1 *Add files* (landing + the choose-pages screen, `uiStep` 1 and 2) · 2 *Edit & arrange* (`uiStep` 3, the tray) · 3 *Preview & finish* (the `previewFinal()` dialog). `uiStep` and `body.step-3` are unchanged underneath — only `updateWorkflowState`'s `stage` mapping and the three click handlers changed. Copy says "your PDF", never "Step 3".
+
 Only one workspace is on screen at a time — Bill asked for the room.
 
 ```js
@@ -184,6 +186,11 @@ Pen strokes are **canvas**, not elements (a path can't be a div). Consequence: *
 | Help | `openHelp()`, `#btnHelp` (header), `#linkHelp` (landing) |
 | Recent projects | `renderRecentProjects()` — landing only, last three from `bliPdfProjects`; refreshed by `saveProject`, project delete and `restoreWorkspace` |
 | Find highlight in the viewer | inside `renderViewer`: `pdfjsLib.Util.transform(vp.transform, item.transform)` → yellow rects; title shows the match count |
+| Home screen (Oct 2026) | markup `#homeView` inside `#sourcePane`: `.home-title`, `.intent-grid` (`#intentEdit`, `#intentCombine`, `#btnForms2`), `#dropzone`, `#recentProjects`, `#linkHelp` (the strip); CSS block "Home screen, October 2026" scoped under `body.home2` |
+| Intents | `pickFiles(intent)`, `pendingIntent`, `runIntent(intent, before)` — in the `fileInput` change handler; `cancel` clears a stale intent |
+| App navigation | `.app-shell` > `aside.app-nav` (`#navNew`, `#navProjects`, `#navForms`, `#navVersion`) + `<main>`; `nav#tabBar` (`#tabNew`, `#tabProjects`, `#tabForms`, `#tabHelp`); `#btnAvatar` → Connections |
+| Recent project cards | `renderRecentProjects()` → `projectCard(pr)` (first page thumb from the saved snapshot, ⋮ menu: Open / Delete) |
+| Finish dialog | `previewFinal()` — title "Preview & finish"; `#savePreview`, `#previewEmail`, `#previewPrint` |
 | Tray, ◀▶ reorder, card buttons | `renderTray` (~1746) |
 | **Build engine** | `drawStamps` (~1892), `buildPdfBytes` (~1947) |
 | Editor shell, modes, zoom | `setEditorMode`, `setEditorZoom`, `openEditor`, `renderEditor` (~2011–2104) |
@@ -287,10 +294,16 @@ The "What is this delivering?" dropdown swaps `{{HEADLINE}}`/`{{INTRO_LINE}}`/su
 | 28 | Flipping a menu sideways is not enough on a phone — the tall Settings panel ran off the bottom | `wireMenu` also adds `upward` when the panel fits above, otherwise caps `style.maxHeight` to the space below and lets it scroll. The smoke test checks all three panels on 375×812 |
 | 29 | Autosave records are now `stored:true` with `bytes:null`; putting bytes back inline would silently double storage again | Read bytes with `bytesGet(docId)`; `savedBytes` is keyed by the byte ARRAY, so a re-created document with a reused id is written again (correct) |
 | 30 | In the smoke test every `evalIn` block returns a fresh `r`; a check inserted between a block and its assertions reads the wrong result (this bit the author once) | Keep each block's `ok(...)` lines directly under it |
+| 31 | A rule in the `@media (max-width:1180px)` block turns every non-Save action into a 42 px icon-only button (`font-size:0; width:42px`). Phones restore the font size but not the width | Overridden under `body.home2` at ≤1180 and ≤600. If you add an action button, check it at 1024 px and 431 px |
+| 32 | New CSS loses to two older generations of header/landing rules, and `body.has-files` compact rules have the same specificity as `body.home2` ones | Landing-only sizes are written `body.home2:not(.has-files) …`; shared look is `body.home2 …`. Keep that split or the compact header regresses |
+| 33 | Other sessions (Bill + Codex, other chats) work in this folder at the same time — `git status` can show a dozen files that are not yours, and the nav pre-push hook reads the working tree | Stage by explicit path only; never `git add -A`; if the hook blocks on someone else's in-progress `tools/nav.json`, stash that one file, push, pop |
+| 34 | Inline shell heredocs over ~9 KB fail with "unexpected EOF" in this environment | Write patch scripts to a file and run them |
 
 ## 11. Extending it safely
 
-**Run the smoke test before you push:** `tools\test-pdf-studio.bat` (29 checks, about a minute, drives the Chrome or Edge already on the PC through `window.PDFStudio`; `set FORMS_CODE=…` first to include the Forms-host checks, `set PDF_STUDIO_URL=https://www.billlayneinsurance.com/pdf-tools/` to test the live site). Add a check when you add a feature — `tools/pdf-studio-tests/smoke.js`, one `evalIn` block per feature, each block returns its own `r`. Bump `APP_VERSION` at the top of the script on every release.
+**Run the smoke test before you push:** `tools\test-pdf-studio.bat` (34 checks, about a minute, drives the Chrome or Edge already on the PC through `window.PDFStudio`; `set FORMS_CODE=…` first to include the Forms-host checks, `set PDF_STUDIO_URL=https://www.billlayneinsurance.com/pdf-tools/` to test the live site). Add a check when you add a feature — `tools/pdf-studio-tests/smoke.js`, one `evalIn` block per feature, each block returns its own `r`. Bump `APP_VERSION` at the top of the script on every release.
+
+**Look at it, too:** `node tools/pdf-studio-tests/shots.js` writes desktop (1586), tablet (1024) and phone (431) screenshots of the home and working screens into `tools/pdf-studio-tests/shots/` (git-ignored). Read the PNGs. Numbers alone missed five visible defects in the October redesign.
 
 1. **Add to `buildPdfBytes`/`drawStamps`, not around them** — that's what keeps preview, print, and output identical.
 2. **Store coordinates in PDF points**, captured via `overlayToPdfPoint()`.
@@ -407,6 +420,16 @@ CSS only: the six older modals (`.form-card`) adopt `dialog#studioDialog`'s look
 7. **Recent projects** — the last three named projects as one-click chips on the landing page.
 8. **Find highlight** — the zoom viewer paints matched words and counts them in its title.
 Also: menus cap their height to the space below when neither sideways nor upward flipping fits (the phone Settings panel).
+
+### Round four — the home screen (2026-10-01)
+Built to Bill's desktop and mobile mockups ("What would you like to do?").
+- **Home view** replaces the old landing card: headline, three intent cards, dashed drop area with a blue *Choose Files*, recent projects as cards, the "simpler way" strip (opens Help). No stepper, no footer and no card chrome around `#sourcePane` on the landing.
+- **Intents.** *Edit a PDF* → picker → every page of the picked files into the tray → `setStep(3)` → editor on the first new page. *Combine Files* → same without the editor. *Start with a Form* → Forms Library. The plain drop area / Choose Files / drag-and-drop keep the choose-pages flow.
+- **Navigation.** Desktop sidebar (New PDF · Recent Projects · Forms Library, brand + version at the foot); it is a 64 px icon rail when `body.has-files` and at every width ≤ 1180 px; hidden ≤ 860 px, where the **landing** shows a bottom tab bar (New PDF · Projects · Forms · Help). New PDF with work open → the Start-over dialog. The gold **BL** mark opens Connections (it is a device mark, not an account).
+- **Stages renamed** to the strip — see the note under "Full-page steps".
+- **Recent projects are real** (the mockup's "Sample projects" were placeholders): last three from `bliPdfProjects`, or a one-line empty state.
+- **No web font.** The mockup's typeface would be a new third-party request; headings use the system stack at weight 700 (800 renders as Segoe "Black" — too heavy).
+- Found by looking at screenshots and fixed: sidebar labels centered by the global `button{justify-content:center}`; the file-types line off-center (old `max-width:560px; margin:0 auto` lost its auto margins); *Back to pages* stretching across the heading column and its focus ring covering the hint; action buttons 42 px wide on phones.
 
 ### Storage added this session
 localStorage `bliPdfHintsOff`, `bliPdfStudioInitials`, `bliPdfRecentTo`; doc fields `ocr`, `libKey`, `libName`; IndexedDB `bliPdfStudio` v4 store `docbytes` (file bytes, keyed by docId); R2 `_shared/packets.json`, `_shared/stamps.json` and their `.prev.json` twins.

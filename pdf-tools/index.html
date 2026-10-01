@@ -1873,15 +1873,213 @@ body.hints-off .editor-main > #editHint { display: none; }
 #studioDialogBody .help kbd { font: inherit; font-size: 12px; padding: 1px 6px; border: 1px solid #bac6d2; border-radius: 6px; background: #f8fafc; }
 #trayPickBar button.go { background: #b91c1c; border-color: #b91c1c; box-shadow: none; }
 #trayPickBar button.go:hover { background: #991b1b; border-color: #991b1b; }
+
+/* ═══════════ Home screen, October 2026 — intent-first landing, sidebar / tab bar ═══════════
+   Scoped under body.home2 so it outranks the two older generations of header and
+   landing rules above without editing them. Landing-only sizes use :not(.has-files):
+   once a file is loaded the compact working chrome (body.has-files rules) takes over. */
+body.home2 { background: #f6f8fb; }
+.app-shell { flex: 1; min-height: 0; display: flex; }
+.app-shell > main { flex: 1; min-width: 0; }
+.app-nav svg, .intent-card svg, .dz-cloud, .how-strip svg, .tab svg, .link-btn svg, .proj-go svg { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+
+/* top bar */
+body.home2 header.app-header { border-bottom: 2px solid var(--gold); box-shadow: none; background: linear-gradient(135deg, #0a1f3d 0%, #10305c 100%); }
+body.home2:not(.has-files) header.app-header { min-height: 64px; padding: 8px 24px; gap: 22px; flex-wrap: nowrap; }
+body.home2:not(.has-files) .brand { min-width: 0; font-size: 20px; font-weight: 700; letter-spacing: .03em; white-space: nowrap; text-align: center; }
+body.home2:not(.has-files) .brand small { margin-top: 1px; font-size: 10.5px; font-weight: 700; letter-spacing: .16em; color: #e4c875; }
+body.home2:not(.has-files) .app-identity { border-left: 1px solid rgba(255,255,255,.28); padding-left: 24px; }
+body.home2:not(.has-files) .app-identity h1 { font-size: 25px; font-weight: 650; letter-spacing: -.01em; }
+body.home2 .app-identity p { display: none; }
+.avatar { width: 38px; height: 38px; flex: 0 0 38px; border-radius: 50%; padding: 0; border: 0; background: linear-gradient(145deg, #e6b440, #c8962a); color: #fff; font-size: 14px; font-weight: 800; letter-spacing: .02em; display: grid; place-items: center; }
+.avatar:hover { background: linear-gradient(145deg, #eec051, #d2a236); border: 0; }
+body.home2.has-files .avatar { width: 30px; height: 30px; flex-basis: 30px; font-size: 12px; }
+@media (min-width: 861px) {
+  body.home2 #btnProjects, body.home2 #btnForms { display: none; }
+  body.home2:not(.has-files) .privacy-chip { display: none; }
+  body.home2 #btnHelp { background: transparent; border-color: transparent; }
+  body.home2 #btnHelp:hover { background: rgba(255,255,255,.10); }
+  body.home2:not(.has-files) #btnHelp { font-size: 15px; gap: 9px; }
+  body.home2:not(.has-files) #btnHelp svg { width: 23px; height: 23px; }
+  body.home2 .header-actions { padding-right: 16px; border-right: 1px solid rgba(255,255,255,.28); }
+}
+
+/* sidebar: full on the landing, an icon rail once files are loaded */
+.app-nav { width: 252px; flex: 0 0 252px; display: flex; flex-direction: column; gap: 4px; padding: 18px 12px 16px; background: #f1f5fa; border-right: 1px solid #e2e8f0; overflow: hidden; }
+.nav-item { display: flex; align-items: center; justify-content: flex-start; gap: 12px; width: 100%; min-height: 52px; padding: 10px 18px; border: 0; border-radius: 10px; background: transparent; color: #1c2c44; font-size: 15.5px; font-weight: 600; text-align: left; }
+.nav-item svg { width: 25px; height: 25px; flex: 0 0 25px; stroke-width: 1.7; }
+.nav-item:hover { background: #e7edf5; border: 0; }
+.nav-item.active { background: #e2edfc; color: #1a62d6; }
+.nav-sep { height: 1px; background: #dde4ed; margin: 14px 10px; }
+.nav-foot { margin-top: auto; display: flex; align-items: center; gap: 12px; padding: 8px 14px; color: #1c2c44; }
+.nav-foot svg { width: 30px; height: 30px; flex: 0 0 30px; stroke-width: 1.5; }
+.nav-foot strong { display: block; font-size: 14px; font-weight: 600; }
+.nav-foot small { display: block; margin-top: 2px; font-size: 9.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #5d6b7e; }
+#navVersion { letter-spacing: .04em; text-transform: none; font-weight: 500; opacity: .8; }
+body.has-files .app-nav { width: 64px; flex-basis: 64px; padding: 12px 8px; }
+body.has-files .nav-item { justify-content: center; padding: 10px 0; min-height: 46px; }
+body.has-files .nav-item span, body.has-files .nav-foot div, body.has-files .nav-sep { display: none; }
+body.has-files .nav-foot { justify-content: center; padding: 8px 0; }
+
+/* landing: no stepper, no card around the pane, no footer */
+body.home2:not(.has-files) .workflow-shell, body.home2:not(.has-files) > footer { display: none; }
+body.home2:not(.has-files) #sourcePane { margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+#homeView { max-width: 1290px; margin: 0 auto; padding: 26px 30px 30px; }
+.home-title { font-size: clamp(28px, 3.1vw, 40px); font-weight: 700; letter-spacing: -.025em; line-height: 1.1; color: #0b1b33; }
+.home-sub { margin-top: 8px; font-size: clamp(15px, 1.5vw, 19.5px); color: #5d6b7e; }
+.dz-mobile { display: none; }
+
+/* the three intent cards */
+.intent-grid { margin-top: 22px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.intent-card { display: flex; align-items: center; gap: 22px; width: 100%; min-height: 144px; padding: 22px; border: 1px solid #e6ebf2; border-radius: 12px; background: #fff; box-shadow: 0 2px 10px rgba(15,35,65,.05); text-align: left; white-space: normal; transition: box-shadow .15s, transform .15s, border-color .15s; }
+.intent-card:hover { background: #fff; border-color: #c9d8ee; box-shadow: 0 10px 26px rgba(15,35,65,.10); transform: translateY(-1px); }
+.intent-ico { width: 96px; height: 96px; flex: 0 0 96px; border-radius: 10px; display: grid; place-items: center; }
+.intent-ico svg { width: 52px; height: 52px; stroke-width: 1.5; }
+.intent-ico.blue { background: #e6effc; color: #1a62d6; }
+.intent-ico.amber { background: #fcefd8; color: #b47d12; }
+.intent-ico.mint { background: #e1f4ec; color: #0f6e5c; }
+.intent-text { flex: 1; min-width: 0; }
+.intent-text strong { display: block; font-size: 20px; font-weight: 700; letter-spacing: -.01em; color: #0b1b33; }
+.intent-text small { display: block; margin-top: 6px; font-size: 16.5px; font-weight: 400; line-height: 1.45; color: #68768a; }
+.intent-card .chev { width: 22px; height: 22px; flex: 0 0 22px; color: #55657a; }
+
+/* the drop area */
+body.home2 .dropzone { width: 100%; max-width: none; margin: 22px 0 0; padding: 20px 20px 20px; border: 1.5px dashed #c5cfdc; border-radius: 12px; background: transparent; box-shadow: none; text-align: center; }
+body.home2 .dropzone::before { content: none; }
+body.home2 .dropzone.dragover, body.home2 .dropzone:hover { border-color: var(--blue); background: #f4f8fe; }
+.dz-cloud { width: 48px; height: 48px; color: #1a62d6; stroke-width: 1.5; }
+body.home2 .dropzone h3 { margin: 4px 0 2px; font-size: 22px; font-weight: 700; letter-spacing: -.01em; color: #0b1b33; }
+body.home2 .dropzone > p { margin: 0 auto; max-width: none; font-size: 15px; color: #68768a; }
+body.home2 #btnBrowseFiles { margin-top: 12px; min-width: 184px; min-height: 44px; padding: 0 22px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; font-size: 16px; font-weight: 600; border-radius: 7px; background: #1a67e0; border-color: #1a67e0; color: #fff; }
+body.home2 #btnBrowseFiles:hover { background: #1458c4; border-color: #1458c4; }
+body.home2 #btnBrowseFiles svg { display: none; }
+body.home2 .drop-privacy { width: auto; margin: 14px auto 0; padding-top: 0; border-top: 0; gap: 8px; color: #5d6b7e; font-size: 14px; font-weight: 500; }
+body.home2 .drop-privacy svg { width: 18px; height: 18px; fill: none; stroke: currentColor; }
+
+/* recent projects: real saved projects as cards */
+body.home2 #recentProjects { margin-top: 24px; }
+body.home2 .recent-head { margin: 0 0 14px; display: flex; align-items: center; gap: 14px; font-size: inherit; letter-spacing: 0; text-transform: none; color: inherit; }
+.recent-head h3 { font-size: 26px; font-weight: 700; letter-spacing: -.02em; color: #0b1b33; }
+.link-btn { margin-left: auto; padding: 6px 4px; display: inline-flex; align-items: center; gap: 8px; border: 0; background: transparent; color: #1a62d6; font-size: 15px; font-weight: 600; }
+.link-btn:hover { background: transparent; border: 0; text-decoration: underline; }
+body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 0; }
+.proj-card { position: relative; display: flex; align-items: center; gap: 18px; min-height: 172px; padding: 14px 18px 14px 14px; border: 1px solid #e6ebf2; border-radius: 12px; background: #fff; box-shadow: 0 2px 10px rgba(15,35,65,.05); cursor: pointer; transition: box-shadow .15s, border-color .15s; }
+.proj-card:hover, .proj-card:focus-visible { border-color: #c9d8ee; box-shadow: 0 10px 26px rgba(15,35,65,.10); }
+.proj-thumb { position: relative; width: 126px; height: 146px; flex: 0 0 126px; }
+.proj-thumb i { position: absolute; left: 22px; top: 8px; width: 100px; height: 132px; background: #fff; border: 1px solid #dfe5ee; border-radius: 3px; box-shadow: 0 2px 6px rgba(15,35,65,.10); }
+.proj-thumb i:nth-child(1) { transform: rotate(6deg); }
+.proj-thumb i:nth-child(2) { left: 14px; transform: rotate(2.5deg); }
+.proj-thumb img, .proj-thumb .proj-blank { position: absolute; left: 4px; top: 5px; width: 104px; height: 136px; object-fit: cover; object-position: top; background: #fff; border: 1px solid #dfe5ee; border-radius: 3px; box-shadow: 0 4px 12px rgba(15,35,65,.16); transform: rotate(-2.5deg); }
+.proj-body { flex: 1; min-width: 0; padding-right: 18px; }
+.proj-body strong { display: block; font-size: 18px; font-weight: 700; color: #0b1b33; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.proj-body small { display: block; margin-top: 8px; font-size: 14px; color: #68768a; }
+.proj-go { display: inline-flex; align-items: center; gap: 8px; margin-top: 26px; font-size: 15.5px; font-weight: 600; color: #1a62d6; }
+.proj-card .menu-wrap { position: absolute; top: 8px; right: 6px; }
+.proj-card .menu-wrap > button { width: 32px; height: 32px; padding: 0; border: 0; background: transparent; color: #55657a; }
+.proj-card .menu-panel { min-width: 170px; }
+.proj-empty { grid-column: 1 / -1; padding: 22px; border: 1.5px dashed #d3dbe6; border-radius: 12px; color: #68768a; font-size: 15px; text-align: center; }
+
+/* the "simpler way" strip (opens Help) */
+.how-strip { margin-top: 20px; width: 100%; min-height: 88px; padding: 14px 28px 14px 40px; display: flex; align-items: center; gap: 26px; flex-wrap: wrap; border: 1px solid #e3e9f2; border-radius: 12px; background: #f2f6fb; color: #0b1b33; text-align: left; white-space: normal; }
+.how-strip:hover { background: #edf3fb; border-color: #cfdcee; }
+.how-strip .how-ico { width: 50px; height: 50px; flex: 0 0 50px; color: #c8962a; stroke-width: 1.4; }
+.how-div { width: 1px; align-self: stretch; margin: 6px 0; background: #d9e1ec; }
+.how-strip strong { font-size: 20px; font-weight: 700; letter-spacing: -.01em; }
+.how-steps { margin-left: auto; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; font-size: 15px; font-weight: 500; color: #33435a; }
+.how-steps b { width: 34px; height: 34px; margin-right: 10px; border-radius: 50%; display: inline-grid; place-items: center; background: #dce8fb; color: #1a62d6; font-size: 15px; font-weight: 700; }
+.how-steps .arr { color: #8a97a9; }
+
+/* phone tab bar (landing only) */
+.tab-bar { display: none; flex: 0 0 auto; gap: 4px; justify-content: space-between; padding: 5px 10px calc(5px + env(safe-area-inset-bottom)); background: #fff; border-top: 1px solid #e3e9f1; }
+.tab { flex: 1; min-height: 50px; padding: 6px 2px 4px; display: flex; flex-direction: column; align-items: center; gap: 3px; border: 0; border-radius: 10px; background: transparent; color: #33435a; font-size: 12px; font-weight: 500; }
+.tab svg { width: 24px; height: 24px; stroke-width: 1.6; }
+.tab.active { background: #e2edfc; color: #1a62d6; }
+.tab:hover { background: #eef3fa; border: 0; }
+
+@media (max-width: 1180px) {
+  /* small laptops and tablets: the sidebar is the icon rail even on the landing */
+  .app-nav { width: 64px; flex-basis: 64px; padding: 12px 8px; }
+  .nav-item { justify-content: center; padding: 10px 0; min-height: 46px; }
+  .nav-item span, .nav-foot div, .nav-sep { display: none; }
+  .nav-foot { justify-content: center; padding: 8px 0; }
+  .intent-card { min-height: 112px; padding: 16px; gap: 14px; }
+  .intent-ico { width: 64px; height: 64px; flex-basis: 64px; }
+  .intent-ico svg { width: 36px; height: 36px; }
+  .intent-text strong { font-size: 18px; }
+  .intent-text small { font-size: 14.5px; }
+  body.home2 #recentList { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .how-steps { margin-left: 0; }
+}
+@media (max-width: 860px) {
+  .app-nav { display: none; }
+  body.home2:not(.has-files) .tab-bar { display: flex; }
+  body.home2:not(.has-files) header.app-header { min-height: 54px; padding: 6px 14px; gap: 12px; flex-direction: row; flex-wrap: nowrap; align-items: center; }
+  body.home2:not(.has-files) .brand { display: none; }
+  body.home2:not(.has-files) .app-identity { display: block; border-left: 0; padding-left: 0; }
+  body.home2:not(.has-files) .app-identity h1 { font-size: 20px; font-weight: 750; line-height: 1.1; }
+  body.home2:not(.has-files) .app-identity p { display: block; margin-top: 2px; font-size: 8.5px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.82); }
+  body.home2:not(.has-files) .avatar { order: -1; }
+  body.home2:not(.has-files) #btnProjects, body.home2:not(.has-files) #btnForms, body.home2:not(.has-files) .privacy-chip { display: none; }
+  body.home2:not(.has-files) .header-actions { margin-left: auto; }
+  body.home2:not(.has-files) #btnHelp { font-size: 0 !important; min-width: 0; padding: 4px !important; background: transparent; border-color: transparent; }
+  body.home2:not(.has-files) #btnHelp svg { width: 27px; height: 27px; }
+  body.home2.has-files .avatar { display: none; }
+  #homeView { padding: 18px 16px 22px; }
+  .home-title { font-size: 32px; }
+  .home-sub { font-size: 16px; }
+  .dz-desktop { display: none; }
+  .dz-mobile { display: inline; }
+  .intent-grid { grid-template-columns: 1fr; gap: 9px; margin-top: 18px; }
+  .intent-card { min-height: 74px; padding: 9px 14px 9px 12px; gap: 18px; }
+  .intent-ico { width: 60px; height: 56px; flex-basis: 60px; }
+  .intent-ico svg { width: 34px; height: 34px; }
+  .intent-text strong { font-size: 17px; }
+  .intent-text small { margin-top: 2px; font-size: 14.5px; }
+  body.home2 .dropzone { margin-top: 16px; padding: 14px 16px 16px; }
+  .dz-cloud { width: 40px; height: 40px; }
+  body.home2 .dropzone h3 { margin: 2px 0; font-size: 17px; }
+  body.home2 .dropzone > p { font-size: 12.5px; }
+  body.home2 #btnBrowseFiles { width: 100%; margin-top: 12px; min-height: 40px; }
+  body.home2 #btnBrowseFiles svg { display: inline-block; width: 22px; height: 22px; }
+  body.home2 .drop-privacy { margin-top: 12px; max-width: 260px; font-size: 11.5px; text-align: left; }
+  body.home2 #recentProjects { margin-top: 22px; }
+  .recent-head h3 { font-size: 21px; }
+  body.home2 #recentList { grid-template-columns: 1fr; gap: 10px; }
+  .proj-card { min-height: 116px; padding: 8px 12px 8px 10px; gap: 14px; }
+  .proj-thumb { width: 92px; height: 102px; flex-basis: 92px; }
+  .proj-thumb i { width: 66px; height: 88px; left: 20px; top: 8px; }
+  .proj-thumb i:nth-child(2) { left: 13px; }
+  .proj-thumb img, .proj-thumb .proj-blank { width: 68px; height: 90px; left: 4px; top: 5px; }
+  .proj-body strong { font-size: 16.5px; }
+  .proj-body small { margin-top: 3px; font-size: 13px; }
+  .proj-go { margin-top: 5px; font-size: 14.5px; }
+  .how-strip { display: none; }
+}
+
+/* working screens, fixes found by looking at them */
+@media (min-width: 601px) { .tray-heading #btnBackStep2 { align-self: flex-start; margin-top: 9px; } }
+/* an older rule made every non-Save action a 42px icon-only button under 1180px;
+   Send / Export / Settings need their words */
+@media (max-width: 1180px) {
+  body.home2 .output-actions > button:not(.save-button):not(.icon-button),
+  body.home2 .output-actions > .menu-wrap > button:not(.icon-button) { font-size: 13px; width: auto; padding: 8px 11px; }
+  body.home2 #btnOptMenu { width: auto; }
+}
+@media (max-width: 600px) {
+  .output-actions .menu-wrap { display: block; }
+  body.home2 .output-actions > button:not(.save-button):not(.icon-button),
+  body.home2 .output-actions > .menu-wrap > button:not(.icon-button),
+  body.home2 #btnOptMenu { width: 100%; padding: 7px 3px; justify-content: center; }
+}
 </style>
 </head>
-<body>
+<body class="home2">
 
 <header class="app-header">
   <div class="brand">Bill Layne Insurance<small>Elkin, NC &bull; Since 2005</small></div>
   <div class="app-identity">
     <h1>PDF Studio</h1>
-    <p>Build, edit and send professional PDFs</p>
+    <p>Bill Layne Insurance</p>
   </div>
   <div class="header-actions"><button id="btnHelp" class="header-button" title="How PDF Studio works" aria-label="How it works"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/></svg>Help</button><button id="btnProjects" class="header-button" title="Saved projects" aria-label="Projects"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 7h6l2 2h10v10H3z"/></svg>Projects</button>
     <button id="btnForms" class="header-button" title="Forms Library" aria-label="Forms Library">
@@ -1893,16 +2091,25 @@ body.hints-off .editor-main > #editHint { display: none; }
       Edited on this device
     </span>
   </div>
+  <button type="button" class="avatar" id="btnAvatar" title="This device: connections and setup" aria-label="Connections and setup">BL</button>
 </header>
 
+<div class="app-shell">
+<aside class="app-nav" aria-label="PDF Studio">
+  <button type="button" class="nav-item active" id="navNew" title="New PDF"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M13 3H7a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h4M13 3l5 5M13 3v5h5M18 8v2.5"/><circle cx="17" cy="17" r="4"/><path d="M17 15.3v3.4M15.3 17h3.4"/></svg><span>New PDF</span></button>
+  <button type="button" class="nav-item" id="navProjects" title="Recent Projects"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg><span>Recent Projects</span></button>
+  <button type="button" class="nav-item" id="navForms" title="Forms Library"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 3h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM14 3v4h4M9 12h6M9 15.5h6M9 8.5h2.5"/></svg><span>Forms Library</span></button>
+  <div class="nav-sep"></div>
+  <div class="nav-foot"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 9.5 12 4l9 5.5M4.5 9.5h15M6 10v7M10 10v7M14 10v7M18 10v7M4 17.5h16M3 20h18"/></svg><div><strong>Bill Layne Insurance</strong><small>Elkin, NC &bull; Since 2005</small><small id="navVersion"></small></div></div>
+</aside>
 <main>
   <div class="workflow-shell">
     <nav class="workflow-steps" aria-label="PDF workflow">
-      <button type="button" class="workflow-step current" id="workflowStep1"><span>1</span><div><strong>Add files</strong><small>PDFs or photos</small></div></button>
+      <button type="button" class="workflow-step current" id="workflowStep1"><span>1</span><div><strong>Add files</strong><small>and choose pages</small></div></button>
       <div class="workflow-line" aria-hidden="true"></div>
-      <button type="button" class="workflow-step" id="workflowStep2"><span>2</span><div><strong>Choose pages</strong><small>Select from your files</small></div></button>
+      <button type="button" class="workflow-step" id="workflowStep2"><span>2</span><div><strong>Edit &amp; arrange</strong><small>Reorder, mark up, sign</small></div></button>
       <div class="workflow-line" aria-hidden="true"></div>
-      <button type="button" class="workflow-step" id="workflowStep3"><span>3</span><div><strong>Arrange &amp; finish</strong><small>Edit, preview and save</small></div></button>
+      <button type="button" class="workflow-step" id="workflowStep3"><span>3</span><div><strong>Preview &amp; finish</strong><small>Check it, save or send</small></div></button>
     </nav>
     <div class="device-status" aria-label="Device connections">
       <span class="status-chip private"><i></i>Local editing</span>
@@ -1922,9 +2129,9 @@ body.hints-off .editor-main > #editHint { display: none; }
   <section id="sourcePane">
     <div class="pane-title" id="sourceTitle" style="display:none">
       <div class="section-heading">
-        <span class="section-step">Step 2</span>
-        <strong>Source files</strong>
-        <span class="tip">Choose the pages you want in the finished PDF</span>
+        <span class="section-step">Step 1</span>
+        <strong>Choose pages</strong>
+        <span class="tip">Pick the pages for your PDF, or add every page</span>
       </div>
       <div class="source-actions">
         <div class="search-box">
@@ -1933,13 +2140,13 @@ body.hints-off .editor-main > #editHint { display: none; }
           <button id="btnSearch">Find</button>
           <button class="ghost" id="btnSearchClear" style="display:none">Clear</button>
         </div>
-        <button id="btnAddEverything" style="display:none" title="Put every page of every file into Step 3, in file order"><svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h9M17 15l3 3-3 3"/></svg><span id="addEverythingLabel">Add every page</span></button>
+        <button id="btnAddEverything" style="display:none" title="Put every page of every file into your PDF, in file order"><svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h9M17 15l3 3-3 3"/></svg><span id="addEverythingLabel">Add every page</span></button>
         <button class="primary" id="btnAdd">
           <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
           Add files
         </button>
         <button class="step-nav" id="btnGoStep3" style="display:none" title="Go to your new PDF">
-          <span id="goStep3Label">Go to Step 3</span>
+          <span id="goStep3Label">Your PDF</span>
           <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </button>
         <div class="menu-wrap" id="srcMenuWrap">
@@ -1960,24 +2167,26 @@ body.hints-off .editor-main > #editHint { display: none; }
       <button class="ghost" id="btnDiscardRestore">Discard</button>
     </div>
 
-    <div class="dropzone" id="dropzone">
-      <div class="dz-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7zM14 3v5h5M12 11v6M9 14h6"/></svg></div>
-      <span class="drop-eyebrow">Private PDF workspace</span>
-      <h2>Build, edit and send a PDF</h2>
-      <p>Combine PDFs, applications, photos and scans into one polished document.</p>
-      <div class="drop-actions">
-        <button class="primary" id="btnBrowseFiles">
-          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 7h7l2 2h9v10H3zM12 11v6M9 14h6"/></svg>
-          Choose PDFs or photos
-        </button>
-        <button id="btnForms2">
-          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 4h10v16H7zM9 2h6v4H9zM9.5 10h5M9.5 14h5"/></svg>
-          Open Forms Library
-        </button>
+    <div id="homeView">
+      <h2 class="home-title">What would you like to do?</h2>
+      <p class="home-sub"><span class="dz-desktop">Edit a document or bring several files together.</span><span class="dz-mobile">Edit, combine and finish your PDFs.</span></p>
+      <div class="intent-grid">
+        <button type="button" class="intent-card" id="intentEdit"><span class="intent-ico blue"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3H7a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h4M12 3l5 5M12 3v5h5"/><path d="m13.5 20.5.6-2.9 5.3-5.3a1.6 1.6 0 0 1 2.3 2.3l-5.3 5.3z"/></svg></span><span class="intent-text"><strong>Edit a PDF</strong><small><span class="dz-desktop">Add text, mark up and make changes</span><span class="dz-mobile">Add text and mark up</span></small></span><svg aria-hidden="true" viewBox="0 0 24 24" class="chev"><path d="m9 5 7 7-7 7"/></svg></button>
+        <button type="button" class="intent-card" id="intentCombine"><span class="intent-ico amber"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 7V5a2 2 0 0 0-2-2 2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"/><rect x="8" y="7" width="12" height="14" rx="2"/></svg></span><span class="intent-text"><strong>Combine Files</strong><small><span class="dz-desktop">Bring PDFs and photos into one document</span><span class="dz-mobile">PDFs and photos in one document</span></small></span><svg aria-hidden="true" viewBox="0 0 24 24" class="chev"><path d="m9 5 7 7-7 7"/></svg></button>
+        <button type="button" class="intent-card" id="btnForms2"><span class="intent-ico mint"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 3h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM14 3v4h4M9 12h6M9 15.5h6M9 8.5h2.5"/></svg></span><span class="intent-text"><strong>Start with a Form</strong><small><span class="dz-desktop">Choose from your saved forms</span><span class="dz-mobile">Choose a saved form</span></small></span><svg aria-hidden="true" viewBox="0 0 24 24" class="chev"><path d="m9 5 7 7-7 7"/></svg></button>
       </div>
-      <p class="hint">Or drag files here &bull; PDF, JPG, PNG, WebP and more &bull; <a href="#" id="linkHelp">How it works</a></p>
-      <div class="drop-privacy"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10V7a5 5 0 0 1 10 0v3M5 10h14v10H5z"/></svg>Files are edited on this device. Only delivery actions upload your finished PDF.</div>
-      <div id="recentProjects" style="display:none"><div class="recent-head">Pick up where you left off</div><div id="recentList"></div></div>
+      <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Add PDFs or photos">
+        <svg aria-hidden="true" viewBox="0 0 24 24" class="dz-cloud"><path d="M7 18a4 4 0 0 1-.8-7.9A5.5 5.5 0 0 1 17 9.2 4.2 4.2 0 0 1 17.5 18H16M12 21v-8M9 15.5l3-3 3 3"/></svg>
+        <h3><span class="dz-desktop">Drop your PDFs or photos here</span><span class="dz-mobile">Add PDFs or photos</span></h3>
+        <p>PDF, JPG, PNG and WebP</p>
+        <button type="button" class="primary" id="btnBrowseFiles"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 7a1 1 0 0 1 1-1h5l2 2h8a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zM3 10.5h18"/></svg>Choose Files</button>
+        <div class="drop-privacy"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10V7a5 5 0 0 1 10 0v3M5 10h14v10H5zM12 14v2"/></svg><span>Edited on this device. Delivery uploads your finished PDF.</span></div>
+      </div>
+      <section id="recentProjects" style="display:none" aria-label="Recent projects">
+        <div class="recent-head"><h3>Recent projects</h3><button type="button" class="link-btn" id="btnViewAllProjects">View all <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+        <div id="recentList"></div>
+      </section>
+      <button type="button" class="how-strip" id="linkHelp" title="How PDF Studio works"><svg aria-hidden="true" viewBox="0 0 24 24" class="how-ico"><path d="M8 5h8l3 3v11H8zM16 5v3h3M5 8v13h10M11 12h5M11 15h5"/></svg><span class="how-div"></span><strong>A simpler way to finish your paperwork.</strong><span class="how-steps"><span><b>1</b>Add files</span><span class="arr">&rarr;</span><span><b>2</b>Edit &amp; arrange</span><span class="arr">&rarr;</span><span><b>3</b>Preview &amp; finish</span></span></button>
     </div>
 
     <div id="pickBar" role="status" aria-live="polite">
@@ -1999,7 +2208,7 @@ body.hints-off .editor-main > #editHint { display: none; }
   <section id="trayPane">
     <div class="tray-head">
       <div class="tray-heading">
-        <span class="section-step">Step 3</span>
+        <span class="section-step">Step 2 &middot; Edit &amp; arrange</span>
         <div><span class="tray-title">Your new PDF</span><span class="tray-count" id="trayCount">0 pages</span></div>
         <small>Drag pages to set their final order &bull; pencil to edit a page</small>
         <button class="step-nav" id="btnBackStep2" title="Go back to your source pages to add more">
@@ -2069,6 +2278,13 @@ body.hints-off .editor-main > #editHint { display: none; }
     </div>
   </section>
 </main>
+</div>
+<nav class="tab-bar" id="tabBar" aria-label="PDF Studio">
+  <button type="button" class="tab active" id="tabNew"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M13 3H7a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h4M13 3l5 5M13 3v5h5M18 8v2.5"/><circle cx="17" cy="17" r="4"/><path d="M17 15.3v3.4M15.3 17h3.4"/></svg><span>New PDF</span></button>
+  <button type="button" class="tab" id="tabProjects"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg><span>Projects</span></button>
+  <button type="button" class="tab" id="tabForms"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 3h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM14 3v4h4M9 12h6M9 15.5h6M9 8.5h2.5"/></svg><span>Forms</span></button>
+  <button type="button" class="tab" id="tabHelp"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/></svg><span>Help</span></button>
+</nav>
 
 <footer>
   Bill Layne Insurance Agency internal tool &bull; <strong>Private by design</strong> &mdash; files are edited locally; Gmail and SMS delivery upload the finished PDF. <span class="app-version" id="appVersion"></span>
@@ -2259,7 +2475,7 @@ body.hints-off .editor-main > #editHint { display: none; }
         <button class="primary" id="btnFormsUpload">&#8682; Add forms</button>
       </div>
       <div id="packetsBox" style="display:none;flex-direction:column;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--warm)">
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><strong>&#128230; Packets</strong><span class="sig-note" style="margin:0;flex:1;min-width:160px">forms you send together, in order &mdash; open one and every page lands in Step 3</span><button id="btnSavePacket" title="Save the library forms in this workspace, in their Step 3 order, as a packet for the whole office">+ Save current forms as a packet</button><button class="ghost" id="btnPacketsUndo" title="Put the packets back the way they were before the last change (for everyone)">Undo last change</button></div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><strong>&#128230; Packets</strong><span class="sig-note" style="margin:0;flex:1;min-width:160px">forms you send together, in order &mdash; open one and every page lands in your PDF</span><button id="btnSavePacket" title="Save the library forms in this workspace, in the order they are in your PDF, as a packet for the whole office">+ Save current forms as a packet</button><button class="ghost" id="btnPacketsUndo" title="Put the packets back the way they were before the last change (for everyone)">Undo last change</button></div>
         <div id="packetsList" style="display:flex;flex-direction:column;gap:6px"></div>
       </div>
       <div id="formsList" style="display:flex;flex-direction:column;gap:8px"></div>
@@ -2473,7 +2689,7 @@ body.hints-off .editor-main > #editHint { display: none; }
 <script>
 (function () {
   'use strict';
-  const APP_VERSION = '2026-09-20.3';   // bump on every release — shown in the footer, the Help dialog and the console
+  const APP_VERSION = '2026-10-01.1';   // bump on every release — shown in the footer, the Help dialog and the console
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -2816,13 +3032,16 @@ body.hints-off .editor-main > #editHint { display: none; }
     document.body.classList.toggle('step-3', uiStep === 3);
     document.body.classList.toggle('has-files', docs.size > 0);
     document.body.classList.toggle('multi-output', outputs.length > 1);
+    // The indicator shows the three stages staff think in. Internally uiStep is still
+    // 1 landing · 2 choose pages · 3 your PDF; stage 3 is the Preview & finish dialog.
+    const stage = uiStep === 3 ? 2 : 1;
     [1, 2, 3].forEach(n => {
       const el = $('workflowStep' + n);
       if (!el) return;
-      el.classList.toggle('current', n === uiStep);
-      el.classList.toggle('complete', n < uiStep);
-      el.setAttribute('aria-current', n === uiStep ? 'step' : 'false');
-      const can = stepAvailable(n) && n !== uiStep;
+      el.classList.toggle('current', n === stage);
+      el.classList.toggle('complete', n < stage);
+      el.setAttribute('aria-current', n === stage ? 'step' : 'false');
+      const can = n === 1 ? (docs.size > 0 && uiStep === 3) : n === 2 ? (tray.length > 0 && uiStep !== 3) : tray.length > 0;
       el.disabled = !can;
       el.dataset.clickable = can ? '1' : '0';
     });
@@ -2844,7 +3063,11 @@ body.hints-off .editor-main > #editHint { display: none; }
 
   [1, 2, 3].forEach(n => {
     const el = $('workflowStep' + n);
-    if (el) el.addEventListener('click', () => { if(n===1&&docs.size){$('fileInput').click();return;} setStep(n); });
+    if (el) el.addEventListener('click', () => {
+      if (n === 1) setStep(2);              // back to the files and the page picker
+      else if (n === 2) setStep(3);         // your PDF
+      else previewFinal();                  // Preview & finish
+    });
   });
   $('btnGoStep3').addEventListener('click', () => setStep(3));
   $('btnBackStep2').addEventListener('click', () => setStep(2));
@@ -2890,6 +3113,7 @@ body.hints-off .editor-main > #editHint { display: none; }
   function renderSources() {
     const has = docs.size > 0;
     dropzone.style.display = has ? 'none' : '';
+    $('homeView').style.display = has ? 'none' : '';
     $('sourceTitle').style.display = has ? '' : 'none';
     docList.innerHTML = '';
     // which source pages are already placed — in THIS new PDF or in another one
@@ -3010,7 +3234,7 @@ body.hints-off .editor-main > #editHint { display: none; }
           pickedSrc.delete(p.sid);          // the first click of the double-click selected it
           trayAdd(p);
           renderAll();
-          toast('Added page ' + (p.pageIndex + 1) + ' to Step 3.');
+          toast('Added page ' + (p.pageIndex + 1) + ' to your PDF.');
         });
         card.addEventListener('keydown', (e) => {
           if (e.target !== card || (e.key !== 'Enter' && e.key !== ' ')) return;
@@ -3576,7 +3800,7 @@ body.hints-off .editor-main > #editHint { display: none; }
       : mode === 'draw'
         ? 'Draw right on the page with your mouse or trackpad — hold the button down and move. The pen uses the color box, and the size box sets how thick it is. Undo removes the last stroke.'
       : mode === 'box'
-        ? 'Permanent white-out is on (Settings, Step 3): when you save or send, this page becomes a picture and the covered text is removed from the file. Turn it off there if the page must keep selectable text.'
+        ? 'Permanent white-out is on (Settings): when you save or send, this page becomes a picture and the covered text is removed from the file. Turn it off there if the page must keep selectable text.'
         : mode === 'sig'
           ? 'Click the page where you want your signature. You can move and resize it after placing it.'
           : mode === 'img'
@@ -4830,10 +5054,10 @@ body.hints-off .editor-main > #editHint { display: none; }
   }
 
   /* ── Toolbar wiring ── */
-  $('btnAdd').addEventListener('click', () => $('fileInput').click());
+  $('btnAdd').addEventListener('click', () => pickFiles());
   $('btnBrowseFiles').addEventListener('click', (e) => {
     e.stopPropagation();
-    $('fileInput').click();
+    pickFiles();
   });
   $('btnReset').addEventListener('click', () => {
     showDialog('Start over?', '<p>Clear the current workspace and its output documents? Named saved projects are kept.</p><div class="studio-row"><button id="confirmReset">Clear workspace</button><button id="cancelReset">Keep working</button></div>');
@@ -5311,8 +5535,45 @@ body.hints-off .editor-main > #editHint { display: none; }
   });
 
   /* ── File input + drag/drop of files ── */
-  $('fileInput').addEventListener('change', (e) => { addFiles(e.target.files); e.target.value = ''; });
-  dropzone.addEventListener('click', () => $('fileInput').click());
+  /* Home-screen intents. "Edit a PDF" and "Combine Files" skip the choose-pages
+     screen: every page of the files just picked goes straight into the PDF, and
+     Edit opens the editor on the first of them. The plain drop area keeps the
+     choose-pages flow. */
+  let pendingIntent = null;                       // 'edit' | 'combine' | null
+  function pickFiles(intent) { pendingIntent = intent || null; $('fileInput').click(); }
+  function runIntent(intent, before) {
+    const fresh = [...docs.entries()].filter(([id]) => !before.has(id)).map(([, d]) => d);
+    if (!fresh.length) return;
+    const firstNew = tray.length;
+    fresh.forEach(d => d.pages.forEach(pg => trayAdd(pg)));
+    pickedSrc.clear();
+    lastPickedSid = null;
+    renderAll();
+    setStep(3);
+    const n = tray.length - firstNew;
+    if (intent === 'edit') {
+      openEditor(tray[firstNew]);
+    } else {
+      toast(n + ' page' + (n === 1 ? '' : 's') + ' from ' + fresh.length + ' file' + (fresh.length === 1 ? '' : 's') +
+        ' — drag to arrange, pencil to mark one up, or Back to pages to leave some out.');
+    }
+  }
+  $('fileInput').addEventListener('change', async (e) => {
+    const intent = pendingIntent;
+    pendingIntent = null;
+    const files = [...e.target.files];            // copy before the input is cleared
+    e.target.value = '';
+    const before = new Set(docs.keys());
+    await addFiles(files);
+    if (intent) runIntent(intent, before);
+  });
+  $('fileInput').addEventListener('cancel', () => { pendingIntent = null; });
+  dropzone.addEventListener('click', () => pickFiles());
+  dropzone.addEventListener('keydown', (e) => {
+    if (e.target === dropzone && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); pickFiles(); }
+  });
+  $('intentEdit').addEventListener('click', () => pickFiles('edit'));
+  $('intentCombine').addEventListener('click', () => pickFiles('combine'));
   // drop files anywhere — a full-page indicator shows while dragging over the window
   let dragDepth = 0;
   function hideDropOverlay() {
@@ -6048,7 +6309,7 @@ body.hints-off .editor-main > #editHint { display: none; }
     async function render(){if(rendering||closed)return;rendering=true;previous.disabled=true;next.disabled=true;try{const page=await task.getPage(current);if(closed)return;const vp=page.getViewport({scale:Math.min(1.5,900/page.getViewport({scale:1}).width)});canvas.width=vp.width;canvas.height=vp.height;canvas.setAttribute('aria-label','Preview page '+current);label.textContent='Page '+current+' of '+task.numPages;await page.render({canvasContext:canvas.getContext('2d'),viewport:vp,intent:'print'}).promise;}catch(e){if(!closed)label.textContent='Could not preview page '+current;}finally{rendering=false;previous.disabled=current===1;next.disabled=current===task.numPages;}}
     previous.onclick=()=>{if(!rendering&&current>1){current--;void render();}};next.onclick=()=>{if(!rendering&&current<task.numPages){current++;void render();}};await render();
   }
-  async function previewFinal(email=false){if(!tray.length){toast('Choose pages first.');return;}busy(true,'Building preview…');try{const options=exportOptions(),r=await buildFinalBytes(tray,{...options,lock:false});const filename=cleanName();showDialog(email?'Review email and attachment':'Preview finished PDF',`<p id="previewSummary"></p><p class="studio-note">${options.lock?'Password protection is selected. Choose the password when saving or creating the draft.':'No password protection selected.'}</p>${email?'<iframe class="email-preview" id="emailBodyPreview" title="Email body preview" sandbox></iframe>':''}<div class="studio-row"><button id="savePreview" class="primary">Save this PDF</button></div><div id="finalPages" class="studio-preview"></div>`);$('previewSummary').textContent=filename+' • '+tray.length+' pages • '+fmtSize(r.bytes.length)+(options.lock?' before locking':'')+(options.numbers?' • Numbered':'')+(options.permanent?' • Permanent white-out':'')+(r.note||'');if(email)$('emailBodyPreview').srcdoc=buildEmailHtml();$('savePreview').onclick=async()=>{let bytes=r.bytes;if(options.lock){const pw=await askExportPassword();if(!pw)return;bytes=await lockPdfBytes(bytes,pw);}download(bytes,filename);};await renderPdfPreview(r.bytes,$('finalPages'));}catch(e){toast('Could not preview PDF: '+e.message);}finally{busy(false);}}
+  async function previewFinal(email=false){if(!tray.length){toast('Choose pages first.');return;}busy(true,'Building preview…');try{const options=exportOptions(),r=await buildFinalBytes(tray,{...options,lock:false});const filename=cleanName();showDialog(email?'Review email and attachment':'Preview & finish',`<p id="previewSummary"></p><p class="studio-note">${options.lock?'Password protection is selected. Choose the password when saving or creating the draft.':'No password protection selected.'}</p>${email?'<iframe class="email-preview" id="emailBodyPreview" title="Email body preview" sandbox></iframe>':''}<div class="studio-row"><button id="savePreview" class="primary">Save this PDF</button>${email?'':'<button id="previewEmail">Gmail draft</button><button id="previewPrint">Print</button>'}</div><div id="finalPages" class="studio-preview"></div>`);$('previewSummary').textContent=filename+' • '+tray.length+' pages • '+fmtSize(r.bytes.length)+(options.lock?' before locking':'')+(options.numbers?' • Numbered':'')+(options.permanent?' • Permanent white-out':'')+(r.note||'');if(email)$('emailBodyPreview').srcdoc=buildEmailHtml();$('savePreview').onclick=async()=>{let bytes=r.bytes;if(options.lock){const pw=await askExportPassword();if(!pw)return;bytes=await lockPdfBytes(bytes,pw);}download(bytes,filename);};if(!email){$('previewEmail').onclick=()=>{closeStudioDialog();$('btnEmail').click();};$('previewPrint').onclick=()=>{closeStudioDialog();$('btnPrint').click();};}await renderPdfPreview(r.bytes,$('finalPages'));}catch(e){toast('Could not preview PDF: '+e.message);}finally{busy(false);}}
       $('btnPreviewFinal').onclick=()=>previewFinal();$('btnEmailPreview').onclick=()=>previewFinal(true);
   const retry=document.createElement('div');retry.id='mailRetryCheck';retry.hidden=!mailUncertain;retry.innerHTML='<p>A previous draft request has an uncertain outcome. Check Gmail Drafts before retrying.</p><a href="https://mail.google.com/mail/u/0/#drafts" target="_blank" rel="noopener">Open Gmail Drafts</a> <button id="mailRetryAllow">I checked Gmail — allow another attempt</button>';$('btnEmailGo').parentElement.before(retry);
   $('mailRetryAllow').onclick=()=>{mailUncertain=false;localStorage.removeItem('bliPdfMailUncertain');retry.hidden=true;$('btnEmailGo').disabled=false;};$('btnEmailGo').disabled=mailUncertain;
@@ -6180,7 +6441,7 @@ body.hints-off .editor-main > #editHint { display: none; }
     packetsCache = data;
     list.innerHTML = '';
     if (!data.packets.length) {
-      list.innerHTML = '<div class="sig-note">No packets yet — open the forms you send together, put them in order in Step 3, then save them as a packet.</div>';
+      list.innerHTML = '<div class="sig-note">No packets yet — open the forms you send together, put them in order in your PDF, then save them as a packet.</div>';
       return;
     }
     data.packets.forEach(pk => {
@@ -6230,11 +6491,11 @@ body.hints-off .editor-main > #editHint { display: none; }
       const notes = (pk.notes || []).filter(Boolean);
       if (notes.length || missing.length) {
         showDialog('Packet "' + pk.name + '"',
-          '<p>' + (loaded.length ? loaded.length + ' form' + (loaded.length === 1 ? '' : 's') + ' loaded and placed in Step 3 in packet order.' : 'No forms could be loaded.') + '</p>' +
+          '<p>' + (loaded.length ? loaded.length + ' form' + (loaded.length === 1 ? '' : 's') + ' loaded and placed in your PDF in packet order.' : 'No forms could be loaded.') + '</p>' +
           (notes.length ? '<p><strong>Still to add by hand:</strong></p><ul>' + notes.map(n => '<li>' + escapeHtml(n) + '</li>').join('') + '</ul>' : '') +
           (missing.length ? '<p class="studio-note">No longer in the library: ' + escapeHtml(missing.join(', ')) + '</p>' : ''));
       } else {
-        toast('Packet "' + pk.name + '" is in Step 3 — ' + loaded.length + ' form' + (loaded.length === 1 ? '' : 's') + '.');
+        toast('Packet "' + pk.name + '" is in your PDF — ' + loaded.length + ' form' + (loaded.length === 1 ? '' : 's') + '.');
       }
     } catch (e) { console.error(e); toast('Could not open that packet — check your connection.'); }
     busy(false);
@@ -6394,13 +6655,13 @@ body.hints-off .editor-main > #editHint { display: none; }
   // ── How it works (item 6) ──
   function openHelp() {
     showDialog('How PDF Studio works', '<div class="help">' +
-      '<h3>1 · Three steps</h3><p><strong>Add files</strong> (PDFs, photos, scans, or a Forms Library form) → <strong>Choose pages</strong> (click to select, shift-click for a range, or <em>Add every page</em>) → <strong>Arrange &amp; finish</strong> (drag to reorder, pencil to edit a page).</p>' +
+      '<h3>1 · Three steps</h3><p><strong>Add files</strong> — or start from <em>Edit a PDF</em>, <em>Combine Files</em> or a form — and choose the pages you want (click to select, shift-click for a range, or <em>Add every page</em>) → <strong>Edit &amp; arrange</strong> (drag to reorder, pencil to mark up a page) → <strong>Preview &amp; finish</strong> (check it, then save, send or print).</p>' +
       '<h3>2 · Finishing</h3><p><strong>Save PDF</strong> downloads it. <strong>Send</strong> makes a Gmail draft with the PDF attached, hands it to SMS Command Center, or prints. <strong>Export</strong> splits or bundles. <strong>Settings</strong> holds shrink-for-email, page numbers, password lock and permanent white-out.</p>' +
       '<h3>3 · White-out is permanent by default</h3><p>A page with a white-out is saved as a picture, so the covered text is truly gone from the file. Turn it off in Settings only if that page must keep typed text. Highlight and crop just hide.</p>' +
       '<h3>4 · Packets and agency stamps</h3><p>In the Forms Library, save the forms you send together as a <strong>packet</strong>; anyone in the office opens it in one tap. Press ↑ on one of your stamps to share it with the agency. Signatures and initials stay on your own device.</p>' +
       '<h3>5 · Your phone</h3><p>Open a Gmail draft on your computer and choose <em>Set up my phone</em> — scan the code once and the phone can create drafts too.</p>' +
       '<h3>6 · Private by design</h3><p>Files never leave this device except when you send. Autosave keeps a copy in this browser; <strong>Projects</strong> saves named copies you can reopen.</p>' +
-      '<h3>Keys</h3><ul><li><kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Y</kbd> undo and redo anything, including edits on a page</li><li><kbd>Ctrl</kbd>+<kbd>S</kbd> save · <kbd>Ctrl</kbd>+<kbd>P</kbd> print (Step 3)</li><li><kbd>PageUp</kbd> / <kbd>PageDown</kbd> move between pages in the editor · <kbd>Delete</kbd> removes a selected page</li><li><kbd>Esc</kbd> closes whatever is open</li></ul>' +
+      '<h3>Keys</h3><ul><li><kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Y</kbd> undo and redo anything, including edits on a page</li><li><kbd>Ctrl</kbd>+<kbd>S</kbd> save · <kbd>Ctrl</kbd>+<kbd>P</kbd> print (while your PDF is open)</li><li><kbd>PageUp</kbd> / <kbd>PageDown</kbd> move between pages in the editor · <kbd>Delete</kbd> removes a selected page</li><li><kbd>Esc</kbd> closes whatever is open</li></ul>' +
       '<p style="margin-top:14px;color:var(--muted);font-size:12px">PDF Studio v' + APP_VERSION + ' &bull; questions: Bill</p></div>');
   }
   $('btnHelp').addEventListener('click', openHelp);
@@ -6408,26 +6669,82 @@ body.hints-off .editor-main > #editHint { display: none; }
 
   // ── recent projects on the landing (item 7) ──
   async function renderRecentProjects() {
-    const box = $('recentProjects');
+    const box = $('recentProjects'), listEl = $('recentList');
     if (docs.size) { box.style.display = 'none'; return; }
     let list = [];
     try { list = await projectStore('getAll'); } catch (_) {}
+    if (docs.size) { box.style.display = 'none'; return; }
     list = (list || []).sort((a, b) => b.when - a.when).slice(0, 3);
-    if (!list.length || docs.size) { box.style.display = 'none'; return; }
-    $('recentList').replaceChildren(...list.map(pr => {
-      const b = document.createElement('button');
-      b.className = 'recent-chip';
-      b.type = 'button';
-      const n = (pr.data && pr.data.outputs ? pr.data.outputs.length : 1);
-      b.innerHTML = '<strong></strong><small></small>';
-      b.querySelector('strong').textContent = pr.name;
-      b.querySelector('small').textContent = new Date(pr.when).toLocaleDateString() + ' · ' + n + ' PDF' + (n === 1 ? '' : 's');
-      b.addEventListener('click', () => { restoreWorkspace(pr.data); resetHistory(); toast('Opened project "' + pr.name + '".'); });
-      return b;
-    }));
     box.style.display = '';
+    if (!list.length) {
+      listEl.innerHTML = '<div class="proj-empty">No saved projects yet. Name your work under <strong>Projects</strong> and it shows up here, ready to continue.</div>';
+      return;
+    }
+    listEl.replaceChildren(...list.map(projectCard));
+  }
+  function projectCard(pr) {
+    const data = pr.data || {};
+    const outs = (data.outputs && data.outputs.length) ? data.outputs : [{ pages: data.tray || [] }];
+    const pages = outs.reduce((n, o) => n + ((o.pages || []).length), 0);
+    const first = ((outs.find(o => (o.pages || []).length) || {}).pages || [])[0] || (((data.docs || [])[0] || {}).pages || [])[0];
+    const card = document.createElement('div');
+    card.className = 'proj-card';
+    card.tabIndex = 0;
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', 'Continue editing ' + pr.name);
+    card.innerHTML = '<div class="proj-thumb"><i></i><i></i>' + (first && first.thumb ? '<img alt="">' : '<div class="proj-blank"></div>') + '</div>' +
+      '<div class="proj-body"><strong></strong><small></small><span class="proj-go">Continue editing <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>';
+    if (first && first.thumb) card.querySelector('img').src = first.thumb;
+    card.querySelector('strong').textContent = pr.name;
+    card.querySelector('small').textContent = pages + ' page' + (pages === 1 ? '' : 's') + ' • saved ' +
+      new Date(pr.when).toLocaleDateString([], { month: 'short', day: 'numeric' });
+    const open = () => { restoreWorkspace(pr.data); resetHistory(); toast('Opened project "' + pr.name + '".'); };
+    card.addEventListener('click', (e) => { if (!e.target.closest('.menu-wrap')) open(); });
+    card.addEventListener('keydown', (e) => { if (e.target === card && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); open(); } });
+    const wrap = document.createElement('div');
+    wrap.className = 'menu-wrap';
+    const btn = document.createElement('button');
+    btn.className = 'icon-button';
+    btn.title = 'More';
+    btn.setAttribute('aria-label', 'More for ' + pr.name);
+    btn.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>';
+    const panel = document.createElement('div');
+    panel.className = 'menu-panel';
+    const bOpen = document.createElement('button');
+    bOpen.textContent = 'Open';
+    bOpen.addEventListener('click', open);
+    const bDel = document.createElement('button');
+    bDel.className = 'danger';
+    bDel.textContent = 'Delete saved copy';
+    bDel.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      if (bDel.dataset.armed !== '1') { bDel.dataset.armed = '1'; bDel.textContent = 'Sure? Delete'; return; }
+      await projectStore('delete', pr.id);
+      if (projectId === pr.id) { projectId = null; projectName = ''; renderOutputSelect(); }
+      renderRecentProjects();
+    });
+    panel.append(bOpen, bDel);
+    wrap.append(btn, panel);
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const wasOpen = wrap.classList.contains('open');
+      closeAllMenus();
+      if (!wasOpen) wrap.classList.add('open');
+    });
+    card.appendChild(wrap);
+    return card;
   }
   renderRecentProjects();
+
+  // ── app navigation: sidebar (desktop), tab bar (phone landing), avatar ──
+  $('navVersion').textContent = 'v' + APP_VERSION;
+  const goNew = () => { if (docs.size) $('btnReset').click(); else $('sourcePane').scrollTo({ top: 0, behavior: 'smooth' }); };
+  $('navNew').addEventListener('click', goNew);
+  $('tabNew').addEventListener('click', goNew);
+  ['navProjects', 'tabProjects', 'btnViewAllProjects'].forEach(id => $(id).addEventListener('click', () => $('btnProjects').click()));
+  ['navForms', 'tabForms'].forEach(id => $(id).addEventListener('click', () => openFormsModal()));
+  $('tabHelp').addEventListener('click', () => openHelp());
+  $('btnAvatar').addEventListener('click', () => $('btnConnections').click());
 
   const modalNames={editModal:'Edit PDF page',emailModal:'Email as Gmail draft',formsModal:'Forms Library',phoneModal:'Phone setup',formModal:'Fill PDF form',viewModal:'PDF page preview',sigPanel:'Signature'};
   for(const [id,name] of Object.entries(modalNames)){const el=$(id);if(el){el.setAttribute('role','dialog');el.setAttribute('aria-label',name);el.setAttribute('aria-modal','true');}}
@@ -6438,7 +6755,7 @@ body.hints-off .editor-main > #editHint { display: none; }
     if (k !== 's' && k !== 'p') return;
     if ($('studioDialog').open || Object.keys(modalNames).some(id => $(id) && $(id).classList.contains('open'))) return;
     e.preventDefault();
-    if (!tray.length) { toast('Nothing to ' + (k === 's' ? 'save' : 'print') + ' yet — put some pages in Step 3 first.'); return; }
+    if (!tray.length) { toast('Nothing to ' + (k === 's' ? 'save' : 'print') + ' yet — put some pages in your PDF first.'); return; }
     if (uiStep !== 3) setStep(3);
     $(k === 's' ? 'btnCreate' : 'btnPrint').click();
   });
@@ -6463,7 +6780,7 @@ body.hints-off .editor-main > #editHint { display: none; }
       if (doc) { trayAdd(doc.pages[pageIndex]); renderAll(); }
     },
     buildPdfBytes, buildFinalBytes, parseRanges, zipBytes, rasterizePages, rememberOcr, getDocTexts, applyMailType,
-    sharedGet, sharedPut, renderPackets, openPacket, libraryDocsInOrder, renderSharedStamps, shareStamp, loadSharedStamps, suggestName, sessionGet, bytesGet, renderRecentProjects, version: APP_VERSION, snapshotWorkspace, restoreWorkspace, travelHistory, exportOptions,
+    sharedGet, sharedPut, renderPackets, openPacket, libraryDocsInOrder, renderSharedStamps, shareStamp, loadSharedStamps, suggestName, sessionGet, bytesGet, renderRecentProjects, runIntent, version: APP_VERSION, snapshotWorkspace, restoreWorkspace, travelHistory, exportOptions,
     openEditorFor: (i) => { if (tray[i]) openEditor(tray[i]); },
     formsAdd: addFormToLibrary,
     formsList: async () => { const r = await formsApi('/list'); return (await r.json()).forms; },

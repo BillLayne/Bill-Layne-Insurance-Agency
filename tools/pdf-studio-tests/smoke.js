@@ -99,6 +99,48 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
     ok('version stamp in footer + body; Help dialog opens', /^\d{4}-\d{2}-\d{2}/.test(r.version) && r.footer === 'v' + r.version && r.bodyVersion === r.version && r.helpTitle === 'How PDF Studio works' && r.helpMentionsWhiteout, r);
     console.log('  info  PDF Studio version ' + r.version);
 
+    // 1b. the home screen: intents, sidebar on desktop, tab bar on a phone
+    r = await evalIn(page, `
+      return { title: document.querySelector('.home-title').textContent, cards: [...document.querySelectorAll('.intent-card')].filter(vis).map(c => c.querySelector('strong').textContent),
+        sidebarW: Math.round(document.querySelector('.app-nav').getBoundingClientRect().width), tabBar: vis(document.getElementById('tabBar')), stepper: vis(document.querySelector('.workflow-shell')),
+        strip: vis(document.getElementById('linkHelp')), recent: vis(document.getElementById('recentProjects')), avatar: vis(document.getElementById('btnAvatar')) };`);
+    ok('home: headline, three intent cards, sidebar, strip, recent projects; no stepper yet',
+      r.title === 'What would you like to do?' && r.cards.join('|') === 'Edit a PDF|Combine Files|Start with a Form' && r.sidebarW > 200 && !r.tabBar && !r.stepper && r.strip && r.recent && r.avatar, r);
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.waitForTimeout(300);
+    r = await evalIn(page, `
+      const cards = [...document.querySelectorAll('.intent-card')];
+      return { tabs: [...document.querySelectorAll('#tabBar .tab')].filter(vis).map(t => t.textContent.trim()), sidebar: vis(document.querySelector('.app-nav')),
+        stacked: new Set(cards.map(c => Math.round(c.getBoundingClientRect().top))).size === 3, overflowX: document.documentElement.scrollWidth > innerWidth,
+        tabBarAtBottom: Math.abs(document.getElementById('tabBar').getBoundingClientRect().bottom - innerHeight) <= 2 };`);
+    ok('home on a phone: tab bar (New PDF, Projects, Forms, Help), stacked cards, no sideways scroll',
+      r.tabs.join('|') === 'New PDF|Projects|Forms|Help' && !r.sidebar && r.stacked && !r.overflowX && r.tabBarAtBottom, r);
+    await page.setViewportSize({ width: 1366, height: 768 });
+    await page.waitForTimeout(300);
+
+    // 1c. the intent cards, through a real file chooser
+    const pdfBuffer = async (label, pages) => Buffer.from(await page.evaluate(async ([label, pages]) => {
+      const d = await PDFLib.PDFDocument.create();
+      for (let i = 1; i <= pages; i++) d.addPage([612, 792]).drawText(label + ' p' + i, { x: 100, y: 700, size: 20 });
+      return Array.from(new Uint8Array(await d.save()));
+    }, [label, pages]));
+    const startOver = async () => { await evalIn(page, `
+      if (document.getElementById('editModal').classList.contains('open')) { document.getElementById('btnEditDone').click(); await wait(400); }
+      document.getElementById('btnReset').click(); await wait(250); document.getElementById('confirmReset').click(); await wait(600); return true;`); };
+    let [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.click('#intentEdit')]);
+    await chooser.setFiles([{ name: 'Edit Me.pdf', mimeType: 'application/pdf', buffer: await pdfBuffer('EDIT', 2) }]);
+    await page.waitForFunction(() => document.getElementById('editModal').classList.contains('open') && document.getElementById('editCanvas').width > 100, null, { timeout: 20000 });
+    r = await evalIn(page, `return { tray: S().tray.length, step3: document.body.classList.contains('step-3'), name: document.getElementById('nameInput').value, page: document.getElementById('editorPageJump').value };`);
+    ok('"Edit a PDF": every page lands in the PDF and the editor opens on page 1', r.tray === 2 && r.step3 && r.name === 'Edit Me' && r.page === '1', r);
+    await startOver();
+    [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.click('#intentCombine')]);
+    await chooser.setFiles([{ name: 'First.pdf', mimeType: 'application/pdf', buffer: await pdfBuffer('ONE', 2) }, { name: 'Second.pdf', mimeType: 'application/pdf', buffer: await pdfBuffer('TWO', 1) }]);
+    await page.waitForFunction(() => window.PDFStudio.getState().tray.length === 3, null, { timeout: 20000 });
+    r = await evalIn(page, `await wait(400); return { tray: S().tray.length, docs: S().docs.length, step3: document.body.classList.contains('step-3'), editorOpen: document.getElementById('editModal').classList.contains('open'),
+      rail: Math.round(document.querySelector('.app-nav').getBoundingClientRect().width) };`);
+    ok('"Combine Files": all pages of both files land ready to arrange (sidebar becomes a rail)', r.tray === 3 && r.docs === 2 && r.step3 && !r.editorOpen && r.rail < 80, r);
+    await startOver();
+
     // 2. files, naming, step 2
     r = await evalIn(page, `
       await makePdf('Smith Home Policy.pdf', 3, 'SENSITIVE 12345');
@@ -124,6 +166,23 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
     ok('Step 3 actions on one row: Save, Preview, Send, Export, Settings', r.rows === 1 && r.actions.length === 5, r);
     ok('Send / Export / Settings menus open inside the viewport', Object.values(r.menus).every(Boolean), r);
     ok('Save PDF is gold', r.saveGold, r);
+
+    // 3b. the steps follow the strip: Add files · Edit & arrange · Preview & finish
+    r = await evalIn(page, `
+      const lab = n => document.querySelector('#workflowStep' + n + ' strong').textContent;
+      const out = { labels: [1, 2, 3].map(lab), current: document.querySelector('.workflow-step.current').id };
+      document.getElementById('workflowStep3').click();
+      await waitFor(() => document.getElementById('studioDialog').open && document.getElementById('previewPrint'), 15000);
+      out.dialog = document.getElementById('studioDialogTitle').textContent;
+      out.finish = ['savePreview', 'previewEmail', 'previewPrint'].every(id => !!document.getElementById(id));
+      document.getElementById('studioDialogClose').click(); await wait(200); unbusy();
+      document.getElementById('workflowStep1').click(); await wait(300);
+      out.backToPages = !document.body.classList.contains('step-3') && document.querySelector('.workflow-step.current').id === 'workflowStep1';
+      document.getElementById('workflowStep2').click(); await wait(300);
+      out.forwardAgain = document.body.classList.contains('step-3');
+      return out;`);
+    ok('steps: Add files · Edit & arrange · Preview & finish (step 3 opens the finish dialog)',
+      r.labels.join('|') === 'Add files|Edit & arrange|Preview & finish' && r.current === 'workflowStep2' && r.dialog === 'Preview & finish' && r.finish && r.backToPages && r.forwardAgain, r);
 
     // 4. permanent white-out through the real build
     r = await evalIn(page, `
@@ -204,7 +263,7 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
       await P.addImageData('scan.jpg', await new Promise(res => cv.toBlob(res, 'image/jpeg', .9))); await wait(500);
       const imgDoc = S().docs.length;
       P.rememberOcr(imgDoc, 0, 'Policy Number ABC-999');
-      document.getElementById('workflowStep2').click(); await wait(200);
+      document.getElementById('btnBackStep2').click(); await wait(200);
       document.getElementById('searchInput').value = 'abc-999'; document.getElementById('btnSearch').click();
       await waitFor(() => document.querySelectorAll('#docList .page-card.search-hit').length > 0, 8000);
       const hits = document.querySelectorAll('#docList .page-card.search-hit').length;
@@ -239,7 +298,7 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
       document.getElementById('confirmReset').click(); await wait(600);
       const out = { cleared: S().docs.length === 0 };
       await waitFor(() => vis(document.getElementById('recentProjects')), 6000);
-      const chip = [...document.querySelectorAll('#recentList .recent-chip')].find(b => b.textContent.includes('zz-smoke project'));
+      const chip = [...document.querySelectorAll('#recentList .proj-card')].find(b => b.textContent.includes('zz-smoke project'));
       out.chipShown = !!chip;
       if (chip) { chip.click(); await waitFor(() => S().docs.length === docsBefore, 8000); }
       out.resumed = S().docs.length === docsBefore;
@@ -298,7 +357,7 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
     await page.setViewportSize({ width: 375, height: 812 });
     await page.waitForTimeout(400);
     r = await evalIn(page, `
-      document.getElementById('workflowStep3').click(); await wait(300);
+      document.getElementById('btnGoStep3').click(); await wait(300);
       const acts = [...document.querySelectorAll('.output-actions > button, .output-actions > .menu-wrap > button')].filter(vis);
       const menus = {};
       for (const [btn, wrap] of [['btnSendMenu','sendMenuWrap'],['btnMoreMenu','moreMenuWrap'],['btnOptMenu','optMenuWrap']]) {
