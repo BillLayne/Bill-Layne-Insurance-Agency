@@ -520,6 +520,7 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
         await P.shareStamp('text', 'ZZ-SMOKE-STAMP'); await wait(300);
         const shared = (await P.loadSharedStamps(true)).text.includes('ZZ-SMOKE-STAMP');
         const d = await P.loadSharedStamps(true); d.text = d.text.filter(x => x !== 'ZZ-SMOKE-STAMP'); await P.sharedPut('stamps', d);
+        await P.sharedPut('stamps', d);   // twice: the office's one-step Undo slot must not hold the test stamp either
         const cleaned = !(await P.loadSharedStamps(true)).text.includes('ZZ-SMOKE-STAMP');
         return { listed, packetsBox, shared, cleaned };`);
       ok('Forms Library lists forms and offers packets', r.listed && r.packetsBox, r);
