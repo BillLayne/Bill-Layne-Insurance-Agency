@@ -1922,6 +1922,19 @@ body.has-files .app-nav { width: 64px; flex-basis: 64px; padding: 12px 8px; }
 body.has-files .nav-item { justify-content: center; padding: 10px 0; min-height: 46px; }
 body.has-files .nav-item span, body.has-files .nav-foot div, body.has-files .nav-sep { display: none; }
 body.has-files .nav-foot { justify-content: center; padding: 8px 0; }
+/* Bill can fold the full sidebar into the same icon rail (2026-10-01: "add option to condense the left column");
+   only offered on wide screens - narrower ones already show the rail. Remembered per device (bliPdfNavCondensed). */
+.nav-toggle { margin-top: auto; min-height: 44px; color: #5d6b7e; font-size: 14px; }
+.nav-toggle svg { width: 22px; height: 22px; flex-basis: 22px; }
+.nav-toggle + .nav-foot { margin-top: 6px; }
+.nav-toggle .ico-open, body.nav-condensed .nav-toggle .ico-close { display: none; }
+body.nav-condensed .nav-toggle .ico-open { display: block; }
+body.nav-condensed .app-nav { width: 64px; flex-basis: 64px; padding: 12px 8px; }
+body.nav-condensed .nav-item { justify-content: center; padding: 10px 0; min-height: 46px; }
+body.nav-condensed .nav-item span, body.nav-condensed .nav-foot div, body.nav-condensed .nav-sep { display: none; }
+body.nav-condensed .nav-foot { justify-content: center; padding: 8px 0; }
+body.nav-anim .app-nav { transition: width .2s ease, flex-basis .2s ease, padding .2s ease; }
+@media (prefers-reduced-motion: reduce) { body.nav-anim .app-nav { transition: none; } }
 
 /* landing: no stepper, no card around the pane, no footer */
 body.home2:not(.has-files) .workflow-shell, body.home2:not(.has-files) > footer { display: none; }
@@ -2004,6 +2017,7 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
   .nav-item { justify-content: center; padding: 10px 0; min-height: 46px; }
   .nav-item span, .nav-foot div, .nav-sep { display: none; }
   .nav-foot { justify-content: center; padding: 8px 0; }
+  .nav-toggle { display: none; }
   .intent-card { min-height: 112px; padding: 16px; gap: 14px; }
   .intent-ico { width: 64px; height: 64px; flex-basis: 64px; }
   .intent-ico svg { width: 36px; height: 36px; }
@@ -2463,12 +2477,14 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
   <button type="button" class="avatar" id="btnAvatar" title="This device: connections and setup" aria-label="Connections and setup">BL</button>
 </header>
 
+<script>try { if (localStorage.getItem('bliPdfNavCondensed') === '1') document.body.classList.add('nav-condensed'); } catch (e) {}</script>
 <div class="app-shell">
-<aside class="app-nav" aria-label="PDF Studio">
+<aside class="app-nav" id="appNav" aria-label="PDF Studio">
   <button type="button" class="nav-item active" id="navNew" title="New PDF"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M13 3H7a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h4M13 3l5 5M13 3v5h5M18 8v2.5"/><circle cx="17" cy="17" r="4"/><path d="M17 15.3v3.4M15.3 17h3.4"/></svg><span>New PDF</span></button>
   <button type="button" class="nav-item" id="navProjects" title="Recent Projects"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg><span>Recent Projects</span></button>
   <button type="button" class="nav-item" id="navForms" title="Forms Library"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 3h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM14 3v4h4M9 12h6M9 15.5h6M9 8.5h2.5"/></svg><span>Forms Library</span></button>
   <div class="nav-sep"></div>
+  <button type="button" class="nav-item nav-toggle" id="navToggle" aria-controls="appNav" aria-expanded="true" aria-label="Collapse menu" title="Make this menu narrow to give the page more room"><svg class="ico-close" aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2"/><path d="M9 4v16M16 9.5 13.5 12l2.5 2.5"/></svg><svg class="ico-open" aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2"/><path d="M9 4v16M13.5 9.5 16 12l-2.5 2.5"/></svg><span>Collapse menu</span></button>
   <div class="nav-foot"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 9.5 12 4l9 5.5M4.5 9.5h15M6 10v7M10 10v7M14 10v7M18 10v7M4 17.5h16M3 20h18"/></svg><div><strong>Bill Layne Insurance</strong><small>Elkin, NC &bull; Since 2005</small><small id="navVersion"></small></div></div>
 </aside>
 <main>
@@ -3115,7 +3131,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#f1efe9}
 <script>
 (function () {
   'use strict';
-  const APP_VERSION = '2026-10-01.7';   // bump on every release — shown in the footer, the Help dialog and the console
+  const APP_VERSION = '2026-10-01.8';   // bump on every release — shown in the footer, the Help dialog and the console
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -7927,6 +7943,23 @@ body{margin:0;padding:0;width:100%!important;background-color:#f1efe9}
   ['navForms', 'tabForms'].forEach(id => $(id).addEventListener('click', () => openFormsModal()));
   $('tabHelp').addEventListener('click', () => openHelp());
   $('btnAvatar').addEventListener('click', () => $('btnConnections').click());
+  // the sidebar folds into the icon rail and back; the choice is kept on this device
+  const NAV_KEY = 'bliPdfNavCondensed';
+  const syncNavToggle = () => {
+    const condensed = document.body.classList.contains('nav-condensed'), btn = $('navToggle');
+    const label = condensed ? 'Expand menu' : 'Collapse menu';
+    btn.setAttribute('aria-expanded', String(!condensed));
+    btn.setAttribute('aria-label', label);
+    btn.title = condensed ? 'Show the menu names again' : 'Make this menu narrow to give the page more room';
+    btn.querySelector('span').textContent = label;
+  };
+  $('navToggle').addEventListener('click', () => {
+    document.body.classList.add('nav-anim');
+    const condensed = document.body.classList.toggle('nav-condensed');
+    try { if (condensed) localStorage.setItem(NAV_KEY, '1'); else localStorage.removeItem(NAV_KEY); } catch (_) {}
+    syncNavToggle();
+  });
+  syncNavToggle();
 
   const modalNames={editModal:'Edit PDF page',emailModal:'Email as Gmail draft',formsModal:'Forms Library',phoneModal:'Phone setup',formModal:'Fill PDF form',viewModal:'PDF page preview',sigPanel:'Signature'};
   for(const [id,name] of Object.entries(modalNames)){const el=$(id);if(el){el.setAttribute('role','dialog');el.setAttribute('aria-label',name);el.setAttribute('aria-modal','true');}}

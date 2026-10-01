@@ -126,6 +126,35 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
     await page.setViewportSize({ width: 1366, height: 768 });
     await page.waitForTimeout(300);
 
+    // 1b2. Bill can fold the home-page sidebar into the icon rail on a wide screen (2026-10-01); it stays folded after a reload
+    r = await evalIn(page, `
+      const nav = document.querySelector('.app-nav'), t = $('navToggle'), w = () => Math.round(nav.getBoundingClientRect().width);
+      const mainW = () => Math.round(document.querySelector('main').getBoundingClientRect().width);
+      const out = { shown: vis(t), fullW: w(), fullMain: mainW(), expanded: t.getAttribute('aria-expanded') };
+      t.click(); await wait(350);
+      out.railW = w(); out.railMain = mainW(); out.labelsHidden = [...nav.querySelectorAll('.nav-item span')].every(s => !vis(s));
+      out.expanded2 = t.getAttribute('aria-expanded'); out.label2 = t.getAttribute('aria-label'); out.saved = localStorage.getItem('bliPdfNavCondensed');
+      return out;`);
+    await page.reload({ waitUntil: 'load' });
+    await page.waitForFunction(() => window.PDFStudio && window.PDFLib && window.pdfjsLib, null, { timeout: 20000 });
+    r.afterReload = await evalIn(page, `
+      if ($('restoreBar').classList.contains('show')) $('btnDiscardRestore').click();
+      const nav = document.querySelector('.app-nav'), t = $('navToggle'), w = () => Math.round(nav.getBoundingClientRect().width);
+      const out = { condensed: document.body.classList.contains('nav-condensed'), w: w(), expanded: t.getAttribute('aria-expanded') };
+      t.click(); await wait(350);
+      out.backW = w(); out.saved = localStorage.getItem('bliPdfNavCondensed'); out.labelsBack = [...nav.querySelectorAll('.nav-item span')].every(vis);
+      return out;`);
+    ok('home sidebar: "Collapse menu" folds it into the icon rail (more room for the page), it stays folded after a reload, and opens again',
+      r.shown && r.fullW > 200 && r.expanded === 'true' && r.railW === 64 && r.railMain > r.fullMain + 150 && r.labelsHidden && r.expanded2 === 'false' &&
+      r.label2 === 'Expand menu' && r.saved === '1' && r.afterReload.condensed && r.afterReload.w === 64 && r.afterReload.expanded === 'false' &&
+      r.afterReload.backW > 200 && r.afterReload.saved === null && r.afterReload.labelsBack, r);
+    await page.setViewportSize({ width: 1100, height: 768 });
+    await page.waitForTimeout(300);
+    r = await evalIn(page, `return { toggle: vis($('navToggle')), w: Math.round(document.querySelector('.app-nav').getBoundingClientRect().width) };`);
+    ok('below 1180 px the sidebar is already the icon rail, so the collapse button is not offered', !r.toggle && r.w === 64, r);
+    await page.setViewportSize({ width: 1366, height: 768 });
+    await page.waitForTimeout(300);
+
     // 1c. the intent cards, through a real file chooser
     const pdfBuffer = async (label, pages) => Buffer.from(await page.evaluate(async ([label, pages]) => {
       const d = await PDFLib.PDFDocument.create();

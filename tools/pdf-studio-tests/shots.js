@@ -129,6 +129,11 @@ const run = (page, body) => page.evaluate(new Function('return (async () => {' +
     await shot(page, 'desktop-1-home-empty');
     await saveProjects(page);
     await shot(page, 'desktop-2-home-projects');
+    await page.click('#navToggle');   // the sidebar folded into the icon rail (Bill's "condense" option)
+    await page.waitForTimeout(400);
+    await shot(page, 'desktop-2b-home-menu-collapsed');
+    await page.click('#navToggle');
+    await page.waitForTimeout(400);
     await workspace(page, 'desktop');
     await ctx.close();
   }
