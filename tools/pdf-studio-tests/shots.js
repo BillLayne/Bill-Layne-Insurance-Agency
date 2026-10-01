@@ -1,15 +1,21 @@
 /**
  * Screenshots of PDF Studio for visual review — LOOK at the screens, do not
  * only measure them. (Measuring found the numbers; looking found the centered
- * sidebar labels, the off-center line and the button stretched over its hint.)
+ * sidebar labels, the page cards that did not fill their column, the delete
+ * handle drawn as a tall pill and the dialogs stuck in the top-left corner.)
  *
- *   node shots.js              desktop + tablet + phone into ./shots/ (git-ignored)
- *   node shots.js phone        one size only (desktop | tablet | phone, comma separated)
+ *   node shots.js              every size into ./shots/ (git-ignored)
+ *   node shots.js phone        one size only: desktop | laptop | tablet | phone
+ *                              (comma separated for several)
  *   PDF_STUDIO_URL=https://www.billlayneinsurance.com/pdf-tools/ node shots.js
  *
  * Needs the dev server on :8080 (python -m http.server 8080 from the repo root)
- * unless a URL is given. Uses the Chrome or Edge already installed. The three
- * "saved projects" it creates live only in the throwaway browser context.
+ * unless a URL is given. Uses the Chrome or Edge already installed. The "saved
+ * projects" it creates live only in the throwaway browser context.
+ *
+ * desktop 1586x992 and laptop 1366x768 show the all-in-one workspace (pages |
+ * live page | tools); tablet 820x1100 and phone 390x844 show the same markup
+ * stacked, with the full-screen editor.
  */
 'use strict';
 const { chromium } = require('playwright-core');
@@ -48,7 +54,7 @@ const run = (page, body) => page.evaluate(new Function('return (async () => {' +
   if (!browser) browser = await chromium.launch({ headless: true });
 
   const shot = async (page, name) => {
-    await page.waitForTimeout(350);
+    await page.waitForTimeout(450);
     await page.screenshot({ path: path.join(OUT, name + '.png') });
     console.log('saved shots/' + name + '.png');
   };
@@ -60,27 +66,55 @@ const run = (page, body) => page.evaluate(new Function('return (async () => {' +
     await page.waitForTimeout(500);
     return { ctx, page };
   };
+  const pageDrawn = page => page.waitForFunction(() => { const s = window.PDFStudio.getState(); return s.current >= 0 && !s.loading && document.getElementById('editCanvas').width > 100; }, null, { timeout: 20000 });
   // three saved projects so the "Recent projects" cards have something real to show
   const saveProjects = async (page) => {
     for (const [name, pages, title] of [['Home Quote Packet', 4, 'Homeowners Insurance Quote'], ['Auto Application', 3, 'Auto Insurance Application'], ['Policy Documents', 5, 'Policy Documents']]) {
       await run(page, `
         await mk(${JSON.stringify(name + '.pdf')}, ${pages}, ${JSON.stringify(title)});
         P.addAllToTray(); await wait(300);
-        document.getElementById('btnProjects').click(); await wait(250);
-        document.getElementById('projectNameInput').value = ${JSON.stringify(name)};
-        document.getElementById('saveProjectNow').click(); await wait(700);
-        document.getElementById('studioDialogClose').click(); await wait(150);
-        document.getElementById('btnReset').click(); await wait(250);
-        document.getElementById('confirmReset').click(); await wait(600);`);
+        document.getElementById('btnWsBack').click(); await wait(250);
+        document.getElementById('closeProjectName').value = ${JSON.stringify(name)};
+        document.getElementById('saveAndClose').click(); await wait(900);`);
     }
-    await page.waitForTimeout(3200);   // let the "Workspace cleared" toast leave the frame
+    await page.waitForTimeout(3400);   // let the "Saved as…" toast leave the frame
   };
-  const working = async (page, prefix, files) => {
+  const files = `await mk('Smith Home Policy.pdf', 4, 'Homeowners Policy'); await mk('Smith Auto ID Cards.pdf', 2, 'Auto ID Cards');`;
+
+  // the workspace: source files with nothing chosen yet, the pages, an edit, the Source files tab, Preview & finish
+  const workspace = async (page, prefix) => {
     await run(page, files);
-    await shot(page, prefix + '-choose-pages');
-    await page.evaluate(() => { document.getElementById('btnAddEverything').click(); });
+    await shot(page, prefix + '-3-source-files');
+    await page.click('#btnAddEverything');
+    await pageDrawn(page);
+    await page.waitForTimeout(3400);
+    await shot(page, prefix + '-4-pages');
+    await run(page, `
+      document.getElementById('modeText').click(); await wait(150);
+      document.getElementById('stampText').value = 'Prepared for your review';
+      const ov = document.getElementById('editOverlay'), r = ov.getBoundingClientRect();
+      ov.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: r.left + r.width * .3, clientY: r.top + r.height * .82 }));
+      await wait(1500);`);
+    await shot(page, prefix + '-5-text-added');
+    await page.click('#wsTabSources');
+    await shot(page, prefix + '-6-source-files-tab');
+    await page.click('#wsTabPages');
+    await page.click('#btnPreviewFinal');
+    await page.waitForFunction(() => document.getElementById('studioDialog').open && document.querySelector('#finalPages canvas'), null, { timeout: 20000 });
+    await shot(page, prefix + '-7-preview-and-finish');
+  };
+  // narrower than three panes: the pages, the full-screen editor, the source files
+  const stacked = async (page, prefix) => {
+    await run(page, files);
+    await page.click('#btnAddEverything');
     await page.waitForTimeout(3600);
-    await shot(page, prefix + '-your-pdf');
+    await shot(page, prefix + '-2-pages');
+    await page.locator('#trayStrip .tray-card').first().click({ position: { x: 60, y: 90 } });
+    await pageDrawn(page);
+    await shot(page, prefix + '-3-editor');
+    await page.click('#btnEditDone');
+    await page.click('#wsTabSources');
+    await shot(page, prefix + '-4-source-files');
   };
 
   if (want('desktop')) {
@@ -88,21 +122,25 @@ const run = (page, body) => page.evaluate(new Function('return (async () => {' +
     await shot(page, 'desktop-1-home-empty');
     await saveProjects(page);
     await shot(page, 'desktop-2-home-projects');
-    await working(page, 'desktop-3', `await mk('Smith Home Policy.pdf', 4, 'Homeowners Policy'); await mk('Smith Auto ID Cards.pdf', 2, 'Auto ID Cards');`);
+    await workspace(page, 'desktop');
+    await ctx.close();
+  }
+  if (want('laptop')) {
+    const { ctx, page } = await open(1366, 768);
+    await shot(page, 'laptop-1-home');
+    await workspace(page, 'laptop');
     await ctx.close();
   }
   if (want('tablet')) {
-    const { ctx, page } = await open(1024, 768);
+    const { ctx, page } = await open(820, 1100);
     await shot(page, 'tablet-1-home');
-    await working(page, 'tablet-2', `await mk('Smith Home Policy.pdf', 4, 'Homeowners Policy');`);
+    await stacked(page, 'tablet');
     await ctx.close();
   }
   if (want('phone')) {
-    const { ctx, page } = await open(431, 912);
+    const { ctx, page } = await open(390, 844);
     await shot(page, 'phone-1-home-empty');
-    await saveProjects(page);
-    await shot(page, 'phone-2-home-projects');
-    await working(page, 'phone-3', `await mk('Smith Home Policy.pdf', 4, 'Homeowners Policy');`);
+    await stacked(page, 'phone');
     await ctx.close();
   }
   await browser.close();

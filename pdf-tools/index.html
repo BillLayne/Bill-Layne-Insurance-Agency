@@ -2071,6 +2071,362 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
   body.home2 .output-actions > .menu-wrap > button:not(.icon-button),
   body.home2 #btnOptMenu { width: 100%; padding: 7px 3px; justify-content: center; }
 }
+
+/* ═══════════ All-in-one workspace, October 2026 ═══════════
+   Once a file is open everything is on one screen: the pages of the new PDF (or
+   the source files) on the left, the live page in the middle, tools on the right.
+   body.ws = wide enough for the three panes (>= 1024px) AND a file is open; below
+   that the same markup stacks and the editor (#editModal) opens full screen from
+   a page card. Scoped under body.home2 / body.ws so it outranks the three older
+   generations of rules above.
+   RETIRED by this block (their old rules above are dead, safe to prune later):
+   .workflow-shell .document-shelf .tray-head .tray-heading .output-controls
+   .output-actions .file-name-field .edit-head .edit-utility .editor-workspace
+   .editor-tools (now .tool-grid) .zoom-group (.ed-zoom) .page-jump (.ed-page)
+   .card-actions .privacy-chip #btnBackStep2 #btnGoStep3 #btnSendMenu
+   #btnMoreMenu #btnOptMenu. */
+body.has-files .app-nav { display: none; }
+body.home2 main { padding-bottom: 0; }
+.ws-grid, .ws-left { flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+.ws-bar, .ws-tabs { display: none; }
+#toast { z-index: 95; }   /* above the full-screen editor on phones, so its messages are seen */
+
+/* top bar with a file open: mark, name, three buttons */
+body.home2.has-files header.app-header { min-height: 56px; padding: 7px 20px; gap: 14px; flex-direction: row; flex-wrap: nowrap; align-items: center; }
+body.home2.has-files .brand { display: none; }
+body.home2.has-files .avatar { display: grid; order: -1; width: 40px; height: 40px; flex: 0 0 40px; font-size: 14px; }
+body.home2.has-files .app-identity { display: block; border-left: 0; padding-left: 0; }
+body.home2.has-files .app-identity h1 { font-size: 21px; font-weight: 700; line-height: 1.1; letter-spacing: -.01em; }
+body.home2.has-files .app-identity p { display: block; margin-top: 3px; font-size: 9px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.82); }
+body.home2.has-files .header-actions { margin-left: auto; padding-right: 0; border-right: 0; gap: 10px; justify-content: flex-end; flex-wrap: nowrap; }
+body.home2.has-files #btnForms, body.home2.has-files #btnProjects, body.home2.has-files #btnHelp { display: inline-flex; min-height: 38px; padding: 6px 14px; border-radius: 8px; background: transparent; border-color: rgba(255,255,255,.38); font-size: 14px; }
+body.home2.has-files #btnForms:hover, body.home2.has-files #btnProjects:hover, body.home2.has-files #btnHelp:hover { background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.62); }
+
+/* this PDF: back, name, project chip, the three stages, ⋯ and the one finishing action */
+body.has-files .ws-bar { display: flex; align-items: center; gap: 12px; flex-shrink: 0; min-height: 66px; padding: 9px 20px; background: #fff; border-bottom: 1px solid #e3e8ef; }
+body.home2 .ws-back { width: 38px; min-width: 38px; height: 38px; min-height: 38px; border-color: #dfe5ee; border-radius: 8px; color: #33435a; }
+.ws-title { display: inline-flex; align-items: baseline; min-width: 0; }
+body.home2 .ws-title input { min-height: 38px; max-width: 34vw; padding: 3px 6px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: #0b1b33; font-size: 20px; font-weight: 700; letter-spacing: -.01em; text-overflow: ellipsis; }
+body.home2 .ws-title input:hover { border-color: #dfe5ee; }
+body.home2 .ws-title input:focus { border-color: var(--blue); background: #fff; }
+.ws-title b { margin-left: 1px; color: #8a97a9; font-size: 14px; font-weight: 500; }
+body.home2 .ws-chip { min-height: 30px; max-width: 230px; padding: 3px 7px 3px 11px; gap: 3px; border: 0; border-radius: 6px; background: #eaf0f8; color: #33435a; font-size: 14px; font-weight: 500; }
+body.home2 .ws-chip:hover { background: #dde7f4; }
+body.home2 .ws-chip #projectLabel { margin: 0; color: inherit; font-size: inherit; overflow: hidden; text-overflow: ellipsis; }
+.ws-chip svg { width: 15px; height: 15px; }
+#docMenuWrap .menu-panel { min-width: 250px; }
+.menu-panel > .doc-switch { display: none; }
+body.multi-output .menu-panel > .doc-switch { display: flex; cursor: default; }
+.doc-switch select { flex: 1; min-width: 0; }
+#docMenuWrap #btnNewOutput, #docMenuWrap #btnDuplicateOutput, #docMenuWrap #btnRemoveOutput { display: flex; }
+body.home2 .ws-bar .workflow-steps { margin: 0 auto; gap: 12px; min-width: 0; }
+body.home2 .ws-bar .workflow-step { min-height: 0; padding: 4px 2px; gap: 10px; color: #6b7889; }
+body.home2 .ws-bar .workflow-step:hover { background: none; transform: none; box-shadow: none; }
+body.home2 .ws-bar .workflow-step > span { width: 32px; height: 32px; font-size: 14px; }
+body.home2 .ws-bar .workflow-step strong { font-size: 15px; font-weight: 600; }
+body.home2 .ws-bar .workflow-step.current { color: #0b1b33; }
+body.home2 .ws-bar .workflow-step.current > span { background: #1a67e0; border-color: #1a67e0; box-shadow: 0 0 0 4px rgba(26,103,224,.16); }
+body.home2 .ws-bar .workflow-step.complete { color: #1a62d6; }
+body.home2 .ws-bar .workflow-step.complete > span { background: #128a5e; border-color: #128a5e; font-size: 0; }
+body.home2 .ws-bar .workflow-step.complete > span::before { content: "\2713"; font-size: 16px; font-weight: 800; color: #fff; }
+body.home2 .ws-bar .workflow-line { width: 28px; }
+body.home2 #btnWsMore { position: relative; width: 44px; min-width: 44px; min-height: 44px; border-color: #dfe5ee; border-radius: 8px; color: #33435a; }
+#btnWsMore .opt-badge { position: absolute; top: -6px; right: -6px; margin: 0; }
+#wsMoreWrap .menu-panel { min-width: 290px; }
+body.home2 .ws-cta { min-height: 44px; padding: 0 20px; gap: 10px; border-radius: 8px; background: #1a67e0; border-color: #1a67e0; color: #fff; font-size: 16px; font-weight: 600; }
+body.home2 .ws-cta:hover { background: #1458c4; border-color: #1458c4; }
+body.home2 .ws-cta svg { width: 20px; height: 20px; }
+
+/* left column: Pages | Source files */
+body.has-files .ws-tabs { display: flex; align-items: center; gap: 8px; flex-shrink: 0; padding: 14px 14px 0; }
+.ws-tabset { flex: 1; min-width: 0; display: flex; border: 1px solid #e3e8ef; border-radius: 9px; background: #fff; overflow: hidden; }
+body.home2 .ws-tab { flex: 1; min-width: 0; min-height: 44px; padding: 6px 8px; gap: 7px; border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: transparent; color: #55657a; font-size: 14.5px; font-weight: 500; }
+body.home2 .ws-tab:hover { background: #f4f7fb; transform: none; box-shadow: none; }
+body.home2 .ws-tab.active { background: #e6effc; border-bottom-color: #1a67e0; color: #1a62d6; font-weight: 600; }
+body.home2 .ws-tab:focus-visible { outline: 2px solid var(--blue); outline-offset: -3px; box-shadow: none; }
+.ws-tab b { min-width: 21px; padding: 1px 6px; border-radius: 999px; background: rgba(15,35,65,.08); font-size: 11.5px; font-weight: 700; line-height: 1.5; }
+.ws-tab.active b { background: rgba(26,98,214,.15); }
+body.home2 .ws-undo { width: 40px; min-width: 40px; min-height: 40px; border-color: #dfe5ee; border-radius: 8px; color: #33435a; }
+body.ws .ws-undo { display: none; }
+
+/* the pages of the new PDF */
+body.home2 #trayPane { margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.pages-head { display: flex; align-items: center; gap: 10px; flex-shrink: 0; padding: 14px 14px 0; }
+body.home2 .pages-head .tray-count { padding: 0; border: 0; border-radius: 0; background: none; color: #0b1b33; font-size: 18px; font-weight: 700; letter-spacing: -.01em; }
+body.home2 .pages-head button { margin-left: auto; min-height: 40px; padding: 6px 14px; border-color: #dfe5ee; border-radius: 8px; color: #1a62d6; font-size: 14.5px; font-weight: 600; }
+.pages-hint { flex-shrink: 0; padding: 9px 14px 0; font-size: 13.5px; color: #68768a; }
+.hint-ws, body.ws .hint-touch { display: none; }
+body.ws .hint-ws { display: inline; }
+body.home2 #trayPickBar { position: static; margin: 10px 14px 0; padding: 8px 10px; gap: 6px; border: 1px solid #a9c9eb; border-radius: 10px; background: #e9f4ff; color: #0b1b33; box-shadow: none; }
+body.home2 #trayPickBar .pick-count { font-size: 13.5px; }
+body.home2 #trayPickBar button { flex: 1 1 auto; min-height: 34px; padding: 4px 9px; border-color: #a9c9eb; background: #fff; color: #174f9d; font-size: 13px; }
+body.home2 #trayPickBar button.go { border-color: #b91c1c; background: #b91c1c; color: #fff; box-shadow: none; }
+body.home2 #pickBar { color: #0b1b33; }
+body.home2 #pickBar .pick-hint { color: #55657a; }
+body.home2 #pickBar button { border-color: #a9c9eb; background: #fff; color: #174f9d; }
+body.home2 #pickBar button.go { border-color: #1a67e0; background: #1a67e0; color: #fff; box-shadow: none; }
+body.home2 #trayStrip { flex: 1; min-height: 0; margin: 10px 0 0; padding: 4px 14px 14px; border: 0; border-radius: 0; background: none; overflow-x: hidden; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 12px; align-content: start; align-items: start; }
+body.home2 #trayStrip.dragover { background: rgba(26,103,224,.05); }
+body.home2 #trayStrip .tray-empty { grid-column: 1 / -1; padding: 30px 10px; }
+body.home2 .tray-card { position: relative; flex: 0 0 auto; padding: 10px 10px 8px; border: 1px solid #e3e8ef; border-radius: 10px; background: #fff; box-shadow: none; cursor: pointer; }
+body.home2 .tray-card:hover { border-color: #c9d8ee; box-shadow: 0 4px 14px rgba(15,35,65,.08); }
+body.home2 .tray-card.current { border-color: #1a67e0; background: #eef4fd; box-shadow: inset 0 0 0 1px #1a67e0; }
+body.home2 .tray-card.picked { border-color: #1a67e0; box-shadow: 0 0 0 3px rgba(26,103,224,.28); }
+body.home2 .tray-card.insert-before { box-shadow: -4px 0 0 0 var(--gold); }
+body.home2 .tray-card.insert-after { box-shadow: 4px 0 0 0 var(--gold); }
+body.home2 .tray-card .thumb-box { aspect-ratio: 3 / 4; border-radius: 6px; background: transparent; }
+body.home2 .tray-card .order-badge { top: 7px; left: 7px; z-index: 1; min-width: 26px; height: 26px; padding: 0 6px; border-radius: 999px; background: #e8edf3; color: #1c2c44; font-size: 13px; font-weight: 700; box-shadow: 0 0 0 2px #fff; }
+body.home2 .tray-card.current .order-badge { background: #1a67e0; color: #fff; }
+body.home2 .card-menu { position: absolute; top: 6px; right: 6px; z-index: 1; width: 32px; min-width: 32px; height: 28px; min-height: 28px; padding: 0; border: 1px solid #e3e8ef; border-radius: 7px; background: #fff; color: #33435a; }
+.card-menu svg { width: 18px; height: 18px; }
+.drag-handle { display: none; }
+body.home2 .tray-card .stamp-badge { bottom: 40px; left: 50%; right: auto; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 3px; padding: 2px 7px 2px 5px; font-size: 11px; }
+.stamp-badge svg { width: 11px; height: 11px; stroke-width: 2.4; }
+body.home2 .tray-card .nav-l, body.home2 .tray-card .nav-r { bottom: 38px; }
+body.home2 .tray-card .nav-l { left: 8px; }
+body.home2 .tray-card .nav-r { right: 8px; }
+body.home2 .tray-card .tray-label { display: flex; justify-content: center; gap: 5px; margin-top: 7px; font-size: 12.5px; color: #33435a; overflow: visible; }
+.tray-label span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tray-label small { flex: none; font-size: inherit; color: #68768a; }
+.tray-label small::before { content: "\00B7\00A0"; }
+body.home2 .blank-page { flex-shrink: 0; margin: 0 14px 14px; min-height: 42px; border-color: #dfe5ee; border-radius: 8px; color: #1a62d6; font-size: 14.5px; font-weight: 600; }
+#pageMenuWrap { position: fixed; left: 0; top: 0; width: 0; height: 0; z-index: 58; display: block; }
+#pageMenu { min-width: 200px; }
+
+/* the page on screen */
+body.home2 .edit-panel { display: grid; grid-template-columns: minmax(0, 1fr) 272px; grid-template-rows: minmax(0, 1fr); background: #e9eef4; }
+.ws-center { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+.ed-bar { flex-shrink: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; min-height: 62px; padding: 9px 16px; background: #f6f8fb; border-bottom: 1px solid #e3e8ef; }
+.ed-bar .grow { flex: 1; }
+body.home2 .ed-bar > button, body.home2 .ed-bar > .menu-wrap > button { min-height: 40px; border-color: #dfe5ee; border-radius: 8px; background: #fff; color: #1c2c44; font-size: 14px; font-weight: 600; }
+body.home2 .ed-bar > button:hover, body.home2 .ed-bar > .menu-wrap > button:hover { background: #f4f7fb; border-color: #c9d8ee; }
+body.home2 .ed-bar > button svg { width: 18px; height: 18px; }
+body.home2 .ed-bar .icon-button { width: 40px; min-width: 40px; padding: 0; }
+.ed-sep { width: 1px; height: 26px; margin: 0 6px; background: #dfe5ee; }
+.ed-page { display: inline-flex; align-items: center; gap: 6px; padding: 0 4px; color: #55657a; font-size: 14px; white-space: nowrap; }
+body.home2 .ed-page input { width: 46px; min-height: 34px; padding: 4px 2px; border: 1px solid #dfe5ee; border-radius: 7px; background: #fff; color: #1c2c44; font: inherit; font-size: 14px; text-align: center; -moz-appearance: textfield; }
+.ed-page input::-webkit-outer-spin-button, .ed-page input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.ed-page b { color: #1c2c44; font-weight: 600; }
+.ed-zoom { display: inline-flex; align-items: stretch; border: 1px solid #dfe5ee; border-radius: 8px; background: #fff; overflow: hidden; }
+body.home2 .ed-zoom button { min-height: 38px; border: 0; border-radius: 0; background: #fff; color: #1c2c44; font-size: 19px; font-weight: 500; }
+body.home2 .ed-zoom button:hover { background: #f4f7fb; transform: none; box-shadow: none; }
+.ed-zoom span { min-width: 58px; padding: 0 6px; display: grid; place-items: center; border-left: 1px solid #dfe5ee; border-right: 1px solid #dfe5ee; color: #1c2c44; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+body.home2 .ed-bar .done-button { min-width: 92px; border-color: #f0d574; background: #f0d574; color: #071727; }
+body.home2 .ed-bar .done-button:hover { border-color: #ffe492; background: #ffe492; }
+body.home2 #editCanvasWrap { position: relative; padding: 20px; background: #e9eef4; }
+body.home2 #editStack { box-shadow: 0 1px 3px rgba(15,35,65,.12), 0 10px 28px rgba(15,35,65,.14); transition: opacity .12s; }
+#editCanvasWrap.loading #editStack { opacity: .5; }
+#wsEmpty { display: none; flex-direction: column; align-items: center; gap: 10px; margin: auto; max-width: 440px; padding: 24px; text-align: center; color: #55657a; }
+#wsEmpty svg { width: 56px; height: 56px; color: #9fb0c6; stroke-width: 1.3; }
+#wsEmpty h3 { font-size: 21px; font-weight: 700; letter-spacing: -.01em; color: #0b1b33; }
+#wsEmpty p { font-size: 15px; line-height: 1.5; }
+body.home2 #wsEmpty button { margin-top: 8px; min-height: 44px; padding: 0 20px; border-radius: 8px; background: #1a67e0; border-color: #1a67e0; font-size: 15.5px; }
+#editModal.ws-empty #editStack { display: none; }
+#editModal.ws-empty #wsEmpty { display: flex; }
+#editModal.ws-empty .ws-right, #editModal.ws-empty .ed-page, #editModal.ws-empty .ed-zoom, #editModal.ws-empty #btnZoomFit, #editModal.ws-empty #editMoreWrap { opacity: .4; pointer-events: none; }
+
+body.home2 .stamp-el .h-del { min-width: 0; min-height: 0; padding: 0; }
+@media (min-width: 601px) { dialog#studioDialog { margin: auto; } }   /* the global margin reset left dialogs in the top-left corner */
+
+/* tools, their options, page actions */
+.ws-right { min-width: 0; min-height: 0; overflow-y: auto; padding: 18px 22px 22px; border-left: 1px solid #e3e8ef; background: #fff; }
+.ws-right h3 { margin: 0 0 12px; font-size: 18px; font-weight: 700; letter-spacing: -.01em; color: #0b1b33; }
+.tool-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+body.home2 .tool-grid .mode-btn { flex-direction: column; gap: 8px; min-width: 0; min-height: 80px; padding: 10px 4px; border: 1px solid #e3e8ef; border-radius: 8px; background: #fff; color: #1c2c44; font-size: 14px; font-weight: 500; line-height: 1.15; white-space: normal; }
+body.home2 .tool-grid .mode-btn svg { width: 26px; height: 26px; stroke-width: 1.6; }
+body.home2 .tool-grid .mode-btn:hover { border-color: #c9d8ee; background: #f7faff; transform: none; box-shadow: none; }
+body.home2 .tool-grid .mode-btn.active { border-color: #1a67e0; background: #e6effc; color: #1a62d6; box-shadow: inset 0 0 0 1px #1a67e0; }
+body.ws #modePan { display: none; }
+.ws-sec { margin-top: 20px; padding-top: 20px; border-top: 1px solid #e3e8ef; }
+body.home2 .ws-right .edit-context { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px; min-height: 0; padding: 0; border: 0; background: none; overflow: visible; }
+body.home2 .ws-right .context-label { display: flex; flex: 1 0 100%; flex-direction: column; align-items: flex-start; gap: 3px; min-width: 0; }
+body.home2 .ws-right .context-label span { font-size: 18px; font-weight: 700; letter-spacing: -.01em; color: #0b1b33; }
+body.home2 .ws-right .context-label small { margin: 0; font-size: 13px; color: #68768a; }
+body.home2 .ws-right #stampText { flex: 1 0 100%; width: 100%; min-width: 0; }
+body.home2 .ws-right .edit-context > label { flex: 1 1 0; flex-direction: column; align-items: stretch; gap: 4px; min-width: 0; font-size: 11px; }
+body.home2 .ws-right .edit-context select { width: 100%; min-width: 0; }
+body.home2 .ws-right .edit-hint { flex-direction: column; align-items: flex-start; gap: 6px; min-height: 0; margin-top: 12px; padding: 10px 12px; border: 1px solid #e3e8ef; border-radius: 8px; background: #f6f8fb; color: #55657a; font-size: 13px; line-height: 1.45; }
+body.home2 .ws-right #btnHideHints { padding: 0; color: #1a62d6; }
+body.hints-off .ws-right #editHint { display: none; }
+.page-actions { display: grid; gap: 10px; }
+body.home2 .page-actions button { justify-content: flex-start; gap: 14px; min-height: 44px; padding: 8px 16px; border: 1px solid #e3e8ef; border-radius: 8px; background: #fff; color: #1c2c44; font-size: 14.5px; font-weight: 500; }
+body.home2 .page-actions button svg { width: 20px; height: 20px; }
+body.home2 .page-actions button.danger { border-color: #fbdcdc; background: #fdf1f1; color: #d92d2d; }
+body.home2 .page-actions button.danger:hover { background: #fbe3e3; }
+
+/* source files: the tab names the screen, so the old "Step 1" kicker goes; bold words in the hint stay hint-sized */
+body.home2 #sourceTitle .section-step { display: none; }
+body.home2 .section-heading .tip strong { margin: 0; font-size: inherit; font-weight: 700; letter-spacing: 0; color: var(--ink); }
+
+/* footer strip */
+body.home2.has-files > footer { display: flex; align-items: center; gap: 14px; min-height: 36px; padding: 5px 20px; border-top: 1px solid #e3e8ef; background: #f6f8fb; color: #5d6b7e; font-size: 13px; text-align: left; }
+.foot-private { flex: 1 1 0; min-width: 0; display: inline-flex; align-items: center; gap: 9px; white-space: nowrap; }
+.foot-private svg { width: 17px; height: 17px; }
+.foot-pages { flex: 0 1 auto; white-space: nowrap; }
+body.home2 footer .device-status { flex: 1 1 0; min-width: 0; width: auto; margin: 0; gap: 7px; justify-content: flex-end; flex-wrap: nowrap; }
+
+/* Preview & finish dialog */
+.finish-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 12px; }
+.finish-actions button { min-height: 46px; padding: 8px 16px; }
+.finish-actions button.save-button { min-width: 150px; border-color: var(--gold); background: var(--gold); color: #132238; }
+.finish-actions button.save-button:hover { border-color: #d9bb5f; background: #d9bb5f; }
+.finish-opts { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0 0 12px; padding: 10px 14px; border: 1px solid #dce2e8; border-radius: 10px; }
+#studioDialogBody .finish-opts label { display: inline-flex; align-items: center; gap: 7px; margin: 0; font-size: 14px; cursor: pointer; }
+.finish-opts input { width: 17px; height: 17px; accent-color: var(--teal); }
+.finish-more { margin: 0 0 12px; }
+.finish-more summary { cursor: pointer; font-size: 14px; font-weight: 600; color: #1a62d6; }
+.finish-more .studio-row { margin: 10px 0 0; }
+.studio-preview canvas { width: auto; max-height: min(64vh, 780px); cursor: zoom-in; }   /* the whole page in view; click for full size */
+.studio-preview canvas.zoomed { max-height: none; cursor: zoom-out; }
+
+/* ── wide screens: the three panes ── */
+body.ws .ws-grid { display: grid; grid-template-columns: clamp(264px, 21.5vw, 336px) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+body.ws .ws-left { border-right: 1px solid #e3e8ef; background: #fff; }
+body.ws #editModal { position: static; display: flex; align-items: stretch; padding: 0; background: none; z-index: auto; min-width: 0; min-height: 0; }
+body.ws .edit-panel { flex: 1; width: auto; height: auto; min-height: 0; border-radius: 0; box-shadow: none; grid-template-columns: minmax(0, 1fr) clamp(280px, 24vw, 368px); }
+body.ws .ed-nav, body.ws #btnEditDone { display: none; }
+body.ws #trayStrip { display: flex; flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 12px; }
+body.ws .tray-card { padding: 12px 46px 10px; }
+body.ws .tray-card .thumb-box { aspect-ratio: auto; height: 128px; }
+body.ws .tray-card .order-badge { top: 14px; left: 44px; box-shadow: none; }
+body.ws .card-menu { top: 12px; right: 12px; }
+body.ws .drag-handle { display: grid; place-items: center; position: absolute; left: 8px; top: 50%; width: 24px; height: 40px; transform: translateY(-50%); color: #9aa7b8; cursor: grab; }
+.drag-handle svg { width: 22px; height: 22px; }
+body.ws .tray-card .nav-l, body.ws .tray-card .nav-r { display: none; }
+body.ws .tray-card .stamp-badge { bottom: 40px; left: auto; right: 46px; transform: none; }
+body.ws .tray-card .tray-label { margin-top: 8px; font-size: 14px; }
+body.ws .tray-card.insert-before { box-shadow: 0 -4px 0 0 var(--gold); }
+body.ws .tray-card.insert-after { box-shadow: 0 4px 0 0 var(--gold); }
+body.ws #sourcePane { margin: 0; padding: 12px 14px 14px; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+body.ws .pane-title { flex-direction: column; align-items: stretch; gap: 8px; min-height: 0; margin: 0 0 12px; padding: 0; border: 0; border-radius: 0; background: none; }
+body.ws .section-heading { min-width: 0; }
+body.ws .section-heading > strong { display: none; }
+body.ws .section-heading .tip { margin: 0; font-size: 13.5px; }
+body.ws .source-actions { width: 100%; margin: 0; flex-wrap: wrap; gap: 8px; }
+body.ws .search-box { order: 3; flex: 1 0 100%; }
+body.ws .search-box input[type="text"] { flex: 1; width: auto; min-width: 0; }
+body.ws #btnAdd { flex: 1; }
+body.ws #btnAddEverything { order: 2; flex: 1 0 100%; }
+body.ws .src-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+body.ws.thumbs-sm .src-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+body.ws.thumbs-lg .src-grid { grid-template-columns: minmax(0, 1fr); }
+body.ws .doc-head { padding: 8px 10px; gap: 8px; }
+body.ws .doc-head .doc-icon { order: 1; }
+body.ws .doc-head .doc-name { order: 2; flex: 1 1 calc(100% - 120px); min-width: 0; }
+body.ws .doc-head .doc-pages { order: 3; }
+body.ws .doc-head .grow { display: none; }
+body.ws .doc-head > button, body.ws .doc-head > .menu-wrap { order: 5; }
+body.ws .doc-head > .menu-wrap { margin-left: auto; }
+body.ws .doc-head > button { min-height: 34px; padding: 4px 10px; font-size: 13px; }
+body.ws #pickBar { padding: 9px 10px; gap: 6px; border-radius: 10px; }
+body.ws #pickBar .pick-hint { display: none; }
+body.ws #pickBar button { min-height: 34px; padding: 4px 9px; font-size: 13px; }
+body.ws #btnPickAdd { flex: 1 0 100%; }
+
+/* small laptops and tablets on their side */
+@media (min-width: 1024px) and (max-width: 1239px) {
+  body.home2 footer .connection-detail { display: none; }   /* still under the BL mark (Connections) */
+  body.has-files .ws-bar { gap: 10px; padding-left: 14px; padding-right: 14px; }
+  .ws-title b { display: none; }
+  body.home2 .ws-title input { max-width: 19ch; font-size: 18px; }
+  body.home2 .ws-chip { max-width: 124px; }
+  body.home2 .ws-bar .workflow-steps { gap: 8px; }
+  body.home2 .ws-bar .workflow-step { gap: 7px; }
+  body.home2 .ws-bar .workflow-step > span { width: 28px; height: 28px; font-size: 13px; }
+  body.home2 .ws-bar .workflow-step strong { font-size: 14px; }
+  body.home2 .ws-bar .workflow-line { width: 14px; }
+  body.home2 .ws-cta { padding: 0 14px; gap: 7px; font-size: 15px; }
+  .ed-bar { gap: 6px; padding-left: 10px; padding-right: 10px; }
+  .ed-sep { margin: 0 2px; }
+  body.home2 .ed-bar > button > span { display: none; }
+  body.home2 .ed-bar > button { width: 40px; padding: 0; }
+  .ed-zoom span { min-width: 50px; }
+  .ws-right { padding: 16px 16px 18px; }
+  body.home2 .tool-grid .mode-btn { min-height: 76px; font-size: 13px; }
+}
+/* shorter windows: Page actions as four tiles, so the whole right pane is in view */
+@media (min-width: 1024px) and (max-height: 900px) {
+  .page-actions { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  body.home2 .page-actions button { flex-direction: column; justify-content: center; gap: 6px; min-height: 70px; padding: 8px 2px; font-size: 12.5px; line-height: 1.15; text-align: center; white-space: normal; }
+}
+/* short screens: the page gets the height */
+@media (min-width: 1024px) and (max-height: 820px) {
+  body.home2.has-files header.app-header { min-height: 50px; padding-top: 5px; padding-bottom: 5px; }
+  body.home2.has-files .avatar { width: 36px; height: 36px; flex-basis: 36px; }
+  body.has-files .ws-bar { min-height: 58px; padding-top: 6px; padding-bottom: 6px; }
+  .ed-bar { min-height: 54px; padding-top: 6px; padding-bottom: 6px; }
+  body.home2 #editCanvasWrap { padding: 14px; }
+  body.home2.has-files > footer { min-height: 32px; padding-top: 3px; padding-bottom: 3px; }
+  .ws-right { padding-top: 14px; }
+  .ws-sec { margin-top: 16px; padding-top: 16px; }
+}
+
+/* ── narrower than three panes: the bar wraps, one pane at a time, the editor opens full screen ── */
+@media (max-width: 1023px) {
+  body.has-files .ws-bar { flex-wrap: wrap; gap: 4px 8px; min-height: 0; padding: 8px 12px; }   /* the forced break below is a line of its own, so two 4px row gaps */
+  body.has-files .ws-bar::after { content: ""; flex-basis: 100%; height: 0; order: 5; }
+  .ws-back { order: 1; }
+  .ws-title { order: 2; flex: 1; }
+  .ws-title b { display: none; }
+  body.home2 .ws-title input { flex: 1; width: 100% !important; max-width: none; min-width: 0; font-size: 18px; }
+  body.home2 .tool-grid .mode-btn { min-height: 74px; padding: 8px 2px; font-size: 12.5px; }
+  #docMenuWrap { order: 3; }
+  #wsMoreWrap { order: 4; }
+  body.home2 .ws-bar .workflow-steps { order: 6; margin: 0 auto 0 0; }
+  body.home2 .ws-cta { order: 7; min-height: 40px; padding: 0 14px; font-size: 15px; }
+  body.home2 #btnWsMore, body.home2 .ws-back { width: 38px; min-width: 38px; height: 38px; min-height: 38px; }
+  body.has-files .ws-tabs { padding: 10px 12px 0; }
+  .pages-head, .pages-hint { padding-left: 12px; padding-right: 12px; }
+  body.home2 #trayStrip { padding-left: 12px; padding-right: 12px; }
+  body.home2 #trayPickBar { margin-left: 12px; margin-right: 12px; }
+  body.home2 .blank-page { margin: 0 12px 12px; }
+  .foot-pages { display: none; }
+  /* full-screen editor: page controls and Done on the first row, undo / zoom / more on the second */
+  .ed-bar { gap: 3px 6px; min-height: 0; padding: 7px 10px; }
+  .ed-bar::after { content: ""; flex-basis: 100%; height: 0; order: 4; }
+  .ed-sep { display: none; }
+  .ed-nav, .ed-page { order: 1; }
+  .ed-bar .grow { order: 2; }
+  .ed-bar .done-button { order: 3; }
+  #btnUndoStamp, #btnRedoStamp, .ed-zoom, #btnZoomFit { order: 5; }
+  #editMoreWrap { order: 6; margin-left: auto; }
+  body.home2 .ed-bar > button > span { display: none; }
+  body.home2 .ed-bar > button:not(.done-button) { width: 40px; padding: 0; }
+}
+@media (max-width: 1023px) and (max-height: 600px) {
+  body.has-files .ws-left { overflow-y: auto; }
+  body.home2.has-files #trayPane, body.home2.has-files #sourcePane { flex: none; min-height: auto; overflow: visible; }
+  body.home2.has-files #trayStrip { flex: none; overflow: visible; }
+  body.home2.has-files > footer { display: none; }
+}
+@media (max-width: 600px) {
+  body.home2.has-files header.app-header { min-height: 52px; padding: 6px 12px; gap: 10px; }
+  body.home2.has-files .avatar { width: 36px; height: 36px; flex-basis: 36px; }
+  body.home2.has-files .app-identity h1 { font-size: 19px; }
+  body.home2.has-files .header-actions { gap: 6px; }
+  body.home2.has-files #btnForms, body.home2.has-files #btnProjects, body.home2.has-files #btnHelp { min-height: 36px; border-color: transparent; }
+  body.home2 .ws-chip { max-width: 104px; font-size: 13px; }
+  body.home2 #projectLabel { display: inline; margin: 0; color: inherit; font-size: inherit; }
+  body.home2 .ws-bar .workflow-steps { gap: 6px; }
+  body.home2 .ws-bar .workflow-step { gap: 6px; padding: 2px 0; }
+  body.home2 .ws-bar .workflow-step > span { width: 26px; height: 26px; flex: 0 0 26px; font-size: 12.5px; }
+  body.home2 .ws-bar .workflow-step strong { font-size: 12.5px; }
+  body.home2 .ws-bar .workflow-step.complete > span::before { font-size: 14px; }
+  body.home2 .ws-cta { padding: 0 12px; font-size: 14.5px; }
+  body.home2 .ws-cta svg { display: none; }
+  body.home2 #trayStrip { grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+  /* full-screen editor on a phone: the tools move into a menu */
+  body.home2 .edit-panel { grid-template-columns: minmax(0, 1fr); }
+  .ws-right { display: none; }
+  .ed-bar { padding: 7px 8px; }
+  body.home2 .ed-bar > button > span { display: none; }
+  body.home2 .ed-bar > button:not(.done-button) { width: 40px; padding: 0; }
+  body.home2 .ed-bar #btnUndoStamp svg { display: inline-block; }
+  body.home2 #btnEditMore { width: 40px !important; }
+  .ed-zoom span { min-width: 50px; }
+  body.home2 #editCanvasWrap { padding: 10px; }
+  body.home2.has-files > footer { padding: 4px 12px; font-size: 12px; }
+}
 </style>
 </head>
 <body class="home2">
@@ -2081,15 +2437,10 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     <h1>PDF Studio</h1>
     <p>Bill Layne Insurance</p>
   </div>
-  <div class="header-actions"><button id="btnHelp" class="header-button" title="How PDF Studio works" aria-label="How it works"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/></svg>Help</button><button id="btnProjects" class="header-button" title="Saved projects" aria-label="Projects"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 7h6l2 2h10v10H3z"/></svg>Projects</button>
-    <button id="btnForms" class="header-button" title="Forms Library" aria-label="Forms Library">
-      <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 4h10v16H7zM9 2h6v4H9zM9.5 10h5M9.5 14h5"/></svg>
-      Forms Library
-    </button>
-    <span class="privacy-chip">
-      <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10V7a5 5 0 0 1 10 0v3M5 10h14v10H5zM12 14v2"/></svg>
-      Edited on this device
-    </span>
+  <div class="header-actions">
+    <button id="btnForms" class="header-button" title="Forms Library" aria-label="Forms Library"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 4h10v16H7zM9 2h6v4H9zM9.5 10h5M9.5 14h5"/></svg>Forms Library</button>
+    <button id="btnProjects" class="header-button" title="Saved projects" aria-label="Projects"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 7h6l2 2h10v10H3z"/></svg>Projects</button>
+    <button id="btnHelp" class="header-button" title="How PDF Studio works" aria-label="How it works"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/></svg>Help</button>
   </div>
   <button type="button" class="avatar" id="btnAvatar" title="This device: connections and setup" aria-label="Connections and setup">BL</button>
 </header>
@@ -2103,35 +2454,77 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
   <div class="nav-foot"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 9.5 12 4l9 5.5M4.5 9.5h15M6 10v7M10 10v7M14 10v7M18 10v7M4 17.5h16M3 20h18"/></svg><div><strong>Bill Layne Insurance</strong><small>Elkin, NC &bull; Since 2005</small><small id="navVersion"></small></div></div>
 </aside>
 <main>
-  <div class="workflow-shell">
-    <nav class="workflow-steps" aria-label="PDF workflow">
-      <button type="button" class="workflow-step current" id="workflowStep1"><span>1</span><div><strong>Add files</strong><small>and choose pages</small></div></button>
-      <div class="workflow-line" aria-hidden="true"></div>
-      <button type="button" class="workflow-step" id="workflowStep2"><span>2</span><div><strong>Edit &amp; arrange</strong><small>Reorder, mark up, sign</small></div></button>
-      <div class="workflow-line" aria-hidden="true"></div>
-      <button type="button" class="workflow-step" id="workflowStep3"><span>3</span><div><strong>Preview &amp; finish</strong><small>Check it, save or send</small></div></button>
-    </nav>
-    <div class="device-status" aria-label="Device connections">
-      <span class="status-chip private"><i></i>Local editing</span>
-      <span class="status-chip" id="autosaveStatus"><i></i>Ready</span>
-      <button type="button" class="status-chip connection-detail" id="formsConnection" title="Open the Forms Library (enter the access code there)"><i></i>Forms setup needed</button>
-      <button type="button" class="status-chip connection-detail" id="mailConnection" title="Gmail and SMS setup and tests"><i></i>Gmail setup needed</button>
+  <!-- This PDF: its name, its project, the three stages and the one finishing action -->
+  <div class="ws-bar">
+    <button type="button" class="icon-button ws-back" id="btnWsBack" title="Close this PDF (you can save it as a project first)" aria-label="Close this PDF"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></svg></button>
+    <label class="ws-title" title="File name for the new PDF"><input type="text" id="nameInput" value="new-document" aria-label="File name for the new PDF" spellcheck="false" autocomplete="off"><b>.pdf</b></label>
+    <div class="menu-wrap" id="docMenuWrap">
+      <button type="button" class="ws-chip" id="btnDocMenu" title="Project, and other new PDFs from these files" aria-haspopup="menu"><span id="projectLabel">Draft</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="menu-panel">
+        <div class="menu-label">Project</div>
+        <button id="btnSaveProject" title="Name this work so you can reopen it from the home screen">Save as a project&hellip;</button>
+        <div class="menu-label">New PDFs from these files</div>
+        <label class="doc-switch">Working on <select id="outputSelect" aria-label="Which new PDF you are building"></select></label>
+        <button id="btnNewOutput" title="Start another new PDF from the same source files">Start another PDF</button>
+        <button id="btnDuplicateOutput" title="Copy this new PDF, pages and edits included">Duplicate this PDF</button>
+        <button class="danger" id="btnRemoveOutput">Remove this PDF</button>
+      </div>
     </div>
+    <nav class="workflow-steps" aria-label="PDF workflow">
+      <button type="button" class="workflow-step current" id="workflowStep1"><span>1</span><div><strong>Add files</strong></div></button>
+      <div class="workflow-line" aria-hidden="true"></div>
+      <button type="button" class="workflow-step" id="workflowStep2"><span>2</span><div><strong>Edit &amp; arrange</strong></div></button>
+      <div class="workflow-line" aria-hidden="true"></div>
+      <button type="button" class="workflow-step" id="workflowStep3"><span>3</span><div><strong>Finish</strong></div></button>
+    </nav>
+    <div class="menu-wrap" id="wsMoreWrap">
+      <button type="button" class="icon-button" id="btnWsMore" title="Save, send, export and settings" aria-label="Save, send, export and settings" aria-haspopup="menu"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg><span class="opt-badge" id="optBadge"></span></button>
+      <div class="menu-panel">
+        <div class="menu-label">Save or send</div>
+        <button id="btnCreate" title="Download the finished PDF (Ctrl+S)"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 4h12l2 2v14H5zM8 4v6h8V4M8 17h8"/></svg>Save PDF</button>
+        <button id="btnEmail" title="Create a Gmail draft with this PDF attached"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 5h18v14H3zM3 6l9 7 9-7"/></svg>Gmail draft</button>
+        <button id="btnSms" title="Hand this PDF to SMS Command Center to text it to a customer"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 4h16v12H8l-4 4z"/></svg>Text via SMS</button>
+        <button id="btnPrint" title="Print the new document (Ctrl+P)"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 9V3h10v6M7 17H4V9h16v8h-3M7 14h10v7H7z"/></svg>Print</button>
+        <div class="menu-label">Export</div>
+        <button id="btnSplitRanges" title="Cut this PDF into several named PDFs by page ranges">Split by page ranges</button>
+        <button id="btnEachPage" title="Download every page as its own one-page PDF">Single pages as ZIP</button>
+        <button id="btnZipOutputs" title="Every new PDF in this project, in one ZIP">All new PDFs as ZIP</button>
+        <div class="menu-label">Finish options</div><p class="option-help">These apply to Save, Gmail, SMS and ZIP exports. Print uses an unlocked copy.</p>
+        <label title="Re-saves every page as a compact scan — much smaller file, ideal for emailing. (Text is no longer selectable in the shrunk copy.)">
+          <input type="checkbox" id="chkShrink" style="width:17px;height:17px;accent-color:var(--teal)"> Shrink for email
+        </label><p class="option-help">Creates image pages if smaller. Selectable text and interactive form fields are lost in that copy.</p>
+        <label title="Stamps Page 1 of N at the bottom of every page">
+          <input type="checkbox" id="chkNumbers" style="width:17px;height:17px;accent-color:var(--teal)"> Page numbers
+        </label>
+        <label title="The PDF will require a password to open — you choose it when you save the file">
+          <input type="checkbox" id="chkLock" style="width:17px;height:17px;accent-color:var(--teal)"> Lock with password
+        </label>
+        <label title="Pages that carry a white-out are re-saved as pictures, so whatever was under the white box is gone from the file — not just hidden. Those pages lose selectable text.">
+          <input type="checkbox" id="chkPermanent" checked style="width:17px;height:17px;accent-color:var(--teal)"> Permanent white-out
+        </label><p class="option-help">On by default. Only pages with a white-out become pictures; the covered text is removed from the file, not just hidden. Turn it off if a whited-out page must keep selectable text.</p>
+        <button class="danger" id="btnClearTray">Remove every page</button>
+      </div>
+    </div>
+    <button type="button" class="primary ws-cta" id="btnPreviewFinal" title="See the finished PDF, then save, send or print it">Preview &amp; finish<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
   </div>
 
-  <div class="document-shelf" aria-label="Output documents">
-    <label>New PDF <select id="outputSelect" aria-label="Which new PDF you are building"></select></label>
-    <button id="btnNewOutput" title="Start another new PDF from the same source files">+ Another PDF</button><button id="btnDuplicateOutput" title="Copy this new PDF, pages and edits included">Duplicate</button><button id="btnRemoveOutput">Remove this PDF</button>
-    <button id="btnWorkspaceUndo" aria-label="Undo workspace change">Undo</button><button id="btnWorkspaceRedo" aria-label="Redo workspace change">Redo</button>
-    <span id="projectLabel">Local workspace</span>
-  </div>
-  <!-- Source pages -->
+  <div class="ws-grid">
+    <div class="ws-left">
+      <div class="ws-tabs">
+        <div class="ws-tabset" role="tablist" aria-label="The pages of your PDF, or the files they come from">
+          <button type="button" role="tab" class="ws-tab" id="wsTabPages" aria-controls="trayPane" aria-selected="false">Pages<b id="wsTabPagesN">0</b></button>
+          <button type="button" role="tab" class="ws-tab active" id="wsTabSources" aria-controls="sourcePane" aria-selected="true">Source files<b id="wsTabSourcesN">0</b></button>
+        </div>
+        <button type="button" class="icon-button ws-undo" id="btnWorkspaceUndo" title="Undo (Ctrl+Z)" aria-label="Undo"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 7 4 12l5 5M5 12h8a6 6 0 0 1 6 6"/></svg></button>
+        <button type="button" class="icon-button ws-undo" id="btnWorkspaceRedo" title="Redo (Ctrl+Y)" aria-label="Redo"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 7 5 5-5 5M19 12h-8a6 6 0 0 0-6 6"/></svg></button>
+      </div>
+  <!-- Source files (and, before any file is open, the home screen) -->
   <section id="sourcePane">
     <div class="pane-title" id="sourceTitle" style="display:none">
       <div class="section-heading">
         <span class="section-step">Step 1</span>
         <strong>Choose pages</strong>
-        <span class="tip">Pick the pages for your PDF, or add every page</span>
+        <span class="tip">Click the pages you want, then <strong>Use selected pages</strong></span>
       </div>
       <div class="source-actions">
         <div class="search-box">
@@ -2144,10 +2537,6 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
         <button class="primary" id="btnAdd">
           <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
           Add files
-        </button>
-        <button class="step-nav" id="btnGoStep3" style="display:none" title="Go to your new PDF">
-          <span id="goStep3Label">Your PDF</span>
-          <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </button>
         <div class="menu-wrap" id="srcMenuWrap">
           <button class="icon-button" id="btnSrcMenu" title="More source options" aria-label="More source options"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
@@ -2204,79 +2593,169 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     <div id="docList"></div>
   </section>
 
-  <!-- New Document tray -->
+  <!-- The pages of the new PDF -->
   <section id="trayPane">
-    <div class="tray-head">
-      <div class="tray-heading">
-        <span class="section-step">Step 2 &middot; Edit &amp; arrange</span>
-        <div><span class="tray-title">Your new PDF</span><span class="tray-count" id="trayCount">0 pages</span></div>
-        <small>Drag pages to set their final order &bull; pencil to edit a page</small>
-        <button class="step-nav" id="btnBackStep2" title="Go back to your source pages to add more">
-          <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
-          Back to pages
-        </button>
-      </div>
-      <div class="output-controls">
-        <label class="file-name-field" for="nameInput"><span>File name</span><input type="text" id="nameInput" value="new-document" title="File name for the new PDF"><b>.pdf</b></label>
-        <div class="output-actions">
-          <button class="primary save-button" id="btnCreate">
-            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 4h12l2 2v14H5zM8 4v6h8V4M8 17h8"/></svg>
-            Save PDF
-          </button>
-          <button id="btnPreviewFinal" title="See the finished PDF before you save or send it"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>Preview</button>
-          <div class="menu-wrap" id="sendMenuWrap">
-            <button id="btnSendMenu" title="Send or print this PDF"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>Send &#9662;</button>
-            <div class="menu-panel">
-              <div class="menu-label">Send this PDF</div>
-              <button id="btnEmail" title="Create a Gmail draft with this PDF attached"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 5h18v14H3zM3 6l9 7 9-7"/></svg>Gmail draft</button>
-              <button id="btnSms" title="Hand this PDF to SMS Command Center to text it to a customer"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 4h16v12H8l-4 4z"/></svg>Text via SMS</button>
-              <button id="btnPrint" title="Print the new document"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 9V3h10v6M7 17H4V9h16v8h-3M7 14h10v7H7z"/></svg>Print</button>
-            </div>
-          </div>
-          <div class="menu-wrap" id="moreMenuWrap">
-            <button id="btnMoreMenu" title="Split or bundle this work"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 17v4h16v-4"/></svg>Export &#9662;</button>
-            <div class="menu-panel">
-              <div class="menu-label">Export</div>
-              <button id="btnSplitRanges" title="Cut this PDF into several named PDFs by page ranges">Split by page ranges</button>
-              <button id="btnEachPage" title="Download every page in the tray as its own one-page PDF">Single pages as ZIP</button>
-              <button id="btnZipOutputs" title="Every new PDF in this project, in one ZIP">All new PDFs as ZIP</button>
-              <button class="danger" id="btnClearTray">Clear tray</button>
-            </div>
-          </div>
-          <div class="menu-wrap" id="optMenuWrap">
-            <button id="btnOptMenu" title="Finish settings for every save and send"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>Settings<span class="opt-badge" id="optBadge"></span></button>
-            <div class="menu-panel">
-              <div class="menu-label">Finish options</div><p class="option-help">These settings apply to Save, Gmail, SMS and ZIP exports. Print uses an unlocked copy.</p>
-              <label title="Re-saves every page as a compact scan — much smaller file, ideal for emailing. (Text is no longer selectable in the shrunk copy.)">
-                <input type="checkbox" id="chkShrink" style="width:17px;height:17px;accent-color:var(--teal)"> Shrink for email
-              </label><p class="option-help">Creates image pages if smaller. Selectable text and interactive form fields are lost in that copy.</p>
-              <label title="Stamps Page 1 of N at the bottom of every page">
-                <input type="checkbox" id="chkNumbers" style="width:17px;height:17px;accent-color:var(--teal)"> Page numbers
-              </label>
-              <label title="The PDF will require a password to open — you choose it when you save the file">
-                <input type="checkbox" id="chkLock" style="width:17px;height:17px;accent-color:var(--teal)"> Lock with password
-              </label>
-              <label title="Pages that carry a white-out are re-saved as pictures, so whatever was under the white box is gone from the file — not just hidden. Those pages lose selectable text.">
-                <input type="checkbox" id="chkPermanent" checked style="width:17px;height:17px;accent-color:var(--teal)"> Permanent white-out
-              </label><p class="option-help">On by default. Only pages with a white-out become pictures; the covered text is removed from the file, not just hidden. Turn it off if a whited-out page must keep selectable text.</p>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="pages-head">
+      <strong class="tray-count" id="trayCount">0 pages</strong>
+      <button type="button" id="btnAddPages" title="Add more PDFs or photos &mdash; all of their pages go into this PDF"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add files</button>
     </div>
+    <p class="pages-hint"><span class="hint-ws">Drag pages to reorder</span><span class="hint-touch">Tap a page to edit it &bull; the arrows move it</span></p>
     <div id="trayPickBar" role="status" aria-live="polite">
       <span class="pick-count" id="trayPickCount">0 pages selected</span>
-      <span class="pick-hint">Click pages to select &bull; shift-click for a range</span>
       <span class="grow"></span>
-      <button id="btnTrayRotL" title="Rotate the selected pages left">&#8634; Rotate left</button>
-      <button id="btnTrayRotR" title="Rotate the selected pages right">&#8635; Rotate right</button>
+      <button id="btnTrayRotL" title="Rotate the selected pages left">&#8634; Left</button>
+      <button id="btnTrayRotR" title="Rotate the selected pages right">&#8635; Right</button>
       <button id="btnTrayPickClear">Clear</button>
       <button class="go" id="btnTrayRemove">Remove selected</button>
     </div>
     <div id="trayStrip">
-      <div class="tray-empty"><strong>Your selected pages will appear here.</strong><br>Click a source page above or drag it into this tray.</div>
+      <div class="tray-empty"><strong>No pages yet.</strong><br>Open <em>Source files</em> and choose the pages for this PDF.</div>
     </div>
+    <button type="button" class="blank-page" id="btnBlankPage" title="Add an empty letter-size page"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add blank page</button>
   </section>
+    </div>
+
+    <!-- Page editor. Wide screens (body.ws): the centre and right panes of the workspace, always
+         showing the current page. Narrower screens: a full-screen editor opened from a page card. -->
+    <div id="editModal">
+      <div class="edit-panel">
+        <div class="ws-center">
+          <div class="ed-bar">
+            <button id="btnUndoStamp" title="Undo (Ctrl+Z)" aria-label="Undo"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 7 4 12l5 5M5 12h8a6 6 0 0 1 6 6"/></svg><span>Undo</span></button>
+            <button id="btnRedoStamp" title="Redo (Ctrl+Y)" aria-label="Redo"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 7 5 5-5 5M19 12h-8a6 6 0 0 0-6 6"/></svg><span>Redo</span></button>
+            <span class="ed-sep" aria-hidden="true"></span>
+            <button class="icon-button ed-nav" id="btnPrevEdit" title="Previous page (PageUp)" aria-label="Previous page"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></svg></button>
+            <span id="editorPageCount" class="ed-page" aria-live="polite">Page <input type="number" id="editorPageJump" min="1" step="1" value="1" aria-label="Go to page number"> of <b id="editorPageTotal">0</b></span>
+            <button class="icon-button ed-nav" id="btnNextEdit" title="Next page (PageDown)" aria-label="Next page"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></button>
+            <div class="ed-zoom" role="group" aria-label="Page zoom">
+              <button class="icon-button" id="btnZoomOut" title="Zoom out" aria-label="Zoom out">&minus;</button>
+              <span id="zoomPct" aria-live="polite">100%</span>
+              <button class="icon-button" id="btnZoomIn" title="Zoom in" aria-label="Zoom in">+</button>
+            </div>
+            <button id="btnZoomFit" title="Fit the whole page" aria-label="Fit page"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span>Fit page</span></button>
+            <span class="grow"></span>
+            <div class="menu-wrap" id="editMoreWrap">
+              <button class="icon-button" id="btnEditMore" title="More editing actions" aria-label="More editing actions"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
+              <div class="menu-panel">
+                <button id="btnShowHints" style="display:none">Show tips again</button>
+                <button class="danger" id="btnClearStamps">Remove all added items</button>
+                <button class="danger" id="btnUncrop" style="display:none">Remove crop</button>
+              </div>
+            </div>
+            <button class="primary done-button" id="btnEditDone"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg>Done</button>
+          </div>
+          <label class="mobile-tool-label">Tool <select id="mobileTool" aria-label="Editing tool"><option value="modeSelect">Select &amp; move</option><option value="modeText">Add text</option><option value="modeHl">Highlight</option><option value="modeDraw">Draw</option><option value="modeBox">White-out</option><option value="modeSig">Signature</option><option value="modeImg">Image</option><option value="modeStamps">Stamps</option><option value="modeCrop">Crop</option><option value="modePan">Move page</option></select><button id="btnToolSettings">Text &amp; style</button></label>
+          <div class="editor-main">
+            <div id="editCanvasWrap">
+              <div id="editStack">
+                <canvas id="editCanvas"></canvas>
+                <canvas id="editOverlay"></canvas>
+                <div id="stampLayer"></div>
+              </div>
+              <div id="wsEmpty">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 4h8l4 4v12H8zM16 4v4h4M4 8v12h10"/></svg>
+                <h3>Choose the pages for this PDF</h3>
+                <p>Click pages on the left to select them, then <strong>Use selected pages</strong> &mdash; or take every page in one go.</p>
+                <button type="button" class="primary" id="btnEmptyAddAll"><span id="emptyAddAllLabel">Add every page</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="ws-right" aria-label="Editing tools and page actions">
+          <h3>Editing tools</h3>
+          <div class="tool-grid">
+            <button class="mode-btn active" id="modeSelect" title="Move, resize or delete what you added"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 3 3.6 16 3-6.6 6.4-3z"/></svg><span>Select</span></button>
+            <button class="mode-btn" id="modeText"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h6M12 9v6.5"/></svg><span>Add text</span></button>
+            <button class="mode-btn" id="modeHl"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6 15 8-8 3 3-8 8H6zM4 21h16"/></svg><span>Highlight</span></button>
+            <button class="mode-btn" id="modeDraw"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m4 20 4-1 11-11-3-3L5 16zM14 7l3 3"/></svg><span>Draw</span></button>
+            <button class="mode-btn" id="modeBox" title="Cover something up &mdash; it is removed from the file when you save"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8.5 20 3.6 15.1a1.5 1.5 0 0 1 0-2.1l9-9a1.5 1.5 0 0 1 2.1 0l5.7 5.7a1.5 1.5 0 0 1 0 2.1L12.5 20zM9 8.5l6.5 6.5M7 20h13"/></svg><span>White-out</span></button>
+            <button class="mode-btn" id="modeSig"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 17c3-5 4-9 6-9 3 0-2 9 1 9 2 0 3-4 5-4 1 0 1 4 3 4 1 0 2-1 3-2M3 21h18"/></svg><span>Signature</span></button>
+            <button class="mode-btn" id="modeImg"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 4h16v16H4zM7 16l4-4 3 3 2-2 3 3M8 8h.01"/></svg><span>Add image</span></button>
+            <button class="mode-btn" id="modeStamps"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg><span>Stamps</span></button>
+            <button class="mode-btn" id="modeCrop"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 3v14h14M3 7h14v14"/></svg><span>Crop</span></button>
+            <button class="mode-btn" id="modePan"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M8 7l4-4 4 4M8 17l4 4 4-4M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg><span>Move page</span></button>
+          </div>
+          <div class="ws-sec tool-opts">
+            <div class="edit-context" id="editContext">
+              <div class="context-label"><span>Select</span><small>Click something you added to move, resize or delete it</small></div>
+              <input type="text" id="stampText" placeholder="Type text to place on the page">
+              <label>Size<select id="stampSize" title="Text size">
+                <option value="10">10 pt</option>
+                <option value="12">12 pt</option>
+                <option value="14" selected>14 pt</option>
+                <option value="18">18 pt</option>
+                <option value="24">24 pt</option>
+                <option value="36">36 pt</option>
+              </select></label>
+              <label>Color<select id="stampColor" title="Text color">
+                <option value="black" selected>Black</option>
+                <option value="red">Red</option>
+                <option value="blue">Blue</option>
+              </select></label>
+            </div>
+            <div class="edit-hint" id="editHint"><span id="editHintText">Pick a tool, then work on the page.</span><button class="ghost" id="btnHideHints" title="Hide these tips. Tool settings still explain each tool.">Hide tips</button></div>
+          </div>
+          <div class="ws-sec">
+            <h3>Page actions</h3>
+            <div class="page-actions">
+              <button id="btnPageRotL"><svg aria-hidden="true" viewBox="0 0 24 24" style="transform:scaleX(-1)"><path d="M20 8V3l-2 2.1A8 8 0 1 0 20 14"/></svg><span>Rotate left</span></button>
+              <button id="btnPageRotR"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 8V3l-2 2.1A8 8 0 1 0 20 14"/></svg><span>Rotate right</span></button>
+              <button id="btnPageDup"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"/></svg><span>Duplicate page</span></button>
+              <button class="danger" id="btnPageRemove"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg><span>Remove page</span></button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- quick-stamp library panel -->
+        <div id="stampPanel" style="position:absolute;inset:0;background:rgba(248,250,252,.97);display:none;align-items:center;justify-content:center;z-index:5;padding:16px;">
+          <div class="sig-card">
+            <h3>Quick stamps <span class="grow"></span><button class="dialog-close" id="btnStampsClose" aria-label="Close">&#10005; Close</button></h3>
+            <div class="sig-note">Tap a stamp — it lands in the middle of the page, already selected, so you just drag it into place.</div>
+            <label class="sig-note" style="display:flex;align-items:center;gap:8px;margin:2px 0 6px;cursor:pointer"><input type="checkbox" id="stampAllPages" style="width:17px;height:17px;accent-color:var(--teal)"> Put it on <strong>every page</strong> of this new PDF (same spot on each page)</label>
+            <div id="quickStamps" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
+            <div class="sig-note" style="margin-top:4px;"><strong>Your saved text stamps</strong> &mdash; save text you use all the time (kept only on this computer):</div>
+            <div id="customStamps" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
+            <textarea id="customStampText" placeholder="Type text to save as a reusable stamp&#10;(more than one line is fine)"></textarea>
+            <div class="sig-row">
+              <button class="primary" id="btnSaveStamp">+ Save as a stamp</button>
+            </div>
+            <div class="sig-note" style="margin-top:4px;"><strong>Your saved picture stamps</strong> &mdash; upload a PNG or JPG (logo, rubber stamp, badge) once and reuse it forever:</div>
+            <div id="imgStamps" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
+            <div class="sig-row">
+              <button class="primary" id="btnStampImgUpload">&#8682; Upload a picture stamp</button>
+            </div>
+            <div class="sig-note" style="margin-top:4px;"><strong>Agency stamps</strong> &mdash; shared with everyone who uses PDF Studio here (press &#8593; on one of your own stamps to share it): <span id="sharedStampsNote"></span> <button class="ghost" id="btnStampsUndo" title="Put the agency stamps back the way they were before the last change (for everyone)">Undo last change</button></div>
+            <div id="sharedStamps" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
+          </div>
+        </div>
+
+        <!-- signature setup panel -->
+        <div id="sigPanel">
+          <div class="sig-card">
+            <h3>Your signature &amp; initials <span class="grow"></span><button class="dialog-close" id="btnSigClose" aria-label="Close">&#10005; Close</button></h3>
+            <div role="group" aria-label="Signature or initials" style="display:flex;gap:6px;margin:2px 0 8px">
+              <button type="button" class="primary" id="sigKindSig">Signature</button>
+              <button type="button" id="sigKindIni">Initials</button>
+            </div>
+            <div class="sig-saved-box">
+              <div class="sig-saved-head" id="sigSavedHead">&#11088; Saved signatures &mdash; tap one to use it (no need to draw or upload again)</div>
+              <div id="sigSaved"></div>
+            </div>
+            <div class="sig-note" style="margin-top:2px"><strong>Add a new one:</strong> draw below or upload an image &mdash; it saves to your list automatically.</div>
+            <canvas id="sigPad"></canvas>
+            <div class="sig-row">
+              <button id="btnSigClear">Clear pad</button>
+              <button class="primary" id="btnSigUse">&#10003; Use this signature</button>
+              <span style="flex:1"></span>
+              <button id="btnSigUpload">&#8682; Upload signature image</button>
+            </div>
+            <div class="sig-note">Draw your signature above with the mouse (or finger on a touchscreen), or upload a photo/scan of it &mdash; white backgrounds are removed automatically. Signatures are saved <strong>only on this computer</strong> so next time it&rsquo;s one click.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </main>
 </div>
 <nav class="tab-bar" id="tabBar" aria-label="PDF Studio">
@@ -2287,125 +2766,15 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
 </nav>
 
 <footer>
-  Bill Layne Insurance Agency internal tool &bull; <strong>Private by design</strong> &mdash; files are edited locally; Gmail and SMS delivery upload the finished PDF. <span class="app-version" id="appVersion"></span>
-</footer>
-
-<!-- Page editor: add text / white-out to a tray page -->
-<div id="editModal">
-  <div class="edit-panel">
-    <div class="edit-head">
-      <div class="edit-title-wrap">
-        <span class="edit-kicker">PDF Studio</span>
-        <span class="edit-title">Edit page</span>
-      </div>
-      <div class="edit-utility">
-        <button id="btnPrevEdit" aria-label="Previous page">Previous</button><span id="editorPageCount" class="page-jump" aria-live="polite">Page <input type="number" id="editorPageJump" min="1" step="1" value="1" aria-label="Go to page number"> of <b id="editorPageTotal">0</b></span><button id="btnNextEdit" aria-label="Next page">Next</button><button id="btnRedoStamp">Redo</button><button id="btnUndoStamp"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 7 4 12l5 5M5 12h8a6 6 0 0 1 6 6"/></svg>Undo</button>
-        <div class="zoom-group" aria-label="Page zoom">
-          <button class="icon-button" id="btnZoomOut" title="Zoom out" aria-label="Zoom out">&minus;</button>
-          <button class="ghost" id="btnZoomFit" title="Fit the whole page">Fit</button>
-          <button class="icon-button" id="btnZoomIn" title="Zoom in" aria-label="Zoom in">+</button>
-        </div>
-        <div class="menu-wrap" id="editMoreWrap">
-          <button class="icon-button" id="btnEditMore" title="More editing actions" aria-label="More editing actions"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
-          <div class="menu-panel">
-            <button id="btnShowHints" style="display:none">Show tips again</button>
-            <button class="danger" id="btnClearStamps">Remove all added items</button>
-            <button class="danger" id="btnUncrop" style="display:none">Remove crop</button>
-          </div>
-        </div>
-        <button class="primary done-button" id="btnEditDone"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg>Done</button>
-      </div>
-    </div>
-
-    <div class="editor-workspace">
-      <label class="mobile-tool-label">Tool <select id="mobileTool" aria-label="Editing tool"><option value="modeText">Add text</option><option value="modeHl">Highlight</option><option value="modeDraw">Pen</option><option value="modeBox">White-out (visual cover)</option><option value="modeSig">Signature</option><option value="modeImg">Image</option><option value="modeStamps">Stamps</option><option value="modeCrop">Crop</option><option value="modePan">Move page</option></select><button id="btnToolSettings">Text &amp; style</button></label><aside class="editor-tools" aria-label="Page editing tools">
-        <button class="mode-btn active" id="modeText"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 5h14M12 5v14M8 19h8"/></svg><span>Add text</span></button>
-        <button class="mode-btn" id="modeHl"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6 15 8-8 3 3-8 8H6zM4 21h16"/></svg><span>Highlight</span></button>
-        <button class="mode-btn" id="modeDraw"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m4 20 4-1 11-11-3-3L5 16zM14 7l3 3"/></svg><span>Pen</span></button>
-        <button class="mode-btn" id="modeBox"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/></svg><span>White-out</span></button>
-        <button class="mode-btn" id="modeSig"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 17c3-5 4-9 6-9 3 0-2 9 1 9 2 0 3-4 5-4 1 0 1 4 3 4 1 0 2-1 3-2M3 21h18"/></svg><span>Signature</span></button>
-        <button class="mode-btn" id="modeImg"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 4h16v16H4zM7 16l4-4 3 3 2-2 3 3M8 8h.01"/></svg><span>Image</span></button>
-        <button class="mode-btn" id="modeStamps"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg><span>Stamps</span></button>
-        <button class="mode-btn" id="modePan"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M8 7l4-4 4 4M8 17l4 4 4-4M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg><span>Move page</span></button><button class="mode-btn" id="modeCrop"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 3v14h14M3 7h14v14"/></svg><span>Crop</span></button>
-      </aside>
-
-      <div class="editor-main">
-        <div class="edit-context" id="editContext">
-          <div class="context-label"><span>Text controls</span><small>Type first, then click the page</small></div>
-          <input type="text" id="stampText" placeholder="Type text to place on the page">
-          <label>Size<select id="stampSize" title="Text size">
-            <option value="10">10 pt</option>
-            <option value="12">12 pt</option>
-            <option value="14" selected>14 pt</option>
-            <option value="18">18 pt</option>
-            <option value="24">24 pt</option>
-            <option value="36">36 pt</option>
-          </select></label>
-          <label>Color<select id="stampColor" title="Text color">
-            <option value="black" selected>Black</option>
-            <option value="red">Red</option>
-            <option value="blue">Blue</option>
-          </select></label>
-        </div>
-        <div class="edit-hint" id="editHint"><span id="editHintText">Type your text above, then click the page where it should go.</span><button class="ghost" id="btnHideHints" title="Hide these tips. Tool settings still explain each tool.">Hide tips</button></div>
-        <div id="editCanvasWrap">
-          <div id="editStack">
-            <canvas id="editCanvas"></canvas>
-            <canvas id="editOverlay"></canvas>
-            <div id="stampLayer"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- quick-stamp library panel -->
-    <div id="stampPanel" style="position:absolute;inset:0;background:rgba(248,250,252,.97);display:none;align-items:center;justify-content:center;z-index:5;padding:16px;">
-      <div class="sig-card">
-        <h3>Quick stamps <span class="grow"></span><button class="dialog-close" id="btnStampsClose" aria-label="Close">&#10005; Close</button></h3>
-        <div class="sig-note">Tap a stamp — it lands in the middle of the page, already selected, so you just drag it into place.</div>
-        <label class="sig-note" style="display:flex;align-items:center;gap:8px;margin:2px 0 6px;cursor:pointer"><input type="checkbox" id="stampAllPages" style="width:17px;height:17px;accent-color:var(--teal)"> Put it on <strong>every page</strong> of this new PDF (same spot on each page)</label>
-        <div id="quickStamps" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
-        <div class="sig-note" style="margin-top:4px;"><strong>Your saved text stamps</strong> &mdash; save text you use all the time (kept only on this computer):</div>
-        <div id="customStamps" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
-        <textarea id="customStampText" placeholder="Type text to save as a reusable stamp&#10;(more than one line is fine)"></textarea>
-        <div class="sig-row">
-          <button class="primary" id="btnSaveStamp">+ Save as a stamp</button>
-        </div>
-        <div class="sig-note" style="margin-top:4px;"><strong>Your saved picture stamps</strong> &mdash; upload a PNG or JPG (logo, rubber stamp, badge) once and reuse it forever:</div>
-        <div id="imgStamps" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
-        <div class="sig-row">
-          <button class="primary" id="btnStampImgUpload">&#8682; Upload a picture stamp</button>
-        </div>
-        <div class="sig-note" style="margin-top:4px;"><strong>Agency stamps</strong> &mdash; shared with everyone who uses PDF Studio here (press &#8593; on one of your own stamps to share it): <span id="sharedStampsNote"></span> <button class="ghost" id="btnStampsUndo" title="Put the agency stamps back the way they were before the last change (for everyone)">Undo last change</button></div>
-        <div id="sharedStamps" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
-      </div>
-    </div>
-
-    <!-- signature setup panel -->
-    <div id="sigPanel">
-      <div class="sig-card">
-        <h3>Your signature &amp; initials <span class="grow"></span><button class="dialog-close" id="btnSigClose" aria-label="Close">&#10005; Close</button></h3>
-        <div role="group" aria-label="Signature or initials" style="display:flex;gap:6px;margin:2px 0 8px">
-          <button type="button" class="primary" id="sigKindSig">Signature</button>
-          <button type="button" id="sigKindIni">Initials</button>
-        </div>
-        <div class="sig-saved-box">
-          <div class="sig-saved-head" id="sigSavedHead">&#11088; Saved signatures &mdash; tap one to use it (no need to draw or upload again)</div>
-          <div id="sigSaved"></div>
-        </div>
-        <div class="sig-note" style="margin-top:2px"><strong>Add a new one:</strong> draw below or upload an image &mdash; it saves to your list automatically.</div>
-        <canvas id="sigPad"></canvas>
-        <div class="sig-row">
-          <button id="btnSigClear">Clear pad</button>
-          <button class="primary" id="btnSigUse">&#10003; Use this signature</button>
-          <span style="flex:1"></span>
-          <button id="btnSigUpload">&#8682; Upload signature image</button>
-        </div>
-        <div class="sig-note">Draw your signature above with the mouse (or finger on a touchscreen), or upload a photo/scan of it &mdash; white backgrounds are removed automatically. Signatures are saved <strong>only on this computer</strong> so next time it&rsquo;s one click.</div>
-      </div>
-    </div>
+  <span class="foot-private" title="Files are edited in this browser. Gmail and SMS delivery upload only the finished PDF."><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10V7a5 5 0 0 1 10 0v3M5 10h14v10H5zM12 14v2"/></svg><span>Edited on this device</span></span>
+  <span class="foot-pages" id="footPages"></span>
+  <div class="device-status" aria-label="Autosave and connections">
+    <span class="status-chip" id="autosaveStatus"><i></i>Ready</span>
+    <button type="button" class="status-chip connection-detail" id="formsConnection" title="Open the Forms Library (enter the access code there)"><i></i>Forms setup needed</button>
+    <button type="button" class="status-chip connection-detail" id="mailConnection" title="Gmail and SMS setup and tests"><i></i>Gmail setup needed</button>
+    <span class="app-version" id="appVersion"></span>
   </div>
-</div>
+</footer>
 
 <!-- Gmail-draft modal -->
 <div id="emailModal">
@@ -2676,6 +3045,18 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
 </html>
 </script>
 
+<!-- per-page menu: one floating panel shared by every page card -->
+<div class="menu-wrap" id="pageMenuWrap"><div class="menu-panel" id="pageMenu" role="menu" aria-label="Page options">
+  <button data-act="edit">Edit this page</button>
+  <button data-act="rotl">Rotate left</button>
+  <button data-act="rotr">Rotate right</button>
+  <button data-act="dup">Duplicate</button>
+  <button data-act="up">Move up</button>
+  <button data-act="down">Move down</button>
+  <button data-act="pick" title="Select several pages to rotate or remove together">Select</button>
+  <button data-act="del" class="danger">Remove</button>
+</div></div>
+
 <div id="dropOverlay"><div class="drop-inner"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg>Drop to add PDFs &amp; photos</div></div>
 
 <input type="file" id="fileInput" accept="application/pdf,.pdf,image/*" multiple hidden>
@@ -2689,7 +3070,7 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
 <script>
 (function () {
   'use strict';
-  const APP_VERSION = '2026-10-01.1';   // bump on every release — shown in the footer, the Help dialog and the console
+  const APP_VERSION = '2026-10-01.2';   // bump on every release — shown in the footer, the Help dialog and the console
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -2786,12 +3167,11 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     document.querySelectorAll('.menu-wrap.open').forEach(w => w.classList.remove('open'));
   }
   wireMenu('btnSrcMenu', 'srcMenuWrap');
-  wireMenu('btnOptMenu', 'optMenuWrap');
-  wireMenu('btnMoreMenu', 'moreMenuWrap');
-  wireMenu('btnSendMenu', 'sendMenuWrap');
+  wireMenu('btnWsMore', 'wsMoreWrap');
+  wireMenu('btnDocMenu', 'docMenuWrap');
   wireMenu('btnEditMore', 'editMoreWrap');
 
-  // gold badge on ⚙ Options showing how many output options are on
+  // gold badge on the ⋯ button: how many finish options differ from the defaults
   function updateOptBadge() {
     // count settings that differ from the defaults (permanent white-out is ON by default)
     const defaults = { chkShrink: false, chkNumbers: false, chkLock: false, chkPermanent: true };
@@ -2930,7 +3310,7 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     });
   }
 
-  async function addPdfData(name, bytes) {
+  async function addPdfData(name, bytes, quiet) {
     // pdf.js transfers the buffer to its worker, so hand it a copy.
     // Locked PDFs: keep asking for the password until it opens or the user skips.
     let pdfjsDoc = null, password;
@@ -2977,7 +3357,7 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
       doc.formFields = fdoc.getForm().getFields().length;
     } catch (_) { doc.formFields = 0; }
     docs.set(docId, doc);
-    suggestName(name);
+    if (!quiet) suggestName(name);
     for (let i = 0; i < pdfjsDoc.numPages; i++) {
       const page = await pdfjsDoc.getPage(i + 1);
       const viewport = page.getViewport({ scale: 1 });
@@ -2995,14 +3375,15 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     }
     const n = pdfjsDoc.numPages;
     pdfjsDoc.destroy();
-    toast('Added "' + name + '" (' + n + ' page' + (n === 1 ? '' : 's') + ')');
+    if (!quiet) toast('Added "' + name + '" (' + n + ' page' + (n === 1 ? '' : 's') + ')');
   }
 
   /* ── Rendering: source pane ── */
-  /* ── Steps: each one gets the whole page ──
-     1 = add files (empty state) · 2 = pick pages · 3 = arrange & finish.
-     Steps 1 and 2 share #sourcePane (the dropzone IS step 1); step 3 hands the
-     page to #trayPane via body.step-3. */
+  /* ── Where the user is ──
+     uiStep 1 = home (no files) · 2 = Source files · 3 = Pages (the new PDF).
+     1 and 2 share #sourcePane; body.step-3 shows #trayPane instead. With files
+     open these are the two tabs of the left column, and the stage indicator in
+     the top bar is derived from them (see updateWorkflowState). */
   let uiStep = 1;
 
   function stepAvailable(n) {
@@ -3011,15 +3392,24 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     return true;
   }
 
+  /* The all-in-one workspace: wide enough for the three panes AND a file is open.
+     CSS follows body.ws, JS asks wsMode(). Below 1024px the same markup stacks: one
+     pane at a time, and the editor opens full screen from a page card. */
+  const wsWide = window.matchMedia('(min-width: 1024px)');
+  function wsMode() { return wsWide.matches && docs.size > 0; }
+
   function setStep(n, opts) {
     if (!stepAvailable(n)) return;
     uiStep = n;
     document.body.classList.toggle('step-3', n === 3);
     updateWorkflowState();
-    const pane = n === 3 ? $('trayPane') : $('sourcePane');
-    if (pane) pane.scrollTop = 0;
+    if (!wsMode()) {                       // a full-page switch starts at the top; the workspace tabs keep their place
+      const pane = n === 3 ? trayStrip : $('sourcePane');
+      if (pane) pane.scrollTop = 0;
+      document.querySelector('.ws-left').scrollTop = 0;       // (short screens scroll the whole column)
+    }
     if (!opts || !opts.silent) {
-      const focus = n === 3 ? $('btnBackStep2') : (docs.size ? $('btnGoStep3') : $('btnBrowseFiles'));
+      const focus = docs.size ? $(n === 3 ? 'wsTabPages' : 'wsTabSources') : $('btnBrowseFiles');
       if (focus && focus.offsetParent !== null) focus.focus({ preventScroll: true });
     }
   }
@@ -3029,11 +3419,14 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     if (uiStep === 3 && !tray.length) uiStep = docs.size ? 2 : 1;
     if (uiStep === 2 && !docs.size) uiStep = 1;
     if (uiStep === 1 && docs.size) uiStep = 2;
-    document.body.classList.toggle('step-3', uiStep === 3);
-    document.body.classList.toggle('has-files', docs.size > 0);
-    document.body.classList.toggle('multi-output', outputs.length > 1);
+    const body = document.body;
+    body.classList.toggle('step-3', uiStep === 3);
+    body.classList.toggle('has-files', docs.size > 0);
+    body.classList.toggle('multi-output', outputs.length > 1);
+    body.classList.toggle('ws', wsMode());
+    syncEditorAria();
     // The indicator shows the three stages staff think in. Internally uiStep is still
-    // 1 landing · 2 choose pages · 3 your PDF; stage 3 is the Preview & finish dialog.
+    // 1 landing · 2 source files · 3 the pages of your PDF; stage 3 is the Preview & finish dialog.
     const stage = uiStep === 3 ? 2 : 1;
     [1, 2, 3].forEach(n => {
       const el = $('workflowStep' + n);
@@ -3045,32 +3438,51 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
       el.disabled = !can;
       el.dataset.clickable = can ? '1' : '0';
     });
-    // "Go to Step 3" only matters once something is waiting there
-    const go = $('btnGoStep3');
-    if (go) {
-      go.style.display = (uiStep !== 3 && tray.length) ? '' : 'none';
-      $('goStep3Label').textContent = 'Your PDF (' + tray.length + ')';
-    }
+    // the two tabs are the same switch: Pages = your new PDF, Source files = where its pages come from
+    const tabP = $('wsTabPages'), tabS = $('wsTabSources');
+    tabP.classList.toggle('active', uiStep === 3);
+    tabS.classList.toggle('active', uiStep !== 3);
+    tabP.setAttribute('aria-selected', uiStep === 3 ? 'true' : 'false');
+    tabS.setAttribute('aria-selected', uiStep !== 3 ? 'true' : 'false');
+    tabP.disabled = !tray.length;
+    $('wsTabPagesN').textContent = tray.length;
+    $('wsTabSourcesN').textContent = docs.size;
     // "Add every page" only while there is something left to add
-    const every = $('btnAddEverything');
-    if (every) {
-      const total = sourcePageTotal();
-      const placed = new Set(tray.map(t => t.docId + ':' + t.pageIndex)).size;
-      every.style.display = (uiStep !== 3 && total && placed < total) ? '' : 'none';
-      $('addEverythingLabel').textContent = 'Add every page (' + total + ')';
-    }
+    const total = sourcePageTotal();
+    const placed = new Set(tray.map(t => t.docId + ':' + t.pageIndex)).size;
+    $('btnAddEverything').style.display = (uiStep !== 3 && total && placed < total) ? '' : 'none';
+    $('addEverythingLabel').textContent = 'Add every page (' + total + ')';
+    $('emptyAddAllLabel').textContent = 'Add every page (' + total + ')';
+    fitNameInput();
   }
 
   [1, 2, 3].forEach(n => {
     const el = $('workflowStep' + n);
     if (el) el.addEventListener('click', () => {
       if (n === 1) setStep(2);              // back to the files and the page picker
-      else if (n === 2) setStep(3);         // your PDF
+      else if (n === 2) setStep(3);         // the pages of your PDF
       else previewFinal();                  // Preview & finish
     });
   });
-  $('btnGoStep3').addEventListener('click', () => setStep(3));
-  $('btnBackStep2').addEventListener('click', () => setStep(2));
+  $('wsTabPages').addEventListener('click', () => setStep(3));
+  $('wsTabSources').addEventListener('click', () => setStep(2));
+  // crossing the three-pane width: the editor is either part of the screen or a full-screen layer
+  wsWide.addEventListener('change', () => {
+    const was = document.body.classList.contains('ws');
+    updateWorkflowState();
+    if (was && !wsMode() && editorItem) {
+      removePendingCrop();
+      closeSigPanel();
+      closeStampPanel();
+      $('editModal').classList.remove('open');
+      editorItem = null;
+      editorVp = null;
+      selectedStamp = null;
+    }
+    $('editModal').classList.remove('ws-empty');
+    paintCurrentCard();
+    syncEditor();
+  });
 
   function updateConnectionStatus() {
     const formsReady = !!localStorage.getItem('bliFormsCode');
@@ -3108,6 +3520,7 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     updateWorkflowState();
     updateConnectionStatus();
     scheduleAutosave();
+    syncEditor();
   }
 
   function renderSources() {
@@ -3232,8 +3645,9 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
         card.addEventListener('dblclick', (e) => {
           e.preventDefault();
           pickedSrc.delete(p.sid);          // the first click of the double-click selected it
-          trayAdd(p);
+          const added = trayAdd(p);
           renderAll();
+          showPage(added);
           toast('Added page ' + (p.pageIndex + 1) + ' to your PDF.');
         });
         card.addEventListener('keydown', (e) => {
@@ -3328,7 +3742,7 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     const n = pickedTray.size;
     $('trayPickBar').classList.toggle('show', n > 0);
     $('trayPickCount').textContent = n + (n === 1 ? ' page selected' : ' pages selected');
-    $('btnTrayRemove').textContent = 'Remove ' + n + (n === 1 ? ' page' : ' pages');
+    $('btnTrayRemove').textContent = 'Remove ' + n;
   }
   function rotatePickedTray(delta) {
     tray.forEach(t => { if (pickedTray.has(t.tid)) t.rot = ((t.rot + delta) % 360 + 360) % 360; });
@@ -3340,12 +3754,13 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     pickedTray.clear();
     lastPickedTid = null;
     renderAll();
-    toastAction('Removed ' + n + ' page' + (n === 1 ? '' : 's') + ' from the new PDF.', 'Undo', () => { tray = prevTray; renderAll(); });
+    toastAction('Removed ' + n + ' page' + (n === 1 ? '' : 's') + ' from the new PDF.', 'Undo', () => restoreTray(prevTray));
   }
   $('btnTrayRotL').addEventListener('click', () => rotatePickedTray(270));
   $('btnTrayRotR').addEventListener('click', () => rotatePickedTray(90));
   $('btnTrayRemove').addEventListener('click', removePickedTray);
-  $('btnTrayPickClear').addEventListener('click', () => { const was = [...pickedTray]; pickedTray.clear(); lastPickedTid = null; was.forEach(paintPickTray); renderTrayPickBar(); });
+  function clearTrayPicks() { const was = [...pickedTray]; pickedTray.clear(); lastPickedTid = null; was.forEach(paintPickTray); renderTrayPickBar(); }
+  $('btnTrayPickClear').addEventListener('click', clearTrayPicks);
 
   function pickedEntries() {
     // keep the on-screen order: document by document, page by page
@@ -3366,13 +3781,15 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
   function addPickedToTray() {
     const picks = pickedEntries();
     if (!picks.length) return;
+    const firstNew = tray.length;
     picks.forEach(p => trayAdd(p));
     pickedSrc.clear();
     lastPickedSid = null;
     renderAll();
-    setStep(3);   // hand the whole page over to the new document
+    setStep(3);   // over to the pages of the new PDF
+    showPage(tray[firstNew]);
     toast('Added ' + picks.length + ' page' + (picks.length === 1 ? '' : 's') +
-      ' — arrange or edit them here, or go Back to pages for more.');
+      ' — arrange or edit them here, or open Source files for more.');
   }
 
   $('btnPickAdd').addEventListener('click', addPickedToTray);
@@ -3409,7 +3826,14 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     return item;
   }
 
+  const ICON_DOTS = '<svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>';
+  const ICON_GRIP = '<svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/></svg>';
+  // rotation the card's picture does not show yet (CSS turns the image until a fresh one is made)
+  const rotDelta = t => ((((t.rot || 0) - (t.thumbRot || 0)) % 360) + 360) % 360;
+  const stampBadgeHtml = n => '<div class="stamp-badge" title="' + n + ' item' + (n === 1 ? '' : 's') + ' added to this page">' + uiIcon('edit') + n + '</div>';
+
   function renderTray() {
+    closePageMenu();
     trayStrip.querySelectorAll('.tray-card').forEach(c => c.remove());
     const empty = trayStrip.querySelector('.tray-empty');
     empty.style.display = tray.length ? 'none' : '';
@@ -3421,93 +3845,61 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
       card.tabIndex = 0;
       card.dataset.tid = t.tid;
       if (pickedTray.has(t.tid)) card.classList.add('picked');
+      if (editorItem && editorItem.tid === t.tid) { card.classList.add('current'); card.setAttribute('aria-current', 'true'); }
       card.setAttribute('aria-pressed', pickedTray.has(t.tid) ? 'true' : 'false');
       card.setAttribute('role', 'group');
-      card.setAttribute('aria-label', 'Output page ' + (i + 1) + ', ' + (doc ? doc.name : 'document') + ' page ' + (t.pageIndex + 1) + '. Use Left and Right arrows to reorder, Enter to edit, or Delete to remove.');
-      const rotCls = t.rot ? ' class="r' + t.rot + '"' : '';
+      card.setAttribute('aria-label', 'Page ' + (i + 1) + ' of your PDF: ' + (doc ? doc.name : 'document') + ' page ' + (t.pageIndex + 1) +
+        '. Enter opens it, Alt with the arrow keys moves it, Delete removes it.');
+      const d = rotDelta(t), edits = t.stamps ? t.stamps.length : 0;
+      const name = doc ? doc.name.replace(/\.(pdf|jpe?g|png|webp|gif|bmp)$/i, '') : '';
       card.innerHTML =
+        '<span class="drag-handle" aria-hidden="true">' + ICON_GRIP + '</span>' +
         '<div class="order-badge">' + (i + 1) + '</div>' +
-        '<div class="card-actions">' +
-          '<button class="act-edit" title="Edit this page" aria-label="Edit output page ' + (i + 1) + '">' + uiIcon('edit') + '</button>' +
-          '<button class="act-rotl" title="Rotate left" aria-label="Rotate output page ' + (i + 1) + ' counter-clockwise">' + uiIcon('rotate') + '</button>' +
-          '<button class="act-rot" title="Rotate right" aria-label="Rotate output page ' + (i + 1) + ' clockwise">' + uiIcon('rotate') + '</button>' +
-          '<button class="act-del" title="Remove from new PDF" aria-label="Remove output page ' + (i + 1) + '">' + uiIcon('close') + '</button>' +
-        '</div>' +
-        '<div class="thumb-box"><img' + rotCls + ' src="' + t.thumb + '" alt=""></div>' +
-        (t.stamps && t.stamps.length ? '<div class="stamp-badge">T&times;' + t.stamps.length + '</div>' : '') +
-        (i > 0 ? '<button class="nav-l" title="Move earlier" aria-label="Move output page ' + (i + 1) + ' earlier">' + uiIcon('left') + '</button>' : '') +
-        (i < tray.length - 1 ? '<button class="nav-r" title="Move later" aria-label="Move output page ' + (i + 1) + ' later">' + uiIcon('right') + '</button>' : '') +
-        '<div class="tray-label">' + escapeHtml(doc ? doc.name : '') + ' &bull; Page ' + (t.pageIndex + 1) + '</div>';
+        '<button class="card-menu" title="Page options" aria-haspopup="menu" aria-label="Options for page ' + (i + 1) + '">' + ICON_DOTS + '</button>' +
+        '<div class="thumb-box"><img' + (d ? ' class="r' + d + '"' : '') + ' src="' + t.thumb + '" alt=""></div>' +
+        (edits ? stampBadgeHtml(edits) : '') +
+        (i > 0 ? '<button class="nav-l" title="Move earlier" aria-label="Move page ' + (i + 1) + ' earlier">' + uiIcon('left') + '</button>' : '') +
+        (i < tray.length - 1 ? '<button class="nav-r" title="Move later" aria-label="Move page ' + (i + 1) + ' later">' + uiIcon('right') + '</button>' : '') +
+        '<div class="tray-label"><span>' + escapeHtml(name) + '</span>' + (doc && doc.kind === 'image' ? '' : '<small>p. ' + (t.pageIndex + 1) + '</small>') + '</div>';
+      const moveBy = (delta) => {
+        const j = i + delta;
+        if (j < 0 || j >= tray.length) return;
+        tray.splice(j, 0, tray.splice(i, 1)[0]);
+        renderAll();
+        requestAnimationFrame(() => trayStrip.querySelector('[data-tid="' + t.tid + '"]')?.focus());
+      };
       const navL = card.querySelector('.nav-l'), navR = card.querySelector('.nav-r');
-      if (navL) navL.addEventListener('click', (e) => {
-        e.stopPropagation();
-        tray.splice(i - 1, 0, tray.splice(i, 1)[0]);
-        renderAll();
-        requestAnimationFrame(() => trayStrip.querySelector('[data-tid="' + t.tid + '"]')?.focus());
-      });
-      if (navR) navR.addEventListener('click', (e) => {
-        e.stopPropagation();
-        tray.splice(i + 1, 0, tray.splice(i, 1)[0]);
-        renderAll();
-        requestAnimationFrame(() => trayStrip.querySelector('[data-tid="' + t.tid + '"]')?.focus());
-      });
-      card.querySelector('.act-edit').addEventListener('click', (e) => {
-        e.stopPropagation();
-        openEditor(t);
-      });
-      // click the card itself (not its buttons) to select it; shift-click for a range
+      if (navL) navL.addEventListener('click', (e) => { e.stopPropagation(); moveBy(-1); });
+      if (navR) navR.addEventListener('click', (e) => { e.stopPropagation(); moveBy(1); });
+      card.querySelector('.card-menu').addEventListener('click', (e) => { e.stopPropagation(); openPageMenu(t, e.currentTarget); });
+      // Click a page to work on it. Ctrl- or Shift-click selects several to rotate or remove
+      // together; on a touch screen "Select" in the page's menu starts that, then taps add to it.
       card.addEventListener('click', (e) => {
         if (e.target.closest('button')) return;
-        togglePickTray(t, e.shiftKey);
-      });
-      card.querySelector('.act-rot').addEventListener('click', (e) => {
-        e.stopPropagation();
-        t.rot = (t.rot + 90) % 360;
-        renderAll();
-        requestAnimationFrame(() => trayStrip.querySelector('[data-tid="' + t.tid + '"] .act-rot')?.focus());
-      });
-      card.querySelector('.act-rotl').addEventListener('click', (e) => {
-        e.stopPropagation();
-        t.rot = (t.rot + 270) % 360;
-        renderAll();
-        requestAnimationFrame(() => trayStrip.querySelector('[data-tid="' + t.tid + '"] .act-rotl')?.focus());
-      });
-      card.querySelector('.act-del').addEventListener('click', (e) => {
-        e.stopPropagation();
-        const prevTray = tray.slice();
-        tray = tray.filter(x => x.tid !== t.tid);
-        renderAll();
-        toastAction('Page removed from the new document.', 'Undo', () => { tray = prevTray; renderAll(); });
+        if (e.shiftKey || e.ctrlKey || e.metaKey || (!wsMode() && pickedTray.size)) {
+          if (e.shiftKey && lastPickedTid == null && editorItem && tray.includes(editorItem)) lastPickedTid = editorItem.tid;
+          togglePickTray(t, e.shiftKey);
+          return;
+        }
+        if (pickedTray.size) clearTrayPicks();
+        openEditor(t);
       });
       card.addEventListener('keydown', (e) => {
         if (e.target !== card) return;
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openEditor(t); return; }
+        if (e.key === 'ArrowLeft' || (e.altKey && e.key === 'ArrowUp')) { e.preventDefault(); moveBy(-1); return; }
+        if (e.key === 'ArrowRight' || (e.altKey && e.key === 'ArrowDown')) { e.preventDefault(); moveBy(1); return; }
+        if (wsMode() && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {     // walk the list
           e.preventDefault();
-          openEditor(t);
-          return;
-        }
-        if (e.key === 'ArrowLeft' && i > 0) {
-          e.preventDefault();
-          tray.splice(i - 1, 0, tray.splice(i, 1)[0]);
-          renderAll();
-          requestAnimationFrame(() => trayStrip.querySelector('[data-tid="' + t.tid + '"]')?.focus());
-          return;
-        }
-        if (e.key === 'ArrowRight' && i < tray.length - 1) {
-          e.preventDefault();
-          tray.splice(i + 1, 0, tray.splice(i, 1)[0]);
-          renderAll();
-          requestAnimationFrame(() => trayStrip.querySelector('[data-tid="' + t.tid + '"]')?.focus());
+          const next = tray[i + (e.key === 'ArrowDown' ? 1 : -1)];
+          if (next) { openEditor(next); trayStrip.querySelector('[data-tid="' + next.tid + '"]')?.focus(); }
           return;
         }
         if (e.key === 'Delete' || e.key === 'Backspace') {
           e.preventDefault();
           if (pickedTray.size > 1 && pickedTray.has(t.tid)) { removePickedTray(); return; }
-          const prevTray = tray.slice();
-          tray = tray.filter(x => x.tid !== t.tid);
-          renderAll();
-          requestAnimationFrame(() => trayStrip.querySelector('.tray-card')?.focus());
-          toastAction('Page removed from the new PDF.', 'Undo', () => { tray = prevTray; renderAll(); });
+          removePage(t);
+          requestAnimationFrame(() => (trayStrip.querySelector('.tray-card.current') || trayStrip.querySelector('.tray-card'))?.focus());
         }
       });
       card.addEventListener('dragstart', (e) => {
@@ -3523,11 +3915,257 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     renderTrayPickBar();
     const n = tray.length;
     $('trayCount').textContent = n + ' page' + (n === 1 ? '' : 's');
-    $('btnCreate').disabled = !n;
-    $('btnPrint').disabled = !n;
-    $('btnEmail').disabled = !n;
-    $('btnEachPage').disabled = !n;
-    $('btnClearTray').disabled = !n;
+    $('footPages').textContent = n ? n + ' page' + (n === 1 ? '' : 's') + ' in finished PDF' : '';
+    ['btnCreate', 'btnPrint', 'btnEmail', 'btnEachPage', 'btnClearTray', 'btnPreviewFinal'].forEach(id => { $(id).disabled = !n; });
+    queueStaleThumbs();
+  }
+
+  /* ── per-page ⋯ menu: ONE floating panel shared by every card (the list scrolls,
+        so a panel inside a card would be clipped) ── */
+  const pageMenuWrap = $('pageMenuWrap'), pageMenu = $('pageMenu');
+  let pageMenuTid = null;
+  function closePageMenu() { pageMenuWrap.classList.remove('open'); }
+  function openPageMenu(t, btn) {
+    const again = pageMenuTid === t.tid && pageMenuWrap.classList.contains('open');
+    closeAllMenus();
+    if (again) return;
+    pageMenuTid = t.tid;
+    const i = tray.indexOf(t), ws = wsMode();
+    const item = (act, label, show) => { const b = pageMenu.querySelector('[data-act="' + act + '"]'); if (label) b.textContent = label; b.hidden = show === false; };
+    item('edit', null, !ws);                                   // in the workspace a click already opens the page
+    item('up', ws ? 'Move up' : 'Move earlier', i > 0);
+    item('down', ws ? 'Move down' : 'Move later', i < tray.length - 1);
+    item('pick', pickedTray.has(t.tid) ? 'Unselect' : 'Select');
+    const r = btn.getBoundingClientRect();
+    pageMenu.classList.remove('flip', 'unflip', 'upward');
+    pageMenu.style.maxHeight = '';
+    pageMenuWrap.style.left = r.right + 'px';
+    pageMenuWrap.style.top = r.bottom + 'px';
+    pageMenuWrap.classList.add('open');
+    let p = pageMenu.getBoundingClientRect();
+    if (p.left < 4) { pageMenuWrap.style.left = r.left + 'px'; pageMenu.classList.add('unflip'); p = pageMenu.getBoundingClientRect(); }
+    if (p.bottom > innerHeight - 4) {
+      if (p.height < r.top - 8) { pageMenuWrap.style.top = r.top + 'px'; pageMenu.classList.add('upward'); }
+      else pageMenu.style.maxHeight = Math.max(160, innerHeight - p.top - 8) + 'px';
+    }
+  }
+  pageMenu.addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-act]');
+    if (!b) return;
+    const t = tray.find(x => x.tid === pageMenuTid), act = b.dataset.act;
+    closePageMenu();
+    if (!t) return;
+    const i = tray.indexOf(t);
+    if (act === 'edit') openEditor(t);
+    else if (act === 'rotl') rotatePage(t, 270);
+    else if (act === 'rotr') rotatePage(t, 90);
+    else if (act === 'dup') duplicatePage(t);
+    else if (act === 'up' && i > 0) { tray.splice(i - 1, 0, tray.splice(i, 1)[0]); renderAll(); }
+    else if (act === 'down' && i < tray.length - 1) { tray.splice(i + 1, 0, tray.splice(i, 1)[0]); renderAll(); }
+    else if (act === 'pick') togglePickTray(t, false);
+    else if (act === 'del') removePage(t);
+  });
+  trayStrip.addEventListener('scroll', closePageMenu, { passive: true });
+  document.querySelector('.ws-left').addEventListener('scroll', closePageMenu, { passive: true });
+
+  /* ── one page at a time: rotate, duplicate, remove, add a blank one ── */
+  function rotatePage(t, delta) {
+    t.rot = ((((t.rot || 0) + delta) % 360) + 360) % 360;
+    renderAll();
+  }
+  function removePage(t) {
+    const prevTray = tray.slice();
+    tray = tray.filter(x => x.tid !== t.tid);
+    renderAll();
+    toastAction('Page removed from the new PDF.', 'Undo', () => restoreTray(prevTray));
+  }
+  // the Undo button on a "removed" message: the pages come back and so does the Pages tab
+  function restoreTray(prev) {
+    tray = prev;
+    renderAll();
+    setStep(3, { silent: true });
+  }
+  // in the workspace, make this the page on screen (narrow screens keep the list in view)
+  function showPage(t) { if (t && wsMode()) openEditor(t); }
+  function duplicatePage(t) {
+    const i = tray.indexOf(t);
+    if (i < 0) return;
+    const copy = JSON.parse(JSON.stringify(t));
+    copy.tid = nextTid++;
+    tray.splice(i + 1, 0, copy);
+    renderAll();
+    showPage(copy);
+    toast('Page ' + (i + 1) + ' duplicated — the copy is page ' + (i + 2) + '.');
+  }
+  const BLANK_NAME = 'Blank page.pdf';
+  async function addBlankPage() {
+    try {
+      let doc = [...docs.values()].find(d => d.name === BLANK_NAME && d.kind !== 'image' && d.pages.length === 1);
+      if (!doc) {
+        const blank = await PDFLib.PDFDocument.create();
+        blank.addPage([612, 792]);                               // letter
+        await addPdfData(BLANK_NAME, new Uint8Array(await blank.save()), true);
+        doc = [...docs.values()].at(-1);
+      }
+      const here = wsMode() && editorItem ? tray.indexOf(editorItem) : -1;
+      const at = here >= 0 ? here + 1 : tray.length;             // after the page on screen, otherwise at the end
+      const item = trayAdd(doc.pages[0], at);
+      renderAll();
+      showPage(item);
+      toast('Blank page added as page ' + (tray.indexOf(item) + 1) + '.');
+    } catch (err) {
+      console.error(err);
+      toast('Sorry — could not add a blank page.');
+    }
+  }
+
+  /* ── page pictures that follow the edits ──
+     A card shows the source page's own thumbnail (rotation applied with CSS) until
+     the page has something on it — stamps or a crop. Then it gets a picture "baked"
+     from the page as it will come out: thumbRot is the rotation already in that
+     picture, thumbKey what it was made from. Both ride along in autosave and
+     projects but are left out of undo history (a new picture is not a new step). */
+  function thumbKeyOf(t) {
+    let s = (t.rot || 0) + '|' + (t.crop ? [t.crop.x, t.crop.y, t.crop.w, t.crop.h].map(v => Math.round(v)).join(',') : '') + '|';
+    for (const st of t.stamps || []) {
+      s += st.kind + ':' + [st.x, st.y, st.w, st.h, st.size].map(v => v == null ? '' : Math.round(v * 4)).join(',') + ':' +
+        (st.text || '') + ':' + (st.color || '') + ':' + (st.pts ? st.pts.length : '') + ':' + (st.dataUrl ? st.dataUrl.length : '') + ';';
+    }
+    let h = 0;
+    for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+    return s.length + ':' + h;
+  }
+  const isPlainPage = t => !(t.stamps && t.stamps.length) && !t.crop;
+  function thumbStale(t) {
+    if (isPlainPage(t)) return !!t.thumbKey;                     // only stale while an old baked picture is still on it
+    return t.thumbKey !== thumbKeyOf(t);
+  }
+  function sourceThumb(t) {
+    const d = docs.get(t.docId), p = d && d.pages.find(x => x.pageIndex === t.pageIndex);
+    return p ? p.thumb : null;
+  }
+  const thumbQueue = new Set();
+  let thumbTimer = null, thumbBusy = false;
+  function queueThumb(t) {
+    if (!t || !thumbStale(t)) return;
+    thumbQueue.add(t.tid);
+    clearTimeout(thumbTimer);
+    thumbTimer = setTimeout(runThumbQueue, 450);
+  }
+  function queueStaleThumbs() { tray.forEach(queueThumb); }
+  // refresh one card's picture and edit count without rebuilding the list
+  function paintCard(t) {
+    const card = trayStrip.querySelector('.tray-card[data-tid="' + t.tid + '"]');
+    if (!card) return;
+    const img = card.querySelector('.thumb-box img'), d = rotDelta(t);
+    img.src = t.thumb;
+    img.className = d ? 'r' + d : '';
+    const old = card.querySelector('.stamp-badge'), n = t.stamps ? t.stamps.length : 0;
+    if (old) old.remove();
+    if (n) card.querySelector('.thumb-box').insertAdjacentHTML('afterend', stampBadgeHtml(n));
+  }
+  // keep the newest undo snapshot's picture in step, so undo / redo never brings back a stale one
+  function rememberThumb(t) {
+    const snap = history[historyAt], s = snap && snap.tray.find(x => x.tid === t.tid);
+    if (!s || thumbKeyOf(s) !== thumbKeyOf(t)) return;
+    s.thumb = t.thumb;
+    s.thumbRot = t.thumbRot;
+    if (t.thumbKey) s.thumbKey = t.thumbKey; else delete s.thumbKey;
+  }
+  async function runThumbQueue() {
+    if (thumbBusy) { clearTimeout(thumbTimer); thumbTimer = setTimeout(runThumbQueue, 300); return; }
+    thumbBusy = true;
+    let made = 0;
+    try {
+      for (const tid of [...thumbQueue]) {
+        thumbQueue.delete(tid);
+        const t = tray.find(x => x.tid === tid);
+        if (!t || !thumbStale(t)) continue;
+        if (isPlainPage(t)) {                                    // nothing on it any more: back to the source picture
+          const src = sourceThumb(t);
+          if (!src) continue;
+          t.thumb = src; t.thumbRot = 0; delete t.thumbKey;
+        } else {
+          const key = thumbKeyOf(t), rot = t.rot || 0;
+          let url = null;
+          if (t === editorItem) {
+            // the page on screen: copy what the editor shows. Still drawing? renderEditor queues it again when done.
+            if (editorVp && !editorLoading && editorShown.sig === editorSigOf(t)) url = editorThumb();
+          } else {
+            url = await bakeThumb(t);
+          }
+          if (!url) continue;
+          if (!tray.includes(t) || thumbKeyOf(t) !== key) { thumbQueue.add(tid); continue; }   // it changed meanwhile
+          t.thumb = url; t.thumbRot = rot; t.thumbKey = key;
+        }
+        paintCard(t);
+        rememberThumb(t);
+        made++;
+      }
+    } finally {
+      thumbBusy = false;
+      if (thumbQueue.size) { clearTimeout(thumbTimer); thumbTimer = setTimeout(runThumbQueue, 450); }
+    }
+    if (made) scheduleAutosave();                                // so a reload or a saved project gets the new pictures
+  }
+  // any page that is not on screen: build it the way Save does and draw that
+  async function bakeThumb(t) {
+    try {
+      const bytes = await buildPdfBytes([{ docId: t.docId, pageIndex: t.pageIndex, rot: t.rot || 0, stamps: t.stamps || [], crop: t.crop }]);
+      const pdoc = await pdfjsLib.getDocument({ data: bytes }).promise;
+      try {
+        const page = await pdoc.getPage(1);
+        const vp = page.getViewport({ scale: 170 / page.getViewport({ scale: 1 }).width });
+        const c = document.createElement('canvas');
+        c.width = Math.ceil(vp.width);
+        c.height = Math.ceil(vp.height);
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, c.width, c.height);
+        await page.render({ canvasContext: ctx, viewport: vp, intent: 'print' }).promise;
+        return c.toDataURL('image/jpeg', 0.82);
+      } finally { pdoc.destroy(); }
+    } catch (_) { return null; }
+  }
+  // the page on screen: the editor already has it drawn, so paint the added items over a small copy
+  function editorThumb() {
+    const cssW = parseFloat(editCanvas.style.width), cssH = parseFloat(editCanvas.style.height);
+    if (!cssW || !cssH) return null;
+    const k = 170 / cssW;
+    const c = document.createElement('canvas');
+    c.width = 170;
+    c.height = Math.max(1, Math.round(cssH * k));
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, c.width, c.height);
+    ctx.drawImage(editCanvas, 0, 0, c.width, c.height);
+    ctx.save();
+    ctx.scale(k, k);                                             // now in the editor's on-screen pixels
+    for (const st of editorItem.stamps) {
+      if (st.kind === 'ink') continue;                           // pen strokes are on the overlay, copied below
+      if (st.kind === 'text') {
+        const fs = textCssSize(st), p = pdfToCss(st.x, st.y);
+        ctx.font = fs + 'px Helvetica, Arial, sans-serif';
+        ctx.fillStyle = CSS_COLORS[st.color] || '#000000';
+        String(st.text).split('\n').forEach((line, i) => ctx.fillText(line, p.x, p.y + i * fs * 1.2));
+        continue;
+      }
+      const a = pdfToCss(st.x, st.y), b = pdfToCss(st.x + st.w, st.y + st.h);
+      const x = Math.min(a.x, b.x), y = Math.min(a.y, b.y), w = Math.abs(b.x - a.x), h = Math.abs(b.y - a.y);
+      if (st.kind === 'box') { ctx.fillStyle = '#ffffff'; ctx.fillRect(x, y, w, h); }
+      else if (st.kind === 'hl') {
+        ctx.globalCompositeOperation = 'multiply';
+        ctx.fillStyle = 'rgba(250, 224, 46, .45)';
+        ctx.fillRect(x, y, w, h);
+        ctx.globalCompositeOperation = 'source-over';
+      } else {
+        const el = elForStamp(st), im = el && el.querySelector('img');
+        if (im && im.complete && im.naturalWidth) ctx.drawImage(im, x, y, w, h);
+      }
+    }
+    ctx.restore();
+    if (editOverlay.width) ctx.drawImage(editOverlay, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', 0.82);
   }
 
   /* ── Drag & drop into / within tray ── */
@@ -3536,11 +4174,16 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     trayStrip.classList.remove('dragover');
     trayStrip.querySelectorAll('.tray-card').forEach(c => c.classList.remove('insert-before', 'insert-after'));
   }
-  // works for the single-row strip AND the wrapped grid used on step 3
+  // the grid (narrow screens) fills rows left to right; the workspace list is one column
   function trayInsertIndex(clientX, clientY) {
     const cards = [...trayStrip.querySelectorAll('.tray-card')];
+    const list = wsMode();
     for (let i = 0; i < cards.length; i++) {
       const r = cards[i].getBoundingClientRect();
+      if (list) {
+        if (clientY < r.top + r.height / 2) return i;                // upper half of this row
+        continue;
+      }
       if (clientY != null && clientY < r.top) return i;              // pointer is on an earlier row
       const sameRow = clientY == null || (clientY >= r.top && clientY <= r.bottom);
       if (sameRow && clientX < r.left + r.width / 2) return i;       // left half of this card
@@ -3666,6 +4309,23 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     return fontRef;
   }
 
+  /* Parsing a source PDF is the slow part of every build, and the workspace builds one
+     page each time you switch pages (plus one per thumbnail). The last few parsed
+     sources are kept and reused; copyPages() only reads from them. A source that has
+     to be flattened (stamps over form fields) is always parsed fresh, because
+     flatten() changes it. Keyed by docId, valid only while the doc's bytes are the same. */
+  const parsedSources = new Map();   // docId -> { bytes, pdf }
+  async function loadSource(docId, doc, forFlatten) {
+    if (forFlatten) return PDFLib.PDFDocument.load(doc.bytes, { ignoreEncryption: true });
+    const hit = parsedSources.get(docId);
+    if (hit && hit.bytes === doc.bytes) return hit.pdf;
+    const pdf = await PDFLib.PDFDocument.load(doc.bytes, { ignoreEncryption: true });
+    parsedSources.delete(docId);
+    parsedSources.set(docId, { bytes: doc.bytes, pdf });
+    while (parsedSources.size > 3) parsedSources.delete(parsedSources.keys().next().value);
+    return pdf;
+  }
+
   async function buildPdfBytes(list) {
     const out = await PDFLib.PDFDocument.create();
     const srcCache = new Map();
@@ -3704,7 +4364,7 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
       }
       let src = srcCache.get(p.docId);
       if (!src) {
-        src = await PDFLib.PDFDocument.load(doc.bytes, { ignoreEncryption: true });
+        src = await loadSource(p.docId, doc, anyStamps && doc.formFields);
         if (anyStamps && doc.formFields) {
           try {
             const f = src.getForm();
@@ -3747,65 +4407,60 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     return out.save();
   }
 
-  /* ── Page editor (add text / white-out) ── */
-  let editorItem = null, editorVp = null, editorFit = 1, editorMode = 'text', boxDrag = null, selectedStamp = null;
+  /* ── Page editor: the page on screen and what is added to it ── */
+  let editorItem = null, editorVp = null, editorFit = 1, editorMode = 'select', boxDrag = null, selectedStamp = null;
   const editCanvas = $('editCanvas'), editOverlay = $('editOverlay'), stampLayer = $('stampLayer');
   const CSSF = 0.5;   // canvas is rendered at 2x and displayed at half size
   const BASE = 0.9;   // first-line baseline offset within a line-height:1.2 text box
   const CSS_COLORS = { black: '#000000', red: '#b91c1c', blue: '#1d4ed8' };
 
+  // per tool: the heading and one-line note in the options panel, and the longer tip under it
+  const TOOL_META = {
+    select: ['Select', 'Click something you added to move, resize or delete it',
+      'Click anything you added to this page to move it, pull its corner to resize it, or press Delete to remove it. The page itself is never changed.'],
+    text: ['Text options', 'Type first, then click the page',
+      'Add a new text box: type above, then tap the page. Move or resize it; double-click to edit your added text. Original PDF text is unchanged.'],
+    hl: ['Highlight tool', 'Drag across the words you want to highlight',
+      'Press and drag across the words you want to highlight. Each highlight can be moved and resized afterwards, and the text still shows through.'],
+    draw: ['Pen options', 'Choose a width and color, then draw',
+      'Draw right on the page with your mouse or trackpad — hold the button down and move. The pen uses the color box, and the size box sets how thick it is. Undo removes the last stroke.'],
+    box: ['White-out', 'Drag over what to cover — it is removed from the file when you save',
+      'Permanent white-out is on: when you save or send, this page becomes a picture and the covered text is removed from the file. Turn it off in the finish options (Preview & finish) if the page must keep selectable text.'],
+    sig: ['Signature tool', 'Choose a signature, then click the page',
+      'Click the page where you want your signature. You can move and resize it after placing it.'],
+    img: ['Image tool', 'Choose an image, then click the page',
+      'Click the page where you want the picture. You can move and resize it after placing it.'],
+    pan: ['Move page', 'Drag to move the zoomed page',
+      'Drag to move around the page. Use Fit page to see the whole page again.'],
+    crop: ['Crop tool', 'Draw the area you want to keep',
+      'Press and drag a box around the part of the page you want to KEEP — then adjust it and press Apply crop. Nothing changes until you apply; Remove crop brings the whole page back.']
+  };
+  const TOOL_IDS = { select: 'modeSelect', text: 'modeText', hl: 'modeHl', draw: 'modeDraw', box: 'modeBox', sig: 'modeSig', img: 'modeImg', crop: 'modeCrop', pan: 'modePan' };
+
   function setEditorMode(mode) {
     editorMode = mode;
-    $('modePan').classList.toggle('active', mode === 'pan');
-    $('editCanvasWrap').classList.toggle('pan-mode', mode === 'pan');
-    const mobileIds = {text:'modeText',hl:'modeHl',draw:'modeDraw',box:'modeBox',sig:'modeSig',img:'modeImg',crop:'modeCrop',pan:'modePan'};
-    if (mobileIds[mode]) $('mobileTool').value = mobileIds[mode];
-    if (mode !== 'crop') removePendingCrop();
-    $('modeText').classList.toggle('active', mode === 'text');
-    $('modeBox').classList.toggle('active', mode === 'box');
-    $('modeSig').classList.toggle('active', mode === 'sig');
-    $('modeImg').classList.toggle('active', mode === 'img');
-    $('modeCrop').classList.toggle('active', mode === 'crop');
-    $('modeHl').classList.toggle('active', mode === 'hl');
-    $('modeDraw').classList.toggle('active', mode === 'draw');
+    Object.entries(TOOL_IDS).forEach(([m, id]) => $(id).classList.toggle('active', m === mode));
     $('modeStamps').classList.remove('active');
-    editOverlay.style.cursor = (mode === 'draw') ? 'cell' : 'crosshair';
+    $('editCanvasWrap').classList.toggle('pan-mode', mode === 'pan');
+    if (TOOL_IDS[mode]) $('mobileTool').value = TOOL_IDS[mode];
+    if (mode !== 'crop') removePendingCrop();
+    editOverlay.style.cursor = mode === 'draw' ? 'cell' : mode === 'select' ? 'default' : 'crosshair';
     stampLayer.classList.toggle('drawing', mode === 'draw');
     $('btnUncrop').style.display = (editorItem && editorItem.crop) ? '' : 'none';
-    const context = $('editContext');
-    const contextTitle = context.querySelector('.context-label span');
-    const contextNote = context.querySelector('.context-label small');
-    const textField = $('stampText');
-    const contextSelects = context.querySelectorAll('label');
+    const context = $('editContext'), meta = TOOL_META[mode] || ['Page tool', 'Use the selected tool on the page', ''];
+    context.querySelector('.context-label span').textContent = meta[0];
+    context.querySelector('.context-label small').textContent = meta[1];
     $('btnToolSettings').textContent = mode === 'text' ? 'Text & style' : 'Tool settings';
-    const meta = {
-      text: ['Text controls', 'Type first, then click the page'],
-      draw: ['Pen controls', 'Choose a width and color, then draw'],
-      hl: ['Highlight tool', 'Drag across the words you want to highlight'],
-      box: ['White-out', 'Drag over what to cover — it is removed from the file when you save'],
-      sig: ['Signature tool', 'Choose a signature, then click the page'],
-      img: ['Image tool', 'Choose an image, then click the page'],
-      pan: ['Move page', 'Drag to move the zoomed page'],
-      crop: ['Crop tool', 'Draw the area you want to keep']
-    }[mode] || ['Page tool', 'Use the selected tool on the page'];
-    contextTitle.textContent = meta[0];
-    contextNote.textContent = meta[1];
-    textField.style.display = mode === 'text' ? '' : 'none';
-    contextSelects.forEach(label => { label.style.display = (mode === 'text' || mode === 'draw') ? '' : 'none'; });
-    context.classList.toggle('compact', mode !== 'text' && mode !== 'draw');
-    $('editHintText').textContent = mode === 'text'
-      ? 'Add a new text box: type above, then tap the page. Move or resize it; double-click to edit your added text. Original PDF text is unchanged.'
-      : mode === 'hl'
-        ? 'Press and drag across the words you want to highlight. Each highlight can be moved and resized afterwards, and the text still shows through.'
-      : mode === 'draw'
-        ? 'Draw right on the page with your mouse or trackpad — hold the button down and move. The pen uses the color box, and the size box sets how thick it is. Undo removes the last stroke.'
-      : mode === 'box'
-        ? 'Permanent white-out is on (Settings): when you save or send, this page becomes a picture and the covered text is removed from the file. Turn it off there if the page must keep selectable text.'
-        : mode === 'sig'
-          ? 'Click the page where you want your signature. You can move and resize it after placing it.'
-          : mode === 'img'
-            ? 'Click the page where you want the picture. You can move and resize it after placing it.'
-            : mode === 'pan' ? 'Drag to move around the page. Use Fit to see the whole page again.' : 'Press and drag a box around the part of the page you want to KEEP — then adjust it and press Apply crop. Nothing changes until you apply; Remove crop brings the whole page back.';
+    $('stampText').style.display = mode === 'text' ? '' : 'none';
+    $('editHintText').textContent = meta[2];
+    syncToolOptions();
+  }
+  // size and color belong to new text, to the pen, and to a text box picked with Select
+  function syncToolOptions() {
+    const styled = editorMode === 'text' || editorMode === 'draw' || (editorMode === 'select' && !!selectedStamp && selectedStamp.kind === 'text');
+    const context = $('editContext');
+    context.querySelectorAll('label').forEach(label => { label.style.display = styled ? '' : 'none'; });
+    context.classList.toggle('compact', !styled);
   }
 
   let editorZoom = 1;
@@ -3835,60 +4490,164 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
   });
   applyHintPref();
 
+  let editorSeq = 0, editorLoading = false, lastEditorIndex = 0;
+  let editorShown = { sig: '', bytes: null };     // what the canvas shows, or is being drawn for
+  function editorSigOf(t) {
+    return t.tid + '|' + t.docId + ':' + t.pageIndex + '|' + (t.rot || 0) + '|' + (t.crop ? [t.crop.x, t.crop.y, t.crop.w, t.crop.h].join(',') : '');
+  }
+  // the tool to go back to after a one-shot placement (signature, picture, stamp, crop)
+  const restMode = () => wsMode() ? 'select' : 'text';
+
   function openEditor(item) {
+    const fresh = item !== editorItem, modal = $('editModal');
+    if (!fresh && wsMode() && editorVp && modal.classList.contains('open')) { paintCurrentCard(); return; }   // already on screen
+    if (fresh) {
+      removePendingCrop();
+      selectedStamp = null;
+      editorVp = null;                       // nothing can be placed until this page is drawn
+      stampLayer.innerHTML = '';
+      editOverlay.getContext('2d').clearRect(0, 0, editOverlay.width, editOverlay.height);
+    }
     editorItem = item;
     updateEditorPage();
-    editorZoom = 1;
-    setEditorMode('text');
-    $('editModal').classList.add('open');
+    if (wsMode()) {
+      // the workspace keeps your tool and zoom from page to page; a half-drawn crop does not carry over
+      setEditorMode(editorMode === 'crop' || editorMode === 'pan' ? 'select' : editorMode);
+    } else {
+      editorZoom = 1;
+      setEditorMode('text');
+    }
+    modal.classList.add('open');
+    modal.classList.remove('ws-empty');
+    paintCurrentCard();
     renderEditor();
   }
 
   function closeEditor() {
     removePendingCrop();
+    if (wsMode()) {
+      // the workspace editor never closes: Esc lets go of the selection, then of the tool
+      if (selectedStamp) selectStamp(null);
+      else if (editorMode !== 'select') setEditorMode('select');
+      return;
+    }
     $('editModal').classList.remove('open');
     editorItem = null;
     editorVp = null;
     renderAll();
   }
 
+  // mark the page being worked on in the list (and keep it in view in the workspace)
+  function paintCurrentCard() {
+    const tid = editorItem ? String(editorItem.tid) : '';
+    let cur = null;
+    trayStrip.querySelectorAll('.tray-card').forEach(c => {
+      const on = !!tid && c.dataset.tid === tid;
+      c.classList.toggle('current', on);
+      if (on) { c.setAttribute('aria-current', 'true'); cur = c; } else c.removeAttribute('aria-current');
+    });
+    if (cur && wsMode()) cur.scrollIntoView({ block: 'nearest' });
+  }
+
+  /* Keep the editor in step with the list. In the workspace a page is always on
+     screen (the first one, or the neighbour of one just removed). In the full-screen
+     editor this only follows changes made from its own Page actions. Runs after
+     every renderAll(). */
+  function syncEditor() {
+    const modal = $('editModal'), ws = wsMode();
+    if (!ws && !(editorItem && modal.classList.contains('open'))) return;
+    let item = null;
+    if (editorItem) item = tray.includes(editorItem) ? editorItem : (tray.find(t => t.tid === editorItem.tid) || null);
+    if (!item && tray.length) item = tray[Math.min(lastEditorIndex, tray.length - 1)];
+    if (!item) {                              // no pages: nothing to show
+      removePendingCrop();
+      editorItem = null;
+      editorVp = null;
+      selectedStamp = null;
+      lastEditorIndex = 0;
+      editorShown = { sig: '', bytes: null };
+      stampLayer.innerHTML = '';
+      modal.classList.remove('open');
+      modal.classList.toggle('ws-empty', ws);
+      updateEditorPage();
+      return;
+    }
+    const doc = docs.get(item.docId);
+    if (item !== editorItem || !modal.classList.contains('open')) openEditor(item);
+    else if (editorShown.sig !== editorSigOf(item) || editorShown.bytes !== (doc ? doc.bytes : null)) { updateEditorPage(); renderEditor(); }
+    else updateEditorPage();                  // same page, nothing to redraw (renderTray already marked its card)
+  }
+
+  // the editor is a dialog when it covers the screen and a plain region inside the workspace
+  function syncEditorAria() {
+    const el = $('editModal'), ws = document.body.classList.contains('ws');
+    el.setAttribute('role', ws ? 'region' : 'dialog');
+    el.setAttribute('aria-label', ws ? 'Page editor' : 'Edit PDF page');
+    if (ws) el.removeAttribute('aria-modal'); else el.setAttribute('aria-modal', 'true');
+  }
+
   async function renderEditor() {
     if (!editorItem) return;
-    busy(true, 'Rendering page…');
+    const item = editorItem, seq = ++editorSeq, inPlace = wsMode();
+    const wrap = $('editCanvasWrap'), doc = docs.get(item.docId);
+    editorShown = { sig: editorSigOf(item), bytes: doc ? doc.bytes : null };
+    editorLoading = true;
+    // in the workspace the page area just dims; the full-screen editor keeps the "Rendering" message
+    if (inPlace) wrap.classList.add('loading'); else busy(true, 'Rendering page…');
     try {
       // render the base page WITHOUT stamps — stamps live as movable overlay boxes
-      const base = { docId: editorItem.docId, pageIndex: editorItem.pageIndex, rot: editorItem.rot, stamps: [], crop: editorItem.crop };
+      const base = { docId: item.docId, pageIndex: item.pageIndex, rot: item.rot, stamps: [], crop: item.crop };
       const bytes = await buildPdfBytes([base]);
-      const task = pdfjsLib.getDocument({ data: bytes });
-      const pdoc = await task.promise;
-      const page = await pdoc.getPage(1);
-      const vp1 = page.getViewport({ scale: 1 });
-      const wrap = $('editCanvasWrap');
-      const maxW = Math.max(280, wrap.clientWidth - 28);
-      const maxH = Math.max(280, wrap.clientHeight - 28);
-      const fit = Math.min(maxW / vp1.width, maxH / vp1.height) * editorZoom;
-      const vp = page.getViewport({ scale: fit * 2 });   // render 2x for crisp text
-      editCanvas.width = Math.ceil(vp.width);
-      editCanvas.height = Math.ceil(vp.height);
-      editCanvas.style.width = Math.ceil(vp.width / 2) + 'px';
-      editCanvas.style.height = Math.ceil(vp.height / 2) + 'px';
-      editOverlay.width = editCanvas.width;
-      editOverlay.height = editCanvas.height;
-      editOverlay.style.width = editCanvas.style.width;
-      editOverlay.style.height = editCanvas.style.height;
-      await page.render({ canvasContext: editCanvas.getContext('2d'), viewport: vp, intent: 'print' }).promise;
-      editorVp = vp;
-      editorFit = fit;
-      pdoc.destroy();
+      if (seq !== editorSeq) return;                              // a newer page or zoom took over
+      const pdoc = await pdfjsLib.getDocument({ data: bytes }).promise;
+      try {
+        const page = await pdoc.getPage(1);
+        const vp1 = page.getViewport({ scale: 1 });
+        const cs = getComputedStyle(wrap);
+        const maxW = Math.max(240, wrap.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 2);
+        const maxH = Math.max(240, wrap.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 2);
+        const fit = Math.min(maxW / vp1.width, maxH / vp1.height) * editorZoom;
+        const vp = page.getViewport({ scale: fit * 2 });   // render 2x for crisp text
+        // draw off-screen, then swap, so the page on screen is never blank or half-drawn
+        const off = document.createElement('canvas');
+        off.width = Math.ceil(vp.width);
+        off.height = Math.ceil(vp.height);
+        await page.render({ canvasContext: off.getContext('2d'), viewport: vp, intent: 'print' }).promise;
+        if (seq !== editorSeq) return;
+        editCanvas.width = off.width;
+        editCanvas.height = off.height;
+        editCanvas.style.width = Math.ceil(vp.width / 2) + 'px';
+        editCanvas.style.height = Math.ceil(vp.height / 2) + 'px';
+        editCanvas.getContext('2d').drawImage(off, 0, 0);
+        editOverlay.width = editCanvas.width;
+        editOverlay.height = editCanvas.height;
+        editOverlay.style.width = editCanvas.style.width;
+        editOverlay.style.height = editCanvas.style.height;
+        editorVp = vp;
+        editorFit = fit;
+        $('zoomPct').textContent = Math.round(fit * 100) + '%';
+      } finally {
+        pdoc.destroy();
+      }
+      editorLoading = false;
       syncStampLayer();
       // a pending crop box must follow the new zoom level too
       const cropEl = document.getElementById('cropBox');
       if (cropEl && pendingCrop) positionBoxEl(cropEl, pendingCrop);
+      queueThumb(item);
     } catch (err) {
       console.error(err);
-      toast('Sorry — could not render that page.');
+      if (seq === editorSeq) {
+        if (!editorVp) editCanvas.getContext('2d').clearRect(0, 0, editCanvas.width, editCanvas.height);   // not the previous page's picture
+        toast('Sorry — could not render that page.');
+      }
+    } finally {
+      if (seq === editorSeq) {                                    // an overtaken render leaves these to the newer one
+        editorLoading = false;
+        wrap.classList.remove('loading');
+        if (!inPlace) busy(false);
+      }
     }
-    busy(false);
   }
 
   /* stamp elements: movable / resizable containers over the page */
@@ -3937,6 +4696,7 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
       if ([...sizeSel.options].some(o => parseInt(o.value, 10) === st.size)) sizeSel.value = String(st.size);
       $('stampColor').value = st.color;
     }
+    if (editorMode === 'select') syncToolOptions();   // size and color appear for a picked text box
   }
   function elForStamp(st) { return [...stampLayer.children].find(el => el.__stamp === st) || null; }
   function removeStamp(st) {
@@ -4289,8 +5049,7 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
   async function applyCrop(rect) {
     editorItem.crop = rect;
     await renderEditor();
-    setEditorMode('text');
-    regenTrayThumb(editorItem);
+    setEditorMode(restMode());
     toast('Cropped — the page is now just the area you selected.');
   }
   $('modeCrop').addEventListener('click', () => setEditorMode('crop'));
@@ -4298,28 +5057,10 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     if (!editorItem || !editorItem.crop) return;
     delete editorItem.crop;
     await renderEditor();
-    setEditorMode('text');
-    regenTrayThumb(editorItem);
+    setEditorMode(restMode());
     toast('Crop removed — the whole page is back.');
   });
 
-  // refresh a tray card's thumbnail after a crop change
-  async function regenTrayThumb(item) {
-    try {
-      const bytes = await buildPdfBytes([{ docId: item.docId, pageIndex: item.pageIndex, rot: 0, stamps: [], crop: item.crop }]);
-      const pdoc = await pdfjsLib.getDocument({ data: bytes }).promise;
-      const page = await pdoc.getPage(1);
-      const vp1 = page.getViewport({ scale: 1 });
-      const vp = page.getViewport({ scale: 170 / vp1.width });
-      const c = document.createElement('canvas');
-      c.width = Math.ceil(vp.width);
-      c.height = Math.ceil(vp.height);
-      await page.render({ canvasContext: c.getContext('2d'), viewport: vp, intent: 'print' }).promise;
-      pdoc.destroy();
-      item.thumb = c.toDataURL('image/jpeg', 0.82);
-      renderTray();
-    } catch (_) {}
-  }
   // place an image-like stamp (signature or picture) centered on the click
   function placeImageStamp(e, kind, dataUrl, dim, viewWpt) {
     const rect = editOverlay.getBoundingClientRect();
@@ -4338,11 +5079,12 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     editorItem.stamps.push(st);
     selectedStamp = st;
     syncStampLayer();
-    setEditorMode('text');   // one per click; switch back so stray clicks don't re-place
+    setEditorMode(restMode());   // one per click; switch back so stray clicks don't re-place
   }
 
   editOverlay.addEventListener('click', (e) => {
     if (!editorItem || !editorVp) return;
+    if (editorMode === 'select') { selectStamp(null); return; }   // an empty spot lets go of the selection
     if (editorMode === 'sig') {
       if (!currentSig) { openSigPanel(); return; }
       placeImageStamp(e, 'sig', currentSig, currentSigDim, currentSigW);
@@ -4648,7 +5390,7 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     editorItem.stamps.push(st);
     selectedStamp = st;
     syncStampLayer();
-    setEditorMode('text');
+    setEditorMode(restMode());
     if ($('stampAllPages').checked && tray.length > 1) {
       // the same stamp, same spot, on every other page of the new PDF
       let n = 0;
@@ -4749,7 +5491,7 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
       editorItem.stamps.push(st);
       selectedStamp = st;
       syncStampLayer();
-      setEditorMode('text');
+      setEditorMode(restMode());
     };
     img.src = dataUrl;
   }
@@ -4949,7 +5691,7 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     tray.forEach(t => {
       if (t.docId === docId) {
         const src = doc.pages.find(pp => pp.pageIndex === t.pageIndex);
-        if (src) t.thumb = src.thumb;
+        if (src) { t.thumb = src.thumb; t.thumbRot = 0; delete t.thumbKey; }   // marked-up pages get a fresh picture from the queue
       }
     });
   }
@@ -4995,6 +5737,18 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
   $('modeSig').addEventListener('click', () => openSigPanel());
   $('modeImg').addEventListener('click', () => $('imgFileInput').click());
   $('modeStamps').addEventListener('click', openStampPanel);
+  $('modeSelect').addEventListener('click', () => setEditorMode('select'));
+  // Page actions work on the page on screen
+  $('btnPageRotL').addEventListener('click', () => { if (editorItem) rotatePage(editorItem, 270); });
+  $('btnPageRotR').addEventListener('click', () => { if (editorItem) rotatePage(editorItem, 90); });
+  $('btnPageDup').addEventListener('click', () => { if (editorItem) duplicatePage(editorItem); });
+  $('btnPageRemove').addEventListener('click', () => { if (editorItem) removePage(editorItem); });
+  $('btnAddPages').addEventListener('click', () => pickFiles('combine'));
+  $('btnBlankPage').addEventListener('click', addBlankPage);
+  $('btnEmptyAddAll').addEventListener('click', () => $('btnAddEverything').click());
+  $('btnWsBack').addEventListener('click', () => $('btnReset').click());
+  $('btnSaveProject').addEventListener('click', () => $('btnProjects').click());
+  $('outputSelect').addEventListener('change', closeAllMenus);
   $('btnUndoStamp').addEventListener('click', () => travelHistory(-1));
   $('btnClearStamps').addEventListener('click', () => {
     if (editorItem && editorItem.stamps.length) {
@@ -5013,7 +5767,9 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     if (e.key === 'Escape' && $('phoneModal').classList.contains('open')) { closePhoneModal(); return; }
     if (e.key === 'Escape' && $('emailModal').classList.contains('open')) { closeEmailModal(); return; }
     if (e.key === 'Escape' && $('formModal').classList.contains('open')) { closeFormModal(); return; }
-    if (!$('editModal').classList.contains('open')) return;
+    if (!$('editModal').classList.contains('open') || e.defaultPrevented) return;
+    // in the workspace the editor is always there, so it stands back while a dialog is on top
+    if (wsMode() && ['formModal', 'emailModal', 'phoneModal', 'pwModal', 'viewModal', 'formsModal'].some(id => $(id).classList.contains('open'))) return;
     const a = document.activeElement;
     const typing = a && (a.isContentEditable || a.tagName === 'INPUT' || a.tagName === 'SELECT' || a.tagName === 'TEXTAREA');
     if (!typing && (e.key === 'PageDown' || e.key === 'PageUp')) {
@@ -5023,6 +5779,7 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     }
     if (e.key === 'Escape') {
       if (a && a.isContentEditable) { a.blur(); return; }
+      if (typing && wsMode()) { a.blur(); return; }             // Esc in a field of the workspace just leaves the field
       if (pendingCrop) { removePendingCrop(); toast('Crop cancelled — nothing changed.'); return; }
       if ($('sigPanel').classList.contains('open')) { closeSigPanel(); return; }
       if ($('stampPanel').style.display === 'flex') { closeStampPanel(); return; }
@@ -5039,6 +5796,15 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     let n = ($('nameInput').value || 'new-document').trim()
       .replace(/\.pdf$/i, '').replace(/[\\/:*?"<>|]+/g, '-') || 'new-document';
     return n + (extra || '') + '.pdf';
+  }
+
+  // the file name in the top bar is as wide as its text (within reason)
+  let nameRuler = null;
+  function fitNameInput() {
+    const el = $('nameInput'), cs = getComputedStyle(el);
+    if (!nameRuler) nameRuler = document.createElement('canvas').getContext('2d');
+    nameRuler.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+    el.style.width = Math.max(64, Math.ceil(nameRuler.measureText(el.value || '').width) + 18) + 'px';
   }
 
   function download(bytes, filename) {
@@ -5059,17 +5825,45 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     e.stopPropagation();
     pickFiles();
   });
+  // "Start over", the back arrow and New PDF all end here: save it as a project, close it, or carry on
   $('btnReset').addEventListener('click', () => {
-    showDialog('Start over?', '<p>Clear the current workspace and its output documents? Named saved projects are kept.</p><div class="studio-row"><button id="confirmReset">Clear workspace</button><button id="cancelReset">Keep working</button></div>');
-    $('cancelReset').onclick=closeStudioDialog;
-    $('confirmReset').onclick=()=>{closeStudioDialog();restoreWorkspace({docs:[],tray:[],name:'new-document',nextDocId:1,nextSid:1,nextTid:1});scheduleAutosave();toast('Workspace cleared. Undo restores it.');};
+    const cur = ($('nameInput').value || '').trim().replace(/\.pdf$/i, '');
+    showDialog('Close this PDF?', '<p>Save it as a project to pick it up later from the home screen, or close it now. Projects stay in this browser, on this device.</p>' +
+      '<label for="closeProjectName">Project name</label><input id="closeProjectName" placeholder="Customer or project name">' +
+      '<div class="studio-row"><button id="saveAndClose" class="primary">Save project &amp; close</button><button id="confirmReset">Close without saving</button><button id="cancelReset">Keep working</button></div>' +
+      '<p id="closeNotice" role="status"></p>');
+    $('closeProjectName').value = projectName || (cur === 'new-document' ? '' : cur);
+    const empty = () => ({ docs: [], tray: [], name: 'new-document', nextDocId: 1, nextSid: 1, nextTid: 1 });
+    $('cancelReset').onclick = closeStudioDialog;
+    $('confirmReset').onclick = () => {
+      closeStudioDialog();
+      restoreWorkspace(empty());
+      scheduleAutosave();
+      toast('Closed. Undo (Ctrl+Z) brings it back.');
+    };
+    $('saveAndClose').onclick = async () => {
+      const name = $('closeProjectName').value.trim();
+      if (!name) { $('closeNotice').textContent = 'Give the project a name first.'; $('closeProjectName').focus(); return; }
+      try {
+        await saveProject(name);
+        closeStudioDialog();
+        restoreWorkspace(empty());
+        resetHistory();
+        scheduleAutosave();
+        toast('Saved as "' + name + '" — it is under Recent projects.');
+      } catch (e) {
+        $('closeNotice').textContent = (e && e.name === 'QuotaExceededError')
+          ? 'This project is too large to keep in this browser. Save the PDF instead.'
+          : 'Could not save the project — your work is still open.';
+      }
+    };
   });
   $('btnClearTray').addEventListener('click', () => {
     if (!tray.length) return;
     const prevTray = tray.slice();
     tray = [];
     renderAll();
-    toastAction('Tray cleared (' + prevTray.length + ' page' + (prevTray.length === 1 ? '' : 's') + ').', 'Undo', () => { tray = prevTray; renderAll(); });
+    toastAction('Removed every page (' + prevTray.length + ').', 'Undo', () => restoreTray(prevTray));
   });
   /* "Shrink for email": re-save every page as a compact scan-style JPEG page */
   async function compressPdfBytes(bytes) {
@@ -5334,7 +6128,7 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
         setTimeout(() => toast('✅ Gmail drafts' + (cfg.f ? ' and the Forms Library' : '') + ' are now connected on this device.'), 400);
       }
     } catch (_) {}
-    history.replaceState(null, '', location.pathname + location.search);
+    window.history.replaceState(null, '', location.pathname + location.search);   // plain "history" in here is the undo stack
   }
   connectFromHash();
   window.addEventListener('hashchange', connectFromHash);
@@ -5440,7 +6234,7 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
   }
 
   function openEmailModal() {
-    if (!tray.length) { toast('Put some pages in the New Document tray first.'); return; }
+    if (!tray.length) { toast('Add some pages to your PDF first.'); return; }
     $('mailBanner').className = 'mail-banner';
     renderRecentTo();
     applyMailType();
@@ -5538,7 +6332,8 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
   /* Home-screen intents. "Edit a PDF" and "Combine Files" skip the choose-pages
      screen: every page of the files just picked goes straight into the PDF, and
      Edit opens the editor on the first of them. The plain drop area keeps the
-     choose-pages flow. */
+     choose-pages flow. "Add files" on the Pages tab, and files dropped while that
+     tab is showing, use the Combine intent too. */
   let pendingIntent = null;                       // 'edit' | 'combine' | null
   function pickFiles(intent) { pendingIntent = intent || null; $('fileInput').click(); }
   function runIntent(intent, before) {
@@ -5554,8 +6349,9 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     if (intent === 'edit') {
       openEditor(tray[firstNew]);
     } else {
+      showPage(tray[firstNew]);
       toast(n + ' page' + (n === 1 ? '' : 's') + ' from ' + fresh.length + ' file' + (fresh.length === 1 ? '' : 's') +
-        ' — drag to arrange, pencil to mark one up, or Back to pages to leave some out.');
+        ' added to your PDF — drag to arrange them; the ⋯ on a page rotates or removes it.');
     }
   }
   $('fileInput').addEventListener('change', async (e) => {
@@ -5596,12 +6392,15 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     dragDepth--;
     if (dragDepth <= 0) hideDropOverlay();
   });
-  document.body.addEventListener('drop', (e) => {
-    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
-      e.preventDefault();
-      addFiles(e.dataTransfer.files);
-    }
+  document.body.addEventListener('drop', async (e) => {
+    const files = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length ? [...e.dataTransfer.files] : null;
+    if (files) e.preventDefault();
     hideDropOverlay();
+    if (!files) return;
+    // dropped while the pages of your PDF are showing: the files join it. Anywhere else they are just opened.
+    const before = new Set(docs.keys()), intoPdf = uiStep === 3;
+    await addFiles(files);
+    if (intoPdf) runIntent('combine', before);
   });
 
   /* ── Page viewer (zoom) ── */
@@ -5861,6 +6660,7 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
   let autosaveTimer = null, quotaWarned = false;
   function scheduleAutosave() {
     captureHistory();
+    if (editorItem) queueThumb(editorItem);            // the page list keeps up with the edits
     clearTimeout(autosaveTimer);
     if (!docs.size && !tray.length) {
       setAutosaveStatus('Ready', 'saved');
@@ -5884,7 +6684,7 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
             libKey: d.libKey || null, libName: d.libName || null,
             pages: d.pages.map(p => ({ sid: p.sid, pageIndex: p.pageIndex, thumb: p.thumb }))
           })),
-          tray: tray.map(t => ({ tid: t.tid, docId: t.docId, pageIndex: t.pageIndex, rot: t.rot, stamps: t.stamps, crop: t.crop || null, thumb: t.thumb }))
+          tray: tray.map(t => ({ tid: t.tid, docId: t.docId, pageIndex: t.pageIndex, rot: t.rot, stamps: t.stamps, crop: t.crop || null, thumb: t.thumb, thumbRot: t.thumbRot || 0, thumbKey: t.thumbKey || null }))
         });
         const at = new Date(when).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
         setAutosaveStatus('Saved at ' + at, 'saved');
@@ -5948,6 +6748,8 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
             rot: t.rot || 0, stamps: t.stamps || [], thumb: t.thumb
           };
           if (t.crop) item.crop = t.crop;
+          if (t.thumbRot) item.thumbRot = t.thumbRot;
+          if (t.thumbKey) item.thumbKey = t.thumbKey;
           return item;
         }).filter(t => docs.has(t.docId));
         nextDocId = saved.nextDocId || (Math.max(0, ...docs.keys()) + 1);
@@ -5958,6 +6760,7 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
         resetHistory();
         $('restoreBar').classList.remove('show');
         renderAll();
+        if (tray.length) setStep(3, { silent: true });   // straight back to the pages of the PDF
         toast(missing.length ? 'Restored your earlier work — ' + missing.length + ' file' + (missing.length === 1 ? '' : 's') + ' could not be recovered.' : 'Restored your earlier work.');
       } catch (err) {
         console.error(err);
@@ -6216,7 +7019,7 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     updateOptBadge(); renderOutputSelect();
   }
   function restoreWorkspace(saved) {
-    clearTimeout(autosaveTimer); historyPaused=true;
+    clearTimeout(autosaveTimer); historyPaused=true; const fromHome=uiStep===1||!tray.length;   // coming from the home screen, or from an emptied PDF
     docs.clear(); srcIndex.clear(); pickedSrc.clear(); collapsedSources.clear(); docTextCache.clear();
     for(const d of saved.docs){ const doc={...d,bytes:d.bytes instanceof Uint8Array ? d.bytes : new Uint8Array(d.bytes),pages:d.pages.map(p=>({...p,docId:d.id}))}; docs.set(d.id,doc); doc.pages.forEach(p=>srcIndex.set(p.sid,p)); }
     tray=copyPages(saved.tray||[]); nextDocId=saved.nextDocId; nextSid=saved.nextSid; nextTid=saved.nextTid;
@@ -6225,11 +7028,12 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     const tid=editorItem?.tid; editorItem=tid ? tray.find(t=>t.tid===tid)||null : null;
     if(!editorItem) $('editModal').classList.remove('open');
     renderAll(); if(editorItem){selectedStamp=null;updateEditorPage();renderEditor();}
+    if(fromHome&&tray.length)setStep(3,{silent:true});   // a project, or pages brought back by undo: show them
     historyPaused=false;
     if(!docs.size)renderRecentProjects(); else $('recentProjects').style.display='none';
   }
   // References to immutable PDF byte arrays avoid copying whole PDFs for every edit.
-  function historyKey(v) { const clean=pages=>pages.map(({thumb,...p})=>p); return JSON.stringify({tray:clean(v.tray),outputs:v.outputs.map(o=>({...o,pages:clean(o.pages)})),name:v.name,active:v.activeOutput,options:v.options,docs:v.docs.map(d=>[d.id,d.name,d.bytes.length])}); }
+  function historyKey(v) { const clean=pages=>pages.map(({thumb,thumbRot,thumbKey,...p})=>p); return JSON.stringify({tray:clean(v.tray),outputs:v.outputs.map(o=>({...o,pages:clean(o.pages)})),name:v.name,active:v.activeOutput,options:v.options,docs:v.docs.map(d=>[d.id,d.name,d.bytes.length])}); }
   function captureHistory() {
     if(historyPaused) return;
     const v=snapshotWorkspace(), prev=history[historyAt];
@@ -6240,21 +7044,31 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
   function updateHistoryButtons(){ for(const id of ['btnUndoStamp','btnWorkspaceUndo']) $(id).disabled=historyAt<=0; for(const id of ['btnRedoStamp','btnWorkspaceRedo']) $(id).disabled=historyAt>=history.length-1; }
   function travelHistory(delta){ if(historyAt+delta<0||historyAt+delta>=history.length)return; historyAt+=delta;restoreWorkspace(history[historyAt]);updateHistoryButtons();scheduleAutosave(); }
   $('btnWorkspaceUndo').onclick=()=>travelHistory(-1); $('btnWorkspaceRedo').onclick=$('btnRedoStamp').onclick=()=>travelHistory(1);
-  document.addEventListener('keydown',e=>{if($('studioDialog').open)return;if(!(e.ctrlKey||e.metaKey)||!['z','y'].includes(e.key.toLowerCase())||e.target.closest('input,textarea,[contenteditable=true]'))return;e.preventDefault();travelHistory(e.key.toLowerCase()==='y'||e.shiftKey?1:-1);});
-  document.addEventListener('pointerup',()=>queueMicrotask(()=>{if(editorItem)scheduleAutosave();}));
+  document.addEventListener('keydown',e=>{if($('studioDialog').open)return;if(!(e.ctrlKey||e.metaKey)||!['z','y'].includes(e.key.toLowerCase())||e.target.isContentEditable||e.target.closest('input,textarea'))return;e.preventDefault();travelHistory(e.key.toLowerCase()==='y'||e.shiftKey?1:-1);});
+  document.addEventListener('pointerup',e=>{const inEditor=!!(e.target&&e.target.closest&&e.target.closest('#editModal'));queueMicrotask(()=>{if(editorItem&&inEditor)scheduleAutosave();});});
   function renderOutputSelect(){
     $('outputSelect').replaceChildren(...outputs.map(o=>{const el=document.createElement('option');el.value=o.id;el.textContent=o.id===activeOutput?$('nameInput').value:o.name;return el;})); $('outputSelect').value=activeOutput;
-    $('projectLabel').textContent=projectName||'Local workspace';
+    $('projectLabel').textContent=(projectName||'Draft')+(outputs.length>1?' · PDF '+(outputs.findIndex(o=>o.id===activeOutput)+1)+' of '+outputs.length:'');
     document.body.classList.toggle('multi-output',outputs.length>1);
   }
   function saveActiveOutput(){const o=outputs.find(o=>o.id===activeOutput);if(o){o.name=$('nameInput').value;o.pages=copyPages(tray);}}
   function switchOutput(id){saveActiveOutput();const o=outputs.find(o=>o.id===id);if(!o)return;activeOutput=id;tray=copyPages(o.pages);$('nameInput').value=o.name;renderOutputSelect();renderAll();if(tray.length)setStep(3);}
-  $('btnRemoveOutput').onclick=()=>{if(outputs.length===1){toast('Keep at least one new PDF — use Clear tray to empty it instead.');return;}showDialog('Remove this new PDF?','<p>Your source files and any other new PDFs are kept.</p><div class="studio-row"><button id="removeOutputConfirm">Remove it</button><button id="removeOutputCancel">Keep it</button></div>');$('removeOutputCancel').onclick=closeStudioDialog;$('removeOutputConfirm').onclick=()=>{outputs=outputs.filter(o=>o.id!==activeOutput);const next=outputs[0];activeOutput=next.id;tray=copyPages(next.pages);$('nameInput').value=next.name;renderOutputSelect();renderAll();closeStudioDialog();};};
+  $('btnRemoveOutput').onclick=()=>{if(outputs.length===1){toast('Keep at least one new PDF — "Remove every page" in the ⋯ menu empties it instead.');return;}showDialog('Remove this new PDF?','<p>Your source files and any other new PDFs are kept.</p><div class="studio-row"><button id="removeOutputConfirm">Remove it</button><button id="removeOutputCancel">Keep it</button></div>');$('removeOutputCancel').onclick=closeStudioDialog;$('removeOutputConfirm').onclick=()=>{outputs=outputs.filter(o=>o.id!==activeOutput);const next=outputs[0];activeOutput=next.id;tray=copyPages(next.pages);$('nameInput').value=next.name;renderOutputSelect();renderAll();closeStudioDialog();};};
   $('outputSelect').onchange=e=>switchOutput(e.target.value);
   $('nameInput').addEventListener('change',()=>{saveActiveOutput();renderOutputSelect();scheduleAutosave();});
   $('btnNewOutput').onclick=()=>{saveActiveOutput();const id=crypto.randomUUID();outputs.push({id,name:'New PDF '+(outputs.length+1),pages:[]});switchOutput(id);toast('Pick source pages for this new PDF.');};
   $('btnDuplicateOutput').onclick=()=>{saveActiveOutput();const id=crypto.randomUUID();outputs.push({id,name:$('nameInput').value+' copy',pages:copyPages(tray).map(t=>({...t,tid:nextTid++}))});switchOutput(id);};
-  function updateEditorPage(){const i=tray.findIndex(t=>t===editorItem);const j=$('editorPageJump');j.value=i+1;j.max=tray.length;$('editorPageTotal').textContent=tray.length;$('btnPrevEdit').disabled=i<=0;$('btnNextEdit').disabled=i<0||i>=tray.length-1;}
+  function updateEditorPage() {
+    const i = tray.findIndex(t => t === editorItem);
+    if (i >= 0) lastEditorIndex = i;                 // where to land if this page is removed
+    const j = $('editorPageJump');
+    j.value = i + 1;
+    j.max = tray.length;
+    $('editorPageTotal').textContent = tray.length;
+    $('btnPrevEdit').disabled = i <= 0;
+    $('btnNextEdit').disabled = i < 0 || i >= tray.length - 1;
+    ['btnPageRotL', 'btnPageRotR', 'btnPageDup', 'btnPageRemove'].forEach(id => { $(id).disabled = i < 0; });
+  }
   function jumpEditor(n){const i=Math.min(tray.length,Math.max(1,Math.round(Number(n)||1)))-1;if(tray[i]&&tray[i]!==editorItem){scheduleAutosave();removePendingCrop();openEditor(tray[i]);}else updateEditorPage();}
   $('editorPageJump').addEventListener('change',e=>jumpEditor(e.target.value));
   $('editorPageJump').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();jumpEditor(e.target.value);e.target.blur();}});
@@ -6277,7 +7091,7 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     showDialog('Saved projects',`<p>Named workspaces stay in this browser on this device, including source files, edits and output documents. They are not cloud backups.</p><label for="projectNameInput">Project name</label><input id="projectNameInput" placeholder="Customer or project name"><div class="studio-row"><button id="saveProjectNow" class="primary">Save project</button><button id="newProjectNow">New empty project</button></div><p id="projectNotice" role="status"></p><div id="projectList"></div>`);
     $('projectNameInput').value=projectName;
     const list=await projectStore('getAll');
-    for(const p of list.sort((a,b)=>b.when-a.when)){const row=document.createElement('div');row.className='studio-card';const title=document.createElement('strong');title.textContent=p.name;const note=document.createElement('p');note.textContent=new Date(p.when).toLocaleString()+' • '+p.data.outputs.length+' new PDF'+(p.data.outputs.length===1?'':'s');const load=document.createElement('button');load.textContent='Open project';load.onclick=async()=>{try{if(docs.size)await saveProject(projectName||'Recovered workspace '+new Date().toLocaleString());restoreWorkspace(p.data);resetHistory();closeStudioDialog();}catch(e){$('projectNotice').textContent='Could not save the current workspace. It has been kept open.';}};const del=document.createElement('button');del.textContent='Delete saved copy';del.onclick=()=>{del.textContent='Confirm delete';del.onclick=async()=>{await projectStore('delete',p.id);if(projectId===p.id){projectId=null;projectName='';renderOutputSelect();}openProjects();renderRecentProjects();};};row.append(title,note,load,del);$('projectList').append(row);}
+    for(const p of list.sort((a,b)=>b.when-a.when)){const row=document.createElement('div');row.className='studio-card';const title=document.createElement('strong');title.textContent=p.name;const note=document.createElement('p');note.textContent=new Date(p.when).toLocaleString()+' • '+p.data.outputs.length+' new PDF'+(p.data.outputs.length===1?'':'s');const load=document.createElement('button');load.textContent='Open project';load.onclick=async()=>{try{if(docs.size)await saveProject(projectName||'Recovered workspace '+new Date().toLocaleString());restoreWorkspace(p.data);resetHistory();if(tray.length){setStep(3,{silent:true});showPage(tray[0]);}closeStudioDialog();}catch(e){$('projectNotice').textContent='Could not save the current workspace. It has been kept open.';}};const del=document.createElement('button');del.textContent='Delete saved copy';del.onclick=()=>{del.textContent='Confirm delete';del.onclick=async()=>{await projectStore('delete',p.id);if(projectId===p.id){projectId=null;projectName='';renderOutputSelect();}openProjects();renderRecentProjects();};};row.append(title,note,load,del);$('projectList').append(row);}
     $('saveProjectNow').onclick=async()=>{try{const name=$('projectNameInput').value.trim();if(!name)throw Error('Enter a project name.');await saveProject(name);openProjects();}catch(e){$('projectNotice').textContent=(e&&e.name==='QuotaExceededError')?'This project is too large to store in this browser. Save the PDFs instead.':e.message;}};
     $('newProjectNow').onclick=async()=>{try{if(docs.size)await saveProject(projectName||'Recovered workspace '+new Date().toLocaleString());restoreWorkspace({docs:[],tray:[],name:'new-document',nextDocId:1,nextSid:1,nextTid:1});resetHistory();closeStudioDialog();}catch(e){$('projectNotice').textContent='Could not save your current work. New project was not started.';}};
   }
@@ -6297,19 +7111,88 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     showDialog('Split into named PDFs',`<p>Use the current document’s ${tray.length} pages. Put one filename and page selection on each line.</p><label for="splitInput">Filename | pages</label><textarea id="splitInput" rows="6" placeholder="Application | 1-3\nSupporting documents | 4, 5-7"></textarea><p class="studio-note">All finish settings apply to each PDF. Page numbering starts at 1 in each document. Password protection uses the same password for the bundle.</p><div class="studio-row"><button id="saveSplit" class="primary">Download ZIP</button><button id="keepSplit">Keep as separate new PDFs</button></div><p id="splitError" role="alert"></p>`);
     function groups(){return $('splitInput').value.trim().split(/\n/).map(line=>{const sep=line.indexOf('|');if(sep<1)throw Error('Each line needs a filename | pages.');return {name:line.slice(0,sep).trim(),pages:parseRanges(line.slice(sep+1),tray.length).map(i=>tray[i])};});}
     $('saveSplit').onclick=async()=>{try{await exportZip(groups());}catch(e){$('splitError').textContent=e.message;}};
-    $('keepSplit').onclick=()=>{try{const gs=groups();saveActiveOutput();for(const g of gs)outputs.push({id:crypto.randomUUID(),name:g.name,pages:copyPages(g.pages).map(t=>({...t,tid:nextTid++}))});renderOutputSelect();scheduleAutosave();closeStudioDialog();toast('Created '+gs.length+' new PDFs — switch between them at the top.');}catch(e){$('splitError').textContent=e.message;}};
+    $('keepSplit').onclick=()=>{try{const gs=groups();saveActiveOutput();for(const g of gs)outputs.push({id:crypto.randomUUID(),name:g.name,pages:copyPages(g.pages).map(t=>({...t,tid:nextTid++}))});renderOutputSelect();scheduleAutosave();closeStudioDialog();toast('Created '+gs.length+' new PDFs — switch between them from the menu beside the file name.');}catch(e){$('splitError').textContent=e.message;}};
   };
   async function renderPdfPreview(bytes,container){
     const task=await pdfjsLib.getDocument({data:bytes.slice()}).promise;
     const bar=document.createElement('div');bar.className='studio-row';
     const previous=document.createElement('button'),next=document.createElement('button'),label=document.createElement('span'),canvas=document.createElement('canvas');
-    previous.textContent='Previous preview page';next.textContent='Next preview page';label.setAttribute('aria-live','polite');bar.append(previous,label,next);container.append(bar,canvas);
+    previous.textContent='Previous page';next.textContent='Next page';canvas.title='Click to zoom in or out';canvas.onclick=()=>canvas.classList.toggle('zoomed');label.setAttribute('aria-live','polite');bar.append(previous,label,next);container.append(bar,canvas);
     let current=1,rendering=false,closed=false;
     const previousCleanup=dialogCleanup;dialogCleanup=()=>{closed=true;previousCleanup();task.destroy();};
     async function render(){if(rendering||closed)return;rendering=true;previous.disabled=true;next.disabled=true;try{const page=await task.getPage(current);if(closed)return;const vp=page.getViewport({scale:Math.min(1.5,900/page.getViewport({scale:1}).width)});canvas.width=vp.width;canvas.height=vp.height;canvas.setAttribute('aria-label','Preview page '+current);label.textContent='Page '+current+' of '+task.numPages;await page.render({canvasContext:canvas.getContext('2d'),viewport:vp,intent:'print'}).promise;}catch(e){if(!closed)label.textContent='Could not preview page '+current;}finally{rendering=false;previous.disabled=current===1;next.disabled=current===task.numPages;}}
     previous.onclick=()=>{if(!rendering&&current>1){current--;void render();}};next.onclick=()=>{if(!rendering&&current<task.numPages){current++;void render();}};await render();
   }
-  async function previewFinal(email=false){if(!tray.length){toast('Choose pages first.');return;}busy(true,'Building preview…');try{const options=exportOptions(),r=await buildFinalBytes(tray,{...options,lock:false});const filename=cleanName();showDialog(email?'Review email and attachment':'Preview & finish',`<p id="previewSummary"></p><p class="studio-note">${options.lock?'Password protection is selected. Choose the password when saving or creating the draft.':'No password protection selected.'}</p>${email?'<iframe class="email-preview" id="emailBodyPreview" title="Email body preview" sandbox></iframe>':''}<div class="studio-row"><button id="savePreview" class="primary">Save this PDF</button>${email?'':'<button id="previewEmail">Gmail draft</button><button id="previewPrint">Print</button>'}</div><div id="finalPages" class="studio-preview"></div>`);$('previewSummary').textContent=filename+' • '+tray.length+' pages • '+fmtSize(r.bytes.length)+(options.lock?' before locking':'')+(options.numbers?' • Numbered':'')+(options.permanent?' • Permanent white-out':'')+(r.note||'');if(email)$('emailBodyPreview').srcdoc=buildEmailHtml();$('savePreview').onclick=async()=>{let bytes=r.bytes;if(options.lock){const pw=await askExportPassword();if(!pw)return;bytes=await lockPdfBytes(bytes,pw);}download(bytes,filename);};if(!email){$('previewEmail').onclick=()=>{closeStudioDialog();$('btnEmail').click();};$('previewPrint').onclick=()=>{closeStudioDialog();$('btnPrint').click();};}await renderPdfPreview(r.bytes,$('finalPages'));}catch(e){toast('Could not preview PDF: '+e.message);}finally{busy(false);}}
+  /* Preview & finish: the one place a finished PDF leaves from. Check it, set the
+     finish options (they are the same four switches as the ⋯ menu), then save,
+     send or print. email=true is the smaller review opened from the Gmail window. */
+  async function previewFinal(email = false, focusOpt) {
+    if (!tray.length) { toast('Choose pages first.'); return; }
+    busy(true, 'Building preview…');
+    try {
+      const options = exportOptions(), r = await buildFinalBytes(tray, { ...options, lock: false });
+      const filename = cleanName();
+      const lockNote = options.lock
+        ? 'Password protection is selected. Choose the password when saving or creating the draft.'
+        : 'No password protection selected.';
+      const box = (id, label, tip) => '<label title="' + tip + '"><input type="checkbox" data-opt="' + id + '"' + ($(id).checked ? ' checked' : '') + '> ' + label + '</label>';
+      const body = email
+        ? '<p class="studio-note">' + lockNote + '</p>' +
+          '<iframe class="email-preview" id="emailBodyPreview" title="Email body preview" sandbox></iframe>' +
+          '<div class="studio-row"><button id="savePreview" class="primary">Save this PDF</button></div>'
+        : '<div class="finish-actions">' +
+            '<button id="savePreview" class="primary save-button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 4h12l2 2v14H5zM8 4v6h8V4M8 17h8"/></svg>Save PDF</button>' +
+            '<button id="previewEmail"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 5h18v14H3zM3 6l9 7 9-7"/></svg>Gmail draft</button>' +
+            '<button id="previewSms"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 4h16v12H8l-4 4z"/></svg>Text via SMS</button>' +
+            '<button id="previewPrint"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 9V3h10v6M7 17H4V9h16v8h-3M7 14h10v7H7z"/></svg>Print</button>' +
+          '</div>' +
+          '<div class="finish-opts" role="group" aria-label="Finish options">' +
+            box('chkShrink', 'Shrink for email', 'Re-saves every page as a compact scan: a much smaller file, but its text can no longer be selected') +
+            box('chkNumbers', 'Page numbers', 'Stamps Page 1 of N at the bottom of every page') +
+            box('chkLock', 'Lock with password', 'The PDF will need a password to open; you choose it when you save') +
+            box('chkPermanent', 'Permanent white-out', 'Pages with a white-out are saved as pictures, so what was covered is removed from the file') +
+          '</div>' +
+          (options.lock ? '<p class="studio-note">' + lockNote + '</p>' : '') +
+          '<details class="finish-more"><summary>More ways to export</summary><div class="studio-row">' +
+            '<button id="previewSplit">Split by page ranges</button><button id="previewEach">Single pages as ZIP</button><button id="previewZip">All new PDFs as ZIP</button>' +
+          '</div></details>';
+      showDialog(email ? 'Review email and attachment' : 'Preview & finish', '<p id="previewSummary"></p>' + body + '<div id="finalPages" class="studio-preview"></div>');
+      $('previewSummary').textContent = filename + ' • ' + tray.length + ' page' + (tray.length === 1 ? '' : 's') + ' • ' + fmtSize(r.bytes.length) +
+        (options.lock ? ' before locking' : '') + (options.numbers ? ' • Numbered' : '') + (options.permanent ? ' • Permanent white-out' : '') + (r.note || '');
+      if (email) $('emailBodyPreview').srcdoc = buildEmailHtml();
+      $('savePreview').onclick = async () => {
+        let bytes = r.bytes;
+        if (options.lock) {
+          const pw = await askExportPassword();
+          if (!pw) return;
+          bytes = await lockPdfBytes(bytes, pw);
+        }
+        download(bytes, filename);
+      };
+      if (!email) {
+        const hand = id => () => { closeStudioDialog(); $(id).click(); };   // the same actions as the ⋯ menu
+        $('previewEmail').onclick = hand('btnEmail');
+        $('previewSms').onclick = hand('btnSms');
+        $('previewPrint').onclick = hand('btnPrint');
+        $('previewSplit').onclick = hand('btnSplitRanges');
+        $('previewEach').onclick = hand('btnEachPage');
+        $('previewZip').onclick = hand('btnZipOutputs');
+        $('studioDialogBody').querySelectorAll('.finish-opts input').forEach(el => el.addEventListener('change', () => {
+          const real = $(el.dataset.opt);
+          real.checked = el.checked;
+          real.dispatchEvent(new Event('change'));               // keeps the badge on the ⋯ button right
+          scheduleAutosave();
+          previewFinal(false, el.dataset.opt);                   // show the PDF the new setting makes
+        }));
+        if (focusOpt) $('studioDialogBody').querySelector('[data-opt="' + focusOpt + '"]')?.focus();
+      }
+      await renderPdfPreview(r.bytes, $('finalPages'));
+    } catch (e) {
+      toast('Could not preview PDF: ' + e.message);
+    } finally {
+      busy(false);
+    }
+  }
       $('btnPreviewFinal').onclick=()=>previewFinal();$('btnEmailPreview').onclick=()=>previewFinal(true);
   const retry=document.createElement('div');retry.id='mailRetryCheck';retry.hidden=!mailUncertain;retry.innerHTML='<p>A previous draft request has an uncertain outcome. Check Gmail Drafts before retrying.</p><a href="https://mail.google.com/mail/u/0/#drafts" target="_blank" rel="noopener">Open Gmail Drafts</a> <button id="mailRetryAllow">I checked Gmail — allow another attempt</button>';$('btnEmailGo').parentElement.before(retry);
   $('mailRetryAllow').onclick=()=>{mailUncertain=false;localStorage.removeItem('bliPdfMailUncertain');retry.hidden=true;$('btnEmailGo').disabled=false;};$('btnEmailGo').disabled=mailUncertain;
@@ -6610,15 +7493,17 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     renderOutputSelect();
   }
   function sourcePageTotal() { let n = 0; docs.forEach(d => { n += d.pages.length; }); return n; }
-  // one click for the most common job: everything, in file order, straight to Step 3
+  // one click for the most common job: everything, in file order, straight to the Pages tab
   $('btnAddEverything').addEventListener('click', () => {
     const inTray = new Set(tray.map(t => t.docId + ':' + t.pageIndex));
+    const firstNew = tray.length;
     let added = 0, skipped = 0;
     docs.forEach(d => d.pages.forEach(pg => { if (inTray.has(pg.docId + ':' + pg.pageIndex)) skipped++; else { trayAdd(pg); added++; } }));
     pickedSrc.clear();
     lastPickedSid = null;
     renderAll();
     if (tray.length) setStep(3);
+    if (added) showPage(tray[firstNew]);
     toast(added ? 'Added ' + added + ' page' + (added === 1 ? '' : 's') + (skipped ? ' (' + skipped + ' already there)' : '') + ' — arrange or edit them here.' : 'Every page is already in this new PDF.');
   });
   // the connection chips open the thing they report on
@@ -6655,13 +7540,13 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
   // ── How it works (item 6) ──
   function openHelp() {
     showDialog('How PDF Studio works', '<div class="help">' +
-      '<h3>1 · Three steps</h3><p><strong>Add files</strong> — or start from <em>Edit a PDF</em>, <em>Combine Files</em> or a form — and choose the pages you want (click to select, shift-click for a range, or <em>Add every page</em>) → <strong>Edit &amp; arrange</strong> (drag to reorder, pencil to mark up a page) → <strong>Preview &amp; finish</strong> (check it, then save, send or print).</p>' +
-      '<h3>2 · Finishing</h3><p><strong>Save PDF</strong> downloads it. <strong>Send</strong> makes a Gmail draft with the PDF attached, hands it to SMS Command Center, or prints. <strong>Export</strong> splits or bundles. <strong>Settings</strong> holds shrink-for-email, page numbers, password lock and permanent white-out.</p>' +
-      '<h3>3 · White-out is permanent by default</h3><p>A page with a white-out is saved as a picture, so the covered text is truly gone from the file. Turn it off in Settings only if that page must keep typed text. Highlight and crop just hide.</p>' +
+      '<h3>1 · One screen, three steps</h3><p><strong>Add files</strong> — or start from <em>Edit a PDF</em>, <em>Combine Files</em> or a form. Then everything is on one screen: your pages on the left, the page you are working on in the middle, the tools on the right. The <em>Source files</em> tab holds the files you opened — click the pages you want there (shift-click for a range) and <em>Use selected pages</em>, or <em>Add every page</em>. <strong>Edit &amp; arrange</strong>: click a page to work on it, drag pages to reorder, and use ⋯ on a page (or <em>Page actions</em>) to rotate, duplicate or remove it. <strong>Preview &amp; finish</strong> when it looks right. On a phone it is the same, one part at a time: tap a page to edit it.</p>' +
+      '<h3>2 · Finishing</h3><p><strong>Preview &amp; finish</strong> shows the finished PDF with everything you can do with it: <strong>Save PDF</strong>, a <strong>Gmail draft</strong> with it attached, <strong>Text via SMS</strong>, <strong>Print</strong>, and the finish options — shrink for email, page numbers, password lock, permanent white-out. The ⋯ button beside it has the same actions without the preview, plus splitting and ZIP bundles.</p>' +
+      '<h3>3 · White-out is permanent by default</h3><p>A page with a white-out is saved as a picture, so the covered text is truly gone from the file. Turn it off in the finish options only if that page must keep typed text. Highlight and crop just hide.</p>' +
       '<h3>4 · Packets and agency stamps</h3><p>In the Forms Library, save the forms you send together as a <strong>packet</strong>; anyone in the office opens it in one tap. Press ↑ on one of your stamps to share it with the agency. Signatures and initials stay on your own device.</p>' +
       '<h3>5 · Your phone</h3><p>Open a Gmail draft on your computer and choose <em>Set up my phone</em> — scan the code once and the phone can create drafts too.</p>' +
       '<h3>6 · Private by design</h3><p>Files never leave this device except when you send. Autosave keeps a copy in this browser; <strong>Projects</strong> saves named copies you can reopen.</p>' +
-      '<h3>Keys</h3><ul><li><kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Y</kbd> undo and redo anything, including edits on a page</li><li><kbd>Ctrl</kbd>+<kbd>S</kbd> save · <kbd>Ctrl</kbd>+<kbd>P</kbd> print (while your PDF is open)</li><li><kbd>PageUp</kbd> / <kbd>PageDown</kbd> move between pages in the editor · <kbd>Delete</kbd> removes a selected page</li><li><kbd>Esc</kbd> closes whatever is open</li></ul>' +
+      '<h3>Keys</h3><ul><li><kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Y</kbd> undo and redo anything, including edits on a page</li><li><kbd>Ctrl</kbd>+<kbd>S</kbd> save · <kbd>Ctrl</kbd>+<kbd>P</kbd> print (while your PDF is open)</li><li><kbd>PageUp</kbd> / <kbd>PageDown</kbd> move between pages · <kbd>Delete</kbd> removes the selected page, or the selected item you added</li><li>In the page list: <kbd>↑</kbd> / <kbd>↓</kbd> walk the pages, <kbd>Alt</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd> move the page</li><li><kbd>Esc</kbd> closes whatever is open</li></ul>' +
       '<p style="margin-top:14px;color:var(--muted);font-size:12px">PDF Studio v' + APP_VERSION + ' &bull; questions: Bill</p></div>');
   }
   $('btnHelp').addEventListener('click', openHelp);
@@ -6698,7 +7583,7 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     card.querySelector('strong').textContent = pr.name;
     card.querySelector('small').textContent = pages + ' page' + (pages === 1 ? '' : 's') + ' • saved ' +
       new Date(pr.when).toLocaleDateString([], { month: 'short', day: 'numeric' });
-    const open = () => { restoreWorkspace(pr.data); resetHistory(); toast('Opened project "' + pr.name + '".'); };
+    const open = () => { restoreWorkspace(pr.data); resetHistory(); showPage(tray[0]); toast('Opened project "' + pr.name + '".'); };
     card.addEventListener('click', (e) => { if (!e.target.closest('.menu-wrap')) open(); });
     card.addEventListener('keydown', (e) => { if (e.target === card && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); open(); } });
     const wrap = document.createElement('div');
@@ -6748,27 +7633,32 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
 
   const modalNames={editModal:'Edit PDF page',emailModal:'Email as Gmail draft',formsModal:'Forms Library',phoneModal:'Phone setup',formModal:'Fill PDF form',viewModal:'PDF page preview',sigPanel:'Signature'};
   for(const [id,name] of Object.entries(modalNames)){const el=$(id);if(el){el.setAttribute('role','dialog');el.setAttribute('aria-label',name);el.setAttribute('aria-modal','true');}}
-  // Step 3 shortcuts: Ctrl+S saves the PDF, Ctrl+P prints it (the editor and dialogs keep their own keys)
+  syncEditorAria();
+  // "open" for the keyboard rules below: in the workspace the editor is part of the page, not a layer over it
+  const modalIsOpen = id => { const el = $(id); return !!el && el.classList.contains('open') && !(id === 'editModal' && wsMode()); };
+  // Ctrl+S saves the PDF, Ctrl+P prints it (dialogs and the full-screen editor keep their own keys)
   document.addEventListener('keydown', (e) => {
     if (!(e.ctrlKey || e.metaKey) || e.altKey) return;
     const k = e.key.toLowerCase();
     if (k !== 's' && k !== 'p') return;
-    if ($('studioDialog').open || Object.keys(modalNames).some(id => $(id) && $(id).classList.contains('open'))) return;
+    if ($('studioDialog').open || Object.keys(modalNames).some(modalIsOpen)) return;
     e.preventDefault();
     if (!tray.length) { toast('Nothing to ' + (k === 's' ? 'save' : 'print') + ' yet — put some pages in your PDF first.'); return; }
     if (uiStep !== 3) setStep(3);
     $(k === 's' ? 'btnCreate' : 'btnPrint').click();
   });
-  document.addEventListener('keydown',e=>{if(e.key!=='Tab'||dlg.open)return;const opened=Object.keys(modalNames).map($).filter(el=>el&&el.classList.contains('open'));const active=opened.at(-1);if(!active)return;const controls=[...active.querySelectorAll('button,input,select,textarea,[tabindex="0"],[contenteditable="true"],a[href]')].filter(el=>!el.disabled&&el.getClientRects().length);if(!controls.length)return;const first=controls[0],last=controls.at(-1);if(e.shiftKey&&(document.activeElement===first||!active.contains(document.activeElement))){e.preventDefault();last.focus();}else if(!e.shiftKey&&(document.activeElement===last||!active.contains(document.activeElement))){e.preventDefault();first.focus();}},true);
+  document.addEventListener('keydown',e=>{if(e.key!=='Tab'||dlg.open)return;const opened=Object.keys(modalNames).filter(modalIsOpen).map($);const active=opened.at(-1);if(!active)return;const controls=[...active.querySelectorAll('button,input,select,textarea,[tabindex="0"],[contenteditable="true"],a[href]')].filter(el=>!el.disabled&&el.getClientRects().length);if(!controls.length)return;const first=controls[0],last=controls.at(-1);if(e.shiftKey&&(document.activeElement===first||!active.contains(document.activeElement))){e.preventDefault();last.focus();}else if(!e.shiftKey&&(document.activeElement===last||!active.contains(document.activeElement))){e.preventDefault();first.focus();}},true);
   // tidy up the setting left behind by the retired watch-print-folder feature
   settingsDel('watchDir').catch(() => {});
 
   $('nameInput').addEventListener('input', scheduleAutosave);
+  $('nameInput').addEventListener('input', fitNameInput);
   window.addEventListener('storage', updateConnectionStatus);
   updateWorkflowState();
   updateConnectionStatus();
   setAutosaveStatus('Ready', 'saved');
 
+  setEditorMode('select');
   renderOutputSelect(); resetHistory();
   // exposed for automated testing
   window.PDFStudio = {
@@ -6787,7 +7677,8 @@ body.home2 #recentList { display: grid; grid-template-columns: repeat(3, minmax(
     useSignature,
     getState: () => ({
       docs: [...docs.values()].map(d => ({ name: d.name, pages: d.pages.length })),
-      tray: tray.map(t => ({ docId: t.docId, pageIndex: t.pageIndex, rot: t.rot, stamps: t.stamps, crop: t.crop || null }))
+      tray: tray.map(t => ({ docId: t.docId, pageIndex: t.pageIndex, rot: t.rot, stamps: t.stamps, crop: t.crop || null, baked: !!t.thumbKey && !thumbStale(t) })),
+      current: editorItem ? tray.indexOf(editorItem) : -1, tool: editorMode, loading: editorLoading, ws: wsMode(), step: uiStep
     })
   };
 })();
