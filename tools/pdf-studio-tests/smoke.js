@@ -405,6 +405,38 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
       return out;`);
     ok('Delete with an item picked on the page removes that item, not the page (page card focused)', r.after === r.pages && r.nAfter === r.n - 1 && !r.stillSelected, r);
 
+    // 6c. the mouse wheel over the page turns the pages (Bill, 2026-10-01); zoomed in it scrolls the page first
+    {
+      const box = await evalIn(page, `await openEditor(0); const b = $('editCanvasWrap').getBoundingClientRect(); return { x: b.left + b.width / 2, y: b.top + b.height / 2 };`);
+      await page.mouse.move(box.x, box.y);
+      await page.mouse.wheel(0, 120); await page.waitForTimeout(900);
+      const a = await evalIn(page, `await shown(1); return { cur: S().current, hint: $('pageFlipHint').textContent, card: (document.querySelector('#trayStrip .tray-card.current .order-badge') || {}).textContent };`);
+      await page.mouse.wheel(0, -120); await page.waitForTimeout(900);
+      const b = await evalIn(page, `await shown(0); return S().current;`);
+      await page.mouse.wheel(0, -120); await page.waitForTimeout(700);
+      const c = await evalIn(page, `return { cur: S().current, hint: $('pageFlipHint').textContent };`);
+      await evalIn(page, `$('btnZoomIn').click(); await wait(600); $('btnZoomIn').click(); await wait(900); return true;`);
+      await page.mouse.wheel(0, 120); await page.waitForTimeout(700);
+      const d = await evalIn(page, `const w = $('editCanvasWrap'); return { cur: S().current, top: w.scrollTop, room: w.scrollHeight - w.clientHeight };`);
+      await evalIn(page, `const w = $('editCanvasWrap'); w.scrollTop = w.scrollHeight; await wait(300); return true;`);
+      await page.mouse.wheel(0, 120); await page.waitForTimeout(1100);
+      const e = await evalIn(page, `await shown(1); const w = $('editCanvasWrap'); return { cur: S().current, top: w.scrollTop };`);
+      await page.mouse.wheel(0, -120); await page.waitForTimeout(1100);
+      const f = await evalIn(page, `await shown(0); const w = $('editCanvasWrap'); return { cur: S().current, atBottom: w.scrollTop + w.clientHeight >= w.scrollHeight - 2 };`);
+      await evalIn(page, `$('btnZoomFit').click(); await wait(700); return true;`);
+      ok('mouse wheel over the page turns pages (the list follows); zoomed in it scrolls the page first, then turns at the edge',
+        a.cur === 1 && /^Page 2 of \d+$/.test(a.hint) && a.card === '2' && b === 0 && c.cur === 0 && c.hint === 'First page' &&
+        d.cur === 0 && d.top > 0 && d.room > 0 && e.cur === 1 && e.top === 0 && f.cur === 0 && f.atBottom, { a, b, c, d, e, f });
+      // a trackpad flick is dozens of small steps: one flick turns ONE page, the next flick the next one
+      const flick = async () => { for (let k = 0; k < 40; k++) { await page.mouse.wheel(0, 12); await page.waitForTimeout(16); } await page.waitForTimeout(900); };
+      await flick();
+      const g = await evalIn(page, `await shown(1); return S().current;`);
+      await flick();
+      const h = await evalIn(page, `await shown(2); return S().current;`);
+      await evalIn(page, `await openEditor(0); return true;`);
+      ok('a trackpad flick turns one page at a time', g === 1 && h === 2, { g, h });
+    }
+
     // 7. OCR text feeds Find
     r = await evalIn(page, `
       const cv = document.createElement('canvas'); cv.width = 800; cv.height = 600; const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, 800, 600);

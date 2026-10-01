@@ -2294,6 +2294,10 @@ button.finish-button svg { width: 18px; height: 18px; stroke-width: 2.4; }
 /* ── wide screens: the three panes ── */
 body.ws .ws-grid { display: grid; grid-template-columns: clamp(264px, 21.5vw, 336px) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
 body.ws .ws-left { border-right: 1px solid #e3e8ef; background: #fff; }
+/* the wheel turns pages: a short "Page 3 of 5" label at the top of the page area (the bottom is where messages appear) */
+.editor-main { position: relative; }
+#pageFlipHint { position: absolute; left: 50%; top: 14px; z-index: 4; transform: translateX(-50%); padding: 7px 16px; border-radius: 999px; background: rgba(11,27,51,.84); color: #fff; font-size: 14px; font-weight: 600; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .18s; }
+#pageFlipHint.show { opacity: 1; }
 body.ws #editModal { position: static; display: flex; align-items: stretch; padding: 0; background: none; z-index: auto; min-width: 0; min-height: 0; }
 body.ws .edit-panel { flex: 1; width: auto; height: auto; min-height: 0; border-radius: 0; box-shadow: none; grid-template-columns: minmax(0, 1fr) clamp(280px, 24vw, 368px); }
 body.ws .ed-nav, body.ws #btnEditDone { display: none; }
@@ -2658,6 +2662,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
           </div>
           <label class="mobile-tool-label">Tool <select id="mobileTool" aria-label="Editing tool"><option value="modeSelect">Select &amp; move</option><option value="modeText">Add text</option><option value="modeHl">Highlight</option><option value="modeDraw">Draw</option><option value="modeBox">White-out</option><option value="modeSig">Signature</option><option value="modeImg">Image</option><option value="modeStamps">Stamps</option><option value="modeCrop">Crop</option><option value="modePan">Move page</option></select><button id="btnToolSettings">Text &amp; style</button></label>
           <div class="editor-main">
+            <div id="pageFlipHint" aria-hidden="true"></div>
             <div id="editCanvasWrap">
               <div id="editStack">
                 <canvas id="editCanvas"></canvas>
@@ -3082,7 +3087,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
 <script>
 (function () {
   'use strict';
-  const APP_VERSION = '2026-10-01.3';   // bump on every release — shown in the footer, the Help dialog and the console
+  const APP_VERSION = '2026-10-01.4';   // bump on every release — shown in the footer, the Help dialog and the console
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -4516,6 +4521,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
   applyHintPref();
 
   let editorSeq = 0, editorLoading = false, lastEditorIndex = 0, editorBusy = false;
+  let landAt = null;                              // 'top' | 'bottom': where the next page drawn opens (zoomed in)
   let editorShown = { sig: '', bytes: null };     // what the canvas shows, or is being drawn for
   function editorSigOf(t) {
     return t.tid + '|' + t.docId + ':' + t.pageIndex + '|' + (t.rot || 0) + '|' + (t.crop ? [t.crop.x, t.crop.y, t.crop.w, t.crop.h].join(',') : '');
@@ -4527,6 +4533,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
     const fresh = item !== editorItem, modal = $('editModal');
     if (!fresh && wsMode() && editorVp && modal.classList.contains('open')) { paintCurrentCard(); return; }   // already on screen
     if (fresh) {
+      if (!editorItem || editorItem.tid !== item.tid) landAt = landAt || 'top';   // another page opens at its top
       removePendingCrop();
       selectedStamp = null;
       editorVp = null;                       // nothing can be placed until this page is drawn
@@ -4610,6 +4617,61 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
     if (a && a.closest && a.closest('#trayStrip, #docList')) a.blur();
   }, true);
 
+  /* ── The mouse wheel over the page turns the pages ──
+     Scrolling down past the bottom of the page shows the next page, scrolling up past
+     the top shows the previous one (at its bottom). Zoomed in, the wheel scrolls the
+     page first and only turns it at the edge.
+     A mouse wheel click (one big step) turns one page. A trackpad sends dozens of small
+     steps per flick: they add up to WHEEL_FLIP px, turn one page, and then nothing more
+     happens until the flick has died away (WHEEL_QUIET ms without a step). The same
+     wait applies when a flick scrolls a zoomed page into its edge, so reaching the
+     bottom never turns the page by itself. */
+  const WHEEL_FLIP = 90, WHEEL_QUIET = 200;
+  let wheelAcc = 0, wheelDir = 0, wheelLock = 0, wheelIdle = null, flipHintTimer = null;
+  let wheelQuiet = false, wheelQuietTimer = null, lastWheelAt = 0, lastWheelEdge = true;
+  function waitForQuiet() {
+    wheelQuiet = true;
+    clearTimeout(wheelQuietTimer);
+    wheelQuietTimer = setTimeout(() => { wheelQuiet = false; }, WHEEL_QUIET);
+  }
+  function flashPageHint(text) {
+    const el = $('pageFlipHint');
+    el.textContent = text;
+    el.classList.add('show');
+    clearTimeout(flipHintTimer);
+    flipHintTimer = setTimeout(() => el.classList.remove('show'), 1000);
+  }
+  $('editCanvasWrap').addEventListener('wheel', (e) => {
+    if (e.ctrlKey || !editorItem || !tray.length || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;   // Ctrl+wheel stays the browser zoom
+    const wrap = e.currentTarget;
+    const dy = e.deltaY * (e.deltaMode === 1 ? 40 : e.deltaMode === 2 ? wrap.clientHeight : 1);
+    if (!dy) return;
+    const dir = dy > 0 ? 1 : -1, now = Date.now(), click = Math.abs(dy) >= 50;   // click: a mouse-wheel notch
+    const atEdge = dir > 0 ? wrap.scrollTop + wrap.clientHeight >= wrap.scrollHeight - 2 : wrap.scrollTop <= 1;
+    const arrived = atEdge && !lastWheelEdge && now - lastWheelAt < WHEEL_QUIET;   // a flick just reached the edge
+    lastWheelAt = now;
+    lastWheelEdge = atEdge;
+    if (!atEdge) { wheelAcc = 0; return; }                  // zoomed in: let the page scroll first
+    e.preventDefault();
+    if (!click && (arrived || wheelQuiet)) { waitForQuiet(); return; }   // one page per trackpad flick
+    if (now < wheelLock || editorLoading || pendingCrop || boxDrag || inkStroke) return;
+    if (dir !== wheelDir) { wheelAcc = 0; wheelDir = dir; }
+    wheelAcc += Math.abs(dy);
+    clearTimeout(wheelIdle);
+    wheelIdle = setTimeout(() => { wheelAcc = 0; }, 300);   // a pause starts the count over
+    if (wheelAcc < WHEEL_FLIP) return;
+    wheelAcc = 0;
+    wheelLock = now + (click ? 300 : 450);
+    if (!click) waitForQuiet();
+    const j = tray.indexOf(editorItem) + dir;
+    if (j < 0 || j >= tray.length) { flashPageHint(dir > 0 ? 'Last page' : 'First page'); return; }
+    const a = document.activeElement;
+    if (a && a.isContentEditable) a.blur();                 // keep what was typed in a text box
+    landAt = dir > 0 ? 'top' : 'bottom';
+    moveEditor(dir);
+    flashPageHint('Page ' + (j + 1) + ' of ' + tray.length);
+  }, { passive: false });
+
   // the editor is a dialog when it covers the screen and a plain region inside the workspace
   function syncEditorAria() {
     const el = $('editModal'), ws = document.body.classList.contains('ws');
@@ -4658,6 +4720,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
         editorVp = vp;
         editorFit = fit;
         $('zoomPct').textContent = Math.round(fit * 100) + '%';
+        if (landAt) { wrap.scrollTop = landAt === 'bottom' ? wrap.scrollHeight : 0; landAt = null; }
       } finally {
         pdoc.destroy();
       }
@@ -7724,7 +7787,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
       '<h3>4 · Packets and agency stamps</h3><p>In the Forms Library, save the forms you send together as a <strong>packet</strong>; anyone in the office opens it in one tap. Press ↑ on one of your stamps to share it with the agency. Signatures and initials stay on your own device.</p>' +
       '<h3>5 · Your phone</h3><p>Open a Gmail draft on your computer and choose <em>Set up my phone</em> — scan the code once and the phone can create drafts too.</p>' +
       '<h3>6 · Private by design</h3><p>Files never leave this device except when you send. Autosave keeps a copy in this browser; <strong>Projects</strong> saves named copies you can reopen.</p>' +
-      '<h3>Keys</h3><ul><li><kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Y</kbd> undo and redo anything, including edits on a page</li><li><kbd>Ctrl</kbd>+<kbd>S</kbd> save · <kbd>Ctrl</kbd>+<kbd>P</kbd> print (while your PDF is open)</li><li><kbd>PageUp</kbd> / <kbd>PageDown</kbd> move between pages · <kbd>Delete</kbd> removes the selected page, or the selected item you added</li><li>In the page list: <kbd>↑</kbd> / <kbd>↓</kbd> walk the pages, <kbd>Alt</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd> move the page</li><li><kbd>Esc</kbd> closes whatever is open</li></ul>' +
+      '<h3>Keys</h3><ul><li><kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Y</kbd> undo and redo anything, including edits on a page</li><li><kbd>Ctrl</kbd>+<kbd>S</kbd> save · <kbd>Ctrl</kbd>+<kbd>P</kbd> print (while your PDF is open)</li><li>The mouse wheel over the page turns to the next or previous page (zoomed in, it scrolls the page first)</li><li><kbd>PageUp</kbd> / <kbd>PageDown</kbd> move between pages · <kbd>Delete</kbd> removes the selected page, or the selected item you added</li><li>In the page list: <kbd>↑</kbd> / <kbd>↓</kbd> walk the pages, <kbd>Alt</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd> move the page</li><li><kbd>Esc</kbd> closes whatever is open</li></ul>' +
       '<p style="margin-top:14px;color:var(--muted);font-size:12px">PDF Studio v' + APP_VERSION + ' &bull; questions: Bill</p></div>');
   }
   $('btnHelp').addEventListener('click', openHelp);
