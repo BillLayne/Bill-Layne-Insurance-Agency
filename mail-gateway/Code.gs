@@ -41,7 +41,7 @@
 
 const DEFAULT_BCC = 'Save@BillLayneInsurance.com';
 const DEFAULT_FROM_NAME = 'Bill Layne Insurance';
-const VERSION = '1.1';
+const VERSION = '1.2';
 
 function doGet() {
   return respond_({ ok: true, service: 'BLI Mail Gateway', version: VERSION });
@@ -59,7 +59,10 @@ function doPost(e) {
   if (!secret) {
     return respond_({ ok: false, error: 'GATEWAY_SECRET is not set. Add it under Project Settings > Script properties.' });
   }
-  if (!req.secret || String(req.secret) !== secret) {
+  // v1.2: the secret may also arrive as a ?secret= query parameter (used by the
+  // Perplexity credential vault). The JSON body secret still works unchanged.
+  const provided = req.secret || (e && e.parameter && e.parameter.secret);
+  if (!provided || String(provided) !== secret) {
     return respond_({ ok: false, error: 'Unauthorized: bad or missing secret.' });
   }
 
