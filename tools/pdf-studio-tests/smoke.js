@@ -705,8 +705,11 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
       ok('two new PDFs in a project: Finish saves the first and opens the second; Finish on the last closes it',
         /opens the next one/.test(r.note) && r.stillOpen && r.second && /closes the project/.test(r.note2) && r.closed && downloads.length === 4 && downloads[2] === 'Two Docs.pdf' && downloads[3] === 'New PDF 2.pdf', Object.assign({ downloads: downloads.slice() }, r));
       // Gmail draft → Finish in its success message: closes without saving again (gateway mocked — nothing is sent)
-      await page.route('https://script.google.com/macros/s/SMOKE-TEST/**', route => route.fulfill({ status: 200, contentType: 'application/json',
-        headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify({ ok: true, attached: 1, remainingQuota: 99 }) }));
+      let posted = null;
+      await page.route('https://script.google.com/macros/s/SMOKE-TEST/**', route => {
+        try { posted = JSON.parse(route.request().postData() || '{}'); } catch (_) {}
+        route.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify({ ok: true, attached: 1, remainingQuota: 99 }) });
+      });
       r = await evalIn(page, `
         localStorage.setItem('bliMailGateway.url', 'https://script.google.com/macros/s/SMOKE-TEST/exec'); localStorage.setItem('bliMailGateway.secret', 'smoke');
         await makePdf('Mail Me.pdf', 1); $('btnAddEverything').click(); await shown(0);
@@ -723,6 +726,23 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
       await page.unroute('https://script.google.com/macros/s/SMOKE-TEST/**');
       await page.waitForTimeout(600);
       ok('Gmail draft → Finish in its success message closes the project, no extra download (gateway mocked)', /Draft created/.test(r.banner) && r.closed && downloads.length === 4, Object.assign({ downloads: downloads.slice() }, r));
+      // the body the gateway turns into the Gmail draft: the Gold Elite v2 / core structure v3 gate (Bill, 2026-10-01)
+      {
+        const html = (posted && posted.html) || '';
+        const count = s => html.split(s).length - 1;
+        const g = {
+          courier: count('font:15px courier'), pngSpacer: count('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQ'),
+          pairedWidth: count('style="width:100%;max-width:600px'), nowrap: count('white-space:nowrap'),
+          fluid: html.includes('width="100%" cellpadding="0" cellspacing="0" class="email-container" style="max-width:600px;margin:0 auto"'),
+          fixed600: /<table[^>]*class="email-container"[^>]*>/.test(html) && /width="600"/.test(html.match(/<table[^>]*class="email-container"[^>]*>/)[0]),
+          firstInBody: /<body[^>]*>\s*<div style="display:none;white-space:nowrap;font:15px courier[^>]*>[^<]*<\/div>\s*<img src="data:image\/png;base64,iVBOR/.test(html),
+          darkGoldOnLight: html.includes('color:#8a6d2f'), placeholders: count('{{'), ascii: /^[\x00-\x7F]*$/.test(html), size: html.length,
+          attachment: !!(posted && posted.attachments && posted.attachments.length === 1 && /\.pdf$/.test(posted.attachments[0].name))
+        };
+        ok('the Gmail draft body keeps the Gold Elite v2 skeleton: spacer line + 600 px image first, fluid container, one nowrap, ASCII',
+          g.courier === 1 && g.pngSpacer === 1 && g.pairedWidth === 0 && g.nowrap === 1 && g.fluid && !g.fixed600 && g.firstInBody && g.darkGoldOnLight &&
+          g.placeholders === 0 && g.ascii && g.size < 102400 && g.attachment, g);
+      }
       page.off('download', onDl);
     }
 
