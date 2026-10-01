@@ -197,17 +197,24 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
       await waitFor(() => $('studioDialog').open && $('previewPrint') && document.querySelector('#finalPages canvas'), 15000);
       out.dialog = $('studioDialogTitle').textContent;
       out.finish = ['savePreview', 'previewEmail', 'previewSms', 'previewPrint', 'previewSplit', 'previewEach', 'previewZip'].every(id => !!$(id));
-      out.saveGold = getComputedStyle($('savePreview')).backgroundColor === 'rgb(200, 168, 78)';
+      const fb = $('btnFinish');
+      out.finishGold = !!fb && getComputedStyle(fb).backgroundColor === 'rgb(200, 168, 78)' && !!fb.closest('#studioDialog > header') && fb.textContent.trim() === 'Finish';
+      out.note = ($('finishNote') || {}).textContent || '';
       const dr = $('studioDialog').getBoundingClientRect();
       out.centered = Math.abs((dr.left + dr.right) / 2 - innerWidth / 2) < 4;
       out.options = [...document.querySelectorAll('.finish-opts input')].map(i => i.dataset.opt + ':' + i.checked).join(' ');
       document.querySelector('.finish-opts [data-opt="chkNumbers"]').click();
+      out.lockedWhileBuilding = document.querySelector('.finish-opts [data-opt="chkNumbers"]').disabled && $('btnFinish').disabled && $('savePreview').disabled;
       await waitFor(() => /Numbered/.test(($('previewSummary') || {}).textContent || '') && document.querySelector('#finalPages canvas'), 15000);
       out.numbered = $('chkNumbers').checked && /Numbered/.test($('previewSummary').textContent) && $('optBadge').classList.contains('show');
       document.querySelector('.finish-opts [data-opt="chkNumbers"]').click();
-      await waitFor(() => !/Numbered/.test(($('previewSummary') || {}).textContent || 'Numbered') && document.querySelector('#finalPages canvas'), 15000);
+      await waitFor(() => $('btnFinish') && !$('btnFinish').disabled && !/Updating|Numbered/.test($('previewSummary').textContent) && document.querySelector('#finalPages canvas'), 15000);
       out.numbersOff = !$('chkNumbers').checked && !$('optBadge').classList.contains('show');
-      $('studioDialogClose').click(); await wait(200); unbusy();
+      // closing while a rebuild is still running: the window must stay closed
+      document.querySelector('.finish-opts [data-opt="chkShrink"]').click();
+      $('studioDialogClose').click(); await wait(2500); unbusy();
+      out.staysClosed = !$('studioDialog').open;
+      $('chkShrink').checked = false; $('chkShrink').dispatchEvent(new Event('change'));
       $('workflowStep1').click(); await wait(300);
       out.toSources = !document.body.classList.contains('step-3') && document.querySelector('.workflow-step.current').id === 'workflowStep1' && $('wsTabSources').classList.contains('active') && vis($('docList'));
       out.pageStillShown = vis($('editCanvas')) && S().current === 0;
@@ -216,7 +223,8 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
       return out;`);
     ok('stages: Add files · Edit & arrange · Finish; Finish opens Preview & finish, centred',
       r.labels.join('|') === 'Add files|Edit & arrange|Finish' && r.current === 'workflowStep2' && r.dialog === 'Preview & finish' && r.finish && r.centered, r);
-    ok('Preview & finish: gold Save PDF, and the finish options rebuild the preview', r.saveGold && r.options === 'chkShrink:false chkNumbers:false chkLock:false chkPermanent:true' && r.numbered && r.numbersOff, r);
+    ok('Preview & finish: a gold Finish in its header; the options rebuild the preview, and nothing can save the old one meanwhile',
+      r.finishGold && /saves this PDF to your computer and closes the project/.test(r.note) && r.options === 'chkShrink:false chkNumbers:false chkLock:false chkPermanent:true' && r.lockedWhileBuilding && r.numbered && r.numbersOff && r.staysClosed, r);
     ok('Add files ↔ Source files tab, Pages tab brings the list back; the page stays on screen', r.toSources && r.pageStillShown && r.back, r);
 
     // 3c. saving: Ctrl+S from the workspace, and the gold button in Preview & finish
@@ -326,6 +334,18 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
       return { order, restored: S().tray.map(x => x.docId + ':' + x.pageIndex).join(' ') };`);
     ok('drag a page above another to reorder; undo puts it back', orderBefore === '1:0 1:1 1:2 2:0' && r.order === '1:1 1:0 1:2 2:0' && r.restored === orderBefore, Object.assign({ orderBefore }, r));
 
+    // 5d. two quick clicks on Add blank page: both pages land (one at a time), one blank file
+    r = await evalIn(page, `
+      await openEditor(0);
+      const before = S().tray.length;
+      $('btnBlankPage').click(); $('btnBlankPage').click();
+      await waitFor(() => S().tray.length === before + 2, 8000); await wait(400);
+      const out = { added: S().tray.length - before, blankFiles: S().docs.filter(d => d.name === 'Blank page.pdf').length };
+      P.travelHistory(-1); await wait(500); P.travelHistory(-1); await wait(700);
+      out.back = S().tray.length === before && !S().docs.some(d => d.name === 'Blank page.pdf');
+      return out;`);
+    ok('two quick clicks on Add blank page: two pages, one blank file; undo takes both back', r.added === 2 && r.blankFiles === 1 && r.back, r);
+
     // 6. the page on screen: jump, PageDown, tips, stamps on every page, initials, Select, live pictures
     r = await evalIn(page, `
       await openEditor(0);
@@ -368,6 +388,22 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
     ok('initials place at 60pt, signatures at 150pt', r.initialsW === 60 && r.sigW === 150, r);
     ok('Select tool: a click on the page adds nothing; pick an added item and Delete removes it', r.toolAfter === 'select' && r.clickAddsNothing && r.selected && r.deleted, r);
     ok('page pictures in the list follow the edits (every marked-up page re-drawn, edit count shown)', r.baked && r.badge === '2', r);
+
+    // 6b. Delete with an item picked on the page removes the item, never the page — even with a page card focused
+    r = await evalIn(page, `
+      await openEditor(1);
+      $('modeText').click(); $('stampText').value = 'DELETE ME';
+      const ov = $('editOverlay'), b = ov.getBoundingClientRect();
+      ov.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: b.left + b.width * .5, clientY: b.top + b.height * .4 })); await wait(300);
+      $('stampText').value = '';
+      const out = { pages: S().tray.length, n: S().tray[1].stamps.length };
+      const card = document.querySelectorAll('#trayStrip .tray-card')[1];
+      card.focus();
+      card.dispatchEvent(new KeyboardEvent('keydown', { key: 'Delete', bubbles: true, cancelable: true })); await wait(300);
+      out.after = S().tray.length; out.nAfter = S().tray[1].stamps.length; out.stillSelected = !!document.querySelector('#stampLayer .stamp-el.selected');
+      $('modeSelect').click();
+      return out;`);
+    ok('Delete with an item picked on the page removes that item, not the page (page card focused)', r.after === r.pages && r.nAfter === r.n - 1 && !r.stillSelected, r);
 
     // 7. OCR text feeds Find
     r = await evalIn(page, `
@@ -462,6 +498,17 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
     ok('reload → Restore brings back files, pages, name and the page pictures, on the Pages tab',
       r.offered && r.docs === beforeReload.docs && r.tray === beforeReload.tray && r.name === beforeReload.name && /sensitive/.test(r.page1) && r.onPages && r.baked === beforeReload.baked, Object.assign({ bakedBefore: beforeReload.baked }, r));
 
+    // 8c. Close without saving, then Ctrl+Z: the autosave holds every file again (not just the page list)
+    r = await evalIn(page, `
+      $('btnReset').click(); await wait(250); $('confirmReset').click(); await wait(800);
+      key('z', { ctrlKey: true });
+      await waitFor(() => S().docs.length > 0, 5000);
+      await waitFor(() => /^Saved at/.test($('autosaveStatus').textContent), 8000); await wait(400);
+      const rec = await P.sessionGet(), have = [];
+      for (const d of rec.docs) have.push(!!(await P.bytesGet(d.id)));
+      return { docs: S().docs.length, recDocs: rec.docs.length, have };`);
+    ok('Close without saving → Ctrl+Z: the autosave holds every file again', r.docs > 0 && r.recDocs === r.docs && r.have.length === r.docs && r.have.every(Boolean), r);
+
     // 9. optional: packets + shared stamps against the live Forms host
     if (FORMS_CODE) {
       r = await evalIn(page, `
@@ -480,6 +527,21 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
     } else {
       console.log('  skip  Forms host checks (set FORMS_CODE to include them)');
     }
+
+    // 9b. narrowing the window while a new text box is still empty: the box goes, nothing breaks
+    r = await evalIn(page, `
+      await openEditor(0);
+      $('modeText').click(); $('stampText').value = '';
+      const ov = $('editOverlay'), b = ov.getBoundingClientRect(), n0 = S().tray[0].stamps.length;
+      ov.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: b.left + b.width * .3, clientY: b.top + b.height * .3 })); await wait(250);
+      const tx = document.querySelector('#stampLayer .stamp-text.editing');
+      if (tx) tx.innerText = '';
+      return { n0, editing: !!tx, n1: S().tray[0].stamps.length };`);
+    const typingBefore = r;
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.waitForTimeout(600);
+    r = await evalIn(page, `return { n: S().tray[0].stamps.length, ws: S().ws, busy: $('busy').classList.contains('show') };`);
+    ok('narrowing the window while a new text box is still empty drops the box, no error, no stuck overlay', typingBefore.editing && typingBefore.n1 === typingBefore.n0 + 1 && r.n === typingBefore.n0 && !r.ws && !r.busy, Object.assign({ typingBefore }, r));
 
     // 10. phone layout: the same screens, one at a time, and a full-screen editor
     await page.setViewportSize({ width: 375, height: 812 });
@@ -530,6 +592,81 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
       const g = await p2.evaluate(() => ({ app: typeof window.PDFStudio === 'object', hashCleared: !location.hash, connected: !!localStorage.getItem('bliMailGateway.url'), chip: (document.getElementById('mailConnection') || {}).textContent }));
       await ctx2.close();
       ok('phone-setup link connects Gmail, clears the link from the address bar and the app still starts', g.app && g.hashCleared && g.connected && /Gmail configured/.test(g.chip || '') && !errs.length, Object.assign({ errs }, g));
+    }
+
+    // 12. Finish (Bill, 2026-10-01): one click ends the job — saves the PDF once, keeps the project, closes it
+    {
+      const downloads = [];
+      const onDl = d => downloads.push(d.suggestedFilename());
+      page.on('download', onDl);
+      r = await evalIn(page, `
+        await openEditor(0);
+        $('btnPreviewFinal').click();
+        await waitFor(() => $('studioDialog').open && $('btnFinish') && document.querySelector('#finalPages canvas'), 15000);
+        const out = { note: $('finishNote').textContent, pages: S().tray.length, name: $('nameInput').value };
+        $('btnFinish').click();
+        await waitFor(() => S().docs.length === 0, 10000); await wait(700);
+        out.closed = S().docs.length === 0 && !$('studioDialog').open && vis(document.querySelector('.home-title'));
+        out.toast = $('toast').textContent;
+        await waitFor(() => document.querySelectorAll('#recentList .proj-card').length > 0, 6000);
+        out.card = (document.querySelector('#recentList .proj-card') || {}).textContent || '';
+        const reopen = [...document.querySelectorAll('#toast button')].find(b => /reopen/i.test(b.textContent));
+        out.reopenOffered = !!reopen;
+        if (reopen) { reopen.click(); await waitFor(() => S().tray.length === out.pages, 8000); await shown(0); }
+        out.reopened = S().tray.length === out.pages && document.body.classList.contains('step-3') && $('nameInput').value === out.name;
+        return out;`);
+      await page.waitForTimeout(800);
+      ok('Finish saves the PDF, closes the project and keeps it under Recent projects; Reopen brings it back',
+        /saves this PDF/.test(r.note) && r.closed && /Finished/.test(r.toast) && downloads.length === 1 && downloads[0] === r.name + '.pdf' && /finished/i.test(r.card) && r.reopenOffered && r.reopened, Object.assign({ downloads: downloads.slice() }, r));
+      r = await evalIn(page, `
+        $('btnPreviewFinal').click();
+        await waitFor(() => $('studioDialog').open && $('btnFinish') && document.querySelector('#finalPages canvas'), 15000);
+        $('savePreview').click(); await wait(700);
+        const note = $('finishNote').textContent;
+        $('btnFinish').click();
+        await waitFor(() => S().docs.length === 0, 10000); await wait(600);
+        return { note, closed: S().docs.length === 0 };`);
+      await page.waitForTimeout(800);
+      ok('after Save PDF the note says so, and Finish just closes (no second download)', r.closed && /was saved/.test(r.note) && downloads.length === 2, Object.assign({ downloads: downloads.slice() }, r));
+      r = await evalIn(page, `
+        await makePdf('Two Docs.pdf', 3); $('btnAddEverything').click(); await shown(0);
+        $('btnNewOutput').click(); await wait(500);
+        document.querySelectorAll('#docList .page-card')[1].click(); await wait(100); $('btnPickAdd').click(); await shown(0);
+        const sel = $('outputSelect'); sel.value = sel.options[0].value; sel.dispatchEvent(new Event('change')); await shown(0);
+        $('btnPreviewFinal').click();
+        await waitFor(() => $('studioDialog').open && $('btnFinish') && document.querySelector('#finalPages canvas'), 15000);
+        const out = { note: $('finishNote').textContent };
+        $('btnFinish').click(); await wait(1500);
+        out.stillOpen = S().docs.length === 1; out.second = $('outputSelect').selectedIndex === 1 && S().tray.length === 1;
+        $('btnPreviewFinal').click();
+        await waitFor(() => $('studioDialog').open && $('btnFinish') && document.querySelector('#finalPages canvas'), 15000);
+        out.note2 = $('finishNote').textContent;
+        $('btnFinish').click(); await waitFor(() => S().docs.length === 0, 10000); await wait(600);
+        out.closed = S().docs.length === 0;
+        return out;`);
+      await page.waitForTimeout(800);
+      ok('two new PDFs in a project: Finish saves the first and opens the second; Finish on the last closes it',
+        /opens the next one/.test(r.note) && r.stillOpen && r.second && /closes the project/.test(r.note2) && r.closed && downloads.length === 4 && downloads[2] === 'Two Docs.pdf' && downloads[3] === 'New PDF 2.pdf', Object.assign({ downloads: downloads.slice() }, r));
+      // Gmail draft → Finish in its success message: closes without saving again (gateway mocked — nothing is sent)
+      await page.route('https://script.google.com/macros/s/SMOKE-TEST/**', route => route.fulfill({ status: 200, contentType: 'application/json',
+        headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify({ ok: true, attached: 1, remainingQuota: 99 }) }));
+      r = await evalIn(page, `
+        localStorage.setItem('bliMailGateway.url', 'https://script.google.com/macros/s/SMOKE-TEST/exec'); localStorage.setItem('bliMailGateway.secret', 'smoke');
+        await makePdf('Mail Me.pdf', 1); $('btnAddEverything').click(); await shown(0);
+        $('btnEmail').click(); await wait(300);
+        $('mailTo').value = 'test@example.com';
+        $('btnEmailGo').click();
+        await waitFor(() => $('mailBanner').classList.contains('ok') && $('mailBanner').querySelector('.finish-button'), 15000);
+        const out = { banner: $('mailBanner').textContent };
+        $('mailBanner').querySelector('.finish-button').click();
+        await waitFor(() => S().docs.length === 0, 10000); await wait(500);
+        out.closed = S().docs.length === 0 && !$('emailModal').classList.contains('open');
+        localStorage.removeItem('bliMailGateway.url'); localStorage.removeItem('bliMailGateway.secret');
+        return out;`);
+      await page.unroute('https://script.google.com/macros/s/SMOKE-TEST/**');
+      await page.waitForTimeout(600);
+      ok('Gmail draft → Finish in its success message closes the project, no extra download (gateway mocked)', /Draft created/.test(r.banner) && r.closed && downloads.length === 4, Object.assign({ downloads: downloads.slice() }, r));
+      page.off('download', onDl);
     }
 
     // 11. console

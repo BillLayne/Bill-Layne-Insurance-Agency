@@ -2268,8 +2268,20 @@ body.home2 footer .device-status { flex: 1 1 0; min-width: 0; width: auto; margi
 /* Preview & finish dialog */
 .finish-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 12px; }
 .finish-actions button { min-height: 46px; padding: 8px 16px; }
-.finish-actions button.save-button { min-width: 150px; border-color: var(--gold); background: var(--gold); color: #132238; }
-.finish-actions button.save-button:hover { border-color: #d9bb5f; background: #d9bb5f; }
+/* Finish: the gold "this job is done" action in the Preview & finish header (gold = finished, as everywhere) */
+#studioDialog > header h2 { flex: 1; min-width: 0; }
+.dialog-actions { display: flex; align-items: center; gap: 8px; }
+.dialog-actions:empty { display: none; }
+button.finish-button { min-height: 40px; padding: 6px 20px; gap: 8px; border-color: var(--gold); background: var(--gold); color: #132238; font-size: 15px; font-weight: 700; }
+button.finish-button:hover:not(:disabled) { border-color: #d9bb5f; background: #d9bb5f; }
+button.finish-button svg { width: 18px; height: 18px; stroke-width: 2.4; }
+.finish-note { margin: 4px 0 0; color: #55657a; font-size: 14px; }
+.mail-banner .banner-finish { margin-top: 10px; }
+@media (max-width: 600px) {
+  #studioDialog > header { padding: 12px 14px; gap: 8px; }
+  #studioDialog > header .dialog-actions:not(:empty) + .dialog-close { width: 40px; min-width: 40px; padding: 0; font-size: 0; }
+  #studioDialog > header .dialog-actions:not(:empty) + .dialog-close::before { content: "\2715"; font-size: 16px; }
+}
 .finish-opts { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0 0 12px; padding: 10px 14px; border: 1px solid #dce2e8; border-radius: 10px; }
 #studioDialogBody .finish-opts label { display: inline-flex; align-items: center; gap: 7px; margin: 0; font-size: 14px; cursor: pointer; }
 .finish-opts input { width: 17px; height: 17px; accent-color: var(--teal); }
@@ -2895,7 +2907,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
   </div>
 </div>
 
-<dialog id="studioDialog" aria-labelledby="studioDialogTitle"><header><h2 id="studioDialogTitle"></h2><button id="studioDialogClose" class="dialog-close" aria-label="Close dialog">&#10005; Close</button></header><div id="studioDialogBody"></div></dialog>
+<dialog id="studioDialog" aria-labelledby="studioDialogTitle"><header><h2 id="studioDialogTitle"></h2><div class="dialog-actions" id="studioDialogActions"></div><button id="studioDialogClose" class="dialog-close" aria-label="Close dialog">&#10005; Close</button></header><div id="studioDialogBody"></div></dialog>
 <!-- Gmail draft body: Bill's Gold Elite "PDF Studio Document Delivery" template.
      Stored as inert text (script type=text/plain) so the full email document —
      doctype, head, body — survives verbatim. Read at send time, tokens filled,
@@ -3070,11 +3082,12 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
 <script>
 (function () {
   'use strict';
-  const APP_VERSION = '2026-10-01.2';   // bump on every release — shown in the footer, the Help dialog and the console
+  const APP_VERSION = '2026-10-01.3';   // bump on every release — shown in the footer, the Help dialog and the console
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
   let outputs = [{id:'output-1',name:'new-document',pages:[]}], activeOutput = 'output-1', projectId = null, projectName = '';
+  const delivered = new Map();   // output id -> { sig, how }: which new PDFs already left the app, and as what (Finish)
   const collapsedSources = new Set();
   let history = [], historyAt = -1, historyPaused = false;
   let mailInFlight = false, mailUncertain = localStorage.getItem('bliPdfMailUncertain') === '1';
@@ -3376,6 +3389,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
     const n = pdfjsDoc.numPages;
     pdfjsDoc.destroy();
     if (!quiet) toast('Added "' + name + '" (' + n + ' page' + (n === 1 ? '' : 's') + ')');
+    return docId;
   }
 
   /* ── Rendering: source pane ── */
@@ -3468,8 +3482,11 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
   $('wsTabSources').addEventListener('click', () => setStep(2));
   // crossing the three-pane width: the editor is either part of the screen or a full-screen layer
   wsWide.addEventListener('change', () => {
-    const was = document.body.classList.contains('ws');
+    const was = document.body.classList.contains('ws'), a = document.activeElement;
+    if (a && a.isContentEditable) a.blur();          // finish the text box being typed while its page is still bound
     updateWorkflowState();
+    if (was !== wsMode() && pickedTray.size) clearTrayPicks();   // a Ctrl-click selection would turn taps into picks
+    if (wsMode() && editorMode === 'pan') setEditorMode('select');   // Move page has no button in the workspace
     if (was && !wsMode() && editorItem) {
       removePendingCrop();
       closeSigPanel();
@@ -3886,16 +3903,20 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
       });
       card.addEventListener('keydown', (e) => {
         if (e.target !== card) return;
+        const list = wsMode(), editing = $('editModal').classList.contains('open');
+        if (!list && editing) return;                                   // the full-screen editor covers the list
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openEditor(t); return; }
-        if (e.key === 'ArrowLeft' || (e.altKey && e.key === 'ArrowUp')) { e.preventDefault(); moveBy(-1); return; }
-        if (e.key === 'ArrowRight' || (e.altKey && e.key === 'ArrowDown')) { e.preventDefault(); moveBy(1); return; }
-        if (wsMode() && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {     // walk the list
+        // the workspace column: ↑/↓ walk, Alt+↑/↓ move · the grid: ←/→ move
+        if ((!list && e.key === 'ArrowLeft') || (e.altKey && e.key === 'ArrowUp')) { e.preventDefault(); moveBy(-1); return; }
+        if ((!list && e.key === 'ArrowRight') || (e.altKey && e.key === 'ArrowDown')) { e.preventDefault(); moveBy(1); return; }
+        if (list && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {     // walk the list
           e.preventDefault();
           const next = tray[i + (e.key === 'ArrowDown' ? 1 : -1)];
           if (next) { openEditor(next); trayStrip.querySelector('[data-tid="' + next.tid + '"]')?.focus(); }
           return;
         }
         if (e.key === 'Delete' || e.key === 'Backspace') {
+          if (selectedStamp && editing) return;                         // an item picked on the page wins: the editor removes it
           e.preventDefault();
           if (pickedTray.size > 1 && pickedTray.has(t.tid)) { removePickedTray(); return; }
           removePage(t);
@@ -3998,14 +4019,16 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
     toast('Page ' + (i + 1) + ' duplicated — the copy is page ' + (i + 2) + '.');
   }
   const BLANK_NAME = 'Blank page.pdf';
-  async function addBlankPage() {
+  let blankChain = Promise.resolve();
+  // one at a time: a quick second click waits for the first, so both pages land
+  function addBlankPage() { blankChain = blankChain.then(addOneBlankPage); return blankChain; }
+  async function addOneBlankPage() {
     try {
       let doc = [...docs.values()].find(d => d.name === BLANK_NAME && d.kind !== 'image' && d.pages.length === 1);
       if (!doc) {
         const blank = await PDFLib.PDFDocument.create();
         blank.addPage([612, 792]);                               // letter
-        await addPdfData(BLANK_NAME, new Uint8Array(await blank.save()), true);
-        doc = [...docs.values()].at(-1);
+        doc = docs.get(await addPdfData(BLANK_NAME, new Uint8Array(await blank.save()), true));
       }
       const here = wsMode() && editorItem ? tray.indexOf(editorItem) : -1;
       const at = here >= 0 ? here + 1 : tray.length;             // after the page on screen, otherwise at the end
@@ -4090,6 +4113,8 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
           let url = null;
           if (t === editorItem) {
             // the page on screen: copy what the editor shows. Still drawing? renderEditor queues it again when done.
+            // Mid-drag the overlay holds a marquee or half a stroke: try again in a moment.
+            if (boxDrag || inkStroke) { thumbQueue.add(tid); continue; }
             if (editorVp && !editorLoading && editorShown.sig === editorSigOf(t)) url = editorThumb();
           } else {
             url = await bakeThumb(t);
@@ -4490,7 +4515,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
   });
   applyHintPref();
 
-  let editorSeq = 0, editorLoading = false, lastEditorIndex = 0;
+  let editorSeq = 0, editorLoading = false, lastEditorIndex = 0, editorBusy = false;
   let editorShown = { sig: '', bytes: null };     // what the canvas shows, or is being drawn for
   function editorSigOf(t) {
     return t.tid + '|' + t.docId + ':' + t.pageIndex + '|' + (t.rot || 0) + '|' + (t.crop ? [t.crop.x, t.crop.y, t.crop.w, t.crop.h].join(',') : '');
@@ -4578,6 +4603,13 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
     else updateEditorPage();                  // same page, nothing to redraw (renderTray already marked its card)
   }
 
+  // working on the page takes the keyboard away from the lists, so Delete and the arrows act on the page.
+  // Capture phase, registered before the Move-page handler, which stops the event in pan mode.
+  $('editCanvasWrap').addEventListener('pointerdown', () => {
+    const a = document.activeElement;
+    if (a && a.closest && a.closest('#trayStrip, #docList')) a.blur();
+  }, true);
+
   // the editor is a dialog when it covers the screen and a plain region inside the workspace
   function syncEditorAria() {
     const el = $('editModal'), ws = document.body.classList.contains('ws');
@@ -4593,7 +4625,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
     editorShown = { sig: editorSigOf(item), bytes: doc ? doc.bytes : null };
     editorLoading = true;
     // in the workspace the page area just dims; the full-screen editor keeps the "Rendering" message
-    if (inPlace) wrap.classList.add('loading'); else busy(true, 'Rendering page…');
+    if (inPlace) wrap.classList.add('loading'); else { busy(true, 'Rendering page…'); editorBusy = true; }
     try {
       // render the base page WITHOUT stamps — stamps live as movable overlay boxes
       const base = { docId: item.docId, pageIndex: item.pageIndex, rot: item.rot, stamps: [], crop: item.crop };
@@ -4645,7 +4677,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
       if (seq === editorSeq) {                                    // an overtaken render leaves these to the newer one
         editorLoading = false;
         wrap.classList.remove('loading');
-        if (!inPlace) busy(false);
+        if (editorBusy) { busy(false); editorBusy = false; }      // also clears one raised by an overtaken full-screen render
       }
     }
   }
@@ -4699,11 +4731,12 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
     if (editorMode === 'select') syncToolOptions();   // size and color appear for a picked text box
   }
   function elForStamp(st) { return [...stampLayer.children].find(el => el.__stamp === st) || null; }
-  function removeStamp(st) {
-    const i = editorItem.stamps.indexOf(st);
-    if (i >= 0) editorItem.stamps.splice(i, 1);
+  function removeStamp(st, item = editorItem) {
+    if (!item) return;
+    const i = item.stamps.indexOf(st);
+    if (i >= 0) item.stamps.splice(i, 1);
     if (selectedStamp === st) selectedStamp = null;
-    syncStampLayer();
+    if (item === editorItem) syncStampLayer();
   }
 
   function syncStampLayer() {
@@ -4757,6 +4790,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
   }
 
   function startTextEdit(el, st) {
+    const owner = editorItem;                    // the page this box belongs to, even if another is on screen when typing ends
     selectStamp(st);
     const txt = el.querySelector('.stamp-text');
     try { txt.contentEditable = 'plaintext-only'; } catch (_) { txt.contentEditable = 'true'; }
@@ -4772,7 +4806,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
       txt.contentEditable = 'false';
       txt.classList.remove('editing');
       const t = txt.innerText.replace(/ /g, ' ').replace(/\s+$/, '');
-      if (!t.trim()) { removeStamp(st); }
+      if (!t.trim()) { removeStamp(st, owner); }
       else { st.text = t; txt.innerText = t; }
       scheduleAutosave();
     };
@@ -6049,6 +6083,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
       const r = await buildFinalBytes();
       if (!r) { busy(false); toast('Cancelled — no password was set, so nothing was created.'); return; }
       download(r.bytes, cleanName());
+      markDelivered('saved');
       toast('Created ' + cleanName() + ' — ' + tray.length + ' page' + (tray.length === 1 ? '' : 's') + r.note);
     } catch (err) {
       console.error(err);
@@ -6101,6 +6136,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
       busy(false);
       frame.contentWindow.focus();
       frame.contentWindow.print();
+      markDelivered('print');
       toast('Print window opened — ' + imgs.length + ' page' + (imgs.length === 1 ? '' : 's') + '.');
     } catch (err) {
       console.error(err);
@@ -6109,7 +6145,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
     }
   });
 
-  $('btnEachPage').addEventListener('click', () => exportZip(tray.map((t,i) => ({ name: cleanName('-page-' + (i+1)), pages: [t] }))));
+  $('btnEachPage').addEventListener('click', () => exportZip(tray.map((t,i) => ({ name: cleanName('-page-' + (i+1)), pages: [t] })), [activeOutput]));
 
   /* ── Email as Gmail draft (BLI Mail Gateway) ── */
   const GW_URL_KEY = 'bliMailGateway.url', GW_SECRET_KEY = 'bliMailGateway.secret';
@@ -6312,6 +6348,13 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
           mailBanner(true, '✅ Draft created with <strong>' + cleanName() + '</strong> attached' + r.note +
             ' — <a href="https://mail.google.com/mail/u/0/#drafts" target="_blank">open Gmail Drafts</a> to review and send.' +
             (out.remainingQuota != null ? ' (' + out.remainingQuota + ' sends left today)' : ''));
+          markDelivered('gmail');
+          const fin = document.createElement('div');
+          fin.className = 'banner-finish';
+          fin.innerHTML = '<button type="button" class="finish-button">' + FINISH_ICON + '<span>Finish</span></button>';
+          fin.firstChild.title = 'Close this project — a copy stays under Recent projects';
+          fin.firstChild.addEventListener('click', () => finishProject());
+          $('mailBanner').append(fin);
         } else {
           mailBanner(false, '⚠️ A draft was created but the PDF was <strong>not attached</strong> — the Mail Gateway needs its one-time update to version 1.1. Ask Claude for the update steps, then try again.');
         }
@@ -6624,6 +6667,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
     }));
   }
   function sessionDel() {
+    storedBytes.clear();                         // the store is emptied below (only ever called after start-up)
     return sdb().then(db => new Promise((res, rej) => {
       const tx = db.transaction(['session', 'docbytes'], 'readwrite');
       tx.objectStore('session').delete('current');
@@ -6632,11 +6676,13 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
       tx.onerror = () => rej(tx.error);
     }));
   }
-  /* File bytes are written to their own store ONCE per file (a WeakSet remembers
-     which byte arrays are already there), so the autosave that runs after every
-     change only carries the light state - page order, edits, thumbnails - instead
-     of re-writing a 30 MB scan packet each time. Orphaned bytes are pruned. */
-  const savedBytes = new WeakSet();
+  /* File bytes are written to their own store ONCE per file (storedBytes remembers
+     which byte array each file has in the store), so the autosave that runs after
+     every change only carries the light state - page order, edits, thumbnails -
+     instead of re-writing a 30 MB scan packet each time. Orphaned bytes are pruned.
+     A Map, not a WeakSet of arrays: Close (sessionDel empties the store) followed by
+     Ctrl+Z brings back the SAME arrays, and they must be written again. */
+  const storedBytes = new Map();   // docId -> the byte array that is in the docbytes store
   function bytesTx(mode, fn) {
     return sdb().then(db => new Promise((res, rej) => {
       const tx = db.transaction('docbytes', mode);
@@ -6649,11 +6695,11 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
   async function storeDocBytes() {
     const live = new Set(docs.keys());
     const keys = await bytesTx('readonly', st => st.getAllKeys());
-    for (const k of keys || []) if (!live.has(k)) await bytesTx('readwrite', st => st.delete(k));
+    for (const k of keys || []) if (!live.has(k)) { await bytesTx('readwrite', st => st.delete(k)); storedBytes.delete(k); }
     for (const [id, d] of docs) {
-      if (savedBytes.has(d.bytes)) continue;
+      if (storedBytes.get(id) === d.bytes) continue;
       await bytesTx('readwrite', st => st.put(d.bytes, id));
-      savedBytes.add(d.bytes);
+      storedBytes.set(id, d.bytes);
     }
   }
 
@@ -6740,7 +6786,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
             doc.pages.push(entry);
             srcIndex.set(entry.sid, entry);
           });
-          savedBytes.add(doc.bytes);   // already in the store - no need to write it again
+          storedBytes.set(d.id, doc.bytes);   // already in the store - no need to write it again
         }
         tray = (saved.tray || []).map(t => {
           const item = {
@@ -7020,6 +7066,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
   }
   function restoreWorkspace(saved) {
     clearTimeout(autosaveTimer); historyPaused=true; const fromHome=uiStep===1||!tray.length;   // coming from the home screen, or from an emptied PDF
+    if(!(saved.docs.length===docs.size&&saved.docs.every(d=>docs.has(d.id)&&docs.get(d.id).bytes===d.bytes)))delivered.clear();   // another job (undo/redo keeps the same files)
     docs.clear(); srcIndex.clear(); pickedSrc.clear(); collapsedSources.clear(); docTextCache.clear();
     for(const d of saved.docs){ const doc={...d,bytes:d.bytes instanceof Uint8Array ? d.bytes : new Uint8Array(d.bytes),pages:d.pages.map(p=>({...p,docId:d.id}))}; docs.set(d.id,doc); doc.pages.forEach(p=>srcIndex.set(p.sid,p)); }
     tray=copyPages(saved.tray||[]); nextDocId=saved.nextDocId; nextSid=saved.nextSid; nextTid=saved.nextTid;
@@ -7084,14 +7131,14 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
   $('btnToolSettings').onclick=()=>{showDialog('Tool settings','<p>Set up this tool, then close this panel to work on the page.</p><div id="toolSettingsHost"></div>');const context=$('editContext'),hint=$('editHint'),parent=context.parentNode,next=hint.nextSibling;$('toolSettingsHost').append(context,hint);dialogCleanup=()=>{parent.insertBefore(context,next);parent.insertBefore(hint,next);};};
   function closeStudioDialog(){dialogCleanup();dialogCleanup=()=>{};dlg.close();}
   $('studioDialogClose').onclick=closeStudioDialog;dlg.addEventListener('cancel',()=>{dialogCleanup();dialogCleanup=()=>{};});
-  function showDialog(title,html){dialogCleanup();dialogCleanup=()=>{};$('studioDialogTitle').textContent=title;$('studioDialogBody').innerHTML=html;if(!dlg.open)dlg.showModal();}
+  function showDialog(title,html){dialogCleanup();dialogCleanup=()=>{};$('studioDialogActions').replaceChildren();$('studioDialogTitle').textContent=title;$('studioDialogBody').innerHTML=html;if(!dlg.open)dlg.showModal();}
   async function projectStore(method,value){return new Promise((resolve,reject)=>{const r=indexedDB.open('bliPdfProjects',1);r.onupgradeneeded=()=>r.result.createObjectStore('projects',{keyPath:'id'});r.onerror=()=>reject(r.error);r.onsuccess=()=>{const db=r.result;const tx=db.transaction('projects',method==='getAll'?'readonly':'readwrite');const q=tx.objectStore('projects')[method](value);tx.oncomplete=()=>{resolve(q.result);db.close();};tx.onerror=()=>{reject(tx.error);db.close();};};});}
-  async function saveProject(name){const id=projectId||crypto.randomUUID();const data=snapshotWorkspace();data.projectId=id;data.projectName=name;await projectStore('put',{id,name,when:Date.now(),data});projectId=id;projectName=name;renderOutputSelect();scheduleAutosave();renderRecentProjects();}
+  async function saveProject(name,extra){const id=projectId||crypto.randomUUID();const data=snapshotWorkspace();data.projectId=id;data.projectName=name;await projectStore('put',{id,name,when:Date.now(),data,...(extra||{})});projectId=id;projectName=name;renderOutputSelect();scheduleAutosave();renderRecentProjects();}
   async function openProjects(){
     showDialog('Saved projects',`<p>Named workspaces stay in this browser on this device, including source files, edits and output documents. They are not cloud backups.</p><label for="projectNameInput">Project name</label><input id="projectNameInput" placeholder="Customer or project name"><div class="studio-row"><button id="saveProjectNow" class="primary">Save project</button><button id="newProjectNow">New empty project</button></div><p id="projectNotice" role="status"></p><div id="projectList"></div>`);
     $('projectNameInput').value=projectName;
     const list=await projectStore('getAll');
-    for(const p of list.sort((a,b)=>b.when-a.when)){const row=document.createElement('div');row.className='studio-card';const title=document.createElement('strong');title.textContent=p.name;const note=document.createElement('p');note.textContent=new Date(p.when).toLocaleString()+' • '+p.data.outputs.length+' new PDF'+(p.data.outputs.length===1?'':'s');const load=document.createElement('button');load.textContent='Open project';load.onclick=async()=>{try{if(docs.size)await saveProject(projectName||'Recovered workspace '+new Date().toLocaleString());restoreWorkspace(p.data);resetHistory();if(tray.length){setStep(3,{silent:true});showPage(tray[0]);}closeStudioDialog();}catch(e){$('projectNotice').textContent='Could not save the current workspace. It has been kept open.';}};const del=document.createElement('button');del.textContent='Delete saved copy';del.onclick=()=>{del.textContent='Confirm delete';del.onclick=async()=>{await projectStore('delete',p.id);if(projectId===p.id){projectId=null;projectName='';renderOutputSelect();}openProjects();renderRecentProjects();};};row.append(title,note,load,del);$('projectList').append(row);}
+    for(const p of list.sort((a,b)=>b.when-a.when)){const row=document.createElement('div');row.className='studio-card';const title=document.createElement('strong');title.textContent=p.name;const note=document.createElement('p');note.textContent=new Date(p.when).toLocaleString()+' • '+p.data.outputs.length+' new PDF'+(p.data.outputs.length===1?'':'s')+(p.finishedAt?' • finished':'');const load=document.createElement('button');load.textContent='Open project';load.onclick=async()=>{try{if(docs.size)await saveProject(projectName||'Recovered workspace '+new Date().toLocaleString());restoreWorkspace(p.data);resetHistory();if(tray.length){setStep(3,{silent:true});showPage(tray[0]);}closeStudioDialog();}catch(e){$('projectNotice').textContent='Could not save the current workspace. It has been kept open.';}};const del=document.createElement('button');del.textContent='Delete saved copy';del.onclick=()=>{del.textContent='Confirm delete';del.onclick=async()=>{await projectStore('delete',p.id);if(projectId===p.id){projectId=null;projectName='';renderOutputSelect();}openProjects();renderRecentProjects();};};row.append(title,note,load,del);$('projectList').append(row);}
     $('saveProjectNow').onclick=async()=>{try{const name=$('projectNameInput').value.trim();if(!name)throw Error('Enter a project name.');await saveProject(name);openProjects();}catch(e){$('projectNotice').textContent=(e&&e.name==='QuotaExceededError')?'This project is too large to store in this browser. Save the PDFs instead.':e.message;}};
     $('newProjectNow').onclick=async()=>{try{if(docs.size)await saveProject(projectName||'Recovered workspace '+new Date().toLocaleString());restoreWorkspace({docs:[],tray:[],name:'new-document',nextDocId:1,nextSid:1,nextTid:1});resetHistory();closeStudioDialog();}catch(e){$('projectNotice').textContent='Could not save your current work. New project was not started.';}};
   }
@@ -7101,16 +7148,16 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
   // Store-only ZIP: no additional library or upload required. CRC and headers are standard ZIP32.
   function zipBytes(entries){const chunks=[],central=[];let offset=0;const enc=new TextEncoder();function crc(bytes){let c=0xffffffff;for(const b of bytes){c^=b;for(let k=0;k<8;k++)c=(c>>>1)^((c&1)?0xedb88320:0);}return (c^0xffffffff)>>>0;}function hdr(n){return new Uint8Array(n);}for(const e of entries){const name=enc.encode(e.name),data=e.bytes,check=crc(data);const h=hdr(30),v=new DataView(h.buffer);v.setUint32(0,0x04034b50,true);v.setUint16(4,20,true);v.setUint16(6,0x800,true);v.setUint32(14,check,true);v.setUint32(18,data.length,true);v.setUint32(22,data.length,true);v.setUint16(26,name.length,true);chunks.push(h,name,data);const c=hdr(46),cv=new DataView(c.buffer);cv.setUint32(0,0x02014b50,true);cv.setUint16(4,20,true);cv.setUint16(6,20,true);cv.setUint16(8,0x800,true);cv.setUint32(16,check,true);cv.setUint32(20,data.length,true);cv.setUint32(24,data.length,true);cv.setUint16(28,name.length,true);cv.setUint32(42,offset,true);central.push(c,name);offset+=h.length+name.length+data.length;}const size=central.reduce((n,c)=>n+c.length,0),end=hdr(22),ev=new DataView(end.buffer);ev.setUint32(0,0x06054b50,true);ev.setUint16(8,entries.length,true);ev.setUint16(10,entries.length,true);ev.setUint32(12,size,true);ev.setUint32(16,offset,true);return new Blob([...chunks,...central,end],{type:'application/zip'});}
   function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),60000);}
-  async function exportZip(groups){
+  async function exportZip(groups,deliveredIds){
     const usable=groups.filter(g=>g.pages.length);if(!usable.length){toast('Choose pages first.');return;}
     const options=exportOptions(),pw=options.lock?await askExportPassword():undefined;if(options.lock&&!pw)return;
-    busy(true,'Building document bundle…');try{const files=[],names=new Set();for(const g of usable){const r=await buildFinalBytes(g.pages,options,pw);let name=safePdfName(g.name),n=2;while(names.has(name.toLowerCase()))name=safePdfName(g.name.replace(/\.pdf$/i,'')+'-'+n++);names.add(name.toLowerCase());files.push({name,bytes:r.bytes});}downloadBlob(zipBytes(files),'pdf-documents.zip');toast('Saved '+files.length+' PDF files in one ZIP.');}catch(e){toast('Could not create ZIP: '+e.message);}finally{busy(false);}
+    busy(true,'Building document bundle…');try{const files=[],names=new Set();for(const g of usable){const r=await buildFinalBytes(g.pages,options,pw);let name=safePdfName(g.name),n=2;while(names.has(name.toLowerCase()))name=safePdfName(g.name.replace(/\.pdf$/i,'')+'-'+n++);names.add(name.toLowerCase());files.push({name,bytes:r.bytes});}downloadBlob(zipBytes(files),'pdf-documents.zip');if(deliveredIds)markDelivered('zip',deliveredIds);toast('Saved '+files.length+' PDF files in one ZIP.');}catch(e){toast('Could not create ZIP: '+e.message);}finally{busy(false);}
   }
-  $('btnZipOutputs').onclick=()=>exportZip(packedOutputs().map(o=>({name:o.name,pages:o.pages})));
+  $('btnZipOutputs').onclick=()=>{const all=packedOutputs();exportZip(all.map(o=>({name:o.name,pages:o.pages})),all.filter(o=>o.pages.length).map(o=>o.id));};
   $('btnSplitRanges').onclick=()=>{
     showDialog('Split into named PDFs',`<p>Use the current document’s ${tray.length} pages. Put one filename and page selection on each line.</p><label for="splitInput">Filename | pages</label><textarea id="splitInput" rows="6" placeholder="Application | 1-3\nSupporting documents | 4, 5-7"></textarea><p class="studio-note">All finish settings apply to each PDF. Page numbering starts at 1 in each document. Password protection uses the same password for the bundle.</p><div class="studio-row"><button id="saveSplit" class="primary">Download ZIP</button><button id="keepSplit">Keep as separate new PDFs</button></div><p id="splitError" role="alert"></p>`);
     function groups(){return $('splitInput').value.trim().split(/\n/).map(line=>{const sep=line.indexOf('|');if(sep<1)throw Error('Each line needs a filename | pages.');return {name:line.slice(0,sep).trim(),pages:parseRanges(line.slice(sep+1),tray.length).map(i=>tray[i])};});}
-    $('saveSplit').onclick=async()=>{try{await exportZip(groups());}catch(e){$('splitError').textContent=e.message;}};
+    $('saveSplit').onclick=async()=>{try{const gs=groups();await exportZip(gs,new Set(gs.flatMap(g=>g.pages)).size===tray.length?[activeOutput]:null);}catch(e){$('splitError').textContent=e.message;}};
     $('keepSplit').onclick=()=>{try{const gs=groups();saveActiveOutput();for(const g of gs)outputs.push({id:crypto.randomUUID(),name:g.name,pages:copyPages(g.pages).map(t=>({...t,tid:nextTid++}))});renderOutputSelect();scheduleAutosave();closeStudioDialog();toast('Created '+gs.length+' new PDFs — switch between them from the menu beside the file name.');}catch(e){$('splitError').textContent=e.message;}};
   };
   async function renderPdfPreview(bytes,container){
@@ -7123,14 +7170,136 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
     async function render(){if(rendering||closed)return;rendering=true;previous.disabled=true;next.disabled=true;try{const page=await task.getPage(current);if(closed)return;const vp=page.getViewport({scale:Math.min(1.5,900/page.getViewport({scale:1}).width)});canvas.width=vp.width;canvas.height=vp.height;canvas.setAttribute('aria-label','Preview page '+current);label.textContent='Page '+current+' of '+task.numPages;await page.render({canvasContext:canvas.getContext('2d'),viewport:vp,intent:'print'}).promise;}catch(e){if(!closed)label.textContent='Could not preview page '+current;}finally{rendering=false;previous.disabled=current===1;next.disabled=current===task.numPages;}}
     previous.onclick=()=>{if(!rendering&&current>1){current--;void render();}};next.onclick=()=>{if(!rendering&&current<task.numPages){current++;void render();}};await render();
   }
+  /* ── Finish: the last step of a job ──
+     Finish saves this PDF unless it already left the app as it stands (saved, put in a
+     Gmail draft, handed to SMS, printed or zipped — markDelivered), then either opens
+     the next new PDF of this project that is still waiting, or keeps the project under
+     Recent projects and closes it. Projects Finish creates are auto:true and only the
+     newest FINISHED_KEEP of those are kept; a project someone named is never pruned. */
+  const FINISHED_KEEP = 12;
+  const HOW_WORDS = { saved: 'saved', gmail: 'put in a Gmail draft', sms: 'handed to SMS Command Center', print: 'sent to the printer', zip: 'saved in a ZIP' };
+  const FINISH_ICON = '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg>';
+  const emptyWorkspace = () => ({ docs: [], tray: [], name: 'new-document', nextDocId: 1, nextSid: 1, nextTid: 1 });
+  function outputSig(id) {
+    const active = id === activeOutput, o = outputs.find(x => x.id === id);
+    const pages = active ? tray : (o ? o.pages || [] : []);
+    return JSON.stringify({
+      name: active ? $('nameInput').value : (o ? o.name : ''), options: exportOptions(),
+      files: [...new Set(pages.map(p => p.docId))].map(d => (docs.get(d) || { bytes: [] }).bytes.length),   // a form filled since
+      pages: pages.map(({ thumb, thumbRot, thumbKey, ...p }) => p)
+    });
+  }
+  function markDelivered(how, ids) {
+    (ids || [activeOutput]).forEach(id => delivered.set(id, { sig: outputSig(id), how }));
+    refreshFinishNote();
+  }
+  function deliveredHow(id) { const d = delivered.get(id); return d && d.sig === outputSig(id) ? d.how : null; }
+  function nextUnfinished() { return outputs.find(o => o.id !== activeOutput && (o.pages || []).length && !deliveredHow(o.id)) || null; }
+  function refreshFinishNote() {
+    const el = $('finishNote');
+    if (!el) return;
+    const how = deliveredHow(activeOutput), next = nextUnfinished();
+    el.textContent = (how ? 'This PDF was ' + HOW_WORDS[how] + '. ' : '') + (next
+      ? 'Finish ' + (how ? '' : 'saves this PDF, then ') + 'opens the next one in this project: “' + next.name + '”.'
+      : 'Finish ' + (how ? 'closes this project' : 'saves this PDF to your computer and closes the project') + ' — a copy stays under Recent projects.');
+  }
+  function addFinishButton(saveFn) {
+    const slot = $('studioDialogActions');
+    if (!slot || $('btnFinish')) return;
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.id = 'btnFinish';
+    b.className = 'finish-button';
+    b.title = 'Save this PDF (unless it was already saved or sent) and close the project';
+    b.innerHTML = FINISH_ICON + '<span>Finish</span>';
+    b.addEventListener('click', () => finishProject(saveFn));
+    slot.append(b);
+  }
+  async function saveCurrentPdf() {
+    busy(true, 'Creating PDF…');
+    try {
+      const r = await buildFinalBytes();
+      if (!r) { toast('Not finished — no password was set, so nothing was saved.'); return false; }
+      download(r.bytes, cleanName());
+      markDelivered('saved');
+      return true;
+    } catch (err) {
+      console.error(err);
+      toast('Sorry — something went wrong building that PDF.');
+      return false;
+    } finally {
+      busy(false);
+    }
+  }
+  async function pruneFinished() {
+    const all = (await projectStore('getAll')) || [];
+    const auto = all.filter(p => p.auto).sort((a, b) => b.when - a.when);
+    for (const p of auto.slice(FINISHED_KEEP)) await projectStore('delete', p.id);
+  }
+  async function reopenProject(id) {
+    const p = await projectStore('get', id).catch(() => null);
+    if (!p) { toast('That project is no longer saved on this device.'); return; }
+    restoreWorkspace(p.data);
+    resetHistory();
+    if (tray.length) { setStep(3, { silent: true }); showPage(tray[0]); }
+  }
+  function closeFinishWindows() {
+    if ($('emailModal').classList.contains('open')) closeEmailModal();
+    if (dlg.open) closeStudioDialog();
+  }
+  let finishing = false;
+  async function finishProject(saveFn) {
+    if (finishing || !tray.length) return;
+    finishing = true;
+    const btn = $('btnFinish');
+    if (btn) { btn.disabled = true; btn.lastChild.textContent = 'Finishing…'; }
+    try {
+      // 1. this PDF: saved, unless it already left the app exactly as it stands
+      if (!deliveredHow(activeOutput) && !(await (saveFn ? saveFn() : saveCurrentPdf()))) return;
+      // 2. another new PDF of this project still waiting: open it instead of closing
+      saveActiveOutput();
+      const done = $('nameInput').value, next = nextUnfinished();
+      if (next) {
+        closeFinishWindows();
+        switchOutput(next.id);
+        toast('“' + done + '” is done. Next in this project: “' + next.name + '” (' + next.pages.length + ' page' + (next.pages.length === 1 ? '' : 's') + ') — Preview & finish it when it is ready.');
+        return;
+      }
+      // 3. keep it under Recent projects, then close it
+      const name = projectName || (outputs[0] && outputs[0].name) || done;
+      let kept = null;
+      try {
+        const prev = projectId ? await projectStore('get', projectId).catch(() => null) : null;
+        await saveProject(name, { finishedAt: Date.now(), auto: prev ? !!prev.auto : true });
+        kept = projectId;
+        await pruneFinished();
+      } catch (err) { console.error(err); }
+      closeFinishWindows();
+      restoreWorkspace(emptyWorkspace());
+      if (kept) resetHistory();                      // Reopen brings it back; without a kept copy Ctrl+Z still can
+      scheduleAutosave();
+      if (kept) toastAction('Finished — “' + done + '”. It is under Recent projects.', 'Reopen', () => reopenProject(kept));
+      else toast('Finished — “' + done + '”. There was no room to keep a copy under Recent projects; Ctrl+Z brings it back.');
+    } finally {
+      finishing = false;
+      const b = $('btnFinish');
+      if (b) { b.disabled = false; b.lastChild.textContent = 'Finish'; }
+    }
+  }
+
   /* Preview & finish: the one place a finished PDF leaves from. Check it, set the
      finish options (they are the same four switches as the ⋯ menu), then save,
-     send or print. email=true is the smaller review opened from the Gmail window. */
+     send or print — or press Finish. email=true is the smaller review opened from
+     the Gmail window. One build at a time: a newer request overtakes an older one. */
+  let previewSeq = 0;
   async function previewFinal(email = false, focusOpt) {
     if (!tray.length) { toast('Choose pages first.'); return; }
+    const seq = ++previewSeq;
     busy(true, 'Building preview…');
     try {
       const options = exportOptions(), r = await buildFinalBytes(tray, { ...options, lock: false });
+      if (seq !== previewSeq) return;                         // a newer request took over
+      if (focusOpt && !(dlg.open && $('finishNote'))) return;  // closed while it rebuilt: do not pop back up
       const filename = cleanName();
       const lockNote = options.lock
         ? 'Password protection is selected. Choose the password when saving or creating the draft.'
@@ -7141,7 +7310,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
           '<iframe class="email-preview" id="emailBodyPreview" title="Email body preview" sandbox></iframe>' +
           '<div class="studio-row"><button id="savePreview" class="primary">Save this PDF</button></div>'
         : '<div class="finish-actions">' +
-            '<button id="savePreview" class="primary save-button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 4h12l2 2v14H5zM8 4v6h8V4M8 17h8"/></svg>Save PDF</button>' +
+            '<button id="savePreview" title="Save a copy and keep working"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 4h12l2 2v14H5zM8 4v6h8V4M8 17h8"/></svg>Save PDF</button>' +
             '<button id="previewEmail"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 5h18v14H3zM3 6l9 7 9-7"/></svg>Gmail draft</button>' +
             '<button id="previewSms"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 4h16v12H8l-4 4z"/></svg>Text via SMS</button>' +
             '<button id="previewPrint"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 9V3h10v6M7 17H4V9h16v8h-3M7 14h10v7H7z"/></svg>Print</button>' +
@@ -7156,20 +7325,25 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
           '<details class="finish-more"><summary>More ways to export</summary><div class="studio-row">' +
             '<button id="previewSplit">Split by page ranges</button><button id="previewEach">Single pages as ZIP</button><button id="previewZip">All new PDFs as ZIP</button>' +
           '</div></details>';
-      showDialog(email ? 'Review email and attachment' : 'Preview & finish', '<p id="previewSummary"></p>' + body + '<div id="finalPages" class="studio-preview"></div>');
+      showDialog(email ? 'Review email and attachment' : 'Preview & finish', '<p id="previewSummary"></p>' + (email ? '' : '<p class="finish-note" id="finishNote"></p>') + body + '<div id="finalPages" class="studio-preview"></div>');
       $('previewSummary').textContent = filename + ' • ' + tray.length + ' page' + (tray.length === 1 ? '' : 's') + ' • ' + fmtSize(r.bytes.length) +
         (options.lock ? ' before locking' : '') + (options.numbers ? ' • Numbered' : '') + (options.permanent ? ' • Permanent white-out' : '') + (r.note || '');
       if (email) $('emailBodyPreview').srcdoc = buildEmailHtml();
-      $('savePreview').onclick = async () => {
+      const saveIt = async () => {               // the PDF on screen, locked when asked: true when it was saved
         let bytes = r.bytes;
         if (options.lock) {
           const pw = await askExportPassword();
-          if (!pw) return;
+          if (!pw) { toast('Not saved — no password was set.'); return false; }
           bytes = await lockPdfBytes(bytes, pw);
         }
         download(bytes, filename);
+        markDelivered('saved');
+        return true;
       };
+      $('savePreview').onclick = () => { saveIt(); };
       if (!email) {
+        addFinishButton(saveIt);
+        refreshFinishNote();
         const hand = id => () => { closeStudioDialog(); $(id).click(); };   // the same actions as the ⋯ menu
         $('previewEmail').onclick = hand('btnEmail');
         $('previewSms').onclick = hand('btnSms');
@@ -7182,15 +7356,19 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
           real.checked = el.checked;
           real.dispatchEvent(new Event('change'));               // keeps the badge on the ⋯ button right
           scheduleAutosave();
+          // until the new PDF is built nothing here may save the old one
+          $('studioDialogBody').querySelectorAll('.finish-opts input, #savePreview').forEach(x => { x.disabled = true; });
+          if ($('btnFinish')) $('btnFinish').disabled = true;
+          $('previewSummary').textContent = 'Updating the preview…';
           previewFinal(false, el.dataset.opt);                   // show the PDF the new setting makes
         }));
         if (focusOpt) $('studioDialogBody').querySelector('[data-opt="' + focusOpt + '"]')?.focus();
       }
       await renderPdfPreview(r.bytes, $('finalPages'));
     } catch (e) {
-      toast('Could not preview PDF: ' + e.message);
+      if (seq === previewSeq) toast('Could not preview PDF: ' + e.message);
     } finally {
-      busy(false);
+      if (seq === previewSeq) busy(false);
     }
   }
       $('btnPreviewFinal').onclick=()=>previewFinal();$('btnEmailPreview').onclick=()=>previewFinal(true);
@@ -7212,7 +7390,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
     $('buildSms').onclick=async()=>{try{$('buildSms').disabled=true;const r=await buildFinalBytes();if(!r){$('buildSms').disabled=false;return;}if(r.bytes.length>5*1024*1024)throw Error('The SMS attachment limit is 5 MB. Use Shrink for email or fewer pages.');smsTransfer={id:crypto.randomUUID(),name:cleanName(),bytes:r.bytes};$('smsStatus').textContent=smsTransfer.name+' • '+fmtSize(r.bytes.length)+' • ready to transfer';$('openSms').disabled=false;}catch(e){$('smsStatus').textContent=e.message;$('buildSms').disabled=false;}finally{busy(false);}};
     $('openSms').onclick=()=>{smsWindow=window.open(SMS_ORIGIN+'/#pdf-import','_blank');if(!smsWindow){$('smsStatus').textContent='Allow the new tab, then try again.';return;}$('smsStatus').textContent='Waiting for SMS Command Center. The PDF has not been uploaded.';clearInterval(smsTimer);let attempts=0;smsTimer=setInterval(()=>{if(!smsTransfer||smsWindow.closed||attempts++>60){clearInterval(smsTimer);if($('smsStatus'))$('smsStatus').textContent='Connection timed out. Keep the PDF prepared and try opening SMS again.';return;}smsWindow.postMessage({type:'bli-pdf-hello',id:smsTransfer.id},SMS_ORIGIN);},1000);};
   };
-  window.addEventListener('message',e=>{if(e.origin!==SMS_ORIGIN||e.source!==smsWindow||!smsTransfer||e.data?.id!==smsTransfer.id)return;if(e.data.type==='bli-sms-ready')smsWindow.postMessage({type:'bli-pdf-import',...smsTransfer},SMS_ORIGIN);if(e.data.type==='bli-sms-received'){clearInterval(smsTimer);smsTransfer=null;if($('smsStatus'))$('smsStatus').textContent='Transferred to SMS. Choose a customer there to attach it to a draft.';}});
+  window.addEventListener('message',e=>{if(e.origin!==SMS_ORIGIN||e.source!==smsWindow||!smsTransfer||e.data?.id!==smsTransfer.id)return;if(e.data.type==='bli-sms-ready')smsWindow.postMessage({type:'bli-pdf-import',...smsTransfer},SMS_ORIGIN);if(e.data.type==='bli-sms-received'){clearInterval(smsTimer);smsTransfer=null;markDelivered('sms');if($('smsStatus')){$('smsStatus').textContent='Transferred to SMS. Choose a customer there to attach it to a draft — Finish closes this project here.';addFinishButton();}}});
 
   let ocrLibrary;
   function loadOCR(){if(window.Tesseract)return Promise.resolve(window.Tesseract);if(!ocrLibrary)ocrLibrary=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';s.onload=()=>resolve(window.Tesseract);s.onerror=()=>{ocrLibrary=null;s.remove();reject(Error('Could not load OCR. Check your connection.'));};document.head.append(s);});return ocrLibrary;}
@@ -7541,7 +7719,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
   function openHelp() {
     showDialog('How PDF Studio works', '<div class="help">' +
       '<h3>1 · One screen, three steps</h3><p><strong>Add files</strong> — or start from <em>Edit a PDF</em>, <em>Combine Files</em> or a form. Then everything is on one screen: your pages on the left, the page you are working on in the middle, the tools on the right. The <em>Source files</em> tab holds the files you opened — click the pages you want there (shift-click for a range) and <em>Use selected pages</em>, or <em>Add every page</em>. <strong>Edit &amp; arrange</strong>: click a page to work on it, drag pages to reorder, and use ⋯ on a page (or <em>Page actions</em>) to rotate, duplicate or remove it. <strong>Preview &amp; finish</strong> when it looks right. On a phone it is the same, one part at a time: tap a page to edit it.</p>' +
-      '<h3>2 · Finishing</h3><p><strong>Preview &amp; finish</strong> shows the finished PDF with everything you can do with it: <strong>Save PDF</strong>, a <strong>Gmail draft</strong> with it attached, <strong>Text via SMS</strong>, <strong>Print</strong>, and the finish options — shrink for email, page numbers, password lock, permanent white-out. The ⋯ button beside it has the same actions without the preview, plus splitting and ZIP bundles.</p>' +
+      '<h3>2 · Finishing</h3><p><strong>Preview &amp; finish</strong> shows the finished PDF with everything you can do with it: <strong>Save PDF</strong>, a <strong>Gmail draft</strong> with it attached, <strong>Text via SMS</strong>, <strong>Print</strong>, and the finish options — shrink for email, page numbers, password lock, permanent white-out. When the job is done press the gold <strong>Finish</strong> at the top: it saves the PDF (unless you already saved or sent it) and closes the project. A copy stays under <em>Recent projects</em> — the last 12 finished jobs are kept. The ⋯ button beside Preview &amp; finish has the same actions without the preview, plus splitting and ZIP bundles.</p>' +
       '<h3>3 · White-out is permanent by default</h3><p>A page with a white-out is saved as a picture, so the covered text is truly gone from the file. Turn it off in the finish options only if that page must keep typed text. Highlight and crop just hide.</p>' +
       '<h3>4 · Packets and agency stamps</h3><p>In the Forms Library, save the forms you send together as a <strong>packet</strong>; anyone in the office opens it in one tap. Press ↑ on one of your stamps to share it with the agency. Signatures and initials stay on your own device.</p>' +
       '<h3>5 · Your phone</h3><p>Open a Gmail draft on your computer and choose <em>Set up my phone</em> — scan the code once and the phone can create drafts too.</p>' +
@@ -7581,7 +7759,7 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
       '<div class="proj-body"><strong></strong><small></small><span class="proj-go">Continue editing <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>';
     if (first && first.thumb) card.querySelector('img').src = first.thumb;
     card.querySelector('strong').textContent = pr.name;
-    card.querySelector('small').textContent = pages + ' page' + (pages === 1 ? '' : 's') + ' • saved ' +
+    card.querySelector('small').textContent = pages + ' page' + (pages === 1 ? '' : 's') + (pr.finishedAt ? ' • finished ' : ' • saved ') +
       new Date(pr.when).toLocaleDateString([], { month: 'short', day: 'numeric' });
     const open = () => { restoreWorkspace(pr.data); resetHistory(); showPage(tray[0]); toast('Opened project "' + pr.name + '".'); };
     card.addEventListener('click', (e) => { if (!e.target.closest('.menu-wrap')) open(); });

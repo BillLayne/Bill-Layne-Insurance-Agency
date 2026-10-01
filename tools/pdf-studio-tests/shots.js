@@ -102,6 +102,9 @@ const run = (page, body) => page.evaluate(new Function('return (async () => {' +
     await page.click('#btnPreviewFinal');
     await page.waitForFunction(() => document.getElementById('studioDialog').open && document.querySelector('#finalPages canvas'), null, { timeout: 20000 });
     await shot(page, prefix + '-7-preview-and-finish');
+    await page.click('#btnFinish');                // saves the PDF (a throwaway download) and closes the project
+    await page.waitForFunction(() => window.PDFStudio.getState().docs.length === 0, null, { timeout: 20000 });
+    await shot(page, prefix + '-8-finished');
   };
   // narrower than three panes: the pages, the full-screen editor, the source files
   const stacked = async (page, prefix) => {
@@ -115,6 +118,10 @@ const run = (page, body) => page.evaluate(new Function('return (async () => {' +
     await page.click('#btnEditDone');
     await page.click('#wsTabSources');
     await shot(page, prefix + '-4-source-files');
+    await page.click('#wsTabPages');
+    await page.click('#btnPreviewFinal');
+    await page.waitForFunction(() => document.getElementById('studioDialog').open && document.querySelector('#finalPages canvas'), null, { timeout: 20000 });
+    await shot(page, prefix + '-5-preview-and-finish');
   };
 
   if (want('desktop')) {
