@@ -437,6 +437,30 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
       ok('a trackpad flick turns one page at a time', g === 1 && h === 2, { g, h });
     }
 
+    // 6d. built-in picture stamps (Bill, 2026-10-01): "Sign here →" and "X", sized for a signature line
+    r = await evalIn(page, `
+      await openEditor(2);
+      $('modeStamps').click(); await wait(300);
+      const chips = () => [...document.querySelectorAll('#quickStamps .pic-chip')];
+      const out = { names: chips().map(c => c.textContent.trim()), imgs: chips().every(c => c.querySelector('img') && c.querySelector('img').naturalWidth > 0) };
+      const before = S().tray.map(t => t.stamps.length);
+      chips().find(c => c.textContent.trim() === 'X').click(); await wait(700);
+      const x = S().tray[2].stamps.at(-1);
+      out.x = { kind: x.kind, w: Math.round(x.w), png: x.dataUrl.startsWith('data:image/png') };
+      $('modeStamps').click(); await wait(300);
+      $('stampAllPages').checked = true;
+      chips().find(c => c.textContent.trim() === 'Sign here').click(); await wait(900);
+      $('stampAllPages').checked = false;
+      out.added = S().tray.map((t, i) => t.stamps.length - before[i]);
+      const sign = S().tray[2].stamps.at(-1);
+      out.sign = { kind: sign.kind, w: Math.round(sign.w) };
+      const bytes = await P.buildPdfBytes([S().tray[2]]);
+      out.built = bytes.length > 4000;
+      return out;`);
+    ok('built-in Sign here and X picture stamps: X lands 28 pt wide, Sign here 130 pt, and on every page when asked',
+      r.names.join('|') === 'Sign here|X' && r.imgs && r.x.kind === 'img' && r.x.w === 28 && r.x.png && r.sign.kind === 'img' && r.sign.w === 130 &&
+      r.added[2] === 2 && r.added.every((n, i) => i === 2 || n === 1) && r.built, r);
+
     // 7. OCR text feeds Find
     r = await evalIn(page, `
       const cv = document.createElement('canvas'); cv.width = 800; cv.height = 600; const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, 800, 600);

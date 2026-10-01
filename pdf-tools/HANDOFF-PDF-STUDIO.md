@@ -201,6 +201,7 @@ Pen strokes are **canvas**, not elements (a path can't be a div). Consequence: *
 | Parsed-source cache | `loadSource`, `parsedSources` (above `buildPdfBytes`) |
 | **Finish** | `finishProject(saveFn)`, `addFinishButton`, `refreshFinishNote` (`#finishNote`), `markDelivered(how, ids)` / `deliveredHow(id)` / `outputSig(id)` over the `delivered` Map (declared with the other state at the top of the script), `nextUnfinished`, `pruneFinished` (`FINISHED_KEEP`), `reopenProject`, `emptyWorkspace`; header slot `#studioDialogActions` (emptied by every `showDialog`) |
 | Mouse wheel turns pages | the `wheel` listener on `#editCanvasWrap` (`WHEEL_FLIP`, `WHEEL_QUIET`, `waitForQuiet`), `flashPageHint` (`#pageFlipHint`), `landAt` (consumed in `renderEditor` after the swap) |
+| Built-in picture stamps | `BUILTIN_PICTURE_STAMPS` (name, width in pt, PNG data URL) beside `AGENCY_BLOCK`; rendered as `.pic-chip` in `renderStampChips`; placed by `placeCenteredImage(dataUrl, widthPt)`; "every page" for text and pictures is `copyToEveryPage(st)` |
 | Permanent white-out | `rasterizePages(bytes, indexes)`; wired in `buildFinalBytes` before numbering; option `permanent` in `exportOptions()` |
 | OCR (tesseract.js, on demand) | `loadOCR`, editor `#btnOCR` dialog, bulk `#btnOcrAll`; `rememberOcr` → `doc.ocr[pageIndex]` → merged in `getDocTexts` |
 | Packets + agency stamps | `sharedGet/sharedPut` (`/shared/<name>`), `renderPackets`, `openPacket`, `libraryDocsInOrder`, `tagLibraryDoc`; `loadSharedStamps`, `renderSharedStamps`, `shareStamp` |
@@ -354,7 +355,7 @@ The "What is this delivering?" dropdown swaps `{{HEADLINE}}`/`{{INTRO_LINE}}`/su
 
 ## 11. Extending it safely
 
-**Run the smoke test before you push:** `tools\test-pdf-studio.bat` (57 checks — 59 with the Forms host — about two and a half minutes, drives the Chrome or Edge already on the PC through `window.PDFStudio`; `set FORMS_CODE=…` first to include the Forms-host checks, `set PDF_STUDIO_URL=https://www.billlayneinsurance.com/pdf-tools/` to test the live site). Add a check when you add a feature — `tools/pdf-studio-tests/smoke.js`, one `evalIn` block per feature, each block returns its own `r`. Bump `APP_VERSION` at the top of the script on every release.
+**Run the smoke test before you push:** `tools\test-pdf-studio.bat` (58 checks — 60 with the Forms host — about two and a half minutes, drives the Chrome or Edge already on the PC through `window.PDFStudio`; `set FORMS_CODE=…` first to include the Forms-host checks, `set PDF_STUDIO_URL=https://www.billlayneinsurance.com/pdf-tools/` to test the live site). Add a check when you add a feature — `tools/pdf-studio-tests/smoke.js`, one `evalIn` block per feature, each block returns its own `r`. Bump `APP_VERSION` at the top of the script on every release.
 
 **Look at it, too:** `node tools/pdf-studio-tests/shots.js` writes desktop (1586×992), laptop (1366×768), tablet (820×1100) and phone (390×844) screenshots — home, the workspace with and without pages, an edit, the Source files tab, Preview & finish, and on the narrow sizes the page grid and the full-screen editor — into `tools/pdf-studio-tests/shots/` (git-ignored). Read the PNGs. Numbers alone missed five visible defects in the home redesign and five more in the workspace (cards not filling their column, a clipped hint, the delete handle as a pill, dialogs in the corner, footer chips over the page count).
 
@@ -508,6 +509,9 @@ Bill: "once I get to Preview and finish, there should be a Finish action button 
 
 ### Round seven — the wheel turns pages (2026-10-01, v2026-10-01.4)
 Bill: "can we add ability to scroll down in the chosen document that would scroll to next document instead of having to click on the next document". Built as wheel paging on the single-page editor (rules in §3), not a continuous multi-page canvas: the editor engine is one page (one canvas, one overlay, one stamp layer), and making every page editable at once would be a rewrite for the same everyday result. Two smoke checks drive it with real wheel events: mouse clicks (including the zoomed scroll-then-turn and the landing positions) and a 40-step trackpad flick that must turn exactly one page.
+
+### Round eight — Sign here and X stamps (2026-10-01, v2026-10-01.5)
+Bill sent two images to add as default stamps: "SIGN HERE →" (navy, gold arrow) and a navy "X". Built into the quick-stamp row for everyone, no setup: `BUILTIN_PICTURE_STAMPS`, placed at 130 pt and 28 pt wide (signature-line size). Made from his files by shrinking on white first, then "colour to alpha" against white (smooth edges, no halo), then one flat ink colour per pixel (navy #091F3C, gold #CC9E16) — 8.8 KB and 5.5 KB. To swap one, replace its data URL with any transparent PNG. "Put it on every page" now works for every picture stamp too (it used to be text only).
 
 ### Storage added this session
 localStorage `bliPdfHintsOff`, `bliPdfStudioInitials`, `bliPdfRecentTo`; doc fields `ocr`, `libKey`, `libName`; IndexedDB `bliPdfStudio` v4 store `docbytes` (file bytes, keyed by docId); R2 `_shared/packets.json`, `_shared/stamps.json` and their `.prev.json` twins.
