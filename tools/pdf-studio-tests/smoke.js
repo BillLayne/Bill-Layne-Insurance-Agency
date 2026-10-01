@@ -737,11 +737,13 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
           fixed600: /<table[^>]*class="email-container"[^>]*>/.test(html) && /width="600"/.test(html.match(/<table[^>]*class="email-container"[^>]*>/)[0]),
           firstInBody: /<body[^>]*>\s*<div style="display:none;white-space:nowrap;font:15px courier[^>]*>[^<]*<\/div>\s*<img src="data:image\/png;base64,iVBOR/.test(html),
           darkGoldOnLight: html.includes('color:#8a6d2f'), placeholders: count('{{'), ascii: /^[\x00-\x7F]*$/.test(html), size: html.length,
-          attachment: !!(posted && posted.attachments && posted.attachments.length === 1 && /\.pdf$/.test(posted.attachments[0].name))
+          attachment: !!(posted && posted.attachments && posted.attachments.length === 1 && /\.pdf$/.test(posted.attachments[0].name)),
+          // texts go to the agency text line, calls to the office (Bill, 2026-10-01)
+          textLine: count('<a href="sms:+13368279065"') === 2 && !/text\??\s*(<a[^>]*>)?\s*\(336\) 835-1993/i.test(html)
         };
-        ok('the Gmail draft body keeps the Gold Elite v2 skeleton: spacer line + 600 px image first, fluid container, one nowrap, ASCII',
+        ok('the Gmail draft body keeps the Gold Elite v2 skeleton: spacer line + 600 px image first, fluid container, one nowrap, ASCII, texts to (336) 827-9065',
           g.courier === 1 && g.pngSpacer === 1 && g.pairedWidth === 0 && g.nowrap === 1 && g.fluid && !g.fixed600 && g.firstInBody && g.darkGoldOnLight &&
-          g.placeholders === 0 && g.ascii && g.size < 102400 && g.attachment, g);
+          g.placeholders === 0 && g.ascii && g.size < 102400 && g.attachment && g.textLine, g);
       }
       page.off('download', onDl);
     }
