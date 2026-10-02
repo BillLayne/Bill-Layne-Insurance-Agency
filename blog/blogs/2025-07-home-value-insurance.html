@@ -26,8 +26,7 @@
     <meta property="twitter:image" content="https://img.billlayneinsurance.com/i/2026/08/im-vlhi9dh-mshfpg.jpg">
 
     <!-- PWA Manifest -->
-    <link rel="manifest" href="https://www.billlayneinsurance.com/blog/blogs/Home-Value-Blog/manifest.json">
-    <link rel="apple-touch-icon" href="https://placehold.co/192x192/1e40af/ffffff?text=BL">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 
     <!-- Preload Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -624,7 +623,7 @@
           "@type": "Organization",
           "name": "Bill Layne Insurance Agency",
           "url": "https://www.billlayneinsurance.com",
-          "logo": "https://placehold.co/200x60/1e40af/ffffff?text=Bill+Layne+Insurance",
+          "logo": "https://img.billlayneinsurance.com/i/2026/08/bli-agency-logo-4jqj2j.png",
           "contactPoint": {
             "@type": "ContactPoint",
             "telephone": "+1-336-835-1993",
@@ -648,8 +647,8 @@
           },
           "geo": {
             "@type": "GeoCoordinates",
-            "latitude": 36.2626,
-            "longitude": -80.8520
+            "latitude": 36.244,
+            "longitude": -80.8486
           },
           "openingHoursSpecification": {
             "@type": "OpeningHoursSpecification",
@@ -668,7 +667,7 @@
           "@type": "BlogPosting",
           "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "https://www.billlayneinsurance.com/blog/nc-replacement-cost"
+            "@id": "https://www.billlayneinsurance.com/blog/blogs/2025-07-home-value-insurance"
           },
           "headline": "Can’t I Just Insure My Home for Less? Here’s Why NC Insurers Say ‘Nope’",
           "description": "Discover why insuring your North Carolina home for less than its replacement cost is a major risk. Learn how local experts at Bill Layne Insurance protect you from costly coverage gaps.",
@@ -682,11 +681,11 @@
             "name": "Bill Layne Insurance Agency",
             "logo": {
               "@type": "ImageObject",
-              "url": "https://placehold.co/200x60/1e40af/ffffff?text=Bill+Layne+Insurance"
+              "url": "https://img.billlayneinsurance.com/i/2026/08/bli-agency-logo-4jqj2j.png"
             }
           },
           "datePublished": "2024-07-29",
-          "dateModified": "2024-07-29"
+          "dateModified": "2026-10-02"
         },
         {
           "@type": "FAQPage",
@@ -774,7 +773,7 @@
                         The Problem: The National Insurer's Algorithm vs. NC Reality
                     </h3>
                     <img src="https://img.billlayneinsurance.com/i/2026/08/im-vlhi9dh-mshfpg.jpg" alt="Humorous depiction of homeowner receiving a tiny insurance check for a large hole in the roof." class="blog-image">
-                    <p>Meet the "Hendersons" from Mount Airy. They insured their beautiful 2,500 sq. ft. home with a major national carrier. The online tool suggested insuring it for its $280,000 market value. It seemed reasonable. They saved $400 a year on their premium.</p>
+                    <p>Picture a hypothetical family; call them the "Hendersons," in Mount Airy. They insured their beautiful 2,500 sq. ft. home with a major national carrier. The online tool suggested insuring it for its $280,000 market value. It seemed reasonable. They saved $400 a year on their premium.</p>
                     <p>Then, a severe hailstorm—a common threat in the NC foothills—tore through their neighborhood, causing catastrophic roof and siding damage. The initial repair estimate was $45,000. But when the adjuster came, he delivered devastating news. Their policy had a "coinsurance penalty." Because they were insured for less than 80% of the home's true <strong>$380,000 replacement cost</strong>, the insurance company would only pay a fraction of the claim. <strong>They were left with a bill of over $18,000 out-of-pocket.</strong> Their $400/year savings turned into a five-figure nightmare.</p>
                 </div>
 
@@ -812,7 +811,7 @@
             <aside class="sidebar">
                 <div class="sidebar-card fade-in">
                     <h3>Your Local NC Expert</h3>
-                    <img src="https://placehold.co/100x100/eeeeee/333333?text=BL" alt="Bill Layne" class="local-expert-img">
+                    <img src="https://img.billlayneinsurance.com/i/2026/08/blog-ndfmjxh-skjqy5.png" alt="Bill Layne Insurance Agency" class="local-expert-img" width="100" height="100" loading="lazy">
                     <p>I'm Bill Layne. For over 20 years, I've helped families right here in Elkin and the surrounding communities protect what matters most. We're not a faceless corporation; we're your neighbors.</p>
                 </div>
 
@@ -908,68 +907,6 @@
 
     <!-- Embedded JavaScript -->
     <script>
-    // To make this a real PWA, you would create these files separately.
-    // manifest.json
-    const manifest = {
-      "name": "Bill Layne Insurance Agency",
-      "short_name": "BL Insurance",
-      "start_url": ".",
-      "display": "standalone",
-      "background_color": "#0f172a",
-      "theme_color": "#1e40af",
-      "description": "Local home insurance experts in Elkin, NC.",
-      "icons": [{
-        "src": "https://placehold.co/192x192/1e40af/ffffff?text=BL",
-        "sizes": "192x192",
-        "type": "image/png"
-      }, {
-        "src": "https://placehold.co/512x512/1e40af/ffffff?text=BL",
-        "sizes": "512x512",
-        "type": "image/png"
-      }]
-    };
-    const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-    const manifestURL = URL.createObjectURL(manifestBlob);
-    document.querySelector('link[rel="manifest"]').setAttribute('href', manifestURL);
-
-    // sw.js (Service Worker)
-    const swCode = `
-        const CACHE_NAME = 'bl-insurance-cache-v1';
-        const urlsToCache = [
-            '/',
-            './?utm_source=homescreen',
-        ];
-        self.addEventListener('install', event => {
-            event.waitUntil(
-                caches.open(CACHE_NAME).then(cache => {
-                    console.log('Opened cache');
-                    return cache.addAll(urlsToCache);
-                })
-            );
-        });
-        self.addEventListener('fetch', event => {
-            event.respondWith(
-                caches.match(event.request).then(response => {
-                    if (response) {
-                        return response;
-                    }
-                    return fetch(event.request);
-                })
-            );
-        });
-    `;
-    const swBlob = new Blob([swCode], {type: 'application/javascript'});
-    const swURL = URL.createObjectURL(swBlob);
-
-    // PWA Service Worker Registration
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register(swURL)
-                .then(registration => console.log('ServiceWorker registration successful with scope: ', registration.scope))
-                .catch(err => console.log('ServiceWorker registration failed: ', err));
-        });
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
         // Page Loader
         const loader = document.querySelector('.loader');
