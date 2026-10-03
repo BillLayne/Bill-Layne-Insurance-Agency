@@ -296,6 +296,7 @@
                         <div>
                             <label for="up-notes" class="field-label">Anything Else We Should Know?</label>
                             <textarea id="up-notes" name="notes" rows="3" class="field-input resize-none" placeholder="e.g. Adding a teen driver, building a new garage, just bought a truck&hellip;"></textarea>
+                            <p id="up-renewal-note-hint" class="text-xs text-blue-700 mt-2" hidden>We added your renewal checkup notes above. Please review them before sending.</p>
                         </div>
 
                         <p class="text-xs text-slate-500 leading-relaxed">
@@ -445,6 +446,22 @@
         const btnUpload   = document.getElementById('btnUpload');
         const btnAddMore  = document.getElementById('btnAddMore');
         const errorEl     = document.getElementById('fileError');
+
+        // Bring notes from the home renewal checkup into the customer's review.
+        try {
+            const transferKey = 'bli-home-renewal-policy-notes';
+            const renewalNotes = sessionStorage.getItem(transferKey);
+            if (renewalNotes) {
+                const notesField = document.getElementById('up-notes');
+                if (!notesField.value.trim()) {
+                    notesField.value = renewalNotes;
+                    notesField.rows = 6;
+                    document.getElementById('up-policyType').value = 'home';
+                    document.getElementById('up-renewal-note-hint').hidden = false;
+                }
+                sessionStorage.removeItem(transferKey);
+            }
+        } catch (_) { /* Customers can still enter notes directly in the form. */ }
 
         const MAX_BYTES_PER_FILE = 8 * 1024 * 1024;   // 8 MB per file
         const MAX_TOTAL_BYTES    = 12 * 1024 * 1024;  // 12 MB combined
