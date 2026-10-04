@@ -14,6 +14,13 @@ for %%W in (1 2 2b 3 4 7) do (
         echo [ok]    wave %%W
     )
 )
+python tools\build-universal-menu.py --check >nul 2>&1
+if errorlevel 1 (
+    echo [DRIFT] universal menu - run: python tools\build-universal-menu.py --apply
+    set FAIL=1
+) else (
+    echo [ok]    universal menu
+)
 if "%FAIL%"=="1" (
     echo.
     echo Site menus have drifted from tools/nav.json. Fix before pushing.
