@@ -64,7 +64,7 @@
       if (i === step) el.setAttribute('aria-current','step'); else el.removeAttribute('aria-current');
     });
     back.hidden = step === 0 && !editing;
-    if (!submitted) next.textContent = editing ? 'Save & return to review →' : step === 2 ? 'Send my renters request →' : 'Continue →';
+    if (!submitted) next.textContent = editing ? 'Save & return to review →' : step === 2 ? 'Send my renters request →' : ['Continue to About You →','Continue to Coverage →'][step];
     document.getElementById('next-hint').textContent = editing ? 'Your other answers will stay in place' : ['Next: a little about you','Next: coverage & review','Your request does not bind coverage'][step];
     if (step === 2) renderReview();
     if (focus) focusHeading();
