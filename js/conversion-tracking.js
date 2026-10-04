@@ -57,6 +57,7 @@
             href.indexOf('auto-quote') > -1 ||
             href.indexOf('home-quote') > -1 ||
             href.indexOf('renters-quote') > -1 ||
+            href.indexOf('motorcycle-quote') > -1 ||
             href.indexOf('boat-quote') > -1
         ) {
             return { eventName: 'quote_click', leadType: 'quote' };
