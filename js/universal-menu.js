@@ -3,6 +3,8 @@
  'use strict';
  var panel = document.getElementById('bli-site-menu');
  if (!panel || typeof panel.showModal !== 'function') return;
+ // Homepage has one menu: inline links are available if enhancement fails.
+ if (panel.hasAttribute('data-inline-fallback')) panel.close();
  var triggerSelector = '#menu-btn, #menu-toggle, #menu-toggle-btn, #mobile-menu-button, #mobileMenuToggle, #menuToggle, #blinavToggle, #hub-dock-menu, .dock-menu, .renters-site-menu > summary, [data-bli-menu-open], button[onclick="openMenu()"]';
  var triggers = Array.from(document.querySelectorAll(triggerSelector));
  var opener = null, overflow = '', padding = '', rootOverflow = '';
@@ -11,6 +13,8 @@
  var current = normalize(canonical ? new URL(canonical.href, location.href).pathname : location.pathname);
  var best = null, bestLength = -1;
  panel.querySelectorAll('.bli-um-link').forEach(function (link) {
+  // An inquiry shortcut should not replace the actual Contact page highlight.
+  if (new URL(link.href, location.href).searchParams.get('src') === 'menu_business') return;
   var path = normalize(new URL(link.href, location.href).pathname);
   if (path === current || (path !== '/' && current.indexOf(path + '/') === 0)) {
    if (path.length > bestLength) { best = link; bestLength = path.length; }

@@ -10,10 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const navbar = document.getElementById('navbar');
-            const menuBtn = document.getElementById('menu-btn');
-            const menuClose = document.getElementById('menu-close');
-            const menuDrawer = document.getElementById('menu-drawer');
-            const menuOverlay = document.getElementById('menu-overlay');
 
             // Scroll Effects - Handle Sticky Header Appearance
             let lastNavState = null;
@@ -72,50 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
 
-            // Mobile Menu Logic
-            let menuReturnFocus = null;
-            if (menuDrawer) {
-                menuDrawer.inert = true;
-                menuDrawer.setAttribute('role', 'dialog');
-                menuDrawer.setAttribute('aria-modal', 'true');
-                menuDrawer.setAttribute('aria-label', 'Site menu');
-            }
-            if (menuBtn) {
-                menuBtn.setAttribute('aria-controls', 'menu-drawer');
-                menuBtn.setAttribute('aria-expanded', 'false');
-            }
-            const toggleMenu = (show) => {
-                if (!menuDrawer || !menuOverlay) return;
-                if (show) menuReturnFocus = document.activeElement;
-                menuDrawer.inert = !show;
-                if (menuBtn) menuBtn.setAttribute('aria-expanded', String(show));
-                menuDrawer.classList.toggle('translate-x-full', !show);
-                menuOverlay.classList.toggle('opacity-0', !show);
-                menuOverlay.classList.toggle('pointer-events-none', !show);
-                document.body.style.overflow = show ? 'hidden' : '';
-                if (show && menuClose) menuClose.focus();
-                else if (menuReturnFocus) menuReturnFocus.focus();
-            };
-            if(menuBtn) menuBtn.addEventListener('click', () => toggleMenu(true));
-            if(menuClose) menuClose.addEventListener('click', () => toggleMenu(false));
-            if(menuOverlay) menuOverlay.addEventListener('click', () => toggleMenu(false));
-            document.addEventListener('keydown', (event) => {
-                if (!menuDrawer || menuDrawer.inert) return;
-                if (event.key === 'Escape') { event.preventDefault(); toggleMenu(false); }
-                if (event.key !== 'Tab') return;
-                const items = [...menuDrawer.querySelectorAll('a[href], button:not([disabled])')]
-                    .filter(el => el.getClientRects().length);
-                const first = items[0], last = items[items.length - 1];
-                if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
-                else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
-            });
-
-            // Auto-close menu when any link inside drawer is clicked
-            if(menuDrawer) {
-                menuDrawer.querySelectorAll('a').forEach(link => {
-                    link.addEventListener('click', () => toggleMenu(false));
-                });
-            }
+            // The shared universal menu owns navigation and focus handling.
 
             const playButton = document.getElementById('play-agent-video');
             if (playButton) playButton.addEventListener('click', () => window.loadYoutubeVideo(document.getElementById('video-wrapper')));
