@@ -200,16 +200,31 @@
     return s;
   }
   function toBase64(blob) { return new Promise(function (res, rej) { var r = new FileReader(); r.onload = function () { res(String(r.result).split(',')[1]); }; r.onerror = rej; r.readAsDataURL(blob); }); }
+  var sending = false;
+  function overlay(title, text, done) {
+    var d = $('send-overlay'); $('send-overlay-title').textContent = title; $('send-overlay-text').textContent = text;
+    $('send-overlay-spinner').hidden = !!done; $('send-overlay-check').hidden = !done;
+    if (!d.open) d.showModal();
+  }
+  function overlayClose() { var d = $('send-overlay'); if (d.open) d.close(); }
+  $('send-overlay').addEventListener('cancel', function (e) { if (sending) e.preventDefault(); });
+  window.addEventListener('beforeunload', function (e) { if (sending) { e.preventDefault(); e.returnValue = ''; } });
   function send() {
     var btn = $('btn-send'), st = $('send-status'); btn.disabled = true; $('send-fallback').hidden = true;
+    sending = true; overlay('Sending your report…', 'Please keep this page open until you see the confirmation.');
     var photos = state.photos.slice(), batches = []; while (photos.length) batches.push(photos.splice(0, 5));
     if (!batches.length) batches.push([]);
     st.textContent = 'Sending…';
     var i = 0;
     function next() {
-      if (i >= batches.length) { state.sent = new Date().toISOString(); save(); $('done-ref').textContent = state.ref; showView('done'); return; }
+      if (i >= batches.length) {
+        state.sent = new Date().toISOString(); save(); $('done-ref').textContent = state.ref; sending = false;
+        overlay('Sent. We have it.', 'Your reference number is ' + state.ref + '.', true);
+        setTimeout(function () { overlayClose(); showView('done'); }, 900); return;
+      }
       var batch = batches[i];
       st.textContent = batches.length > 1 ? 'Sending part ' + (i + 1) + ' of ' + batches.length + '…' : 'Sending…';
+      overlay(batches.length > 1 ? 'Sending part ' + (i + 1) + ' of ' + batches.length + '…' : 'Sending your report…', 'Please keep this page open until you see the confirmation.');
       Promise.all(batch.map(function (p) { return getBlob(p.id).then(function (b) { return toBase64(b).then(function (b64) { return { name: state.ref + '-' + p.group + '-' + p.id + '.jpg', type: p.type, base64: b64 }; }); }); }))
         .then(function (files) {
           return fetch('/api/accident-report', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
@@ -220,7 +235,7 @@
         })
         .then(function (r) { return r.json().then(function (j) { if (!r.ok || !j.ok) throw new Error('unconfirmed'); }); })
         .then(function () { i++; next(); })
-        .catch(function () { st.textContent = ''; $('send-fallback').hidden = false; btn.disabled = false; $('send-fallback').scrollIntoView({ block: 'center' }); });
+        .catch(function () { sending = false; overlayClose(); st.textContent = ''; $('send-fallback').hidden = false; btn.disabled = false; $('send-fallback').scrollIntoView({ block: 'center' }); });
     }
     next();
   }
