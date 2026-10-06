@@ -60,7 +60,7 @@ Used on the tool microsites. The MAIN SITE keeps its own SEO-hardened footer
   1283 N Bridge St, Elkin NC 28621<br>
   <a href="tel:3368351993" style="color:#ffd966;text-decoration:none;">336-835-1993</a> &nbsp;|&nbsp;
   <a href="mailto:Save@BillLayneInsurance.com" style="color:#ffd966;text-decoration:none;">Save@BillLayneInsurance.com</a><br>
-  NC License #6571216 &nbsp;&middot;&nbsp; <em>Your Neighbor. Your Agent.</em><br><br>
+  NC Agency License #15569731 &nbsp;&middot;&nbsp; <em>Your Neighbor. Your Agent.</em><br><br>
   <a href="https://www.billlayneinsurance.com/free-tools/?utm_source=DOMAIN-HERE&amp;utm_medium=tool&amp;utm_campaign=footer" style="color:#8fb0ff;">More Free NC Insurance Tools &rarr;</a> &nbsp;|&nbsp;
   <a href="https://www.billlayneinsurance.com" style="color:#8fb0ff;">BillLayneInsurance.com</a>
 </footer>
@@ -72,7 +72,7 @@ contrast on the `#14184d` navy background.
 ## 3. Canonical NAP (plain text — must match everywhere, character for character)
 
 ```
-Bill Layne Insurance Agency | 1283 N Bridge St, Elkin NC 28621 | 336-835-1993 | Save@BillLayneInsurance.com | NC License #6571216
+Bill Layne Insurance Agency | 1283 N Bridge St, Elkin NC 28621 | 336-835-1993 | Save@BillLayneInsurance.com | NC Agency License #15569731
 ```
 
 `Save@` is the PUBLIC display address on every property. `docs@` remains a

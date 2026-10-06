@@ -22,7 +22,7 @@ export interface HeroPromoPostProps {
   align?: 'left' | 'center';
   /** Brand footer bar. Default true. */
   showStrap?: boolean;
-  /** Compliance line above the strap, e.g. “Coverage subject to policy terms. NC License #6571216”. */
+  /** Compliance line above the strap, e.g. “Coverage subject to policy terms. NC Agency License #15569731”. */
   finePrint?: string;
 }
 

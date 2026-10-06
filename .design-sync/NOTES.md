@@ -29,7 +29,7 @@ Repo-specific gotchas for future syncs. Read before re-running anything.
 
 - Every cell wraps in `<SocialCanvas … scale={…}>`: portrait 0.32, square 0.4, story 0.26, gbp 0.36, cover 0.28.
 - Layout glue: `<div style={{ margin: 'auto 0' }}>` centers; flex column stacks with `gap` in **em**.
-- Copy: phone 336-835-1993 · BillLayneInsurance.com · Elkin/Dobson/Surry County · "Independent since 2005". Compliance: "could save", never "will save"/"cheapest"; promo cells carry `finePrint="Coverage subject to policy terms and underwriting. NC License #6571216"` (license number is the current site standard, 83 uses).
+- Copy: phone 336-835-1993 · BillLayneInsurance.com · Elkin/Dobson/Surry County · "Independent since 2005". Compliance: "could save", never "will save"/"cheapest"; promo cells carry `finePrint="Coverage subject to policy terms and underwriting. NC Agency License #15569731"` (license number is the current site standard, 83 uses).
 
 ## Wave-1 fold (2026-07-12, all 25 components authored + graded good)
 
@@ -52,7 +52,7 @@ Repo-specific gotchas for future syncs. Read before re-running anything.
 
 - **The review server locks `ds-bundle/`**: `http-serve.mjs` holding the dir makes `package-build`/`resync` die with `EBUSY: rmdir` on Windows. Stop it first: `Get-NetTCPConnection -LocalPort <port>` → `Stop-Process`.
 - **Every component carries `cardMode: "column"`** in `cfg.overrides` (canvas previews are wider than grid cells by design). A NEW component needs its own entry or validate will flag `[GRID_OVERFLOW]`.
-- **Agency facts are inlined in component defaults**: phone 336-835-1993, BillLayneInsurance.com, "Since 2005", NC License #6571216 (finePrint convention). If any change, update `bli-social-studio/src/components/*` defaults + `conventions.md` + guidelines.
+- **Agency facts are inlined in component defaults**: phone 336-835-1993, BillLayneInsurance.com, "Since 2005", NC Agency License #15569731 (finePrint convention). If any change, update `bli-social-studio/src/components/*` defaults + `conventions.md` + guidelines.
 - **Guidelines are a July 2026 trends snapshot** (platform specs, algorithm behavior, AI-fatigue stats). Re-verify around mid-2027; platform pixel specs live in `SocialCanvas.tsx` (`FORMATS`/`GUIDES`) + `docs/platform-specs.md` — change together.
 - **Fonts are pinned copies** from @fontsource (OFL) in `src/fonts/` — they don't auto-update, which is desirable.
 - Verified-state carry-forward comes from the uploaded `_ds_sync.json` (this machine's grades live in gitignored `.design-sync/.cache/`). Re-syncs: fetch the remote anchor per the skill's one-command block.

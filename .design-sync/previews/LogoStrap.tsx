@@ -17,6 +17,6 @@ export const OnCream = () => (
 /** Promotional posts carry the compliance line above the bar. */
 export const WithFinePrint = () => (
   <SocialCanvas format="portrait" background="navy" scale={0.32}>
-    <LogoStrap finePrint="Coverage subject to policy terms and underwriting. NC License #6571216" />
+    <LogoStrap finePrint="Coverage subject to policy terms and underwriting. NC Agency License #15569731" />
   </SocialCanvas>
 );

@@ -22,7 +22,7 @@ fast comprehension) · (3) brand consistency · (4) visual impact · (5) speed.
 - **Address:** 1283 N Bridge St, Elkin, NC 28621
 - **Phone:** 336-835-1993 · **Email:** Save@BillLayneInsurance.com
 - **Website:** BillLayneInsurance.com · **YouTube:** @ncautoandhome
-- **Founded:** 2005 · **NC License #6571216**
+- **Founded:** 2005 · **NC Agency License #15569731**
 - **Taglines (choose only from these):** "Simple. Affordable. Reliable." ·
   "NC Auto • Home • Business" · "Independent Agency — Elkin, NC"
 
@@ -71,8 +71,8 @@ names or logos.
 **Use compliant language:** "Request a quote" · "Compare options" · "Let's review
 your options" · "Coverage and pricing vary" · "Quote subject to underwriting /
 eligibility / policy terms". Put the standard line on every promo/sales piece via
-`Disclaimer` / `finePrint` (default: `STANDARD_DISCLAIMER`, includes NC License
-#6571216). Quote figures/limits appear **only** when Bill supplies real numbers.
+`Disclaimer` / `finePrint` (default: `STANDARD_DISCLAIMER`, includes NC Agency License
+#15569731). Quote figures/limits appear **only** when Bill supplies real numbers.
 
 ## E) Modes → templates
 

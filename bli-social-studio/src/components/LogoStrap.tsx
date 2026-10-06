@@ -5,7 +5,7 @@ export interface LogoStrapProps {
   website?: string;
   /**
    * Small compliance / disclaimer line above the strap, e.g.
-   * “Coverage subject to policy terms. NC License #6571216”. Include on
+   * “Coverage subject to policy terms. NC Agency License #15569731”. Include on
    * promotional posts.
    */
   finePrint?: string;

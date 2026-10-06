@@ -29,7 +29,7 @@ export const TeenDriverSavings = () => (
         <>Put them on the <strong>older sedan</strong>, not the new SUV.</>,
       ]}
       ctaLabel="Ask us about teen discounts"
-      finePrint="Savings vary by policy and driving record. NC License #6571216"
+      finePrint="Savings vary by policy and driving record. NC Agency License #15569731"
     />
   </SocialCanvas>
 );

@@ -9,9 +9,9 @@ export interface DisclaimerProps {
   align?: 'left' | 'center';
 }
 
-/** The current standard compliance line (NC License #6571216 is the site standard). */
+/** The current standard compliance line (NPN #6608086 is the site standard). */
 export const STANDARD_DISCLAIMER =
-  'Coverage and pricing vary. Quote subject to underwriting, eligibility, and policy terms. NC License #6571216';
+  'Coverage and pricing vary. Quote subject to underwriting, eligibility, and policy terms. NC Agency License #15569731';
 
 /**
  * The fine-print compliance block. Include on every promotional / sales piece.

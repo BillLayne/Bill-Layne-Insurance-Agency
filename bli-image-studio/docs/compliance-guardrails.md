@@ -39,7 +39,7 @@ Put the standard disclaimer on every promotional / sales piece (the `Disclaimer`
 component / `finePrint` prop default):
 
 > Coverage and pricing vary. Quote subject to underwriting, eligibility, and policy
-> terms. NC License #6571216
+> terms. NC Agency License #15569731
 
 Third-party statistics (`StatSpotlight`) must carry a `source` line.
 

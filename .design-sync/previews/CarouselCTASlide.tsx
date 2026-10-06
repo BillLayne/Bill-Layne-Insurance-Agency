@@ -14,7 +14,7 @@ export const AskAnythingClose = () => (
       headline="Not sure what your policy actually covers?"
       sub="No robots here — a real Surry County agent reads every message."
       ctaLabel="Ask us anything"
-      finePrint="Coverage subject to policy terms and underwriting. NC License #6571216"
+      finePrint="Coverage subject to policy terms and underwriting. NC Agency License #15569731"
     />
   </SocialCanvas>
 );

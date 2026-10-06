@@ -13,7 +13,7 @@ export const FreePolicyReview = () => (
       subline="Bring any auto or home policy — we’ll flag the gaps and the overcharges in plain English."
       ctaLabel="Call or text 336-835-1993"
       ctaIcon="phone"
-      finePrint="Coverage subject to policy terms and underwriting. NC License #6571216"
+      finePrint="Coverage subject to policy terms and underwriting. NC Agency License #15569731"
     />
   </SocialCanvas>
 );
@@ -32,7 +32,7 @@ export const TeenDriverMoment = () => (
       ctaLabel="Message us"
       ctaIcon="message"
       secondaryCtaLabel="Ask about discounts"
-      finePrint="Savings vary by policy and driving record. NC License #6571216"
+      finePrint="Savings vary by policy and driving record. NC Agency License #15569731"
     />
   </SocialCanvas>
 );

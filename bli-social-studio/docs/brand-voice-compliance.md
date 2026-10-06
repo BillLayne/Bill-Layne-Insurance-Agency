@@ -22,7 +22,7 @@ Bill Layne Insurance is a real, family-run, independent agency in Elkin, NC
 - **No disparaging named competitors.**
 - **Testimonials must be genuine and unedited in substance**; disclose any incentive (FTC).
 - **Promotional posts carry the fine print** via the `finePrint` prop:
-  `Coverage subject to policy terms and underwriting. NC License #6571216`
+  `Coverage subject to policy terms and underwriting. NC Agency License #15569731`
   Educational/community posts don’t need it, offers and quote CTAs do.
 - Readable disclaimers — regulators now flag tiny-print “dark patterns”. The `LogoStrap finePrint` size is the minimum.
 - Claims stories: anonymize, round numbers, never imply a guaranteed outcome.

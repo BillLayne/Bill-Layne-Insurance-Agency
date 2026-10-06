@@ -7,7 +7,7 @@ export interface LogoStrapProps {
   address?: string;
   /**
    * Small compliance / disclaimer line above the strap, e.g.
-   * "Coverage and pricing vary. Quote subject to underwriting. NC License #6571216".
+   * "Coverage and pricing vary. Quote subject to underwriting. NC Agency License #15569731".
    * Include on promotional pieces.
    */
   finePrint?: string;

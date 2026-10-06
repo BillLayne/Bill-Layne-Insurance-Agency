@@ -21,7 +21,7 @@ export const UninsuredDrivers = () => (
       label="U.S. drivers carry no insurance. Uninsured-motorist coverage is how you answer that."
       source="Insurance Research Council"
       ctaLabel="Check your UM limits with us"
-      finePrint="Coverage subject to policy terms and underwriting. NC License #6571216"
+      finePrint="Coverage subject to policy terms and underwriting. NC Agency License #15569731"
     />
   </SocialCanvas>
 );

@@ -31,7 +31,7 @@ export const FirstFrostStillToDo = () => (
       ]}
       footnote="Frozen-pipe claims spike every January in the Yadkin Valley."
       ctaLabel="Get a free coverage review"
-      finePrint="Coverage subject to policy terms and underwriting. NC License #6571216"
+      finePrint="Coverage subject to policy terms and underwriting. NC Agency License #15569731"
     />
   </SocialCanvas>
 );
@@ -48,7 +48,7 @@ export const RentersMoveInList = () => (
         'Update your address with your carrier',
       ]}
       ctaLabel="Text us: 336-835-1993"
-      finePrint="Coverage subject to policy terms and underwriting. NC License #6571216"
+      finePrint="Coverage subject to policy terms and underwriting. NC Agency License #15569731"
     />
   </SocialCanvas>
 );

@@ -13,7 +13,7 @@ export const Standard = () => (
 export const CustomCentered = () => (
   <ImageCanvas format="square" background="cream" scale={0.4}>
     <div style={{ margin: 'auto 0' }}>
-      <Disclaimer align="center">Coverage and pricing vary. Let's review your options. NC License #6571216</Disclaimer>
+      <Disclaimer align="center">Coverage and pricing vary. Let's review your options. NC Agency License #15569731</Disclaimer>
     </div>
   </ImageCanvas>
 );

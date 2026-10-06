@@ -44,7 +44,7 @@ Insurance Agency — Facebook, Instagram, and Google Business Profile.
 - Never "will save" / "cheapest" / competitor bashing. Use "could save",
   "many drivers save".
 - Offer/quote posts pass
-  `finePrint="Coverage subject to policy terms and underwriting. NC License #6571216"`
+  `finePrint="Coverage subject to policy terms and underwriting. NC Agency License #15569731"`
   (renders above the `LogoStrap`). Keep `showStrap` on for feed posts.
 - Photos: real people/places only (never AI-generated people) via
   `background="photo" photoSrc={url}` + `PhotoPost`.
@@ -68,7 +68,7 @@ const { SocialCanvas, HeroPromoPost, Highlight } = window.BLISocialStudio;
     subline="Bring any auto or home policy — we’ll flag the gaps in plain English."
     ctaLabel="Call or text 336-835-1993"
     ctaIcon="phone"
-    finePrint="Coverage subject to policy terms and underwriting. NC License #6571216"
+    finePrint="Coverage subject to policy terms and underwriting. NC Agency License #15569731"
   />
 </SocialCanvas>
 ```

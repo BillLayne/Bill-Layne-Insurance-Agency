@@ -61,7 +61,7 @@ export function FlyerPromo({
   qrSrc,
   qrCaption,
   align = 'left',
-  finePrint = 'Coverage and pricing vary. Quote subject to underwriting. NC License #6571216',
+  finePrint = 'Coverage and pricing vary. Quote subject to underwriting. NC Agency License #15569731',
   showStrap = true,
 }: FlyerPromoProps) {
   return (

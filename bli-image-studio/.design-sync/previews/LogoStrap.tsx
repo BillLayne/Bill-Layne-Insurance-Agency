@@ -3,7 +3,7 @@ import { ImageCanvas, LogoStrap } from 'bli-image-studio';
 /** The standard footer bar, pinned to the canvas bottom. */
 export const StandardStrap = () => (
   <ImageCanvas format="square" background="gradient" scale={0.4}>
-    <LogoStrap finePrint="Coverage and pricing vary. Quote subject to underwriting. NC License #6571216" />
+    <LogoStrap finePrint="Coverage and pricing vary. Quote subject to underwriting. NC Agency License #15569731" />
   </ImageCanvas>
 );
 

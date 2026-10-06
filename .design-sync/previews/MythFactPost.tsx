@@ -23,7 +23,7 @@ export const FloodCoverageMyth = () => (
           wait. Ask before the storm forms.
         </>
       }
-      finePrint="Coverage subject to policy terms and underwriting. NC License #6571216"
+      finePrint="Coverage subject to policy terms and underwriting. NC Agency License #15569731"
     />
   </SocialCanvas>
 );
