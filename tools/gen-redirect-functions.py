@@ -42,10 +42,13 @@ export function onRequest({ request, next }) {
 
 def target_files(frm):
     frm = frm.strip()
+    # normpath: on Windows, "blog/blogs/x" joined onto FUNCS keeps its forward
+    # slashes, so it never equals the backslash path os.walk returns and the
+    # stale sweep below deleted every nested redirect it had just written.
     if frm.endswith('/'):
-        return [os.path.join(FUNCS, frm.strip('/'), '[[path]].js')]
+        return [os.path.normpath(os.path.join(FUNCS, frm.strip('/'), '[[path]].js'))]
     base = frm.strip('/')
-    return [os.path.join(FUNCS, base + '.js'), os.path.join(FUNCS, base + '.html.js')]
+    return [os.path.normpath(os.path.join(FUNCS, base + '.js')), os.path.normpath(os.path.join(FUNCS, base + '.html.js'))]
 
 
 def main():
@@ -56,7 +59,7 @@ def main():
     stale = []
     for dirpath, _dirs, files in os.walk(FUNCS):
         for name in files:
-            path = os.path.join(dirpath, name)
+            path = os.path.normpath(os.path.join(dirpath, name))
             try:
                 with open(path, encoding='utf-8') as fh:
                     head = fh.read(len(MARK))
