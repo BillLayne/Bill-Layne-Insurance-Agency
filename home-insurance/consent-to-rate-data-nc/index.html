@@ -283,6 +283,20 @@
     .kpi small { display:block; margin-top:6px; font-size:.82rem; color:#aab7c9; }
     .result .fine { font-size:.85rem; color:#aab7c9; margin:14px 0 0; }
     .result + .result { margin-top:14px; }
+    .meaning { margin-top:16px; background:#fff7df; border:1px solid #f0dca0; border-radius:var(--r); padding:22px 24px; }
+    .meaning h3 { margin:0 0 10px; font-size:1.3rem; }
+    .meaning ul { margin:0; padding-left:22px; display:grid; gap:8px; }
+    .meaning li { color:var(--ink); }
+    .meaning p { margin:12px 0 0; color:var(--muted); font-size:.95rem; }
+    .howto { margin-top:22px; background:#fff; border:1px solid var(--line); border-radius:var(--r); padding:24px 26px; box-shadow:0 2px 10px rgba(10,31,60,.05); }
+    .howto-head h3 { font-size:1.35rem; margin-bottom:4px; }
+    .howto-head p { color:var(--muted); margin:0 0 14px; }
+    .steps { margin:0; padding-left:0; list-style:none; counter-reset:step; display:grid; gap:12px; }
+    .steps li { position:relative; padding-left:48px; }
+    .steps li::before { counter-increment:step; content:counter(step); position:absolute; left:0; top:0; width:34px; height:34px; border-radius:50%; background:var(--gold); color:var(--navy); font-weight:800; display:grid; place-items:center; font-family:var(--display); }
+    .steps b { color:var(--navy); }
+    .howto-actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:18px; }
+    .btn-outline { background:#fff; color:var(--navy); border:1.5px solid var(--navy); }
     .trend { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr); gap:24px; align-items:start; }
     .card { background:#fff; border:1px solid var(--line); border-radius:var(--r); padding:22px 24px; box-shadow:0 2px 10px rgba(10,31,60,.05); }
     .chart { display:grid; grid-template-columns:repeat(4, 1fr); gap:18px; align-items:end; height:220px; padding:0 8px 28px; border-bottom:1px solid var(--line); position:relative; }
@@ -351,7 +365,7 @@
       <div>
         <p class="eyebrow">NC home insurance data &bull; 2022&ndash;2025</p>
         <h1 id="page-title">North Carolina Consent to Rate, by County</h1>
-        <p class="hero-sub">Find the share of home policies with consent to rate and the average premium increase in your county&rsquo;s rating territory.</p>
+        <p class="hero-sub">Is your home insurance renewal priced above the state-approved rate? See how common that is where you live, how big the extra charge usually is, and what you can do about yours.</p>
         <div class="hero-links">
           <a href="/home-insurance/consent-to-rate/">What is consent to rate? <span aria-hidden="true">&rarr;</span></a>
           <a href="#all-data">View all data <span aria-hidden="true">&rarr;</span></a>
@@ -500,8 +514,21 @@
           <div class="ex"><span class="ex-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18M5 16l5-6 4 3 5-7"/></svg></span><div><h3>Average premium increase</h3><p>On the policies that did carry a surcharge, how much higher the charged premium was than the approved premium, as a percentage and in dollars per policy. It says how big the surcharge is, not how many people pay it.</p></div></div>
         </div>
         <div id="result" class="result result-empty" aria-live="polite">
-          <h3>Pick a county above to see its numbers</h3>
-          <p class="terr">For example Surry, Yadkin, Wilkes or Stokes. The matching territory is highlighted in the table below.</p>
+          <h3>Pick your county above</h3>
+          <p class="terr">We will show you how common the consent-to-rate surcharge is where you live, how big it usually is, and what that means for your own renewal. The matching territory is highlighted in the table further down.</p>
+        </div>
+        <div id="meaning" class="meaning" hidden></div>
+        <div class="howto">
+          <div class="howto-head"><h3>How to check your own renewal in two minutes</h3><p>You do not need this page to tell you whether you are paying a consent-to-rate surcharge. Your renewal says so.</p></div>
+          <ol class="steps">
+            <li><b>Find the two premiums.</b> On a North Carolina home renewal with consent to rate, the declarations page (or a page right before it) shows the premium at the approved rate and the premium you are actually being charged, with a consent-to-rate notice. If there is only one premium and no notice, you are at the approved rate.</li>
+            <li><b>Subtract.</b> The difference is your surcharge. Compare it with the average for your territory above. Bigger than average means it is worth a second look; average or below is still worth a quote at renewal time.</li>
+            <li><b>Send it to us.</b> Upload or text a photo of the renewal. We quote the same house with every carrier we represent, including one that does not use consent-to-rate pricing, and show you the numbers side by side. Nothing changes unless you say so.</li>
+          </ol>
+          <div class="howto-actions">
+            <a class="btn btn-gold" href="/upload-policy?src=ctr_data_howto">Upload my renewal</a>
+            <a class="btn btn-outline" href="sms:+13368279065?&amp;body=Hi%2C%20I%20have%20a%20consent-to-rate%20notice%20on%20my%20home%20renewal." data-source="ctr_data_howto">Text a photo to 336-827-9065</a>
+          </div>
         </div>
       </div>
     </section>
@@ -704,6 +731,13 @@
       if (D.notes[county]) html += '<p class="fine">' + D.notes[county] + '</p>';
       html += '<p class="fine">Source: NC Department of Insurance aggregate consent-to-rate data; NC Rate Bureau territory definitions. These are statistics for the territory, not a quote for any home.</p>';
       out.className = 'result'; out.innerHTML = html;
+      var m = document.getElementById('meaning'), r1 = D.rows[Y1][codes[0]], tenths = Math.round(r1[2] / 10);
+      m.hidden = false;
+      m.innerHTML = '<h3>What this means for you in ' + county + ' County</h3><ul>'
+        + '<li><strong>You are not being singled out.</strong> About ' + tenths + ' in 10 home policies in your rating territory were priced above the state-approved rate in ' + Y1 + '. If your renewal has a consent-to-rate notice, that is now the normal case, not a sign something is wrong with your house.</li>'
+        + '<li><strong>The extra charge is real money.</strong> On those policies the premium ran about ' + r1[4] + '% above the approved rate, roughly ' + money(r1[3]) + ' a year on average. Yours may be more or less; the notice on your renewal shows the exact amount.</li>'
+        + '<li><strong>It is each company&rsquo;s choice, so it can be shopped.</strong> The approved rate is the same for every company in your territory. Whether to charge above it is up to each insurer, which is why the same house can be priced at the approved rate by one company and well above it by another.</li>'
+        + '</ul><p>Next step: check your own renewal below, then send it to us and we will tell you where your surcharge stands and whether another carrier would price the house differently.</p>';
       document.querySelectorAll('#terr-table tr.hl').forEach(function (tr) { tr.classList.remove('hl'); });
       codes.forEach(function (c) { var tr = document.querySelector('#terr-table tr[data-t="' + c + '"]'); if (tr) tr.classList.add('hl'); });
       try { var u = new URL(location.href); u.searchParams.set('county', county); history.replaceState(null, '', u); } catch (e) {}
