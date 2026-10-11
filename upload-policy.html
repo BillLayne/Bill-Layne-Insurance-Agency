@@ -703,10 +703,17 @@
             successEl.focus({ preventScroll: true });
             try {
                 if (typeof gtag === 'function') {
+                    // Record only a bounded internal link label, never a full URL or customer input.
+                    const entry = new URLSearchParams(window.location.search).get('src') || '';
+                    const ctaSource = /^[a-z][a-z0-9_]{0,79}$/.test(entry) ? entry : 'upload_policy_direct';
                     gtag('event', 'policy_upload_submit', {
                         'event_category': 'lead',
                         'event_label': payload.policyType,
-                        'value': selectedFiles.length
+                        'value': selectedFiles.length,
+                        'cta_source': ctaSource,
+                        'form_name': 'policy_upload',
+                        'lead_type': 'policy_upload',
+                        'method': 'backend_acknowledged'
                     });
                 }
             } catch (_) { /* Tracking must never hide a confirmed submission. */ }
