@@ -62,6 +62,10 @@ def main():
     first_li = out.index('<li>', ul_open)
     indent = out[out.rfind('\n', 0, first_li) + 1:first_li]
     close_indent = out[out.rfind('\n', 0, ul_close) + 1:ul_close]
+    # Match the file's own line endings: git stores LF, but a Windows checkout
+    # (core.autocrlf=true) has CRLF, and mixing them made --check report drift
+    # on every Windows machine even when the list was correct.
+    nl = '\r\n' if '\r\n' in src else '\n'
     seen, lines = set(), []
     for p in posts:
         h = href(p)
@@ -69,7 +73,7 @@ def main():
             continue
         seen.add(h)
         lines.append(f'{indent}<li><a href="{html.escape(h, quote=True)}">{html.escape(p["title"], quote=False)}</a></li>')
-    out = out[:ul_open + len('<ul>')] + '\n' + '\n'.join(lines) + '\n' + close_indent + out[ul_close:]
+    out = out[:ul_open + len('<ul>')] + nl + nl.join(lines) + nl + close_indent + out[ul_close:]
 
     if out == src:
         print(f'blog/index.html in sync ({len(posts)} posts, {len(lines)} noscript links)')

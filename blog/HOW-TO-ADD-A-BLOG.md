@@ -105,14 +105,15 @@ All base64 images must be extracted, uploaded, and replaced with hosted URLs. Th
 - `featured: true` — Makes it show prominently
 - All three URL fields (`url`, `linkUrl`, `readMoreUrl`) should be identical
 
-### Step 6: Update the Embedded Blog Data in index.html (CRITICAL)
+### Step 6: Sync the blog page from blogs.json (CRITICAL — use the tool, never hand-edit)
 - **This step is required or the blog will NOT appear on the landing page.**
-- Open `blog/index.html` and search for `window.__BLOG_DATA__`
-- This is a single very long line: `<script>window.__BLOG_DATA__ = [...];</script>`
-- Replace the entire JSON array on that line with the **current full contents** of `blog/data/blogs.json`, minified to a single line
-- **How to do it:** Read `blog/data/blogs.json`, minify it (remove all newlines and unnecessary whitespace), then replace that script with: `<script>window.__BLOG_DATA__ = MINIFIED_JSON;</script>`
-- **Verify** by checking that the number of `"id":` occurrences in the embedded script matches the count in `blogs.json`
-- This embedded data is the primary data source for the blog landing page — if it's out of sync, blogs won't show
+- `blog/index.html` carries the post list twice outside the JS grid: the `window.__BLOG_DATA__` script (what `blog/app.js` renders) and the `<noscript>` "All Blog Posts" list (what crawlers without JavaScript see). Hand-patching them caused duplicates, missing posts and listed cross-canonical posts (fixed 2026-10-07).
+- After any change to `blog/data/blogs.json`, run from the repo root:
+  ```bash
+  python tools/sync-blog-index.py
+  ```
+  It regenerates both lists from blogs.json (noscript links in the canonical `/blog/blogs/<slug>` form). `python tools/sync-blog-index.py --check` exits 1 if either list has drifted.
+- Removing a post: delete its blogs.json entry, then run the tool — it drops the post from both lists.
 
 ### Step 5A: Canonical + Link Hygiene (REQUIRED — checked before every publish)
 - The canonical URL has exactly ONE correct shape:
@@ -149,8 +150,7 @@ All base64 images must be extracted, uploaded, and replaced with hosted URLs. Th
 - [ ] No `utm_*` on internal links (only on outbound share links)
 - [ ] `blogs.json` has the new entry at the **top** with today's date
 - [ ] `imageUrl` in blogs.json uses the hosted hero image URL
-- [ ] `window.__BLOG_DATA__` in `blog/index.html` has the **same number of entries** as `blogs.json` (count `"id":` occurrences in both — they must match)
-- [ ] The new blog's `id` appears in both `blogs.json` AND the embedded data script
+- [ ] `python tools/sync-blog-index.py --check` passes (embedded data and noscript list match blogs.json)
 - [ ] The newest blog appears in the raw HTML "Latest NC Insurance Guides" section and in the blog JSON-LD schema
 - [ ] `python tools/build-sitemaps.py` was run after the commit and `sitemap-blog.xml` lists the new post (extensionless URL)
 - [ ] After pushing: Search Console → URL Inspection → Request Indexing on the new URL
