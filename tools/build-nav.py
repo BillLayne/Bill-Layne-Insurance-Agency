@@ -150,7 +150,9 @@ def transform_standalone(src, cfg, rel, dock=True):
         out = out[:m.start()] + '    ' + css_link + '\n' + out[m.start():]
         notes.append('css link added')
 
-    block = render_block(cfg, dock=dock, footer_cta=rel not in cfg.get('footer_cta_exclude', []))
+    page_cfg = dict(cfg)
+    page_cfg['quote_href'] = cfg.get('quote_href_overrides', {}).get(rel, cfg['quote_href'])
+    block = render_block(page_cfg, dock=dock, footer_cta=rel not in cfg.get('footer_cta_exclude', []))
     if BLOCK_RE.search(out):
         out, n = BLOCK_RE.subn(lambda m: block, out)
         if n != 1:

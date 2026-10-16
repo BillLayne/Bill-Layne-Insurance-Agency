@@ -40,6 +40,7 @@ def esc(value):
  return html.escape(html.unescape(value), quote=True)
 
 def render(cfg, rel):
+ quote_href=cfg.get('quote_href_overrides',{}).get(rel,cfg['quote_href'])
  u=cfg['universal']; spanish=rel in cfg.get('lang',{}) and cfg['lang'][rel]=='es' or rel.startswith('espanol/')
  labels=cfg.get('labels_es',{}) if spanish else {}
  words=u['es'] if spanish else u['en']
@@ -56,7 +57,7 @@ def render(cfg, rel):
    rows.append(link)
   heading='<h3 class="bli-um-label">%s</h3>'%esc(words[group['key']]) if group['key'] else ''
   sections.append('<section class="bli-um-group">'+heading+''.join(rows)+'</section>')
- actions='' if rel in cfg.get('footer_cta_exclude',[]) else '<div class="bli-um-actions"><a class="bli-um-quote" data-source="universal_menu" href="%s?src=universal_menu">%s <span aria-hidden="true">&rarr;</span></a><a class="bli-um-call" data-source="universal_menu" href="%s">%s %s</a></div><p class="bli-um-hours">%s</p>'%(esc(cfg['quote_href']),esc(words['quote']),esc(cfg['phone_href']),svg('phone'),esc(cfg['phone_display']),esc(words['hours']))
+ actions='' if rel in cfg.get('footer_cta_exclude',[]) else '<div class="bli-um-actions"><a class="bli-um-quote" data-source="universal_menu" href="%s?src=universal_menu">%s <span aria-hidden="true">&rarr;</span></a><a class="bli-um-call" data-source="universal_menu" href="%s">%s %s</a></div><p class="bli-um-hours">%s</p>'%(esc(quote_href),esc(words['quote']),esc(cfg['phone_href']),svg('phone'),esc(cfg['phone_display']),esc(words['hours']))
  return '\n'.join([START,
   '<div class="bli-um-entry"><button type="button" data-bli-menu-open>%s <span aria-hidden="true">&rarr;</span></button></div>'%esc(words['open']),
   '<dialog id="bli-site-menu" class="bli-um-dialog" aria-labelledby="bli-um-title" lang="%s"%s>'%(('es' if spanish else 'en'), ' open data-inline-fallback' if rel=='index.html' else ''),
