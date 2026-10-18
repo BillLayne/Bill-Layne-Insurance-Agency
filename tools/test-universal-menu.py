@@ -8,11 +8,13 @@ cfg=json.loads((menu.ROOT/'tools/nav.json').read_text(encoding='utf-8'))
 class UniversalMenuTests(unittest.TestCase):
  def test_homepage_has_inline_fallback_in_the_same_menu(self):
   self.assertIn('open data-inline-fallback',menu.render(cfg,'index.html'))
+  self.assertIn('cdn-cgi/image/width=370',menu.render(cfg,'index.html'))
+  self.assertIn('cdn-cgi/image/width=370',menu.render(cfg,'get-quote.html'))
   self.assertNotIn('data-inline-fallback',menu.render(cfg,'auto-quote.html'))
  def test_trust_and_coverage_links_and_direct_blog(self):
   items=[item for group in cfg['universal']['groups'] for item in group['items']]
   hrefs={item['href'] for item in items}
-  self.assertTrue({'/about/','/blog/','/renters-insurance/','/contact-us/?src=menu_business'} <= hrefs)
+  self.assertTrue({'/about/','/blog/','/renters-insurance/','/business-insurance/?src=menu_business'} <= hrefs)
   self.assertNotIn('/blog/',{child['href'] for item in items for child in item.get('children',[])})
  def test_repeat_generation_preserves_existing_form_and_scripts(self):
   src='<html><head><title>Test</title></head><body><form><input name="email"></form><script>keepMe()</script></body></html>'

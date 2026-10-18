@@ -58,10 +58,11 @@ def render(cfg, rel):
   heading='<h3 class="bli-um-label">%s</h3>'%esc(words[group['key']]) if group['key'] else ''
   sections.append('<section class="bli-um-group">'+heading+''.join(rows)+'</section>')
  actions='' if rel in cfg.get('footer_cta_exclude',[]) else '<div class="bli-um-actions"><a class="bli-um-quote" data-source="universal_menu" href="%s?src=universal_menu">%s <span aria-hidden="true">&rarr;</span></a><a class="bli-um-call" data-source="universal_menu" href="%s">%s %s</a></div><p class="bli-um-hours">%s</p>'%(esc(quote_href),esc(words['quote']),esc(cfg['phone_href']),svg('phone'),esc(cfg['phone_display']),esc(words['hours']))
+ logo=u.get('logo_overrides',{}).get(rel,u['logo'])
  return '\n'.join([START,
   '<div class="bli-um-entry"><button type="button" data-bli-menu-open>%s <span aria-hidden="true">&rarr;</span></button></div>'%esc(words['open']),
   '<dialog id="bli-site-menu" class="bli-um-dialog" aria-labelledby="bli-um-title" lang="%s"%s>'%(('es' if spanish else 'en'), ' open data-inline-fallback' if rel=='index.html' else ''),
-  '<header class="bli-um-header"><a href="/" aria-label="Bill Layne Insurance"><img src="%s" alt="Bill Layne Insurance" width="240" height="64" decoding="async" loading="lazy"></a><button type="button" class="bli-um-close" aria-label="%s">%s</button></header>'%(esc(u['logo']),esc(words['close']),svg('close')),
+  '<header class="bli-um-header"><a href="/" aria-label="Bill Layne Insurance"><img src="%s" alt="Bill Layne Insurance" width="240" height="64" decoding="async" loading="lazy"></a><button type="button" class="bli-um-close" aria-label="%s">%s</button></header>'%(esc(logo),esc(words['close']),svg('close')),
   '<h2 id="bli-um-title">%s</h2>'%esc(words['menu']),
   '<nav class="bli-um-scroll" aria-label="%s">%s</nav>'%(esc(words['menu']),''.join(sections)),
   '<footer class="bli-um-footer"><p class="bli-um-personal">%s</p>%s</footer>'%(esc(words['personal']),actions),
