@@ -1,37 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-N37THY37CR"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <!-- Analytics: queued immediately, network-loaded after first paint or first interaction -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-N37THY37CR', location.hostname === 'www.billlayneinsurance.com' ? {} : { traffic_type: 'internal' });
-    </script>
-    <!-- Microsoft Clarity -->
-    <script>
-      (function(c,l,a,r,i,t,y){
-        // Microsoft Clarity, loaded after the page has painted so the recorder
-        // never competes with the hero image, fonts, or first input (INP).
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        function load(){ if(t)return; t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y); }
-        function idle(){ ('requestIdleCallback' in window)?requestIdleCallback(load,{timeout:4000}):setTimeout(load,1500); }
-        (l.readyState==='complete')?idle():window.addEventListener('load',idle,{once:true});
-      })(window, document, "clarity", "script", "vo5s3jhhub");
+      window.clarity = window.clarity || function(){(window.clarity.q = window.clarity.q || []).push(arguments);};
+      (function(){
+        var analyticsLoaded = false;
+        function loadAnalytics(){
+          if (analyticsLoaded) return;
+          analyticsLoaded = true;
+          var gtagScript = document.createElement('script');
+          gtagScript.async = true;
+          gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-N37THY37CR';
+          document.head.appendChild(gtagScript);
+          (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            function load(){ if(t)return; t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+              y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y); }
+            function idle(){ ('requestIdleCallback' in window)?requestIdleCallback(load,{timeout:4000}):setTimeout(load,1500); }
+            (l.readyState==='complete')?idle():window.addEventListener('load',idle,{once:true});
+          })(window, document, "clarity", "script", "vo5s3jhhub");
+        }
+        window.addEventListener('load', function(){ setTimeout(loadAnalytics, 1800); }, { once: true });
+        ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function(eventName){
+          window.addEventListener(eventName, loadAnalytics, { once: true, passive: true });
+        });
+      })();
     </script>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <title>NC Insurance Quote Requests | Bill Layne Insurance</title>
-    <meta name="description" content="Request auto, home, renters, motorcycle / ATV or boat / PWC insurance quotes with Bill Layne Insurance, an independent agency in Elkin, North Carolina.">
+    <meta name="description" content="Request auto, home, mobile home, renters, motorcycle / ATV / UTV, or boat insurance quotes with Bill Layne Insurance in Elkin, North Carolina.">
     <link rel="canonical" href="https://www.billlayneinsurance.com/get-quote">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <meta name="robots" content="index, follow">
 
     <!-- Keywords & Geo -->
-<meta name="geo.region" content="US-NC">
+    <meta name="geo.region" content="US-NC">
     <meta name="geo.placename" content="Elkin, North Carolina">
     <meta name="geo.position" content="36.2554;-80.8479">
     <meta name="ICBM" content="36.2554, -80.8479">
@@ -41,13 +51,13 @@
     <meta property="og:site_name" content="Bill Layne Insurance Agency">
     <meta property="og:url" content="https://www.billlayneinsurance.com/get-quote">
     <meta property="og:title" content="NC Insurance Quote Requests | Bill Layne Insurance">
-    <meta property="og:description" content="Free auto, home, renters, motorcycle / ATV and boat / PWC quote requests with a local Elkin, NC independent agency. Compare multiple carriers and get licensed guidance.">
+    <meta property="og:description" content="Free auto, home, mobile home, renters, motorcycle / ATV / UTV, and boat quote requests with a local Elkin, NC independent agency. Compare available carriers.">
     <meta property="og:image" content="https://img.billlayneinsurance.com/i/2026/08/bli-og-image-cfpd46.png">
     <meta property="og:locale" content="en_US">
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="NC Insurance Quote Requests | Bill Layne Insurance">
-    <meta name="twitter:description" content="Free auto, home, renters, motorcycle / ATV and boat / PWC quote requests with a local Elkin, NC independent agency. Compare multiple carriers and get licensed guidance.">
+    <meta name="twitter:description" content="Free auto, home, mobile home, renters, motorcycle / ATV / UTV, and boat quote requests with a local Elkin, NC independent agency. Compare available carriers.">
     <meta name="twitter:image" content="https://img.billlayneinsurance.com/i/2026/08/bli-og-image-cfpd46.png">
 
     <!-- Schema: InsuranceAgency (rich) -->
@@ -59,7 +69,7 @@
   "url": "https://www.billlayneinsurance.com/",
   "logo": "https://img.billlayneinsurance.com/i/2026/08/bli-agency-logo-4jqj2j.png",
   "image": "https://img.billlayneinsurance.com/i/2026/08/bli-og-image-cfpd46.png",
-  "description": "Independent insurance agency in Elkin, NC comparing North Carolina auto and home insurance quotes from multiple carriers.",
+  "description": "Independent insurance agency in Elkin, NC comparing North Carolina auto, home, mobile home, renters, and powersports insurance options across multiple carriers.",
   "telephone": "+1-336-835-1993",
   "email": "Save@BillLayneInsurance.com",
   "foundingDate": "2005",
@@ -113,36 +123,77 @@
       "name": "North Carolina"
     }
   ],
+  "hasCredential": [
+    {
+      "@type": "EducationalOccupationalCredential",
+      "name": "North Carolina Insurance License",
+      "credentialCategory": "license",
+      "identifier": "15569731",
+      "url": "https://sbs.naic.org/solar-external-lookup/",
+      "recognizedBy": {
+        "@type": "Organization",
+        "name": "North Carolina Department of Insurance"
+      }
+    }
+  ],
   "hasOfferCatalog": {
     "@type": "OfferCatalog",
-    "name": "Insurance Products",
+    "name": "Insurance Quote Options",
     "itemListElement": [
       {
         "@type": "Offer",
         "itemOffered": {
           "@type": "Service",
-          "name": "Auto Insurance"
+          "name": "Auto Insurance",
+          "url": "https://www.billlayneinsurance.com/auto-quote"
         }
       },
       {
         "@type": "Offer",
         "itemOffered": {
           "@type": "Service",
-          "name": "Home Insurance"
+          "name": "Homeowners Insurance",
+          "url": "https://www.billlayneinsurance.com/home-quote"
         }
       },
       {
         "@type": "Offer",
         "itemOffered": {
           "@type": "Service",
-          "name": "Renters Insurance"
+          "name": "Mobile & Manufactured Home Insurance",
+          "url": "https://www.billlayneinsurance.com/mobile-home-quote"
         }
       },
       {
         "@type": "Offer",
         "itemOffered": {
           "@type": "Service",
-          "name": "Business Insurance"
+          "name": "Motorcycle, ATV & UTV Insurance",
+          "url": "https://www.billlayneinsurance.com/motorcycle-quote"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Renters Insurance",
+          "url": "https://www.billlayneinsurance.com/renters-quote"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Boat & PWC Insurance",
+          "url": "https://www.billlayneinsurance.com/boat-quote"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Landlord & Rental Property Insurance",
+          "url": "https://www.billlayneinsurance.com/home-insurance/landlord-insurance"
         }
       }
     ]
@@ -163,7 +214,8 @@
   "@id": "https://www.billlayneinsurance.com/get-quote#webpage",
   "name": "North Carolina Insurance Quote Chooser",
   "url": "https://www.billlayneinsurance.com/get-quote",
-  "description": "Choose an auto, home, or renters insurance quote from Bill Layne Insurance Agency in Elkin, NC. A licensed local agent compares multiple carriers for North Carolina coverage.",
+  "description": "Request auto, home, mobile home, renters, motorcycle / ATV / UTV, or boat insurance quotes with Bill Layne Insurance Agency in Elkin, NC.",
+  "dateModified": "2026-10-18",
   "inLanguage": "en-US",
   "isPartOf": {
     "@id": "https://www.billlayneinsurance.com/#website"
@@ -186,7 +238,7 @@
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://www.billlayneinsurance.com"
+        "item": "https://www.billlayneinsurance.com/"
       },
       {
         "@type": "ListItem",
@@ -208,7 +260,7 @@
       "name": "How long does it take to get an insurance quote?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "An auto insurance quote takes about 5-7 minutes. A home insurance quote takes 8-10 minutes. You'll hear back from Bill Layne within 1 business day with your rate options."
+        "text": "Completing the online request form takes about 5–7 minutes for auto or 8–10 minutes for home. Because our licensed agency team personally shops your request across available carriers, pricing is not instant—our team follows up after reviewing your options."
       }
     },
     {
@@ -232,7 +284,7 @@
       "name": "Can I bundle auto and home insurance for a discount?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. Bundling auto and home insurance may qualify you for a multi-policy discount depending on the carrier, coverage, and underwriting details. Complete one quote now and then the other so we can compare options together."
+        "text": "Yes. Bundling auto with home, mobile home, or renters insurance may qualify you for a multi-policy discount depending on the carrier, coverage, and underwriting details. Start with your primary auto or property request and note the additional coverage you want to bundle, or submit both forms if you have your details handy."
       }
     },
     {
@@ -246,11 +298,19 @@
   ]
 }</script>
 
-    <!-- Schema: HowTo (Quote Process) -->
-    
-
-    <link rel="stylesheet" href="/fonts/fonts.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Fast LCP font delivery: preload Outfit 800/900 for main heading, defer full fonts & icons -->
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/outfit-900-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/outfit-800-latin.woff2" crossorigin>
+    <style>
+      @font-face{font-family:'Outfit';font-style:normal;font-weight:900;font-display:swap;src:url(/fonts/outfit-900-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+      @font-face{font-family:'Outfit';font-style:normal;font-weight:800;font-display:swap;src:url(/fonts/outfit-800-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+    </style>
+    <link rel="stylesheet" href="/fonts/fonts.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="/fonts/fonts.css">
+        <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css">
+    </noscript>
 
 <style>
 /* ============================================================
@@ -731,13 +791,13 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; }
     min-height: 48px;
     transition: all 0.2s;
 }
-.contact-btn.phone { background: var(--green); color: white; }
-.contact-btn.phone:hover { background: #047857; }
+.contact-btn.phone { background: #047857; color: white; }
+.contact-btn.phone:hover { background: #065f46; }
 .contact-btn.text  { background: var(--g700); color: white; }
 .contact-btn.text:hover  { background: var(--g800); }
 .contact-hours {
     font-size: 12px;
-    color: var(--g400);
+    color: var(--g600);
     margin-top: 10px;
 }
 
@@ -1198,28 +1258,52 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; }
 <link rel="stylesheet" href="/css/universal-menu.css?v=20261005-1">
 <script src="/js/universal-menu.js?v=20261005-1" defer></script>
 <!-- BLI-UNIVERSAL-HEAD:END -->
-<link rel="stylesheet" href="/css/quote-selector.css?v=20261004-1">
+<link rel="stylesheet" href="/css/quote-selector.css?v=20261018-3">
 <link rel="stylesheet" href="/css/mobile-home-selector.css?v=20261016-1">
-<link rel="stylesheet" href="/css/quote-selector-mobile.css?v=20261018-2">
-<link rel="stylesheet" href="/css/quote-selector-desktop.css?v=20261018-2">
+<link rel="stylesheet" href="/css/quote-selector-mobile.css?v=20261018-3">
+<link rel="stylesheet" href="/css/quote-selector-desktop.css?v=20261018-3">
+<style>
+.qs-icon svg { width: 1em; height: 1em; display: inline-block; vertical-align: -0.125em; fill: currentColor; }
+.qs-landlord-bar {
+    grid-column: 1 / -1;
+    order: 9;
+    margin-top: 14px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    border: 1px solid #d8c28a;
+    background: #fffdf6;
+    color: #062334;
+    font-size: 14px;
+    line-height: 1.5;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 16px;
+}
+.qs-landlord-bar strong { color: #062334; font-weight: 700; }
+.qs-landlord-links { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 12px; font-weight: 700; }
+.qs-landlord-links a { color: #092e40; text-decoration: underline; text-underline-offset: 3px; }
+.qs-landlord-links a:hover { color: #8c6000; }
+</style>
 </head>
 <body class="quote-flow">
 
 <!-- -- HEADER -- -->
 <header class="site-header quote-header">
         <a href="/" class="header-brand" aria-label="Bill Layne Insurance home">
-            <img class="qs-logo" src="https://img.billlayneinsurance.com/i/2026/08/bli-agency-logo-4jqj2j.png" alt="Bill Layne Insurance" width="240" height="64" decoding="async">
+            <img class="qs-logo" src="https://img.billlayneinsurance.com/cdn-cgi/image/width=370,format=auto,quality=85/i/2026/08/bli-agency-logo-4jqj2j.png" srcset="https://img.billlayneinsurance.com/cdn-cgi/image/width=370,format=auto,quality=85/i/2026/08/bli-agency-logo-4jqj2j.png 370w, https://img.billlayneinsurance.com/cdn-cgi/image/width=440,format=auto,quality=85/i/2026/08/bli-agency-logo-4jqj2j.png 440w" sizes="(max-width: 699px) 175px, 220px" alt="Bill Layne Insurance" width="240" height="64" decoding="async">
         </a>
         <nav class="qs-desktop-nav" aria-label="Quote page links"><a href="/">Home</a><a href="/get-quote?src=quote_selector_header" aria-current="page">Get a Quote</a><a href="/clients/">Client Resources</a><a href="/contact-us/">Contact</a></nav>
         <a href="tel:3368351993" class="header-phone" aria-label="Call Bill Layne Insurance at (336) 835-1993">
-            <i class="fas fa-phone-alt" aria-hidden="true"></i>
+            <i class="qs-icon" aria-hidden="true"><svg viewBox="0 0 512 512"><path d="M497.39 361.8l-112-48a24 24 0 0 0-28 6.9l-49.6 60.6A370.66 370.66 0 0 1 130.6 204.11l60.6-49.6a23.94 23.94 0 0 0 6.9-28l-48-112A24.16 24.16 0 0 0 122.6.61l-104 24A24 24 0 0 0 0 48c0 256.5 207.9 464 464 464a24 24 0 0 0 23.4-18.6l24-104a24.29 24.29 0 0 0-14.01-27.6z"/></svg></i>
             <span class="phone-text">(336) 835-1993</span>
         </a>
 <button type="button" class="qs-menu" data-bli-menu-open onclick="openMenu()" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 5h18M3 12h18M3 19h18"/></svg></button>
     </header>
 
 <!-- -- HERO -- -->
-<section class="hero qs-hero" aria-labelledby="quote-heading"><div class="qs-container"><p class="qs-eyebrow">Local guidance. More options.</p><h1 id="quote-heading"><span class="qs-heading-desktop" style="color:inherit">What would you like to protect?</span><span class="qs-heading-mobile" style="color:inherit">One request.<br><span>Personally shopped.</span></span></h1><p class="hero-sub"><span class="qs-desktop-copy">One request. Our local team shops multiple carriers for you.</span><span class="qs-mobile-copy">Our NC team compares available carriers for you.</span></p><p class="qs-expectation"><span class="qs-desktop-copy"><i class="fas fa-check-circle" aria-hidden="true"></i><strong>Personally reviewed. Pricing isn’t instant.</strong></span><span class="qs-mobile-copy"><strong>Personally reviewed.</strong> Pricing isn’t instant.</span></p><div class="qs-benefits"><span><i class="fas fa-users" aria-hidden="true"></i> Multiple carriers</span><span><i class="far fa-comment" aria-hidden="true"></i> Personal guidance</span><span><i class="fas fa-map-marker-alt" aria-hidden="true"></i> One local agency</span></div></div></section>
+<section class="hero qs-hero" aria-labelledby="quote-heading"><div class="qs-container"><p class="qs-eyebrow">Local guidance. More options.</p><h1 id="quote-heading"><span class="qs-heading-desktop" style="color:inherit">What would you like to protect?</span><span class="qs-heading-mobile" style="color:inherit">One request.<br><span>Personally shopped.</span></span></h1><p class="hero-sub"><span class="qs-desktop-copy">One request. Our local team shops available carriers for you.</span><span class="qs-mobile-copy">Our NC team compares available carriers for you.</span></p><p class="qs-expectation"><span class="qs-desktop-copy"><i class="qs-icon" aria-hidden="true"><svg viewBox="0 0 512 512"><path d="M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z"/></svg></i><strong>Free, no obligation &middot; Personally reviewed.</strong> Pricing isn’t instant.</span><span class="qs-mobile-copy"><strong>Free, no obligation.</strong> Personally reviewed &mdash; pricing isn’t instant.</span></p><div class="qs-benefits"><span><i class="qs-icon" aria-hidden="true"><svg viewBox="0 0 640 512"><path d="M96 224c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm448 0c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm32 32h-64c-17.6 0-33.5 7.1-45.1 18.6 40.3 22.1 68.9 62 75.1 109.4h66c17.7 0 32-14.3 32-32v-32c0-35.3-28.7-64-64-64zm-256 0c61.9 0 112-50.1 112-112S381.9 32 320 32 208 82.1 208 144s50.1 112 112 112zm76.8 32h-8.3c-20.8 10-43.9 16-68.5 16s-47.6-6-68.5-16h-8.3C179.6 288 128 339.6 128 403.2V432c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48v-28.8c0-63.6-51.6-115.2-115.2-115.2zm-223.7-13.4C161.5 263.1 145.6 256 128 256H64c-35.3 0-64 28.7-64 64v32c0 17.7 14.3 32 32 32h65.9c6.3-47.4 34.9-87.3 75.2-109.4z"/></svg></i> Multiple carriers</span><span><i class="qs-icon" aria-hidden="true"><svg viewBox="0 0 512 512"><path d="M256 32C114.6 32 0 125.1 0 240c0 49.6 21.4 95 57 130.7C44.5 421.1 2.7 466 2.2 466.5c-2.2 2.3-2.8 5.7-1.5 8.7S4.8 480 8 480c66.3 0 116-31.8 140.6-51.4 32.7 12.3 69 19.4 107.4 19.4 141.4 0 256-93.1 256-208S397.4 32 256 32z"/></svg></i> Personal guidance</span><span><i class="qs-icon" aria-hidden="true"><svg viewBox="0 0 384 512"><path d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z"/></svg></i> One local agency</span></div></div></section>
 
 <!-- -- MAIN -- -->
 <main id="main-content">
@@ -1231,15 +1315,23 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; }
     </div>
 
 <div class="qs-coverage-layout">
-<div class="cards-grid"><a href="auto-quote.html" class="quote-card card-auto" aria-label="Start my auto insurance request"><div class="card-inner"><div class="card-icon-wrap"><i class="fas fa-car" aria-hidden="true"></i></div><div class="qs-card-copy"><h3 class="card-title">Auto Insurance</h3><p class="card-desc">For your drivers and vehicles.</p></div><span class="card-cta"><b class="qs-full-request">Start My Auto Request</b><b class="qs-short-request">Start my request</b> <span aria-hidden="true">→</span></span></div></a><a href="home-quote.html" class="quote-card card-home" aria-label="Start my home insurance request"><div class="card-inner"><div class="card-icon-wrap"><i class="fas fa-house" aria-hidden="true"></i></div><div class="qs-card-copy"><h3 class="card-title">Home Insurance</h3><p class="card-desc">For your home and belongings.</p></div><span class="card-cta"><b class="qs-full-request">Start My Home Request</b><b class="qs-short-request">Start my request</b> <span aria-hidden="true">→</span></span></div></a><a href="/mobile-home-quote" data-source="quote_selector_mobile_home" class="quote-card card-mobile-home" aria-label="Start my mobile home insurance request"><div class="card-inner"><div class="card-icon-wrap"><i class="fas fa-house" aria-hidden="true"></i></div><div class="qs-card-copy"><h3 class="card-title">Mobile &amp; Manufactured Home</h3><p class="card-desc">Coverage made for your home.</p></div><span class="card-cta">Start My Mobile Home Request <span aria-hidden="true">→</span></span></div></a><a href="motorcycle-quote.html" data-source="quote_selector_motorcycle" class="quote-card card-motorcycle" aria-label="Start my motorcycle and ATV insurance request"><div class="card-inner"><div class="card-icon-wrap"><i class="fas fa-motorcycle" aria-hidden="true"></i></div><div class="qs-card-copy"><h3 class="card-title">Motorcycle &amp; ATV</h3><p class="card-desc">For every ride, on and off the road.</p></div><span class="card-cta">Start My Motorcycle / ATV Request <span aria-hidden="true">→</span></span></div></a></div>
+<div class="cards-grid"><a href="/auto-quote" class="quote-card card-auto" aria-label="Start my auto insurance request"><div class="card-inner"><div class="card-icon-wrap"><i class="qs-icon" aria-hidden="true"><svg viewBox="0 0 512 512"><path d="M499.99 176h-59.87l-16.64-41.6C406.38 91.63 365.57 64 319.5 64h-127c-46.06 0-86.88 27.63-103.99 70.4L71.87 176H12.01C4.2 176-1.53 183.34.37 190.91l6 24C7.7 220.25 12.5 224 18.01 224h20.07C24.65 235.73 16 252.78 16 272v48c0 16.12 6.16 30.67 16 41.93V416c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32v-32h256v32c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32v-54.07c9.84-11.25 16-25.8 16-41.93v-48c0-19.22-8.65-36.27-22.07-48H494c5.51 0 10.31-3.75 11.64-9.09l6-24c1.89-7.57-3.84-14.91-11.65-14.91zm-352.06-17.83c7.29-18.22 24.94-30.17 44.57-30.17h127c19.63 0 37.28 11.95 44.57 30.17L384 208H128l19.93-49.83zM96 319.8c-19.2 0-32-12.76-32-31.9S76.8 256 96 256s48 28.71 48 47.85-28.8 15.95-48 15.95zm320 0c-19.2 0-48 3.19-48-15.95S396.8 256 416 256s32 12.76 32 31.9-12.8 31.9-32 31.9z"/></svg></i></div><div class="qs-card-copy"><h3 class="card-title">Auto Insurance</h3><p class="card-desc">For your drivers and everyday vehicles.</p></div><span class="card-cta"><b class="qs-full-request">Start My Auto Request</b><b class="qs-short-request">Start my request</b> <span aria-hidden="true">→</span></span></div></a><a href="/home-quote" class="quote-card card-home" aria-label="Start my home insurance request"><div class="card-inner"><div class="card-icon-wrap"><i class="qs-icon" aria-hidden="true"><svg viewBox="0 0 576 512"><path d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z"/></svg></i></div><div class="qs-card-copy"><h3 class="card-title">Home Insurance</h3><p class="card-desc">For homeowners insuring the home they live in.</p></div><span class="card-cta"><b class="qs-full-request">Start My Home Request</b><b class="qs-short-request">Start my request</b> <span aria-hidden="true">→</span></span></div></a><a href="/mobile-home-quote" data-source="quote_selector_mobile_home" class="quote-card card-mobile-home" aria-label="Start my mobile home insurance request"><div class="card-inner"><div class="card-icon-wrap"><i class="qs-icon" aria-hidden="true"><svg viewBox="0 0 576 512"><path d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z"/></svg></i></div><div class="qs-card-copy"><h3 class="card-title">Mobile &amp; Manufactured Home</h3><p class="card-desc">For single-wide and double-wide homes in NC.</p></div><span class="card-cta">Start My Mobile Home Request <span aria-hidden="true">→</span></span></div></a><a href="/motorcycle-quote" data-source="quote_selector_motorcycle" class="quote-card card-motorcycle" aria-label="Start my motorcycle, ATV, and UTV insurance request"><div class="card-inner"><div class="card-icon-wrap"><i class="qs-icon" aria-hidden="true"><svg viewBox="0 0 640 512"><path d="M512.9 192c-14.9-.1-29.1 2.3-42.4 6.9L437.6 144H520c13.3 0 24-10.7 24-24V88c0-13.3-10.7-24-24-24h-45.3c-6.8 0-13.3 2.9-17.8 7.9l-37.5 42.1-22.8-38C392.2 68.4 384.4 64 376 64h-80c-8.8 0-16 7.2-16 16v16c0 8.8 7.2 16 16 16h66.4l19.2 32H227.9c-17.7-23.1-44.9-40-99.9-40H72.5C59 104 47.7 115 48 128.5c.2 13 10.9 23.5 24 23.5h56c24.5 0 38.7 10.9 47.8 24.8l-11.3 20.3c-13-3.9-26.9-5.7-41.3-5.1C55.9 194.5 1.6 249.6 0 317c-1.6 72.1 56.3 131 128 131 59.6 0 109.7-40.8 124-96h84.2c13.7 0 24.6-11.4 24-25.1-2.1-47.1 17.5-93.7 56.2-125l12.5 20.8c-27.6 23.7-45.1 58.9-44.8 98.2.5 71.6 59.3 128.5 130.8 127.1 70.3-1.4 126.9-59.1 125.1-129.4-1.7-69.9-58.6-126.5-127.1-126.6zM128 400c-44.1 0-80-35.9-80-80s35.9-80 80-80c4.2 0 8.4.3 12.5 1L99 316.4c-8.8 16 2.8 35.6 21 35.6h81.3c-12.4 28.2-40.6 48-73.3 48zm384 0c-44.1 0-80-35.9-80-80 0-21.2 8.3-40.4 21.7-54.7l39.6 66c6.8 11.3 21.5 15 32.8 8.2s15-21.5 8.2-32.8l-39.6-66c5.5-1.1 11.3-1.7 17.3-1.7 44.1 0 80 35.9 80 80s-35.9 80-80 80z"/></svg></i></div><div class="qs-card-copy"><h3 class="card-title">Motorcycle, ATV &amp; UTV</h3><p class="card-desc">For motorcycles, ATVs, UTVs, and side-by-sides.</p></div><span class="card-cta">Start My Motorcycle / ATV Request <span aria-hidden="true">→</span></span></div></a></div>
 <h2 class="qs-more-heading">More ways to protect what matters</h2>
-<section class="specialty-options specialty-desktop" aria-label="Other coverage"><div class="specialty-cards"><a href="renters-quote.html" aria-label="Start my renters insurance request"><i class="fas fa-building" aria-hidden="true"></i><span class="qs-specialty-copy"><strong>Renters Insurance</strong><span class="qs-specialty-desc">For your belongings and your space.</span></span><span class="qs-specialty-action">Start My Renters Request <b aria-hidden="true">→</b></span></a><a href="boat-quote.html" data-source="quote_selector_boat"><i class="fas fa-ship" aria-hidden="true"></i><span class="qs-specialty-copy"><strong>Boat / PWC / Jet Ski</strong><span class="qs-specialty-desc">For time on the water.</span></span><span class="qs-specialty-action">Start My Boat Request <b aria-hidden="true">→</b></span></a></div></section>
-<a href="/upload-policy?src=get_quote_shortcut" data-source="get_quote_shortcut" class="desktop-policy-shortcut qs-policy"><span class="qs-policy-icon" aria-hidden="true"><i class="far fa-file-alt"></i></span><span class="qs-policy-copy"><strong>Already insured? We’ll do the shopping.</strong><span>Send your current policy. Our team will review your coverage and compare available options.</span></span><span class="qs-policy-action">Upload My Policy <span aria-hidden="true">→</span></span></a>
+<section class="specialty-options specialty-desktop" aria-label="Other coverage"><div class="specialty-cards"><a href="/renters-quote" aria-label="Start my renters insurance request"><i class="qs-icon" aria-hidden="true"><svg viewBox="0 0 384 512"><path d="M48 0C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h96v-80c0-26.5 21.5-48 48-48s48 21.5 48 48v80h96c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48H48zm64 240c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16h-32c-8.8 0-16-7.2-16-16v-32zm112-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16h-32c-8.8 0-16-7.2-16-16v-32c0-8.8 7.2-16 16-16zm-112-96c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16h-32c-8.8 0-16-7.2-16-16v-32zm112-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16h-32c-8.8 0-16-7.2-16-16v-32c0-8.8 7.2-16 16-16z"/></svg></i><span class="qs-specialty-copy"><strong>Renters Insurance</strong><span class="qs-specialty-desc">For tenants protecting their belongings and liability.</span></span><span class="qs-specialty-action">Start My Renters Request <b aria-hidden="true">→</b></span></a><a href="/boat-quote" data-source="quote_selector_boat"><i class="qs-icon" aria-hidden="true"><svg viewBox="0 0 640 512"><path d="M624 352h-16V243.9c0-12.7-5.1-24.9-14.1-33.9L494 110.1c-9-9-21.2-14.1-33.9-14.1H416V48c0-26.5-21.5-48-48-48H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h16c0 53 43 96 96 96s96-43 96-96h128c0 53 43 96 96 96s96-43 96-96h48c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16z"/></svg></i><span class="qs-specialty-copy"><strong>Boat / PWC / Jet Ski</strong><span class="qs-specialty-desc">For boats, personal watercraft, and time on the water.</span></span><span class="qs-specialty-action">Start My Boat Request <b aria-hidden="true">→</b></span></a></div></section>
+<a href="/upload-policy?src=get_quote_shortcut" data-source="get_quote_shortcut" class="desktop-policy-shortcut qs-policy"><span class="qs-policy-icon" aria-hidden="true"><i class="qs-icon"><svg viewBox="0 0 384 512"><path d="M224 136V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H248c-13.2 0-24-10.8-24-24zm160-14.1v6.1H256V0h6.1c6.4 0 12.5 2.5 17 7l97.9 98c4.5 4.5 7 10.6 7 16.9z"/></svg></i></span><span class="qs-policy-copy"><strong>Already insured? We’ll do the shopping.</strong><span>Send your current policy. Our team will review your coverage and compare available options.</span></span><span class="qs-policy-action">Upload My Policy <span aria-hidden="true">→</span></span></a>
+<div class="qs-landlord-bar" role="region" aria-label="Landlord and rental property insurance">
+    <span><strong>Own a rental home, landlord property, or Airbnb/VRBO?</strong> Home and Renters forms above are for primary homeowners and tenants.</span>
+    <span class="qs-landlord-links">
+        <a href="/home-insurance/landlord-insurance?src=quote_selector_landlord" data-source="quote_selector_landlord">Landlord &amp; Rental Property Guide &rarr;</a>
+        <a href="tel:3368351993" data-source="quote_selector_landlord_call">Call (336) 835-1993</a>
+        <a href="sms:+13368279065" data-source="quote_selector_landlord_text">Text (336) 827-9065</a>
+    </span>
+</div>
 </div>
 <section class="qs-desktop-help" aria-labelledby="quote-help-heading">
-    <i class="far fa-comment qs-help-icon" aria-hidden="true"></i>
+    <i class="qs-icon qs-help-icon" aria-hidden="true"><svg viewBox="0 0 512 512"><path d="M256 32C114.6 32 0 125.1 0 240c0 49.6 21.4 95 57 130.7C44.5 421.1 2.7 466 2.2 466.5c-2.2 2.3-2.8 5.7-1.5 8.7S4.8 480 8 480c66.3 0 116-31.8 140.6-51.4 32.7 12.3 69 19.4 107.4 19.4 141.4 0 256-93.1 256-208S397.4 32 256 32z"/></svg></i>
     <div class="qs-help-copy"><h2 id="quote-help-heading">Not sure which coverage to choose?</h2><p>Our local team is here to help.</p></div>
-    <div class="qs-help-actions"><a href="tel:3368351993" data-source="quote_selector_desktop_call"><i class="fas fa-phone-alt" aria-hidden="true"></i>Call 336-835-1993</a><a href="sms:+13368279065" data-source="quote_selector_desktop_text"><i class="far fa-comment" aria-hidden="true"></i>Text us</a></div>
+    <div class="qs-help-actions"><a href="tel:3368351993" data-source="quote_selector_desktop_call"><i class="qs-icon" aria-hidden="true"><svg viewBox="0 0 512 512"><path d="M497.39 361.8l-112-48a24 24 0 0 0-28 6.9l-49.6 60.6A370.66 370.66 0 0 1 130.6 204.11l60.6-49.6a23.94 23.94 0 0 0 6.9-28l-48-112A24.16 24.16 0 0 0 122.6.61l-104 24A24 24 0 0 0 0 48c0 256.5 207.9 464 464 464a24 24 0 0 0 23.4-18.6l24-104a24.29 24.29 0 0 0-14.01-27.6z"/></svg></i>Call 336-835-1993</a><a href="sms:+13368279065" data-source="quote_selector_desktop_text"><i class="qs-icon" aria-hidden="true"><svg viewBox="0 0 512 512"><path d="M256 32C114.6 32 0 125.1 0 240c0 49.6 21.4 95 57 130.7C44.5 421.1 2.7 466 2.2 466.5c-2.2 2.3-2.8 5.7-1.5 8.7S4.8 480 8 480c66.3 0 116-31.8 140.6-51.4 32.7 12.3 69 19.4 107.4 19.4 141.4 0 256-93.1 256-208S397.4 32 256 32z"/></svg></i>Text us</a></div>
 </section>
 <p class="qs-closing">One local team, from comparison to coverage.</p>
 <details class="qs-supporting-content" open><summary>How quote requests work &amp; common questions</summary>
@@ -1247,12 +1339,12 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; }
 <div class="carrier-strip">
     <div class="carrier-inner">
         <span class="carrier-lbl">We compare:</span>
-        <img src="https://img.billlayneinsurance.com/i/2026/08/progressive-logo-rpu5dp.png" alt="Progressive Insurance NC carrier logo" width="140" height="32" loading="lazy" decoding="async">
-        <img src="https://img.billlayneinsurance.com/i/2026/08/nationwide-logo-z3gbr8.png" alt="Nationwide Insurance NC carrier logo" width="140" height="32" loading="lazy" decoding="async">
-        <img src="https://img.billlayneinsurance.com/i/2026/08/travelers-logo-asd9r4.png" alt="Travelers Insurance NC carrier logo" width="140" height="32" loading="lazy" decoding="async">
-        <img src="https://img.billlayneinsurance.com/i/2026/08/national-general-logo-dpjsf3.png" alt="National General Insurance NC carrier logo" width="140" height="32" loading="lazy" decoding="async">
-        <img src="https://img.billlayneinsurance.com/i/2026/08/alamance-farmers-logo-wx6zcx.png" alt="Alamance Farmers Mutual Insurance NC carrier logo" width="140" height="32" loading="lazy" decoding="async">
-        <img src="https://img.billlayneinsurance.com/i/2026/08/foremost-logo-eh5sta.jpg" alt="Foremost Insurance NC carrier logo" width="140" height="32" loading="lazy" decoding="async">
+        <img src="/auto-center/images/progressive%20logo.webp" alt="Progressive Insurance NC carrier logo" width="140" height="32" loading="lazy" decoding="async">
+        <img src="/auto-center/images/Nationwide%20logo.webp" alt="Nationwide Insurance NC carrier logo" width="140" height="32" loading="lazy" decoding="async">
+        <img src="/auto-center/images/Travelers.webp" alt="Travelers Insurance NC carrier logo" width="140" height="32" loading="lazy" decoding="async">
+        <img src="/auto-center/images/National%20General.webp" alt="National General Insurance NC carrier logo" width="140" height="32" loading="lazy" decoding="async">
+        <img src="/auto-center/images/Alamance.webp" alt="Alamance Farmers Mutual Insurance NC carrier logo" width="140" height="32" loading="lazy" decoding="async">
+        <img src="/auto-center/images/Foremost.webp" alt="Foremost Insurance NC carrier logo" width="140" height="32" loading="lazy" decoding="async">
     </div>
 </div>
 
@@ -1260,15 +1352,14 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; }
 <div class="review-badge-strip">
     <div class="review-badge-inner">
         <a href="https://www.google.com/search?q=Bill+Layne+Insurance+Agency+Elkin+NC+reviews" target="_blank" rel="noopener noreferrer">
-            <img src="https://www.google.com/favicon.ico" alt="Google reviews rating badge" width="18" height="18" loading="lazy" decoding="async" class="google-g">
-            <span class="review-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span>
-            <span>4.9 stars &middot; 127 reviews on Google</span>
+            <img src="/img/google-g.svg" alt="Google reviews icon" width="18" height="18" loading="lazy" decoding="async" class="google-g">
+            <span>Read Public Customer Reviews on Google &nearr;</span>
         </a>
     </div>
 </div>
 
     <!-- PAY BILL BANNER (Desktop) -->
-    <a href="https://www.billlayneinsurance.com/service-center#payment-panel" class="desktop-pay-banner fade-up delay-2">
+    <a href="/service-center#payment-panel" class="desktop-pay-banner fade-up delay-2">
         <i class="fas fa-credit-card"></i>
         <span>Already a customer? <strong>Pay Your Bill</strong></span>
         <i class="fas fa-arrow-right" style="font-size:12px;"></i>
@@ -1289,7 +1380,7 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; }
                 <div class="why-icon"><i class="fas fa-map-marker-alt"></i></div>
                 <div>
                     <div class="why-item-title">Local &amp; Trusted</div>
-                    <div class="why-item-sub">Family-owned agency serving North Carolina for 20+ years. We know NC insurance inside and out.</div>
+                    <div class="why-item-sub">Family-owned agency serving North Carolina since 2005. We know NC insurance inside and out.</div>
                 </div>
             </div>
             <div class="why-item">
@@ -1304,28 +1395,28 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; }
 
     <div class="quote-safe-note fade-up delay-3">
         <i class="fas fa-lock"></i>
-        <span>Your quote request is reviewed by a licensed North Carolina agency team. Submitting a request does not bind, change, or cancel coverage until an agent confirms it with you.</span>
+        <span>Your quote request is reviewed by our licensed North Carolina agency team. Submitting a request does not bind, change, or cancel coverage until an agent confirms it with you.</span>
     </div>
 
     <!-- CONTACT -->
     <div class="contact-row fade-up delay-3">
-        <p><strong>Prefer to talk to a real person?</strong> We can quote you over the phone right now.</p>
+        <p><strong>Prefer to talk to a real person?</strong> Call our office during business hours or text us anytime.</p>
         <div class="contact-btns">
             <a href="tel:3368351993" class="contact-btn phone">
                 <i class="fas fa-phone-alt"></i> Call (336) 835-1993
             </a>
             <a href="sms:+13368279065" class="contact-btn text">
-                <i class="fas fa-comment-dots"></i> Text Us
+                <i class="fas fa-comment-dots"></i> Text (336) 827-9065
             </a>
         </div>
-        <p class="contact-hours"><i class="fas fa-clock"></i> Monday-Friday: 9am-5pm EST</p>
+        <p class="contact-hours"><i class="fas fa-clock"></i> Office hours: Monday–Friday, 9am–5pm EST</p>
     </div>
 
     <!-- BUNDLE BANNER -->
     <div class="bundle-banner fade-up delay-4">
         <h3><i class="fas fa-gift"></i> Bundle &amp; Save Even More!</h3>
-        <p>Need Auto plus Home or Renters insurance? Let us know so we can check available multi-policy options.</p>
-        <p>Complete one quote now and let us know which other coverage interests you.</p><p><a href="/auto-renters-insurance-nc/?src=quote_selector_renters" style="text-decoration:underline;text-underline-offset:4px;font-weight:600">Renting your home? Explore auto + renters coverage →</a></p>
+        <p>Need Auto plus Home, Mobile Home, or Renters insurance? Let us know so we can check available multi-policy options.</p>
+        <p>Start with your primary Auto or property request and note the additional coverage you want to bundle, or submit both forms if you have your details handy.</p><p><a href="/auto-renters-insurance-nc/?src=quote_selector_renters" style="text-decoration:underline;text-underline-offset:4px;font-weight:600">Renting your home? Explore auto + renters coverage →</a></p>
     </div>
 
     <!-- HOW IT WORKS (visible companion to HowTo schema) -->
@@ -1336,21 +1427,21 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; }
                 <div class="how-num">1</div>
                 <div>
                     <div class="how-step-title">Choose Your Coverage Type</div>
-                    <div class="how-step-sub">Select Auto, Home, Mobile / Manufactured Home, Renters, Motorcycle / ATV, or Boat / PWC / Jet Ski to begin your free quote request.</div>
+                    <div class="how-step-sub">Select Auto, Home, Mobile / Manufactured Home, Renters, Motorcycle / ATV / UTV, or Boat / PWC / Jet Ski to begin your free quote request.</div>
                 </div>
             </div>
             <div class="how-step">
                 <div class="how-num">2</div>
                 <div>
                     <div class="how-step-title">Complete the Short Form</div>
-                    <div class="how-step-sub">Answer a few questions about yourself, your vehicle or property, and your current coverage. Allow about 5–7 minutes for Auto or 8–10 minutes for Home.</div>
+                    <div class="how-step-sub">Answer a few questions about yourself, your vehicle or property, and your current coverage. Estimated form-completion time is about 5–7 minutes for Auto or 8–10 minutes for Home.</div>
                 </div>
             </div>
             <div class="how-step">
                 <div class="how-num">3</div>
                 <div>
-                    <div class="how-step-title">Receive Your Quote</div>
-                    <div class="how-step-sub">Our team personally reviews your request, compares available carrier options for your coverage needs, and contacts you with coverage and pricing to discuss.</div>
+                    <div class="how-step-title">Receive Your Options</div>
+                    <div class="how-step-sub">Our licensed agency team personally reviews your request, compares available carrier options for your coverage needs, and follows up with pricing and coverage to discuss.</div>
                 </div>
             </div>
         </div>
@@ -1361,7 +1452,7 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; }
         <div class="why-title"><i class="fas fa-circle-question"></i> Frequently Asked Questions</div>
         <div class="faq-item">
             <div class="faq-q">How long does it take to get an insurance quote?</div>
-            <div class="faq-a">An auto insurance quote takes about 5-7 minutes. A home insurance quote takes 8-10 minutes. You'll hear back from Bill Layne within 1 business day with your rate options.</div>
+            <div class="faq-a">Completing the online request form takes about 5–7 minutes for auto or 8–10 minutes for home. Because our licensed agency team personally shops your request across available carriers, pricing is not instant—our team follows up after reviewing your options.</div>
         </div>
         <div class="faq-item">
             <div class="faq-q">Is the insurance quote really free?</div>
@@ -1373,7 +1464,7 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; }
         </div>
         <div class="faq-item">
             <div class="faq-q">Can I bundle auto and home insurance for a discount?</div>
-            <div class="faq-a">Yes. Bundling auto and home insurance may qualify you for a multi-policy discount depending on the carrier, coverage, and underwriting details. Complete one quote now and then the other so we can compare options together.</div>
+            <div class="faq-a">Yes. Bundling auto with home, mobile home, or renters insurance may qualify you for a multi-policy discount depending on the carrier, coverage, and underwriting details. Start with your primary auto or property request and note the additional coverage you want to bundle, or submit both forms if you have your details handy.</div>
         </div>
         <div class="faq-item">
             <div class="faq-q">Does Bill Layne Insurance serve all of North Carolina?</div>
@@ -1397,19 +1488,19 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; }
      ============================================================ -->
 <div class="mobile-dock">
     <a href="tel:3368351993" class="dock-btn dock-call">
-        <i class="fas fa-phone-alt" aria-hidden="true"></i>
+        <i class="qs-icon" aria-hidden="true"><svg viewBox="0 0 512 512"><path d="M497.39 361.8l-112-48a24 24 0 0 0-28 6.9l-49.6 60.6A370.66 370.66 0 0 1 130.6 204.11l60.6-49.6a23.94 23.94 0 0 0 6.9-28l-48-112A24.16 24.16 0 0 0 122.6.61l-104 24A24 24 0 0 0 0 48c0 256.5 207.9 464 464 464a24 24 0 0 0 23.4-18.6l24-104a24.29 24.29 0 0 0-14.01-27.6z"/></svg></i>
         <span class="qs-desktop-copy">Call</span><span class="qs-mobile-copy">Call us</span>
     </a>
     <a href="sms:+13368279065" class="dock-btn dock-text" data-source="quote_selector_mobile_text" aria-label="Text us at (336) 827-9065">
-        <i class="far fa-comment" aria-hidden="true"></i>
+        <i class="qs-icon" aria-hidden="true"><svg viewBox="0 0 512 512"><path d="M256 32C114.6 32 0 125.1 0 240c0 49.6 21.4 95 57 130.7C44.5 421.1 2.7 466 2.2 466.5c-2.2 2.3-2.8 5.7-1.5 8.7S4.8 480 8 480c66.3 0 116-31.8 140.6-51.4 32.7 12.3 69 19.4 107.4 19.4 141.4 0 256-93.1 256-208S397.4 32 256 32z"/></svg></i>
         <span>Text us</span>
     </a>
     <button type="button" class="dock-btn dock-quote" onclick="focusQuoteChoices()">
-        <i class="fas fa-bolt"></i>
+        <i class="qs-icon" aria-hidden="true"><svg viewBox="0 0 320 512"><path d="M296 160H180.6l42.6-129.8C227.2 15 215.7 0 200 0H56C44 0 33.8 8.9 32.2 20.8l-32 240C-1.7 275.2 9.5 288 24 288h118.7L96.6 482.5c-3.6 15.2 8 29.5 23.3 29.5 8.4 0 16.4-4.4 20.8-12l176-304c9.3-15.9-2.2-36-20.7-36z"/></svg></i>
         <span>Choose Coverage</span>
-    </button>
+    </a>
     <button class="dock-btn dock-menu" onclick="openMenu()" aria-label="Open menu">
-        <i class="fas fa-bars"></i>
+        <i class="qs-icon" aria-hidden="true"><svg viewBox="0 0 448 512"><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/></svg></i>
         <span>Menu</span>
     </button>
 </div>
@@ -1470,7 +1561,7 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; }
     }
 
     // Homepage hero ZIP form lands here with ?zip=XXXXX. Forward it onto
-    // the auto/home quote links so their zip_code field can prefill.
+    // the quote links so their zip_code field can prefill.
     // Keep the internal src label with the visitor without adding UTMs.
     (function() {
         try {
@@ -1480,21 +1571,18 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; }
             const validZip = zip && /^[0-9]{5}$/.test(zip);
             const validSrc = src && /^[a-z0-9_-]{1,80}$/i.test(src);
             if (!validZip && !validSrc) return;
-            document.querySelectorAll('a[href^="auto-quote.html"], a[href^="home-quote.html"], a[href^="renters-quote.html"], a[href^="motorcycle-quote.html"], a[href^="boat-quote.html"], a[href^="mobile-home-quote.html"], a[href^="/mobile-home-quote"]').forEach(a => {
+            document.querySelectorAll('a[href^="/auto-quote"], a[href^="/home-quote"], a[href^="/renters-quote"], a[href^="/motorcycle-quote"], a[href^="/boat-quote"], a[href^="/mobile-home-quote"], a[href^="auto-quote"], a[href^="home-quote"], a[href^="renters-quote"], a[href^="motorcycle-quote"], a[href^="boat-quote"], a[href^="mobile-home-quote"]').forEach(a => {
                 const u = new URL(a.getAttribute('href'), window.location.origin);
                 if (validZip) u.searchParams.set('zip', zip);
                 if (validSrc) u.searchParams.set('src', src);
-                a.href = u.pathname.replace(/^\//, '') + u.search;
+                a.href = u.pathname + u.search;
             });
         } catch (e) {}
     })();
-    // Keep the supporting information available while the desktop selector stays compact.
+    // Keep the supporting information expandable on both mobile and desktop (while open in static HTML for no-JS).
     (function () {
         const details = document.querySelector('.qs-supporting-content');
-        const desktop = window.matchMedia('(min-width: 700px)');
-        function updateLayout() { details.open = !desktop.matches; }
-        updateLayout();
-        desktop.addEventListener('change', updateLayout);
+        if (details) details.open = false;
     })();
 </script>
 
@@ -1502,7 +1590,7 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; }
 <!-- BLI-UNIVERSAL-MENU:START - generated from tools/nav.json; do not edit by hand. -->
 <div class="bli-um-entry"><button type="button" data-bli-menu-open>Open site menu <span aria-hidden="true">&rarr;</span></button></div>
 <dialog id="bli-site-menu" class="bli-um-dialog" aria-labelledby="bli-um-title" lang="en">
-<header class="bli-um-header"><a href="/" aria-label="Bill Layne Insurance"><img src="https://img.billlayneinsurance.com/i/2026/08/bli-agency-logo-4jqj2j.png" alt="Bill Layne Insurance" width="240" height="64" decoding="async" loading="lazy"></a><button type="button" class="bli-um-close" aria-label="Close menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 5 14 14M19 5 5 19"/></svg></button></header>
+<header class="bli-um-header"><a href="/" aria-label="Bill Layne Insurance"><img src="https://img.billlayneinsurance.com/cdn-cgi/image/width=370,format=auto,quality=85/i/2026/08/bli-agency-logo-4jqj2j.png" alt="Bill Layne Insurance" width="240" height="64" decoding="async" loading="lazy"></a><button type="button" class="bli-um-close" aria-label="Close menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 5 14 14M19 5 5 19"/></svg></button></header>
 <h2 id="bli-um-title">Menu</h2>
 <nav class="bli-um-scroll" aria-label="Menu"><section class="bli-um-group"><a class="bli-um-link" href="/"><span class="bli-um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v11h-6v-7H9v7H3z"/></svg></span><span>Home</span><span class="bli-um-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span></a></section><section class="bli-um-group"><h3 class="bli-um-label">Insurance</h3><a class="bli-um-link" href="/auto-center/"><span class="bli-um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 7 2-4h10l2 4 2 3v8H3v-8zM3 10h18M6 18v3m12-3v3"/><path d="M6 14h2m8 0h2"/></svg></span><span>Auto Insurance</span><span class="bli-um-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span></a><a class="bli-um-link" href="/home-insurance/"><span class="bli-um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v11h-6v-7H9v7H3z"/></svg></span><span>Home Insurance</span><span class="bli-um-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span></a><a class="bli-um-link" href="/motorcycle-insurance/"><span class="bli-um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="17" r="4"/><circle cx="19" cy="17" r="4"/><path d="m5 17 5-8 5 8H5m10-8h3l1 8M8 6h4m3-3 3 1v5"/></svg></span><span>Motorcycle &amp; ATV</span><span class="bli-um-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span></a><a class="bli-um-link" href="/boat-insurance/"><span class="bli-um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 12 9-3 9 3-3 7H6zM7 10V5h9v6M12 5V2M2 22q3-4 6 0 4-4 8 0 3-4 6 0"/></svg></span><span>Boat &amp; PWC</span><span class="bli-um-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span></a><a class="bli-um-link" href="/renters-insurance/"><span class="bli-um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v11h-6v-7H9v7H3z"/></svg></span><span>Renters Insurance</span><span class="bli-um-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span></a><a class="bli-um-link" href="/business-insurance/?src=menu_business"><span class="bli-um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v17M2 3c4-1 7 0 10 2 3-2 6-3 10-2v16c-4-1-7 0-10 2-3-2-6-3-10-2z"/></svg></span><span>Business Insurance</span><span class="bli-um-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span></a></section><section class="bli-um-group"><h3 class="bli-um-label">Manage your policy</h3><a class="bli-um-link" href="/claims-center/"><span class="bli-um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4H5v18h14V4h-3M8 2h8v5H8zM8 12h8m-8 5h6"/></svg></span><span>Claims Center</span><span class="bli-um-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span></a><a class="bli-um-link" href="/service-center"><span class="bli-um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3a6 6 0 0 0-7 8l-5 5a3 3 0 0 0 4 4l5-5a6 6 0 0 0 8-7l-4 4-4-4z"/></svg></span><span>Service Center</span><span class="bli-um-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span></a><a class="bli-um-link" href="/clients/"><span class="bli-um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M4 22v-3a8 8 0 0 1 16 0v3z"/></svg></span><span>Client Hub</span><span class="bli-um-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span></a></section><section class="bli-um-group"><h3 class="bli-um-label">Explore</h3><a class="bli-um-link" href="/about/"><span class="bli-um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M4 22v-3a8 8 0 0 1 16 0v3z"/></svg></span><span>About Bill</span><span class="bli-um-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span></a><a class="bli-um-link" href="/areas-we-serve"><span class="bli-um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg></span><span>Areas We Serve</span><span class="bli-um-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span></a><a class="bli-um-link" href="/blog/"><span class="bli-um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 2h10l4 4v16H5zM15 2v5h4M8 11h8m-8 4h8m-8 4h5"/></svg></span><span>Blog</span><span class="bli-um-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span></a><div class="bli-um-resource-row"><a class="bli-um-link" href="/resources/"><span class="bli-um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v17M2 3c4-1 7 0 10 2 3-2 6-3 10-2v16c-4-1-7 0-10 2-3-2-6-3-10-2z"/></svg></span><span>Resources</span><span class="bli-um-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span></a><button class="bli-um-expand" type="button" aria-label="Show videos and community" aria-expanded="false" aria-controls="bli-um-resources"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button></div><div class="bli-um-children" id="bli-um-resources" hidden><a class="bli-um-link" href="/videos/"><span class="bli-um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="m10 8 6 4-6 4z"/></svg></span><span>Videos</span><span class="bli-um-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span></a><a class="bli-um-link" href="/community/"><span class="bli-um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="6" r="3"/><path d="M6 20v-3a6 6 0 0 1 12 0v3M3 8a3 3 0 0 0 0 6m18-6a3 3 0 0 1 0 6M1 21v-3m22 3v-3"/></svg></span><span>Community</span><span class="bli-um-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span></a></div></section><section class="bli-um-group"><a class="bli-um-link" href="/contact-us/"><span class="bli-um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 5 10 8L22 5"/></svg></span><span>Contact Us</span><span class="bli-um-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span></a><a class="bli-um-link" href="/espanol/"><span class="bli-um-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><ellipse cx="12" cy="12" rx="4" ry="10"/><path d="M2 12h20"/></svg></span><span>Español</span><span class="bli-um-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span></a></section></nav>
 <footer class="bli-um-footer"><p class="bli-um-personal">Local help. A real person.</p><div class="bli-um-actions"><a class="bli-um-quote" data-source="universal_menu" href="/get-quote?src=universal_menu">Compare My Options <span aria-hidden="true">&rarr;</span></a><a class="bli-um-call" data-source="universal_menu" href="tel:3368351993"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 3 3 5-3 3a15 15 0 0 0 7 7l3-3 5 3c0 3-2 4-4 4C9 22 2 15 2 7c0-2 1-4 4-4z"/></svg> (336) 835-1993</a></div><p class="bli-um-hours">Mon–Fri · 9 AM–5 PM</p></footer>
