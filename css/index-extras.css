@@ -299,31 +299,31 @@ margin-bottom: 0;
 cursor: pointer;
 }
 /* Jump-link strip: sticky quick actions for the long mobile scroll.
-Sits under the shrunken (h-16) navbar; hidden on md+ via .md:hidden. */
+Sits under the shrunken navbar; hidden on md+ via .md:hidden. */
 .jump-links {
 position: sticky;
-top: 64px;
+top: 56px;
 z-index: 40;
-display: flex;
-gap: 8px;
-padding: 8px 12px;
+display: grid;
+grid-template-columns: repeat(4, minmax(0, 1fr));
+gap: 6px;
+padding: 8px 10px;
 background: rgba(255, 255, 255, 0.97);
 backdrop-filter: blur(8px);
 -webkit-backdrop-filter: blur(8px);
 border-bottom: 1px solid #e2e8f0;
 box-shadow: 0 4px 14px rgba(12, 26, 46, 0.06);
-overflow-x: auto;
-scrollbar-width: none;
+overflow-x: hidden;
 }
 .jump-links::-webkit-scrollbar { display: none; }
 .jump-link {
-flex: 1 0 auto;
+min-width: 0;
 display: flex;
 align-items: center;
 justify-content: center;
-gap: 6px;
+gap: 5px;
 min-height: 44px;
-padding: 6px 12px;
+padding: 6px 6px;
 border-radius: 999px;
 border: 1.5px solid #e2e8f0;
 background: #f8fafc;
@@ -334,19 +334,19 @@ line-height: 1;
 text-decoration: none;
 white-space: nowrap;
 }
-.jump-link i { flex: 0 0 12px; font-size: 12px; text-align: center; color: #2563eb; }
+.jump-link i, .jump-link svg { flex-shrink: 0; color: #2563eb; }
 .jump-link:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
 /* No gold chips in this strip on purpose: gold = quote action only
 (hero + dock Check Savings). An Upload chip was gold 08-27..08-31
 and it made gold mean two things on the first mobile screen. */
 @media (max-width: 389px) {
-.jump-links { gap: 6px; padding: 8px 10px; }
-.jump-link { gap: 5px; padding: 6px 8px; font-size: 11px; }
-.jump-link i { flex-basis: 11px; font-size: 11px; }
+.jump-links { gap: 5px; padding: 7px 8px; }
+.jump-link { gap: 4px; padding: 6px 4px; font-size: 11px; }
+.jump-link svg { width: 12px; height: 12px; }
 }
 @media (max-width: 767px) {
-/* Navbar (64px) + strip (~62px) must not cover the anchored section */
-#policy-review { scroll-margin-top: 132px; }
+/* Navbar (56px) + strip (~60px) must not cover the anchored section */
+#policy-review { scroll-margin-top: 124px; }
 }
 @media (min-width: 768px) and (max-width: 1023px) {
 #navbar:not(.glass-nav) {
