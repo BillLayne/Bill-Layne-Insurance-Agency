@@ -99,11 +99,12 @@ def render_header(cfg,rel,mode='static'):
  """mode: static | sticky | fixed - mirrors how the page's old header was positioned."""
  assert mode in ('static','sticky','fixed'),mode
  u=cfg['universal']; words=u['es'] if is_spanish(cfg,rel) else u['en']
+ logo=u.get('logo_overrides',{}).get(rel,u['logo'])
  menu_icon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>'
  return '\n'.join([HDR_START,
   '<style>'+HDR_CSS+'</style>',
   '<div class="bli-uh bli-uh--%s" role="banner"><div class="bli-uh-inner">'%mode
-  +'<a class="bli-uh-brand" href="/" aria-label="Bill Layne Insurance"><img src="%s" alt="Bill Layne Insurance" width="784" height="248" decoding="async"></a>'%esc(u['logo'])
+  +'<a class="bli-uh-brand" href="/" aria-label="Bill Layne Insurance"><img src="%s" alt="Bill Layne Insurance" width="784" height="248" decoding="async"></a>'%esc(logo)
   +'<a class="bli-uh-phone" href="%s" aria-label="%s">%s<span>%s</span></a>'%(esc(cfg['phone_href']),esc(cfg['phone_display']),svg('phone'),esc(cfg['phone_display']))
   +'<button type="button" class="bli-uh-menu" data-bli-menu-open aria-label="%s">%s<span>%s</span></button>'%(esc(words['open']),menu_icon,esc(words['menu']))
   +'</div></div>',
