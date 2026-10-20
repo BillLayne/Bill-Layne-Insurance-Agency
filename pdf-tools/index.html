@@ -3225,7 +3225,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#f1efe9}
 <script>
 (function () {
   'use strict';
-  const APP_VERSION = '2026-10-20.2';   // bump on every release — shown in the footer, the Help dialog and the console
+  const APP_VERSION = '2026-10-20.3';   // bump on every release — shown in the footer, the Help dialog and the console
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -4856,13 +4856,13 @@ body{margin:0;padding:0;width:100%!important;background-color:#f1efe9}
      happens until the flick has died away (WHEEL_QUIET ms without a step). The same
      wait applies when a flick scrolls a zoomed page into its edge, so reaching the
      bottom never turns the page by itself. */
-  const WHEEL_FLIP = 48, WHEEL_QUIET = 160;
+  const WHEEL_FLIP = 48, WHEEL_QUIET = 150;
   let wheelAcc = 0, wheelDir = 0, wheelLock = 0, wheelIdle = null, flipHintTimer = null;
-  let wheelQuiet = false, wheelQuietTimer = null, lastWheelAt = 0, lastWheelEdge = true;
+  let wheelQuiet = false, wheelQuietTimer = null, quietDist = 0, lastWheelAt = 0, lastWheelEdge = true;
   function waitForQuiet() {
     wheelQuiet = true;
     clearTimeout(wheelQuietTimer);
-    wheelQuietTimer = setTimeout(() => { wheelQuiet = false; }, WHEEL_QUIET);
+    wheelQuietTimer = setTimeout(() => { wheelQuiet = false; quietDist = 0; }, WHEEL_QUIET);
   }
   function flashPageHint(text) {
     const el = $('pageFlipHint');
@@ -4876,23 +4876,31 @@ body{margin:0;padding:0;width:100%!important;background-color:#f1efe9}
     const wrap = e.currentTarget;
     const dy = e.deltaY * (e.deltaMode === 1 ? 40 : e.deltaMode === 2 ? wrap.clientHeight : 1);
     if (!dy) return;
-    const dir = dy > 0 ? 1 : -1, now = Date.now(), click = Math.abs(dy) >= 40;   // click: a mouse-wheel notch
-    const atEdge = dir > 0 ? wrap.scrollTop + wrap.clientHeight >= wrap.scrollHeight - 2 : wrap.scrollTop <= 1;
-    const arrived = atEdge && !lastWheelEdge && now - lastWheelAt < WHEEL_QUIET;   // a flick just reached the edge
+    const dir = dy > 0 ? 1 : -1, now = Date.now(), click = Math.abs(dy) >= 20;   // click: any mouse-wheel notch (>= 20px)
+    const unzoomed = editorZoom <= 1.01 || wrap.scrollHeight - wrap.clientHeight <= 8;
+    const atEdge = unzoomed || (dir > 0 ? wrap.scrollTop + wrap.clientHeight >= wrap.scrollHeight - 4 : wrap.scrollTop <= 2);
+    const arrived = !unzoomed && atEdge && !lastWheelEdge && now - lastWheelAt < WHEEL_QUIET;   // a flick on a zoomed page just reached the edge
     lastWheelAt = now;
     lastWheelEdge = atEdge;
     if (!atEdge) { wheelAcc = 0; return; }                  // zoomed in: let the page scroll first
     e.preventDefault();
-    if (!click && (arrived || wheelQuiet)) { waitForQuiet(); return; }   // one page per trackpad flick
+    if (!click && arrived) { quietDist = 0; waitForQuiet(); return; }
+    if (!click && wheelQuiet) {
+      quietDist += Math.abs(dy);
+      if (quietDist < 520) { waitForQuiet(); return; }      // one 40-step flick (480px) turns one page; sustained scrolling (> 520px) keeps turning
+      wheelQuiet = false;
+      quietDist = 0;
+    }
     if (now < wheelLock || pendingCrop || boxDrag || inkStroke) return;
     if (dir !== wheelDir) { wheelAcc = 0; wheelDir = dir; }
     wheelAcc += Math.abs(dy);
     clearTimeout(wheelIdle);
     wheelIdle = setTimeout(() => { wheelAcc = 0; }, 260);   // a pause starts the count over
-    if (wheelAcc < WHEEL_FLIP) return;
+    const flipNeed = click ? 20 : WHEEL_FLIP;
+    if (wheelAcc < flipNeed) return;
     wheelAcc = 0;
-    wheelLock = now + (click ? 75 : 220);
-    if (!click) waitForQuiet();
+    wheelLock = now + (click ? 50 : 180);
+    if (!click) { quietDist = 0; waitForQuiet(); }
     const j = tray.indexOf(editorItem) + dir;
     if (j < 0 || j >= tray.length) { flashPageHint(dir > 0 ? 'Last page' : 'First page'); return; }
     const a = document.activeElement;
@@ -4971,8 +4979,9 @@ body{margin:0;padding:0;width:100%!important;background-color:#f1efe9}
     const slideDir = landAt === 'top' ? 1 : landAt === 'bottom' ? -1 : 0;
     editCanvas.width = off.width;
     editCanvas.height = off.height;
-    editCanvas.style.width = Math.ceil(vp.width / 2) + 'px';
-    editCanvas.style.height = Math.ceil(vp.height / 2) + 'px';
+    const roundCss = editorZoom <= 1.01 ? Math.floor : Math.ceil;
+    editCanvas.style.width = roundCss(vp.width / 2) + 'px';
+    editCanvas.style.height = roundCss(vp.height / 2) + 'px';
     editCanvas.getContext('2d').drawImage(off, 0, 0);
     editOverlay.width = editCanvas.width;
     editOverlay.height = editCanvas.height;
@@ -7699,12 +7708,55 @@ body{margin:0;padding:0;width:100%!important;background-color:#f1efe9}
   async function renderPdfPreview(bytes,container){
     const task=await pdfjsLib.getDocument({data:bytes.slice()}).promise;
     const bar=document.createElement('div');bar.className='studio-row';
-    const previous=document.createElement('button'),next=document.createElement('button'),label=document.createElement('span'),canvas=document.createElement('canvas');
-    previous.textContent='Previous page';next.textContent='Next page';canvas.title='Click to zoom in or out';canvas.onclick=()=>canvas.classList.toggle('zoomed');label.setAttribute('aria-live','polite');bar.append(previous,label,next);container.append(bar,canvas);
-    let current=1,rendering=false,closed=false;
+    const previous=document.createElement('button'),next=document.createElement('button'),label=document.createElement('span');
+    const pagesWrap=document.createElement('div');
+    pagesWrap.style.cssText='max-height:min(68vh,820px);overflow-y:auto;padding:4px 8px;scroll-behavior:smooth;';
+    previous.textContent='Previous page';next.textContent='Next page';label.setAttribute('aria-live','polite');
+    bar.append(previous,label,next);container.append(bar,pagesWrap);
+    let current=1,closed=false;
+    const canvases=[];
     const previousCleanup=dialogCleanup;dialogCleanup=()=>{closed=true;previousCleanup();task.destroy();};
-    async function render(){if(rendering||closed)return;rendering=true;previous.disabled=true;next.disabled=true;try{const page=await task.getPage(current);if(closed)return;const vp=page.getViewport({scale:Math.min(1.5,900/page.getViewport({scale:1}).width)});canvas.width=vp.width;canvas.height=vp.height;canvas.setAttribute('aria-label','Preview page '+current);label.textContent='Page '+current+' of '+task.numPages;await page.render({canvasContext:canvas.getContext('2d'),viewport:vp,intent:'print'}).promise;}catch(e){if(!closed)label.textContent='Could not preview page '+current;}finally{rendering=false;previous.disabled=current===1;next.disabled=current===task.numPages;}}
-    previous.onclick=()=>{if(!rendering&&current>1){current--;void render();}};next.onclick=()=>{if(!rendering&&current<task.numPages){current++;void render();}};await render();
+    function syncBar(){
+      label.textContent='Page '+current+' of '+task.numPages;
+      previous.disabled=current<=1;
+      next.disabled=current>=task.numPages;
+    }
+    function scrollToPage(n){
+      current=Math.max(1,Math.min(task.numPages,n));
+      syncBar();
+      const c=canvases[current-1];
+      if(c)c.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+    previous.onclick=()=>scrollToPage(current-1);
+    next.onclick=()=>scrollToPage(current+1);
+    pagesWrap.addEventListener('scroll',()=>{
+      if(!canvases.length)return;
+      const top=pagesWrap.getBoundingClientRect().top+pagesWrap.clientHeight*0.35;
+      let best=1;
+      for(let i=0;i<canvases.length;i++){
+        const r=canvases[i].getBoundingClientRect();
+        if(r.top<=top)best=i+1;
+      }
+      if(best!==current){current=best;syncBar();}
+    },{passive:true});
+    syncBar();
+    for(let i=1;i<=task.numPages;i++){
+      if(closed)return;
+      try{
+        const page=await task.getPage(i);
+        if(closed)return;
+        const vp=page.getViewport({scale:Math.min(1.5,900/page.getViewport({scale:1}).width)});
+        const canvas=document.createElement('canvas');
+        canvas.width=vp.width;canvas.height=vp.height;
+        canvas.title='Click to zoom in or out';
+        canvas.setAttribute('aria-label','Preview page '+i);
+        canvas.onclick=()=>canvas.classList.toggle('zoomed');
+        await page.render({canvasContext:canvas.getContext('2d'),viewport:vp,intent:'print'}).promise;
+        if(closed)return;
+        canvases.push(canvas);
+        pagesWrap.appendChild(canvas);
+      }catch(e){if(!closed)label.textContent='Could not preview page '+i;}
+    }
   }
   /* ── Finish: the last step of a job ──
      Finish saves this PDF unless it already left the app as it stands (saved, put in a
