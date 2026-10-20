@@ -40,7 +40,10 @@ def esc(value):
  return html.escape(html.unescape(value), quote=True)
 
 def render(cfg, rel):
+ page=cfg.get('page_overrides',{}).get(rel,{})
+ cfg={**cfg,**{k:v for k,v in page.items() if k in ('phone_href','phone_display')}}
  quote_href=cfg.get('quote_href_overrides',{}).get(rel,cfg['quote_href'])
+ quote_target=page.get('quote_target',quote_href+'?src=universal_menu')
  u=cfg['universal']; spanish=rel in cfg.get('lang',{}) and cfg['lang'][rel]=='es' or rel.startswith('espanol/')
  labels=cfg.get('labels_es',{}) if spanish else {}
  words=u['es'] if spanish else u['en']
@@ -48,6 +51,8 @@ def render(cfg, rel):
   label=labels.get(item['href'],item.get('label_es') if spanish else None) or item['label']
   return '<a class="bli-um-link" href="%s"><span class="bli-um-icon">%s</span><span>%s</span><span class="bli-um-chevron">%s</span></a>'%(esc(item['href']),svg(item['icon']),esc(label),svg('arrow'))
  sections=[]
+ if page.get('section_links'):
+  sections.append('<section class="bli-um-group">'+''.join('<a class="bli-um-link" href="%s"><span>%s</span><span class="bli-um-chevron">%s</span></a>'%(esc(item['href']),esc(item['label']),svg('arrow')) for item in page['section_links'])+'</section>')
  for group in u['groups']:
   rows=[]
   for item in group['items']:
@@ -57,7 +62,7 @@ def render(cfg, rel):
    rows.append(link)
   heading='<h3 class="bli-um-label">%s</h3>'%esc(words[group['key']]) if group['key'] else ''
   sections.append('<section class="bli-um-group">'+heading+''.join(rows)+'</section>')
- actions='' if rel in cfg.get('footer_cta_exclude',[]) else '<div class="bli-um-actions"><a class="bli-um-quote" data-source="universal_menu" href="%s?src=universal_menu">%s <span aria-hidden="true">&rarr;</span></a><a class="bli-um-call" data-source="universal_menu" href="%s">%s %s</a></div><p class="bli-um-hours">%s</p>'%(esc(quote_href),esc(words['quote']),esc(cfg['phone_href']),svg('phone'),esc(cfg['phone_display']),esc(words['hours']))
+ actions='' if rel in cfg.get('footer_cta_exclude',[]) else '<div class="bli-um-actions"><a class="bli-um-quote" data-source="universal_menu" href="%s">%s <span aria-hidden="true">&rarr;</span></a><a class="bli-um-call" data-source="universal_menu" href="%s">%s %s</a></div><p class="bli-um-hours">%s</p>'%(esc(quote_target),esc(page.get('quote_label',words['quote'])),esc(cfg['phone_href']),svg('phone'),esc(cfg['phone_display']),esc(words['hours']))
  logo=u.get('logo_overrides',{}).get(rel,u['logo'])
  return '\n'.join([START,
   '<div class="bli-um-entry"><button type="button" data-bli-menu-open>%s <span aria-hidden="true">&rarr;</span></button></div>'%esc(words['open']),
@@ -100,6 +105,15 @@ def render_header(cfg,rel,mode='static'):
  assert mode in ('static','sticky','fixed'),mode
  u=cfg['universal']; words=u['es'] if is_spanish(cfg,rel) else u['en']
  logo=u.get('logo_overrides',{}).get(rel,u['logo'])
+ page=cfg.get('page_overrides',{}).get(rel,{})
+ if page.get('header_style')=='spanish-landing':
+  links=''.join('<a href="%s">%s</a>'%(esc(item['href']),esc(item['label'])) for item in page['section_links'])
+  return '\n'.join([HDR_START,'<header class="es-header"><div class="es-wrap es-header-inner">'
+   +'<a class="es-logo" href="/" aria-label="Bill Layne Insurance"><img src="%s" width="788" height="248" alt="Bill Layne Insurance" decoding="async"></a>'%esc(logo)
+   +'<nav class="es-desktop-nav" aria-label="Navegación principal">'+links+'</nav>'
+   +'<div class="es-languages"><span aria-current="page">Español</span><a href="/" lang="en" aria-label="English website">English</a></div>'
+   +'<a class="es-header-phone" href="%s" data-source="espanol_header_call">%s%s</a>'%(esc(page['phone_href']),svg('phone'),esc(page['phone_display']))
+   +'<button class="es-menu-toggle" type="button" data-bli-menu-open aria-label="Abrir menú"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button></div></header>',HDR_END])
  menu_icon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>'
  return '\n'.join([HDR_START,
   '<style>'+HDR_CSS+'</style>',
@@ -115,7 +129,8 @@ def transform(src,cfg,rel):
  found=header.findall(src)
  if found:
   assert len(found)==1,(rel,'duplicate header marker')
-  mode=re.search(r'class="bli-uh bli-uh--(static|sticky|fixed)"',found[0]).group(1)
+  mode_match=re.search(r'class="bli-uh bli-uh--(static|sticky|fixed)"',found[0])
+  mode=mode_match.group(1) if mode_match else 'static'
   src=header.sub(lambda _:render_header(cfg,rel,mode),src)
  version=cfg['universal']['version']
  assets=HEAD_START+'\n<link rel="stylesheet" href="/css/universal-menu.css?v='+version+'">\n<script src="/js/universal-menu.js?v='+version+'" defer></script>\n'+HEAD_END
@@ -138,7 +153,7 @@ def targets():
  for rel in files:
   if rel.startswith(('templates/','mail-gateway/','pdf-tools/','shared/','social-media/')): continue
   src=(ROOT/rel).read_text(encoding='utf-8')
-  if rel=='index.html' or markers.search(src): yield rel,src
+  if rel in ('index.html','espanol/index.html') or markers.search(src): yield rel,src
 
 def main():
  parser=argparse.ArgumentParser(description=__doc__); parser.add_argument('--apply',action='store_true');parser.add_argument('--check',action='store_true');args=parser.parse_args()
