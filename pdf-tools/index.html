@@ -2365,7 +2365,9 @@ body.ws #editModal { position: static; display: flex; align-items: stretch; padd
 body.ws .edit-panel { position: static; overflow: visible; flex: 1; width: auto; height: auto; min-height: 0; border-radius: 0; box-shadow: none; grid-template-columns: minmax(0, 1fr) clamp(268px, 22vw, 316px); }
 body.ws .ed-bar { position: absolute; top: 0; left: 0; right: 0; height: 50px; min-height: 50px; z-index: 6; }
 body.ws #sigPanel, body.ws #stampPanel { top: 50px; z-index: 8; }
-body.ws .ed-nav, body.ws #btnEditDone { display: none; }
+body.ws #btnEditDone { display: none; }
+body.home2 .ed-bar .ed-nav { width: 28px; min-width: 28px; height: 30px; min-height: 30px; padding: 0; border-color: #d5deea; border-radius: 6px; background: #fff; color: #33435a; }
+body.home2 .ed-bar .ed-nav svg { width: 15px; height: 15px; }
 body.ws #trayStrip { display: flex; flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 10px; }
 body.ws .tray-card { padding: 12px 14px 10px; }
 body.ws .tray-card .thumb-box { aspect-ratio: auto; height: 144px; }
@@ -3223,7 +3225,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#f1efe9}
 <script>
 (function () {
   'use strict';
-  const APP_VERSION = '2026-10-20.1';   // bump on every release — shown in the footer, the Help dialog and the console
+  const APP_VERSION = '2026-10-20.2';   // bump on every release — shown in the footer, the Help dialog and the console
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -4762,9 +4764,11 @@ body{margin:0;padding:0;width:100%!important;background-color:#f1efe9}
       if (!editorItem || editorItem.tid !== item.tid) landAt = landAt || 'top';   // another page opens at its top
       removePendingCrop();
       selectedStamp = null;
-      editorVp = null;                       // nothing can be placed until this page is drawn
-      stampLayer.innerHTML = '';
-      editOverlay.getContext('2d').clearRect(0, 0, editOverlay.width, editOverlay.height);
+      if (!wsMode()) {
+        editorVp = null;                     // nothing can be placed until this page is drawn
+        stampLayer.innerHTML = '';
+        editOverlay.getContext('2d').clearRect(0, 0, editOverlay.width, editOverlay.height);
+      }
     }
     editorItem = item;
     updateEditorPage();
@@ -4852,7 +4856,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#f1efe9}
      happens until the flick has died away (WHEEL_QUIET ms without a step). The same
      wait applies when a flick scrolls a zoomed page into its edge, so reaching the
      bottom never turns the page by itself. */
-  const WHEEL_FLIP = 90, WHEEL_QUIET = 200;
+  const WHEEL_FLIP = 48, WHEEL_QUIET = 160;
   let wheelAcc = 0, wheelDir = 0, wheelLock = 0, wheelIdle = null, flipHintTimer = null;
   let wheelQuiet = false, wheelQuietTimer = null, lastWheelAt = 0, lastWheelEdge = true;
   function waitForQuiet() {
@@ -4865,14 +4869,14 @@ body{margin:0;padding:0;width:100%!important;background-color:#f1efe9}
     el.textContent = text;
     el.classList.add('show');
     clearTimeout(flipHintTimer);
-    flipHintTimer = setTimeout(() => el.classList.remove('show'), 1000);
+    flipHintTimer = setTimeout(() => el.classList.remove('show'), 950);
   }
   $('editCanvasWrap').addEventListener('wheel', (e) => {
     if (e.ctrlKey || !editorItem || !tray.length || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;   // Ctrl+wheel stays the browser zoom
     const wrap = e.currentTarget;
     const dy = e.deltaY * (e.deltaMode === 1 ? 40 : e.deltaMode === 2 ? wrap.clientHeight : 1);
     if (!dy) return;
-    const dir = dy > 0 ? 1 : -1, now = Date.now(), click = Math.abs(dy) >= 50;   // click: a mouse-wheel notch
+    const dir = dy > 0 ? 1 : -1, now = Date.now(), click = Math.abs(dy) >= 40;   // click: a mouse-wheel notch
     const atEdge = dir > 0 ? wrap.scrollTop + wrap.clientHeight >= wrap.scrollHeight - 2 : wrap.scrollTop <= 1;
     const arrived = atEdge && !lastWheelEdge && now - lastWheelAt < WHEEL_QUIET;   // a flick just reached the edge
     lastWheelAt = now;
@@ -4880,14 +4884,14 @@ body{margin:0;padding:0;width:100%!important;background-color:#f1efe9}
     if (!atEdge) { wheelAcc = 0; return; }                  // zoomed in: let the page scroll first
     e.preventDefault();
     if (!click && (arrived || wheelQuiet)) { waitForQuiet(); return; }   // one page per trackpad flick
-    if (now < wheelLock || editorLoading || pendingCrop || boxDrag || inkStroke) return;
+    if (now < wheelLock || pendingCrop || boxDrag || inkStroke) return;
     if (dir !== wheelDir) { wheelAcc = 0; wheelDir = dir; }
     wheelAcc += Math.abs(dy);
     clearTimeout(wheelIdle);
-    wheelIdle = setTimeout(() => { wheelAcc = 0; }, 300);   // a pause starts the count over
+    wheelIdle = setTimeout(() => { wheelAcc = 0; }, 260);   // a pause starts the count over
     if (wheelAcc < WHEEL_FLIP) return;
     wheelAcc = 0;
-    wheelLock = now + (click ? 300 : 450);
+    wheelLock = now + (click ? 75 : 220);
     if (!click) waitForQuiet();
     const j = tray.indexOf(editorItem) + dir;
     if (j < 0 || j >= tray.length) { flashPageHint(dir > 0 ? 'Last page' : 'First page'); return; }
@@ -4906,63 +4910,133 @@ body{margin:0;padding:0;width:100%!important;background-color:#f1efe9}
     if (ws) el.removeAttribute('aria-modal'); else el.setAttribute('aria-modal', 'true');
   }
 
+  /* ── Fast page-bitmap cache + neighbor pre-warming for instant, flicker-free page scrolling ── */
+  const editorBitmapCache = new Map();   // key -> { canvas, vp, fit, bytes }
+  let prewarmTimer = null;
+  function editorCacheKey(item, maxW, maxH) {
+    const c = item.crop ? [item.crop.x, item.crop.y, item.crop.w, item.crop.h].join(',') : '';
+    return item.docId + ':' + item.pageIndex + '|' + (item.rot || 0) + '|' + c + '|' + Math.round(editorZoom * 100) + '|' + Math.round(maxW) + 'x' + Math.round(maxH);
+  }
+  function rememberEditorBitmap(key, entry) {
+    editorBitmapCache.delete(key);
+    editorBitmapCache.set(key, entry);
+    while (editorBitmapCache.size > 16) editorBitmapCache.delete(editorBitmapCache.keys().next().value);
+  }
+  async function buildEditorBitmap(item, maxW, maxH) {
+    const doc = docs.get(item.docId);
+    if (!doc) return null;
+    const key = editorCacheKey(item, maxW, maxH);
+    const hit = editorBitmapCache.get(key);
+    if (hit && hit.bytes === doc.bytes) return hit;
+    const base = { docId: item.docId, pageIndex: item.pageIndex, rot: item.rot, stamps: [], crop: item.crop };
+    const bytes = await buildPdfBytes([base]);
+    const pdoc = await pdfjsLib.getDocument({ data: bytes }).promise;
+    try {
+      const page = await pdoc.getPage(1);
+      const vp1 = page.getViewport({ scale: 1 });
+      const fit = Math.min(maxW / vp1.width, maxH / vp1.height) * editorZoom;
+      const vp = page.getViewport({ scale: fit * 2 });   // render 2x for crisp text
+      const off = document.createElement('canvas');
+      off.width = Math.ceil(vp.width);
+      off.height = Math.ceil(vp.height);
+      await page.render({ canvasContext: off.getContext('2d'), viewport: vp, intent: 'print' }).promise;
+      const entry = { canvas: off, vp, fit, bytes: doc.bytes };
+      rememberEditorBitmap(key, entry);
+      return entry;
+    } finally {
+      pdoc.destroy();
+    }
+  }
+  function schedulePrewarm(centerItem, maxW, maxH) {
+    clearTimeout(prewarmTimer);
+    prewarmTimer = setTimeout(async () => {
+      if (!tray.length || !centerItem) return;
+      const idx = tray.indexOf(centerItem);
+      if (idx < 0) return;
+      for (const step of [1, -1, 2]) {
+        if (editorLoading) return;
+        const neighbor = tray[idx + step];
+        if (!neighbor) continue;
+        const doc = docs.get(neighbor.docId);
+        if (!doc) continue;
+        const key = editorCacheKey(neighbor, maxW, maxH);
+        const hit = editorBitmapCache.get(key);
+        if (hit && hit.bytes === doc.bytes) continue;
+        try { await buildEditorBitmap(neighbor, maxW, maxH); } catch (_) {}
+      }
+    }, 45);
+  }
+  function applyEditorBitmap(item, entry, wrap, maxW, maxH) {
+    const off = entry.canvas, vp = entry.vp, fit = entry.fit;
+    const slideDir = landAt === 'top' ? 1 : landAt === 'bottom' ? -1 : 0;
+    editCanvas.width = off.width;
+    editCanvas.height = off.height;
+    editCanvas.style.width = Math.ceil(vp.width / 2) + 'px';
+    editCanvas.style.height = Math.ceil(vp.height / 2) + 'px';
+    editCanvas.getContext('2d').drawImage(off, 0, 0);
+    editOverlay.width = editCanvas.width;
+    editOverlay.height = editCanvas.height;
+    editOverlay.style.width = editCanvas.style.width;
+    editOverlay.style.height = editCanvas.style.height;
+    editorVp = vp;
+    editorFit = fit;
+    $('zoomPct').textContent = Math.round(fit * 100) + '%';
+    if (landAt) { wrap.scrollTop = landAt === 'bottom' ? wrap.scrollHeight : 0; landAt = null; }
+    editorLoading = false;
+    wrap.classList.remove('loading');
+    syncStampLayer(false);
+    const cropEl = document.getElementById('cropBox');
+    if (cropEl && pendingCrop) positionBoxEl(cropEl, pendingCrop);
+    if (thumbStale(item)) queueThumb(item);
+    if (slideDir && wsMode() && $('editStack').animate) {
+      try {
+        $('editStack').animate(
+          [{ transform: 'translateY(' + (slideDir * 8) + 'px)' }, { transform: 'translateY(0)' }],
+          { duration: 95, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+        );
+      } catch (_) {}
+    }
+    schedulePrewarm(item, maxW, maxH);
+  }
+
   async function renderEditor() {
     if (!editorItem) return;
     const item = editorItem, seq = ++editorSeq, inPlace = wsMode();
     const wrap = $('editCanvasWrap'), doc = docs.get(item.docId);
     editorShown = { sig: editorSigOf(item), bytes: doc ? doc.bytes : null };
+    const cs = getComputedStyle(wrap);
+    const maxW = Math.max(240, wrap.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 2);
+    const maxH = Math.max(240, wrap.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 2);
+    const cacheKey = editorCacheKey(item, maxW, maxH);
+    const cached = editorBitmapCache.get(cacheKey);
+    if (cached && doc && cached.bytes === doc.bytes) {
+      applyEditorBitmap(item, cached, wrap, maxW, maxH);
+      if (editorBusy) { busy(false); editorBusy = false; }
+      return;
+    }
     editorLoading = true;
-    // in the workspace the page area just dims; the full-screen editor keeps the "Rendering" message
-    if (inPlace) wrap.classList.add('loading'); else { busy(true, 'Rendering page…'); editorBusy = true; }
+    let loadingTimer = null;
+    // only dim if rendering takes longer than 150ms, avoiding any flash on normal page turns
+    if (inPlace) {
+      loadingTimer = setTimeout(() => { if (seq === editorSeq && editorLoading) wrap.classList.add('loading'); }, 150);
+    } else {
+      busy(true, 'Rendering page…');
+      editorBusy = true;
+    }
     try {
-      // render the base page WITHOUT stamps — stamps live as movable overlay boxes
-      const base = { docId: item.docId, pageIndex: item.pageIndex, rot: item.rot, stamps: [], crop: item.crop };
-      const bytes = await buildPdfBytes([base]);
-      if (seq !== editorSeq) return;                              // a newer page or zoom took over
-      const pdoc = await pdfjsLib.getDocument({ data: bytes }).promise;
-      try {
-        const page = await pdoc.getPage(1);
-        const vp1 = page.getViewport({ scale: 1 });
-        const cs = getComputedStyle(wrap);
-        const maxW = Math.max(240, wrap.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 2);
-        const maxH = Math.max(240, wrap.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - 2);
-        const fit = Math.min(maxW / vp1.width, maxH / vp1.height) * editorZoom;
-        const vp = page.getViewport({ scale: fit * 2 });   // render 2x for crisp text
-        // draw off-screen, then swap, so the page on screen is never blank or half-drawn
-        const off = document.createElement('canvas');
-        off.width = Math.ceil(vp.width);
-        off.height = Math.ceil(vp.height);
-        await page.render({ canvasContext: off.getContext('2d'), viewport: vp, intent: 'print' }).promise;
-        if (seq !== editorSeq) return;
-        editCanvas.width = off.width;
-        editCanvas.height = off.height;
-        editCanvas.style.width = Math.ceil(vp.width / 2) + 'px';
-        editCanvas.style.height = Math.ceil(vp.height / 2) + 'px';
-        editCanvas.getContext('2d').drawImage(off, 0, 0);
-        editOverlay.width = editCanvas.width;
-        editOverlay.height = editCanvas.height;
-        editOverlay.style.width = editCanvas.style.width;
-        editOverlay.style.height = editCanvas.style.height;
-        editorVp = vp;
-        editorFit = fit;
-        $('zoomPct').textContent = Math.round(fit * 100) + '%';
-        if (landAt) { wrap.scrollTop = landAt === 'bottom' ? wrap.scrollHeight : 0; landAt = null; }
-      } finally {
-        pdoc.destroy();
-      }
-      editorLoading = false;
-      syncStampLayer();
-      // a pending crop box must follow the new zoom level too
-      const cropEl = document.getElementById('cropBox');
-      if (cropEl && pendingCrop) positionBoxEl(cropEl, pendingCrop);
-      queueThumb(item);
+      const entry = await buildEditorBitmap(item, maxW, maxH);
+      if (seq !== editorSeq || !entry) return;                    // a newer page or zoom took over
+      clearTimeout(loadingTimer);
+      applyEditorBitmap(item, entry, wrap, maxW, maxH);
     } catch (err) {
+      clearTimeout(loadingTimer);
       console.error(err);
       if (seq === editorSeq) {
         if (!editorVp) editCanvas.getContext('2d').clearRect(0, 0, editCanvas.width, editCanvas.height);   // not the previous page's picture
         toast('Sorry — could not render that page.');
       }
     } finally {
+      clearTimeout(loadingTimer);
       if (seq === editorSeq) {                                    // an overtaken render leaves these to the newer one
         editorLoading = false;
         wrap.classList.remove('loading');
@@ -5040,7 +5114,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#f1efe9}
     if (item === editorItem) syncStampLayer();
   }
 
-  function syncStampLayer() {
+  function syncStampLayer(save = true) {
     const cropEl = document.getElementById('cropBox');   // keep a pending crop box alive
     stampLayer.innerHTML = '';
     if (!editorItem || !editorVp) return;
@@ -5049,7 +5123,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#f1efe9}
     redrawInk();
     if (cropEl && pendingCrop) stampLayer.appendChild(cropEl);
     selectStamp(selectedStamp && editorItem.stamps.includes(selectedStamp) ? selectedStamp : null);
-    scheduleAutosave();
+    if (save) scheduleAutosave();
   }
 
   function buildStampEl(st) {
@@ -6956,6 +7030,24 @@ body{margin:0;padding:0;width:100%!important;background-color:#f1efe9}
     const doc = docs.get(viewDocId);
     if (doc && viewPageIndex < doc.pages.length - 1) { viewPageIndex++; renderViewer(); }
   });
+  let viewWheelLock = 0;
+  $('viewBody').addEventListener('wheel', (e) => {
+    if (e.ctrlKey || !$('viewModal').classList.contains('open') || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    const body = e.currentTarget, doc = docs.get(viewDocId);
+    if (!doc || !e.deltaY) return;
+    const dir = e.deltaY > 0 ? 1 : -1;
+    const atEdge = dir > 0 ? body.scrollTop + body.clientHeight >= body.scrollHeight - 2 : body.scrollTop <= 1;
+    if (!atEdge) return;
+    e.preventDefault();
+    const now = Date.now();
+    if (now < viewWheelLock) return;
+    const next = viewPageIndex + dir;
+    if (next >= 0 && next < doc.pages.length) {
+      viewWheelLock = now + 140;
+      viewPageIndex = next;
+      renderViewer();
+    }
+  }, { passive: false });
   $('btnViewAdd').addEventListener('click', () => {
     const doc = docs.get(viewDocId);
     const src = doc && doc.pages.find(p => p.pageIndex === viewPageIndex);
@@ -7560,10 +7652,10 @@ body{margin:0;padding:0;width:100%!important;background-color:#f1efe9}
     $('btnNextEdit').disabled = i < 0 || i >= tray.length - 1;
     ['btnPageRotL', 'btnPageRotR', 'btnPageDup', 'btnPageRemove'].forEach(id => { $(id).disabled = i < 0; });
   }
-  function jumpEditor(n){const i=Math.min(tray.length,Math.max(1,Math.round(Number(n)||1)))-1;if(tray[i]&&tray[i]!==editorItem){scheduleAutosave();removePendingCrop();openEditor(tray[i]);}else updateEditorPage();}
+  function jumpEditor(n){const i=Math.min(tray.length,Math.max(1,Math.round(Number(n)||1)))-1;if(tray[i]&&tray[i]!==editorItem){removePendingCrop();openEditor(tray[i]);}else updateEditorPage();}
   $('editorPageJump').addEventListener('change',e=>jumpEditor(e.target.value));
   $('editorPageJump').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();jumpEditor(e.target.value);e.target.blur();}});
-  function moveEditor(d){const i=tray.indexOf(editorItem)+d;if(i>=0&&i<tray.length){scheduleAutosave();removePendingCrop();openEditor(tray[i]);}}
+  function moveEditor(d){const i=tray.indexOf(editorItem)+d;if(i>=0&&i<tray.length){removePendingCrop();openEditor(tray[i]);}}
   $('btnPrevEdit').onclick=()=>moveEditor(-1);$('btnNextEdit').onclick=()=>moveEditor(1);
   $('mobileTool').onchange=e=>$(e.target.value).click();$('modePan').onclick=()=>setEditorMode('pan');
   let panStart=null;
