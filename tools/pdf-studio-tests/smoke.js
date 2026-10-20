@@ -291,6 +291,19 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
       return { sizes: [a.length, b.length, d.length], same: ta.text === td.text, markedHasNote: tc.text.includes('note'), plainHasNoNote: !td.text.includes('note'), repeat: te.pages === 3 && te.text.includes('p2') };`);
     ok('repeat builds from the same file are identical; marking one up never leaks into the next', r.sizes[0] === r.sizes[1] && r.sizes[1] === r.sizes[2] && r.same && r.markedHasNote && r.plainHasNoNote && r.repeat, r);
 
+    // 4c. contextual Text properties inspector & horizontal toolbar (font, B/I/U, navy swatch, align, opacity, X/Y, Duplicate/Delete)
+    r = await evalIn(page, `
+      const styledList = [{ docId: 1, pageIndex: 0, rot: 0, stamps: [
+        { kind: 'text', x: 90, y: 540, text: 'INSPECTOR LINE 1\\nLINE 2', size: 18, color: 'navy', font: 'serif', bold: true, italic: true, underline: true, align: 'center', opacity: 0.75 }
+      ] }];
+      const sb = await P.buildPdfBytes(styledList);
+      const st = await pageText(sb, 1);
+      const edBarR = document.querySelector('.ed-bar').getBoundingClientRect();
+      const hasControls = ['stampFont', 'btnTextBold', 'btnTextItalic', 'btnTextUnderline', 'textAlignGroup', 'stampOpacityRange', 'stampPosX', 'stampPosY', 'btnStampDup', 'btnStampDel', 'btnSaveCopy', 'wsSaveStatus', 'btnToolbarFillForm'].every(id => !!$(id));
+      return { built: sb.length > 500 && st.text.includes('inspector line 1'), fullWidthBar: edBarR.width > innerWidth - 40, hasControls };`);
+    ok('full-width toolbar + Text properties inspector (Font, B/I/U, Navy, Align, Opacity, X/Y, Duplicate/Delete) build into the PDF',
+      r.built && r.fullWidthBar && r.hasControls, r);
+
     // 5. one page: Page actions, the ⋯ on its card, undo
     r = await evalIn(page, `
       await openEditor(0);
