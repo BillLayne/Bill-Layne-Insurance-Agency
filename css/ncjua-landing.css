@@ -1,0 +1,1546 @@
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  src: url('/fonts/bricolage-grotesque-latin-variable.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Outfit';
+  src: url('/fonts/outfit-400-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Outfit';
+  src: url('/fonts/outfit-600-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Outfit';
+  src: url('/fonts/outfit-700-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+:root {
+  --navy: #0A1F3C;
+  --navy-2: #122A52;
+  --gold: #E8B84B;
+  --gold-dark: #D4A93C;
+  --gold-accent: #C59226;
+  --cream: #FAF7F0;
+  --gray-bg: #F5F7FA;
+  --white: #FFFFFF;
+  --text: #1B2432;
+  --muted: #586577;
+  --border: #E2E7ED;
+  --shadow: 0 8px 30px rgba(10, 31, 60, 0.06);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 24px;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: var(--white);
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+body:has(dialog[open]) {
+  overflow: hidden;
+}
+
+h1, h2, h3, h4, p, figure, ul, ol {
+  margin: 0;
+}
+
+h1, h2, h3, .ncjua-dp-code, .ncjua-step-num {
+  font-family: 'Bricolage Grotesque', 'Outfit', sans-serif;
+  color: var(--navy);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: clamp(56px, 4.5vw, 64px);
+  font-weight: 800;
+  line-height: 1.08;
+}
+
+h2 {
+  font-size: clamp(34px, 3vw, 40px);
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button, input, select, textarea {
+  font: inherit;
+}
+
+button, a, input, select, textarea, summary {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  cursor: pointer;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+svg {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 3px solid #1974CF;
+  outline-offset: 3px;
+}
+
+.ncjua-skip {
+  position: absolute;
+  top: -100px;
+  left: 16px;
+  padding: 12px 18px;
+  background: var(--white);
+  color: var(--navy);
+  font-weight: 600;
+  border-radius: 8px;
+  z-index: 10000;
+  box-shadow: var(--shadow);
+}
+.ncjua-skip:focus {
+  top: 12px;
+}
+
+.ncjua-wrap {
+  width: min(100%, 1264px);
+  margin-inline: auto;
+  padding-inline: 32px;
+}
+
+.ncjua-section {
+  padding-block: 80px;
+}
+
+.ncjua-section--compact-top {
+  padding-top: 16px;
+  padding-bottom: 80px;
+}
+
+.ncjua-cream {
+  background: var(--cream);
+}
+
+.ncjua-section-head {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto 40px;
+}
+
+.ncjua-section-head p {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 18px;
+}
+
+/* Buttons */
+.ncjua-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 12px 26px;
+  border-radius: 12px;
+  border: 1.5px solid transparent;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.15s ease, box-shadow 0.18s ease;
+}
+
+.ncjua-btn-gold {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--navy);
+}
+.ncjua-btn-gold:hover {
+  background: var(--gold-dark);
+  border-color: var(--gold-dark);
+  box-shadow: 0 6px 18px rgba(10, 31, 60, 0.14);
+}
+
+.ncjua-btn-outline-light {
+  background: rgba(10, 31, 60, 0.35);
+  border-color: rgba(255, 255, 255, 0.78);
+  color: var(--white);
+}
+.ncjua-btn-outline-light:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--white);
+}
+.ncjua-btn-outline-light svg {
+  color: var(--gold);
+  width: 20px;
+  height: 20px;
+}
+
+.ncjua-btn-navy {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: var(--white);
+}
+.ncjua-btn-navy:hover {
+  background: var(--navy-2);
+  border-color: var(--navy-2);
+}
+
+/* 6. Header */
+.ncjua-header {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.ncjua-header-inner {
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+}
+
+.ncjua-logo {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.ncjua-logo img {
+  width: 204px;
+  height: auto;
+}
+
+.ncjua-nav {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.ncjua-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--navy);
+  transition: color 0.15s ease;
+}
+.ncjua-nav a:hover {
+  color: var(--gold-accent);
+}
+.ncjua-nav a svg {
+  width: 14px;
+  height: 14px;
+  color: var(--muted);
+}
+
+.ncjua-header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ncjua-header-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--navy);
+  white-space: nowrap;
+}
+.ncjua-header-phone svg {
+  color: var(--gold-dark);
+  width: 22px;
+  height: 22px;
+}
+.ncjua-header-phone:hover {
+  color: var(--gold-accent);
+}
+
+.ncjua-menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 8px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--navy);
+}
+.ncjua-menu-btn svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* 7 & 8. Hero */
+.ncjua-hero {
+  position: relative;
+  isolation: isolate;
+  background: var(--navy);
+  color: var(--white);
+  overflow: hidden;
+}
+
+.ncjua-hero-bg-desktop {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+.ncjua-hero-bg-desktop img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right center;
+}
+.ncjua-hero-bg-desktop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(10, 31, 60, 0.94) 0%,
+    rgba(10, 31, 60, 0.82) 34%,
+    rgba(10, 31, 60, 0.25) 56%,
+    rgba(10, 31, 60, 0) 72%
+  );
+}
+
+.ncjua-hero-mobile-photo {
+  display: none;
+}
+
+.ncjua-hero-inner {
+  min-height: 680px;
+  display: flex;
+  align-items: center;
+  padding-block: 56px;
+}
+
+.ncjua-hero-copy {
+  width: 100%;
+  max-width: 600px;
+}
+
+.ncjua-eyebrow {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+}
+.ncjua-eyebrow-mobile {
+  display: none;
+}
+
+.ncjua-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 18px 7px 14px;
+  border: 1.5px solid rgba(255, 255, 255, 0.72);
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: 24px;
+}
+
+.ncjua-pill-logo {
+  width: 28px;
+  height: auto;
+  filter: brightness(0) invert(1);
+  flex-shrink: 0;
+}
+
+.ncjua-fair-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 16px 6px 12px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 14px;
+  box-shadow: 0 2px 8px rgba(10, 31, 60, 0.04);
+}
+
+.ncjua-fair-badge img {
+  width: 34px;
+  height: auto;
+  flex-shrink: 0;
+}
+
+.ncjua-footer-emblem {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #E2E8F0;
+}
+
+.ncjua-footer-emblem img {
+  width: 34px;
+  height: auto;
+  filter: brightness(0) invert(1);
+  flex-shrink: 0;
+}
+
+.ncjua-hero h1 {
+  color: var(--white);
+  margin-bottom: 24px;
+}
+.ncjua-hero h1 .ncjua-line {
+  display: block;
+}
+.ncjua-hero h1 .ncjua-gold {
+  display: block;
+  color: var(--gold);
+}
+
+.ncjua-hero-lead {
+  font-size: 19px;
+  line-height: 1.58;
+  color: #EEF3F8;
+  max-width: 530px;
+}
+.ncjua-lead-mobile {
+  display: none;
+}
+
+.ncjua-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.ncjua-location-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #EEF3F8;
+}
+.ncjua-location-line svg {
+  width: 18px;
+  height: 18px;
+  color: var(--white);
+}
+
+.ncjua-hero-note {
+  margin-top: 10px;
+  font-size: 14px;
+  color: rgba(230, 237, 245, 0.8);
+}
+
+/* 9. Benefits Strip */
+.ncjua-benefits {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+}
+
+.ncjua-benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding-block: 24px;
+}
+
+.ncjua-benefit-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding-inline: 16px;
+  color: var(--navy);
+  font-size: 17px;
+  font-weight: 600;
+}
+.ncjua-benefit-item + .ncjua-benefit-item {
+  border-left: 1px solid var(--border);
+}
+.ncjua-benefit-item svg {
+  width: 38px;
+  height: 38px;
+  color: var(--gold-dark);
+}
+.ncjua-benefit-mobile {
+  display: none;
+}
+
+/* 10. Property-type cards */
+.ncjua-prop-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.ncjua-prop-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.ncjua-prop-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold-dark);
+  box-shadow: 0 12px 34px rgba(10, 31, 60, 0.1);
+}
+
+.ncjua-prop-media {
+  aspect-ratio: 3 / 2;
+  background: var(--gray-bg);
+  overflow: hidden;
+}
+.ncjua-prop-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.ncjua-prop-body {
+  padding: 24px 26px 26px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.ncjua-prop-body h3 {
+  font-size: 23px;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+
+.ncjua-prop-body p {
+  font-size: 17px;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.ncjua-card-action {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--gold-accent);
+}
+.ncjua-card-action svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.15s ease;
+}
+.ncjua-prop-card:hover .ncjua-card-action svg {
+  transform: translateX(3px);
+}
+
+.ncjua-supporting-note {
+  margin-top: 22px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* 11. DP-1 and DP-2 Section */
+.ncjua-dp-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.ncjua-dp-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: var(--shadow);
+}
+
+.ncjua-dp-code {
+  display: block;
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+
+.ncjua-dp-sub {
+  display: block;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--gold-accent);
+  margin-bottom: 12px;
+}
+
+.ncjua-dp-desc {
+  font-size: 18px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.ncjua-dp-meta {
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.ncjua-dp-strip {
+  margin-top: 20px;
+  background: var(--navy);
+  color: var(--white);
+  border-radius: 12px;
+  padding: 20px 28px;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  box-shadow: var(--shadow);
+}
+
+.ncjua-dp-strip-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: 22px;
+  border-right: 1px solid rgba(255, 255, 255, 0.22);
+  color: var(--gold);
+}
+.ncjua-dp-strip-icon svg {
+  width: 34px;
+  height: 34px;
+}
+
+.ncjua-dp-strip-text strong {
+  display: block;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 2px;
+}
+.ncjua-dp-strip-text p {
+  font-size: 15px;
+  color: #D7E1EE;
+}
+
+.ncjua-dp-more {
+  margin-top: 16px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 22px;
+}
+.ncjua-dp-more summary {
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--navy);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.ncjua-dp-more summary::-webkit-details-marker {
+  display: none;
+}
+.ncjua-dp-more summary::after {
+  content: "Learn about coverage details +";
+  font-size: 14px;
+  color: var(--gold-accent);
+}
+.ncjua-dp-more[open] summary::after {
+  content: "Hide coverage details −";
+}
+.ncjua-dp-more-body {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 15px;
+  color: var(--muted);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.ncjua-dp-more-body strong {
+  color: var(--navy);
+}
+
+/* 12. Personal property-review section */
+.ncjua-review-split {
+  display: grid;
+  grid-template-columns: 48fr 52fr;
+  gap: 44px;
+  align-items: center;
+}
+
+.ncjua-review-photo img {
+  width: 100%;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  object-fit: cover;
+}
+
+.ncjua-review-copy h2 {
+  margin-bottom: 22px;
+}
+
+.ncjua-check-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.ncjua-check-list li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 18px;
+  color: var(--text);
+}
+.ncjua-check-list svg {
+  width: 28px;
+  height: 28px;
+  color: var(--gold-dark);
+}
+
+/* 13. Coverage questions section */
+.ncjua-closer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.ncjua-closer-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  box-shadow: var(--shadow);
+}
+.ncjua-closer-card svg {
+  width: 38px;
+  height: 38px;
+  color: var(--gold-dark);
+  margin-top: 2px;
+}
+.ncjua-closer-card h3 {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+.ncjua-closer-card p {
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+/* 14. Three-step process */
+.ncjua-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  list-style: none;
+  padding: 0;
+}
+
+.ncjua-step-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px 26px;
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  box-shadow: var(--shadow);
+}
+
+.ncjua-step-num {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--navy);
+  font-size: 20px;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.ncjua-step-card h3 {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+.ncjua-step-card p {
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+/* 15. FAQ section */
+.ncjua-faq-wrap {
+  max-width: 960px;
+  margin-inline: auto;
+}
+
+.ncjua-faq-wrap h2 {
+  margin-bottom: 24px;
+}
+
+.ncjua-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ncjua-faq-item {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(10, 31, 60, 0.03);
+}
+
+.ncjua-faq-item summary {
+  padding: 18px 22px;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--navy);
+  min-height: 58px;
+}
+.ncjua-faq-item summary::-webkit-details-marker {
+  display: none;
+}
+.ncjua-faq-item summary svg {
+  width: 20px;
+  height: 20px;
+  color: var(--navy);
+  transition: transform 0.2s ease;
+}
+.ncjua-faq-item[open] summary svg {
+  transform: rotate(180deg);
+}
+
+.ncjua-faq-answer {
+  padding: 0 22px 20px;
+  font-size: 17px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* 16. Closing Section */
+.ncjua-closing-section {
+  padding-top: 8px;
+  padding-bottom: 72px;
+}
+
+.ncjua-closing-banner {
+  position: relative;
+  isolation: isolate;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--navy);
+  color: var(--white);
+  padding: 48px;
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  box-shadow: var(--shadow);
+}
+
+.ncjua-closing-banner > img {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right center;
+}
+
+.ncjua-closing-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    90deg,
+    rgba(10, 31, 60, 0.88) 0%,
+    rgba(10, 31, 60, 0.62) 38%,
+    rgba(10, 31, 60, 0.12) 64%,
+    rgba(10, 31, 60, 0) 100%
+  );
+}
+
+.ncjua-closing-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 580px;
+}
+
+.ncjua-closing-copy h2 {
+  color: var(--white);
+  font-size: clamp(30px, 2.8vw, 38px);
+  margin-bottom: 8px;
+}
+
+.ncjua-closing-copy p {
+  color: #E5ECF5;
+  font-size: 18px;
+  margin-bottom: 24px;
+}
+
+.ncjua-closing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+/* 18. Footer */
+.ncjua-footer {
+  background: var(--navy);
+  color: #E2E8F0;
+  padding: 44px 0 36px;
+}
+
+.ncjua-footer-top {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  gap: 32px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.ncjua-footer-brand strong {
+  display: block;
+  font-family: 'Bricolage Grotesque', 'Outfit', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+.ncjua-footer-brand span {
+  display: block;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.ncjua-footer-brand address {
+  font-style: normal;
+  font-size: 15px;
+  color: #CBD5E1;
+  line-height: 1.65;
+}
+.ncjua-footer-brand a:hover,
+.ncjua-footer-links a:hover {
+  color: var(--gold);
+  text-decoration: underline;
+}
+
+.ncjua-footer-links h3 {
+  color: var(--white);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.ncjua-footer-links ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14.5px;
+  color: #CBD5E1;
+}
+.ncjua-footer-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+}
+
+.ncjua-footer-bottom {
+  padding-top: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 13px;
+  color: #94A3B8;
+}
+.ncjua-footer-bottom p {
+  max-width: 780px;
+}
+
+/* 17. Property-Review Modal Form */
+.ncjua-dialog {
+  width: min(620px, calc(100% - 32px));
+  max-height: calc(100dvh - 32px);
+  border: 0;
+  border-radius: 20px;
+  padding: 32px;
+  color: var(--text);
+  background: var(--white);
+  box-shadow: 0 24px 80px rgba(10, 31, 60, 0.32);
+  overflow: auto;
+}
+.ncjua-dialog::backdrop {
+  background: rgba(10, 31, 60, 0.72);
+}
+
+.ncjua-dialog-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--gray-bg);
+  color: var(--navy);
+  display: grid;
+  place-items: center;
+}
+.ncjua-dialog-close:hover {
+  background: #E2E7ED;
+}
+
+.ncjua-dialog h2 {
+  font-size: 28px;
+  padding-right: 36px;
+  margin-bottom: 8px;
+}
+
+.ncjua-dialog-lead {
+  font-size: 16px;
+  color: var(--muted);
+  margin-bottom: 22px;
+}
+
+.ncjua-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.ncjua-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ncjua-field-wide {
+  grid-column: 1 / -1;
+}
+
+.ncjua-field label {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--navy);
+}
+.ncjua-field label span {
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.ncjua-field input,
+.ncjua-field select,
+.ncjua-field textarea {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid #B8C3D1;
+  border-radius: 10px;
+  padding: 10px 13px;
+  font-size: 16px;
+  color: var(--text);
+  background: var(--white);
+}
+.ncjua-field textarea {
+  min-height: 92px;
+  resize: vertical;
+}
+
+.ncjua-form-note {
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.ncjua-form-note a {
+  text-decoration: underline;
+  color: var(--navy);
+}
+
+.ncjua-form-submit {
+  margin-top: 18px;
+  width: 100%;
+  min-height: 54px;
+}
+.ncjua-form-submit:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.ncjua-form-status {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #EEF6F1;
+  border: 1px solid #B7DEC5;
+  color: #1B4D2E;
+  font-size: 15.5px;
+  line-height: 1.55;
+}
+.ncjua-form-status:empty {
+  display: none;
+}
+.ncjua-form-status[data-error="true"] {
+  background: #FFF1F0;
+  border-color: #F2B8B5;
+  color: #8C1D28;
+}
+
+.ncjua-upload-next {
+  margin-top: 14px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--cream);
+  border: 1px solid #E5D9BD;
+}
+.ncjua-upload-next[hidden] {
+  display: none;
+}
+.ncjua-upload-next p {
+  font-size: 14.5px;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.ncjua-honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* 20. Mobile Sticky Bottom Bar */
+.ncjua-mobile-bar {
+  display: none;
+}
+
+.bli-um-entry {
+  display: none !important;
+}
+
+/* Responsive Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+  .ncjua-wrap {
+    padding-inline: 24px;
+  }
+  .ncjua-header-inner {
+    gap: 14px;
+  }
+  .ncjua-logo img {
+    width: 168px;
+  }
+  .ncjua-nav {
+    gap: 14px;
+  }
+  .ncjua-nav a {
+    font-size: 15px;
+  }
+  .ncjua-header-phone {
+    font-size: 16px;
+    gap: 6px;
+  }
+  .ncjua-hero-inner {
+    min-height: 620px;
+  }
+  .ncjua-hero-copy {
+    max-width: 500px;
+  }
+  .ncjua-prop-grid,
+  .ncjua-closer-grid,
+  .ncjua-steps-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .ncjua-review-split {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+}
+
+/* Responsive Mobile (<= 767px) */
+@media (max-width: 767px) {
+  body {
+    font-size: 17px;
+    padding-bottom: 82px;
+  }
+
+  h1 {
+    font-size: clamp(36px, 9.6vw, 42px);
+    line-height: 1.1;
+  }
+
+  h2 {
+    font-size: clamp(28px, 7.2vw, 32px);
+  }
+
+  h3 {
+    font-size: 21px;
+  }
+
+  .ncjua-wrap {
+    padding-inline: 20px;
+  }
+
+  .ncjua-section {
+    padding-block: 50px;
+  }
+
+  .ncjua-section--compact-top {
+    padding-top: 8px;
+    padding-bottom: 50px;
+  }
+
+  .ncjua-section-head {
+    margin-bottom: 28px;
+  }
+  .ncjua-section-head p {
+    font-size: 17px;
+  }
+
+  .ncjua-btn {
+    min-height: 54px;
+    font-size: 17px;
+    width: 100%;
+  }
+
+  /* Mobile Header (64-72px, 150px logo, Menu button on right) */
+  .ncjua-header-inner {
+    min-height: 68px;
+  }
+  .ncjua-logo img {
+    width: 150px;
+  }
+  .ncjua-nav,
+  .ncjua-header-phone {
+    display: none;
+  }
+  .ncjua-menu-btn {
+    display: inline-flex;
+  }
+
+  /* Mobile Hero */
+  .ncjua-hero-bg-desktop {
+    display: none;
+  }
+  .ncjua-hero-inner {
+    min-height: 0;
+    display: block;
+    padding-top: 28px;
+    padding-bottom: 18px;
+  }
+  .ncjua-hero-copy {
+    max-width: none;
+  }
+  .ncjua-eyebrow-desktop {
+    display: none;
+  }
+  .ncjua-eyebrow-mobile {
+    display: inline;
+  }
+  .ncjua-eyebrow {
+    font-size: 11.5px;
+    margin-bottom: 12px;
+  }
+  .ncjua-pill {
+    font-size: 11px;
+    padding: 6px 14px;
+    margin-bottom: 20px;
+  }
+  .ncjua-hero h1 {
+    margin-bottom: 18px;
+  }
+  .ncjua-lead-desktop {
+    display: none;
+  }
+  .ncjua-lead-mobile {
+    display: inline;
+  }
+  .ncjua-hero-lead {
+    font-size: 17px;
+    line-height: 1.55;
+  }
+  .ncjua-hero-actions {
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .ncjua-location-line {
+    display: none;
+  }
+  .ncjua-hero-note {
+    margin-top: 14px;
+    font-size: 13px;
+  }
+
+  /* Preserve 280-360px of visible house photography beneath the mobile hero text */
+  .ncjua-hero-mobile-photo {
+    display: block;
+    position: relative;
+    height: 320px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .ncjua-hero-mobile-photo img {
+    width: 100%;
+    height: 185%;
+    max-width: none;
+    object-fit: cover;
+    object-position: center bottom;
+    transform: translateY(-44%);
+  }
+  .ncjua-hero-mobile-photo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      var(--navy) 0%,
+      rgba(10, 31, 60, 0.55) 18%,
+      rgba(10, 31, 60, 0) 42%
+    );
+  }
+
+  /* Benefits Strip Mobile */
+  .ncjua-benefits-grid {
+    padding-block: 18px;
+  }
+  .ncjua-benefit-item {
+    flex-direction: column;
+    gap: 8px;
+    padding-inline: 8px;
+    font-size: 13px;
+    text-align: center;
+    line-height: 1.3;
+  }
+  .ncjua-benefit-item svg {
+    width: 32px;
+    height: 32px;
+  }
+  .ncjua-benefit-desktop {
+    display: none;
+  }
+  .ncjua-benefit-mobile {
+    display: inline;
+  }
+
+  /* Cards & Grids Mobile */
+  .ncjua-prop-grid,
+  .ncjua-dp-grid,
+  .ncjua-review-split,
+  .ncjua-closer-grid,
+  .ncjua-steps-grid,
+  .ncjua-footer-top,
+  .ncjua-dp-more-body,
+  .ncjua-form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .ncjua-review-split {
+    gap: 24px;
+  }
+
+  .ncjua-prop-body,
+  .ncjua-dp-card,
+  .ncjua-closer-card,
+  .ncjua-step-card {
+    padding: 22px;
+  }
+
+  .ncjua-dp-code {
+    font-size: 28px;
+  }
+
+  .ncjua-dp-strip {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 20px 22px;
+  }
+  .ncjua-dp-strip-icon {
+    padding-right: 0;
+    border-right: 0;
+  }
+
+  .ncjua-faq-item summary {
+    padding: 16px 18px;
+    font-size: 17px;
+  }
+  .ncjua-faq-answer {
+    padding: 0 18px 18px;
+    font-size: 16.5px;
+  }
+
+  .ncjua-closing-section {
+    padding-bottom: 48px;
+  }
+  .ncjua-closing-banner {
+    padding: 28px;
+    padding-bottom: 180px;
+    display: block;
+  }
+  .ncjua-closing-banner > img {
+    height: 220px;
+    top: auto;
+    bottom: 0;
+    object-position: right bottom;
+  }
+  .ncjua-closing-banner::after {
+    background: linear-gradient(
+      180deg,
+      rgba(10, 31, 60, 0.98) 0%,
+      rgba(10, 31, 60, 0.94) 52%,
+      rgba(10, 31, 60, 0.45) 76%,
+      rgba(10, 31, 60, 0.1) 100%
+    );
+  }
+  .ncjua-closing-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Compact Review Property / Call bottom bar after hero actions scroll out of view */
+  .ncjua-mobile-bar {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    gap: 10px;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 45;
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    padding: 10px 16px max(10px, env(safe-area-inset-bottom));
+    box-shadow: 0 -6px 24px rgba(10, 31, 60, 0.1);
+    transform: translateY(110%);
+    transition: transform 0.22s ease;
+  }
+  .ncjua-mobile-bar.is-visible {
+    transform: translateY(0);
+  }
+  .ncjua-mobile-bar .ncjua-btn {
+    min-height: 48px;
+    padding: 10px 12px;
+    font-size: 15.5px;
+    border-radius: 10px;
+  }
+
+  .ncjua-dialog {
+    padding: 26px 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
