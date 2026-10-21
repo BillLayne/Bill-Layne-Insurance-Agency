@@ -109,9 +109,9 @@ def render_header(cfg,rel,mode='static'):
  if page.get('header_style')=='spanish-landing':
   links=''.join('<a href="%s">%s</a>'%(esc(item['href']),esc(item['label'])) for item in page['section_links'])
   return '\n'.join([HDR_START,'<header class="es-header"><div class="es-wrap es-header-inner">'
-   +'<a class="es-logo" href="/" aria-label="Bill Layne Insurance"><img src="%s" width="788" height="248" alt="Bill Layne Insurance" decoding="async"></a>'%esc(logo)
+   +'<a class="es-logo" href="%s" aria-label="Bill Layne Insurance"><img src="%s" width="788" height="248" alt="Bill Layne Insurance" decoding="async"></a>'%(esc(page.get('brand_href','/')),esc(logo))
    +'<nav class="es-desktop-nav" aria-label="Navegación principal">'+links+'</nav>'
-   +'<div class="es-languages"><span aria-current="page">Español</span><a href="/" lang="en" aria-label="English website">English</a></div>'
+   +'<div class="es-languages"><span aria-current="page">Español</span><a href="%s" lang="en" aria-label="English website">English</a></div>'%esc(page.get('english_href','/'))
    +'<a class="es-header-phone" href="%s" data-source="espanol_header_call">%s%s</a>'%(esc(page['phone_href']),svg('phone'),esc(page['phone_display']))
    +'<button class="es-menu-toggle" type="button" data-bli-menu-open aria-label="Abrir menú"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button></div></header>',HDR_END])
  menu_icon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>'
@@ -153,7 +153,7 @@ def targets():
  for rel in files:
   if rel.startswith(('templates/','mail-gateway/','pdf-tools/','shared/','social-media/')): continue
   src=(ROOT/rel).read_text(encoding='utf-8')
-  if rel in ('index.html','espanol/index.html') or markers.search(src): yield rel,src
+  if rel=='index.html' or rel.startswith('espanol/') or markers.search(src): yield rel,src
 
 def main():
  parser=argparse.ArgumentParser(description=__doc__); parser.add_argument('--apply',action='store_true');parser.add_argument('--check',action='store_true');args=parser.parse_args()

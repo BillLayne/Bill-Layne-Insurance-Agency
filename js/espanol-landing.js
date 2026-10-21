@@ -42,6 +42,18 @@
   if (location.hash === '#cotizar') openQuote(null);
   const params = new URLSearchParams(location.search);
   if (params.get('tipo') && Array.from(select.options).some(o => o.value === params.get('tipo'))) select.value = params.get('tipo');
+  // Same-tab handoff from the Spanish home form, kept out of the URL.
+  if (params.get('src') === 'espanol_home_renters') {
+    try {
+      const saved = JSON.parse(sessionStorage.getItem('bli_es_renters_handoff') || 'null');
+      sessionStorage.removeItem('bli_es_renters_handoff');
+      if (saved) {
+        document.getElementById('es-name').value = [saved.firstname, saved.lastname].filter(Boolean).join(' ');
+        document.getElementById('es-phone').value = saved.phone || '';
+        document.getElementById('es-zip').value = saved.zip_code || '';
+      }
+    } catch {}
+  }
   const docsButton = document.getElementById('es-doc-toggle');
   const docs = document.getElementById('es-doc-more');
   docs.hidden = true;
