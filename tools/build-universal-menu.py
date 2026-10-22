@@ -106,6 +106,13 @@ def render_header(cfg,rel,mode='static'):
  u=cfg['universal']; words=u['es'] if is_spanish(cfg,rel) else u['en']
  logo=u.get('logo_overrides',{}).get(rel,u['logo'])
  page=cfg.get('page_overrides',{}).get(rel,{})
+ if page.get('header_style')=='premium-carrier':
+  links=''.join('<a href="%s">%s</a>'%(esc(item['href']),esc(item['label'])) for item in page['header_links'])
+  return '\n'.join([HDR_START,'<header class="hg-header"><div class="hg-wrap hg-header-inner">'
+   +'<a class="hg-brand" href="/" aria-label="Bill Layne Insurance"><img src="%s" width="784" height="248" alt="Bill Layne Insurance" decoding="async"></a>'%esc(logo)
+   +'<nav class="hg-desktop-nav" aria-label="Main navigation">'+links+'</nav>'
+   +'<a class="hg-header-phone" href="%s">%s<span>%s</span></a>'%(esc(cfg['phone_href']),svg('phone'),esc(cfg['phone_display']))
+   +'<button class="hg-menu" type="button" data-bli-menu-open aria-label="Open site menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button></div></header>',HDR_END])
  if page.get('header_style')=='spanish-landing':
   links=''.join('<a href="%s">%s</a>'%(esc(item['href']),esc(item['label'])) for item in page['section_links'])
   return '\n'.join([HDR_START,'<header class="es-header"><div class="es-wrap es-header-inner">'
@@ -147,19 +154,19 @@ def transform(src,cfg,rel):
    src=src[:match.start()]+block+'\n'+src[match.start():]
  return src
 
-def targets():
+def targets(cfg):
  files=subprocess.check_output(['git','ls-files','*.html'],cwd=ROOT,text=True).splitlines()
  markers=re.compile(r'BLI-NAV:START|id=["\'](?:mobileDockPanel|menuPanel|menu-drawer|navigation-menu|mobile-menu|navDrawer)["\']|class=["\']menu-drawer')
  for rel in files:
   if rel.startswith(('templates/','mail-gateway/','pdf-tools/','shared/','social-media/')): continue
   src=(ROOT/rel).read_text(encoding='utf-8')
-  if rel=='index.html' or rel.startswith('espanol/') or markers.search(src): yield rel,src
+  if rel=='index.html' or rel in cfg.get('page_overrides',{}) or rel.startswith('espanol/') or markers.search(src): yield rel,src
 
 def main():
  parser=argparse.ArgumentParser(description=__doc__); parser.add_argument('--apply',action='store_true');parser.add_argument('--check',action='store_true');args=parser.parse_args()
  cfg=json.loads((ROOT/'tools/nav.json').read_text(encoding='utf-8'))
  changed=[]; count=0; pages=[]
- for rel,src in targets():
+ for rel,src in targets(cfg):
   count+=1; pages.append(rel); out=transform(src,cfg,rel)
   if src!=out:
    changed.append(rel)
