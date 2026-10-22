@@ -106,13 +106,14 @@ def render_header(cfg,rel,mode='static'):
  u=cfg['universal']; words=u['es'] if is_spanish(cfg,rel) else u['en']
  logo=u.get('logo_overrides',{}).get(rel,u['logo'])
  page=cfg.get('page_overrides',{}).get(rel,{})
- if page.get('header_style')=='premium-carrier':
+ if page.get('header_style') in ('premium-carrier','premium-landing'):
   links=''.join('<a href="%s">%s</a>'%(esc(item['href']),esc(item['label'])) for item in page['header_links'])
-  return '\n'.join([HDR_START,'<header class="hg-header"><div class="hg-wrap hg-header-inner">'
+  header='\n'.join([HDR_START,'<header class="hg-header"><div class="hg-wrap hg-header-inner">'
    +'<a class="hg-brand" href="/" aria-label="Bill Layne Insurance"><img src="%s" width="784" height="248" alt="Bill Layne Insurance" decoding="async"></a>'%esc(logo)
    +'<nav class="hg-desktop-nav" aria-label="Main navigation">'+links+'</nav>'
    +'<a class="hg-header-phone" href="%s">%s<span>%s</span></a>'%(esc(cfg['phone_href']),svg('phone'),esc(cfg['phone_display']))
    +'<button class="hg-menu" type="button" data-bli-menu-open aria-label="Open site menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button></div></header>',HDR_END])
+  return header.replace('class="hg-', 'class="mh-').replace(' hg-', ' mh-') if page.get('header_style')=='premium-landing' else header
  if page.get('header_style')=='spanish-landing':
   links=''.join('<a href="%s">%s</a>'%(esc(item['href']),esc(item['label'])) for item in page['section_links'])
   return '\n'.join([HDR_START,'<header class="es-header"><div class="es-wrap es-header-inner">'
