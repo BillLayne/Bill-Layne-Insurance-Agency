@@ -59,6 +59,7 @@ class BlogNavigationTests(unittest.TestCase):
                                                   'blog/blogs/example.html', dock=False)
             (folder / 'example.html').write_text(current.replace('>Client Hub</a>', '>Old Portal</a>'), encoding='utf-8')
             with patch.object(nav, 'ROOT', root), patch.object(nav, 'load_cfg', return_value=cfg), \
+                    patch.object(nav.subprocess, 'check_output', return_value='blog/blogs/example.html\n'), \
                     patch('sys.argv', ['build-nav.py', '--wave', '7', '--check']), \
                     contextlib.redirect_stdout(io.StringIO()), self.assertRaises(SystemExit) as failure:
                 nav.main()

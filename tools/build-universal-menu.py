@@ -106,6 +106,7 @@ def render_header(cfg,rel,mode='static'):
  u=cfg['universal']; words=u['es'] if is_spanish(cfg,rel) else u['en']
  logo=u.get('logo_overrides',{}).get(rel,u['logo'])
  page=cfg.get('page_overrides',{}).get(rel,{})
+ cfg={**cfg,**{k:v for k,v in page.items() if k in ('phone_href','phone_display')}}
  if page.get('header_style') in ('premium-carrier','premium-landing'):
   links=''.join('<a href="%s">%s</a>'%(esc(item['href']),esc(item['label'])) for item in page['header_links'])
   header='\n'.join([HDR_START,'<header class="hg-header"><div class="hg-wrap hg-header-inner">'
@@ -141,6 +142,10 @@ def transform(src,cfg,rel):
   mode=mode_match.group(1) if mode_match else 'static'
   src=header.sub(lambda _:render_header(cfg,rel,mode),src)
  version=cfg['universal']['version']
+ if HEAD_START not in src:
+  # Adopt existing shared assets when a page has only the menu markers.
+  src=re.sub(r'<link\b[^>]*href=["\']/css/universal-menu\.css(?:\?[^"\']*)?["\'][^>]*>\s*', '', src)
+  src=re.sub(r'<script\b[^>]*src=["\']/js/universal-menu\.js(?:\?[^"\']*)?["\'][^>]*>\s*</script>\s*', '', src)
  assets=HEAD_START+'\n<link rel="stylesheet" href="/css/universal-menu.css?v='+version+'">\n<script src="/js/universal-menu.js?v='+version+'" defer></script>\n'+HEAD_END
  for start,end,block,closing in [(HEAD_START,HEAD_END,assets,'head'),(START,END,render(cfg,rel),'body')]:
   pattern=re.compile(re.escape(start)+'.*?'+re.escape(end),re.S)
@@ -157,7 +162,7 @@ def transform(src,cfg,rel):
 
 def targets(cfg):
  files=subprocess.check_output(['git','ls-files','*.html'],cwd=ROOT,text=True).splitlines()
- markers=re.compile(r'BLI-NAV:START|id=["\'](?:mobileDockPanel|menuPanel|menu-drawer|navigation-menu|mobile-menu|navDrawer)["\']|class=["\']menu-drawer')
+ markers=re.compile(r'BLI-NAV:START|BLI-UNIVERSAL-MENU:START|id=["\'](?:mobileDockPanel|menuPanel|menu-drawer|navigation-menu|mobile-menu|navDrawer)["\']|class=["\']menu-drawer')
  for rel in files:
   if rel.startswith(('templates/','mail-gateway/','pdf-tools/','shared/','social-media/')): continue
   src=(ROOT/rel).read_text(encoding='utf-8')

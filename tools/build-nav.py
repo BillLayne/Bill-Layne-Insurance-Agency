@@ -40,6 +40,7 @@ import difflib
 import json
 import os
 import re
+import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -393,7 +394,7 @@ def desk_dropdown(label, items, ind):
 
 def items_desktop_header(cfg, ind):
     home = cfg['links'][0]
-    services = by_label(cfg, 'Auto Insurance', 'Home Insurance', 'Claims Center', 'Service Center', 'Client Hub')
+    services = by_label(cfg, 'Auto Insurance', 'Home Insurance', 'Mobile Home Insurance', 'Claims Center', 'Service Center', 'Client Hub')
     more = by_label(cfg, 'Videos', 'Community', 'Espa&ntilde;ol')
     resources, blog, contact = by_label(cfg, 'Resources', 'Blog', 'Contact Us')
     out = [ind + DESK_LINK % (home['href'], 'Home')]
@@ -578,6 +579,10 @@ def main():
     else:
         pages = wave['pages']
     pages = [p for p in pages if p not in cfg.get('exclude', [])]
+    if not args.pages:
+        # Auto-discovery must not rewrite unrelated, unpublished drafts.
+        tracked = set(subprocess.check_output(['git', 'ls-files', '*.html'], cwd=ROOT, text=True).splitlines())
+        pages = [p for p in pages if p in tracked]
 
     changed, failed, same = [], [], []
     for rel in pages:

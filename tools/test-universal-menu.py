@@ -33,12 +33,21 @@ class UniversalMenuTests(unittest.TestCase):
   self.assertIn('href="/motorcycle-insurance/"',drawer)
   self.assertIn('href="/boat-insurance/"',drawer)
  def test_internal_tools_and_untracked_work_excluded(self):
-  pages={rel for rel,src in menu.targets()}
+  pages={rel for rel,src in menu.targets(cfg)}
   self.assertIn('index.html',pages)
   self.assertIn('auto-quote.html',pages)
   self.assertIn('boat-insurance/index.html',pages)
   self.assertNotIn('pdf-tools/index.html',pages)
   self.assertNotIn('claims-center/auto-report/index.html',pages)
+  self.assertIn('mobile-home-insurance/index.html',pages)
+  self.assertIn('home-insurance/ncjua-fair-plan-nc/index.html',pages)
+  self.assertIn('resources/homeowners-estimator.html',pages)
+ def test_existing_unmarked_assets_are_adopted_without_duplicate_scripts(self):
+  src='<html><head><link rel="stylesheet" href="/css/universal-menu.css?v=old"><script src="/js/universal-menu.js?v=old" defer></script></head><body>Keep this form</body></html>'
+  generated=menu.transform(src,cfg,'accident/index.html')
+  self.assertEqual(generated.count('/js/universal-menu.js?'),1)
+  self.assertEqual(generated.count('/css/universal-menu.css?'),1)
+  self.assertEqual(generated,menu.transform(generated,cfg,'accident/index.html'))
  def test_legacy_double_head_not_rewritten(self):
   src='<head></head><body><head></head>article</body>'
   generated=menu.transform(src,cfg,'legacy.html')
