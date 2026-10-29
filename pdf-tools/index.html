@@ -907,7 +907,12 @@
     position: absolute;
     inset: 0;
     cursor: crosshair;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
   }
+  #editCanvasWrap.ink-mode { touch-action: none; }
+  #sigPad { user-select: none; -webkit-user-select: none; }
   #stampLayer { position: absolute; inset: 0; pointer-events: none; }
   /* while the pen is active nothing on the page intercepts the stroke */
   #stampLayer.drawing .stamp-el { pointer-events: none; }
@@ -2454,7 +2459,8 @@ body.ws #btnPickAdd { flex: 1 0 100%; }
   .ed-bar .done-button { order: 3; }
   #btnUndoStamp, #btnRedoStamp, .ed-zoom, #btnZoomFit { order: 5; }
   #editMoreWrap { order: 6; margin-left: auto; }
-  .ed-bar .tool-grid { order: 7; flex-basis: 100%; overflow-x: auto; padding-top: 2px; }
+  .ed-bar .tool-grid { order: 7; flex-basis: 100%; min-width: 0; overflow-x: auto; padding-top: 2px; }
+  .ed-bar .tool-grid .mode-btn { flex: 0 0 auto; }
   body.home2 .ed-bar > button > span { display: none; }
   body.home2 .ed-bar > button:not(.done-button) { width: 38px; min-width: 38px; padding: 0; justify-content: center; }
 }
@@ -3390,7 +3396,7 @@ body.ws:not(.step-3) #srcPreviewLegend {
               <span style="flex:1"></span>
               <button id="btnSigUpload">&#8682; Upload signature image</button>
             </div>
-            <div class="sig-note">Draw your signature above with the mouse (or finger on a touchscreen), or upload a photo/scan of it &mdash; white backgrounds are removed automatically. Signatures are saved <strong>only on this computer</strong> so next time it&rsquo;s one click.</div>
+            <div class="sig-note">Draw above with your pen, mouse or finger. When a pen is detected, palm touches are ignored. You can also upload a photo/scan &mdash; white backgrounds are removed automatically. Signatures are saved <strong>only on this device</strong>.</div>
           </div>
         </div>
       </div>
@@ -3673,7 +3679,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#F7F4EE}
 <script>
 (function () {
   'use strict';
-  const APP_VERSION = '2026-10-29.2';   // bump on every release — shown in the footer, the Help dialog and the console
+  const APP_VERSION = '2026-10-29.3';   // bump on every release — shown in the footer, the Help dialog and the console
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -5193,7 +5199,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#F7F4EE}
     hl: ['Highlight properties', 'Drag across the words you want to highlight',
       'Press and drag across the words you want to highlight. Each highlight can be moved and resized afterwards, and the text still shows through.', 'H', 'Highlight'],
     draw: ['Draw properties', 'Choose a width and color, then draw freehand',
-      'Draw right on the page with your mouse or trackpad — hold the button down and move. The pen uses the color and size controls above.', 'P', 'Freehand pen'],
+      'Draw on the page with your pen, mouse or finger. When a pen is detected, palm touches are ignored. Use Move page to scroll while drawing.', 'P', 'Freehand pen'],
     box: ['White-out properties', 'Drag over what to cover — removed from the file when saved',
       'Permanent white-out is on: when you save or send, this page becomes a picture and the covered text is removed from the file.', 'W', 'White-out box'],
     sig: ['Signature properties', 'Choose a signature, then click the page',
@@ -5212,6 +5218,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#F7F4EE}
     Object.entries(TOOL_IDS).forEach(([m, id]) => $(id).classList.toggle('active', m === mode));
     $('modeStamps').classList.remove('active');
     $('editCanvasWrap').classList.toggle('pan-mode', mode === 'pan');
+    $('editCanvasWrap').classList.toggle('ink-mode', mode === 'draw');
     if (TOOL_IDS[mode]) $('mobileTool').value = TOOL_IDS[mode];
     if (mode !== 'crop') removePendingCrop();
     editOverlay.style.cursor = mode === 'draw' ? 'cell' : mode === 'select' ? 'default' : 'crosshair';
@@ -5873,12 +5880,72 @@ body{margin:0;padding:0;width:100%!important;background-color:#F7F4EE}
     drawInkOn(ctx);
   }
 
-  let inkStroke = null;
-  editOverlay.addEventListener('pointerdown', (e) => {
-    if (!editorItem || !editorVp || editorMode !== 'draw') return;
-    e.preventDefault();
-    try { editOverlay.setPointerCapture(e.pointerId); } catch (_) {}
+  // Both drawing surfaces own one pointer at a time. A palm cannot replace
+  // the pen or finish its stroke. Finger drawing remains available on phones
+  // until a pen is detected in this Studio session. Pointer ownership follows
+  // the working Counter Sign canvases; no changes to Task Manager Notes.
+  let studioPenSeen = false;
+  function bindInkPointer(canvas, handlers) {
+    let active = null;
+    const detectPen = e => { if (e.pointerType === 'pen') studioPenSeen = true; };
+    const stop = () => {
+      if (!active) return;
+      const id = active.id;
+      active = null;
+      handlers.end();
+      try { if (canvas.hasPointerCapture(id)) canvas.releasePointerCapture(id); } catch (_) {}
+    };
+    canvas.addEventListener('pointerenter', detectPen);
+    canvas.addEventListener('pointerdown', e => {
+      detectPen(e);
+      if (e.pointerType === 'touch' && (studioPenSeen || e.width > 22 || e.height > 22)) return;
+      if (e.button !== 0) return;
+      if (active) {
+        if (e.pointerType === 'pen' && active.type === 'touch') stop();
+        else return;
+      }
+      if (handlers.start(e) === false) return;
+      active = { id: e.pointerId, type: e.pointerType };
+      e.preventDefault();
+      try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+    });
+    // Window listeners also finish a stroke lifted outside the canvas after
+    // capture is lost. Hover and another pointer never add ink.
+    window.addEventListener('pointermove', e => {
+      if (!active || e.pointerId !== active.id) return;
+      if (e.pointerType !== 'touch' && e.buttons === 0 && e.pressure === 0) { stop(); return; }
+      if (e.cancelable) e.preventDefault();
+      const samples = e.getCoalescedEvents?.();
+      for (const p of samples?.length ? samples : [e]) handlers.move(p);
+    }, { passive: false });
+    window.addEventListener('pointerup', e => {
+      if (!active || e.pointerId !== active.id) return;
+      handlers.move(e);
+      stop();
+    });
+    window.addEventListener('pointercancel', e => {
+      if (active && e.pointerId === active.id) stop();
+    });
+    window.addEventListener('blur', stop);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
+    canvas.addEventListener('contextmenu', e => { if (active || studioPenSeen) e.preventDefault(); });
+    // Samsung/Android also emits touch events for a palm. Block native page
+    // panning on the drawing surface before it can cancel a pen stroke.
+    for (const type of ['touchstart', 'touchmove']) {
+      canvas.addEventListener(type, e => e.preventDefault(), { passive: false });
+    }
+  }
+  for (const type of ['touchstart', 'touchmove']) {
+    $('editCanvasWrap').addEventListener(type, e => {
+      if (editorMode === 'draw') e.preventDefault();
+    }, { passive: false });
+  }
+
+  let inkStroke = null, inkOwner = null;
+  function startInkStroke(e) {
+    if (!editorItem || !editorVp || editorMode !== 'draw') return false;
     const pt = overlayToPdfPoint(e);
+    inkOwner = editorItem;
     inkStroke = { kind: 'ink', pts: [[pt.px, pt.py]], color: $('stampColor').value, size: inkThickness() };
     const ctx = editOverlay.getContext('2d');
     const c = STAMP_COLORS[inkStroke.color] || STAMP_COLORS.black;
@@ -5889,8 +5956,10 @@ body{margin:0;padding:0;width:100%!important;background-color:#F7F4EE}
     ctx.lineWidth = inkStroke.size * editorFit * 2;
     ctx.beginPath();
     ctx.moveTo(pt.cx, pt.cy);
-  });
-  editOverlay.addEventListener('pointermove', (e) => {
+    ctx.lineTo(pt.cx + 0.1, pt.cy);
+    ctx.stroke();
+  }
+  function moveInkStroke(e) {
     if (!inkStroke) return;
     const pt = overlayToPdfPoint(e);
     const last = inkStroke.pts[inkStroke.pts.length - 1];
@@ -5900,17 +5969,16 @@ body{margin:0;padding:0;width:100%!important;background-color:#F7F4EE}
     const ctx = editOverlay.getContext('2d');
     ctx.lineTo(pt.cx, pt.cy);
     ctx.stroke();
-  });
+  }
   function finishInkStroke() {
     if (!inkStroke) return;
     const st = inkStroke;
     inkStroke = null;
-    editorItem.stamps.push(st);
+    inkOwner.stamps.push(st);
+    inkOwner = null;
     syncStampLayer();
   }
-  editOverlay.addEventListener('pointerup', finishInkStroke);
-  editOverlay.addEventListener('pointercancel', finishInkStroke);
-  editOverlay.addEventListener('pointerleave', finishInkStroke);
+  bindInkPointer(editOverlay, { start: startInkStroke, move: moveInkStroke, end: finishInkStroke });
 
   editOverlay.addEventListener('pointerdown', (e) => {
     if (!editorItem || !editorVp) return;
@@ -6344,6 +6412,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#F7F4EE}
   }
   function clearPad() {
     sigPad.getContext('2d').clearRect(0, 0, sigPad.width, sigPad.height);
+    padStroke = null;
     padDirty = false;
   }
   function padPoint(e) {
@@ -6353,12 +6422,17 @@ body{margin:0;padding:0;width:100%!important;background-color:#F7F4EE}
       y: (e.clientY - rect.top) * (sigPad.height / rect.height)
     };
   }
-  sigPad.addEventListener('pointerdown', (e) => {
-    e.preventDefault();
-    try { sigPad.setPointerCapture(e.pointerId); } catch (_) {}
+  function startPadStroke(e) {
     padStroke = padPoint(e);
-  });
-  sigPad.addEventListener('pointermove', (e) => {
+    // A tap is a real mark too; it must survive Use signature and export.
+    const ctx = sigPad.getContext('2d');
+    ctx.fillStyle = '#1e40af';
+    ctx.beginPath();
+    ctx.arc(padStroke.x, padStroke.y, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+    padDirty = true;
+  }
+  function movePadStroke(e) {
     if (!padStroke) return;
     const p = padPoint(e);
     const ctx = sigPad.getContext('2d');
@@ -6372,8 +6446,8 @@ body{margin:0;padding:0;width:100%!important;background-color:#F7F4EE}
     ctx.stroke();
     padStroke = p;
     padDirty = true;
-  });
-  sigPad.addEventListener('pointerup', () => { padStroke = null; });
+  }
+  bindInkPointer(sigPad, { start: startPadStroke, move: movePadStroke, end: () => { padStroke = null; } });
 
   $('btnSigClear').addEventListener('click', clearPad);
   $('btnSigUse').addEventListener('click', () => {
