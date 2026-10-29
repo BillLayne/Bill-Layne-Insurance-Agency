@@ -768,23 +768,23 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
       await page.unroute('https://script.google.com/macros/s/SMOKE-TEST/**');
       await page.waitForTimeout(600);
       ok('Gmail draft → Finish in its success message closes the project, no extra download (gateway mocked)', /Draft created/.test(r.banner) && r.closed && downloads.length === 4, Object.assign({ downloads: downloads.slice() }, r));
-      // the body the gateway turns into the Gmail draft: the Gold Elite v2 / core structure v3 gate (Bill, 2026-10-01)
+      // the body the gateway turns into the Gmail draft: the Gold Elite v3 gate (cream + white, 2026-10-29)
       {
         const html = (posted && posted.html) || '';
         const count = s => html.split(s).length - 1;
         const g = {
           courier: count('font:15px courier'), pngSpacer: count('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQ'),
-          pairedWidth: count('style="width:100%;max-width:600px'), nowrap: count('white-space:nowrap'),
-          fluid: html.includes('width="100%" cellpadding="0" cellspacing="0" class="email-container" style="max-width:600px;margin:0 auto"'),
+          nowrap: count('white-space:nowrap'),
+          fluid: count('class="email-container" style="width:100%;max-width:600px;margin:0 auto"') === 1,
           fixed600: /<table[^>]*class="email-container"[^>]*>/.test(html) && /width="600"/.test(html.match(/<table[^>]*class="email-container"[^>]*>/)[0]),
           firstInBody: /<body[^>]*>\s*<div style="display:none;white-space:nowrap;font:15px courier[^>]*>[^<]*<\/div>\s*<img src="data:image\/png;base64,iVBOR/.test(html),
-          darkGoldOnLight: html.includes('color:#8a6d2f'), placeholders: count('{{'), ascii: /^[\x00-\x7F]*$/.test(html), size: html.length,
+          v3Palette: html.includes('#F7F4EE') && html.includes('#0A1F44') && html.includes('#D9A441') && !/Georgia|#8a6d2f|#D4A843/.test(html), placeholders: count('{{'), ascii: /^[\x00-\x7F]*$/.test(html), size: html.length,
           attachment: !!(posted && posted.attachments && posted.attachments.length === 1 && /\.pdf$/.test(posted.attachments[0].name)),
           // texts go to the agency text line, calls to the office (Bill, 2026-10-01)
-          textLine: count('<a href="sms:+13368279065"') === 2 && !/text\??\s*(<a[^>]*>)?\s*\(336\) 835-1993/i.test(html)
+          textLine: count('<a href="sms:+13368279065"') === 1 && !/text\??\s*(<a[^>]*>)?\s*\(?336\)?[ -]835-1993/i.test(html)
         };
-        ok('the Gmail draft body keeps the Gold Elite v2 skeleton: spacer line + 600 px image first, fluid container, one nowrap, ASCII, texts to (336) 827-9065',
-          g.courier === 1 && g.pngSpacer === 1 && g.pairedWidth === 0 && g.nowrap === 1 && g.fluid && !g.fixed600 && g.firstInBody && g.darkGoldOnLight &&
+        ok('the Gmail draft body is Gold Elite v3: spacer line + 600 px image first, fluid container, one nowrap, v3 palette, ASCII, texts to (336) 827-9065',
+          g.courier === 1 && g.pngSpacer === 1 && g.nowrap === 1 && g.fluid && !g.fixed600 && g.firstInBody && g.v3Palette &&
           g.placeholders === 0 && g.ascii && g.size < 102400 && g.attachment && g.textLine, g);
       }
       page.off('download', onDl);
