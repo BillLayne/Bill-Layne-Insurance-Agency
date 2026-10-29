@@ -26,7 +26,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <title>Get Home Insurance Quote - Bill Layne Insurance | Elkin, NC</title>
-    <meta name="description" content="Get your free NC home insurance quote in 8–10 minutes. Compare Nationwide, Travelers, NC Grange, Foremost &amp; more with our independent Elkin agency.">
+    <meta name="description" content="Get your free NC home insurance quote in about 2 minutes — we can look up your property details. Compare Nationwide, Travelers, NC Grange, Foremost &amp; more.">
     <link rel="canonical" href="https://www.billlayneinsurance.com/home-quote">
     <meta name="robots" content="index, follow">
     <meta http-equiv="Cache-Control" content="max-age=3600, must-revalidate">
@@ -42,13 +42,13 @@
     <meta property="og:site_name" content="Bill Layne Insurance Agency">
     <meta property="og:url" content="https://www.billlayneinsurance.com/home-quote">
     <meta property="og:title" content="Free Home Insurance Quote - Bill Layne Insurance | Elkin, NC">
-    <meta property="og:description" content="Get your free NC homeowners insurance quote in 8–10 minutes. We compare Nationwide, Travelers, National General, Foremost & more. Local Elkin independent agent serving Surry County.">
+    <meta property="og:description" content="Get your free NC homeowners insurance quote in about 2 minutes — we can look up your property details. We compare Nationwide, Travelers, National General, Foremost & more.">
     <meta property="og:image" content="https://img.billlayneinsurance.com/i/2026/08/bli-og-image-cfpd46.png">
     <meta property="og:locale" content="en_US">
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Free Home Insurance Quote - Bill Layne Insurance">
-    <meta name="twitter:description" content="Compare NC homeowners insurance rates in 8–10 minutes. Nationwide, Travelers, Foremost & more. Local Elkin, NC independent agent. 4.9 Google stars.">
+    <meta name="twitter:description" content="Compare NC homeowners insurance rates in about 2 minutes — we can look up your property details. Nationwide, Travelers, Foremost & more. Local Elkin, NC agent.">
     <meta name="twitter:image" content="https://img.billlayneinsurance.com/i/2026/08/bli-og-image-cfpd46.png">
 
     <!-- Schema: InsuranceAgency (rich) -->
@@ -156,7 +156,7 @@
             "@type": "Offer",
             "itemOffered": {
               "@type": "Service",
-              "name": "Flood Insurance NC"
+              "name": "Water Backup & Equipment Breakdown Coverage"
             }
           }
         ]
@@ -173,7 +173,7 @@
       "@type": "WebPage",
       "name": "Free Home Insurance Quote - Bill Layne Insurance",
       "url": "https://www.billlayneinsurance.com/home-quote",
-      "description": "Get a free NC homeowners insurance quote in 8–10 minutes. Bill Layne Insurance compares Nationwide, Travelers, National General, Foremost & more.",
+      "description": "Get a free NC homeowners insurance quote in about 2 minutes — we can look up your property details. Bill Layne Insurance compares Nationwide, Travelers, National General, Foremost & more.",
       "inLanguage": "en-US",
       "isPartOf": {
         "@type": "WebSite",
@@ -234,10 +234,10 @@
         },
         {
           "@type": "Question",
-          "name": "Does homeowners insurance cover flooding in North Carolina?",
+          "name": "What if I don't know my home's exact year built, roof age, or square footage?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Standard homeowners insurance does NOT cover flood damage. Separate flood insurance is available through the National Flood Insurance Program (NFIP) or private flood insurers. Given NC's history with hurricanes, flood coverage is strongly recommended."
+            "text": "No problem at all! You can use our built-in public records lookup on Step 2 or simply select 'Not sure — look it up for me' and our local Elkin team will pull your property specifications for you."
           }
         },
         {
@@ -245,7 +245,7 @@
           "name": "How long does a home insurance quote take?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Our online home insurance quote form takes about 8–10 minutes. Once submitted, Bill Layne will contact you within 1 business day with rate comparisons from multiple carriers."
+            "text": "Starting your online home insurance quote takes about 2 minutes — we can look up your property details for you. Once submitted, our local team compares multiple carriers and follows up with your coverage options."
           }
         },
         {
@@ -253,7 +253,7 @@
           "name": "What information do I need to get a homeowners insurance quote?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "You'll need: your date of birth; your home's address, year built, square footage, and construction type; current insurance carrier and expiration date; your desired dwelling coverage amount; and information about any recent claims or home improvements."
+            "text": "To start, all you need is your contact information, date of birth, and your home's street address. If you don't know your year built, roof year, or square footage offhand, we can look them up for you."
           }
         }
       ]
@@ -1488,6 +1488,7 @@
                                     <label class="field-label" for="square_footage">Approx. Square Footage</label>
                                     <select name="square_footage" id="square_footage">
                                         <option value="">Select range</option>
+                                        <option value="not_sure">Not sure — look it up for me</option>
                                         <option value="under_1000">Under 1,000 sq ft</option>
                                         <option value="1000_1500">1,000 – 1,500 sq ft</option>
                                         <option value="1500_2000">1,500 – 2,000 sq ft</option>
@@ -1697,11 +1698,6 @@
                                     <input type="checkbox" name="home_business">
                                     <div class="check-box"></div>
                                     <div class="check-label">Home Business</div>
-                                </label>
-                                <label class="coverage-check">
-                                    <input type="checkbox" name="flood_interest">
-                                    <div class="check-box"></div>
-                                    <div class="check-label">Flood Insurance</div>
                                 </label>
                                 <label class="coverage-check">
                                     <input type="checkbox" name="identity_theft">
@@ -1951,10 +1947,13 @@
 
         let currentStep = 1;
         const totalSteps = 5;
+        let step1Completed = false;
+        let finalSubmitted = false;
+        let partialLeadSent = false;
 
         // ─── POPULATE YEAR DROPDOWNS ───────────────────────────────────
         function populateYears(selectEl, startYear, endYear, defaultText) {
-            selectEl.innerHTML = `<option value="">${defaultText}</option>`;
+            selectEl.innerHTML = `<option value="">${defaultText}</option><option value="not_sure">Not sure — look it up for me</option>`;
             for (let y = endYear; y >= startYear; y--) {
                 const opt = document.createElement('option');
                 opt.value = y; opt.textContent = y;
@@ -2083,6 +2082,7 @@
 
         function nextStep() {
             if (validateStep(currentStep) && currentStep < totalSteps) {
+                if (currentStep === 1) step1Completed = true;
                 currentStep = quoteReviewEditing ? totalSteps : currentStep + 1;
                 showStep(currentStep);
             }
@@ -2091,6 +2091,72 @@
             quoteReviewEditing = false;
             if (currentStep > 1) { currentStep--; showStep(currentStep); }
         }
+
+        // ─── PARTIAL LEAD CAPTURE (Step 1+ completed, abandoned before final submit) ──
+        function sendPartialHomeLead() {
+            if (!step1Completed || finalSubmitted || partialLeadSent) return;
+            const formEl = document.getElementById('home-quote-form');
+            if (!formEl) return;
+            const fd = new FormData(formEl);
+            const fn = (fd.get('firstname') || '').trim();
+            const ln = (fd.get('lastname') || '').trim();
+            const email = (fd.get('email') || '').trim();
+            const phone = (fd.get('phone') || '').trim();
+            if (!fn || !email || !phone) return;
+            const sessionKey = 'bli_partial_home_' + email.toLowerCase();
+            try { if (sessionStorage.getItem(sessionKey)) return; sessionStorage.setItem(sessionKey, '1'); } catch (_) {}
+            partialLeadSent = true;
+
+            const fullName = `${fn} ${ln}`.trim();
+            const addr = `${fd.get('property_address') || 'Not entered yet'}, ${fd.get('city') || ''} ${fd.get('zip_code') || ''}`.trim();
+            const summary = [
+                `[PARTIAL HOME QUOTE — STOPPED AT STEP ${currentStep} OF ${totalSteps}]`,
+                `Name: ${fullName}`,
+                `DOB: ${fd.get('date_of_birth') || 'N/A'}`,
+                `Phone: ${phone}`,
+                `Email: ${email}`,
+                `Owner Status: ${fd.get('is_owner') || 'N/A'}`,
+                `Property Address: ${addr}`,
+                `Property Type: ${fd.get('property_type') || 'N/A'} | Year Built: ${fd.get('year_built') || 'N/A'} | Sq Ft: ${fd.get('square_footage') || 'N/A'}`,
+                `Roof: ${fd.get('roof_type') || 'N/A'} (${fd.get('roof_year') || 'N/A'}) | Construction: ${fd.get('construction_type') || 'N/A'}`,
+                `Current Carrier: ${fd.get('current_carrier') || 'N/A'} | Exp: ${fd.get('coverage_expiration') || 'N/A'}`,
+                `Bundle Auto: ${fd.get('bundle_auto') || 'N/A'}`,
+                `Notes: ${fd.get('additional_notes') || 'None'}`
+            ].join('\n');
+
+            try {
+                fetch('https://api.emailjs.com/api/v1.0/email/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    keepalive: true,
+                    body: JSON.stringify({
+                        service_id: 'service_4flmw3k',
+                        template_id: 'template_6k9bgwi',
+                        user_id: 'Av6wKxL6HR-FIMtgm',
+                        template_params: {
+                            from_name: fullName,
+                            name: fullName,
+                            from_email: email,
+                            email: email,
+                            phone: phone,
+                            subject: `[PARTIAL HOME QUOTE] ${fullName} — Step ${currentStep} of ${totalSteps}`,
+                            message: summary,
+                            full_message: summary
+                        }
+                    })
+                }).catch(() => {});
+                if (typeof gtag === 'function') {
+                    gtag('event', 'partial_lead_saved', {
+                        form_type: 'home_insurance',
+                        step_reached: currentStep
+                    });
+                }
+            } catch (_) {}
+        }
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') sendPartialHomeLead();
+        });
+        window.addEventListener('pagehide', sendPartialHomeLead);
 
         // ─── SUCCESS MODAL ─────────────────────────────────────────────
         function closeSuccessModal() {
@@ -2143,6 +2209,7 @@
 
             const submitBtn = document.getElementById('submit-btn');
             if (submitBtn.disabled) return;
+            finalSubmitted = true;
             const loadingOverlay = document.getElementById('loadingOverlay');
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';

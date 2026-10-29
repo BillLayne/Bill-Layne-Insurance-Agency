@@ -9,7 +9,7 @@
   const captions=['Continue to Your Mobile Home →','Continue to Current Insurance →','Continue to Coverage →','Review My Request →','Send My Mobile Home Request →'];
   const localDate=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   const today=localDate(new Date());
-  let step=0,editing=false,submitting=false,attempted=false,submitted=false,started=false;
+  let step=0,editing=false,submitting=false,attempted=false,submitted=false,started=false,step1Completed=false,partialSent=false;
   form.elements.date_of_birth.min='1900-01-01'; form.elements.date_of_birth.max=today;
   form.elements.effective_date.min=today;
   ['year_built','roof_year'].forEach(key=>form.elements[key].max=String(new Date().getFullYear()+1));
@@ -81,10 +81,60 @@
       });block.append(dl);container.append(block);
     });
   }
+  function sendPartialMobileHomeLead() {
+    if (!step1Completed || attempted || submitted || partialSent) return;
+    const v=values();
+    const fn=(v.firstname||'').trim(), ln=(v.lastname||'').trim(), email=(v.email||'').trim(), phone=(v.phone||'').trim();
+    if (!fn || !email || !phone) return;
+    const sessionKey='bli_partial_mh_'+email.toLowerCase();
+    try { if (sessionStorage.getItem(sessionKey)) return; sessionStorage.setItem(sessionKey,'1'); } catch (_) {}
+    partialSent=true;
+    const fullName=`${fn} ${ln}`.trim();
+    const summary=[
+      `[PARTIAL MOBILE HOME QUOTE — STOPPED AT STEP ${step+1} OF 5]`,
+      `Name: ${fullName}`,
+      `DOB: ${v.date_of_birth||'N/A'}`,
+      `Phone: ${phone}`,
+      `Email: ${email}`,
+      `Owner Status: ${v.is_owner||'N/A'}`,
+      `Property Address: ${v.property_address||'Not entered yet'}, ${v.city||''} ${v.zip_code||''}`,
+      `Home Style: ${v.home_style||'N/A'} | Year Built: ${v.year_built||'N/A'} | Occupancy: ${v.occupancy||'N/A'}`,
+      `Land: ${v.land_ownership||'N/A'} | Sq Ft: ${v.square_footage||'N/A'} | Roof Year: ${v.roof_year||'N/A'}`,
+      `Current Insurance: ${v.current_insurance||'N/A'} | Carrier: ${v.current_carrier||'N/A'}`,
+      `Bundle Auto: ${v.bundle_auto ? 'Yes' : 'No'}`,
+      `Notes: ${v.additional_notes||'None'}`
+    ].join('\n');
+    try {
+      fetch('https://api.emailjs.com/api/v1.0/email/send',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        keepalive:true,
+        body:JSON.stringify({
+          service_id:'service_4flmw3k',
+          template_id:'template_6k9bgwi',
+          user_id:'Av6wKxL6HR-FIMtgm',
+          template_params:{
+            from_name:fullName,
+            name:fullName,
+            from_email:email,
+            email:email,
+            phone:phone,
+            subject:`[PARTIAL MOBILE HOME QUOTE] ${fullName} — Step ${step+1} of 5`,
+            message:summary,
+            full_message:summary
+          }
+        })
+      }).catch(()=>{});
+      track('partial_lead_saved',{step_reached:step+1});
+    } catch (_) {}
+  }
+  document.addEventListener('visibilitychange',()=>{ if (document.visibilityState==='hidden') sendPartialMobileHomeLead(); });
+  window.addEventListener('pagehide',sendPartialMobileHomeLead);
   back.addEventListener('click',()=>{if(attempted)return;if(editing){editing=false;show(4);}else show(Math.max(0,step-1));});
   form.addEventListener('submit',async event=>{
     event.preventDefault();if(submitting||attempted||submitted)return;
     if(!valid(step))return;
+    if(step===0)step1Completed=true;
     if(editing){editing=false;show(4);return;}
     if(step<4){show(step+1);return;}
     const checked=rules.validate(values(),localDate(new Date()),true);

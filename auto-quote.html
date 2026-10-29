@@ -25,7 +25,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <title>Get Auto Insurance Quote - Bill Layne Insurance | Elkin, NC</title>
-    <meta name="description" content="Get your free NC auto insurance quote in 5–7 minutes. Compare Progressive, Travelers, Nationwide &amp; National General with our Elkin agency across NC.">
+    <meta name="description" content="Get your free NC auto insurance quote in about 2 minutes — no VIN or driver's license required to start. Compare Progressive, Travelers, Nationwide &amp; National General.">
     <link rel="canonical" href="https://www.billlayneinsurance.com/auto-quote">
     <meta name="robots" content="index, follow">
     <meta http-equiv="Cache-Control" content="max-age=3600, must-revalidate">
@@ -41,13 +41,13 @@
     <meta property="og:site_name" content="Bill Layne Insurance Agency">
     <meta property="og:url" content="https://www.billlayneinsurance.com/auto-quote">
     <meta property="og:title" content="Free Auto Insurance Quote - Bill Layne Insurance | Elkin, NC">
-    <meta property="og:description" content="Get your free NC auto insurance quote in about 5–7 minutes. We compare our 6 auto insurance carriers for you. Local Elkin independent agent.">
+    <meta property="og:description" content="Get your free NC auto insurance quote in about 2 minutes — no VIN or driver's license required to start. We compare our 6 auto insurance carriers for you.">
     <meta property="og:image" content="https://img.billlayneinsurance.com/i/2026/08/bli-og-image-cfpd46.png">
     <meta property="og:locale" content="en_US">
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Free Auto Insurance Quote - Bill Layne Insurance">
-    <meta name="twitter:description" content="Compare NC auto insurance rates in about 5–7 minutes. Progressive, Travelers, Nationwide & more. Local Elkin independent agent. Free, no obligation.">
+    <meta name="twitter:description" content="Compare NC auto insurance rates in about 2 minutes — no VIN required to start. Progressive, Travelers, Nationwide & more. Local Elkin independent agent.">
     <meta name="twitter:image" content="https://img.billlayneinsurance.com/i/2026/08/bli-og-image-cfpd46.png">
 
     <!-- Schema: InsuranceAgency (rich) -->
@@ -172,7 +172,7 @@
       "@type": "WebPage",
       "name": "Free Auto Insurance Quote - Bill Layne Insurance",
       "url": "https://www.billlayneinsurance.com/auto-quote",
-      "description": "Get a free NC auto insurance quote in about 5–7 minutes. Bill Layne Insurance compares 6 auto insurance carriers.",
+      "description": "Get a free NC auto insurance quote in about 2 minutes — no VIN or driver's license number required to start. Bill Layne Insurance compares 6 auto insurance carriers.",
       "inLanguage": "en-US",
       "isPartOf": {
         "@type": "WebSite",
@@ -234,7 +234,7 @@
           "name": "How long does an auto insurance quote take?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Our online auto quote form takes about 5–7 minutes to complete. Once submitted, Bill Layne will contact you within 1 business day with rate comparisons from multiple carriers."
+            "text": "Our online auto quote form takes about 2 minutes — no VIN or driver's license number required to start. Once submitted, our local Elkin team personally compares multiple carriers and contacts you with your options."
           }
         },
         {
@@ -250,7 +250,7 @@
           "name": "What information do I need to get an auto insurance quote?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "You'll need: your name, address, and date of birth; driver's license number; vehicle year, make, model, and VIN (helpful but not required); current insurance carrier and expiration date; and information about any drivers on the policy."
+            "text": "To start, all you need is your name, address, date of birth, and basic vehicle year, make, and model — no VIN or driver's license number required upfront."
           }
         }
       ]
@@ -2124,11 +2124,14 @@
         const totalSteps = 6;
         let driverCount = 1;
         let vehicleCount = 1;
+        let step1Completed = false;
+        let finalSubmitted = false;
+        let partialLeadSent = false;
 
         // ─── YEAR DROPDOWN (populate on load) ─────────────────────────
         function populateYearSelect(selectEl) {
             const currentYear = new Date().getFullYear() + 1;
-            selectEl.innerHTML = '<option value="">Year</option>';
+            selectEl.innerHTML = '<option value="">Year</option><option value="Not sure">Not sure</option>';
             for (let y = currentYear; y >= 1980; y--) {
                 const opt = document.createElement('option');
                 opt.value = y;
@@ -2285,6 +2288,7 @@
 
         function nextStep() {
             if (validateStep(currentStep) && currentStep < totalSteps) {
+                if (currentStep === 1) step1Completed = true;
                 currentStep = quoteReviewEditing ? totalSteps : currentStep + 1;
                 showStep(currentStep);
             }
@@ -2293,6 +2297,71 @@
             quoteReviewEditing = false;
             if (currentStep > 1) { currentStep--; showStep(currentStep); }
         }
+
+        // ─── PARTIAL LEAD CAPTURE (Step 1+ completed, abandoned before final submit) ──
+        function sendPartialAutoLead() {
+            if (!step1Completed || finalSubmitted || partialLeadSent) return;
+            const formEl = document.getElementById('auto-quote-form');
+            if (!formEl) return;
+            const fd = new FormData(formEl);
+            const fn = (fd.get('firstname') || '').trim();
+            const ln = (fd.get('lastname') || '').trim();
+            const email = (fd.get('email') || '').trim();
+            const phone = (fd.get('phone') || '').trim();
+            if (!fn || !email || !phone) return;
+            const sessionKey = 'bli_partial_auto_' + email.toLowerCase();
+            try { if (sessionStorage.getItem(sessionKey)) return; sessionStorage.setItem(sessionKey, '1'); } catch (_) {}
+            partialLeadSent = true;
+
+            const fullName = `${fn} ${ln}`.trim();
+            const addr = `${fd.get('street_address') || ''}, ${fd.get('city') || ''}, ${fd.get('state') || 'NC'} ${fd.get('zip_code') || ''}`.trim();
+            const veh1 = `${fd.get('vehicle_1_year') || ''} ${fd.get('vehicle_1_make') || ''} ${fd.get('vehicle_1_model') || ''} (VIN: ${fd.get('vehicle_1_vin') || 'N/A'})`.trim();
+            const summary = [
+                `[PARTIAL AUTO QUOTE — STOPPED AT STEP ${currentStep} OF ${totalSteps}]`,
+                `Name: ${fullName}`,
+                `Phone: ${phone}`,
+                `Email: ${email}`,
+                `Address: ${addr}`,
+                `Primary Driver DOB: ${fd.get('driver_1_dob') || 'Not entered yet'}`,
+                `Current Insurance: ${fd.get('current_insurance') || 'N/A'} | Carrier: ${fd.get('current_carrier') || 'N/A'} | Exp: ${fd.get('coverage_expiration') || 'N/A'}`,
+                `Vehicle 1: ${veh1}`,
+                `Liability Preference: ${fd.get('liability_limits') || 'N/A'}`,
+                `Notes: ${fd.get('additional_notes') || 'None'}`
+            ].join('\n');
+
+            try {
+                fetch('https://api.emailjs.com/api/v1.0/email/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    keepalive: true,
+                    body: JSON.stringify({
+                        service_id: 'service_4flmw3k',
+                        template_id: 'template_6k9bgwi',
+                        user_id: 'Av6wKxL6HR-FIMtgm',
+                        template_params: {
+                            from_name: fullName,
+                            name: fullName,
+                            from_email: email,
+                            email: email,
+                            phone: phone,
+                            subject: `[PARTIAL AUTO QUOTE] ${fullName} — Step ${currentStep} of ${totalSteps}`,
+                            message: summary,
+                            full_message: summary
+                        }
+                    })
+                }).catch(() => {});
+                if (typeof gtag === 'function') {
+                    gtag('event', 'partial_lead_saved', {
+                        form_type: 'auto_insurance',
+                        step_reached: currentStep
+                    });
+                }
+            } catch (_) {}
+        }
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') sendPartialAutoLead();
+        });
+        window.addEventListener('pagehide', sendPartialAutoLead);
 
         // ─── ADD/REMOVE DRIVERS ────────────────────────────────────────
         function addDriver() {
@@ -2425,6 +2494,7 @@
 
             const submitBtn = document.getElementById('submit-btn');
             if (submitBtn.disabled) return;
+            finalSubmitted = true;
             const loadingOverlay = document.getElementById('loadingOverlay');
 
             submitBtn.disabled = true;
