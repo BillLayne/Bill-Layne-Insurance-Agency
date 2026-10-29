@@ -557,3 +557,35 @@ localStorage `bliPdfHintsOff`, `bliPdfNavCondensed`, `bliPdfStudioInitials`, `bl
 Bill approved all PDF Studio review recommendations. Implemented and locally verified. Publishing authorized by Bill (push please); both main branches pushed. PDF branch `codex/pdf-studio-workflow`, commit `90e249c`, checkout `C:/Users/bill/OneDrive/Documents/Playground/pdf-studio-workflow`. Companion SMS branch `codex/pdf-studio-import`, commit `85aaa35`, checkout `C:/Users/bill/OneDrive/Documents/Playground/sms-pdf-studio-import`. SMS published first: Worker version ff8a1f4c-b740-4a65-b58e-c8017dfec83e. Website GitHub Pages run 34166401502 succeeded. Production PDF HTML matches commit 90e249c after line-ending normalization; production SMS serves index-Cjms5Fxj.js. Live PDF UI and Connections dialog checked at desktop/mobile widths without horizontal overflow. Existing browser recovery data preserved; no production customer upload, Gmail draft, or SMS send was performed. Read `C:/Users/bill/OneDrive/Documents/Playground/pdf-review-samples/INTEGRATION.md` for full scope, tests, limits, and release steps. One-file PDF architecture retained; original service-center work untouched.
 
 
+
+### Round fifteen — Task bridge for the AI Task Manager frame (2026-10-29, v2026-10-29.1)
+
+The AI Task Manager (`ai-task-manager.bill-7e3.workers.dev`) now frames this
+page from its own origin (`/pdf`, a proxy of the live file with a `<base>`
+tag) as its footer's PDF page. Inside that frame only, Studio takes part in
+a same-origin `postMessage` bridge (commit `7bb9717`):
+
+- On load, when `window.parent` is same-origin, Studio posts
+  `{type:'bli-studio-ready'}` to the parent and listens for
+  `{type:'bli-task-context', task}` (`id`, `title`, `clientName`, `phone`,
+  `email`, `policyNumber`, `carrier`, `folderName`). It shows a navy pill
+  at the bottom ("For <customer> · <task> — finished PDFs can be sent to
+  the task") and pre-fills the Gmail draft's recipient (`#mailTo`) with the
+  customer's email when the field is empty.
+- **Preview & finish** gets a **Send to task** button (`#previewTask`,
+  only when a context is present). It copies the finished bytes and posts
+  `{type:'bli-pdf-to-task', id, taskId, name, bytes}` to the parent
+  (transfer). The parent files the PDF to the customer's Drive folder and
+  attaches it to the task, then replies `bli-task-received {id, where}`
+  (Studio calls `markDelivered('task')` and toasts) or
+  `bli-task-failed {id, error}`.
+- Everything checks `e.origin === location.origin` and the parent/frame
+  identity; standalone use of Studio is unchanged (no pill, no button).
+  Bytes travel in browser memory only; Drive is the only destination.
+- Note for staff: inside the task manager, Studio's localStorage is the
+  task manager's origin, so the Mail Gateway connection (`#gw=` link) and
+  the Forms Library code are entered once there; projects saved on the
+  website address are not visible inside the app and vice versa.
+- Verification: `tools\test-pdf-studio.bat` 62/62, `shots.js` regenerated
+  (desktop / laptop / tablet / phone) and inspected. Task-manager side:
+  `docs/PDF-TASK-BRIDGE-2026-10-29.md` in that repo.
