@@ -3736,7 +3736,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#f1efe9}
 <script>
 (function () {
   'use strict';
-  const APP_VERSION = '2026-10-20.5';   // bump on every release — shown in the footer, the Help dialog and the console
+  const APP_VERSION = '2026-10-29.1';   // bump on every release — shown in the footer, the Help dialog and the console
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -7389,6 +7389,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#f1efe9}
   }
   function renderRecentTo() {
     $('mailToList').replaceChildren(...loadRecentTo().map(v => { const o = document.createElement('option'); o.value = v; return o; }));
+    if (bliTask && bliTask.email && !$('mailTo').value.trim()) $('mailTo').value = bliTask.email;   // task bridge: customer from the task manager
   }
   $('mailDocType').addEventListener('change', applyMailType);
 
@@ -8527,6 +8528,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#f1efe9}
             '<button id="savePreview" title="Save a copy and keep working"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 4h12l2 2v14H5zM8 4v6h8V4M8 17h8"/></svg>Save PDF</button>' +
             '<button id="previewEmail"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 5h18v14H3zM3 6l9 7 9-7"/></svg>Gmail draft</button>' +
             '<button id="previewSms"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 4h16v12H8l-4 4z"/></svg>Text via SMS</button>' +
+            (bliTask ? '<button id="previewTask" class="task-send-btn" title="File this PDF to the customer\'s Drive folder and attach it to the task in the task manager"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 12h8M12 8l4 4-4 4"/></svg>Send to task</button>' : '') +
             '<button id="previewPrint"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 9V3h10v6M7 17H4V9h16v8h-3M7 14h10v7H7z"/></svg>Print</button>' +
           '</div>' +
           '<div class="finish-opts" role="group" aria-label="Finish options">' +
@@ -8555,6 +8557,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#f1efe9}
         return true;
       };
       $('savePreview').onclick = () => { saveIt(); };
+      if (!email && $('previewTask')) $('previewTask').onclick = () => { sendToTask(r.bytes, filename); };
       if (!email) {
         addFinishButton(saveIt);
         refreshFinishNote();
@@ -8605,6 +8608,34 @@ body{margin:0;padding:0;width:100%!important;background-color:#f1efe9}
     $('openSms').onclick=()=>{smsWindow=window.open(SMS_ORIGIN+'/#pdf-import','_blank');if(!smsWindow){$('smsStatus').textContent='Allow the new tab, then try again.';return;}$('smsStatus').textContent='Waiting for SMS Command Center. The PDF has not been uploaded.';clearInterval(smsTimer);let attempts=0;smsTimer=setInterval(()=>{if(!smsTransfer||smsWindow.closed||attempts++>60){clearInterval(smsTimer);if($('smsStatus'))$('smsStatus').textContent='Connection timed out. Keep the PDF prepared and try opening SMS again.';return;}smsWindow.postMessage({type:'bli-pdf-hello',id:smsTransfer.id},SMS_ORIGIN);},1000);};
   };
   window.addEventListener('message',e=>{if(e.origin!==SMS_ORIGIN||e.source!==smsWindow||!smsTransfer||e.data?.id!==smsTransfer.id)return;if(e.data.type==='bli-sms-ready')smsWindow.postMessage({type:'bli-pdf-import',...smsTransfer},SMS_ORIGIN);if(e.data.type==='bli-sms-received'){clearInterval(smsTimer);smsTransfer=null;markDelivered('sms');if($('smsStatus')){$('smsStatus').textContent='Transferred to SMS. Choose a customer there to attach it to a draft — Finish closes this project here.';addFinishButton();}}});
+
+  // Task bridge (2026-10-29): when the task manager frames this page from its own
+  // origin, the parent sends the customer / task it was opened from and receives
+  // the finished PDF back ("Send to task"), which it files to the customer's Drive
+  // folder and attaches to the task. Same-origin only; the bytes travel in memory.
+  let bliTask=null,taskTransfer=null;
+  function inTaskFrame(){try{return window.parent!==window&&window.parent.location.origin===location.origin;}catch(e){return false;}}
+  function applyTaskContext(){
+    let pill=$('taskContextPill');
+    if(!bliTask){if(pill)pill.remove();return;}
+    if(!pill){pill=document.createElement('div');pill.id='taskContextPill';pill.className='task-context-pill';document.body.append(pill);}
+    pill.textContent='For '+(bliTask.clientName||'this task')+(bliTask.title?' \u00b7 '+bliTask.title:'')+' \u2014 finished PDFs can be sent to the task';
+  }
+  function sendToTask(bytes,name){
+    if(!bliTask){toast('Open this PDF from a task in the task manager to send it there.');return;}
+    const copy=bytes.slice();taskTransfer={id:crypto.randomUUID(),name};
+    window.parent.postMessage({type:'bli-pdf-to-task',id:taskTransfer.id,taskId:bliTask.id,name,bytes:copy},location.origin,[copy.buffer]);
+    toast('Sending to the task\u2026');
+  }
+  if(inTaskFrame()){
+    window.addEventListener('message',e=>{
+      if(e.origin!==location.origin||e.source!==window.parent)return;const d=e.data||{};
+      if(d.type==='bli-task-context'){bliTask=d.task||null;applyTaskContext();}
+      if(d.type==='bli-task-received'&&taskTransfer&&d.id===taskTransfer.id){taskTransfer=null;markDelivered('task');toast('Filed to the task \u2014 '+(d.where||'Drive')+'.');}
+      if(d.type==='bli-task-failed'&&taskTransfer&&d.id===taskTransfer.id){taskTransfer=null;toast(d.error||'The task manager could not file the PDF.');}
+    });
+    window.parent.postMessage({type:'bli-studio-ready'},location.origin);
+  }
 
   let ocrLibrary;
   function loadOCR(){if(window.Tesseract)return Promise.resolve(window.Tesseract);if(!ocrLibrary)ocrLibrary=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';s.onload=()=>resolve(window.Tesseract);s.onerror=()=>{ocrLibrary=null;s.remove();reject(Error('Could not load OCR. Check your connection.'));};document.head.append(s);});return ocrLibrary;}
