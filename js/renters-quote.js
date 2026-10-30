@@ -161,7 +161,78 @@
   form.addEventListener('submit', event => { event.preventDefault(); advance(); });
   back.addEventListener('click', () => { if (editing) { editing = false; show(2); } else show(Math.max(0,step-1)); });
   form.addEventListener('input', () => { if (step === 2) renderReview(); });
-  form.addEventListener('change', () => { if (step === 2) renderReview(); });
+  let formStarted = false;
+  function trackRentersStart() {
+    if (formStarted) return;
+    formStarted = true;
+    try {
+      if (typeof window.gtag === 'function') {
+        const entry = new URLSearchParams(location.search).get('src') || '';
+        const ctaSource = /^[a-z0-9_-]{1,80}$/i.test(entry) ? entry : 'renters_quote';
+        window.gtag('event', 'form_start', { form_name: 'renters_quote', service_line: 'renters', cta_source: ctaSource });
+      }
+    } catch {}
+  }
+  form.addEventListener('input', trackRentersStart);
+  form.addEventListener('change', () => { trackRentersStart(); if (step === 2) renderReview(); });
+  let partialSent = false;
+  function sendPartialRentersLead() {
+    if (partialSent || submitted || submitting) return;
+    const data = Object.fromEntries(values());
+    const fn = (data.firstname || '').toString().trim();
+    const ln = (data.lastname || '').toString().trim();
+    const phone = (data.phone || '').toString().trim();
+    const email = (data.email || '').toString().trim();
+    if (!fn || !phone || !email) return;
+    partialSent = true;
+    const summary = '=== PARTIAL RENTERS QUOTE LEAD (Abandoned Mid-Form) ===\n' +
+      'Customer completed contact details on /renters-quote but left before final submit.\n\n' +
+      'Name: ' + fn + ' ' + ln + '\n' +
+      'Phone: ' + phone + '\n' +
+      'Email: ' + email + '\n' +
+      'DOB: ' + (data.date_of_birth || 'Not entered') + '\n' +
+      'Rental Type: ' + (data.rental_type || 'Not entered') + '\n' +
+      'Address: ' + [data.property_address, data.unit, data.city, 'NC', data.zip_code].filter(Boolean).join(', ');
+    try {
+      fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        keepalive: true,
+        body: JSON.stringify({
+          service_id: 'service_4flmw3k',
+          template_id: 'template_6k9bgwi',
+          user_id: 'Av6wKxL6HR-FIMtgm',
+          template_params: {
+            from_name: fn + ' ' + ln + ' (Partial Renters Lead)',
+            from_email: email,
+            phone: phone,
+            address: [data.property_address, data.city, data.zip_code].filter(Boolean).join(', ') || 'NC',
+            dob: data.date_of_birth || 'Not provided',
+            effective_date: data.effective_date || 'ASAP',
+            current_insurance: data.current_insurance || 'Not reached',
+            current_carrier: data.current_carrier || 'Not specified',
+            years_with_carrier: 'N/A',
+            previous_claims: data.previous_claims || 'Not reached',
+            claims_details: data.claims_details || 'None',
+            drivers_info: 'Renters Quote (Partial Lead)',
+            vehicles_info: 'Rental Type: ' + (data.rental_type || 'Not specified'),
+            coverage_preferences: 'Personal Property: ' + (data.personal_property || 'Not reached') + ' | Liability: ' + (data.liability || 'Not reached'),
+            homeowner_status: 'Renter',
+            bundle_interest: form.elements.bundle_auto && form.elements.bundle_auto.checked ? 'Yes — Auto Bundle' : 'No',
+            additional_notes: summary,
+            submission_date: new Date().toLocaleString()
+          }
+        })
+      }).catch(() => {});
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'partial_lead_captured', { form_name: 'renters_quote', step_reached: step + 1 });
+      }
+    } catch {}
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') sendPartialRentersLead();
+  });
+  window.addEventListener('pagehide', sendPartialRentersLead);
   const params = new URLSearchParams(location.search);
   if (/^\d{5}$/.test(params.get('zip') || '')) form.elements.zip_code.value = params.get('zip');
   const choices = new URL('/get-quote',location.href);

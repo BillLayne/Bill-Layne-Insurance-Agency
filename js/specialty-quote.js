@@ -521,6 +521,113 @@
       show(4);
     } else show(Math.max(0, step - 1));
   });
+  let formStarted = false;
+  function trackSpecialtyStart() {
+    if (formStarted) return;
+    formStarted = true;
+    try {
+      if (typeof window.gtag === "function") {
+        const entry = new URLSearchParams(location.search).get("src") || "";
+        const ctaSource = /^[a-z0-9_-]{1,80}$/i.test(entry)
+          ? entry
+          : kind + "_quote";
+        window.gtag("event", "form_start", {
+          form_name: kind + "_quote",
+          service_line: kind,
+          cta_source: ctaSource,
+        });
+      }
+    } catch {}
+  }
+  form.addEventListener("input", trackSpecialtyStart);
+  form.addEventListener("change", trackSpecialtyStart);
+  let partialSent = false;
+  function sendPartialSpecialtyLead() {
+    if (partialSent || sending || settled || step < 1) return;
+    const data = payload();
+    const a = data.applicant || {};
+    const fn = (a.firstname || "").trim();
+    const ln = (a.lastname || "").trim();
+    const phone = (a.phone || "").trim();
+    const email = (a.email || "").trim();
+    if (!fn || !phone || !email) return;
+    partialSent = true;
+    const label = kind === "boat" ? "BOAT / WATERCRAFT" : "MOTORCYCLE / ATV";
+    const summary =
+      "=== PARTIAL " +
+      label +
+      " QUOTE LEAD (Step " +
+      (step + 1) +
+      " of 5) ===\n" +
+      "Customer completed Step 1 contact info but left before final submit.\n\n" +
+      "Name: " +
+      fn +
+      " " +
+      ln +
+      "\n" +
+      "Phone: " +
+      phone +
+      "\n" +
+      "Email: " +
+      email +
+      "\n" +
+      "DOB: " +
+      (a.date_of_birth || "Not entered") +
+      "\n" +
+      "Address: " +
+      [a.street_address, a.city, "NC", a.zip_code].filter(Boolean).join(", ");
+    try {
+      fetch("https://api.emailjs.com/api/v1.0/email/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        keepalive: true,
+        body: JSON.stringify({
+          service_id: "service_4flmw3k",
+          template_id: "template_6k9bgwi",
+          user_id: "Av6wKxL6HR-FIMtgm",
+          template_params: {
+            from_name: fn + " " + ln + " (Partial " + kind + " Lead)",
+            from_email: email,
+            phone: phone,
+            address:
+              [a.street_address, a.city, a.zip_code].filter(Boolean).join(", ") ||
+              "NC",
+            dob: a.date_of_birth || "Not provided",
+            effective_date:
+              (data.coverage && data.coverage.effective_date) || "ASAP",
+            current_insurance:
+              (data.coverage && data.coverage.current_insurance) ||
+              "Step 1 Partial",
+            current_carrier:
+              (data.coverage && data.coverage.current_carrier) ||
+              "Not specified",
+            years_with_carrier: "N/A",
+            previous_claims: "Not reached",
+            claims_details: "None",
+            drivers_info: JSON.stringify(data.operators || []),
+            vehicles_info: JSON.stringify(data.assets || []),
+            coverage_preferences: JSON.stringify(data.coverage || {}),
+            homeowner_status: a.homeowner_status || "Not specified",
+            bundle_interest:
+              (data.coverage && data.coverage.bundle_interest) ||
+              "Not specified",
+            additional_notes: summary,
+            submission_date: new Date().toLocaleString(),
+          },
+        }),
+      }).catch(() => {});
+      if (typeof window.gtag === "function") {
+        window.gtag("event", "partial_lead_captured", {
+          form_name: kind + "_quote",
+          step_reached: step + 1,
+        });
+      }
+    } catch {}
+  }
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") sendPartialSpecialtyLead();
+  });
+  window.addEventListener("pagehide", sendPartialSpecialtyLead);
   const params = new URLSearchParams(location.search),
     zip = params.get("zip");
   if (/^\d{5}$/.test(zip || ""))

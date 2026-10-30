@@ -830,18 +830,85 @@
                     // Record only a bounded internal link label, never a full URL or customer input.
                     const entry = new URLSearchParams(window.location.search).get('src') || '';
                     const ctaSource = /^[a-z][a-z0-9_]{0,79}$/.test(entry) ? entry : 'upload_policy_direct';
-                    gtag('event', 'policy_upload_submit', {
+                    const detail = {
                         'event_category': 'lead',
                         'event_label': payload.policyType,
                         'value': selectedFiles.length,
                         'cta_source': ctaSource,
                         'form_name': 'policy_upload',
+                        'service_line': payload.policyType || 'policy_upload',
                         'lead_type': 'policy_upload',
                         'method': 'backend_acknowledged'
-                    });
+                    };
+                    gtag('event', 'policy_upload_submit', detail);
+                    gtag('event', 'form_submit', detail);
+                    gtag('event', 'generate_lead', detail);
                 }
             } catch (_) { /* Tracking must never hide a confirmed submission. */ }
         });
+
+        let partialUploadSent = false;
+        function sendPartialUploadLead() {
+            if (partialUploadSent || !form || form.hidden) return;
+            const nameVal = (document.getElementById('up-name').value || '').trim();
+            const phoneVal = (document.getElementById('up-phone').value || '').trim();
+            const emailVal = (document.getElementById('up-email').value || '').trim();
+            if (!nameVal || !hasTenDigits(phoneVal) || !isValidEmail(emailVal)) return;
+            partialUploadSent = true;
+            const policyTypeEl = form.querySelector('input[name="policyType"]:checked');
+            const pType = policyTypeEl ? policyTypeEl.value : 'Not selected';
+            const notesVal = (document.getElementById('up-notes').value || '').trim();
+            const summary = '=== PARTIAL POLICY UPLOAD LEAD (Left Before Uploading File) ===\n' +
+                'Customer entered contact info on /upload-policy but left before completing document upload.\n\n' +
+                'Name: ' + nameVal + '\n' +
+                'Phone: ' + phoneVal + '\n' +
+                'Email: ' + emailVal + '\n' +
+                'Policy Type: ' + pType + '\n' +
+                'Selected Files: ' + selectedFiles.length + '\n' +
+                'Notes: ' + (notesVal || 'None');
+            try {
+                fetch('https://api.emailjs.com/api/v1.0/email/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    keepalive: true,
+                    body: JSON.stringify({
+                        service_id: 'service_4flmw3k',
+                        template_id: 'template_6k9bgwi',
+                        user_id: 'Av6wKxL6HR-FIMtgm',
+                        template_params: {
+                            from_name: nameVal + ' (Partial Policy Upload Lead)',
+                            from_email: emailVal,
+                            phone: phoneVal,
+                            address: 'NC Policy Review Request',
+                            dob: 'N/A',
+                            effective_date: 'Policy Upload Follow-Up',
+                            current_insurance: 'Yes — Uploading Policy (' + pType + ')',
+                            current_carrier: 'See Policy Review',
+                            years_with_carrier: 'N/A',
+                            previous_claims: 'N/A',
+                            claims_details: 'None',
+                            drivers_info: 'Policy Type: ' + pType,
+                            vehicles_info: 'Files attached before exit: ' + selectedFiles.length,
+                            coverage_preferences: 'Policy Review / Rate Comparison',
+                            homeowner_status: 'Not specified',
+                            bundle_interest: 'Policy Review',
+                            additional_notes: summary,
+                            submission_date: new Date().toLocaleString()
+                        }
+                    })
+                }).catch(function () {});
+                if (typeof gtag === 'function') {
+                    gtag('event', 'partial_lead_captured', {
+                        'form_name': 'policy_upload',
+                        'service_line': pType
+                    });
+                }
+            } catch (_) {}
+        }
+        document.addEventListener('visibilitychange', function () {
+            if (document.visibilityState === 'hidden') sendPartialUploadLead();
+        });
+        window.addEventListener('pagehide', sendPartialUploadLead);
     })();
     </script>
     <script defer src="js/conversion-tracking.js"></script>
