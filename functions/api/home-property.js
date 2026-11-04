@@ -7,21 +7,64 @@ const reply = (body, status = 200) => Response.json(body, { status, headers: {
 const text = (value, max = 160) => typeof value === 'string' ? value.replace(/\s+/g, ' ').trim().slice(0, max) : '';
 const numeric = (value, min, max) => {
     if (typeof value !== 'number' && typeof value !== 'string') return null;
+    if (typeof value === 'string' && !value.trim()) return null;
     const n = Number(value);
     return Number.isFinite(n) && n >= min && n <= max ? n : null;
 };
+const safeUrl = value => {
+    try {
+        const raw = text(value, 500);
+        if (!raw) return '';
+        const url = new URL(raw);
+        return (url.protocol === 'https:' || url.protocol === 'http:') && !url.username && !url.password ? url.href : '';
+    } catch { return ''; }
+};
+const LINK_KEYS = ['taxCard', 'gisParcel', 'gis', 'deed', 'fema', 'ncFlood', 'googleMaps', 'zillow', 'realtor'];
 
 export function publicMatches(payload) {
     if (!payload || !Array.isArray(payload.results)) throw new Error('Invalid property response');
-    // Deliberately omit owner names, valuations, coordinates, arbitrary links and private details.
+    const currentYear = new Date().getFullYear();
+    // Deliberately omit owner names, mailing addresses, coordinates, arbitrary links and private details.
     return payload.results.slice(0, 20).filter(p => p && p.hasCountyRecord === true &&
-        text(p.officialAddress) && (text(p.parcelId) || text(p.pin))).map(p => ({
-        address: text(p.officialAddress, 250), county: text(p.county, 50),
-        parcel: text(p.parcelId) || text(p.pin), addressDiffers: p.recordAddressDiffers !== false,
-        yearBuilt: numeric(p.yearBuilt, 1700, new Date().getFullYear()),
-        heatedArea: numeric(p.heatedArea, 1, 100000),
-        roofCover: text(p.roofCover), exteriorWall: text(p.exteriorWall)
-    }));
+        text(p.officialAddress) && (text(p.parcelId) || text(p.pin))).map(p => {
+        const rawLinks = p.links && typeof p.links === 'object' && !Array.isArray(p.links) ? p.links : {};
+        const links = {};
+        for (const key of LINK_KEYS) {
+            const url = safeUrl(rawLinks[key]);
+            if (url) links[key] = url;
+        }
+        return {
+            address: text(p.officialAddress, 250),
+            county: text(p.county, 50),
+            parcel: text(p.parcelId) || text(p.pin),
+            parcelId: text(p.parcelId, 80),
+            pin: text(p.pin, 80),
+            addressDiffers: p.recordAddressDiffers !== false,
+            matchMethod: text(p.matchMethod, 80),
+            yearBuilt: numeric(p.yearBuilt, 1700, currentYear),
+            effectiveYearBuilt: numeric(p.effectiveYearBuilt, 1700, currentYear),
+            heatedArea: numeric(p.heatedArea, 1, 100000),
+            groundFloorArea: numeric(p.groundFloorArea, 1, 100000),
+            stories: numeric(p.stories, 0.5, 10) ?? text(p.stories, 40),
+            bedrooms: numeric(p.bedrooms, 0, 50),
+            fullBaths: numeric(p.fullBaths, 0, 50),
+            halfBaths: numeric(p.halfBaths, 0, 50),
+            roofCover: text(p.roofCover),
+            roofStructure: text(p.roofStructure),
+            exteriorWall: text(p.exteriorWall),
+            foundation: text(p.foundation),
+            heatingType: text(p.heatingType),
+            totalAcres: numeric(p.totalAcres, 0, 100000),
+            buildingValue: numeric(p.buildingValue, 0, 100000000),
+            landValue: numeric(p.landValue, 0, 100000000),
+            totalValue: numeric(p.totalValue, 0, 100000000),
+            salePrice: numeric(p.salePrice, 0, 100000000),
+            saleDate: text(p.saleDate, 40),
+            deedBook: text(p.deedBook, 40),
+            deedPage: text(p.deedPage, 40),
+            links
+        };
+    });
 }
 
 export async function handleLookup({ request, env = {} }, fetcher = fetch) {
