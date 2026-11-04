@@ -629,14 +629,23 @@ body.has-sticky{padding-bottom:76px}
     gtag('js', new Date());
     gtag('config', 'G-N37THY37CR', location.hostname === 'www.billlayneinsurance.com' ? {} : { traffic_type: 'internal' });
   </script>
-  <!-- Microsoft Clarity -->
-  <script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
+  <!-- Microsoft Clarity (idle-deferred for CWV) -->
+<script>
+  window.addEventListener('load', function() {
+    var loadClarity = function() {
+      (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
         t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "vo5s3jhhub");
-  </script>
+      })(window, document, "clarity", "script", "vo5s3jhhub");
+    };
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(loadClarity, { timeout: 3500 });
+    } else {
+      setTimeout(loadClarity, 2000);
+    }
+  });
+</script>
   <script defer src="/js/conversion-tracking.js"></script>
 </head>
 <body>
@@ -696,7 +705,7 @@ body.has-sticky{padding-bottom:76px}
         </div>
         <p class="lede">An envelope from the North Carolina Division of Motor Vehicles shows up, it says your liability insurance was terminated, and it mentions a penalty and a deadline. Take a breath. In most cases nothing is wrong with your coverage at all &mdash; two computer filings simply crossed paths in Raleigh. Here's exactly what triggered the letter, and what to do before the date printed on it.</p>
         <div class="btns">
-          <a class="btn btn-gold" href="https://www.billlayneinsurance.com/get-quote?src=blog_dmv_termination_2026_hero">Clear this notice</a>
+          <a class="btn btn-gold" href="/auto-quote?src=blog_dmv_termination_2026_hero">Clear this notice</a>
           <a class="btn btn-ghost" href="#how-to-check">See the 5-step checklist</a>
         </div>
     </div>
@@ -828,7 +837,7 @@ body.has-sticky{padding-bottom:76px}
       <div class="pills">
         <a href="https://www.billlayneinsurance.com/blog/blogs/nc-inexperienced-driver-continuous-coverage-2026">Why continuous coverage changes your rate</a>
         <a href="https://www.billlayneinsurance.com/auto-center/">Auto insurance in the foothills</a>
-        <a href="https://www.billlayneinsurance.com/get-quote?src=blog_dmv_termination_2026_linkhub">Clear a DMV notice</a>
+        <a href="/auto-quote?src=blog_dmv_termination_2026_linkhub">Clear a DMV notice</a>
       </div>
     </aside>
 
@@ -866,7 +875,7 @@ body.has-sticky{padding-bottom:76px}
       <p>Send me a photo of the letter and I'll tell you which answer applies and handle the filing if that's the fix. You'll talk to someone here in Elkin who deals with these every month, not a call center three states away &mdash; and if the notice came because you were shopping for a better rate, we can finish that conversation too.</p>
       <div class="btns">
         <a class="btn btn-gold" href="tel:3368351993">Call 336-835-1993</a>
-        <a class="btn btn-line" href="https://www.billlayneinsurance.com/get-quote?src=blog_dmv_termination_2026_cta_card">Clear a notice online</a>
+        <a class="btn btn-line" href="/auto-quote?src=blog_dmv_termination_2026_cta_card">Clear a notice online</a>
       </div>
       <div class="nap">Bill Layne Insurance Agency &middot; 1283 N Bridge St, Elkin, NC 28621 &middot; NC Agency License #15569731</div>
     </div>
@@ -970,7 +979,7 @@ body.has-sticky{padding-bottom:76px}
 </footer>
 
 <div class="sticky-cta" id="stickyCta">
-  <a href="https://www.billlayneinsurance.com/get-quote?src=blog_dmv_termination_2026_sticky">Clear this notice &rarr;</a>
+  <a href="/auto-quote?src=blog_dmv_termination_2026_sticky">Clear this notice &rarr;</a>
   <button type="button" id="stickyClose" aria-label="Dismiss quote banner">&times;</button>
 </div>
 
