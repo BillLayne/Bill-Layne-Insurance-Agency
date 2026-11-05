@@ -668,7 +668,7 @@
     <!-- Other pages still use tailwind-output.css. Rebuild homepage CSS via build-css-index.bat. -->
     <style>.bli-um-dialog:not([open]){display:none}.mobile-dock{position:fixed;bottom:0;left:0;right:0;z-index:9998}.menu-overlay,.menu-panel{display:none}</style>
     <link rel="stylesheet" href="css/tailwind-index.css?v=20261104-2">
-    <link rel="stylesheet" href="css/index-extras.css?v=20261104-2">
+    <link rel="stylesheet" href="css/index-extras.css?v=20261105b">
     <link rel="stylesheet" href="css/homepage-hero-refresh.css?v=20261019-1">
     <link rel="stylesheet" href="/css/homepage-refinements.css?v=20261003-2">
     <!-- Below-the-fold styles deferred so they do not delay first mobile paint -->
@@ -759,11 +759,16 @@
             <p class="main-hero-eyebrow">AUTO &amp; HOME INSURANCE &middot; NORTH CAROLINA</p>
             <h1 class="hero-headline">Your NC insurance.<br><span class="highlight">We shop. You choose</span></h1>
             <p class="main-hero-summary">Independent insurance for all of North Carolina. Here to help you compare.</p>
-<form class="hero-zip-form" action="/get-quote" method="get" data-lead="zip" data-source="hero_zip_mobile">
+<div class="hero-line-switch" role="group" aria-label="Choose insurance type to quote">
+                <button type="button" class="hero-line-pill" data-hero-line="auto" data-route="/auto-quote" data-cta="Start Auto Quote" aria-pressed="false">&#128663; Auto</button>
+                <button type="button" class="hero-line-pill" data-hero-line="home" data-route="/home-quote" data-cta="Start Home Quote" aria-pressed="false">&#127968; Home</button>
+                <button type="button" class="hero-line-pill" data-hero-line="all" data-route="/get-quote" data-cta="Compare My Options" aria-pressed="true">&#10024; Bundle / All</button>
+            </div>
+<form class="hero-zip-form" action="/get-quote" method="get" data-lead="zip" data-source="hero_zip_mobile" data-base-source="hero_zip_mobile">
                 <label for="hero-zip-mobile" class="sr-only">Your NC ZIP code</label>
                 <input id="hero-zip-mobile" type="text" name="zip" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}" maxlength="5" placeholder="ZIP code" title="Enter your 5-digit NC ZIP code" required>
                 <input type="hidden" name="src" value="hero_zip_mobile">
-                <button type="submit" class="hero-cta p-3 text-[15px]">Compare My Options <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="0.9em" height="0.9em" fill="currentColor" aria-hidden="true" class="ml-2" style="display:inline-block;vertical-align:-0.1em;"><path d="M190.5 66.9l22.2-22.2c9.4-9.4 24.6-9.4 33.9 0L441 239c9.4 9.4 9.4 24.6 0 33.9L246.6 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.2-22.2c-9.5-9.5-9.3-25 .4-34.3L311.4 296H24c-13.3 0-24-10.7-24-24v-32c0-13.3 10.7-24 24-24h287.4L190.9 101.2c-9.8-9.3-10-24.8-.4-34.3z"/></svg></button>
+                <button type="submit" class="hero-cta p-3 text-[15px]"><span data-hero-cta-label>Compare My Options</span> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="0.9em" height="0.9em" fill="currentColor" aria-hidden="true" class="ml-2" style="display:inline-block;vertical-align:-0.1em;"><path d="M190.5 66.9l22.2-22.2c9.4-9.4 24.6-9.4 33.9 0L441 239c9.4 9.4 9.4 24.6 0 33.9L246.6 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.2-22.2c-9.5-9.5-9.3-25 .4-34.3L311.4 296H24c-13.3 0-24-10.7-24-24v-32c0-13.3 10.7-24 24-24h287.4L190.9 101.2c-9.8-9.3-10-24.8-.4-34.3z"/></svg></button>
             </form><p class="main-hero-assurance">Enter your ZIP to start &mdash; our local team compares available options from our carrier network. Free, no obligation.</p>
         </div>
     </section>
@@ -851,13 +856,18 @@
 
                     <!-- CTAs — ZIP capture starts the quote before the click -->
                     <div>
+                        <div class="hero-line-switch" role="group" aria-label="Choose insurance type to quote">
+                            <button type="button" class="hero-line-pill" data-hero-line="auto" data-route="/auto-quote" data-cta="Start Auto Quote" aria-pressed="false">&#128663; Auto</button>
+                            <button type="button" class="hero-line-pill" data-hero-line="home" data-route="/home-quote" data-cta="Start Home Quote" aria-pressed="false">&#127968; Home</button>
+                            <button type="button" class="hero-line-pill" data-hero-line="all" data-route="/get-quote" data-cta="Compare My Options" aria-pressed="true">&#10024; Bundle / All</button>
+                        </div>
                         <div class="homepage-hero-ctas">
-                            <form class="homepage-hero-zip" action="/get-quote" method="get" data-lead="zip" data-source="hero_zip_desktop">
+                            <form class="homepage-hero-zip" action="/get-quote" method="get" data-lead="zip" data-source="hero_zip_desktop" data-base-source="hero_zip_desktop">
                                 <label for="hero-zip-desktop" class="sr-only">Your NC ZIP code</label>
                                 <input id="hero-zip-desktop" type="text" name="zip" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}" maxlength="5" placeholder="ZIP code" title="Enter your 5-digit NC ZIP code" required>
                                 <input type="hidden" name="src" value="hero_zip_desktop">
                                 <button type="submit" class="homepage-hero-primary btn-shine">
-                                    Compare My Options <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="0.9em" height="0.9em" fill="currentColor" aria-hidden="true" class="ml-2" style="display:inline-block;vertical-align:-0.1em;"><path d="M190.5 66.9l22.2-22.2c9.4-9.4 24.6-9.4 33.9 0L441 239c9.4 9.4 9.4 24.6 0 33.9L246.6 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.2-22.2c-9.5-9.5-9.3-25 .4-34.3L311.4 296H24c-13.3 0-24-10.7-24-24v-32c0-13.3 10.7-24 24-24h287.4L190.9 101.2c-9.8-9.3-10-24.8-.4-34.3z"/></svg>
+                                    <span data-hero-cta-label>Compare My Options</span> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="0.9em" height="0.9em" fill="currentColor" aria-hidden="true" class="ml-2" style="display:inline-block;vertical-align:-0.1em;"><path d="M190.5 66.9l22.2-22.2c9.4-9.4 24.6-9.4 33.9 0L441 239c9.4 9.4 9.4 24.6 0 33.9L246.6 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.2-22.2c-9.5-9.5-9.3-25 .4-34.3L311.4 296H24c-13.3 0-24-10.7-24-24v-32c0-13.3 10.7-24 24-24h287.4L190.9 101.2c-9.8-9.3-10-24.8-.4-34.3z"/></svg>
                                 </button>
                             </form>
                             <a href="tel:3368351993" data-source="hero_cta_desktop" class="homepage-hero-secondary">
@@ -1392,6 +1402,31 @@
                     link_url: link.href
                 });
             }, true);
+
+            // Hero line-of-business quick-route pills (Auto -> /auto-quote, Home -> /home-quote, Bundle/All -> /get-quote)
+            document.querySelectorAll('.hero-line-pill').forEach(function(pill) {
+                pill.addEventListener('click', function() {
+                    var line = pill.getAttribute('data-hero-line') || 'all';
+                    var route = pill.getAttribute('data-route') || '/get-quote';
+                    var ctaLabel = pill.getAttribute('data-cta') || 'Compare My Options';
+                    document.querySelectorAll('.hero-line-pill').forEach(function(btn) {
+                        btn.setAttribute('aria-pressed', btn.getAttribute('data-hero-line') === line ? 'true' : 'false');
+                    });
+                    document.querySelectorAll('form[data-lead="zip"]').forEach(function(form) {
+                        form.setAttribute('action', route);
+                        var baseSrc = form.getAttribute('data-base-source') || 'hero_zip';
+                        var nextSrc = line === 'all' ? baseSrc : baseSrc + '_' + line;
+                        form.dataset.source = nextSrc;
+                        var hiddenSrc = form.querySelector('input[name="src"]');
+                        if (hiddenSrc) hiddenSrc.value = nextSrc;
+                        var span = form.querySelector('[data-hero-cta-label]');
+                        if (span) span.textContent = ctaLabel;
+                    });
+                    var container = pill.closest('section, header');
+                    var zipInput = container ? container.querySelector('input[name="zip"]') : null;
+                    if (zipInput && !zipInput.value) zipInput.focus();
+                });
+            });
 
             // ZIP capture forms in the hero
             document.querySelectorAll('form[data-lead="zip"]').forEach(function(form) {
