@@ -105,8 +105,10 @@
             '<p class="lookup-editor-sub">Everything else from your county record stays imported automatically.</p>',
             '<div class="lookup-editor-grid">',
             '  <div class="lookup-editor-field"><label for="le-yearBuilt">Year built</label><input type="number" id="le-yearBuilt" min="1700" max="2027" step="1"></div>',
+            '  <div class="lookup-editor-field"><label for="le-effectiveYearBuilt">Effective / remodel year</label><input type="number" id="le-effectiveYearBuilt" min="1700" max="2027" step="1"></div>',
             '  <div class="lookup-editor-field"><label for="le-heatedArea">Heated area (sq ft)</label><input type="number" id="le-heatedArea" min="100" max="50000" step="1"></div>',
-            '  <div class="lookup-editor-field"><label for="le-stories">Stories</label><input type="number" id="le-stories" min="1" max="5" step="0.5"></div>',
+            '  <div class="lookup-editor-field"><label for="le-groundFloorArea">Ground floor area (sq ft)</label><input type="number" id="le-groundFloorArea" min="100" max="50000" step="1"></div>',
+            '  <div class="lookup-editor-field"><label for="le-stories">Stories</label><input type="number" id="le-stories" min="1" max="10" step="0.5"></div>',
             '  <div class="lookup-editor-field"><label for="le-totalAcres">Lot size (acres)</label><input type="number" id="le-totalAcres" min="0" max="5000" step="0.01"></div>',
             '  <div class="lookup-editor-grid-3">',
             '    <div class="lookup-editor-field"><label for="le-bedrooms">Bedrooms</label><input type="number" id="le-bedrooms" min="0" max="20" step="1"></div>',
@@ -158,7 +160,9 @@
         if (!cur) return;
         const setVal = (id, v) => { const el = get(id); if (el) el.value = (v !== null && v !== undefined) ? String(v) : ''; };
         setVal('le-yearBuilt', cur.yearBuilt);
+        setVal('le-effectiveYearBuilt', cur.effectiveYearBuilt);
         setVal('le-heatedArea', cur.heatedArea);
+        setVal('le-groundFloorArea', cur.groundFloorArea);
         setVal('le-stories', cur.stories);
         setVal('le-totalAcres', cur.totalAcres);
         setVal('le-bedrooms', cur.bedrooms);
@@ -176,7 +180,9 @@
         const nextOverrides = {};
         const intFields = [
             ['yearBuilt', 'le-yearBuilt', 1700, 2027],
+            ['effectiveYearBuilt', 'le-effectiveYearBuilt', 1700, 2027],
             ['heatedArea', 'le-heatedArea', 100, 50000],
+            ['groundFloorArea', 'le-groundFloorArea', 100, 50000],
             ['bedrooms', 'le-bedrooms', 0, 20],
             ['fullBaths', 'le-fullBaths', 0, 20],
             ['halfBaths', 'le-halfBaths', 0, 20]
