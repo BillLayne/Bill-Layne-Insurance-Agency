@@ -612,4 +612,5 @@
     // Research never has to finish before moving to another step.
     new MutationObserver(updateReview).observe(get('quote-review-sections'), { childList: true });
     host.hidden = false;
+    if (addresses[0] && addresses[0].value) autoSplitFullAddressIfNeeded();
 })();
