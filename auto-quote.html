@@ -1491,12 +1491,12 @@
                     <div class="next-step-item"><span class="step-num">3</span> We contact you to explain your options</div>
                 </div>
 
-                <p class="auto-confirm-note">This is a personally prepared quote request. Pricing won’t appear instantly. Submitting this request does not bind, change, or cancel coverage; an agent will confirm your coverage and start date.</p>
+                <p class="auto-confirm-note">Personally reviewed by our licensed NC team across our 6 represented auto carriers. Submitting this request does not bind, change, or cancel coverage; an agent will confirm your coverage and start date.</p>
                 <!-- Bundle Cross-Sell -->
                 <a href="home-quote.html" class="modal-cross-sell">
                     <div class="cross-sell-icon"><i class="fas fa-home"></i></div>
                     <div class="cross-sell-text">
-                        <strong>Bundle &amp; save</strong>
+                        <strong>Ask about auto + home options</strong>
                         <span>Add a home quote too — takes just a few more minutes</span>
                     </div>
                     <i class="fas fa-arrow-right cross-sell-arrow"></i>
@@ -1583,7 +1583,7 @@
       <h1 class="hero-title" id="auto-quote-heading">Tell us about your vehicles.<br><span>We’ll do the shopping.</span></h1>
       <p class="hero-sub">Our local team personally compares available carrier options for coverage and value.</p>
       <div class="hero-stats"><span class="hero-stat"><i class="fas fa-check-circle" aria-hidden="true"></i> Personal guidance</span><span class="hero-stat"><i class="fas fa-check-circle" aria-hidden="true"></i> Carrier comparison</span><span class="hero-stat"><i class="fas fa-check-circle" aria-hidden="true"></i> No obligation</span></div></div>
-    </section><p class="auto-personal-note"><i class="fas fa-info-circle" aria-hidden="true"></i> Your quote is personally prepared by our team. Pricing won’t appear instantly.</p></div>
+    </section><p class="auto-personal-note"><i class="fas fa-info-circle" aria-hidden="true"></i> Personally reviewed by our licensed NC team &mdash; we compare our 6 represented auto carriers and follow up with your available options. No obligation.</p></div>
     <!-- Main Content -->
     <main id="main-content">
         <div class="page-wrap">
@@ -2129,6 +2129,13 @@
         let step1Completed = false;
         let finalSubmitted = false;
         let partialLeadSent = false;
+        let partialLeadTimer = null;
+        function resetPartialAutoTimer() {
+            if (partialLeadTimer) clearTimeout(partialLeadTimer);
+            if (step1Completed && !finalSubmitted && !partialLeadSent) {
+                partialLeadTimer = setTimeout(sendPartialAutoLead, 120000);
+            }
+        }
 
         // ─── YEAR DROPDOWN (populate on load) ─────────────────────────
         function populateYearSelect(selectEl) {
@@ -2293,6 +2300,7 @@
                 if (currentStep === 1) step1Completed = true;
                 currentStep = quoteReviewEditing ? totalSteps : currentStep + 1;
                 showStep(currentStep);
+                resetPartialAutoTimer();
             }
         }
         function previousStep() {
@@ -2360,6 +2368,9 @@
                 }
             } catch (_) {}
         }
+        document.addEventListener('input', () => {
+            if (step1Completed) resetPartialAutoTimer();
+        });
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'hidden') sendPartialAutoLead();
         });

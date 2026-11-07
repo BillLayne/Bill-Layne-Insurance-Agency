@@ -1182,7 +1182,7 @@
                     <div class="next-step-item"><span class="step-num">3</span> We contact you to explain your options</div>
                 </div>
 
-                <p class="home-confirm-note">This is a personally prepared quote request. Pricing won’t appear instantly. Submitting this request does not bind, change, or cancel coverage; an agent will confirm your coverage and start date.</p>
+                <p class="home-confirm-note">Personally reviewed by our licensed NC team across our 8 represented home carriers. Submitting this request does not bind, change, or cancel coverage; an agent will confirm your coverage and start date.</p>
                 <!-- Bundle Cross-Sell -->
                 <a href="/get-quote?src=page_home_quote" class="modal-cross-sell">
                     <div class="cross-sell-icon"><i class="fas fa-car"></i></div>
@@ -1274,7 +1274,7 @@
       <h1 class="hero-title" id="home-quote-heading">Tell us about your home.<br><span>We’ll do the shopping.</span></h1>
       <p class="hero-sub">One request. Our local team compares available carriers for coverage and value.</p></div>
     </section>
-    <div class="home-note-wrap"><p class="home-personal-note"><i class="fas fa-info-circle" aria-hidden="true"></i> Your quote is personally prepared by our team. Pricing won’t appear instantly.</p></div>
+    <div class="home-note-wrap"><p class="home-personal-note"><i class="fas fa-info-circle" aria-hidden="true"></i> Personally reviewed by our licensed NC team &mdash; we compare our 8 represented home carriers and follow up with your available options. No obligation.</p></div>
     <!-- Main -->
     <main id="main-content">
         <div class="page-wrap">
@@ -1956,6 +1956,13 @@
         let step1Completed = false;
         let finalSubmitted = false;
         let partialLeadSent = false;
+        let partialLeadTimer = null;
+        function resetPartialHomeTimer() {
+            if (partialLeadTimer) clearTimeout(partialLeadTimer);
+            if (step1Completed && !finalSubmitted && !partialLeadSent) {
+                partialLeadTimer = setTimeout(sendPartialHomeLead, 120000);
+            }
+        }
 
         // ─── POPULATE YEAR DROPDOWNS ───────────────────────────────────
         function populateYears(selectEl, startYear, endYear, defaultText) {
@@ -2091,6 +2098,7 @@
                 if (currentStep === 1) step1Completed = true;
                 currentStep = quoteReviewEditing ? totalSteps : currentStep + 1;
                 showStep(currentStep);
+                resetPartialHomeTimer();
             }
         }
         function previousStep() {
@@ -2159,6 +2167,9 @@
                 }
             } catch (_) {}
         }
+        document.addEventListener('input', () => {
+            if (step1Completed) resetPartialHomeTimer();
+        });
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'hidden') sendPartialHomeLead();
         });
