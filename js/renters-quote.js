@@ -225,10 +225,20 @@
         })
       }).catch(() => {});
       if (typeof window.gtag === 'function') {
-        window.gtag('event', 'partial_lead_captured', { form_name: 'renters_quote', step_reached: step + 1 });
+        window.gtag('event', 'partial_lead_saved', { form_name: 'renters_quote', service_line: 'renters', step_reached: step + 1 });
       }
     } catch {}
   }
+  let partialRentersTimer = null;
+  function resetPartialRentersTimer() {
+    if (partialSent || submitted || submitting) return;
+    if (partialRentersTimer) clearTimeout(partialRentersTimer);
+    if (step >= 1) {
+      partialRentersTimer = setTimeout(sendPartialRentersLead, 120000);
+    }
+  }
+  form.addEventListener('input', resetPartialRentersTimer);
+  form.addEventListener('change', resetPartialRentersTimer);
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') sendPartialRentersLead();
   });

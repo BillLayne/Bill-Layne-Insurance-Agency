@@ -128,13 +128,21 @@
       track('partial_lead_saved',{step_reached:step+1});
     } catch (_) {}
   }
+  let partialMhTimer=null;
+  function resetPartialMhTimer(){
+    if(partialSent||attempted||submitted)return;
+    if(partialMhTimer)clearTimeout(partialMhTimer);
+    if(step1Completed)partialMhTimer=setTimeout(sendPartialMobileHomeLead,120000);
+  }
+  form.addEventListener('input',resetPartialMhTimer);
+  form.addEventListener('change',resetPartialMhTimer);
   document.addEventListener('visibilitychange',()=>{ if (document.visibilityState==='hidden') sendPartialMobileHomeLead(); });
   window.addEventListener('pagehide',sendPartialMobileHomeLead);
   back.addEventListener('click',()=>{if(attempted)return;if(editing){editing=false;show(4);}else show(Math.max(0,step-1));});
   form.addEventListener('submit',async event=>{
     event.preventDefault();if(submitting||attempted||submitted)return;
     if(!valid(step))return;
-    if(step===0)step1Completed=true;
+    if(step===0){step1Completed=true;resetPartialMhTimer();}
     if(editing){editing=false;show(4);return;}
     if(step<4){show(step+1);return;}
     const checked=rules.validate(values(),localDate(new Date()),true);

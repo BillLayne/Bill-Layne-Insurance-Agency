@@ -427,6 +427,7 @@
     }
     if (step < 4) {
       show(step + 1);
+      resetPartialSpecialtyTimer();
       return;
     }
     for (let i = 0; i < 5; i++) {
@@ -617,13 +618,23 @@
         }),
       }).catch(() => {});
       if (typeof window.gtag === "function") {
-        window.gtag("event", "partial_lead_captured", {
+        window.gtag("event", "partial_lead_saved", {
           form_name: kind + "_quote",
           step_reached: step + 1,
         });
       }
     } catch {}
   }
+  let partialSpecialtyTimer = null;
+  function resetPartialSpecialtyTimer() {
+    if (partialSent || sending || settled) return;
+    if (partialSpecialtyTimer) clearTimeout(partialSpecialtyTimer);
+    if (step >= 1) {
+      partialSpecialtyTimer = setTimeout(sendPartialSpecialtyLead, 120000);
+    }
+  }
+  form.addEventListener("input", resetPartialSpecialtyTimer);
+  form.addEventListener("change", resetPartialSpecialtyTimer);
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") sendPartialSpecialtyLead();
   });
