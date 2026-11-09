@@ -118,7 +118,7 @@
         "name": "Bill Layne Insurance Agency",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://img.billlayneinsurance.com/i/2026/08/bli-og-image-cfpd46.png"
+          "url": "https://img.billlayneinsurance.com/i/2026/08/bli-agency-logo-4jqj2j.png"
         }
       },
       "mainEntityOfPage": {
@@ -406,125 +406,16 @@
     </div>
 
     <script>
-        // HYPER-RESILIENT IMAGE LOGIC V2.2
-        if (typeof window.blogInitialized === 'undefined') {
-            window.blogInitialized = true;
-            let imagesReady = 0;
-            const totalImages = 2;
-
-            window.onscroll = function() {
-                let ws = document.body.scrollTop || document.documentElement.scrollTop;
-                let h = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                let p = document.getElementById("gemProgress");
-                if (p) p.style.width = (ws / h) * 100 + "%";
-            };
-
-            async function generateImage(prompt, containerId, retries = 0) {
-                const container = document.getElementById(containerId);
-                if (!container || container.getAttribute('data-status') === 'done') return;
-                
-                const apiKey = ""; 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`;
-                
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            instances: [{ prompt: prompt }],
-                            parameters: { "sampleCount": 1 }
-                        })
-                    });
-                    
-                    const text = await response.text();
-                    if (!text) throw new Error("Empty response");
-                    const result = JSON.parse(text);
-
-                    if (result && result.predictions && result.predictions[0]?.bytesBase64Encoded) {
-                        const imageUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
-                        container.innerHTML = `<img src="${imageUrl}" class="w-full h-full object-cover baked-img" alt="AI Visual" />`;
-                        container.setAttribute('data-status', 'done');
-                        imagesReady++;
-                        checkStatus();
-                    } else { throw new Error("No data"); }
-                } catch (error) {
-                    if (retries < 6) {
-                        const delay = Math.pow(2, retries) * 1000;
-                        setTimeout(() => generateImage(prompt, containerId, retries + 1), delay);
-                    } else {
-                        container.innerHTML = `<div class='p-5 text-slate-300 flex flex-col items-center'><i class='fa-solid fa-image text-3xl mb-2'></i><p class='text-[10px] uppercase font-bold'>Visual Load Paused</p></div>`;
-                    }
-                }
-            }
-
-            function checkStatus() {
-                if (imagesReady >= totalImages) {
-                    const statusEl = document.getElementById('gen-status');
-                    if (statusEl) statusEl.innerHTML = '<i class="fa-solid fa-circle-check text-green-400"></i> Claim Visuals Baked!';
-                    const btn = document.getElementById('bake-btn');
-                    if (btn) btn.style.display = 'block';
-                }
-            }
-
-            function bakeImages() {
-                const btn = document.getElementById('bake-btn');
-                const docClone = document.documentElement.cloneNode(true);
-                const bar = docClone.querySelector('#export-bar');
-                if (bar) bar.remove();
-                
-                const scripts = docClone.querySelectorAll('script');
-                scripts.forEach(s => {
-                    if (s.src.includes('tailwindcss') || s.innerText.includes('gemProgress')) { } else { s.remove(); }
-                });
-
-                const newScript = document.createElement('script');
-                newScript.innerHTML = `
-                    window.onscroll = function() {
-                        let ws = document.body.scrollTop || document.documentElement.scrollTop;
-                        let h = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                        let p = document.getElementById("gemProgress");
-                        if(p) p.style.width = (ws / h) * 100 + "%";
-                    };
-                    window.toggleReveal = function(el) { el.classList.toggle('active'); };
-                `;
-                const clonedBody = docClone.querySelector('body');
-                if (clonedBody) { clonedBody.appendChild(newScript); }
-
-                const htmlString = '<!DOCTYPE html>\n' + docClone.outerHTML;
-                const output = document.getElementById('final-code-output');
-                const area = document.getElementById('bake-area');
-                
-                if (output && area) {
-                    output.value = htmlString;
-                    area.style.display = 'block';
-                    btn.innerHTML = '<i class="fa-solid fa-check-double text-green-400"></i> CODE READY FOR BLOGGER';
-                    btn.style.background = '#1e293b';
-                }
-            }
-
-            window.onload = () => {
-                const hPrompt = "Viral YouTube thumbnail, 8K, high saturation. BOLD TEXT: WHY THE DELAY? 🚗⏳. Frustrated driver standing at a rental car counter looking at a 'Closed' or 'Investigation' sign. High tension lighting.";
-                const bPrompt = "Clean 16:9 photorealistic image. A close up of a North Carolina police report and a car key sitting on a modern office desk. Professional insurance adjustment environment.";
-                
-                generateImage(hPrompt, 'hero-container');
-                generateImage(bPrompt, 'body-img-container');
-            };
-
-            window.toggleReveal = (el) => { el.classList.toggle('active'); };
-            window.copyToClipboard = () => { navigator.clipboard.writeText(window.location.href); };
-            window.bakeImages = bakeImages;
-        }
+        window.onscroll = function() {
+            let ws = document.body.scrollTop || document.documentElement.scrollTop;
+            let h = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            let p = document.getElementById("gemProgress");
+            if (p) p.style.width = (ws / h) * 100 + "%";
+        };
+        window.toggleReveal = function(el) { el.classList.toggle('active'); };
+        window.copyToClipboard = function() { navigator.clipboard.writeText(window.location.href); };
     </script>
-
-<script>
-                    window.onscroll = function() {
-                        let ws = document.body.scrollTop || document.documentElement.scrollTop;
-                        let h = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                        let p = document.getElementById("gemProgress");
-                        if(p) p.style.width = (ws / h) * 100 + "%";
-                    };
-                    window.toggleReveal = function(el) { el.classList.toggle('active'); };
-                </script>    </main>
+    </main>
 <!-- BLI-NAV:START - generated by tools/build-nav.py from tools/nav.json. Do not edit by hand. -->
 <nav class="blinav-footer" aria-label="Site">
   <div class="blinav-footer-inner">
