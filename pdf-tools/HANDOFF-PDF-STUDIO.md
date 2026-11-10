@@ -589,3 +589,21 @@ a same-origin `postMessage` bridge (commit `7bb9717`):
 - Verification: `tools\test-pdf-studio.bat` 62/62, `shots.js` regenerated
   (desktop / laptop / tablet / phone) and inspected. Task-manager side:
   `docs/PDF-TASK-BRIDGE-2026-10-29.md` in that repo.
+
+### Round sixteen — Speedee Kiosk Design System & front-end contrast/responsive polish (2026-11-10, v2026-11-10.1)
+
+Following the Speedee Kiosk Design System pass (`v2026-11-03.1`: Deep Speedee Navy `#0B1F3A`, Warm Speedee Gold `#FFC72C`, `--font-speedee` display stack), a full multi-viewport front-end review (`1586×992` desktop, `1366×768` laptop, `820×1100` tablet, `390×844` phone) identified and resolved the following contrast, state, and responsive layout issues:
+
+- **White-on-navy contrast on `+ Add Files` (`#btnAdd`, `#btnAddPages`) and `#wsEmpty` CTA:** Added explicit `color: #FFFFFF` to `body.home2 #sourceTitle #btnAdd`, `body.ws #btnAdd`, `body.home2 #trayPane #btnAddPages`, `body.home2 .pages-head #btnAddPages`, and `body.home2 #wsEmpty button` so labels and icons no longer inherit `#0b1b33` dark text over `--speedee-navy`.
+- **White-on-navy contrast on modal headers (`#studioDialog > header`, `.form-card .form-head`):** Set `color: #FFFFFF` on `#studioDialog > header h2` and `.form-card .form-head` (with `.fn` subtitle at `rgba(255, 255, 255, 0.78)`) so dialog titles (`Preview & finish`, `Forms Library`, `Saved projects`, `How PDF Studio works`, `Send via Gmail`, `Fill form`) are crisp white against the Speedee Navy header gradient.
+- **High-contrast home intent card icons (`.intent-ico.blue`, `.intent-ico.mint`):** Set `color: #FFFFFF` on `.intent-ico.blue` (Edit a PDF) and `.intent-ico.mint` (Start with a Form) so their SVG icons stand out cleanly against the navy and emerald gradient tiles.
+- **Mobile bottom tab bar active pill (`.tab-bar .tab.active`):** Replaced the clashing pale-blue active box + 2 px circular gold SVG background on `≤ 860px` with a cohesive `--speedee-gold-soft` (`#FFF8E1`) pill, `--speedee-gold-border` inset outline, and bold `--speedee-navy` icon + label.
+- **Restored `⋯` More source options menu (`#srcMenuWrap`, `#btnSrcMenu`):** Un-hid `#srcMenuWrap` in `.src-top-row` beside `+ Add Files` as a `40×40px` outlined icon button so **Thumbnail size**, **Connections & tests**, **Read scanned pages (OCR)**, and **Start over** are reachable from the Source Files pane.
+- **Clean `Source Files` preview & empty state (`uiStep === 2`):**
+  - Scoped `#srcPreviewBar` and `#srcPreviewLegend` to `body.ws:not(.step-3) #editModal:not(.ws-empty)` so they do not appear simultaneously with the `#wsEmpty` ("Choose the pages for this PDF") empty state.
+  - Updated `setStep(2)` to call `previewSourcePage()` on the active source page when `tray.length > 0 && wsMode()`, clearing `#stampLayer` selection handles/stamps from the `Pages` tab so the center pane displays the clean `Original file` source preview.
+  - Dimmed and disabled `aside.ws-right` (`opacity: 0.42; pointer-events: none`) while on the `Source Files` tab (`body.ws:not(.step-3)`) so `Text properties` and `This page` actions clearly apply to placed pages on the `Pages` tab.
+- **Tablet single-row `.ws-bar` & Phone `.ws-cta` / footer layout:**
+  - Kept `.ws-bar` on a single horizontal row on tablets (`681px–1023px`) instead of forcing a wrap via `.ws-bar::after`.
+  - Made `Preview & finish` (`.ws-cta`) span full width across the second row on phones (`≤ 600px`) and tightened the phone footer (`.foot-private` + `.device-status`, hiding `#appVersion` when files are open on `≤ 600px`) so `"Edited on this device"` and `"Saved at ..."` never collide.
+- **Verification:** `tools/pdf-studio-tests/smoke.js` updated to accept Speedee Gold `rgb(255, 199, 44)` on `#btnFinish`; all **62/62** checks pass and `shots.js` screenshots verified across desktop, laptop, tablet, and phone. *(Note: `--font-speedee` currently uses local `'Plus Jakarta Sans'` or falls back to `"Segoe UI Variable", Aptos, system-ui` to avoid an extra CDN request; a Google Fonts `<link>` can be added later if strict cross-device geometric rendering is desired.)*

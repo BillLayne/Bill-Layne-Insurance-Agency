@@ -227,7 +227,7 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
       out.dialog = $('studioDialogTitle').textContent;
       out.finish = ['savePreview', 'previewEmail', 'previewSms', 'previewPrint', 'previewSplit', 'previewEach', 'previewZip'].every(id => !!$(id));
       const fb = $('btnFinish');
-      out.finishGold = !!fb && getComputedStyle(fb).backgroundColor === 'rgb(200, 168, 78)' && !!fb.closest('#studioDialog > header') && fb.textContent.trim() === 'Finish';
+      out.finishGold = !!fb && ['rgb(255, 199, 44)', 'rgb(200, 168, 78)'].includes(getComputedStyle(fb).backgroundColor) && !!fb.closest('#studioDialog > header') && fb.textContent.trim() === 'Finish';
       out.note = ($('finishNote') || {}).textContent || '';
       const dr = $('studioDialog').getBoundingClientRect();
       out.centered = Math.abs((dr.left + dr.right) / 2 - innerWidth / 2) < 4;

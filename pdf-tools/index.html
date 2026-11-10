@@ -2561,12 +2561,23 @@ body.home2 #btnAdd:hover {
 }
 body.home2 #btnAdd svg { width: 16px; height: 16px; stroke-width: 2.3; }
 body.home2 #srcMenuWrap {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  opacity: 0;
-  pointer-events: none;
+  position: relative;
+  flex: 0 0 auto;
+}
+body.home2 #btnSrcMenu {
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0;
+  border: 1.5px solid var(--speedee-border, #e2e8f0);
+  border-radius: 10px;
+  background: #FFFFFF;
+  color: var(--speedee-navy, #0b1b33);
+}
+body.home2 #btnSrcMenu:hover {
+  background: #F1F5F9;
+  border-color: #CBD5E1;
 }
 body.home2 .search-box,
 body.ws .search-box {
@@ -2954,7 +2965,7 @@ body.ws #pickBar #btnPickAdd:hover {
 
 /* Source preview header bar & bottom color legend on the center pane when Source Files tab is active */
 #srcPreviewBar, #srcPreviewLegend { display: none; }
-body.ws:not(.step-3) #srcPreviewBar {
+body.ws:not(.step-3) #editModal:not(.ws-empty) #srcPreviewBar {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2972,7 +2983,7 @@ body.ws:not(.step-3) #srcPreviewBar {
   font-weight: 500;
   color: #64748b;
 }
-body.ws:not(.step-3) #srcPreviewLegend {
+body.ws:not(.step-3) #editModal:not(.ws-empty) #srcPreviewLegend {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2984,6 +2995,10 @@ body.ws:not(.step-3) #srcPreviewLegend {
   font-size: 12.5px;
   font-weight: 600;
   flex-shrink: 0;
+}
+body.ws:not(.step-3) .ws-right {
+  opacity: 0.42;
+  pointer-events: none;
 }
 .legend-item {
   display: inline-flex;
@@ -3126,15 +3141,20 @@ body.home2 .avatar:hover {
   font-weight: 700;
   letter-spacing: -0.01em;
 }
+body.home2 .tab-bar .tab.active,
 .tab-bar .tab.active {
+  background: var(--speedee-gold-soft);
   color: var(--speedee-navy);
   font-weight: 800;
+  box-shadow: inset 0 0 0 1.5px var(--speedee-gold-border);
 }
+body.home2 .tab-bar .tab.active svg,
 .tab-bar .tab.active svg {
   color: var(--speedee-navy);
-  background: var(--speedee-gold);
-  border-radius: 999px;
-  padding: 2px;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  stroke-width: 2.2;
 }
 
 /* 3. Home Landing Kiosk View (#homeView, Intent Tiles, Dropzone, Recent Projects) */
@@ -3172,6 +3192,7 @@ body.home2:not(.has-files) #sourcePane {
 }
 .intent-ico.blue {
   background: linear-gradient(155deg, #163B6E 0%, var(--speedee-navy) 100%);
+  color: #FFFFFF;
   box-shadow: 0 6px 14px rgba(11, 31, 58, 0.22);
 }
 .intent-ico.amber {
@@ -3181,6 +3202,7 @@ body.home2:not(.has-files) #sourcePane {
 }
 .intent-ico.mint {
   background: linear-gradient(155deg, #10B981 0%, #059669 100%);
+  color: #FFFFFF;
   box-shadow: 0 6px 14px rgba(16, 185, 129, 0.25);
 }
 .intent-text strong {
@@ -3344,18 +3366,26 @@ button.finish-button:hover,
 
 /* Source Files & Page Cards — Speedee Gold Selection & Navy Framing */
 body.home2 #sourceTitle #btnAdd,
-body.home2 #trayPane #btnAddPages {
+body.ws #btnAdd,
+body.home2 #trayPane #btnAddPages,
+body.home2 .pages-head #btnAddPages,
+body.home2 #wsEmpty button {
   background: var(--speedee-navy);
   border-color: var(--speedee-navy);
+  color: #FFFFFF;
   font-family: var(--font-speedee);
   font-weight: 800;
   letter-spacing: -0.015em;
   border-radius: 10px;
 }
 body.home2 #sourceTitle #btnAdd:hover,
-body.home2 #trayPane #btnAddPages:hover {
+body.ws #btnAdd:hover,
+body.home2 #trayPane #btnAddPages:hover,
+body.home2 .pages-head #btnAddPages:hover,
+body.home2 #wsEmpty button:hover {
   background: var(--speedee-navy-hover);
   border-color: var(--speedee-navy-hover);
+  color: #FFFFFF;
 }
 body.home2 .doc-title {
   font-family: var(--font-speedee);
@@ -3454,18 +3484,60 @@ body.ws #pickBar #btnPickAdd:hover {
 #studioDialog > header {
   background: linear-gradient(180deg, #0E2547 0%, var(--speedee-navy) 100%);
   border-bottom: 3px solid var(--speedee-gold);
+  color: #FFFFFF;
   font-family: var(--font-speedee);
   font-weight: 800;
   letter-spacing: -0.02em;
 }
 #studioDialog > header h2 {
+  color: #FFFFFF;
   font-family: var(--font-speedee);
   font-weight: 800;
   letter-spacing: -0.025em;
 }
+.form-card .form-head .fn {
+  color: rgba(255, 255, 255, 0.78);
+}
 footer {
   font-family: var(--font-speedee);
   font-weight: 600;
+}
+
+@media (min-width: 681px) and (max-width: 1023px) {
+  body.has-files .ws-bar {
+    flex-wrap: nowrap;
+  }
+  body.has-files .ws-bar::after {
+    display: none;
+  }
+  body.home2 .ws-cta {
+    margin-left: 0;
+  }
+}
+@media (max-width: 600px) {
+  body.home2 .ws-cta {
+    width: 100%;
+    justify-content: center;
+  }
+  body.home2.has-files > footer {
+    gap: 8px;
+    padding: 4px 12px;
+    font-size: 11.5px;
+    justify-content: space-between;
+  }
+  body.home2.has-files > footer .foot-private {
+    flex: 0 1 auto;
+    gap: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  body.home2.has-files > footer .device-status {
+    flex: 0 0 auto;
+    gap: 6px;
+  }
+  body.home2.has-files > footer #appVersion {
+    display: none;
+  }
 }
 
 </style>
@@ -4151,7 +4223,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#F7F4EE}
 <script>
 (function () {
   'use strict';
-  const APP_VERSION = '2026-11-03.1';   // bump on every release — shown in the footer, the Help dialog and the console
+  const APP_VERSION = '2026-11-10.1';   // bump on every release — shown in the footer, the Help dialog and the console
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -4487,7 +4559,15 @@ body{margin:0;padding:0;width:100%!important;background-color:#F7F4EE}
     document.body.classList.toggle('step-3', n === 3);
     updateWorkflowState();
     if (n === 3 && wsMode() && editorItem && editorShown.sig !== editorSigOf(editorItem)) renderEditor();
-    if (n === 2) syncSourcePreviewHeader();
+    if (n === 2) {
+      syncSourcePreviewHeader();
+      if (wsMode() && tray.length > 0) {
+        const p = (previewedSid != null ? srcIndex.get(previewedSid) : null) ||
+          (editorItem ? [...srcIndex.values()].find(x => x.docId === editorItem.docId && x.pageIndex === editorItem.pageIndex) : null) ||
+          [...srcIndex.values()][0];
+        if (p) previewSourcePage(p);
+      }
+    }
     if (!wsMode()) {                       // a full-page switch starts at the top; the workspace tabs keep their place
       const pane = n === 3 ? trayStrip : $('sourcePane');
       if (pane) pane.scrollTop = 0;
