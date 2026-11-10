@@ -775,16 +775,16 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
         const g = {
           courier: count('font:15px courier'), pngSpacer: count('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQ'),
           nowrap: count('white-space:nowrap'),
-          fluid: count('class="email-container" style="width:100%;max-width:600px;margin:0 auto"') === 1,
+          fluid: count('class="email-container" style="width:100%;max-width:600px;margin:0 auto') === 1, wrapper: count('id="gmail-email-content"') === 1, w600: count('width="600"'),
           fixed600: /<table[^>]*class="email-container"[^>]*>/.test(html) && /width="600"/.test(html.match(/<table[^>]*class="email-container"[^>]*>/)[0]),
-          firstInBody: /<body[^>]*>\s*<div style="display:none;white-space:nowrap;font:15px courier[^>]*>[^<]*<\/div>\s*<img src="data:image\/png;base64,iVBOR/.test(html),
-          v3Palette: html.includes('#F7F4EE') && html.includes('#0A1F44') && html.includes('#D9A441') && !/Georgia|#8a6d2f|#D4A843/.test(html), placeholders: count('{{'), ascii: /^[\x00-\x7F]*$/.test(html), size: html.length,
+          firstInBody: /<div id="gmail-email-content">\s*(?:<!--[\s\S]*?-->\s*)*<div style="display:none;white-space:nowrap;font:15px courier[^>]*>[^<]*<\/div>\s*<img src="data:image\/png;base64,iVBOR/.test(html),
+          v3Palette: html.includes('#EEF2F6') && html.includes('#0B1F3A') && html.includes('#FFC72C') && html.includes('Here when you need us.') && html.includes('Bill Layne Insurance Team') && !/#F7F4EE|bgcolor="#000000"/.test(html), placeholders: count('{{'), ascii: /^[\x00-\x7F]*$/.test(html), size: html.length,
           attachment: !!(posted && posted.attachments && posted.attachments.length === 1 && /\.pdf$/.test(posted.attachments[0].name)),
           // texts go to the agency text line, calls to the office (Bill, 2026-10-01)
           textLine: count('<a href="sms:+13368279065"') === 1 && !/text\??\s*(<a[^>]*>)?\s*\(?336\)?[ -]835-1993/i.test(html)
         };
-        ok('the Gmail draft body is Gold Elite v3: spacer line + 600 px image first, fluid container, one nowrap, v3 palette, ASCII, texts to (336) 827-9065',
-          g.courier === 1 && g.pngSpacer === 1 && g.nowrap === 1 && g.fluid && !g.fixed600 && g.firstInBody && g.v3Palette &&
+        ok('the Gmail draft body is Gmail White (Speedee White Elite): #gmail-email-content, spacer line + 600 px image first, fluid container, one nowrap, Speedee White palette, ASCII, texts to (336) 827-9065',
+          g.wrapper && g.w600 === 2 && g.courier === 1 && g.pngSpacer === 1 && g.nowrap === 1 && g.fluid && !g.fixed600 && g.firstInBody && g.v3Palette &&
           g.placeholders === 0 && g.ascii && g.size < 102400 && g.attachment && g.textLine, g);
       }
       page.off('download', onDl);
