@@ -297,9 +297,6 @@
     <!-- Schema: FAQPage -->
     
 
-    <!-- Schema: HowTo -->
-    
-
     <!-- Cloudflare Turnstile (spam protection) - replace TURNSTILE_SITE_KEY with your real key once issued in Cloudflare dashboard -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
@@ -1184,7 +1181,7 @@
 
                 <p class="home-confirm-note">Personally reviewed by our licensed NC team across our 8 represented home carriers. Submitting this request does not bind, change, or cancel coverage; an agent will confirm your coverage and start date.</p>
                 <!-- Bundle Cross-Sell -->
-                <a href="/get-quote?src=page_home_quote" class="modal-cross-sell">
+                <a href="/auto-quote?src=home_success_cross_sell" class="modal-cross-sell">
                     <div class="cross-sell-icon"><i class="fas fa-car"></i></div>
                     <div class="cross-sell-text">
                         <strong>Ask about auto + home options</strong>
@@ -1215,7 +1212,7 @@
                 <p class="email-sent">We'll follow up at <strong id="customer-email"></strong></p>
 
                 <div class="modal-actions">
-                    <a href="index.html" class="modal-btn-home"><i class="fas fa-home"></i> Return Home</a>
+                    <a href="/" class="modal-btn-home"><i class="fas fa-home"></i> Return Home</a>
                     <button onclick="closeSuccessModal()" class="modal-btn-close">Done</button>
                 </div>
             </div>
@@ -1413,7 +1410,7 @@
                             <section id="home-property-lookup" class="home-lookup" aria-labelledby="lookup-title" data-clarity-mask="true" hidden>
                                 <p class="lookup-kicker">&#9889; Fast-Track Prefill &middot; NC County Records</p>
                                 <h3 id="lookup-title">Skip the guesswork &mdash; auto-fill your home details</h3>
-                                <p>Tap below after entering your street address above and we’ll pull your year built, square footage, bedrooms, and baths from NC public records in 1 click (and you can edit any detail).</p>
+                                <p>Enter your street address, city, and ZIP above — we’ll automatically check NC county records for your year built, square footage, bedrooms, and baths (or tap below anytime).</p>
                                 <div class="lookup-actions">
                                     <button type="button" id="lookup-find">Auto-Fill My Home Details</button>
                                     <button type="button" id="lookup-manual" class="lookup-secondary">Enter details myself</button>
@@ -2048,7 +2045,7 @@
                 quoteReviewEditing = false;
                 renderQuoteReview();
             }
-            nextBtn.textContent = quoteReviewEditing ? 'Save & Return to Review' : ['Continue to Your Home', 'Continue to Current Coverage', 'Continue to Coverage', 'Continue to Review'][step - 1] || 'Continue';
+            nextBtn.innerHTML = (quoteReviewEditing ? 'Save &amp; Return to Review' : (['Continue to Your Home', 'Continue to Current Coverage', 'Continue to Coverage', 'Continue to Review'][step - 1] || 'Continue')) + ' <i class="fas fa-arrow-right"></i>';
             if (returningToReview) focusQuoteReview();
             else focusQuoteStep();
         }
@@ -2106,9 +2103,10 @@
             if (currentStep > 1) { currentStep--; showStep(currentStep); }
         }
 
-        // ─── PARTIAL LEAD CAPTURE (Step 1+ completed, abandoned before final submit) ──
-        function sendPartialHomeLead() {
-            if (!step1Completed || finalSubmitted || partialLeadSent) return;
+        // ─── PARTIAL LEAD CAPTURE (Step 1+ completed or exit with contact info) ──
+        function sendPartialHomeLead(isExit = false) {
+            if (finalSubmitted || partialLeadSent) return;
+            if (!isExit && !step1Completed) return;
             const formEl = document.getElementById('home-quote-form');
             if (!formEl) return;
             const fd = new FormData(formEl);
@@ -2116,7 +2114,7 @@
             const ln = (fd.get('lastname') || '').trim();
             const email = (fd.get('email') || '').trim();
             const phone = (fd.get('phone') || '').trim();
-            if (!fn || !email || !phone) return;
+            if (!fn || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || phone.replace(/\D/g, '').length < 10) return;
             const sessionKey = 'bli_partial_home_' + email.toLowerCase();
             try { if (sessionStorage.getItem(sessionKey)) return; sessionStorage.setItem(sessionKey, '1'); } catch (_) {}
             partialLeadSent = true;
@@ -2167,13 +2165,21 @@
                 }
             } catch (_) {}
         }
-        document.addEventListener('input', () => {
+        let homeFormStarted = false;
+        document.getElementById('home-quote-form').addEventListener('input', () => {
+            if (!homeFormStarted) {
+                homeFormStarted = true;
+                if (typeof gtag === 'function') {
+                    const srcParam = new URLSearchParams(window.location.search).get('src') || 'direct';
+                    gtag('event', 'form_start', { form_type: 'home_insurance', cta_source: srcParam });
+                }
+            }
             if (step1Completed) resetPartialHomeTimer();
         });
         document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'hidden') sendPartialHomeLead();
+            if (document.visibilityState === 'hidden') sendPartialHomeLead(true);
         });
-        window.addEventListener('pagehide', sendPartialHomeLead);
+        window.addEventListener('pagehide', () => sendPartialHomeLead(true));
 
         // ─── SUCCESS MODAL ─────────────────────────────────────────────
         function closeSuccessModal() {
@@ -2318,37 +2324,35 @@
                 const acceptedConfirmation = receipt.confirmationNumber;
                 try { localStorage.removeItem(`bli_pending_${confirmationNumber}`); } catch {}
 
-                setTimeout(() => {
-                    document.getElementById('modal-confirmation-number').textContent = acceptedConfirmation;
-                    document.getElementById('customer-email').textContent = data.email;
+                document.getElementById('modal-confirmation-number').textContent = acceptedConfirmation;
+                document.getElementById('customer-email').textContent = data.email;
 
-                    loadingOverlay.classList.remove('active');
-                    loadingOverlay.style.display = 'none';
+                loadingOverlay.classList.remove('active');
+                loadingOverlay.style.display = 'none';
 
-                    document.getElementById('modal-customer-name').textContent = data.firstname || 'there';
+                document.getElementById('modal-customer-name').textContent = data.firstname || 'there';
 
-                    const modal = document.getElementById('successModal');
-                    modal.style.display = 'flex';
-                    modal.classList.add('active');
+                const modal = document.getElementById('successModal');
+                modal.style.display = 'flex';
+                modal.classList.add('active');
 
-                    // Count only an explicit successful response from the existing backend.
-                    if (typeof gtag !== 'undefined') {
-                        gtag('event', 'form_submit', {
-                            form_type: 'home_insurance',
-                            confirmation_number: acceptedConfirmation
-                        });
-                        gtag('event', 'generate_lead', {
-                            lead_type: 'quote',
-                            service_line: 'home',
-                            form_name: 'home_quote',
-                            method: 'backend_acknowledged'
-                        });
-                    }
+                // Count only an explicit successful response from the existing backend.
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'form_submit', {
+                        form_type: 'home_insurance',
+                        confirmation_number: acceptedConfirmation
+                    });
+                    gtag('event', 'generate_lead', {
+                        lead_type: 'quote',
+                        service_line: 'home',
+                        form_name: 'home_quote',
+                        method: 'backend_acknowledged'
+                    });
+                }
 
-                    try { sessionStorage.setItem('lastQuoteConfirmation', acceptedConfirmation); } catch {}
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send My Quote Request';
-                }, 1500);
+                try { sessionStorage.setItem('lastQuoteConfirmation', acceptedConfirmation); } catch {}
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send My Quote Request';
 
             } catch (error) {
                 console.error('Submission error:', error);
@@ -2513,7 +2517,7 @@
     </script>
     <script defer src="js/conversion-tracking.js?v=20260924"></script>
     <script src="/js/quote-review.js"></script>
-    <script src="/js/home-property-lookup.js?v=20261107-1"></script>
+    <script src="/js/home-property-lookup.js?v=20261109-1"></script>
 <script defer src="/js/renters-handoff.js?v=20260924"></script>
 <!-- BLI-UNIVERSAL-MENU:START - generated from tools/nav.json; do not edit by hand. -->
 <div class="bli-um-entry"><button type="button" data-bli-menu-open>Open site menu <span aria-hidden="true">&rarr;</span></button></div>

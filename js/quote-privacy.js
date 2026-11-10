@@ -52,7 +52,7 @@
             </details>
         </div>
         <footer class="quote-privacy-dialog-footer">
-            <p>Your answers stay in the form.</p>
+            <p>Your progress stays in the form, and our team may follow up on unfinished requests.</p>
             <button type="button" class="quote-privacy-return" data-quote-privacy-close>Back to my quote</button>
         </footer>
     </dialog>`;

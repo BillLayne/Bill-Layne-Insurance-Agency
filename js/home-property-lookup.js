@@ -276,11 +276,30 @@
         updateReview();
     }));
 
+    let autoLookupTimer = null;
+    let lastShownSignature = '';
+
+    function isAddressComplete() {
+        return addresses[0].value.trim().length >= 5 &&
+               /\d/.test(addresses[0].value) &&
+               Boolean(addresses[1].value.trim()) &&
+               /^\d{5}$/.test(addresses[2].value.trim());
+    }
+
     addresses.forEach(field => field.addEventListener('input', () => {
+        if (autoLookupTimer) { clearTimeout(autoLookupTimer); autoLookupTimer = null; }
         if (lastAddress && signature() !== lastAddress) {
-            clearResearch(); lastAddress = '';
+            clearResearch(); lastAddress = ''; lastShownSignature = '';
             say('Address changed. Suggested values were cleared; your own entries were kept. Look up this home or continue manually.');
             updateReview();
+        }
+        autoSplitFullAddressIfNeeded();
+        if (isAddressComplete() && signature() !== lastAddress) {
+            autoLookupTimer = setTimeout(() => {
+                if (isAddressComplete() && signature() !== lastAddress) {
+                    runLookup(true);
+                }
+            }, 600);
         }
     }));
 
@@ -352,6 +371,15 @@
             detail.textContent = value; row.append(term, detail); facts.append(row);
         });
         renderLinks(cur.links);
+        if (typeof gtag === 'function' && lastAddress && lastShownSignature !== lastAddress) {
+            lastShownSignature = lastAddress;
+            try {
+                gtag('event', 'property_record_shown', {
+                    county: cur.county || 'unknown',
+                    match_count: matches.length
+                });
+            } catch {}
+        }
     }
 
     choices.addEventListener('change', () => { clearImported(); showMatch(); updateReview(); });
@@ -380,15 +408,24 @@
         }
     }
 
-    find.addEventListener('click', async () => {
+    async function runLookup(isAutoRun = false) {
+        if (autoLookupTimer) { clearTimeout(autoLookupTimer); autoLookupTimer = null; }
         autoSplitFullAddressIfNeeded();
         if (addresses[0].value.trim().length < 5 || !/\d/.test(addresses[0].value)) {
-            say('Enter your street address above, then try again. You can also continue manually.'); addresses[0].focus(); return;
+            if (!isAutoRun) {
+                say('Enter your street address above, then try again. You can also continue manually.');
+                addresses[0].focus();
+            }
+            return;
         }
         if (!addresses[1].value.trim() || !/^\d{5}$/.test(addresses[2].value.trim())) {
-            say('Add the city and five-digit ZIP above to help find the correct home.');
-            (!addresses[1].value.trim() ? addresses[1] : addresses[2]).focus(); return;
+            if (!isAutoRun) {
+                say('Add the city and five-digit ZIP above to help find the correct home.');
+                (!addresses[1].value.trim() ? addresses[1] : addresses[2]).focus();
+            }
+            return;
         }
+        if (isAutoRun && signature() === lastAddress) return;
         clearResearch(); updateReview(); lastAddress = signature();
         let address = addresses[0].value.trim();
         if (!address.toLowerCase().includes(addresses[1].value.trim().toLowerCase())) address += ', ' + addresses[1].value.trim();
@@ -398,7 +435,7 @@
         const current = generation;
         controller = new AbortController(); const requestController = controller;
         find.disabled = true; find.textContent = 'Finding your home…';
-        say('Looking for public records. You can keep filling out the form or continue without waiting.');
+        say(isAutoRun ? 'Checking county records for your address — keep going, we’ll fill in what we find.' : 'Looking for public records. You can keep filling out the form or continue without waiting.');
         const timeout = setTimeout(() => requestController.abort(), 20000);
         try {
             const response = await fetch('/api/home-property', { method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -420,9 +457,11 @@
             say(requestController.signal.aborted ? 'The lookup is taking too long. Your quote still works — enter details below or try again.' : 'We couldn’t retrieve home details right now. Your answers are safe. Enter details below and continue, or try again.');
         } finally {
             clearTimeout(timeout);
-            if (current === generation) { controller = null; find.disabled = false; find.textContent = 'Find my home details'; }
+            if (current === generation) { controller = null; find.disabled = false; find.textContent = 'Auto-Fill My Home Details'; }
         }
-    });
+    }
+
+    find.addEventListener('click', () => runLookup(false));
 
     function applyRecordToForm(fromEditorSave) {
         if (!selected || signature() !== lastAddress) return;
@@ -607,10 +646,16 @@
         const notes = researchNotes(); return notes ? [original, notes].filter(Boolean).join('\n\n') : original;
     } };
     form.addEventListener('reset', () => {
-        clearResearch(); touched.clear(); lastAddress = ''; say(''); updateReview();
+        if (autoLookupTimer) { clearTimeout(autoLookupTimer); autoLookupTimer = null; }
+        clearResearch(); touched.clear(); lastAddress = ''; lastShownSignature = ''; say(''); updateReview();
     });
     // Research never has to finish before moving to another step.
     new MutationObserver(updateReview).observe(get('quote-review-sections'), { childList: true });
     host.hidden = false;
-    if (addresses[0] && addresses[0].value) autoSplitFullAddressIfNeeded();
+    if (addresses[0] && addresses[0].value) {
+        autoSplitFullAddressIfNeeded();
+        if (isAddressComplete() && signature() !== lastAddress) {
+            runLookup(true);
+        }
+    }
 })();
