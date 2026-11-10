@@ -14,9 +14,33 @@ rules.
 | File | What it is |
 |---|---|
 | `Code.gs` | The Apps Script gateway (v1.1, attachments) — paste into script.google.com (one time) |
-| `index.html` | Universal sender page — paste/drop any template, preview, Draft or Send |
+| `index.html` | Universal sender page — paste/drop any template (or open it from a hand-off link), attach files, preview, Draft or Send |
 | `gateway-client.js` | Drop-in snippet to add a "Draft in Gmail" button to any BLI app |
 | `README.md` | This file |
+
+## Loading a finished email into the sender page (2026-11-09)
+
+The sender page takes a finished email three ways. All three end the same way: the email, its subject and any
+recipient are filled in, and a person clicks **Create Gmail Draft** (nothing is created or sent on page load).
+
+1. **Drop or choose the file.** The subject comes from the file's first-line `SUBJECT` comment, else its `<title>`.
+2. **Paste the HTML.**
+3. **Hand-off link.** Open `…/mail-gateway/#z=<payload>` where the payload is
+   `base64url( deflate-raw( JSON {v:1, name, subject, to, cc, html} ) )`. A URL fragment never leaves the browser,
+   so the email is not uploaded anywhere. The page reads it, clears the fragment and shows a green "Loaded" banner.
+   The Gmail template skill's `gmail-draft-handoff.js` builds this link and a small launcher file from any email file.
+
+Whatever the route, the page cleans the email before it goes to the gateway, so a customer never receives
+browser-only helpers:
+
+- the Designer "Draft in Gmail" toolbar, the Gmail White `#preview-toolbar`, every script tag and the `SUBJECT` comment are removed;
+- the Gmail White 600px anti-fit spacer, which ships as a `data:` image for the copy/paste path, becomes its hosted
+  copy (Gmail drops `data:` images from delivered mail);
+- every character above ASCII 126 becomes a numeric entity and 4-byte characters are stripped from the subject
+  (the GmailApp corruption rule in `HANDOFF-GATEWAY-INTEGRATION.md`).
+
+Step 3 on the page attaches up to 5 files (18 MB in all) to the draft, for example a declarations page PDF.
+**Send Now** is a two-click button (it arms for 10 seconds); it never uses a native confirm dialog.
 
 ## Integrating the gateway into a NEW app — read these in order
 
