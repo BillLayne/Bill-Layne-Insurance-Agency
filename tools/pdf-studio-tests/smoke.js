@@ -231,6 +231,8 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
       out.note = ($('finishNote') || {}).textContent || '';
       const dr = $('studioDialog').getBoundingClientRect();
       out.centered = Math.abs((dr.left + dr.right) / 2 - innerWidth / 2) < 4;
+      const fpR = $('finalPages').getBoundingClientRect(), fsR = document.querySelector('.finish-side').getBoundingClientRect();
+      out.splitSideBySide = fpR.width > 300 && fsR.width > 240 && fsR.left >= fpR.right - 2;
       out.options = [...document.querySelectorAll('.finish-opts input')].map(i => i.dataset.opt + ':' + i.checked).join(' ');
       document.querySelector('.finish-opts [data-opt="chkNumbers"]').click();
       out.lockedWhileBuilding = document.querySelector('.finish-opts [data-opt="chkNumbers"]').disabled && $('btnFinish').disabled && $('savePreview').disabled;
@@ -251,7 +253,7 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
       out.back = document.body.classList.contains('step-3') && vis($('trayStrip'));
       return out;`);
     ok('stages: Add files · Edit & arrange · Finish; Finish opens Preview & finish, centred',
-      r.labels.join('|') === 'Add files|Edit & arrange|Finish' && r.current === 'workflowStep2' && r.dialog === 'Preview & finish' && r.finish && r.centered, r);
+      r.labels.join('|') === 'Add files|Edit & arrange|Finish' && r.current === 'workflowStep2' && r.dialog === 'Preview & finish' && r.finish && r.centered && r.splitSideBySide, r);
     ok('Preview & finish: a gold Finish in its header; the options rebuild the preview, and nothing can save the old one meanwhile',
       r.finishGold && /saves this PDF to your computer and closes the project/.test(r.note) && r.options === 'chkShrink:false chkNumbers:false chkLock:false chkPermanent:true' && r.lockedWhileBuilding && r.numbered && r.numbersOff && r.staysClosed, r);
     ok('Add files ↔ Source files tab, Pages tab brings the list back; the page stays on screen', r.toSources && r.pageStillShown && r.back, r);
@@ -303,6 +305,51 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
       return { built: sb.length > 500 && st.text.includes('inspector line 1'), fullWidthBar: edBarR.width > innerWidth - 40, hasControls };`);
     ok('full-width toolbar + Text properties inspector (Font, B/I/U, Navy, Align, Opacity, X/Y, Duplicate/Delete) build into the PDF',
       r.built && r.fullWidthBar && r.hasControls, r);
+
+    // 4d. v2026-11-10.3 overlays & ease-of-use: Today's Date button, floating context toolbar, arrow micro-nudge, 4-color highlight, 8-handle crop + presets, interactive Source preview bar
+    r = await evalIn(page, `
+      await openEditor(0);
+      const beforeStamps = S().tray[0].stamps.length;
+      $('btnToolbarDate').click(); await wait(200);
+      const dateAdded = S().tray[0].stamps.length === beforeStamps + 1 && /^\\d{2}\\/\\d{2}\\/\\d{4}$/.test(S().tray[0].stamps[0].text);
+      const x0 = S().tray[0].stamps[0].x, y0 = S().tray[0].stamps[0].y;
+      key('ArrowRight'); await wait(80);
+      key('ArrowDown', { shiftKey: true }); await wait(80);
+      const nudged = Math.abs(S().tray[0].stamps[0].x - (x0 + 1)) < 0.15 && Math.abs(S().tray[0].stamps[0].y - (y0 - 10)) < 0.15;
+      const floatBtns = [...document.querySelectorAll('.stamp-el.selected .stamp-toolbar button')].map(b => b.className).join('|');
+      document.querySelector('.stamp-el.selected .stamp-toolbar .tb-dup').click(); await wait(120);
+      const duped = S().tray[0].stamps.length === beforeStamps + 2;
+      while (S().tray[0].stamps.length > beforeStamps) {
+        if (!document.querySelector('.stamp-el.selected')) {
+          const rem = document.querySelector('#stampLayer .stamp-el');
+          if (!rem) break;
+          rem.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, clientX: 10, clientY: 10 }));
+          rem.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, clientX: 10, clientY: 10 }));
+          await wait(60);
+        }
+        const delBtn = document.querySelector('.stamp-el.selected .stamp-toolbar .tb-del');
+        if (!delBtn) break;
+        delBtn.click(); await wait(80);
+      }
+      const cleaned = S().tray[0].stamps.length === beforeStamps;
+      // 4-color highlight build check
+      const hlBytes = await P.buildPdfBytes([{ docId: 1, pageIndex: 0, rot: 0, stamps: [{ kind: 'hl', x: 72, y: 650, w: 180, h: 20, hlColor: 'green' }] }]);
+      // 8-handle crop box + ID card preset
+      $('modeCrop').click(); await wait(100);
+      const cropSectionVis = vis($('propCropPresets'));
+      document.querySelector('[data-crop-preset="idcard"]').click(); await wait(120);
+      const cropHandles = document.querySelectorAll('#cropBox .crop-h').length;
+      const cropShown = !!$('cropBox') && vis($('cropBox'));
+      $('btnCropCancel').click(); await wait(80);
+      $('modeSelect').click(); await wait(80);
+      const overviewVis = vis($('pageInspectorOverview'));
+      // Source preview interactive buttons
+      $('wsTabSources').click(); await wait(250);
+      const srcPrevBtns = vis($('btnSrcPrevPick')) && vis($('btnSrcPrevAdd'));
+      $('wsTabPages').click(); await wait(250);
+      return { dateAdded, nudged, floatBtns, duped, cleaned, hlBuilt: hlBytes.length > 500, cropSectionVis, cropHandles, cropShown, overviewVis, srcPrevBtns };`);
+    ok('v2026-11-10.3: Today Date button, floating stamp toolbar, arrow nudge, 4-color highlight, 8-handle crop + preset, contextual inspector & Source preview actions',
+      r.dateAdded && r.nudged && r.floatBtns === 'tb-edit|tb-size|tb-size|tb-dup|tb-del' && r.duped && r.cleaned && r.hlBuilt && r.cropSectionVis && r.cropHandles === 8 && r.cropShown && r.overviewVis && r.srcPrevBtns, r);
 
     // 5. one page: Page actions, the ⋯ on its card, undo
     r = await evalIn(page, `
