@@ -34,30 +34,31 @@
         ['Zebulon', 'Wake County', 'Triangle Corridor', '270', '/blog/blogs/chapel-hill-carrboro-durham-raleigh-triangle-insurance-guide'],
         ['Pittsboro', 'Chatham County', 'Triangle Corridor', '280', '/blog/blogs/chapel-hill-carrboro-durham-raleigh-triangle-insurance-guide'],
         ['Siler City', 'Chatham County', 'Triangle Corridor', '280', '/blog/blogs/chapel-hill-carrboro-durham-raleigh-triangle-insurance-guide'],
-        ['Charlotte', 'Mecklenburg County', 'Charlotte Metro & Lake Norman', '340', '/insurance-charlotte-nc'],
-        ['Huntersville', 'Mecklenburg County', 'Charlotte Metro & Lake Norman', '340', '/insurance-charlotte-nc'],
-        ['Cornelius', 'Mecklenburg County', 'Charlotte Metro & Lake Norman', '340', '/insurance-charlotte-nc'],
-        ['Davidson', 'Mecklenburg / Iredell County', 'Charlotte Metro & Lake Norman', '340', '/insurance-charlotte-nc'],
-        ['Matthews', 'Mecklenburg County', 'Charlotte Metro & Lake Norman', '340', '/insurance-charlotte-nc'],
-        ['Mint Hill', 'Mecklenburg County', 'Charlotte Metro & Lake Norman', '340', '/insurance-charlotte-nc'],
-        ['Pineville', 'Mecklenburg County', 'Charlotte Metro & Lake Norman', '340', '/insurance-charlotte-nc'],
-        ['Concord', 'Cabarrus County', 'Charlotte Metro & Lake Norman', '340', '/insurance-concord-nc'],
-        ['Kannapolis', 'Cabarrus / Rowan County', 'Charlotte Metro & I-85', '340', '/insurance-concord-nc'],
-        ['Harrisburg', 'Cabarrus County', 'Charlotte Metro & I-85', '340', '/insurance-concord-nc'],
-        ['Indian Trail', 'Union County', 'Charlotte Metro', '340', '/insurance-charlotte-nc'],
-        ['Waxhaw', 'Union County', 'Charlotte Metro', '340', '/insurance-charlotte-nc'],
-        ['Monroe', 'Union County', 'Charlotte Metro', '340', '/insurance-charlotte-nc'],
-        ['Stallings', 'Union / Mecklenburg County', 'Charlotte Metro', '340', '/insurance-charlotte-nc'],
-        ['Mooresville', 'Iredell County', 'Lake Norman & I-77', '340', '/insurance-charlotte-nc'],
-        ['Statesville', 'Iredell County', 'Lake Norman & I-77', '340', ''],
-        ['Troutman', 'Iredell County', 'Lake Norman & I-77', '340', ''],
-        ['Union Grove', 'Iredell County', 'Yadkin Valley & Foothills', '340', ''],
-        ['Gastonia', 'Gaston County', 'Charlotte Metro West', '340', ''],
-        ['Belmont', 'Gaston County', 'Charlotte Metro West', '340', ''],
-        ['Mount Holly', 'Gaston County', 'Charlotte Metro West', '340', ''],
-        ['Denver', 'Lincoln County', 'Lake Norman West', '350', ''],
-        ['Lincolnton', 'Lincoln County', 'Charlotte Metro West', '350', ''],
-        ['Salisbury', 'Rowan County', 'I-85 Corridor', '340', ''],
+        ['Charlotte', 'Mecklenburg County', 'Greater Charlotte & Lake Norman', '340', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Huntersville', 'Mecklenburg County', 'Greater Charlotte & Lake Norman', '340', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Cornelius', 'Mecklenburg County', 'Greater Charlotte & Lake Norman', '340', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Davidson', 'Mecklenburg / Iredell County', 'Greater Charlotte & Lake Norman', '340', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Matthews', 'Mecklenburg County', 'Greater Charlotte & Lake Norman', '340', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Mint Hill', 'Mecklenburg County', 'Greater Charlotte & Lake Norman', '340', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Pineville', 'Mecklenburg County', 'Greater Charlotte & Lake Norman', '340', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Concord', 'Cabarrus County', 'Greater Charlotte & Lake Norman', '320', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Kannapolis', 'Cabarrus / Rowan County', 'Greater Charlotte & I-85', '320', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Harrisburg', 'Cabarrus County', 'Greater Charlotte & I-85', '320', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Indian Trail', 'Union County', 'Greater Charlotte & Lake Norman', '340', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Waxhaw', 'Union County', 'Greater Charlotte & Lake Norman', '340', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Weddington', 'Union County', 'Greater Charlotte & Lake Norman', '340', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Monroe', 'Union County', 'Greater Charlotte & Lake Norman', '340', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Stallings', 'Union / Mecklenburg County', 'Greater Charlotte & Lake Norman', '340', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Mooresville', 'Iredell County', 'Lake Norman & I-77', '340', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Statesville', 'Iredell County', 'Lake Norman & I-77', '340', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Troutman', 'Iredell County', 'Lake Norman & I-77', '340', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Union Grove', 'Iredell County', 'Yadkin Valley & Foothills', '340', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Gastonia', 'Gaston County', 'Greater Charlotte West', '350', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Belmont', 'Gaston County', 'Greater Charlotte West', '350', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Mount Holly', 'Gaston County', 'Greater Charlotte West', '350', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Denver', 'Lincoln County', 'Lake Norman West', '350', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Lincolnton', 'Lincoln County', 'Greater Charlotte West', '350', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        ['Salisbury', 'Rowan County', 'Greater Charlotte & I-85 Corridor', '320', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
         ['Albemarle', 'Stanly County', 'Charlotte Metro East', '320', ''],
         ['Shelby', 'Cleveland County', 'Foothills South', '350', ''],
         ['Winston-Salem', 'Forsyth County', 'Piedmont Triad', '310', ''],
@@ -196,6 +197,20 @@
         });
     }
 
+    var NC_COUNTY_GUIDES = {
+        'mecklenburg': ['Mecklenburg County', 'Charlotte, Huntersville, Cornelius & Matthews', 'Greater Charlotte & Lake Norman', '340', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        'iredell': ['Iredell County', 'Mooresville, Statesville & Davidson', 'Greater Charlotte & Lake Norman', '340', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        'cabarrus': ['Cabarrus County', 'Concord, Kannapolis & Harrisburg', 'Greater Charlotte & Lake Norman', '320', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        'union': ['Union County', 'Indian Trail, Waxhaw, Weddington & Monroe', 'Greater Charlotte & Lake Norman', '340', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        'lincoln': ['Lincoln County', 'Denver & Lincolnton (Lake Norman West)', 'Greater Charlotte & Lake Norman', '350', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        'gaston': ['Gaston County', 'Gastonia, Belmont & Mount Holly', 'Greater Charlotte & Lake Norman', '350', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        'rowan': ['Rowan County', 'Salisbury & Kannapolis (I-85 Corridor)', 'Greater Charlotte & Lake Norman', '320', '/blog/blogs/charlotte-huntersville-lake-norman-nc-insurance-guide'],
+        'orange': ['Orange County', 'Chapel Hill, Carrboro & Hillsborough', 'Triangle Corridor', '280', '/blog/blogs/chapel-hill-carrboro-durham-raleigh-triangle-insurance-guide'],
+        'durham': ['Durham County', 'Durham & RTP', 'Triangle Corridor', '270', '/blog/blogs/chapel-hill-carrboro-durham-raleigh-triangle-insurance-guide'],
+        'wake': ['Wake County', 'Raleigh, Cary, Apex & Holly Springs', 'Triangle Corridor', '270', '/blog/blogs/chapel-hill-carrboro-durham-raleigh-triangle-insurance-guide'],
+        'chatham': ['Chatham County', 'Pittsboro, Chapel Hill South & Siler City', 'Triangle Corridor', '280', '/blog/blogs/chapel-hill-carrboro-durham-raleigh-triangle-insurance-guide']
+    };
+
     function findNcMatch(query) {
         if (!query || query.length < 2) return null;
         var exact = null;
@@ -209,11 +224,14 @@
                 partial = p;
             }
         }
-        if (exact || partial) return exact || partial;
+        if (exact) return exact;
+        if (NC_COUNTY_GUIDES[query]) return NC_COUNTY_GUIDES[query];
+        if (partial) return partial;
         for (var j = 0; j < NC_COUNTIES.length; j++) {
             var c = NC_COUNTIES[j];
             var normC = normalize(c);
             if (normC === query || normC.indexOf(query) === 0) {
+                if (NC_COUNTY_GUIDES[normC]) return NC_COUNTY_GUIDES[normC];
                 return [c + ' County', c + ' County, NC', 'All 100 NC Counties Served', 'NC Rate Bureau', ''];
             }
         }
