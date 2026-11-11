@@ -130,6 +130,14 @@
             "@type": "Answer",
             "text": "Yes. While SDIP surcharge percentages are standardized, base rates and underwriting discounts vary significantly between carriers like Progressive, National General, Travelers, and Nationwide. We compare multiple companies to find your most affordable option."
           }
+        },
+        {
+          "@type": "Question",
+          "name": "How long do NC SDIP insurance points stay on my policy?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Under N.C. Gen. Stat. § 58-36-65(j), convictions assigned four or more SDIP points carry a five-policy-year surcharge period excluding speeding convictions, while speeding convictions and minor one-to-three-point violations or at-fault accidents generally remain on a three-policy-year experience period."
+          }
         }
       ]
     },
@@ -1078,6 +1086,78 @@
             text-decoration: underline;
         }
 
+        .calc-result-cta-bar {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-secondary) 100%);
+            border: 1px solid rgba(226, 178, 65, 0.45);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 10px;
+            color: var(--white);
+        }
+
+        .calc-result-cta-title {
+            font-family: 'Bricolage Grotesque', Arial, sans-serif;
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 3px;
+            line-height: 1.25;
+        }
+
+        .calc-result-cta-sub {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.82);
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .calc-result-cta-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .calc-cta-primary,
+        .calc-cta-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 42px;
+            padding: 8px 10px;
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: 800;
+            text-align: center;
+            transition: transform 0.15s ease, background-color 0.15s ease;
+        }
+
+        .calc-cta-primary {
+            background: var(--gold);
+            color: var(--navy);
+        }
+
+        .calc-cta-primary:hover {
+            background: var(--gold-hover);
+            transform: translateY(-1px);
+        }
+
+        .calc-cta-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.36);
+            color: var(--white);
+        }
+
+        .calc-cta-secondary:hover {
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        @media (max-width: 480px) {
+            .calc-result-cta-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* 3-STEP STRIP BELOW HERO */
         .steps-strip {
             background: var(--cream);
@@ -1909,13 +1989,24 @@
                                 </div>
                             </div>
 
-                            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                            <div class="calc-result-cta-bar" role="region" aria-label="Next step for NC auto options">
+                                <div class="calc-result-cta-title">See how North Carolina carriers price your record</div>
+                                <p class="calc-result-cta-sub">We compare 6 appointed NC auto carriers. Rates vary by carrier and underwriting.</p>
+                                <div class="calc-result-cta-actions">
+                                    <a href="/auto-quote?src=sdip_result_wave34" data-source="sdip_result_wave34" class="calc-cta-primary">
+                                        <span>Compare auto options</span>
+                                        <span aria-hidden="true">&rarr;</span>
+                                    </a>
+                                    <a href="/contact-us/?src=sdip_question_wave34" data-source="sdip_question_wave34" class="calc-cta-secondary">
+                                        <span>Ask the team a question</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div style="display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-wrap:wrap;">
                                 <button type="button" id="clearAllBtn" class="clear-incidents-link">
                                     <i class="fas fa-rotate-left" aria-hidden="true"></i> Reset calculator
                                 </button>
-                                <a href="/auto-quote?src=sdip_calc_results" style="font-size:13px;font-weight:700;color:var(--navy);text-decoration:underline;">
-                                    Shop carriers for better rates &rarr;
-                                </a>
                             </div>
                         </div>
                     </div>
@@ -1998,7 +2089,7 @@
                         <ul class="compare-list">
                             <li><i class="fas fa-circle-check" aria-hidden="true"></i><span>Even <strong>1 insurance point increases your base rate by +40%</strong>; 2 points equals +55%; 4 points equals +90%.</span></li>
                             <li><i class="fas fa-circle-check" aria-hidden="true"></i><span>Applies to both <strong>moving convictions and at-fault accidents</strong> above state damage thresholds.</span></li>
-                            <li><i class="fas fa-circle-check" aria-hidden="true"></i><span>Follows your policy for <strong>3 years (minor incidents)</strong> or <strong>5 years (4+ point convictions)</strong> under 2026 rules.</span></li>
+                            <li><i class="fas fa-circle-check" aria-hidden="true"></i><span>Follows your policy for <strong>3 years (minor incidents &amp; speeding)</strong> or <strong>5 years (non-speeding 4+ point convictions)</strong> under N.C.G.S. &sect; 58-36-65(j).</span></li>
                         </ul>
                     </div>
                 </div>
@@ -2007,8 +2098,8 @@
                 <div class="rules-grid">
                     <div class="rule-card">
                         <div class="rule-stat">5 Years</div>
-                        <div class="rule-label">Lookback for 4+ Point Tickets</div>
-                        <p>Convictions of 4 or more SDIP points (such as reckless driving or passing a stopped school bus) now stay on your insurance record for <strong>60 months</strong>, up from 36 months.</p>
+                        <div class="rule-label">Non-Speeding 4+ Point Convictions</div>
+                        <p>Under N.C. Gen. Stat. &sect; 58-36-65(j), convictions assigned 4 or more SDIP points (such as reckless driving or passing a stopped school bus, <strong>excluding speeding convictions</strong>) carry a <strong>5-policy-year</strong> surcharge period instead of 3 years.</p>
                     </div>
                     <div class="rule-card">
                         <div class="rule-stat">1 Per Home</div>
@@ -2106,6 +2197,13 @@
                                 <i class="fas fa-plus" aria-hidden="true"></i>
                             </summary>
                             <p><strong>Yes.</strong> While SDIP surcharge percentages are standardized, base rates and underwriting discounts vary significantly between carriers like Progressive, National General, Travelers, and Nationwide. We compare multiple companies to find your most affordable option.</p>
+                        </details>
+                        <details class="faq-item">
+                            <summary>
+                                <span>How long do NC SDIP insurance points stay on my policy?</span>
+                                <i class="fas fa-plus" aria-hidden="true"></i>
+                            </summary>
+                            <p>Under N.C. Gen. Stat. &sect; 58-36-65(j), convictions assigned four or more SDIP points carry a five-policy-year surcharge period excluding speeding convictions, while speeding convictions and minor one-to-three-point violations or at-fault accidents generally remain on a three-policy-year experience period.</p>
                         </details>
                     </div>
                 </div>
@@ -2205,8 +2303,8 @@
                     name: 'Speeding over 75 mph (or over 80 mph in a 70 zone)',
                     dmvPts: 3,
                     insPts: 4,
-                    lookbackYears: 5,
-                    tip: '4-point conviction: triggers a 5-year (60-month) insurance lookback under 2026 NC rules (+90% surcharge).'
+                    lookbackYears: 3,
+                    tip: '4-point speeding conviction (+90% surcharge): under N.C. Gen. Stat. § 58-36-65(j), speeding convictions are excluded from the 5-year surcharge rule and remain on a 3-policy-year experience period.'
                 },
                 {
                     id: 'v_stop_light',
