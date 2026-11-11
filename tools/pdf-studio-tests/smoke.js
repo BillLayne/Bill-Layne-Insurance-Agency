@@ -215,7 +215,7 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
     ok('tools: Select, Add text, Highlight, Draw, White-out, Signature, Add image, Stamps, Crop; four page actions',
       r.tools.join('|') === 'Select|Add text|Highlight|Draw|White-out|Signature|Add image|Stamps|Crop' && r.actions.join('|') === 'Rotate left|Rotate right|Duplicate page|Remove page', r);
     ok('one finishing action; Save, Gmail, SMS, Print, exports and the four options in the ⋯ menu',
-      r.cta === 'Preview & finish' && r.ctaOn && r.menu.join('|') === 'Save PDF|Gmail draft|Text via SMS|Print|Split by page ranges|Single pages as ZIP|All new PDFs as ZIP|Remove every page' && r.menuOptions === 4, r);
+      r.cta === 'Preview & finish' && r.ctaOn && r.menu.join('|') === 'Save PDF|Gmail draft|Text via SMS|Send to eSign|Print|Split by page ranges|Single pages as ZIP|All new PDFs as ZIP|Remove every page' && r.menuOptions === 4, r);
     ok('the ⋯ menu and the project menu open inside the viewport', r.menuInside && r.docMenuInside && r.docMenu.join('|') === 'Save as a project…|Start another PDF|Duplicate this PDF|Remove this PDF', r);
 
     // 3b. the stages in the top bar, and the Preview & finish dialog as the delivery surface
@@ -225,7 +225,7 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
       $('workflowStep3').click();
       await waitFor(() => $('studioDialog').open && $('previewPrint') && document.querySelector('#finalPages canvas'), 15000);
       out.dialog = $('studioDialogTitle').textContent;
-      out.finish = ['savePreview', 'previewEmail', 'previewSms', 'previewPrint', 'previewSplit', 'previewEach', 'previewZip'].every(id => !!$(id));
+      out.finish = ['savePreview', 'previewEmail', 'previewSms', 'previewEsign', 'previewPrint', 'previewSplit', 'previewEach', 'previewZip'].every(id => !!$(id));
       const fb = $('btnFinish');
       out.finishGold = !!fb && ['rgb(255, 199, 44)', 'rgb(200, 168, 78)'].includes(getComputedStyle(fb).backgroundColor) && !!fb.closest('#studioDialog > header') && fb.textContent.trim() === 'Finish';
       out.note = ($('finishNote') || {}).textContent || '';
@@ -833,6 +833,56 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
         ok('the Gmail draft body is Gmail White (Speedee White Elite): #gmail-email-content, spacer line + 600 px image first, fluid container, one nowrap, Speedee White palette, ASCII, texts to (336) 827-9065',
           g.wrapper && g.w600 === 2 && g.courier === 1 && g.pngSpacer === 1 && g.nowrap === 1 && g.fluid && !g.fixed600 && g.firstInBody && g.v3Palette &&
           g.placeholders === 0 && g.ascii && g.size < 102400 && g.attachment && g.textLine, g);
+      }
+      // Send to eSign -> converts Sign here stamp to cust_sig box, transfers bytes via postMessage, and Finish closes without extra download
+      {
+        const ctx = page.context();
+        await ctx.route('http://127.0.0.1:8816/agent**', route => route.fulfill({
+          status: 200,
+          contentType: 'text/html',
+          body: '<!doctype html><script>' +
+            'window.received = null;' +
+            'window.addEventListener("message", e => {' +
+            '  if (e.data && e.data.type === "bli-pdf-esign-hello") e.source.postMessage({ type: "bli-esign-ready", id: e.data.id }, e.origin);' +
+            '  if (e.data && e.data.type === "bli-pdf-esign-import") { window.received = e.data; e.source.postMessage({ type: "bli-esign-received", id: e.data.id }, e.origin); }' +
+            '});' +
+            '</script><body>mock esign</body>'
+        }));
+        await evalIn(page, `
+          window.__BLI_ESIGN_ORIGIN = 'http://127.0.0.1:8816';
+          await makePdf('NC Grange App.pdf', 1); $('btnAddEverything').click(); await shown(0);
+          await openEditor(0);
+          $('modeStamps').click(); await wait(200);
+          [...document.querySelectorAll('#quickStamps .pic-chip')].find(c => c.textContent.trim() === 'Sign here').click();
+          await wait(500);
+          $('btnPreviewFinal').click();
+          await waitFor(() => $('studioDialog').open && $('previewEsign') && document.querySelector('#finalPages canvas'), 15000);
+          $('previewEsign').click();
+          await waitFor(() => $('studioDialog').open && $('openEsign') && $('esignConvertMarkers'), 5000);
+          return true;`);
+        const [popup] = await Promise.all([
+          ctx.waitForEvent('page', { timeout: 10000 }),
+          page.click('#openEsign')
+        ]);
+        await popup.waitForFunction(() => !!window.received, null, { timeout: 10000 });
+        const got = await popup.evaluate(() => ({
+          docCount: (window.received.docs || []).length,
+          name: window.received.docs?.[0]?.name,
+          byteLen: window.received.docs?.[0]?.bytes?.byteLength || window.received.docs?.[0]?.bytes?.length || 0,
+          boxes: window.received.docs?.[0]?.boxes || []
+        }));
+        await popup.close();
+        const es = await evalIn(page, `
+          await waitFor(() => $('btnFinish') && /Transferred to BLI eSign/.test(($('esignStatus') || {}).textContent || ''), 8000);
+          $('btnFinish').click();
+          await waitFor(() => S().docs.length === 0, 10000); await wait(400);
+          delete window.__BLI_ESIGN_ORIGIN;
+          return { closed: S().docs.length === 0 };`);
+        await ctx.unroute('http://127.0.0.1:8816/agent**');
+        ok('Send to eSign converts Sign here stamp into cust_sig box, transfers PDF in memory, and Finish closes with no extra download',
+          got.docCount === 1 && got.name === 'NC Grange App' && got.byteLen > 500 &&
+          got.boxes.length === 1 && got.boxes[0].type === 'cust_sig' && got.boxes[0].page === 1 &&
+          es.closed && downloads.length === 4, Object.assign({ downloads: downloads.slice() }, got, es));
       }
       page.off('download', onDl);
     }

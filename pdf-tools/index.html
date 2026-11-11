@@ -4055,6 +4055,17 @@ body.home2 .fill-form-cta svg {
   background: var(--speedee-navy-hover);
   border-color: var(--speedee-navy-hover);
 }
+.finish-side .finish-actions #previewEsign {
+  grid-column: 1 / -1;
+  background: var(--speedee-gold-soft);
+  border: 1.5px solid var(--speedee-gold-border);
+  color: var(--speedee-navy);
+  font-weight: 800;
+}
+.finish-side .finish-actions #previewEsign:hover:not(:disabled) {
+  background: var(--speedee-gold);
+  border-color: var(--speedee-gold-border);
+}
 @media (min-width: 860px) {
   dialog#studioDialog:has(.finish-split) {
     width: min(1140px, 96vw);
@@ -4138,6 +4149,7 @@ body.home2 .fill-form-cta svg {
         <button id="btnCreate" title="Download the finished PDF (Ctrl+S)"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 4h12l2 2v14H5zM8 4v6h8V4M8 17h8"/></svg>Save PDF</button>
         <button id="btnEmail" title="Create a Gmail draft with this PDF attached"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 5h18v14H3zM3 6l9 7 9-7"/></svg>Gmail draft</button>
         <button id="btnSms" title="Hand this PDF to SMS Command Center to text it to a customer"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 4h16v12H8l-4 4z"/></svg>Text via SMS</button>
+        <button id="btnEsign" title="Send this PDF straight to BLI eSign to place signature boxes and text or email a signing link"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 17c3-5 4-9 6-9 3 0-2 9 1 9 2 0 3-4 5-4 1 0 1 4 3 4 1 0 2-1 3-2M3 21h18"/></svg>Send to eSign</button>
         <button id="btnPrint" title="Print the new document (Ctrl+P)"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 9V3h10v6M7 17H4V9h16v8h-3M7 14h10v7H7z"/></svg>Print</button>
         <div class="menu-label">Export</div>
         <button id="btnSplitRanges" title="Cut this PDF into several named PDFs by page ranges">Split by page ranges</button>
@@ -4860,7 +4872,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#EEF2F6}
 <script>
 (function () {
   'use strict';
-  const APP_VERSION = '2026-11-10.3';   // bump on every release — shown in the footer, the Help dialog and the console
+  const APP_VERSION = '2026-11-10.4';   // bump on every release — shown in the footer, the Help dialog and the console
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -5874,7 +5886,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#EEF2F6}
     const n = tray.length;
     $('trayCount').textContent = n + ' page' + (n === 1 ? '' : 's');
     $('footPages').textContent = n ? n + ' page' + (n === 1 ? '' : 's') + ' in finished PDF' : '';
-    ['btnCreate', 'btnSaveCopy', 'btnPrint', 'btnEmail', 'btnEachPage', 'btnClearTray', 'btnPreviewFinal'].forEach(id => { if ($(id)) $(id).disabled = !n; });
+    ['btnCreate', 'btnSaveCopy', 'btnPrint', 'btnEmail', 'btnEsign', 'btnEachPage', 'btnClearTray', 'btnPreviewFinal'].forEach(id => { if ($(id)) $(id).disabled = !n; });
     queueStaleThumbs();
   }
 
@@ -10043,7 +10055,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#EEF2F6}
      Recent projects and closes it. Projects Finish creates are auto:true and only the
      newest FINISHED_KEEP of those are kept; a project someone named is never pruned. */
   const FINISHED_KEEP = 12;
-  const HOW_WORDS = { saved: 'saved', gmail: 'put in a Gmail draft', sms: 'handed to SMS Command Center', print: 'sent to the printer', zip: 'saved in a ZIP' };
+  const HOW_WORDS = { saved: 'saved', gmail: 'put in a Gmail draft', sms: 'handed to SMS Command Center', esign: 'sent to BLI eSign', print: 'sent to the printer', zip: 'saved in a ZIP' };
   const FINISH_ICON = '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg>';
   const emptyWorkspace = () => ({ docs: [], tray: [], name: 'new-document', nextDocId: 1, nextSid: 1, nextTid: 1 });
   function outputSig(id) {
@@ -10181,6 +10193,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#EEF2F6}
             '<button id="previewSms"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 4h16v12H8l-4 4z"/></svg>Text via SMS</button>' +
             (bliTask ? '<button id="previewTask" class="task-send-btn" title="File this PDF to the customer\'s Drive folder and attach it to the task in the task manager"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 12h8M12 8l4 4-4 4"/></svg>Send to task</button>' : '') +
             '<button id="previewPrint"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 9V3h10v6M7 17H4V9h16v8h-3M7 14h10v7H7z"/></svg>Print</button>' +
+            '<button id="previewEsign" title="Send straight to BLI eSign to place signature boxes and text or email a signing link"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 17c3-5 4-9 6-9 3 0-2 9 1 9 2 0 3-4 5-4 1 0 1 4 3 4 1 0 2-1 3-2M3 21h18"/></svg>Send to eSign</button>' +
           '</div>' +
           '<div class="finish-opts" role="group" aria-label="Finish options">' +
             box('chkShrink', 'Shrink for email', 'Re-saves every page as a compact scan: a much smaller file, but its text can no longer be selected') +
@@ -10225,6 +10238,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#EEF2F6}
         const hand = id => () => { closeStudioDialog(); $(id).click(); };   // the same actions as the ⋯ menu
         $('previewEmail').onclick = hand('btnEmail');
         $('previewSms').onclick = hand('btnSms');
+        $('previewEsign').onclick = hand('btnEsign');
         $('previewPrint').onclick = hand('btnPrint');
         $('previewSplit').onclick = hand('btnSplitRanges');
         $('previewEach').onclick = hand('btnEachPage');
@@ -10253,7 +10267,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#EEF2F6}
   const retry=document.createElement('div');retry.id='mailRetryCheck';retry.hidden=!mailUncertain;retry.innerHTML='<p>A previous draft request has an uncertain outcome. Check Gmail Drafts before retrying.</p><a href="https://mail.google.com/mail/u/0/#drafts" target="_blank" rel="noopener">Open Gmail Drafts</a> <button id="mailRetryAllow">I checked Gmail — allow another attempt</button>';$('btnEmailGo').parentElement.before(retry);
   $('mailRetryAllow').onclick=()=>{mailUncertain=false;localStorage.removeItem('bliPdfMailUncertain');retry.hidden=true;$('btnEmailGo').disabled=false;};$('btnEmailGo').disabled=mailUncertain;
   $('btnConnections').onclick=()=>{
-    showDialog('Connections',`<p>Editing and project storage stay on this device. Gmail draft creation uploads the finished PDF to your mail gateway. Text via SMS hands it to SMS Command Center; you choose the customer there before anything uploads.</p><section class="studio-card"><h3>Forms Library</h3><p>Shared blank agency forms.</p><div class="studio-row"><button id="setupForms">Open setup</button><button id="testForms">Test connection</button></div><p id="formsTestStatus" role="status"></p></section><section class="studio-card"><h3>Gmail</h3><p>Creates a draft for your review, with the agency record BCC shown in the email window.</p><a href="/mail-gateway/" target="_blank" rel="noopener">Open Mail Gateway setup</a><div class="studio-row"><button id="testMail">Test gateway</button></div><p id="mailTestStatus" role="status"></p></section><section class="studio-card"><h3>SMS Command Center</h3><p>Sign in there using the existing staff access. No SMS credentials are stored in PDF Studio.</p></section>`);
+    showDialog('Connections',`<p>Editing and project storage stay on this device. Gmail draft creation uploads the finished PDF to your mail gateway. Text via SMS hands it to SMS Command Center; you choose the customer there before anything uploads.</p><section class="studio-card"><h3>Forms Library</h3><p>Shared blank agency forms.</p><div class="studio-row"><button id="setupForms">Open setup</button><button id="testForms">Test connection</button></div><p id="formsTestStatus" role="status"></p></section><section class="studio-card"><h3>Gmail</h3><p>Creates a draft for your review, with the agency record BCC shown in the email window.</p><a href="/mail-gateway/" target="_blank" rel="noopener">Open Mail Gateway setup</a><div class="studio-row"><button id="testMail">Test gateway</button></div><p id="mailTestStatus" role="status"></p></section><section class="studio-card"><h3>SMS Command Center</h3><p>Sign in there using the existing staff access. No SMS credentials are stored in PDF Studio.</p></section><section class="studio-card"><h3>BLI eSign</h3><p>Transfers your finished PDF directly in browser memory to <a href="https://esign.billlayneinsurance.com/agent" target="_blank" rel="noopener">BLI eSign Console</a> so you can place signature boxes and send a signing link.</p></section>`);
     $('setupForms').onclick=()=>{closeStudioDialog();openFormsModal();};
     $('testForms').onclick=async()=>{const el=$('formsTestStatus');if(!formsCode()){el.textContent='Set up the access code first.';return;}el.textContent='Checking…';try{const r=await formsApi('/list');const data=await r.json();if(!r.ok||!Array.isArray(data.forms))throw Error('Access was not accepted.');el.textContent='Verified: '+data.forms.length+' forms available.';}catch(e){el.textContent='Connection failed. Check the access code and network.';}};
     $('testMail').onclick=async()=>{const el=$('mailTestStatus'),url=localStorage.getItem(GW_URL_KEY),secret=localStorage.getItem(GW_SECRET_KEY);if(!url||!secret){el.textContent='Complete Mail Gateway setup on this device first.';return;}el.textContent='Checking…';try{const r=await fetch(url,{signal:AbortSignal.timeout(15000)}),data=await r.json();if(!data.ok||data.service!=='BLI Mail Gateway')throw Error();el.textContent='Gateway reachable (version '+data.version+'). Saved credentials are configured; authentication and attachment delivery are checked when a draft is created. No draft was created by this test.';}catch(e){el.textContent='Could not reach the gateway. Check setup and network; no draft was created.';}};
@@ -10269,6 +10283,165 @@ body{margin:0;padding:0;width:100%!important;background-color:#EEF2F6}
     $('openSms').onclick=()=>{smsWindow=window.open(SMS_ORIGIN+'/#pdf-import','_blank');if(!smsWindow){$('smsStatus').textContent='Allow the new tab, then try again.';return;}$('smsStatus').textContent='Waiting for SMS Command Center. The PDF has not been uploaded.';clearInterval(smsTimer);let attempts=0;smsTimer=setInterval(()=>{if(!smsTransfer||smsWindow.closed||attempts++>60){clearInterval(smsTimer);if($('smsStatus'))$('smsStatus').textContent='Connection timed out. Keep the PDF prepared and try opening SMS again.';return;}smsWindow.postMessage({type:'bli-pdf-hello',id:smsTransfer.id},SMS_ORIGIN);},1000);};
   };
   window.addEventListener('message',e=>{if(e.origin!==SMS_ORIGIN||e.source!==smsWindow||!smsTransfer||e.data?.id!==smsTransfer.id)return;if(e.data.type==='bli-sms-ready')smsWindow.postMessage({type:'bli-pdf-import',...smsTransfer},SMS_ORIGIN);if(e.data.type==='bli-sms-received'){clearInterval(smsTimer);smsTransfer=null;markDelivered('sms');if($('smsStatus')){$('smsStatus').textContent='Transferred to SMS. Choose a customer there to attach it to a draft — Finish closes this project here.';addFinishButton();}}});
+
+  // BLI eSign direct in-memory handoff (esign.billlayneinsurance.com/agent#pdf-import)
+  let esignWindow = null, esignTransfer = null, esignTimer = null;
+  function getEsignOrigin() {
+    if (window.__BLI_ESIGN_ORIGIN) return String(window.__BLI_ESIGN_ORIGIN).replace(/\/+$/, '');
+    if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') return 'http://127.0.0.1:8816';
+    return 'https://esign.billlayneinsurance.com';
+  }
+  function isBuiltinSignStamp(st) {
+    return !!(st && st.kind === 'img' && BUILTIN_PICTURE_STAMPS.some(b => b.dataUrl === st.dataUrl));
+  }
+  function countSignMarkers(pages) {
+    return (pages || []).reduce((n, p) => {
+      if ((p.rot || 0) % 360 !== 0 || p.crop) return n;
+      return n + (p.stamps || []).filter(isBuiltinSignStamp).length;
+    }, 0);
+  }
+  function preparePagesForEsign(pages, convertMarkers) {
+    const cloned = copyPages(pages || []);
+    const boxes = [];
+    if (convertMarkers) {
+      cloned.forEach((p, idx) => {
+        if ((p.rot || 0) % 360 !== 0 || p.crop || !Array.isArray(p.stamps)) return;
+        const kept = [];
+        for (const st of p.stamps) {
+          if (isBuiltinSignStamp(st)) {
+            boxes.push({
+              page: idx + 1,
+              type: 'cust_sig',
+              x: Math.max(0, Math.round(st.x || 0)),
+              y: Math.max(0, Math.round((st.y || 0) - 2)),
+              w: 200,
+              h: 40
+            });
+          } else {
+            kept.push(st);
+          }
+        }
+        p.stamps = kept;
+      });
+    }
+    return { pages: cloned, boxes };
+  }
+  $('btnEsign').onclick = () => {
+    if (!tray.length) { toast('Choose pages first.'); return; }
+    const allOuts = packedOutputs().filter(o => o.pages && o.pages.length);
+    const totalMarkers = allOuts.reduce((s, o) => s + countSignMarkers(o.pages), 0);
+    const curMarkers = countSignMarkers(tray);
+    const multiCount = Math.min(6, allOuts.length);
+    const lockWarn = $('chkLock').checked
+      ? '<p class="studio-note">Note: BLI eSign receives an unlocked copy so customer signatures and the SHA-256 certificate page can be stamped; the customer\u2019s 5-digit ZIP code protects the signing link.</p>'
+      : '';
+    const multiRow = allOuts.length > 1
+      ? '<label style="display:flex;gap:8px;align-items:flex-start;margin:10px 0"><input type="checkbox" id="esignAllOutputs" style="width:17px;height:17px;margin-top:2px;accent-color:var(--speedee-navy)"> <span><strong>Include all ' + multiCount + ' PDFs in this project</strong> in a single multi-document signing envelope</span></label>'
+      : '';
+    const markerRow = totalMarkers > 0
+      ? '<label style="display:flex;gap:8px;align-items:flex-start;margin:10px 0"><input type="checkbox" id="esignConvertMarkers" checked style="width:17px;height:17px;margin-top:2px;accent-color:var(--speedee-navy)"> <span><strong>Convert \u201cSign here\u201d / \u201cX\u201d stamps into live Customer Signature boxes</strong> (' + (allOuts.length > 1 ? totalMarkers + ' across project' : curMarkers + ' on this PDF') + ') &mdash; removes the static stamp graphic so real ink lands cleanly on the line</span></label>'
+      : '';
+    showDialog('Send to BLI eSign',
+      '<p>Build your finished PDF in browser memory and open <strong>BLI eSign Console</strong> ready to place signature boxes and send the signing link via text or Gmail.</p>' +
+      multiRow + markerRow + lockWarn +
+      '<div class="studio-row" style="margin-top:12px"><button id="openEsign" class="primary">Open in BLI eSign &rarr;</button></div>' +
+      '<p id="esignStatus" role="status"></p>'
+    );
+    dialogCleanup = () => { clearInterval(esignTimer); esignTransfer = null; };
+    $('openEsign').onclick = async () => {
+      const origin = getEsignOrigin();
+      // Open synchronously inside the click gesture so popup blockers never interfere
+      esignWindow = window.open(origin + '/agent#pdf-import', '_blank');
+      if (!esignWindow) {
+        $('esignStatus').textContent = 'Pop-up blocked — allow pop-ups for this site, then click Open in BLI eSign again.';
+        return;
+      }
+      $('openEsign').disabled = true;
+      $('esignStatus').textContent = 'Building PDF and connecting to BLI eSign…';
+      try {
+        const sendAll = !!($('esignAllOutputs') && $('esignAllOutputs').checked);
+        const convertMarkers = !!($('esignConvertMarkers') && $('esignConvertMarkers').checked);
+        const targets = sendAll
+          ? allOuts.slice(0, 6)
+          : [{ id: activeOutput, name: $('nameInput').value || 'Document', pages: tray }];
+        const opts = { ...exportOptions(), lock: false };
+        const builtDocs = [];
+        for (const t of targets) {
+          const prep = preparePagesForEsign(t.pages, convertMarkers);
+          const r = await buildFinalBytes(prep.pages, opts);
+          if (!r || !r.bytes) throw new Error('Could not build ' + t.name + '.');
+          if (r.bytes.length > 15 * 1024 * 1024) {
+            throw new Error('"' + t.name + '" is over the 15 MB eSign limit (' + fmtSize(r.bytes.length) + '). Turn on "Shrink for email" and try again.');
+          }
+          builtDocs.push({
+            name: String(t.name || 'Document').replace(/\.pdf$/i, '').trim() || 'Document',
+            bytes: r.bytes,
+            boxes: prep.boxes
+          });
+        }
+        const prefill = bliTask ? {
+          clientName: bliTask.clientName || '',
+          phone: bliTask.phone || '',
+          email: bliTask.email || '',
+          policyNum: bliTask.policyNumber || '',
+          carrier: bliTask.carrier || ''
+        } : {};
+        esignTransfer = {
+          id: crypto.randomUUID(),
+          origin,
+          ids: targets.map(t => t.id),
+          docs: builtDocs,
+          prefill
+        };
+        const totalSize = builtDocs.reduce((s, d) => s + d.bytes.length, 0);
+        if ($('esignStatus')) {
+          $('esignStatus').textContent = builtDocs.map(d => d.name + '.pdf').join(', ') + ' • ' + fmtSize(totalSize) + ' • waiting for BLI eSign Console…';
+        }
+        clearInterval(esignTimer);
+        let attempts = 0;
+        const ping = () => {
+          if (!esignTransfer || !esignWindow || esignWindow.closed || attempts++ > 120) {
+            clearInterval(esignTimer);
+            if ($('esignStatus') && esignTransfer) {
+              $('esignStatus').textContent = 'Connection timed out or tab was closed. Click Open in BLI eSign to try again.';
+              if ($('openEsign')) $('openEsign').disabled = false;
+            }
+            return;
+          }
+          try { esignWindow.postMessage({ type: 'bli-pdf-esign-hello', id: esignTransfer.id }, esignTransfer.origin); } catch (_) {}
+        };
+        ping();
+        esignTimer = setInterval(ping, 400);
+      } catch (err) {
+        try { if (esignWindow && !esignWindow.closed) esignWindow.close(); } catch (_) {}
+        if ($('esignStatus')) $('esignStatus').textContent = err.message || 'Could not prepare PDF for eSign.';
+        if ($('openEsign')) $('openEsign').disabled = false;
+      } finally {
+        busy(false);
+      }
+    };
+  };
+  window.addEventListener('message', (e) => {
+    if (!esignTransfer || e.origin !== esignTransfer.origin || e.source !== esignWindow || !e.data || e.data.id !== esignTransfer.id) return;
+    if (e.data.type === 'bli-esign-ready') {
+      esignWindow.postMessage({
+        type: 'bli-pdf-esign-import',
+        id: esignTransfer.id,
+        docs: esignTransfer.docs,
+        prefill: esignTransfer.prefill
+      }, esignTransfer.origin);
+    } else if (e.data.type === 'bli-esign-received') {
+      clearInterval(esignTimer);
+      const doneIds = esignTransfer.ids;
+      esignTransfer = null;
+      markDelivered('esign', doneIds);
+      if ($('esignStatus')) {
+        $('esignStatus').textContent = 'Transferred to BLI eSign ✓ — place signature boxes & create the signing link in that tab. Press Finish above to close this project here.';
+        addFinishButton();
+      }
+      if ($('openEsign')) $('openEsign').disabled = false;
+    }
+  });
 
   // Task bridge (2026-10-29): when the task manager frames this page from its own
   // origin, the parent sends the customer / task it was opened from and receives
