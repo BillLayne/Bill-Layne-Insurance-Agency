@@ -44,8 +44,9 @@ def translate_js(src):
 
 def schema(title, path, description):
     return {'@context':'https://schema.org','@graph':[
-        {'@type':['InsuranceAgency','LocalBusiness'],'@id':'https://www.billlayneinsurance.com/#agency','name':'Bill Layne Insurance Agency','url':'https://www.billlayneinsurance.com/','telephone':'+1-336-835-1993','address':{'@type':'PostalAddress','streetAddress':'1283 N Bridge St','addressLocality':'Elkin','addressRegion':'NC','postalCode':'28621','addressCountry':'US'},'areaServed':{'@type':'State','name':'North Carolina'}},
-        {'@type':'WebPage','@id':'https://www.billlayneinsurance.com'+path+'#webpage','url':'https://www.billlayneinsurance.com'+path,'name':title,'description':description,'inLanguage':'es','isPartOf':{'@id':'https://www.billlayneinsurance.com/#website'},'about':{'@id':'https://www.billlayneinsurance.com/#agency'}},
+        {'@type':['InsuranceAgency','LocalBusiness'],'@id':'https://www.billlayneinsurance.com/#agency','name':'Bill Layne Insurance Agency','identifier':'NC Agency License #15569731','url':'https://www.billlayneinsurance.com/','telephone':'+1-336-835-1993','address':{'@type':'PostalAddress','streetAddress':'1283 N Bridge St','addressLocality':'Elkin','addressRegion':'NC','postalCode':'28621','addressCountry':'US'},'areaServed':{'@type':'State','name':'North Carolina'}},
+        {'@type':'Person','@id':'https://www.billlayneinsurance.com/#founder','name':'Bill Layne','url':'https://www.billlayneinsurance.com/about/','jobTitle':'Licensed North Carolina Principal Insurance Agent','worksFor':{'@id':'https://www.billlayneinsurance.com/#agency'},'hasCredential':{'@type':'EducationalOccupationalCredential','credentialCategory':'North Carolina Resident Insurance Producer License','identifier':'NPN #6608086','recognizedBy':{'@type':'GovernmentOrganization','name':'North Carolina Department of Insurance (NCDOI)','url':'https://www.ncdoi.gov/'}}},
+        {'@type':'WebPage','@id':'https://www.billlayneinsurance.com'+path+'#webpage','url':'https://www.billlayneinsurance.com'+path,'name':title,'description':description,'inLanguage':'es','isPartOf':{'@id':'https://www.billlayneinsurance.com/#website'},'publisher':{'@id':'https://www.billlayneinsurance.com/#agency'},'reviewedBy':{'@id':'https://www.billlayneinsurance.com/#founder'},'about':{'@id':'https://www.billlayneinsurance.com/#agency'}},
         {'@type':'BreadcrumbList','itemListElement':[{'@type':'ListItem','position':1,'name':'Español','item':'https://www.billlayneinsurance.com/espanol/'},{'@type':'ListItem','position':2,'name':'Cotizar','item':'https://www.billlayneinsurance.com/espanol/cotizar/'}]+([] if path=='/espanol/cotizar/' else [{'@type':'ListItem','position':3,'name':title,'item':'https://www.billlayneinsurance.com'+path}])}]}
 
 def build(kind, slug):
@@ -74,10 +75,10 @@ def build(kind, slug):
         if href.startswith(('tel:','sms:')):el['href']='tel:3363562200'
         elif href.startswith('mailto:'):el['href']='mailto:jimenez.links@gmail.com'
         elif href=='/':el['href']='/espanol/'
-        elif href.startswith('/get-quote'):el['href']='/espanol/cotizar/?src=espanol_'+kind+'_back'
-        elif href.startswith('/auto-quote'):el['href']='/espanol/cotizar-auto/?src=espanol_home_bundle'
-        elif href.startswith('/home-quote'):el['href']='/espanol/cotizar-casa/?src=espanol_auto_bundle'
-        elif href.startswith('/renters-quote'):el['href']='/espanol/?src=espanol_home_renters&tipo=inquilino#cotizar'
+        elif href.lstrip('/').startswith('get-quote'):el['href']='/espanol/cotizar/?src=espanol_'+kind+'_back'
+        elif href.lstrip('/').startswith('auto-quote'):el['href']='/espanol/cotizar-auto/?src=espanol_home_bundle'
+        elif href.lstrip('/').startswith('home-quote'):el['href']='/espanol/cotizar-casa/?src=espanol_auto_bundle'
+        elif href.lstrip('/').startswith('renters-quote'):el['href']='/espanol/?src=espanol_home_renters&tipo=inquilino#cotizar'
         elif 'review' in href and href.startswith('https:'):el['href']='/espanol/#nosotros'
     for node in list(s.body.find_all(string=True)):
         if isinstance(node,Comment) or node.parent.name in ['script','style']:continue
@@ -133,6 +134,8 @@ def build(kind, slug):
     for tag in s.select('link[hreflang]'):tag.decompose()
     for lang,href in [('es',path),('en','/'+kind+'-quote')]:
         tag=s.new_tag('link',rel='alternate',hreflang=lang,href='https://www.billlayneinsurance.com'+href);s.head.append(tag)
+    for href,lbl in [('https://www.billlayneinsurance.com/llms.txt','AI & LLM Directory'),('https://www.billlayneinsurance.com/llms-full.txt','Full NC Insurance Statutory & Carrier Reference')]:
+        tag=s.new_tag('link',rel='alternate',type='text/markdown',href=href,title=lbl);s.head.append(tag)
     for tag in s.select('meta[name="keywords"]'):tag.decompose()
     for tag in s.select('meta[name="geo.position"],meta[name="ICBM"]'):tag.decompose()
     for tag in s.select('meta[name="geo.placename"]'):tag['content']='Dobson, North Carolina'
