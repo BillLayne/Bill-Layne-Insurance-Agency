@@ -141,7 +141,10 @@ function analyzeData() {
     const scoreMessage = document.getElementById('scoreMessage');
     
     scoreNumber.textContent = score;
-    scoreCircle.style.setProperty('--score-deg', `${(score / 100) * 360}deg`);
+    if (scoreCircle) {
+        scoreCircle.style.transition = 'stroke-dashoffset 0.8s ease';
+        scoreCircle.style.strokeDashoffset = (351.86 * (1 - score / 100)).toFixed(2);
+    }
     
     if (score >= 85) {
         scoreMessage.textContent = "Excellent coverage! Your home is well protected.";
@@ -288,11 +291,11 @@ function identifyCoverageGaps() {
     }
     
     if (formData.hasBusinessUse) {
-        gaps.push('Home business use may not be covered - consider business insurance');
+        gaps.push('Home-based work or equipment may face sub-limits on a standard homeowners policy — ask about an in-home property endorsement');
     }
     
     if (formData.hasRental) {
-        gaps.push('Rental activity requires special coverage - standard policies may exclude');
+        gaps.push('Short-term or tenant rental activity requires a landlord/dwelling policy or endorsement — standard HO-3 policies may exclude it');
     }
     
     // Roof age concern
@@ -355,16 +358,16 @@ function generateRecommendations() {
     
     // Additional coverage recommendations
     if (!formData.hasWaterBackup) {
-        recommendations.push('Add water backup coverage - typically costs $30-60/year');
+        recommendations.push('Add water and sewer backup coverage by endorsement to protect finished interiors and drains');
     }
     
     if (!formData.hasIdentityTheft) {
-        recommendations.push('Consider identity theft protection - increasingly important coverage');
+        recommendations.push('Ask about optional identity fraud expense or equipment breakdown endorsements');
     }
     
     // Risk mitigation
     if (formData.hasPool || formData.hasTrampoline) {
-        recommendations.push('Install security features and maintain strict safety protocols to reduce liability');
+        recommendations.push('Install self-latching fencing and safety features to reduce liability exposure');
     }
     
     return recommendations;
@@ -374,40 +377,39 @@ function generateRecommendations() {
 function identifySavings() {
     const savings = [];
     
-    savings.push('Bundle home with auto insurance for 15-25% discount');
+    savings.push('Compare multi-policy home + auto bundle credits across appointed NC carriers');
     
     if (formData.hasSecuritySystem) {
-        savings.push('Monitored security system discount applied - saving 5-20%');
+        savings.push('Protective device credit: confirm your monitored alarm certificate is on file');
     } else {
-        savings.push('Install monitored security system for 5-20% discount');
+        savings.push('Monitored burglar/fire alarm or smart water-shutoff sensors may qualify for protective device credits');
     }
     
     if (formData.hasSmokeDetectors && formData.hasFireExtinguisher) {
-        savings.push('Fire safety features qualify for additional discounts');
+        savings.push('Smoke detectors, deadbolts, and fire extinguishers help qualify for loss-mitigation credits');
     }
     
     if (formData.updatedElectrical || formData.updatedPlumbing || formData.updatedHVAC) {
-        savings.push('Updated systems may qualify for modernization discounts');
+        savings.push('Document roof, electrical, plumbing, and HVAC update years — newer systems improve carrier eligibility');
     }
     
     if (formData.deductible === '500' || formData.deductible === '1000') {
-        savings.push('Raising deductible to $2,500 could save 15-30% on premiums');
+        savings.push('Compare $1,000 vs. $2,500 all-peril deductibles side by side if you maintain an emergency reserve');
     }
     
     const homeAge = new Date().getFullYear() - parseInt(formData.yearBuilt);
     if (homeAge < 10) {
-        savings.push('Newer home discount may be available - verify with agent');
+        savings.push('Newer-home construction credits may apply — verify roof and build year on your quote');
     }
     
     if (formData.previousClaims === '0') {
-        savings.push('Claims-free discount earned - maintain for continued savings');
+        savings.push('Claims-free history helps unlock preferred NC homeowners underwriting tiers');
     }
     
-    savings.push('Pay annually instead of monthly to save 5-8%');
-    savings.push('Review coverage annually - avoid paying for unnecessary add-ons');
+    savings.push('Shop multiple NC homeowners carriers at renewal — rates and discount eligibility vary by carrier and underwriting');
     
     if (formData.mortgageBalance === 'paid-off') {
-        savings.push('No mortgage requirement - flexibility to adjust coverage and save');
+        savings.push('Paid-off home: verify billing preferences and escrow removal so notices come directly to you');
     }
     
     return savings;
@@ -524,8 +526,12 @@ function assessRiskProfile() {
 
 // Show results
 function showResults() {
-    document.getElementById('homeEvaluatorForm').style.display = 'none';
-    document.getElementById('resultsSection').style.display = 'block';
+    const formEl = document.getElementById('homeEvaluatorForm');
+    const resultsEl = document.getElementById('resultsSection');
+    formEl.classList.add('hidden');
+    formEl.style.display = 'none';
+    resultsEl.classList.remove('hidden');
+    resultsEl.style.display = 'block';
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -533,9 +539,13 @@ function showResults() {
 function startOver() {
     currentStep = 1;
     formData = {};
-    document.getElementById('homeEvaluatorForm').reset();
-    document.getElementById('homeEvaluatorForm').style.display = 'block';
-    document.getElementById('resultsSection').style.display = 'none';
+    const formEl = document.getElementById('homeEvaluatorForm');
+    const resultsEl = document.getElementById('resultsSection');
+    formEl.reset();
+    formEl.classList.remove('hidden');
+    formEl.style.display = 'block';
+    resultsEl.classList.add('hidden');
+    resultsEl.style.display = 'none';
     showStep(1);
     updateProgressBar();
 }

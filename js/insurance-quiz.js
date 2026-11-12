@@ -11,15 +11,15 @@ const quizQuestions = [
         explanation: "A deductible is the amount you must pay out-of-pocket before your insurance company starts paying for covered expenses. For example, if you have a $1,000 deductible and file a $3,000 claim, you pay the first $1,000 and your insurance covers the remaining $2,000."
     },
     {
-        question: "Which type of life insurance provides coverage for a specific period?",
+        question: "What are North Carolina's mandatory minimum auto liability insurance limits?",
         options: [
-            "Whole life insurance",
-            "Universal life insurance",
-            "Term life insurance",
-            "Variable life insurance"
+            "25/50/25",
+            "30/60/25",
+            "50/100/50",
+            "100/300/100"
         ],
         correct: 2,
-        explanation: "Term life insurance provides coverage for a specific period (term), such as 10, 20, or 30 years. It's typically more affordable than permanent life insurance and is ideal for temporary needs like mortgage protection or income replacement during working years."
+        explanation: "Under North Carolina General Statute § 20-279.21 (SB 452), NC requires minimum auto liability limits of $50,000 bodily injury per person, $100,000 bodily injury per accident, and $50,000 property damage (50/100/50)."
     },
     {
         question: "What does liability coverage in auto insurance protect?",
@@ -46,57 +46,57 @@ const quizQuestions = [
     {
         question: "Which type of insurance is typically required by mortgage lenders?",
         options: [
-            "Life insurance",
+            "Boat insurance",
             "Homeowners insurance",
             "Umbrella insurance",
-            "Flood insurance"
+            "Travel insurance"
         ],
         correct: 1,
-        explanation: "Mortgage lenders typically require homeowners insurance to protect their investment in your property. This ensures that if the home is damaged or destroyed, there's coverage to repair or rebuild it."
+        explanation: "Mortgage lenders require homeowners insurance to protect the dwelling securing your loan. Note that if a home is in a FEMA high-risk flood zone, lenders also require separate flood insurance."
     },
     {
-        question: "What does 'co-insurance' mean in health insurance?",
+        question: "Under North Carolina DMV law, what must you do BEFORE canceling auto insurance on a registered vehicle?",
         options: [
-            "Insurance shared between two companies",
-            "The percentage of costs you share with your insurer after meeting the deductible",
-            "Insurance for multiple family members",
-            "Coverage for pre-existing conditions"
+            "Nothing if the vehicle is parked in your driveway",
+            "Turn in the license plate to an NC DMV plate agency first",
+            "Wait 30 days for the carrier to notify NCDMV",
+            "Remove the registration sticker from the bumper"
         ],
         correct: 1,
-        explanation: "Co-insurance is the percentage of covered healthcare costs you pay after meeting your deductible. For example, with 80/20 co-insurance, your insurance pays 80% of covered costs and you pay 20%."
+        explanation: "Under N.C.G.S. § 20-309(d), North Carolina requires continuous liability coverage on every active license plate. Always surrender your license plate at an NCDMV license plate agency BEFORE canceling insurance to avoid civil lapse fines."
     },
     {
-        question: "What is an insurance rider?",
+        question: "What is an insurance endorsement (or rider)?",
         options: [
             "A person who drives your insured vehicle",
-            "An add-on to customize your insurance policy",
-            "A discount on your premium",
-            "A type of motorcycle insurance"
+            "An add-on that customizes or expands your insurance policy",
+            "A discount on your monthly payment",
+            "A traffic citation surcharge"
         ],
         correct: 1,
-        explanation: "An insurance rider is an add-on or amendment to your basic insurance policy that provides additional coverage or modifies the terms. For example, adding valuable items coverage to a homeowners policy."
+        explanation: "An endorsement (or scheduled rider) modifies a base policy to add or adjust coverage — such as adding water backup protection, equipment breakdown, or scheduled jewelry coverage to a homeowners policy."
     },
     {
-        question: "What type of insurance covers lost income due to disability?",
+        question: "What does a Personal Umbrella insurance policy cover in North Carolina?",
         options: [
-            "Life insurance",
-            "Health insurance",
-            "Disability insurance",
-            "Workers' compensation"
+            "Flooding from rising surface water",
+            "Excess personal liability above your auto and homeowners limits",
+            "Routine roof wear and tear",
+            "Vehicle mechanical breakdowns"
         ],
-        correct: 2,
-        explanation: "Disability insurance replaces a portion of your income if you become unable to work due to illness or injury. It helps maintain your financial stability during periods when you can't earn your regular income."
+        correct: 1,
+        explanation: "A personal umbrella policy provides an extra $1 million to $5 million+ layer of personal liability and legal defense protection above your underlying auto, homeowners, boat, or rental property liability limits."
     },
     {
-        question: "What is the difference between HMO and PPO health plans?",
+        question: "How does a 1% wind/hail deductible work on a $350,000 North Carolina homeowners policy?",
         options: [
-            "HMO is more expensive than PPO",
-            "PPO requires referrals, HMO doesn't",
-            "HMO typically requires choosing a primary care physician and getting referrals",
-            "There is no difference"
+            "You pay 1% of the contractor's repair bill",
+            "You pay $3,500 (1% of the Coverage A dwelling limit) on a covered wind or hail claim",
+            "Your annual premium rises by 1% after a storm",
+            "The carrier covers only 1% of roof damage"
         ],
-        correct: 2,
-        explanation: "HMO (Health Maintenance Organization) plans typically require you to choose a primary care physician and get referrals for specialists, while PPO (Preferred Provider Organization) plans offer more flexibility to see any healthcare provider without referrals."
+        correct: 1,
+        explanation: "Percentage wind/hail deductibles in North Carolina are calculated as a percentage of your Coverage A dwelling limit — so a 1% deductible on a $350,000 dwelling equals $3,500 out of pocket on a covered wind or hail loss."
     },
     {
         question: "What is underwriting in insurance?",
@@ -143,15 +143,15 @@ const quizQuestions = [
         explanation: "Gap insurance covers the 'gap' between what you owe on your car loan and the actual cash value of your vehicle if it's totaled. This is important because cars depreciate quickly and you might owe more than the car is worth."
     },
     {
-        question: "What factors typically affect life insurance premiums?",
+        question: "What does a North Carolina renters insurance policy (HO-4) cover?",
         options: [
-            "Only your age",
-            "Age, health, lifestyle, and coverage amount",
-            "Only the coverage amount",
-            "Your credit score only"
+            "Only the landlord's building roof and walls",
+            "Your personal belongings, personal liability, and loss-of-use living expenses",
+            "Routine apartment plumbing wear and tear",
+            "Your roommate's vehicle collision damage"
         ],
         correct: 1,
-        explanation: "Life insurance premiums are determined by multiple factors including your age, health status, lifestyle choices (like smoking), occupation, hobbies, and the amount of coverage you want. Younger, healthier individuals typically pay lower premiums."
+        explanation: "While a landlord's policy covers the building structure, an HO-4 renters policy protects your personal belongings (Coverage C), personal liability (Coverage E), and temporary living expenses (Coverage D) after a covered loss."
     },
     {
         question: "What is an insurance grace period?",
@@ -281,37 +281,37 @@ function generateRecommendations() {
     
     userAnswers.forEach(answer => {
         if (!answer.correct) {
-            const question = quizQuestions[answer.questionIndex];
-            if (question.question.includes('deductible')) incorrectTopics.add('deductibles');
-            if (question.question.includes('life insurance')) incorrectTopics.add('life');
-            if (question.question.includes('health')) incorrectTopics.add('health');
-            if (question.question.includes('auto') || question.question.includes('vehicle')) incorrectTopics.add('auto');
-            if (question.question.includes('property') || question.question.includes('homeowners')) incorrectTopics.add('property');
+            const qText = quizQuestions[answer.questionIndex].question.toLowerCase();
+            if (qText.includes('deductible')) incorrectTopics.add('deductibles');
+            if (qText.includes('dmv') || qText.includes('canceling')) incorrectTopics.add('dmv');
+            if (qText.includes('umbrella')) incorrectTopics.add('umbrella');
+            if (qText.includes('auto') || qText.includes('vehicle') || qText.includes('gap')) incorrectTopics.add('auto');
+            if (qText.includes('property') || qText.includes('homeowners') || qText.includes('renters') || qText.includes('endorsement')) incorrectTopics.add('property');
         }
     });
     
     if (incorrectTopics.has('deductibles')) {
-        recommendations.push("Review how deductibles work and their impact on premiums");
+        recommendations.push("Review how flat dollar deductibles and NC percentage wind/hail deductibles affect out-of-pocket claim costs");
     }
-    if (incorrectTopics.has('life')) {
-        recommendations.push("Learn more about different types of life insurance and their benefits");
+    if (incorrectTopics.has('dmv')) {
+        recommendations.push("Bookmark NC DMV rules: always turn in license plates before canceling auto coverage (N.C.G.S. § 20-309)");
     }
-    if (incorrectTopics.has('health')) {
-        recommendations.push("Explore health insurance plan types and coverage options");
+    if (incorrectTopics.has('umbrella')) {
+        recommendations.push("Check whether a $1M+ personal umbrella policy makes sense above your auto and home limits");
     }
     if (incorrectTopics.has('auto')) {
-        recommendations.push("Understand auto insurance coverage types and state requirements");
+        recommendations.push("Compare your current NC auto liability and UM/UIM limits against 100/300/100+ protection");
     }
     if (incorrectTopics.has('property')) {
-        recommendations.push("Study homeowners and property insurance essentials");
+        recommendations.push("Review replacement cost vs. actual cash value on your homeowners or renters declarations page");
     }
     
     if (recommendations.length === 0) {
-        recommendations.push("Keep up the great work and stay informed about insurance updates");
-        recommendations.push("Consider reviewing advanced insurance topics like umbrella policies");
+        recommendations.push("Outstanding NC insurance IQ — keep reviewing your auto and homeowners renewals annually");
+        recommendations.push("Consider checking personal umbrella limits as household savings and home equity grow");
     }
     
-    recommendations.push("Schedule a consultation with an insurance professional for personalized advice");
+    recommendations.push("Compare side-by-side NC auto or home options with our licensed team whenever your policy renews");
     
     return recommendations;
 }

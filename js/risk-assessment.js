@@ -166,15 +166,15 @@ const assessmentQuestions = {
             ]
         },
         {
-            question: "Do you have any of the following? (Select all that apply)",
+            question: "Which personal protection layers do you currently carry? (Select all that apply)",
             type: "multiple",
             options: [
-                { text: "Life insurance", value: -2 },
-                { text: "Disability insurance", value: -2 },
-                { text: "Health insurance", value: -1 },
-                { text: "Retirement savings", value: -1 },
-                { text: "Investment portfolio", value: -1 },
-                { text: "None of the above", value: 3 }
+                { text: "Auto liability at 100/300/100 or higher", value: -2 },
+                { text: "Personal umbrella liability policy ($1M+)", value: -2 },
+                { text: "Scheduled valuables / water backup endorsements", value: -1 },
+                { text: "Dedicated deductible emergency fund", value: -1 },
+                { text: "Bundled home/renters + auto policies", value: -1 },
+                { text: "None of the above / Not sure", value: 3 }
             ]
         },
         {
@@ -542,15 +542,15 @@ function generateRecommendations(scores) {
     
     if (scores.financial > 15) {
         recommendations.push({
-            title: "Life Insurance Review",
-            description: "Your financial obligations suggest a need for adequate life insurance to protect dependents.",
-            priority: "medium"
+            title: "Higher Auto & Home Liability Limits",
+            description: "Household income and asset exposure outgrow NC 50/100/50 state minimums quickly — compare 100/300/100 or 250/500/100 liability limits.",
+            priority: "high"
         });
         
         recommendations.push({
-            title: "Disability Insurance",
-            description: "Protect your income with short and long-term disability coverage.",
-            priority: "high"
+            title: "Personal Umbrella Policy ($1M–$5M)",
+            description: "Add an excess personal liability layer above your NC auto and homeowners policies to shield savings, home equity, and future income.",
+            priority: "medium"
         });
     }
     
@@ -614,15 +614,15 @@ function createActionPlan(scores) {
     actionList.innerHTML = '';
     
     const actions = [
-        "Schedule a comprehensive insurance review with Bill Layne Insurance",
-        "Document all valuable possessions for accurate coverage",
-        "Review and update beneficiaries on all policies",
-        "Consider bundling policies for better coverage and savings",
-        "Evaluate deductibles to optimize premium costs"
+        "Request a side-by-side NC auto and homeowners review with Bill Layne Insurance",
+        "Document valuable household possessions with photos for accurate Coverage C & scheduled limits",
+        "Verify Uninsured/Underinsured Motorist (UM/UIM) limits match your bodily injury limits",
+        "Compare multi-policy auto + home or renters bundle options across appointed NC carriers",
+        "Review flat and wind/hail deductibles against your emergency savings reserve"
     ];
     
     if (scores.financial > 20) {
-        actions.unshift("Prioritize disability and life insurance evaluation");
+        actions.unshift("Compare 250/500/100 underlying liability limits plus a $1M+ personal umbrella quote");
     }
     
     if (scores.property > 20) {

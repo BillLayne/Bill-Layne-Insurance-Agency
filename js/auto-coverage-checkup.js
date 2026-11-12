@@ -156,7 +156,10 @@ function analyzeData() {
     const scoreMessage = document.getElementById('scoreMessage');
     
     scoreNumber.textContent = score;
-    scoreCircle.style.setProperty('--score-deg', `${(score / 100) * 360}deg`);
+    if (scoreCircle) {
+        scoreCircle.style.transition = 'stroke-dashoffset 0.8s ease';
+        scoreCircle.style.strokeDashoffset = (351.86 * (1 - score / 100)).toFixed(2);
+    }
     
     if (score >= 80) {
         scoreMessage.textContent = "Excellent coverage! You're well protected.";
@@ -185,13 +188,11 @@ function analyzeData() {
 function calculateCoverageScore() {
     let score = 100;
     
-    // Liability limits check
-    if (formData.liabilityLimits === 'state-minimum') {
+    // Liability limits check (NC mandatory minimum is 50/100/50 under N.C.G.S. § 20-279.21)
+    if (formData.liabilityLimits === 'below-nc-min') {
         score -= 30;
-    } else if (formData.liabilityLimits === '25/50/25') {
-        score -= 20;
     } else if (formData.liabilityLimits === '50/100/50') {
-        score -= 10;
+        score -= 20;
     } else if (formData.liabilityLimits === 'not-sure') {
         score -= 15;
     }
@@ -212,8 +213,7 @@ function calculateCoverageScore() {
     };
     
     const liabilityValue = {
-        'state-minimum': 25000,
-        '25/50/25': 50000,
+        'below-nc-min': 50000,
         '50/100/50': 100000,
         '100/300/100': 300000,
         '250/500/250': 500000,
@@ -221,7 +221,7 @@ function calculateCoverageScore() {
     };
     
     const netWorth = netWorthValue[formData.netWorth] || 100000;
-    const liability = liabilityValue[formData.liabilityLimits] || 50000;
+    const liability = liabilityValue[formData.liabilityLimits] || 100000;
     
     if (liability < netWorth * 0.5) {
         score -= 20;
@@ -239,34 +239,36 @@ function calculateCoverageScore() {
 function identifyCoverageGaps() {
     const gaps = [];
     
-    if (formData.liabilityLimits === 'state-minimum' || formData.liabilityLimits === '25/50/25') {
-        gaps.push('Your liability limits are dangerously low for protecting your assets');
+    if (formData.liabilityLimits === 'below-nc-min') {
+        gaps.push('Legacy or out-of-state limits below 50/100/50 do not meet North Carolina mandatory auto liability minimums under N.C.G.S. § 20-279.21');
+    } else if (formData.liabilityLimits === '50/100/50') {
+        gaps.push('Carrying only the 50/100/50 NC state minimum can leave personal savings and home equity exposed in a multi-vehicle accident');
     }
     
     if (!formData.hasUninsured) {
-        gaps.push('No uninsured/underinsured motorist coverage leaves you vulnerable');
+        gaps.push('Verify your Uninsured and Underinsured Motorist (UM/UIM) limits match your bodily injury limits');
     }
     
     if (formData.vehicleValue !== '<5000' && !formData.hasCollision) {
-        gaps.push('No collision coverage on a valuable vehicle');
+        gaps.push('No collision coverage selected on a vehicle worth $5,000 or more');
     }
     
     if (formData.vehicleValue !== '<5000' && !formData.hasComprehensive) {
-        gaps.push('No comprehensive coverage for theft, vandalism, or weather damage');
+        gaps.push('No comprehensive coverage for deer strikes, hail, falling trees, glass, or theft');
     }
     
     const highNetWorth = ['250k-500k', '500k-1m', '1m+'].includes(formData.netWorth);
-    const lowLiability = ['state-minimum', '25/50/25', '50/100/50'].includes(formData.liabilityLimits);
+    const lowLiability = ['below-nc-min', '50/100/50', '100/300/100'].includes(formData.liabilityLimits);
     
     if (highNetWorth && lowLiability) {
-        gaps.push('Your liability coverage is insufficient for your asset level - consider umbrella policy');
+        gaps.push('Your liability limits are below your household asset exposure — consider 250/500/100+ with a personal umbrella policy');
     }
     
     if (formData.primaryUse === 'rideshare' && !gaps.includes('rideshare')) {
-        gaps.push('Standard policies may not cover rideshare activities - specialized coverage needed');
+        gaps.push('Standard personal auto policies exclude active rideshare periods without a rideshare endorsement');
     }
     
-    return gaps.length > 0 ? gaps : ['No critical gaps identified - great job!'];
+    return gaps.length > 0 ? gaps : ['No critical gaps identified — great job reviewing your NC auto coverage!'];
 }
 
 // Generate recommendations
@@ -275,31 +277,31 @@ function generateRecommendations() {
     
     // Liability recommendations
     const netWorthToLiability = {
-        '<50k': '50/100/50',
+        '<50k': '100/300/100 (above the 50/100/50 NC minimum)',
         '50k-100k': '100/300/100',
-        '100k-250k': '100/300/100',
+        '100k-250k': '100/300/100 or 250/500/100',
         '250k-500k': '250/500/250',
-        '500k-1m': '250/500/250 plus $1M umbrella',
-        '1m+': '500/500/500 plus $2M+ umbrella'
+        '500k-1m': '250/500/250 plus a $1M personal umbrella',
+        '1m+': '500/500/500 plus a $2M+ personal umbrella'
     };
     
-    const recommendedLiability = netWorthToLiability[formData.netWorth];
-    recommendations.push(`Based on your assets, we recommend ${recommendedLiability} liability coverage`);
+    const recommendedLiability = netWorthToLiability[formData.netWorth] || '100/300/100';
+    recommendations.push(`Based on your household profile, consider ${recommendedLiability} liability coverage`);
     
     // Deductible recommendations
     if (formData.deductible === '250' || formData.deductible === '500') {
-        recommendations.push('Consider raising your deductible to $1,000 to save on premiums');
+        recommendations.push('Compare a $1,000 collision deductible alongside $500 if you keep an emergency reserve');
     }
     
     // Coverage recommendations
     if (!formData.hasUninsured) {
-        recommendations.push('Add uninsured/underinsured motorist coverage matching your liability limits');
+        recommendations.push('Keep NC Uninsured/Underinsured Motorist (UM/UIM) limits aligned with your bodily injury limits');
     }
     
     // Vehicle-specific recommendations
     const vehicleAge = new Date().getFullYear() - parseInt(formData.vehicleYear);
-    if (vehicleAge > 10 && (formData.hasCollision || formData.hasComprehensive)) {
-        recommendations.push('Consider dropping collision/comprehensive on older vehicles to save money');
+    if (vehicleAge > 12 && formData.vehicleValue === '<5000' && (formData.hasCollision || formData.hasComprehensive)) {
+        recommendations.push('Compare physical damage premium cost against actual cash value on older paid-off vehicles');
     }
     
     return recommendations;
@@ -309,21 +311,22 @@ function generateRecommendations() {
 function identifySavings() {
     const savings = [];
     
-    savings.push('Bundle auto with home insurance for up to 25% discount');
+    savings.push('Compare multi-policy auto + home or renters bundle credits across appointed NC carriers');
     
     if (formData.cleanRecord) {
-        savings.push('Your clean driving record qualifies you for safe driver discounts');
+        savings.push('3-year clean NC Safe Driver Incentive Plan (SDIP) history helps qualify for preferred carrier tiers');
     }
     
     if (formData.annualMileage === '<5000' || formData.annualMileage === '5000-10000') {
-        savings.push('Low mileage discount available for driving less than 10,000 miles/year');
+        savings.push('Low-mileage or pleasure-use rating may apply when driving under 10,000 miles per year');
     }
     
-    savings.push('Pay-in-full discount can save 5-10% vs monthly payments');
-    savings.push('Defensive driving course completion can save 5-15%');
+    savings.push('Ask about paid-in-full, EFT autopay, and paperless billing credits');
     
     if (formData.deductible === '250' || formData.deductible === '500') {
-        savings.push('Raising deductible from $500 to $1,000 could save $200-400/year');
+        savings.push('Compare $500 vs. $1,000 deductibles side by side (rates and discounts vary by carrier and underwriting)');
+    } else {
+        savings.push('Shop multiple NC auto carriers side by side at renewal (rates vary by carrier and underwriting)');
     }
     
     return savings;
@@ -331,8 +334,12 @@ function identifySavings() {
 
 // Show results
 function showResults() {
-    document.getElementById('autoCheckupForm').style.display = 'none';
-    document.getElementById('resultsSection').style.display = 'block';
+    const formEl = document.getElementById('autoCheckupForm');
+    const resultsEl = document.getElementById('resultsSection');
+    formEl.classList.add('hidden');
+    formEl.style.display = 'none';
+    resultsEl.classList.remove('hidden');
+    resultsEl.style.display = 'block';
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -340,9 +347,13 @@ function showResults() {
 function startOver() {
     currentStep = 1;
     formData = {};
-    document.getElementById('autoCheckupForm').reset();
-    document.getElementById('autoCheckupForm').style.display = 'block';
-    document.getElementById('resultsSection').style.display = 'none';
+    const formEl = document.getElementById('autoCheckupForm');
+    const resultsEl = document.getElementById('resultsSection');
+    formEl.reset();
+    formEl.classList.remove('hidden');
+    formEl.style.display = 'block';
+    resultsEl.classList.add('hidden');
+    resultsEl.style.display = 'none';
     showStep(1);
     updateProgressBar();
 }

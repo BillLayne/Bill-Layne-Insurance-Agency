@@ -30,11 +30,11 @@ const AnalyzerSystem = {
                     required: true,
                     options: [
                         { value: '', label: 'Select your current limits' },
-                        { value: '25_50_25', label: '$25,000/$50,000/$25,000 (State Minimum)' },
-                        { value: '50_100_50', label: '$50,000/$100,000/$50,000' },
-                        { value: '100_300_100', label: '$100,000/$300,000/$100,000' },
-                        { value: '250_500_250', label: '$250,000/$500,000/$250,000' },
+                        { value: '50_100_50', label: '$50,000/$100,000/$50,000 (NC State Minimum)' },
+                        { value: '100_300_100', label: '$100,000/$300,000/$100,000 (Recommended Baseline)' },
+                        { value: '250_500_250', label: '$250,000/$500,000/$250,000 (Umbrella Ready)' },
                         { value: '500_1000_500', label: '$500,000/$1,000,000/$500,000' },
+                        { value: 'legacy_min', label: 'Legacy / Out-of-State ($30,000/$60,000/$25,000 or lower)' },
                         { value: 'unsure', label: 'I\'m not sure' }
                     ]
                 },
@@ -1183,11 +1183,11 @@ const AnalyzerSystem = {
 
         // Analyze liability limits
         const liability = this.userData.liability_limits;
-        if (liability === '25_50_25') {
+        if (liability === '50_100_50' || liability === 'legacy_min') {
             riskScore += 3;
             recommendations.push({
-                title: 'Increase Liability Coverage',
-                description: 'Your current liability limits are at state minimums. Consider increasing to at least $100,000/$300,000/$100,000 for better protection.'
+                title: 'Increase Liability Coverage Above NC Minimums',
+                description: 'North Carolina requires at least $50,000/$100,000/$50,000, which a serious multi-car crash can exceed quickly. Consider increasing to at least $100,000/$300,000/$100,000 for stronger asset protection.'
             });
         } else if (liability === 'unsure') {
             riskScore += 2;
