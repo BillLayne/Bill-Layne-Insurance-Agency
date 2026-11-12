@@ -1,0 +1,27 @@
+<!--
+  BLI After-Hours Voice Assistant — website embed.
+
+  Paste these two lines just before </body> on any page. The widget renders a
+  floating call button in the bottom-right.
+
+  NOTE: this widget is live 24/7, but the agent's script says the office is
+  closed. Either gate it to after-hours with the snippet below, or reword the
+  first message before putting it on a page customers hit during the day.
+-->
+<elevenlabs-convai agent-id="agent_6801m0bgqxpxeycbgmkr0w1h3n44"></elevenlabs-convai>
+<script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
+
+<!-- Optional: only show it outside Mon-Fri 9-5 America/New_York -->
+<script>
+(function () {
+  var el = document.querySelector('elevenlabs-convai');
+  if (!el) return;
+  var now = new Date(
+    new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })
+  );
+  var day = now.getDay();          // 0 Sun .. 6 Sat
+  var hour = now.getHours();
+  var openNow = day >= 1 && day <= 5 && hour >= 9 && hour < 17;
+  if (openNow) el.remove();
+})();
+</script>
