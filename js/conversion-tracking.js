@@ -20,6 +20,7 @@
     function safeLinkPath(link) {
         var rawHref = (link.getAttribute('href') || '').trim().toLowerCase();
         if (rawHref.indexOf('tel:') === 0) return 'tel:';
+        if (rawHref.indexOf('sms:') === 0) return 'sms:';
         if (rawHref.indexOf('mailto:') === 0) return 'mailto:';
 
         try {
@@ -48,6 +49,7 @@
         var href = (link.getAttribute('href') || '').trim().toLowerCase();
         if (!href) return null;
         if (href.indexOf('tel:') === 0) return { eventName: 'phone_click', leadType: 'phone' };
+        if (href.indexOf('sms:') === 0) return { eventName: 'sms_click', leadType: 'sms' };
         if (href.indexOf('mailto:') === 0) return { eventName: 'email_click', leadType: 'email' };
         if (href.indexOf('maps.google.') > -1 || href.indexOf('google.com/maps') > -1) {
             return { eventName: 'directions_click', leadType: 'directions' };
