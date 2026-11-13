@@ -34,6 +34,7 @@
     }
 
     function sourceFor(link) {
+        if (link.dataset.ctaSource) return link.dataset.ctaSource;
         if (link.dataset.source) return link.dataset.source;
         if (link.id) return link.id;
 
