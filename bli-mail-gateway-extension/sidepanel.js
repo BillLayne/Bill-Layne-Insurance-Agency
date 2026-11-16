@@ -1,40 +1,102 @@
 /**
- * BLI Mail Gateway - Chrome side panel.
+ * BLI Mail Gateway - Chrome Side Panel (v1.2.0).
  *
  * Captures the rendered email template from the active tab (or accepts
- * pasted/dropped HTML) and posts it to the BLI Mail Gateway Apps Script
- * endpoint as a Gmail draft or an immediate send.
- *
- * Nothing is transmitted anywhere except to the user-configured gateway
- * URL, and only when the user clicks "Create Gmail Draft" or "Send Now".
- * The gateway URL and secret live in chrome.storage.local on this
- * computer only.
+ * pasted/dropped HTML), strips preview toolbars/scripts while keeping
+ * Schema.org JSON-LD, upgrades base64 600px spacers, entity-encodes
+ * non-ASCII emojis, attaches optional PDFs, and posts to BLI Mail Gateway.
  */
 
 (function () {
   'use strict';
 
   const $ = (id) => document.getElementById(id);
-  const state = { html: '', source: '', pageText: '', pageUrl: '', pageTitle: '' };
+  const SPACER_URL = 'https://img.billlayneinsurance.com/i/2026/11/email-spacer-600x1-4rd8em.png';
+  const DEFAULT_AUTHUSER = 'bill@billlayneinsurance.com';
   const RECEIPT_BUILDER_URL = 'https://www.billlayneinsurance.com/mail-gateway/receipt.html';
 
-  /* ---------------- settings ---------------- */
+  const state = {
+    html: '',
+    stripped: [],
+    source: '',
+    pageText: '',
+    pageUrl: '',
+    pageTitle: '',
+    looksLikePayment: false,
+    senderEmail: ''
+  };
+
+  let attachments = [];
+  const MAX_ATTACH = 5, MAX_ATTACH_BYTES = 18 * 1024 * 1024;
+  let sendArmed = false, overrideArmed = false, armTimer = null;
+  const SEND_LABEL = $('sendBtn').innerHTML;
+  const DRAFT_LABEL = $('draftBtn').innerHTML;
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+
+  function showResult(kind, htmlMsg) {
+    const r = $('result');
+    r.className = kind === true ? 'ok' : (kind === 'warn' ? 'warn' : 'err');
+    r.innerHTML = htmlMsg;
+    r.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function disarmAll() {
+    sendArmed = false;
+    overrideArmed = false;
+    clearTimeout(armTimer);
+    $('sendBtn').classList.remove('armed');
+    $('sendBtn').innerHTML = SEND_LABEL;
+    $('draftBtn').classList.remove('armed');
+    $('draftBtn').innerHTML = DRAFT_LABEL;
+  }
+  document.addEventListener('input', disarmAll, true);
+  document.addEventListener('change', disarmAll, true);
+
+  function fetchWithTimeout(url, opts, ms) {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), ms);
+    opts.signal = ctrl.signal;
+    return fetch(url, opts).finally(() => clearTimeout(t));
+  }
+
+  /* ---------------- settings & secret-verified ping ---------------- */
+
+  function updateDefaultsSummary() {
+    const bcc = $('bccInput').value.trim();
+    const cc = $('ccInput').value.trim();
+    const parts = [bcc ? ('&#128274; BCC: ' + esc(bcc)) : '&#9888;&#65039; No BCC'];
+    if (cc) parts.push('CC: ' + esc(cc));
+    $('defaultsSummary').innerHTML = parts.join(' &middot; ');
+  }
 
   async function loadSettings() {
     const s = await chrome.storage.local.get({
       gatewayUrl: '',
       gatewaySecret: '',
       fromName: 'Bill Layne Insurance',
-      bcc: 'Save@BillLayneInsurance.com'
+      bcc: 'Save@BillLayneInsurance.com',
+      senderEmail: ''
     });
     $('gwUrl').value = s.gatewayUrl;
     $('gwSecret').value = s.gatewaySecret;
     $('fromNameInput').value = s.fromName;
     $('bccInput').value = s.bcc;
-    if (!s.gatewayUrl) {
+    state.senderEmail = s.senderEmail || '';
+    updateDefaultsSummary();
+
+    if (!s.gatewayUrl || !s.gatewaySecret) {
       $('settingsCard').open = true;
+      $('connBadge').className = 'badge err';
+      $('connBadge').textContent = 'Gateway: setup needed';
     } else {
-      $('setStatus').textContent = '- saved ✓';
+      $('settingsCard').open = false;
+      $('setStatus').textContent = '— saved ✓';
+      pingGateway(true);
     }
   }
 
@@ -42,77 +104,84 @@
     const url = $('gwUrl').value.trim();
     const secret = $('gwSecret').value.trim();
     await chrome.storage.local.set({ gatewayUrl: url, gatewaySecret: secret });
-    $('setStatus').textContent = url ? '- saved ✓' : '';
+    $('setStatus').textContent = (url && secret) ? '— saved ✓' : '';
     if (url && url.indexOf('/exec') === -1) {
-      showResult(false, 'Heads up: the gateway URL usually ends in /exec - double-check you copied the Web app URL.');
+      showResult('warn', 'Heads up: the gateway URL usually ends in <code>/exec</code>.');
+      return;
+    }
+    if (url && secret) {
+      $('settingsCard').open = false;
+      pingGateway(false);
     } else {
-      showResult(true, 'Settings saved on this computer.');
+      showResult('warn', 'Enter both Gateway URL and Secret, then Save &amp; Test.');
     }
   }
 
   $('saveSettings').addEventListener('click', saveSettings);
-
   $('showSecret').addEventListener('click', function () {
     const f = $('gwSecret');
     f.type = f.type === 'password' ? 'text' : 'password';
     this.textContent = f.type === 'password' ? 'Show' : 'Hide';
   });
 
-  ['fromNameInput', 'bccInput'].forEach((id) => {
-    $(id).addEventListener('change', () => {
-      chrome.storage.local.set(id === 'fromNameInput'
-        ? { fromName: $(id).value }
-        : { bcc: $(id).value });
-    });
+  ['fromNameInput', 'bccInput', 'ccInput'].forEach((id) => {
+    $(id).addEventListener('input', updateDefaultsSummary);
+    if (id !== 'ccInput') {
+      $(id).addEventListener('change', () => {
+        chrome.storage.local.set(id === 'fromNameInput'
+          ? { fromName: $(id).value }
+          : { bcc: $(id).value });
+      });
+    }
   });
 
-  $('testConn').addEventListener('click', async () => {
+  async function pingGateway(silent) {
     const url = $('gwUrl').value.trim();
+    const secret = $('gwSecret').value.trim();
     const badge = $('connBadge');
     if (!url) {
       badge.className = 'badge err';
-      badge.textContent = 'Gateway: enter the URL first';
+      badge.textContent = 'Gateway: enter URL';
       return;
     }
     badge.className = 'badge';
-    badge.textContent = 'Gateway: testing…';
+    badge.textContent = 'Gateway: checking…';
     try {
-      const res = await fetchWithTimeout(url, { method: 'GET', redirect: 'follow' }, 30000);
+      const res = await fetchWithTimeout(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ secret, mode: 'ping' }),
+        redirect: 'follow'
+      }, 22000);
       const d = await res.json();
       if (d && d.ok) {
+        if (d.senderEmail) {
+          state.senderEmail = d.senderEmail;
+          chrome.storage.local.set({ senderEmail: d.senderEmail });
+        }
+        const q = typeof d.remainingQuota === 'number' ? ' · ' + d.remainingQuota + ' left' : '';
         badge.className = 'badge ok';
-        badge.textContent = 'Gateway: connected ✓ (v' + (d.version || '?') + ')';
+        badge.textContent = 'Gateway: connected ✓ (v' + (d.version || '1.3') + q + ')';
+        if (!silent) showResult(true, '&#9989; Connected &amp; secret verified' + q + '.');
+      } else if (d && /mode must be/i.test(d.error || '')) {
+        badge.className = 'badge ok';
+        badge.textContent = 'Gateway: connected ✓ (v1.2)';
+        if (!silent) showResult(true, '&#9989; Connected &amp; secret verified (v1.2).');
       } else {
         badge.className = 'badge err';
-        badge.textContent = 'Gateway: unexpected reply';
+        badge.textContent = 'Gateway: wrong secret';
+        $('settingsCard').open = true;
+        if (!silent) showResult(false, '&#10060; ' + esc((d && d.error) || 'Secret mismatch'));
       }
     } catch (e) {
       badge.className = 'badge err';
-      badge.textContent = 'Gateway: could not reach URL';
+      badge.textContent = 'Gateway: unreachable';
+      if (!silent) showResult(false, '&#10060; Could not reach Gateway URL.');
     }
-  });
-
-  /* ---------------- email HTML intake ---------------- */
-
-  function setEmailHtml(html, sourceLabel, title) {
-    state.html = html || '';
-    state.source = sourceLabel || '';
-    const bytes = new Blob([state.html]).size;
-    $('sourceInfo').textContent = state.html
-      ? sourceLabel + ' · ' + (bytes / 1024).toFixed(1) + ' KB'
-      : 'No email loaded yet';
-    $('clipWarn').hidden = bytes < 100 * 1024;
-    $('preview').srcdoc = state.html ||
-      '<body style="font-family:sans-serif;color:#94a3b8;display:grid;place-items:center;height:100vh;margin:0;font-size:13px">Preview appears here</body>';
-    if (state.html && !$('subjectInput').value.trim()) {
-      const t = title || extractTitle(state.html);
-      if (t) $('subjectInput').value = t;
-    }
-    const ready = !!state.html;
-    $('draftBtn').disabled = !ready;
-    $('sendBtn').disabled = !ready;
-    $('receiptBtn').disabled = !ready;
   }
+  $('testConn').addEventListener('click', () => pingGateway(false));
+
+  /* ---------------- HTML Cleaners & Pre-Flight QA ---------------- */
 
   function extractTitle(html) {
     const m = /<title[^>]*>([\s\S]*?)<\/title>/i.exec(html || '');
@@ -122,8 +191,103 @@
     return d.value.replace(/\s+/g, ' ').trim();
   }
 
-  // Injected into the active tab. Must be fully self-contained.
-  // Keep in sync with the copy in background.js.
+  function extractSubject(html, fallbackTitle) {
+    const m = /<!--\s*SUBJECT:\s*([\s\S]*?)\s*-->/i.exec(html || '');
+    if (m && m[1].trim()) {
+      const d = document.createElement('textarea');
+      d.innerHTML = m[1];
+      return d.value.replace(/\s+/g, ' ').trim();
+    }
+    return fallbackTitle || extractTitle(html);
+  }
+
+  function cleanEmailWithReport(rawHtml) {
+    if (!rawHtml) return { html: '', stripped: [] };
+    const stripped = [];
+    let out = String(rawHtml);
+
+    if (/id=["']bli-send-toolbar["']/i.test(out)) stripped.push('Designer toolbar');
+    if (/id=["']preview-toolbar["']/i.test(out)) stripped.push('Preview toolbar');
+
+    out = out.replace(/^\s*<!--\s*SUBJECT:[\s\S]*?-->\s*/i, '');
+    out = out.replace(/<!--[^>]*PREVIEW TOOLBAR[^>]*-->\s*/gi, '');
+    out = out.replace(/<div\b[^>]*\bid=["']bli-send-toolbar["'][^>]*>(?:(?!<div\b|<\/div>)[\s\S]|<div\b[^>]*>(?:(?!<div\b|<\/div>)[\s\S])*<\/div>)*<\/div>\s*/gi, '');
+    out = out.replace(/<div\b[^>]*\bid=["']preview-toolbar["'][^>]*>(?:(?!<div\b|<\/div>)[\s\S]|<div\b[^>]*>(?:(?!<div\b|<\/div>)[\s\S])*<\/div>)*<\/div>\s*/gi, '');
+    // Strip browser extension injected overlays (Grammarly, etc.)
+    out = out.replace(/<grammarly-[a-z-]+[\s\S]*?<\/grammarly-[a-z-]+>\s*/gi, '');
+    // Strip executable scripts while keeping <script type="application/ld+json">
+    out = out.replace(/<script\b(?![^>]*\btype\s*=\s*["']application\/ld\+json["'])[^>]*>[\s\S]*?<\/script>\s*/gi, '');
+
+    const beforeSpacer = out;
+    out = out.replace(/(<img\b[^>]*?\bsrc=["'])data:image\/png;base64,[A-Za-z0-9+\/=]+(["'][^>]*?\bwidth=["']600["'])/gi,
+      (_, a, b) => a + SPACER_URL + b);
+    if (out !== beforeSpacer) stripped.push('600px spacer');
+
+    return { html: out, stripped };
+  }
+
+  function asciiHtml(html) {
+    let out = '';
+    for (let i = 0; i < html.length; i++) {
+      const cp = html.codePointAt(i);
+      if (cp > 126) {
+        out += '&#x' + cp.toString(16).toUpperCase() + ';';
+        if (cp > 0xFFFF) i++;
+      } else {
+        out += html.charAt(i);
+      }
+    }
+    return out;
+  }
+
+  function safeSubject(s) {
+    return String(s || '').replace(/[\uD800-\uDFFF]/g, '').replace(/\s+/g, ' ').trim();
+  }
+
+  function inspectEmail(cleanedHtml) {
+    const bytes = new Blob([cleanedHtml]).size;
+    const kb = (bytes / 1024).toFixed(1);
+    const errors = [];
+    const tokens = cleanedHtml.match(/\{\{[A-Za-z0-9_ -]{2,40}\}\}/g);
+    if (tokens) errors.push('Unfilled ' + Array.from(new Set(tokens)).slice(0, 2).join(', '));
+    if (/__cf_email__|cdn-cgi\/l\/email-protection|data-cfemail/i.test(cleanedHtml)) {
+      errors.push('Cloudflare link corruption');
+    }
+    return { bytes, kb, errors };
+  }
+
+  function setEmailHtml(rawHtml, sourceLabel, fallbackTitle, overwriteSubj) {
+    disarmAll();
+    const rep = cleanEmailWithReport(rawHtml || '');
+    state.html = rep.html;
+    state.stripped = rep.stripped;
+    state.source = sourceLabel || '';
+
+    const qaBar = $('qaBar');
+    if (!state.html.trim()) {
+      qaBar.innerHTML = '<span class="qa-pill">No email loaded yet</span>';
+      $('preview').srcdoc = '<body style="font-family:sans-serif;color:#94a3b8;display:grid;place-items:center;height:100vh;margin:0;font-size:12.5px">Preview appears here</body>';
+      return;
+    }
+
+    const qa = inspectEmail(state.html);
+    const pills = [];
+    const sizeCls = qa.bytes > 102400 ? 'err' : (qa.bytes > 98 * 1024 ? 'warn' : 'ok');
+    pills.push('<span class="qa-pill ' + sizeCls + '">' + esc(sourceLabel || 'Loaded') + ' · ' + qa.kb + ' KB</span>');
+    if (qa.bytes > 100 * 1024) pills.push('<span class="qa-pill warn">&#9888; Near/over 102 KB clip</span>');
+    qa.errors.forEach((er) => pills.push('<span class="qa-pill err">&#10060; ' + esc(er) + '</span>'));
+    if (rep.stripped.length) pills.push('<span class="qa-pill ok">&#10003; Cleaned: ' + esc(rep.stripped.join(', ')) + '</span>');
+    qaBar.innerHTML = pills.join('');
+
+    $('preview').srcdoc = state.html;
+    if (overwriteSubj || !$('subjectInput').value.trim()) {
+      const subj = extractSubject(rawHtml, fallbackTitle);
+      if (subj) $('subjectInput').value = safeSubject(subj);
+    }
+  }
+
+  /* ---------------- Capture & Manual Intake ---------------- */
+
   function capturePageHtml() {
     const doctype = document.doctype ? '<!doctype html>\n' : '';
     return {
@@ -134,14 +298,9 @@
     };
   }
 
-  // The toolbar icon click captures in the background (that click carries the
-  // activeTab permission) and parks the result in storage.session for us.
   function applyCapture(cap) {
     if (!cap) return;
     if (cap.error) { showResult(false, esc(cap.error)); return; }
-    // Capturing a DIFFERENT page starts a new job: reset recipient + subject
-    // so back-to-back customers never inherit each other's details.
-    // Re-capturing the same page (template tweaks) keeps what you typed.
     const isNewPage = !!cap.url && cap.url !== state.pageUrl;
     state.pageText = cap.text || '';
     state.pageUrl = cap.url || '';
@@ -150,22 +309,28 @@
       $('toInput').value = '';
       $('ccInput').value = '';
       $('subjectInput').value = '';
+      attachments = [];
+      renderAttachments();
+      updateDefaultsSummary();
     }
     let label = 'Captured tab';
-    try { label = 'Captured: ' + ((new URL(cap.url)).pathname.split('/').pop() || 'page'); } catch (e) { /* keep default */ }
-    setEmailHtml(cap.html, label, cap.title);
-    // Does this capture smell like a carrier payment screen rather than an email template?
+    try { label = 'Captured: ' + ((new URL(cap.url)).pathname.split('/').pop() || 'page'); } catch (e) {}
+    setEmailHtml(cap.html, label, cap.title, isNewPage);
+
     state.looksLikePayment = false;
     try {
       const f = extractReceiptFields(state.pageText, state.pageUrl, state.pageTitle);
-      state.looksLikePayment = !!(f.amount && (f.conf || f.policy));
-    } catch (e) { /* detection is best-effort */ }
+      // Avoid flagging actual BLI email templates as raw carrier screens
+      const isBliEmail = /mailto:Save@BillLayneInsurance\.com|email-container/i.test(cap.html || '');
+      state.looksLikePayment = !isBliEmail && !!(f.amount && (f.conf || f.policy));
+    } catch (e) {}
+
     if (state.looksLikePayment) {
-      $('receiptBtn').style.boxShadow = '0 0 0 3px rgba(200,168,78,.45)';
-      showResult(true, '&#9888;&#65039; This looks like a <b>payment-confirmation screen</b>. For a customer receipt, use <b>&#129534; Receipt from this page</b> below — don\'t email the raw page.');
+      $('receiptBtn').style.boxShadow = '0 0 0 3px rgba(200,168,78,.5)';
+      showResult('warn', '&#9888;&#65039; This looks like a <b>carrier payment screen</b>. Click <b>&#129534; Receipt from payment screen</b> above to build a branded receipt.');
     } else {
       $('receiptBtn').style.boxShadow = '';
-      showResult(true, 'Captured the open page. Check the preview, then draft or send.');
+      showResult(true, '&#9989; Captured &amp; cleaned active tab. Verify preview, then Draft or Send.');
     }
   }
 
@@ -173,14 +338,14 @@
     try {
       const { pendingCapture } = await chrome.storage.session.get('pendingCapture');
       applyCapture(pendingCapture);
-    } catch (e) { /* storage.session unavailable - ignore */ }
+    } catch (e) {}
   }
 
   try {
     chrome.storage.session.onChanged.addListener((changes) => {
       if (changes.pendingCapture) applyCapture(changes.pendingCapture.newValue);
     });
-  } catch (e) { /* older Chrome - icon capture still lands via loadPendingCapture on open */ }
+  } catch (e) {}
 
   $('captureBtn').addEventListener('click', async () => {
     showResult(true, 'Capturing…');
@@ -189,148 +354,247 @@
       if (!tab || !tab.id) throw new Error('No active tab found.');
       const url = tab.url || '';
       if (/^(chrome|edge|about|devtools|chrome-extension):/.test(url)) {
-        throw new Error('Chrome does not allow capturing this type of page. Open the email template in a normal tab.');
+        throw new Error('Open the email template in a normal browser tab first.');
       }
       const results = await chrome.scripting.executeScript({
         target: { tabId: tab.id },
         func: capturePageHtml
       });
       const r = results && results[0] && results[0].result;
-      if (!r || !r.html) throw new Error('Nothing captured - reload the template tab and try again.');
+      if (!r || !r.html) throw new Error('Nothing captured — reload the tab and try again.');
       applyCapture(r);
     } catch (e) {
       const msg = String((e && e.message) || e);
       if (/Cannot access|cannot be scripted|permission/i.test(msg)) {
-        showResult(false, 'Chrome blocked the capture. Click the BLI toolbar icon on the template tab first, then capture. For local files (file://), enable "Allow access to file URLs" for this extension in chrome://extensions.');
+        showResult(false, 'Chrome blocked capture. Click the BLI toolbar icon on the template tab first. For local files (<code>file://</code>), enable "Allow access to file URLs" in extension Details.');
       } else {
-        showResult(false, msg);
+        showResult(false, esc(msg));
       }
     }
   });
 
-  $('htmlInput').addEventListener('input', function () {
-    setEmailHtml(this.value.trim(), 'Pasted HTML');
+  $('pasteClipBtn').addEventListener('click', async () => {
+    try {
+      const txt = await navigator.clipboard.readText();
+      if (!txt || !txt.trim()) { showResult('warn', 'Clipboard is empty.'); return; }
+      $('htmlInput').value = txt;
+      state.looksLikePayment = false;
+      setEmailHtml(txt.trim(), 'Clipboard', '', true);
+      showResult(true, '&#9989; Loaded &amp; cleaned HTML from clipboard.');
+    } catch (e) {
+      $('htmlInput').focus();
+      showResult('warn', 'Paste manually with <b>Ctrl+V</b> inside the box.');
+    }
   });
 
-  function loadFile(file) {
+  $('htmlInput').addEventListener('input', function () {
+    state.looksLikePayment = false;
+    setEmailHtml(this.value.trim(), 'Pasted HTML', '', false);
+  });
+
+  function loadHtmlFile(file) {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
       $('htmlInput').value = String(reader.result || '');
-      setEmailHtml($('htmlInput').value.trim(), 'File: ' + file.name);
+      state.looksLikePayment = false;
+      setEmailHtml($('htmlInput').value.trim(), 'File: ' + file.name, '', true);
     };
     reader.readAsText(file);
   }
 
   $('fileInput').addEventListener('change', function () {
-    loadFile(this.files[0]);
+    loadHtmlFile(this.files[0]);
     this.value = '';
   });
-
-  const dz = $('dropZone');
-  ['dragenter', 'dragover'].forEach((ev) =>
-    dz.addEventListener(ev, (e) => { e.preventDefault(); dz.classList.add('drag'); }));
-  ['dragleave', 'drop'].forEach((ev) =>
-    dz.addEventListener(ev, (e) => { e.preventDefault(); dz.classList.remove('drag'); }));
-  dz.addEventListener('drop', (e) => {
-    const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-    loadFile(f);
+  $('dropZone').addEventListener('click', (e) => {
+    if (e.target && e.target.tagName === 'LABEL') return;
+    $('fileInput').click();
   });
 
-  /* ---------------- send / draft ---------------- */
+  /* ---------------- Attachments (up to 5 files, 18 MB) ---------------- */
 
-  function esc(s) {
-    return String(s).replace(/[&<>"']/g, (c) => ({
-      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-    }[c]));
+  function fmtSize(b) {
+    return b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB';
   }
 
-  function showResult(ok, htmlMsg) {
-    const r = $('result');
-    r.className = ok ? 'ok' : 'err';
-    r.innerHTML = htmlMsg;
+  function renderAttachments() {
+    const ul = $('attachList');
+    ul.innerHTML = attachments.map((a, idx) =>
+      '<li><span class="att-name">&#128196; ' + esc(a.name) + ' (' + fmtSize(a.size) + ')</span>' +
+      '<button type="button" class="att-rm" data-idx="' + idx + '">&times;</button></li>'
+    ).join('');
+    ul.querySelectorAll('.att-rm').forEach((btn) => {
+      btn.addEventListener('click', function () {
+        attachments.splice(parseInt(this.dataset.idx, 10), 1);
+        disarmAll();
+        renderAttachments();
+      });
+    });
+    const tot = attachments.reduce((n, a) => n + a.size, 0);
+    $('attachMeter').textContent = attachments.length
+      ? '(' + attachments.length + '/5 · ' + fmtSize(tot) + ')'
+      : '(optional · up to 5 PDFs)';
   }
 
-  function fetchWithTimeout(url, opts, ms) {
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), ms);
-    opts.signal = ctrl.signal;
-    return fetch(url, opts).finally(() => clearTimeout(t));
+  function addAttachFiles(fileList) {
+    const files = Array.from(fileList || []);
+    let total = attachments.reduce((n, a) => n + a.size, 0);
+    const skipped = [];
+    const jobs = files.map((f) => {
+      if (attachments.length + 1 > MAX_ATTACH || total + f.size > MAX_ATTACH_BYTES) { skipped.push(f.name); return null; }
+      total += f.size;
+      const slot = { name: f.name, mimeType: f.type || 'application/octet-stream', size: f.size, dataB64: '' };
+      attachments.push(slot);
+      return new Promise((resolve) => {
+        const r = new FileReader();
+        r.onload = () => { slot.dataB64 = String(r.result || '').split(',')[1] || ''; resolve(); };
+        r.onerror = () => { attachments = attachments.filter((a) => a !== slot); skipped.push(f.name); resolve(); };
+        r.readAsDataURL(f);
+      });
+    }).filter(Boolean);
+    Promise.all(jobs).then(() => {
+      disarmAll();
+      renderAttachments();
+      if (skipped.length) showResult('warn', 'Skipped (limit 5 files / 18 MB): ' + esc(skipped.join(', ')));
+    });
+  }
+
+  $('attachInput').addEventListener('change', function () { addAttachFiles(this.files); this.value = ''; });
+  $('attachDrop').addEventListener('click', (e) => {
+    if (e.target && e.target.tagName === 'LABEL') return;
+    $('attachInput').click();
+  });
+
+  [['dropZone', (files) => loadHtmlFile(files[0])], ['attachDrop', addAttachFiles]].forEach(([id, fn]) => {
+    const z = $(id);
+    ['dragenter', 'dragover'].forEach((ev) => z.addEventListener(ev, (e) => { e.preventDefault(); z.classList.add('drag'); }));
+    ['dragleave', 'drop'].forEach((ev) => z.addEventListener(ev, (e) => { e.preventDefault(); z.classList.remove('drag'); }));
+    z.addEventListener('drop', (e) => fn((e.dataTransfer && e.dataTransfer.files) || []));
+  });
+
+  /* ---------------- Submit (Zero window.confirm!) ---------------- */
+
+  function gmailLinkFor(d) {
+    const user = encodeURIComponent((d && d.senderEmail) || state.senderEmail || DEFAULT_AUTHUSER);
+    const base = 'https://mail.google.com/mail/?authuser=' + user;
+    if (d && d.mode === 'send') return base + '#sent';
+    if (d && d.messageId) return base + '#drafts/' + encodeURIComponent(d.messageId);
+    return base + '#drafts';
   }
 
   async function submit(mode) {
     const cfg = await chrome.storage.local.get({ gatewayUrl: '', gatewaySecret: '' });
     if (!cfg.gatewayUrl || !cfg.gatewaySecret) {
       $('settingsCard').open = true;
-      showResult(false, 'Enter the gateway URL and secret first (Gateway settings above), then Save.');
+      showResult(false, '&#9888;&#65039; Enter the Gateway URL and Secret above, then Save &amp; Test.');
       return;
     }
-    if (!state.html) {
-      showResult(false, 'Capture or paste the email HTML first (step 1).');
+    if (!state.html.trim()) {
+      showResult(false, '&#9888;&#65039; Capture a template tab or paste HTML first (Step 1).');
       return;
     }
-    if (state.looksLikePayment &&
-        !window.confirm('This capture looks like a carrier PAYMENT SCREEN, not an email template.\n\nEmail the raw page anyway?\n\n(For a customer receipt, press Cancel and use "Receipt from this page" instead.)')) {
-      return;
-    }
+
     const to = $('toInput').value.trim();
-    if (mode === 'send') {
-      if (!to) { showResult(false, '"Send Now" needs a To address.'); return; }
-      if (!window.confirm('Send this email NOW to: ' + to + '?')) return;
+    if (mode === 'send' && !to) {
+      disarmAll();
+      $('toInput').focus();
+      showResult(false, '&#10060; NOT SENT — "Send Now" requires a recipient in <b>To</b>.');
+      return;
     }
+
+    const qa = inspectEmail(state.html);
+    const warnings = [];
+    if (state.looksLikePayment) warnings.push('Raw payment screen detected (use "Receipt from payment screen" for receipts)');
+    if (qa.errors.length) warnings.push(qa.errors.join(', '));
+
+    if (warnings.length && !overrideArmed && !sendArmed) {
+      overrideArmed = true;
+      const btn = mode === 'send' ? $('sendBtn') : $('draftBtn');
+      btn.classList.add('armed');
+      btn.textContent = '⚠️ Click again to ' + (mode === 'send' ? 'send anyway' : 'draft anyway');
+      showResult('warn', '&#9888;&#65039; Heads up: <b>' + esc(warnings.join(' · ')) + '</b>. Click the orange button again within 10s to proceed anyway.');
+      clearTimeout(armTimer);
+      armTimer = setTimeout(disarmAll, 10000);
+      return;
+    }
+
+    if (mode === 'send' && !sendArmed) {
+      sendArmed = true;
+      $('sendBtn').classList.add('armed');
+      $('sendBtn').textContent = '⚠️ Click again to send to ' + to;
+      showResult('warn', 'Ready — click the orange button again within 10s to send immediately to <b>' + esc(to) + '</b>.');
+      clearTimeout(armTimer);
+      armTimer = setTimeout(disarmAll, 10000);
+      return;
+    }
+    disarmAll();
+
     const payload = {
       secret: cfg.gatewaySecret,
       mode: mode,
       to: to,
-      subject: $('subjectInput').value.trim(),
-      html: state.html,
+      subject: safeSubject($('subjectInput').value),
+      html: asciiHtml(state.html),
       cc: $('ccInput').value.trim(),
-      bcc: $('bccInput').value.trim(), // '' means: no BCC
+      bcc: $('bccInput').value.trim(),
       fromName: $('fromNameInput').value.trim(),
       replyTo: $('replyToInput').value.trim()
     };
+    if (attachments.length) {
+      payload.attachments = attachments.map((a) => ({ name: a.name, mimeType: a.mimeType, dataB64: a.dataB64 }));
+    }
+
     $('draftBtn').disabled = true;
     $('sendBtn').disabled = true;
     showResult(true, mode === 'send' ? 'Sending…' : 'Creating draft…');
     try {
       const res = await fetchWithTimeout(cfg.gatewayUrl, {
         method: 'POST',
-        // text/plain keeps this a "simple request" so the browser skips the
-        // CORS preflight, which Apps Script web apps cannot answer.
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload),
         redirect: 'follow'
       }, 45000);
       const d = await res.json().catch(() => {
-        throw new Error('Gateway returned a bad response (HTTP ' + res.status + '). Is the web app deployed with access "Anyone"?');
+        throw new Error('Gateway returned a bad response (HTTP ' + res.status + '). Is access set to "Anyone"?');
       });
       if (!d.ok) throw new Error(d.error || 'Gateway error.');
-      const quota = typeof d.remainingQuota === 'number'
-        ? ' · ' + d.remainingQuota + ' sends left today'
-        : '';
+      if (d.senderEmail) {
+        state.senderEmail = d.senderEmail;
+        chrome.storage.local.set({ senderEmail: d.senderEmail });
+      }
+      const quota = typeof d.remainingQuota === 'number' ? ' · ' + d.remainingQuota + ' left today' : '';
+      const want = attachments.length;
+      const att = want ? ((d.attached === want)
+        ? ' with <b>' + want + ' file' + (want === 1 ? '' : 's') + '</b>'
+        : ' — <b>⚠️ files NOT attached</b>') : '';
+      const link = gmailLinkFor(d);
       if (d.mode === 'send') {
-        showResult(true, '✅ Sent to <b>' + esc(d.to) + '</b>' + quota);
+        showResult(true, '✅ Sent to <b>' + esc(d.to) + '</b>' + att +
+          ' — <a href="' + link + '" target="_blank" rel="noopener">Open Sent →</a>' + quota);
       } else {
-        showResult(true, '✅ Draft created' + (d.to ? ' for <b>' + esc(d.to) + '</b>' : '') +
-          ' - <a href="https://mail.google.com/mail/u/0/#drafts" target="_blank" rel="noopener">open Gmail Drafts →</a>' + quota);
+        const label = d.messageId ? 'Open Draft in Gmail →' : 'Open Gmail Drafts →';
+        showResult(true, '✅ Draft created' + (d.to ? ' for <b>' + esc(d.to) + '</b>' : '') + att +
+          ' — <a href="' + link + '" target="_blank" rel="noopener">' + label + '</a>' + quota);
       }
     } catch (e) {
       const msg = e && e.name === 'AbortError'
-        ? 'The gateway took too long to answer (45s). Try again.'
+        ? 'The gateway took too long (45s). Try again.'
         : String((e && e.message) || e);
       showResult(false, '❌ ' + esc(msg));
     } finally {
-      $('draftBtn').disabled = !state.html;
-      $('sendBtn').disabled = !state.html;
+      $('draftBtn').disabled = false;
+      $('sendBtn').disabled = false;
     }
   }
 
-  $('draftBtn').addEventListener('click', () => submit('draft'));
+  $('draftBtn').addEventListener('click', () => { disarmAll(); submit('draft'); });
   $('sendBtn').addEventListener('click', () => submit('send'));
 
-  /* ---------------- clear / start a new email ---------------- */
+  /* ---------------- Clear / Next Customer ---------------- */
 
   $('clearBtn').addEventListener('click', () => {
+    disarmAll();
     state.pageText = '';
     state.pageUrl = '';
     state.pageTitle = '';
@@ -341,14 +605,15 @@
     $('subjectInput').value = '';
     $('replyToInput').value = '';
     $('receiptBtn').style.boxShadow = '';
+    attachments = [];
+    renderAttachments();
+    updateDefaultsSummary();
     setEmailHtml('', '');
-    try { chrome.storage.session.remove('pendingCapture'); } catch (e) { /* best effort */ }
-    showResult(true, 'Cleared. Capture or paste the next email whenever you\'re ready.');
+    try { chrome.storage.session.remove('pendingCapture'); } catch (e) {}
+    showResult(true, '&#129529; Cleared — ready for the next customer.');
   });
 
-  /* ---------------- receipt from captured page ---------------- */
-  // Best-effort local extraction (no AI, nothing leaves the browser). The
-  // receipt builder page shows every field for confirmation before drafting.
+  /* ---------------- Receipt from Payment Screen ---------------- */
 
   const CARRIER_MATCHERS = [
     { re: /progressive/i, name: 'Progressive' },
@@ -397,7 +662,6 @@
     m = /(\d{1,2}:\d{2}\s*(?:AM|PM)(?:\s*[A-Z]{2,3})?)/i.exec(t);
     if (m) out.time = m[1].toUpperCase();
 
-    // stay on one line ([ \t], never \s) and require a digit in the code
     const confRe = /(?:confirmation|reference|authorization|receipt)[ \t]*(?:number|no\.?|code|#)?[ \t]*[:#]?[ \t]*([A-Za-z0-9][A-Za-z0-9-]{4,24})\b/gi;
     let cm;
     while ((cm = confRe.exec(t))) { if (/\d/.test(cm[1])) { out.conf = cm[1]; break; } }
@@ -433,7 +697,10 @@
   }
 
   $('receiptBtn').addEventListener('click', () => {
-    if (!state.html) { showResult(false, 'Capture the confirmation page first (BLI icon or the capture button).'); return; }
+    if (!state.html && !state.pageText) {
+      showResult('warn', 'Capture the carrier payment-confirmation tab first, then click Receipt from payment screen.');
+      return;
+    }
     let text = state.pageText;
     if (!text) {
       try { text = new DOMParser().parseFromString(state.html, 'text/html').body.innerText || ''; } catch (e) { text = ''; }
@@ -443,14 +710,14 @@
     try {
       const json = JSON.stringify(fields);
       encoded = btoa(unescape(encodeURIComponent(json))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-    } catch (e) { /* open blank builder */ }
+    } catch (e) {}
     const url = RECEIPT_BUILDER_URL + (encoded ? '#d=' + encoded : '');
     chrome.tabs.create({ url });
     const found = Object.keys(fields).length;
-    showResult(true, 'Opened the receipt builder with ' + found + ' field' + (found === 1 ? '' : 's') + ' pre-filled — double-check them against the confirmation screen, then draft from there.');
+    showResult(true, 'Opened Receipt Builder with ' + found + ' field' + (found === 1 ? '' : 's') + ' pre-filled — verify against the confirmation screen before drafting.');
   });
 
-  /* ---------------- init ---------------- */
+  /* ---------------- Init ---------------- */
 
   loadSettings();
   setEmailHtml('', '');

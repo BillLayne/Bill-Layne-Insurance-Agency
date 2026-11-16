@@ -1,4 +1,4 @@
-# BLI Mail Gateway
+# BLI Mail Gateway (v1.3)
 
 One shared endpoint that lets **any** Bill Layne Insurance tool create a Gmail
 draft or send an email directly from the program — no more copy-pasting HTML
@@ -7,54 +7,43 @@ into a Gmail compose window.
 Bonus: emails sent through the gateway render **better** than pasted ones.
 Pasting into Gmail strips the `<head>` styles and media queries; the gateway
 delivers the raw HTML intact, so mobile-first templates keep their stacking
-rules.
+rules, Outlook VML conditionals, and Schema.org JSON-LD Rich Cards.
 
 ## What's in this folder
 
 | File | What it is |
 |---|---|
-| `Code.gs` | The Apps Script gateway (v1.1, attachments) — paste into script.google.com (one time) |
-| `index.html` | Universal sender page — paste/drop any template (or open it from a hand-off link), attach files, preview, Draft or Send |
-| `gateway-client.js` | Drop-in snippet to add a "Draft in Gmail" button to any BLI app |
+| `Code.gs` | The Apps Script gateway (**v1.3**: attachments, server-side emoji/spacer cleanup, secret `ping`, exact `messageId` draft link) — paste into script.google.com |
+| `index.html` | **Universal Sender** (2-column workbench) — 1-click Paste from Clipboard, smart `.html` + `.pdf` drag-drop, Pre-Flight QA bar, live preview, Draft or Send |
+| `studio.html` + `studio-templates.js` | **Mail Studio** — fill-in-the-blanks branded templates (Quote Follow-Up, Welcome, Doc Request, Payment Reminder, General Note) |
+| `receipt.html` + `receipt-template.js` | **Receipt Builder** — NC-compliant (`11 NCAC 04.0121`) payment receipt builder + `#d=` Chrome Extension prefill |
+| `gateway-client.js` | Drop-in `bliMail()` client (v1.3) to add a "Draft in Gmail" button to any BLI app |
 | `README.md` | This file |
 
-## Loading a finished email into the sender page (2026-11-09)
+## Loading a finished email into the Universal Sender
 
-The sender page takes a finished email three ways. All three end the same way: the email, its subject and any
-recipient are filled in, and a person clicks **Create Gmail Draft** (nothing is created or sent on page load).
+The sender page (`/mail-gateway/`) takes a finished email four ways. Nothing is created or sent until you click **Create Gmail Draft** or **Send Now**:
 
-1. **Drop or choose the file.** The subject comes from the file's first-line `SUBJECT` comment, else its `<title>`.
-2. **Paste the HTML.**
-3. **Hand-off link.** Open `…/mail-gateway/#z=<payload>` where the payload is
-   `base64url( deflate-raw( JSON {v:1, name, subject, to, cc, html} ) )`. A URL fragment never leaves the browser,
-   so the email is not uploaded anywhere. The page reads it, clears the fragment and shows a green "Loaded" banner.
-   The Gmail template skill's `gmail-draft-handoff.js` builds this link and a small launcher file from any email file.
+1. **1-Click `📋 Paste HTML from Clipboard`.** Reads your clipboard, auto-cleans toolbars, extracts the subject, collapses the raw code drawer, and renders the live preview.
+2. **Drop or choose files (smart `.html` + `.pdf` routing).** Dragging an `.html` email file and up to 5 PDF attachments onto the window routes the `.html` to Step 1 and the PDFs directly to Step 3 Attachments.
+3. **Hand-off link (`#z=`).** Open `…/mail-gateway/#z=<payload>` where the payload is `base64url( deflate-raw( JSON {v:1, name, subject, to, cc, html} ) )`. The fragment never leaves the browser, is scrubbed immediately via `history.replaceState`, and loads into the workbench.
+4. **Setup link (`#gw=`).** Open `…/mail-gateway/#gw=<base64url({u,s})>` to import the Gateway URL + Secret into a new browser/origin in one click.
 
-Whatever the route, the page cleans the email before it goes to the gateway, so a customer never receives
-browser-only helpers:
+### Automatic Cleaning & Pre-Flight QA (Client + Server `v1.3`)
 
-- the Designer "Draft in Gmail" toolbar, the Gmail White `#preview-toolbar`, every script tag and the `SUBJECT` comment are removed;
-- the Gmail White 600px anti-fit spacer, which ships as a `data:` image for the copy/paste path, becomes its hosted
-  copy (Gmail drops `data:` images from delivered mail);
-- every character above ASCII 126 becomes a numeric entity and 4-byte characters are stripped from the subject
-  (the GmailApp corruption rule in `HANDOFF-GATEWAY-INTEGRATION.md`).
-
-Step 3 on the page attaches up to 5 files (18 MB in all) to the draft, for example a declarations page PDF.
-**Send Now** is a two-click button (it arms for 10 seconds); it never uses a native confirm dialog.
+Every route cleans and inspects the email before it reaches Gmail:
+- **Preview toolbars removed:** `#bli-send-toolbar`, `#preview-toolbar`, browser extension overlays, and executable `<script>` tags are stripped (while **preserving** `<script type="application/ld+json">` Schema.org Gmail Rich Cards and Outlook VML namespaces).
+- **600px spacer upgraded:** `data:image/png;base64,...` 600px anti-fit spacers become the hosted `img.billlayneinsurance.com` PNG (Gmail strips `data:` images from delivered mail).
+- **Emoji-safe ASCII encoding:** Every code point above ASCII 126 is converted to a numeric entity (`&#xHEX;`) and astral chars are stripped from subjects so `GmailApp` never corrupts 4-byte emojis into ``.
+- **Pre-Flight QA Bar:** Flags unfilled `{{TOKENS}}`, Cloudflare `cdn-cgi/l/email-protection` mangling, legacy Imgur links, and `>102 KB` Gmail clipping before you draft or send.
 
 ## Integrating the gateway into a NEW app — read these in order
 
 | Read | To add |
 |---|---|
 | 1. `HANDOFF-GATEWAY-INTEGRATION.md` | The base: send/draft any HTML email from any app (CORS rules, secrets, escaping, UI rules) |
-| 2. `HANDOFF-ATTACH-PDF-TO-GMAIL.md` | **Attach a PDF (or any file) to the draft automatically** — v1.1 contract, base64 recipe, `attached===1` check |
+| 2. `HANDOFF-ATTACH-PDF-TO-GMAIL.md` | **Attach a PDF (or any file) to the draft automatically** — v1.1+ contract, base64 recipe, `attached===1` check |
 | 3. `HANDOFF-STYLED-DRAFT-BODY.md` | **Put a fully styled branded email body in the draft** — template + `{{TOKENS}}` + conditional blocks pipeline |
-
-Working reference implementations: **PDF Studio** (`/pdf-tools/index.html` — all three layers,
-search `btnEmailGo`; the program itself is documented in `pdf-tools/HANDOFF-PDF-STUDIO.md`)
-and **CertGuard AI** (styled COI email + ACORD PDF). A future Claude prompt as simple as
-*"add a Gmail-draft button like PDF Studio's — read the three handoffs in mail-gateway/"*
-is enough to wire everything correctly.
 
 ## One-time deploy (about 3 minutes)
 
@@ -66,102 +55,40 @@ is enough to wire everything correctly.
 3. Click the **gear icon (Project Settings)** → **Script properties** →
    **Add script property**:
    - Property: `GATEWAY_SECRET`
-   - Value: your secret (long and random — do NOT reuse the granite-* codes)
+   - Value: your secret (long and random)
 4. Back in the editor, pick **`selfTest`** in the function dropdown → **Run**.
    Authorize when prompted (Advanced → *Go to BLI Mail Gateway (unsafe)* →
-   Allow — it's your own script, this is normal). Then check Gmail → Drafts
-   for the self-test draft.
+   Allow). Check Gmail → Drafts for the self-test draft.
 5. **Deploy → New deployment** → type **Web app**:
    - Execute as: **Me**
    - Who has access: **Anyone**  ← must be *Anyone*, NOT "Anyone with Google account"
 6. Copy the **Web app URL** (ends in `/exec`).
-7. Open `index.html` (double-click the file, or host it), expand **Gateway
-   settings**, paste the URL + secret, **Save settings**, then **Test
-   connection** — the header badge should turn green.
+7. Open `/mail-gateway/`, paste the URL + secret in **Gateway settings**, and click **Save & Test** — the header badge verifies both the URL and secret and shows your remaining daily sends.
 
-### Updating the gateway later
+### Updating the gateway (`v1.2` → `v1.3`)
 
-Same rule as SendBillDocs: edit the code, then **Deploy → Manage deployments →
-pencil icon → Version: New version → Deploy**. The `/exec` URL stays the same.
-(A plain code save does NOT go live.)
+Edit the code in `script.google.com`, Save, then **Deploy → Manage deployments →
+pencil icon → Version: New version → Deploy**. The `/exec` URL stays the same!
+(Never choose *New deployment*, which mints a new URL.)
 
-## Using the sender page
-
-1. Drag-drop the template's `index.html` (or paste the HTML).
-2. Subject auto-fills from the template's `<title>`. Fill in To.
-3. BCC defaults to `Save@BillLayneInsurance.com` — clear the field to skip it.
-4. **Create Gmail Draft** (recommended for customer emails — final look in
-   Gmail, then hit Send there) or **Send Now** (goes out immediately; good for
-   receipts).
-
-The page works opened straight from this folder (`file://`) or hosted. If this
-repo is pushed, it will be live at `billlayneinsurance.com/mail-gateway/` —
-that's safe (the page contains no secret), but it's a staff tool, so keeping
-it local is fine too.
-
-## Wiring a "Draft in Gmail" button into another app
-
-Paste the contents of `gateway-client.js` into the app, then:
-
-```html
-<button onclick="draftInGmail()">Draft in Gmail</button>
-<script>
-async function draftInGmail() {
-  try {
-    await bliMail({
-      mode: 'draft',              // or 'send'
-      to: '',                     // optional for drafts
-      subject: document.title,
-      html: getEmailHtml()        // app-specific: the finished email HTML string
-    });
-    alert('Draft created ✓  Open Gmail › Drafts');
-  } catch (e) { alert(e.message); }
-}
-</script>
-```
-
-First click in each app prompts once for the gateway URL + secret and stores
-them in that app's localStorage.
-
-## API reference
+## API reference (`v1.3`)
 
 `POST` to the `/exec` URL. Body = JSON **string**, sent with
-`Content-Type: text/plain` (this avoids the CORS preflight, which Apps Script
-can't answer — never use `application/json`).
+`Content-Type: text/plain;charset=utf-8` (avoids CORS preflight — never use `application/json`).
 
 | Field | Required | Notes |
 |---|---|---|
-| `secret` | yes | Must match the `GATEWAY_SECRET` script property |
-| `mode` | no | `draft` (default) or `send` |
+| `secret` | yes | Must match `GATEWAY_SECRET` (also accepted via `?secret=`) |
+| `mode` | no | `draft` (default), `send`, or `ping` (verifies secret + returns quota) |
 | `to` | send: yes / draft: no | Comma-separate multiple addresses |
 | `subject` | no | Defaults to `(no subject)` |
-| `html` | yes | The full email HTML |
-| `text` | no | Plain-text part; auto-generated from the HTML if omitted |
+| `html` | draft/send: yes | Full `<!DOCTYPE html>…</html>` document |
+| `text` | no | Plain-text part; auto-generated if omitted |
 | `cc` | no | |
-| `bcc` | no | Omit the field → defaults to `Save@BillLayneInsurance.com`; send `""` → no BCC |
+| `bcc` | no | Omit field → defaults to `Save@BillLayneInsurance.com`; send `""` → no BCC |
 | `replyTo` | no | |
 | `fromName` | no | Display name; defaults to `Bill Layne Insurance` |
+| `attachments` | no | Up to 5 `{ name, mimeType, dataB64 }` items (`<= 20 MB` total) |
 
-Success: `{ ok:true, mode, draftId?, to, subject, remainingQuota }`
+Success: `{ ok:true, mode, version, draftId?, messageId?, attached, senderEmail, remainingQuota }`  
 Failure: `{ ok:false, error }`
-
-## Security notes
-
-- The secret lives in **Script Properties** (server side) and in the staff
-  browser's **localStorage** — never hardcode it in any page you ship, and
-  never in the email HTML itself.
-- Anyone with the URL but no secret gets `Unauthorized` and can do nothing.
-- If the secret ever leaks: change the `GATEWAY_SECRET` script property.
-  Done — old secret is dead everywhere, no redeploy needed.
-
-## Limits & gotchas
-
-- **Daily quota:** Google Workspace ≈ 1,500 recipients/day via Apps Script
-  (consumer Gmail is only 100/day). Every gateway response includes
-  `remainingQuota` so you can see where you stand.
-- **Gmail clipping:** Gmail clips messages over ~102 KB of HTML — the sender
-  page warns you at 100 KB. (Same rule as always for BLI templates.)
-- **CORS errors in the console:** almost always means the deployment's "Who
-  has access" is not **Anyone**, or the client sent `application/json`.
-- **Sent mail lands in your Gmail Sent folder** and threads normally — same
-  as sending by hand.

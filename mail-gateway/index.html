@@ -4,50 +4,77 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>BLI Mail Gateway</title>
+<title>BLI Mail Gateway — Universal Email Sender</title>
 <link rel="icon" href="data:,">
 <style>
   :root{
     --navy:#003f87; --navy-dark:#00295c; --gold:#C8A84E; --teal:#0f766e;
     --ink:#0f172a; --muted:#475569; --line:#e2e8f0; --bg:#f1f5f9; --card:#ffffff;
-    --ok:#166534; --ok-bg:#f0fdf4; --err:#b91c1c; --err-bg:#fef2f2; --warn:#92400e; --warn-bg:#fffbeb;
+    --ok:#166534; --ok-bg:#f0fdf4; --ok-brd:#86efac;
+    --err:#b91c1c; --err-bg:#fef2f2; --err-brd:#fca5a5;
+    --warn:#92400e; --warn-bg:#fffbeb; --warn-brd:#fcd34d;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);
-    font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-  .wrap{max-width:960px;margin:0 auto;padding:0 20px}
+    font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
 
-  header{background:linear-gradient(135deg,var(--navy-dark) 0%,var(--navy) 55%,var(--teal) 130%);color:#fff;padding:28px 0 24px}
-  header h1{margin:0;font-size:26px;letter-spacing:.3px}
-  header h1 .gold{color:var(--gold)}
-  header p{margin:6px 0 0;color:#cbd5e1;font-size:14.5px;max-width:640px}
-  .badge{display:inline-block;margin-top:12px;padding:4px 12px;border-radius:999px;font-size:12.5px;font-weight:600;
-    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25)}
-  .badge.ok{background:#dcfce7;color:var(--ok);border-color:#86efac}
-  .badge.err{background:#fee2e2;color:var(--err);border-color:#fca5a5}
+  /* ---------- Suite Header & Nav ---------- */
+  header{background:linear-gradient(135deg,var(--navy-dark) 0%,var(--navy) 55%,var(--teal) 135%);color:#fff;padding:18px 22px 16px}
+  .head-inner{max-width:1440px;margin:0 auto;display:flex;flex-wrap:wrap;gap:14px 24px;align-items:center;justify-content:space-between}
+  .brand-block h1{margin:0;font-size:23px;letter-spacing:.2px;display:flex;align-items:center;gap:8px}
+  .brand-block h1 .gold{color:var(--gold)}
+  .brand-block p{margin:4px 0 0;color:#cbd5e1;font-size:13.5px;max-width:680px}
+  .head-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+  @media(max-width:860px){.head-right{align-items:flex-start;width:100%}}
 
-  main{padding:22px 0 60px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:18px;
-    box-shadow:0 1px 3px rgba(15,23,42,.05)}
-  .card h2{margin:0 0 14px;font-size:16px;color:var(--navy)}
-  .card h2 .step{display:inline-block;background:var(--gold);color:var(--navy-dark);border-radius:6px;
-    padding:1px 8px;margin-right:8px;font-size:13px}
+  .suite-nav{display:flex;flex-wrap:wrap;gap:6px;background:rgba(15,23,42,.28);padding:4px;border-radius:10px;border:1px solid rgba(255,255,255,.16)}
+  .suite-nav a{color:#e2e8f0;text-decoration:none;font-size:13px;font-weight:600;padding:6px 12px;border-radius:7px;transition:background .15s,color .15s;white-space:nowrap}
+  .suite-nav a:hover{background:rgba(255,255,255,.12);color:#fff}
+  .suite-nav a.active{background:#fff;color:var(--navy-dark);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.18)}
 
-  details.card summary{cursor:pointer;font-weight:700;color:var(--navy);font-size:15px;list-style-position:inside}
-  details.card[open] summary{margin-bottom:14px}
+  .status-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:600;
+    background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.26);color:#f8fafc}
+  .badge.ok{background:#dcfce7;color:var(--ok);border-color:var(--ok-brd)}
+  .badge.err{background:#fee2e2;color:var(--err);border-color:var(--err-brd)}
+  .gear-pill{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.28);border-radius:999px;
+    padding:4px 11px;font-size:12px;font-weight:600;cursor:pointer}
+  .gear-pill:hover{background:rgba(255,255,255,.24)}
 
-  label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:4px}
+  /* ---------- Layout Workbench ---------- */
+  main.shell{max-width:1440px;margin:0 auto;padding:18px 22px 54px}
+  @media(max-width:640px){main.shell{padding:14px 12px 40px}}
+
+  .workbench{display:grid;grid-template-columns:470px minmax(0,1fr);gap:18px;align-items:start}
+  @media(max-width:1060px){.workbench{grid-template-columns:1fr}}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:16px 18px;margin-bottom:14px;
+    box-shadow:0 1px 3px rgba(15,23,42,.04)}
+  .card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 11px}
+  .card h2{margin:0;font-size:15px;color:var(--navy);display:flex;align-items:center;gap:8px}
+  .card h2 .step{display:inline-flex;align-items:center;justify-content:center;background:var(--gold);color:var(--navy-dark);
+    border-radius:6px;min-width:22px;height:22px;padding:0 6px;font-size:12.5px;font-weight:800}
+
+  details.card summary{cursor:pointer;font-weight:700;color:var(--navy);font-size:14.5px;list-style-position:inside}
+  details.card[open] summary{margin-bottom:12px}
+  #settingsCard:not([open]){display:none}
+
+  label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin:0 0 4px}
+  label .soft{font-weight:400;color:#64748b}
   input[type=text],input[type=password],input[type=email]{
-    width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:8px;font-size:15px;color:var(--ink);background:#fff}
-  input:focus,textarea:focus{outline:2px solid var(--navy);outline-offset:1px;border-color:var(--navy)}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
+    width:100%;padding:8px 11px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;color:var(--ink);background:#fff;font-family:inherit}
+  input:focus-visible,textarea:focus-visible,button:focus-visible,summary:focus-visible{
+    outline:2px solid var(--navy);outline-offset:1px;border-color:var(--navy)}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
   .grid2 .full{grid-column:1 / -1}
-  @media(max-width:640px){.grid2{grid-template-columns:1fr}}
+  @media(max-width:560px){.grid2{grid-template-columns:1fr}}
 
-  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
-  .note{font-size:12.5px;color:var(--muted)}
+  .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+  .note{font-size:12px;color:var(--muted)}
 
-  button{font:inherit;font-weight:700;border:0;border-radius:9px;padding:10px 18px;cursor:pointer}
+  /* ---------- Buttons ---------- */
+  button{font:inherit;font-weight:700;border:0;border-radius:9px;padding:9px 16px;cursor:pointer;transition:background .15s,filter .15s}
   button:disabled{opacity:.55;cursor:not-allowed}
   .btn-primary{background:var(--navy);color:#fff}
   .btn-primary:hover:not(:disabled){background:var(--navy-dark)}
@@ -55,143 +82,295 @@
   .btn-gold:hover:not(:disabled){filter:brightness(1.06)}
   .btn-quiet{background:#e2e8f0;color:var(--ink);font-weight:600}
   .btn-quiet:hover:not(:disabled){background:#cbd5e1}
-  .btn-mini{padding:6px 12px;font-size:13px;font-weight:600}
+  .btn-ghost{background:#f8fafc;color:var(--navy);border:1px solid #cbd5e1;font-weight:600}
+  .btn-ghost:hover:not(:disabled){background:#eff6ff;border-color:#93c5fd}
+  .btn-mini{padding:5px 10px;font-size:12px;font-weight:600;border-radius:7px}
 
-  #dropZone{border:2px dashed #cbd5e1;border-radius:10px;padding:14px 16px;text-align:center;
-    color:var(--muted);font-size:14px;margin-bottom:10px;transition:background .15s,border-color .15s}
-  #dropZone.drag{background:#eef6ff;border-color:var(--navy);color:var(--navy)}
-  #dropZone .filebtn{color:var(--navy);font-weight:700;text-decoration:underline;cursor:pointer}
-  #fileInput{display:none}
+  @keyframes armPulse{50%{filter:brightness(1.12)}}
+  .armed{background:#ea580c!important;color:#fff!important;animation:armPulse 1.15s ease-in-out infinite}
 
-  textarea#htmlInput{width:100%;min-height:170px;resize:vertical;border:1px solid var(--line);border-radius:10px;
-    padding:12px;font:13px/1.5 Consolas,Menlo,monospace;color:var(--ink);background:#fff}
-  .meta{display:flex;gap:14px;align-items:center;margin-top:8px;font-size:13px;color:var(--muted)}
-  #clipWarn{color:var(--warn);background:var(--warn-bg);border:1px solid #fde68a;border-radius:8px;padding:3px 10px;font-weight:600}
+  /* ---------- Step 1: Intake & Collapsible Code ---------- */
+  .intake-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px}
+  @media(max-width:480px){.intake-btns{grid-template-columns:1fr}}
 
-  .previewbar{display:flex;gap:8px;align-items:center;margin-bottom:10px}
-  .previewbar .btn-mini.active{background:var(--navy);color:#fff}
-  #previewShell{background:#e2e8f0;border:1px solid var(--line);border-radius:10px;padding:14px;overflow:auto;text-align:center}
-  #preview{background:#fff;border:0;width:100%;height:520px;border-radius:8px;box-shadow:0 2px 8px rgba(15,23,42,.12);
-    display:inline-block;max-width:100%}
+  #dropZone{border:2px dashed #cbd5e1;border-radius:10px;padding:12px 14px;text-align:center;
+    color:var(--muted);font-size:13px;background:#f8fafc;cursor:pointer;transition:background .15s,border-color .15s}
+  #dropZone:hover,#dropZone.drag{background:#eff6ff;border-color:var(--navy);color:var(--navy)}
+  #dropZone .filebtn{display:inline;margin:0;color:var(--navy);font-weight:700;text-decoration:underline;cursor:pointer;font-size:13px}
+  #fileInput,#attachInput{display:none}
 
-  #result{margin-top:14px;border-radius:10px;padding:12px 14px;font-size:14.5px;display:none}
-  #result.ok{display:block;background:var(--ok-bg);border:1px solid #bbf7d0;color:var(--ok)}
-  #result.err{display:block;background:var(--err-bg);border:1px solid #fecaca;color:var(--err)}
+  #loadedBar{display:none;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;
+    margin-top:9px;padding:8px 11px;border-radius:9px;background:var(--ok-bg);border:1px solid var(--ok-brd);color:var(--ok);font-size:12.5px}
+  #loadedBar.show{display:flex}
+  #loadedTitle{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:250px}
+
+  #codeWrap{margin-top:9px}
+  #codeWrap[hidden]{display:none}
+  textarea#htmlInput{width:100%;min-height:135px;resize:vertical;border:1px solid #cbd5e1;border-radius:9px;
+    padding:10px;font:12px/1.45 Consolas,Menlo,monospace;color:var(--ink);background:#fff}
+
+  /* ---------- Step 2: Recipients & Compact Options ---------- */
+  .field-gap{margin-bottom:10px}
+  .label-split{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin-bottom:4px}
+  .label-split label{margin:0}
+  .subj-coach{font-size:11.5px;color:#64748b;font-weight:600}
+  .subj-coach.warn{color:var(--warn)}
+  .link-btn{background:none;border:0;padding:0;color:var(--navy);font-size:11.5px;font-weight:700;cursor:pointer;text-decoration:underline}
+
+  details.more-opts{margin-top:8px;border:1px solid var(--line);border-radius:9px;background:#f8fafc;padding:7px 11px}
+  details.more-opts summary{cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);display:flex;align-items:center;justify-content:space-between;gap:8px;list-style:none}
+  details.more-opts summary::-webkit-details-marker{display:none}
+  details.more-opts summary .opt-action{color:var(--navy);font-weight:700;white-space:nowrap;flex-shrink:0}
+  details.more-opts[open] .opts-body{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+
+  /* ---------- Step 3: Attachments ---------- */
+  #attachDrop{border:1.5px dashed #cbd5e1;border-radius:9px;padding:10px 12px;text-align:center;font-size:12.5px;
+    color:var(--muted);background:#f8fafc;cursor:pointer;transition:background .15s,border-color .15s}
+  #attachDrop:hover,#attachDrop.drag{background:#eff6ff;border-color:var(--navy);color:var(--navy)}
+  #attachDrop .filebtn{display:inline;margin:0;color:var(--navy);font-weight:700;text-decoration:underline;cursor:pointer;font-size:12.5px}
+  #attachList{margin:8px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:5px}
+  #attachList li{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 9px;
+    background:#f8fafc;border:1px solid var(--line);border-radius:7px;font-size:12.5px}
+  .att-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+  .att-rm{background:#fee2e2;color:var(--err);border:0;border-radius:5px;padding:2px 7px;font-size:12px;font-weight:700;cursor:pointer;line-height:1.3}
+  .att-rm:hover{background:#fecaca}
+
+  /* ---------- Step 4: Actions & Result ---------- */
+  .action-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  @media(max-width:460px){.action-grid{grid-template-columns:1fr}}
+  .sub-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+
+  #result{margin-top:12px;border-radius:10px;padding:12px 14px;font-size:13.5px;line-height:1.45;display:none}
+  #result.ok{display:block;background:var(--ok-bg);border:1.5px solid var(--ok-brd);color:var(--ok)}
+  #result.err{display:block;background:var(--err-bg);border:1.5px solid var(--err-brd);color:var(--err)}
+  #result.warn{display:block;background:var(--warn-bg);border:1.5px solid var(--warn-brd);color:var(--warn)}
   #result a{color:var(--navy);font-weight:700}
 
-  #handoff{display:none;margin-bottom:14px;border-radius:10px;padding:12px 14px;font-size:14.5px;background:var(--ok-bg);border:1px solid #bbf7d0;color:var(--ok)}
+  #handoff{display:none;margin-bottom:14px;border-radius:10px;padding:11px 14px;font-size:13.5px;
+    background:var(--ok-bg);border:1.5px solid var(--ok-brd);color:var(--ok)}
   #handoff.show{display:block}
-  #handoff.err{background:var(--err-bg);border-color:#fecaca;color:var(--err)}
-  #attachList{margin:8px 0 0;padding:0;list-style:none;font-size:14px;color:var(--ink)}
-  #attachList li{padding:3px 0}
-  #sendBtn.armed{background:#ea580c;color:#fff;border-color:#c2410c}
-  .actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
-  .actions .note{flex-basis:100%;margin-top:2px}
+  #handoff.err{background:var(--err-bg);border-color:var(--err-brd);color:var(--err)}
+
+  /* ---------- Right Column: Sticky Preview + Pre-Flight QA ---------- */
+  .preview-col{position:sticky;top:14px}
+  @media(max-width:1060px){.preview-col{position:static}}
+  .preview-card{margin-bottom:0}
+
+  .qa-bar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .qa-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:600;
+    background:#f1f5f9;color:var(--muted);border:1px solid var(--line)}
+  .qa-pill.ok{background:var(--ok-bg);color:var(--ok);border-color:var(--ok-brd)}
+  .qa-pill.warn{background:var(--warn-bg);color:var(--warn);border-color:var(--warn-brd)}
+  .qa-pill.err{background:var(--err-bg);color:var(--err);border-color:var(--err-brd)}
+
+  .previewbar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;align-items:center;margin-bottom:10px}
+  .vp-group{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  .vp-group .btn-mini.active{background:var(--navy);color:#fff}
+
+  #previewShell{background:#e2e8f0;border:1px solid var(--line);border-radius:10px;padding:14px;overflow:auto;text-align:center;transition:background .15s}
+  #previewShell.dark-stage{background:#0f172a;border-color:#334155}
+  #preview{background:#fff;border:0;width:600px;max-width:100%;height:calc(100vh - 210px);min-height:540px;
+    border-radius:8px;box-shadow:0 2px 10px rgba(15,23,42,.14);display:inline-block}
+  @media(max-width:680px){
+    #previewShell{padding:8px}
+    #preview{width:100%!important;max-width:100%!important;height:480px;min-height:380px}
+  }
+
+  /* Global window drag overlay */
+  #pageDropToast{position:fixed;inset:12px;border:3px dashed var(--navy);border-radius:16px;
+    background:rgba(239,246,255,.9);z-index:9999;display:none;align-items:center;justify-content:center;
+    pointer-events:none;font-size:18px;font-weight:800;color:var(--navy);box-shadow:0 12px 32px rgba(0,63,135,.18)}
+  #pageDropToast.show{display:flex}
 </style>
 </head>
 <body>
 
+<div id="pageDropToast">Drop .html email template and/or PDF attachments anywhere</div>
+
 <header>
-  <div class="wrap">
-    <h1>BLI <span class="gold">Mail Gateway</span></h1>
-    <p>Paste any Bill Layne Insurance email template below, preview it, then create a Gmail draft or send it — no copy-pasting into Gmail.</p>
-    <p>Need to build the email first? Open <a href="studio.html" style="color:#fff;font-weight:700;">✉️ Mail Studio</a> (fill-in-the-blanks templates) or the <a href="receipt.html" style="color:#fff;font-weight:700;">🧾 Receipt Builder</a>.</p>
-    <span class="badge" id="connBadge">Gateway: not tested</span>
+  <div class="head-inner">
+    <div class="brand-block">
+      <h1>BLI <span class="gold">Mail Gateway</span></h1>
+      <p>Paste or drop any Bill Layne Insurance email template, verify mobile &amp; desktop layout, attach PDFs, and draft or send straight into Gmail — with every style &amp; container intact.</p>
+    </div>
+    <div class="head-right">
+      <nav class="suite-nav" aria-label="BLI Mail tools">
+        <a href="./" class="active" aria-current="page">&#128228; Universal Sender</a>
+        <a href="studio.html" class="sibling-link">&#9993;&#65039; Mail Studio</a>
+        <a href="receipt.html" class="sibling-link">&#129534; Receipt Builder</a>
+      </nav>
+      <div class="status-row">
+        <span class="badge" id="connBadge">Gateway: checking&hellip;</span>
+        <button class="gear-pill" id="toggleSettingsBtn" type="button">&#9881;&#65039; Settings</button>
+      </div>
+    </div>
   </div>
 </header>
 
-<main class="wrap">
+<main class="shell">
 
   <div id="handoff" role="status"></div>
 
   <details class="card" id="settingsCard">
-    <summary>&#9881;&#65039; Gateway settings <span class="note" id="setStatus"></span></summary>
+    <summary>&#9881;&#65039; Gateway connection settings <span class="note" id="setStatus"></span></summary>
     <div class="grid2">
       <div class="full">
-        <label for="gwUrl">Gateway URL (the Apps Script link ending in /exec)</label>
-        <input type="text" id="gwUrl" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off">
+        <label for="gwUrl">Gateway URL <span class="soft">(Google Apps Script Web App link ending in /exec)</span></label>
+        <input type="text" id="gwUrl" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off" spellcheck="false">
       </div>
       <div>
-        <label for="gwSecret">Secret</label>
-        <input type="password" id="gwSecret" placeholder="GATEWAY_SECRET value" autocomplete="off">
+        <label for="gwSecret">Gateway Secret</label>
+        <input type="password" id="gwSecret" placeholder="GATEWAY_SECRET value" autocomplete="off" spellcheck="false">
       </div>
-      <div style="align-self:end">
+      <div style="align-self:end;display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn-quiet btn-mini" id="showSecret" type="button">Show</button>
+        <button class="btn-primary btn-mini" id="saveSettings" type="button">Save &amp; Test</button>
+        <button class="btn-quiet btn-mini" id="testConn" type="button">Test connection</button>
+        <button class="btn-ghost btn-mini" id="copySetupLink" type="button" title="Copy a #gw= setup snippet to configure other BLI tools">&#128279; Copy setup hash</button>
       </div>
     </div>
     <div class="row">
-      <button class="btn-primary btn-mini" id="saveSettings" type="button">Save settings</button>
-      <button class="btn-quiet btn-mini" id="testConn" type="button">Test connection</button>
-      <span class="note">Stored only in this browser (localStorage) — never inside the emails themselves.</span>
+      <span class="note">Stored only in this browser (<code>localStorage</code>) — never inside code or customer emails.</span>
     </div>
   </details>
 
-  <section class="card">
-    <h2><span class="step">1</span>Email HTML</h2>
-    <div id="dropZone">
-      Drag &amp; drop an <b>index.html</b> here, <label class="filebtn" for="fileInput">choose a file</label>, or paste the HTML below.
-      <input type="file" id="fileInput" accept=".html,.htm,text/html">
-    </div>
-    <textarea id="htmlInput" placeholder="Paste the full email HTML here…" spellcheck="false"></textarea>
-    <div class="meta">
-      <span id="sizeInfo">0 KB</span>
-      <span id="clipWarn" hidden>&#9888;&#65039; Over ~100 KB — Gmail may clip this email</span>
-    </div>
-  </section>
+  <div class="workbench">
 
-  <section class="card">
-    <h2><span class="step">2</span>Recipients &amp; subject</h2>
-    <div class="grid2">
-      <div>
-        <label for="toInput">To <span style="font-weight:400">(comma-separate multiple — optional for drafts)</span></label>
-        <input type="text" id="toInput" placeholder="customer@example.com" autocomplete="off">
-      </div>
-      <div>
-        <label for="subjectInput">Subject <span style="font-weight:400">(auto-fills from the email file)</span></label>
-        <input type="text" id="subjectInput" placeholder="Your Auto Quote — Bill Layne Insurance" autocomplete="off">
-      </div>
-      <div>
-        <label for="ccInput">CC</label>
-        <input type="text" id="ccInput" autocomplete="off">
-      </div>
-      <div>
-        <label for="bccInput">BCC <span style="font-weight:400">(clear it to skip the Save@ copy)</span></label>
-        <input type="text" id="bccInput" value="Save@BillLayneInsurance.com" autocomplete="off">
-      </div>
-      <div>
-        <label for="fromNameInput">From name</label>
-        <input type="text" id="fromNameInput" value="Bill Layne Insurance" autocomplete="off">
-      </div>
-      <div>
-        <label for="replyToInput">Reply-To (optional)</label>
-        <input type="text" id="replyToInput" placeholder="Save@BillLayneInsurance.com" autocomplete="off">
-      </div>
+    <!-- ==================== LEFT COLUMN: CONTROLS ==================== -->
+    <div class="controls-col">
+
+      <!-- STEP 1: EMAIL HTML -->
+      <section class="card">
+        <div class="card-head">
+          <h2><span class="step">1</span>Email HTML</h2>
+          <button class="btn-quiet btn-mini" id="toggleCodeBtn" type="button" hidden>&lt;/&gt; Edit HTML</button>
+        </div>
+
+        <div class="intake-btns">
+          <button class="btn-primary btn-mini" id="pasteClipBtn" type="button" style="padding:9px 12px;font-size:13px">&#128203; Paste HTML from Clipboard</button>
+          <button class="btn-ghost btn-mini" id="pickFileBtn" type="button" style="padding:9px 12px;font-size:13px">&#128194; Choose .html File</button>
+        </div>
+
+        <div id="dropZone" role="button" tabindex="0" aria-label="Drop HTML email template file or click to browse">
+          Drag &amp; drop an <b>.html</b> file here (plus any PDFs!), <label class="filebtn" for="fileInput">browse files</label>, or paste below.
+          <input type="file" id="fileInput" accept=".html,.htm,text/html">
+        </div>
+
+        <div id="loadedBar">
+          <span id="loadedTitle">&#9989; Template loaded</span>
+          <div style="display:flex;gap:6px;align-items:center">
+            <button class="btn-quiet btn-mini" id="editCodeInlineBtn" type="button">&lt;/&gt; Code</button>
+            <button class="btn-quiet btn-mini" id="clearHtmlBtn" type="button" title="Remove loaded HTML">&times; Clear</button>
+          </div>
+        </div>
+
+        <div id="codeWrap">
+          <textarea id="htmlInput" aria-label="Email HTML source code" placeholder="Or paste the full <!DOCTYPE html>…</html> template code here…" spellcheck="false"></textarea>
+        </div>
+      </section>
+
+      <!-- STEP 2: RECIPIENTS & SUBJECT -->
+      <section class="card">
+        <div class="card-head">
+          <h2><span class="step">2</span>Recipients &amp; Subject</h2>
+        </div>
+
+        <div class="field-gap">
+          <label for="toInput">To <span class="soft">(comma-separate multiple &mdash; optional for drafts)</span></label>
+          <input type="text" id="toInput" placeholder="customer@example.com" autocomplete="off">
+        </div>
+
+        <div class="field-gap" style="margin-bottom:6px">
+          <div class="label-split">
+            <label for="subjectInput">Subject <span class="soft">(auto-filled from template)</span></label>
+            <span>
+              <span class="subj-coach" id="subjCoach"></span>
+              <button class="link-btn" id="reExtractSubjBtn" type="button" title="Re-pull subject from HTML title/comment" hidden>&#8634; Auto</button>
+            </span>
+          </div>
+          <input type="text" id="subjectInput" placeholder="your auto quote — bill layne insurance" autocomplete="off">
+        </div>
+
+        <details class="more-opts" id="moreRecipOpts">
+          <summary>
+            <span id="defaultsSummary">&#128274; BCC: Save@BillLayneInsurance.com &middot; From: Bill Layne Insurance</span>
+            <span class="opt-action">+ CC / Options &#9662;</span>
+          </summary>
+          <div class="opts-body grid2">
+            <div>
+              <label for="ccInput">CC</label>
+              <input type="text" id="ccInput" placeholder="optional@example.com" autocomplete="off">
+            </div>
+            <div>
+              <label for="bccInput">BCC <span class="soft">(clear to skip Save@)</span></label>
+              <input type="text" id="bccInput" value="Save@BillLayneInsurance.com" autocomplete="off">
+            </div>
+            <div>
+              <label for="fromNameInput">From name</label>
+              <input type="text" id="fromNameInput" value="Bill Layne Insurance" autocomplete="off">
+            </div>
+            <div>
+              <label for="replyToInput">Reply-To <span class="soft">(optional)</span></label>
+              <input type="text" id="replyToInput" placeholder="Save@BillLayneInsurance.com" autocomplete="off">
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <!-- STEP 3: ATTACHMENTS -->
+      <section class="card">
+        <div class="card-head">
+          <h2><span class="step">3</span>Attachments <span class="note" id="attachMeter">(optional &middot; up to 5 files)</span></h2>
+          <button class="btn-quiet btn-mini" id="attachClear" type="button" hidden>Remove all</button>
+        </div>
+        <div id="attachDrop" role="button" tabindex="0" aria-label="Drop PDF or attachment files here or click to choose">
+          &#128206; Drop PDF dec pages / quotes here or <label class="filebtn" for="attachInput">choose files</label>
+          <input type="file" id="attachInput" aria-label="Choose attachment files" multiple>
+        </div>
+        <ul id="attachList"></ul>
+      </section>
+
+      <!-- STEP 4: ACTIONS -->
+      <section class="card">
+        <div class="action-grid">
+          <button class="btn-primary" id="draftBtn" type="button">&#9993;&#65039; Create Gmail Draft</button>
+          <button class="btn-gold" id="sendBtn" type="button">&#9889; Send Now</button>
+        </div>
+        <div class="sub-actions">
+          <button class="btn-quiet btn-mini" id="copyCleanBtn" type="button">&#128203; Copy Cleaned HTML</button>
+          <button class="btn-quiet btn-mini" id="resetAllBtn" type="button">&#129529; Clear / Next Customer</button>
+        </div>
+        <p class="note" style="margin:8px 0 0">Draft = lands in Gmail Drafts for a final look. Send Now = two-click confirm, sends immediately from your Gmail.</p>
+        <div id="result" role="status"></div>
+      </section>
+
     </div>
-  </section>
 
-  <section class="card">
-    <h2><span class="step">3</span>Attachments <span style="font-weight:400;font-size:14px;color:var(--muted)">(optional &mdash; up to 5 files, such as a declarations page PDF)</span></h2>
-    <input type="file" id="attachInput" multiple>
-    <button class="btn-quiet btn-mini" id="attachClear" type="button" hidden>Remove all</button>
-    <ul id="attachList"></ul>
-  </section>
+    <!-- ==================== RIGHT COLUMN: PREVIEW & QA ==================== -->
+    <div class="preview-col">
+      <section class="card preview-card">
+        <div class="previewbar">
+          <h2 style="margin:0;font-size:15px;color:var(--navy)">Live Email Preview</h2>
+          <div class="vp-group">
+            <button class="btn-quiet btn-mini vp-btn" data-w="375" type="button">&#128241; Phone 375</button>
+            <button class="btn-quiet btn-mini vp-btn active" data-w="600" type="button">&#128187; Email 600</button>
+            <button class="btn-quiet btn-mini vp-btn" data-w="full" type="button">Full width</button>
+            <button class="btn-ghost btn-mini" id="darkBackdropBtn" type="button" title="Toggle dark backdrop behind the email container">&#127769; Backdrop</button>
+          </div>
+        </div>
 
-  <section class="card">
-    <h2><span class="step">4</span>Preview</h2>
-    <div class="previewbar">
-      <button class="btn-quiet btn-mini" data-w="375" type="button">Phone 375</button>
-      <button class="btn-quiet btn-mini active" data-w="600" type="button">Email 600</button>
-      <button class="btn-quiet btn-mini" data-w="full" type="button">Full width</button>
+        <div class="qa-bar" id="qaBar">
+          <span class="qa-pill" id="sizeInfo">0.0 KB</span>
+          <span class="qa-pill" id="qaStatusPill">Paste or drop an email template to run BLI pre-flight checks</span>
+        </div>
+
+        <div id="previewShell">
+          <iframe id="preview" sandbox="" title="Email preview"></iframe>
+        </div>
+      </section>
     </div>
-    <div id="previewShell"><iframe id="preview" sandbox="" title="Email preview"></iframe></div>
-  </section>
 
-  <section class="card actions">
-    <button class="btn-primary" id="draftBtn" type="button">Create Gmail Draft</button>
-    <button class="btn-gold" id="sendBtn" type="button">Send Now</button>
-    <span class="note">Draft = lands in your Gmail Drafts for a final look. Send Now = goes out immediately from your Gmail account.</span>
-    <div id="result" role="status"></div>
-  </section>
+  </div>
 
 </main>
 
@@ -201,62 +380,193 @@
   var $ = function(id){ return document.getElementById(id); };
   var LS = {
     url:'bliMailGateway.url', secret:'bliMailGateway.secret',
-    fromName:'bliMailGateway.fromName', bcc:'bliMailGateway.bcc'
+    fromName:'bliMailGateway.fromName', bcc:'bliMailGateway.bcc',
+    senderEmail:'bliMailGateway.senderEmail'
   };
+  var SPACER_URL = 'https://img.billlayneinsurance.com/i/2026/11/email-spacer-600x1-4rd8em.png';
+  var DEFAULT_AUTHUSER = 'bill@billlayneinsurance.com';
+  var sourceLabel = '';
 
-  /* ---------- settings ---------- */
+  function esc(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  function showResult(kind, htmlMsg){
+    var r = $('result');
+    r.className = kind === true ? 'ok' : (kind === 'warn' ? 'warn' : 'err');
+    r.innerHTML = htmlMsg;
+    r.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function clearResult(){
+    var r = $('result');
+    r.className = '';
+    r.style.display = '';
+    r.innerHTML = '';
+  }
+
+  function fetchWithTimeout(url, opts, ms){
+    var ctrl = new AbortController();
+    var t = setTimeout(function(){ ctrl.abort(); }, ms);
+    opts.signal = ctrl.signal;
+    return fetch(url, opts).finally(function(){ clearTimeout(t); });
+  }
+
+  /* ---------- Cross-origin #gw= setup intake & export ---------- */
+  function ingestGwHash(){
+    var h = location.hash || '';
+    var m = /[#&]gw=([A-Za-z0-9_-]+)/.exec(h);
+    if (!m) return false;
+    try {
+      var b64 = m[1].replace(/-/g, '+').replace(/_/g, '/');
+      while (b64.length % 4) b64 += '=';
+      var d = JSON.parse(decodeURIComponent(escape(atob(b64))));
+      if (d && d.u) localStorage.setItem(LS.url, String(d.u).trim());
+      if (d && d.s) localStorage.setItem(LS.secret, String(d.s).trim());
+      history.replaceState(null, '', location.pathname + location.search);
+      return true;
+    } catch (e) { return false; }
+  }
+
+  $('copySetupLink').addEventListener('click', function(){
+    var url = $('gwUrl').value.trim(), sec = $('gwSecret').value.trim();
+    if (!url || !sec) {
+      showResult(false, 'Enter and save both the Gateway URL and Secret first before copying a setup hash.');
+      return;
+    }
+    var json = JSON.stringify({ u: url, s: sec });
+    var b64 = btoa(unescape(encodeURIComponent(json))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    var full = location.origin + location.pathname + '#gw=' + b64;
+    navigator.clipboard.writeText(full).then(function(){
+      showResult(true, '&#128279; Copied one-click setup link to clipboard. Open it in another browser/profile to configure instantly (treat like a password).');
+    }, function(){
+      showResult('warn', 'Clipboard blocked by browser — copy manually: <code>#gw=' + esc(b64) + '</code>');
+    });
+  });
+
+  /* ---------- Settings & Secret-Verified Connection Ping ---------- */
   function loadSettings(){
+    var fromGw = ingestGwHash();
     $('gwUrl').value = localStorage.getItem(LS.url) || '';
     $('gwSecret').value = localStorage.getItem(LS.secret) || '';
     var fn = localStorage.getItem(LS.fromName); if (fn !== null) $('fromNameInput').value = fn;
     var bc = localStorage.getItem(LS.bcc); if (bc !== null) $('bccInput').value = bc;
-    if (!$('gwUrl').value) { $('settingsCard').open = true; }
-    else { $('setStatus').textContent = '— saved ✓'; }
+    updateDefaultsSummary();
+
+    if (!$('gwUrl').value || !$('gwSecret').value) {
+      $('settingsCard').open = true;
+      $('connBadge').className = 'badge err';
+      $('connBadge').textContent = 'Gateway: setup needed';
+    } else {
+      $('settingsCard').open = false;
+      $('setStatus').textContent = '— saved ✓';
+      if (fromGw) showResult(true, '&#9989; Gateway URL &amp; secret imported from setup link.');
+      pingGateway(true);
+    }
   }
+
+  $('toggleSettingsBtn').addEventListener('click', function(){
+    var c = $('settingsCard');
+    c.open = !c.open;
+    if (c.open) c.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+
+  function pingGateway(silent){
+    var url = $('gwUrl').value.trim();
+    var sec = $('gwSecret').value.trim();
+    var badge = $('connBadge');
+    if (!url) {
+      badge.className = 'badge err';
+      badge.textContent = 'Gateway: enter URL';
+      return;
+    }
+    badge.className = 'badge';
+    badge.textContent = 'Gateway: checking…';
+
+    // POST mode:'ping' verifies BOTH the URL and GATEWAY_SECRET (v1.3 returns ok:true + quota;
+    // v1.2 returns "mode must be 'draft' or 'send'" ONLY after passing the secret check!).
+    var postBody = JSON.stringify({ secret: sec, mode: 'ping' });
+    fetchWithTimeout(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: postBody,
+      redirect: 'follow'
+    }, 25000)
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d && d.ok) {
+          if (d.senderEmail) localStorage.setItem(LS.senderEmail, d.senderEmail);
+          var q = (typeof d.remainingQuota === 'number') ? ' · ' + d.remainingQuota + ' left today' : '';
+          badge.className = 'badge ok';
+          badge.textContent = 'Gateway: connected ✓ (v' + (d.version || '1.3') + q + ')';
+          if (!silent) showResult(true, '&#9989; Connected &amp; secret verified' + (d.senderEmail ? ' as <b>' + esc(d.senderEmail) + '</b>' : '') + q + '.');
+        } else if (d && /Unauthorized/i.test(d.error || '')) {
+          badge.className = 'badge err';
+          badge.textContent = 'Gateway: wrong secret';
+          $('settingsCard').open = true;
+          if (!silent) showResult(false, '&#10060; Reachable URL, but <b>GATEWAY_SECRET</b> did not match. Check Gateway settings above.');
+        } else if (d && /mode must be/i.test(d.error || '')) {
+          // Live gateway is v1.2 — secret passed! Fetch version via GET for display.
+          badge.className = 'badge ok';
+          badge.textContent = 'Gateway: connected & verified ✓ (v1.2)';
+          if (!silent) showResult(true, '&#9989; Connected &amp; secret verified (running v1.2).');
+        } else {
+          badge.className = 'badge err';
+          badge.textContent = 'Gateway: check settings';
+          if (!silent) showResult(false, '&#10060; Unexpected gateway response: ' + esc((d && d.error) || 'unknown'));
+        }
+      })
+      .catch(function(){
+        badge.className = 'badge err';
+        badge.textContent = 'Gateway: unreachable';
+        if (!silent) showResult(false, '&#10060; Could not reach Gateway URL. Confirm it ends in <code>/exec</code> and is deployed with access "Anyone".');
+      });
+  }
+
   $('saveSettings').addEventListener('click', function(){
     var url = $('gwUrl').value.trim(), sec = $('gwSecret').value.trim();
     localStorage.setItem(LS.url, url);
     localStorage.setItem(LS.secret, sec);
-    $('setStatus').textContent = url ? '— saved ✓' : '';
+    $('setStatus').textContent = (url && sec) ? '— saved ✓' : '';
     if (url && url.indexOf('/exec') === -1) {
-      showResult(false, 'Heads up: the gateway URL usually ends in /exec — double-check you copied the Web app URL.');
+      showResult('warn', 'Heads up: the gateway URL usually ends in <code>/exec</code> — double-check you copied the Web app URL.');
+      return;
+    }
+    if (url && sec) {
+      $('settingsCard').open = false;
+      pingGateway(false);
     } else {
-      showResult(true, 'Settings saved in this browser.');
+      showResult('warn', 'Enter both the Gateway URL and Secret, then click Save &amp; Test.');
     }
   });
+
   $('showSecret').addEventListener('click', function(){
     var f = $('gwSecret');
     f.type = (f.type === 'password') ? 'text' : 'password';
     this.textContent = (f.type === 'password') ? 'Show' : 'Hide';
   });
-  $('testConn').addEventListener('click', function(){
-    var url = $('gwUrl').value.trim();
-    var badge = $('connBadge');
-    if (!url) { badge.className = 'badge err'; badge.textContent = 'Gateway: enter the URL first'; return; }
-    badge.className = 'badge'; badge.textContent = 'Gateway: testing…';
-    fetchWithTimeout(url, { method:'GET', redirect:'follow' }, 30000)
-      .then(function(r){ return r.json(); })
-      .then(function(d){
-        if (d && d.ok) { badge.className = 'badge ok'; badge.textContent = 'Gateway: connected ✓ (v' + (d.version || '?') + ')'; }
-        else { badge.className = 'badge err'; badge.textContent = 'Gateway: unexpected reply'; }
-      })
-      .catch(function(){ badge.className = 'badge err'; badge.textContent = 'Gateway: could not reach URL'; });
+
+  $('testConn').addEventListener('click', function(){ pingGateway(false); });
+
+  function updateDefaultsSummary(){
+    var cc = $('ccInput').value.trim();
+    var bcc = $('bccInput').value.trim();
+    var fn = $('fromNameInput').value.trim() || 'Bill Layne Insurance';
+    var parts = [];
+    parts.push(bcc ? ('&#128274; BCC: ' + esc(bcc)) : '&#9888;&#65039; No BCC');
+    if (cc) parts.push('CC: ' + esc(cc));
+    parts.push('From: ' + esc(fn));
+    $('defaultsSummary').innerHTML = parts.join(' &middot; ');
+  }
+  ['ccInput','bccInput','fromNameInput','replyToInput'].forEach(function(id){
+    $(id).addEventListener('input', updateDefaultsSummary);
   });
   $('fromNameInput').addEventListener('change', function(){ localStorage.setItem(LS.fromName, this.value); });
   $('bccInput').addEventListener('change', function(){ localStorage.setItem(LS.bcc, this.value); });
 
-  /* ---------- HTML input, preview, subject autofill ---------- */
-  function refresh(){
-    var v = cleanEmail($('htmlInput').value);
-    var bytes = new Blob([v]).size;
-    $('sizeInfo').textContent = (bytes/1024).toFixed(1) + ' KB';
-    $('clipWarn').hidden = bytes < 100 * 1024;
-    $('preview').srcdoc = v || '<body style="font-family:sans-serif;color:#94a3b8;display:grid;place-items:center;height:100vh;margin:0">Preview appears here</body>';
-    if (!$('subjectInput').value.trim()) {
-      var t = extractSubject($('htmlInput').value);
-      if (t) $('subjectInput').value = t;
-    }
-  }
+  /* ---------- Email Cleaning, Subject Extraction & Pre-Flight QA ---------- */
   function extractTitle(html){
     var m = /<title[^>]*>([\s\S]*?)<\/title>/i.exec(html || '');
     if (!m) return '';
@@ -264,20 +574,9 @@
     d.innerHTML = m[1].replace(/<[^>]+>/g, '');
     return d.value.replace(/\s+/g, ' ').trim();
   }
-  // Templates built with the Designer prompt carry a "Draft in Gmail" toolbar.
-  // It must never reach a customer, so remove it from anything pasted/dropped here.
-  function stripSendToolbar(html){
-    if (!html || (html.indexOf('bli-send-toolbar') === -1 && html.indexOf('bli-send-script') === -1)) return html;
-    try {
-      var doc = new DOMParser().parseFromString(html, 'text/html');
-      doc.querySelectorAll('#bli-send-toolbar, #bli-send-script').forEach(function(n){ n.remove(); });
-      var dt = /^\s*<!doctype[^>]*>/i.exec(html);
-      return (dt ? dt[0] + '\n' : '<!doctype html>\n') + doc.documentElement.outerHTML;
-    } catch (e) { return html; }
-  }
-  // Email files name their subject in a first-line SUBJECT comment. Fall back to the title tag.
+
   function extractSubject(html){
-    var m = /<\!--\s*SUBJECT:\s*([\s\S]*?)\s*-->/i.exec(html || '');
+    var m = /<!--\s*SUBJECT:\s*([\s\S]*?)\s*-->/i.exec(html || '');
     if (m && m[1].trim()) {
       var d = document.createElement('textarea');
       d.innerHTML = m[1];
@@ -285,26 +584,38 @@
     }
     return extractTitle(html);
   }
-  // Everything that must never reach a customer, removed from anything pasted, dropped or handed off:
-  //  - the Designer "Draft in Gmail" toolbar (stripSendToolbar)
-  //  - the Gmail White preview toolbar (#preview-toolbar) and every script tag
-  //  - the leading SUBJECT comment
-  // The Gmail White 600px anti-fit spacer ships as a data: image for the copy/paste path. Gmail drops
-  // data: images from delivered mail, so here it becomes the hosted copy of the same transparent row.
-  var SPACER_URL = 'https://img.billlayneinsurance.com/i/2026/11/email-spacer-600x1-4rd8em.png';
-  function cleanEmail(html){
-    if (!html) return html;
-    var out = stripSendToolbar(html);
-    out = out.replace(/^\s*<\!--\s*SUBJECT:[\s\S]*?-->\s*/i, '');
-    out = out.replace(/<\!--[^>]*PREVIEW TOOLBAR[^>]*-->\s*/i, '');
-    out = out.replace(/<div id="preview-toolbar"[^>]*>[\s\S]{0,3000}?<\/div>\s*/i, '');
-    out = out.replace(/<(?:script)\b[\s\S]*?<\/(?:script)>\s*/gi, '');
-    out = out.replace(/(<img\b[^>]*?\bsrc=")data:image\/png;base64,[A-Za-z0-9+\/=]+("[^>]*?\bwidth="600")/gi,
+
+  // Pure-string cleaner (never DOMParser.outerHTML, which alters Outlook VML xmlns attributes).
+  // Preserves <script type="application/ld+json"> Schema.org Gmail Rich Cards!
+  function cleanEmailWithReport(html){
+    if (!html) return { html: '', stripped: [] };
+    var stripped = [];
+    var out = String(html);
+
+    if (/id=["']bli-send-toolbar["']/i.test(out)) stripped.push('Designer toolbar');
+    if (/id=["']preview-toolbar["']/i.test(out)) stripped.push('Preview toolbar');
+
+    out = out.replace(/^\s*<!--\s*SUBJECT:[\s\S]*?-->\s*/i, '');
+    out = out.replace(/<!--[^>]*PREVIEW TOOLBAR[^>]*-->\s*/gi, '');
+    out = out.replace(/<div\b[^>]*\bid=["']bli-send-toolbar["'][^>]*>(?:(?!<div\b|<\/div>)[\s\S]|<div\b[^>]*>(?:(?!<div\b|<\/div>)[\s\S])*<\/div>)*<\/div>\s*/gi, '');
+    out = out.replace(/<div\b[^>]*\bid=["']preview-toolbar["'][^>]*>(?:(?!<div\b|<\/div>)[\s\S]|<div\b[^>]*>(?:(?!<div\b|<\/div>)[\s\S])*<\/div>)*<\/div>\s*/gi, '');
+
+    var beforeScript = out;
+    out = out.replace(/<script\b(?![^>]*\btype\s*=\s*["']application\/ld\+json["'])[^>]*>[\s\S]*?<\/script>\s*/gi, '');
+    if (out !== beforeScript && stripped.indexOf('Designer toolbar') === -1) stripped.push('script tag');
+
+    var beforeSpacer = out;
+    out = out.replace(/(<img\b[^>]*?\bsrc=["'])data:image\/png;base64,[A-Za-z0-9+\/=]+(["'][^>]*?\bwidth=["']600["'])/gi,
       function(_, a, b){ return a + SPACER_URL + b; });
-    return out;
+    if (out !== beforeSpacer) stripped.push('600px CDN spacer');
+
+    return { html: out, stripped: stripped };
   }
-  // GmailApp corrupts 4-byte characters and can mangle other non-ASCII text, so the html goes out as
-  // pure ASCII: every character above 126 becomes a numeric entity (renders identically).
+
+  function cleanEmail(html){
+    return cleanEmailWithReport(html).html;
+  }
+
   function asciiHtml(html){
     var out = '', i, cp;
     for (i = 0; i < html.length; i++) {
@@ -314,50 +625,232 @@
     }
     return out;
   }
-  function safeSubject(s){ return String(s || '').replace(/[\uD800-\uDFFF]/g, '').replace(/\s+/g, ' ').trim(); }
-  $('htmlInput').addEventListener('input', refresh);
 
-  function loadFile(file){
+  function safeSubject(s){
+    return String(s || '').replace(/[\uD800-\uDFFF]/g, '').replace(/\s+/g, ' ').trim();
+  }
+
+  // Pre-Flight QA inspector (non-destructive visibility + guards against unfilled tokens / Cloudflare mangling)
+  function inspectEmail(cleanedHtml, strippedList){
+    var bytes = new Blob([cleanedHtml]).size;
+    var kb = (bytes / 1024).toFixed(1);
+    var errors = [];
+    var warnings = [];
+
+    var tokens = cleanedHtml.match(/\{\{[A-Za-z0-9_ -]{2,40}\}\}/g);
+    if (tokens) {
+      var uniq = Array.from(new Set(tokens)).slice(0, 3);
+      errors.push('Unfilled token: ' + uniq.join(', '));
+    }
+    if (/__cf_email__|cdn-cgi\/l\/email-protection|data-cfemail/i.test(cleanedHtml)) {
+      errors.push('Cloudflare email-obfuscation detected');
+    }
+    if (bytes > 102400) {
+      warnings.push('Over 102 KB Gmail clip limit (' + kb + ' KB)');
+    } else if (bytes > 98 * 1024) {
+      warnings.push('Near 102 KB clip limit (' + kb + ' KB)');
+    }
+    if (/https?:\/\/i\.imgur\.com\//i.test(cleanedHtml)) {
+      warnings.push('Legacy Imgur image URL (verify it loads)');
+    }
+    return { bytes: bytes, kb: kb, errors: errors, warnings: warnings, stripped: strippedList || [] };
+  }
+
+  function updateSubjectCoach(){
+    var s = $('subjectInput').value.trim();
+    var coach = $('subjCoach');
+    var raw = $('htmlInput').value.trim();
+    $('reExtractSubjBtn').hidden = !raw;
+    if (!s) { coach.className = 'subj-coach'; coach.textContent = ''; return; }
+    var len = s.length;
+    var flags = [];
+    if (len > 55) flags.push(len + ' chars (long)');
+    if (/\$|\bfree\b|\burgent\b/i.test(s)) flags.push('spam-filter word/symbol');
+    if (flags.length) {
+      coach.className = 'subj-coach warn';
+      coach.textContent = flags.join(' · ');
+    } else {
+      coach.className = 'subj-coach';
+      coach.textContent = len + ' chars ✓';
+    }
+  }
+  $('subjectInput').addEventListener('input', updateSubjectCoach);
+  $('reExtractSubjBtn').addEventListener('click', function(){
+    var t = extractSubject($('htmlInput').value);
+    if (t) { $('subjectInput').value = safeSubject(t); updateSubjectCoach(); }
+  });
+
+  function setCodeCollapsed(collapsed){
+    var wrap = $('codeWrap');
+    var hasHtml = !!$('htmlInput').value.trim();
+    wrap.hidden = collapsed && hasHtml;
+    $('toggleCodeBtn').hidden = !hasHtml;
+    $('toggleCodeBtn').textContent = wrap.hidden ? '</> View / Edit HTML' : 'Hide HTML Code';
+    $('editCodeInlineBtn').textContent = wrap.hidden ? '</> View Code' : 'Hide Code';
+  }
+
+  $('toggleCodeBtn').addEventListener('click', function(){ setCodeCollapsed(!$('codeWrap').hidden); });
+  $('editCodeInlineBtn').addEventListener('click', function(){ setCodeCollapsed(!$('codeWrap').hidden); });
+
+  function refresh(opts){
+    opts = opts || {};
+    var raw = $('htmlInput').value;
+    var rep = cleanEmailWithReport(raw);
+    var cleaned = rep.html;
+    var qaBar = $('qaBar');
+
+    if (!cleaned.trim()) {
+      $('loadedBar').className = '';
+      setCodeCollapsed(false);
+      qaBar.innerHTML = '<span class="qa-pill">0.0 KB</span><span class="qa-pill">Paste or drop an email template to run BLI pre-flight checks</span>';
+      $('preview').srcdoc = '<body style="font-family:system-ui,-apple-system,sans-serif;color:#64748b;display:grid;place-items:center;height:100vh;margin:0;background:#f8fafc"><div style="text-align:center;padding:24px"><div style="font-size:32px;margin-bottom:8px">&#9993;&#65039;</div><div style="font-weight:700;color:#0f172a;margin-bottom:4px">Live Email Preview</div><div style="font-size:13px">Click <b>Paste HTML from Clipboard</b> or drop an <b>.html</b> file on the left</div></div></body>';
+      updateSubjectCoach();
+      return;
+    }
+
+    var qa = inspectEmail(cleaned, rep.stripped);
+    var titleGuess = extractSubject(raw) || sourceLabel || 'Email template';
+
+    $('loadedBar').className = 'show';
+    $('loadedTitle').textContent = '✓ ' + (sourceLabel ? sourceLabel + ' · ' : '') + qa.kb + ' KB';
+    if (opts.collapseCode) setCodeCollapsed(true);
+    else $('toggleCodeBtn').hidden = false;
+
+    if (opts.overwriteSubject || !$('subjectInput').value.trim()) {
+      var extracted = extractSubject(raw);
+      if (extracted) $('subjectInput').value = safeSubject(extracted);
+    }
+    updateSubjectCoach();
+
+    // Render Pre-Flight QA Pills
+    var pills = [];
+    var sizeCls = qa.bytes > 102400 ? 'err' : (qa.bytes > 98 * 1024 ? 'warn' : 'ok');
+    pills.push('<span class="qa-pill ' + sizeCls + '">' + (sizeCls === 'ok' ? '&#10003; ' : '&#9888; ') + qa.kb + ' KB</span>');
+
+    if (qa.errors.length) {
+      qa.errors.forEach(function(er){ pills.push('<span class="qa-pill err">&#10060; ' + esc(er) + '</span>'); });
+    } else {
+      pills.push('<span class="qa-pill ok">&#10003; Tokens &amp; links clean</span>');
+    }
+    qa.warnings.forEach(function(w){
+      if (w.indexOf('clip limit') === -1) pills.push('<span class="qa-pill warn">&#9888; ' + esc(w) + '</span>');
+    });
+    if (qa.stripped.length) {
+      pills.push('<span class="qa-pill ok">&#10003; Auto-cleaned: ' + esc(qa.stripped.join(', ')) + '</span>');
+    }
+    qaBar.innerHTML = pills.join('');
+
+    $('preview').srcdoc = cleaned;
+    return qa;
+  }
+
+  $('htmlInput').addEventListener('input', function(){
+    sourceLabel = 'Edited HTML';
+    refresh({ collapseCode: false });
+  });
+
+  /* ---------- Paste from Clipboard / File Load / Clear ---------- */
+  $('pasteClipBtn').addEventListener('click', function(){
+    if (!navigator.clipboard || !navigator.clipboard.readText) {
+      setCodeCollapsed(false);
+      $('htmlInput').focus();
+      showResult('warn', 'Your browser requires manual paste — click inside the HTML box and press <b>Ctrl+V</b>.');
+      return;
+    }
+    navigator.clipboard.readText().then(function(txt){
+      if (!txt || !txt.trim()) {
+        showResult('warn', 'Clipboard is empty — copy your finished HTML template first, then click Paste.');
+        return;
+      }
+      sourceLabel = 'Clipboard';
+      $('htmlInput').value = txt;
+      refresh({ collapseCode: true, overwriteSubject: true });
+      clearResult();
+    }).catch(function(){
+      setCodeCollapsed(false);
+      $('htmlInput').focus();
+      showResult('warn', 'Clipboard permission was declined — press <b>Ctrl+V</b> inside the HTML box below.');
+    });
+  });
+
+  $('pickFileBtn').addEventListener('click', function(){ $('fileInput').click(); });
+  $('dropZone').addEventListener('click', function(e){
+    if (e.target && e.target.tagName === 'LABEL') return;
+    $('fileInput').click();
+  });
+  $('dropZone').addEventListener('keydown', function(e){
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('fileInput').click(); }
+  });
+
+  function loadHtmlFile(file){
     if (!file) return;
     var reader = new FileReader();
     reader.onload = function(){
+      sourceLabel = file.name;
       $('htmlInput').value = String(reader.result || '');
-      $('subjectInput').value = '';   // a new file is a new email: take its own subject
-      refresh();
+      refresh({ collapseCode: true, overwriteSubject: true });
+      clearResult();
     };
     reader.readAsText(file);
   }
-  $('fileInput').addEventListener('change', function(){ loadFile(this.files[0]); this.value = ''; });
-  var dz = $('dropZone');
-  ['dragenter','dragover'].forEach(function(ev){
-    dz.addEventListener(ev, function(e){ e.preventDefault(); dz.classList.add('drag'); });
-  });
-  ['dragleave','drop'].forEach(function(ev){
-    dz.addEventListener(ev, function(e){ e.preventDefault(); dz.classList.remove('drag'); });
-  });
-  dz.addEventListener('drop', function(e){
-    var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-    loadFile(f);
+
+  $('fileInput').addEventListener('change', function(){
+    if (this.files && this.files[0]) loadHtmlFile(this.files[0]);
+    this.value = '';
   });
 
-  /* ---------- attachments (gateway v1.1+: up to 5 files, base64) ---------- */
+  $('clearHtmlBtn').addEventListener('click', function(){
+    disarmAll();
+    sourceLabel = '';
+    $('htmlInput').value = '';
+    refresh({ collapseCode: false });
+  });
+
+  /* ---------- Attachments (up to 5 files, 18 MB total, individual remove) ---------- */
   var attachments = [];
   var MAX_ATTACH = 5, MAX_ATTACH_BYTES = 18 * 1024 * 1024;
+
+  function totalAttachBytes(){
+    return attachments.reduce(function(n, a){ return n + a.size; }, 0);
+  }
+
+  function fmtSize(bytes){
+    return bytes >= 1048576 ? (bytes / 1048576).toFixed(2) + ' MB' : Math.max(1, Math.round(bytes / 1024)) + ' KB';
+  }
+
   function renderAttachments(){
     var ul = $('attachList');
-    ul.innerHTML = attachments.map(function(a){
-      return '<li>&#128206; ' + esc(a.name) + ' <span class="note">(' + (a.size / 1024).toFixed(0) + ' KB)</span></li>';
+    ul.innerHTML = attachments.map(function(a, idx){
+      return '<li>' +
+        '<span class="att-name" title="' + esc(a.name) + '">&#128196; ' + esc(a.name) + ' <span class="note">(' + fmtSize(a.size) + ')</span></span>' +
+        '<button type="button" class="att-rm" data-idx="' + idx + '" aria-label="Remove ' + esc(a.name) + '">&times;</button>' +
+      '</li>';
     }).join('');
+    ul.querySelectorAll('.att-rm').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var idx = parseInt(this.getAttribute('data-idx'), 10);
+        attachments.splice(idx, 1);
+        disarmAll();
+        renderAttachments();
+      });
+    });
     $('attachClear').hidden = !attachments.length;
+    var tot = totalAttachBytes();
+    $('attachMeter').textContent = attachments.length
+      ? '(' + attachments.length + ' of ' + MAX_ATTACH + ' · ' + fmtSize(tot) + ' / 18 MB)'
+      : '(optional · up to 5 files)';
   }
-  $('attachClear').addEventListener('click', function(){ attachments = []; renderAttachments(); });
-  $('attachInput').addEventListener('change', function(){
-    var files = Array.prototype.slice.call(this.files || []);
-    this.value = '';
-    var total = attachments.reduce(function(n, a){ return n + a.size; }, 0);
+
+  function addAttachmentFiles(fileList){
+    var files = Array.prototype.slice.call(fileList || []);
+    if (!files.length) return;
+    var total = totalAttachBytes();
     var skipped = [];
     var jobs = files.map(function(f){
-      if (attachments.length + 1 > MAX_ATTACH || total + f.size > MAX_ATTACH_BYTES) { skipped.push(f.name); return null; }
+      if (attachments.length + 1 > MAX_ATTACH || total + f.size > MAX_ATTACH_BYTES) {
+        skipped.push(f.name);
+        return null;
+      }
       total += f.size;
       var slot = { name: f.name, mimeType: f.type || 'application/octet-stream', size: f.size, dataB64: '' };
       attachments.push(slot);
@@ -369,15 +862,72 @@
       });
     }).filter(Boolean);
     Promise.all(jobs).then(function(){
+      disarmAll();
       renderAttachments();
-      if (skipped.length) showResult(false, 'Not attached (limit is 5 files, 18 MB in all): ' + esc(skipped.join(', ')));
+      if (skipped.length) showResult('warn', 'Skipped (limit is 5 files, 18 MB total): <b>' + esc(skipped.join(', ')) + '</b>');
     });
+  }
+
+  $('attachClear').addEventListener('click', function(){ attachments = []; disarmAll(); renderAttachments(); });
+  $('attachInput').addEventListener('change', function(){ addAttachmentFiles(this.files); this.value = ''; });
+  $('attachDrop').addEventListener('click', function(e){
+    if (e.target && e.target.tagName === 'LABEL') return;
+    $('attachInput').click();
+  });
+  $('attachDrop').addEventListener('keydown', function(e){
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('attachInput').click(); }
   });
 
-  /* ---------- hand-off intake ----------
-     An email file (or Claude) opens this page as  .../mail-gateway/#z=<payload>  where the payload is
-     base64url( deflate-raw( JSON {v, name, subject, to, cc, html} ) ). The fragment never leaves the
-     browser. The email is loaded into the form; nothing is created or sent until a button is clicked. */
+  /* ---------- Smart Drag & Drop (Routes .html -> Email, PDFs/others -> Attachments) ---------- */
+  function routeDroppedFiles(fileList){
+    var files = Array.prototype.slice.call(fileList || []);
+    if (!files.length) return;
+    var htmlFiles = [], otherFiles = [];
+    files.forEach(function(f){
+      if (/\.html?$/i.test(f.name) || f.type === 'text/html') htmlFiles.push(f);
+      else otherFiles.push(f);
+    });
+    if (htmlFiles[0]) loadHtmlFile(htmlFiles[0]);
+    if (otherFiles.length) addAttachmentFiles(otherFiles);
+  }
+
+  var dz = $('dropZone'), adz = $('attachDrop'), toast = $('pageDropToast'), dragDepth = 0;
+  [dz, adz].forEach(function(zone){
+    ['dragenter','dragover'].forEach(function(ev){
+      zone.addEventListener(ev, function(e){ e.preventDefault(); e.stopPropagation(); zone.classList.add('drag'); });
+    });
+    ['dragleave','drop'].forEach(function(ev){
+      zone.addEventListener(ev, function(e){ e.preventDefault(); e.stopPropagation(); zone.classList.remove('drag'); });
+    });
+  });
+  dz.addEventListener('drop', function(e){
+    toast.classList.remove('show'); dragDepth = 0;
+    routeDroppedFiles(e.dataTransfer && e.dataTransfer.files);
+  });
+  adz.addEventListener('drop', function(e){
+    toast.classList.remove('show'); dragDepth = 0;
+    addAttachmentFiles(e.dataTransfer && e.dataTransfer.files);
+  });
+
+  window.addEventListener('dragenter', function(e){
+    if (e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types || [], 'Files') !== -1) {
+      dragDepth++;
+      toast.classList.add('show');
+    }
+  });
+  window.addEventListener('dragover', function(e){ e.preventDefault(); });
+  window.addEventListener('dragleave', function(){
+    dragDepth = Math.max(0, dragDepth - 1);
+    if (dragDepth === 0) toast.classList.remove('show');
+  });
+  window.addEventListener('drop', function(e){
+    e.preventDefault();
+    dragDepth = 0;
+    toast.classList.remove('show');
+    routeDroppedFiles(e.dataTransfer && e.dataTransfer.files);
+  });
+
+  /* ---------- Hand-Off Intake (#z= compressed email payload) ---------- */
   function b64urlToBytes(s){
     s = s.replace(/-/g, '+').replace(/_/g, '/');
     while (s.length % 4) s += '=';
@@ -402,45 +952,96 @@
     Promise.resolve().then(function(){ return inflateRaw(b64urlToBytes(data)); }).then(function(json){
       var p = JSON.parse(json);
       if (!p || typeof p.html !== 'string' || !p.html) throw new Error('empty');
+      sourceLabel = p.name || 'Handoff email';
       $('htmlInput').value = p.html;
       $('subjectInput').value = safeSubject(p.subject || '');
       $('toInput').value = String(p.to || '');
       $('ccInput').value = String(p.cc || '');
+      updateDefaultsSummary();
       attachments = []; renderAttachments();
-      refresh();
-      showHandoff(true, '&#9989; Loaded <b>' + esc(p.name || 'email') + '</b>. Check the recipient and subject, add any attachment, then click <b>Create Gmail Draft</b> below.');
+      refresh({ collapseCode: true, overwriteSubject: false });
+      showHandoff(true, '&#9989; Loaded <b>' + esc(p.name || 'email') + '</b>. Verify recipient &amp; preview, add any PDF attachment, then click <b>Create Gmail Draft</b>.');
     }).catch(function(){
-      showHandoff(false, '&#10060; That hand-off link could not be read. Drop the email file below instead.');
+      showHandoff(false, '&#10060; That hand-off link could not be read. Drop or paste the email HTML below instead.');
     });
   }
 
-  /* ---------- preview width toggle ---------- */
-  document.querySelectorAll('.previewbar button').forEach(function(btn){
+  /* ---------- Preview Viewport & Backdrop Toggles ---------- */
+  document.querySelectorAll('.vp-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
-      document.querySelectorAll('.previewbar button').forEach(function(b){ b.classList.remove('active'); });
+      document.querySelectorAll('.vp-btn').forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
       var w = btn.getAttribute('data-w');
       $('preview').style.width = (w === 'full') ? '100%' : (w + 'px');
     });
   });
-  $('preview').style.width = '600px';
+  $('darkBackdropBtn').addEventListener('click', function(){
+    $('previewShell').classList.toggle('dark-stage');
+    this.classList.toggle('active');
+  });
 
-  /* ---------- submit ---------- */
-  function esc(s){
-    return String(s).replace(/[&<>"']/g, function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  /* ---------- Copy Cleaned HTML & Clear for Next Customer ---------- */
+  $('copyCleanBtn').addEventListener('click', function(){
+    var cleaned = cleanEmail($('htmlInput').value.trim());
+    if (!cleaned) { showResult('warn', 'Load or paste an email template first.'); return; }
+    navigator.clipboard.writeText(cleaned).then(function(){
+      showResult(true, '&#128203; Cleaned email HTML copied to clipboard.');
+    }, function(){
+      showResult(false, 'Browser blocked clipboard access.');
     });
+  });
+
+  $('resetAllBtn').addEventListener('click', function(){
+    disarmAll();
+    sourceLabel = '';
+    $('htmlInput').value = '';
+    $('toInput').value = '';
+    $('ccInput').value = '';
+    $('subjectInput').value = '';
+    $('replyToInput').value = '';
+    $('handoff').className = '';
+    attachments = [];
+    renderAttachments();
+    updateDefaultsSummary();
+    refresh({ collapseCode: false });
+    showResult(true, '&#129529; Cleared recipient, HTML, and attachments — ready for the next customer.');
+  });
+
+  /* ---------- Protect Unsaved Work on Sibling Navigation ---------- */
+  function isDirty(){
+    return !!($('htmlInput').value.trim() || attachments.length || $('toInput').value.trim());
   }
-  function showResult(ok, htmlMsg){
-    var r = $('result');
-    r.className = ok ? 'ok' : 'err';
-    r.innerHTML = htmlMsg;
+  document.querySelectorAll('.sibling-link').forEach(function(a){
+    a.addEventListener('click', function(e){
+      if (isDirty()) {
+        e.preventDefault();
+        window.open(this.href, '_blank', 'noopener');
+      }
+    });
+  });
+
+  /* ---------- Two-Click Arming & Submit ---------- */
+  var sendArmed = false, qaOverrideArmed = false, armTimer = null;
+  var SEND_LABEL = $('sendBtn').innerHTML;
+  var DRAFT_LABEL = $('draftBtn').innerHTML;
+
+  function disarmAll(){
+    sendArmed = false;
+    qaOverrideArmed = false;
+    clearTimeout(armTimer);
+    var sb = $('sendBtn'), db = $('draftBtn');
+    sb.classList.remove('armed'); sb.innerHTML = SEND_LABEL;
+    db.classList.remove('armed'); db.innerHTML = DRAFT_LABEL;
   }
-  function fetchWithTimeout(url, opts, ms){
-    var ctrl = new AbortController();
-    var t = setTimeout(function(){ ctrl.abort(); }, ms);
-    opts.signal = ctrl.signal;
-    return fetch(url, opts).finally(function(){ clearTimeout(t); });
+  document.addEventListener('input', disarmAll, true);
+  document.addEventListener('change', disarmAll, true);
+
+  function gmailLinkFor(d){
+    var user = encodeURIComponent((d && d.senderEmail) || localStorage.getItem(LS.senderEmail) || DEFAULT_AUTHUSER);
+    var base = 'https://mail.google.com/mail/?authuser=' + user;
+    if (d && d.mode === 'send') return base + '#sent';
+    if (d && d.messageId) return base + '#drafts/' + encodeURIComponent(d.messageId);
+    return base + '#drafts';
   }
 
   function submit(mode){
@@ -448,18 +1049,52 @@
     var secret = ($('gwSecret').value || '').trim();
     if (!url || !secret) {
       $('settingsCard').open = true;
-      showResult(false, 'Enter the gateway URL and secret first (Gateway settings above), then click <b>Save settings</b>.');
+      $('settingsCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      showResult(false, '&#9888;&#65039; Enter the Gateway URL and Secret in <b>Gateway settings</b> above, then click <b>Save &amp; Test</b>.');
       return;
     }
-    var html = cleanEmail($('htmlInput').value.trim());
-    if (!html) { showResult(false, 'Paste or drop the email HTML first (step 1).'); return; }
-    var to = $('toInput').value.trim();
-    if (mode === 'send') {
-      if (!to) { disarmSend(); showResult(false, '&#10060; NOT SENT. "Send Now" needs a To address.'); return; }
-      // Two-click send. Native confirm() dialogs are auto-dismissed by Chrome, so the button arms itself.
-      if (!sendArmed) { armSend(to); return; }
-      disarmSend();
+
+    var rep = cleanEmailWithReport($('htmlInput').value.trim());
+    var html = rep.html;
+    if (!html) {
+      showResult(false, '&#9888;&#65039; Paste or drop the email HTML first (Step 1).');
+      return;
     }
+
+    var to = $('toInput').value.trim();
+    if (mode === 'send' && !to) {
+      disarmAll();
+      $('toInput').focus();
+      showResult(false, '&#10060; NOT SENT — "Send Now" requires a customer email in <b>To</b> (Step 2).');
+      return;
+    }
+
+    // Pre-Flight safety guard: if unfilled {{TOKENS}} or Cloudflare corruption exist, warn before proceeding!
+    var qa = inspectEmail(html, rep.stripped);
+    if (qa.errors.length && !qaOverrideArmed && !sendArmed) {
+      qaOverrideArmed = true;
+      var targetBtn = mode === 'send' ? $('sendBtn') : $('draftBtn');
+      targetBtn.classList.add('armed');
+      targetBtn.textContent = '⚠️ Click again to ' + (mode === 'send' ? 'send anyway' : 'draft anyway');
+      showResult('warn', '&#9888;&#65039; Pre-flight check flagged: <b>' + esc(qa.errors.join(' · ')) + '</b>. Fix the HTML, or click the orange button again within 10s to proceed anyway.');
+      clearTimeout(armTimer);
+      armTimer = setTimeout(disarmAll, 10000);
+      return;
+    }
+
+    // Two-click confirmation on Send Now (no native window.confirm!)
+    if (mode === 'send' && !sendArmed) {
+      sendArmed = true;
+      var sb = $('sendBtn');
+      sb.classList.add('armed');
+      sb.textContent = '⚠️ Click again to send to ' + to;
+      showResult('warn', 'Ready — click the orange button again within 10 seconds to send immediately to <b>' + esc(to) + '</b>.');
+      clearTimeout(armTimer);
+      armTimer = setTimeout(disarmAll, 10000);
+      return;
+    }
+    disarmAll();
+
     var payload = {
       secret: secret,
       mode: mode,
@@ -467,21 +1102,22 @@
       subject: safeSubject($('subjectInput').value),
       html: asciiHtml(html),
       cc: $('ccInput').value.trim(),
-      bcc: $('bccInput').value.trim(),   // '' means: no BCC
+      bcc: $('bccInput').value.trim(), // '' = explicit no BCC
       fromName: $('fromNameInput').value.trim(),
       replyTo: $('replyToInput').value.trim()
     };
     if (attachments.length) {
-      payload.attachments = attachments.map(function(a){ return { name: a.name, mimeType: a.mimeType, dataB64: a.dataB64 }; });
+      payload.attachments = attachments.map(function(a){
+        return { name: a.name, mimeType: a.mimeType, dataB64: a.dataB64 };
+      });
     }
+
     var draftBtn = $('draftBtn'), sendBtn = $('sendBtn');
     draftBtn.disabled = sendBtn.disabled = true;
-    showResult(true, mode === 'send' ? 'Sending…' : 'Creating draft…');
+    showResult(true, mode === 'send' ? 'Sending email…' : 'Creating Gmail draft…');
 
     fetchWithTimeout(url, {
       method: 'POST',
-      // text/plain keeps this a "simple request" so the browser skips the
-      // CORS preflight, which Apps Script web apps cannot answer.
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload),
       redirect: 'follow'
@@ -493,45 +1129,38 @@
       })
       .then(function(d){
         if (!d.ok) throw new Error(d.error || 'Gateway error.');
+        if (d.senderEmail) localStorage.setItem(LS.senderEmail, d.senderEmail);
         var quota = (typeof d.remainingQuota === 'number') ? ' &middot; ' + d.remainingQuota + ' sends left today' : '';
+        if (typeof d.remainingQuota === 'number') {
+          $('connBadge').className = 'badge ok';
+          $('connBadge').textContent = 'Gateway: connected ✓ (' + d.remainingQuota + ' left today)';
+        }
         var want = attachments.length;
-        var att = want ? ((d.attached === want) ? ' with ' + want + ' attachment' + (want === 1 ? '' : 's')
-                                               : ' &mdash; <b>attachments did NOT go through</b> (' + (d.attached || 0) + ' of ' + want + ')') : '';
+        var att = want ? ((d.attached === want)
+          ? ' with <b>' + want + ' attachment' + (want === 1 ? '' : 's') + '</b>'
+          : ' &mdash; <b>&#9888;&#65039; attachments did NOT attach</b> (' + (d.attached || 0) + ' of ' + want + ')') : '';
+        var link = gmailLinkFor(d);
         if (d.mode === 'send') {
-          showResult(true, '&#9989; SENT to <b>' + esc(d.to) + '</b>' + att + quota);
+          showResult(true, '&#9989; <b>SENT</b> to <b>' + esc(d.to) + '</b>' + att +
+            ' &mdash; <a href="' + link + '" target="_blank" rel="noopener">Open Gmail Sent &rarr;</a>' + quota);
         } else {
-          showResult(true, '&#9989; Draft created' + (d.to ? ' for <b>' + esc(d.to) + '</b>' : '') + att +
-            ' — <a href="https://mail.google.com/mail/?authuser=bill%40billlayneinsurance.com#drafts" target="_blank" rel="noopener">open Gmail Drafts &rarr;</a>' + quota);
+          var label = d.messageId ? 'Open this Draft in Gmail &rarr;' : 'Open Gmail Drafts &rarr;';
+          showResult(true, '&#9989; <b>Draft created</b>' + (d.to ? ' for <b>' + esc(d.to) + '</b>' : '') + att +
+            ' &mdash; <a href="' + link + '" target="_blank" rel="noopener">' + label + '</a>' + quota);
         }
       })
       .catch(function(e){
-        var msg = (e && e.name === 'AbortError') ? 'The gateway took too long to answer (45s). Try again.' : (e && e.message) || 'Unknown error.';
+        var msg = (e && e.name === 'AbortError')
+          ? 'The gateway took too long to answer (45s). Please try again.'
+          : (e && e.message) || 'Unknown error.';
         showResult(false, '&#10060; ' + esc(msg));
       })
-      .finally(function(){ draftBtn.disabled = sendBtn.disabled = false; });
+      .finally(function(){
+        draftBtn.disabled = sendBtn.disabled = false;
+      });
   }
-  /* ---------- two-click Send (10s window; any edit disarms) ---------- */
-  var sendArmed = false, armTimer = null, SEND_LABEL = $('sendBtn').textContent;
-  function armSend(to){
-    sendArmed = true;
-    var b = $('sendBtn');
-    b.classList.add('armed');
-    b.textContent = 'Click again to send to ' + to;
-    showResult(false, 'NOT SENT yet. Click the orange button again within 10 seconds to send to <b>' + esc(to) + '</b>.');
-    clearTimeout(armTimer);
-    armTimer = setTimeout(disarmSend, 10000);
-  }
-  function disarmSend(){
-    sendArmed = false;
-    clearTimeout(armTimer);
-    var b = $('sendBtn');
-    b.classList.remove('armed');
-    b.textContent = SEND_LABEL;
-  }
-  document.addEventListener('input', disarmSend, true);
-  document.addEventListener('change', disarmSend, true);
 
-  $('draftBtn').addEventListener('click', function(){ disarmSend(); submit('draft'); });
+  $('draftBtn').addEventListener('click', function(){ disarmAll(); submit('draft'); });
   $('sendBtn').addEventListener('click', function(){ submit('send'); });
 
   loadSettings();

@@ -10,26 +10,45 @@
   :root{
     --navy:#003f87; --navy-dark:#00295c; --gold:#C8A84E; --teal:#0f766e;
     --ink:#0f172a; --muted:#475569; --line:#e2e8f0; --bg:#f1f5f9; --card:#ffffff;
-    --ok:#166534; --ok-bg:#f0fdf4; --err:#b91c1c; --err-bg:#fef2f2;
+    --ok:#166534; --ok-bg:#f0fdf4; --ok-brd:#86efac;
+    --err:#b91c1c; --err-bg:#fef2f2; --err-brd:#fca5a5;
+    --warn:#92400e; --warn-bg:#fffbeb; --warn-brd:#fcd34d;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);
     font:14.5px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-  header{background:linear-gradient(135deg,var(--navy-dark) 0%,var(--navy) 55%,var(--teal) 140%);color:#fff;padding:18px 22px}
-  header h1{margin:0;font-size:20px}
-  header .gold{color:var(--gold)}
-  header p{margin:4px 0 0;color:#cbd5e1;font-size:13px}
-  header a{color:#fff}
-  .badge{display:inline-block;margin-top:8px;padding:3px 11px;border-radius:999px;font-size:12px;font-weight:600;
-    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25)}
-  .badge.ok{background:#dcfce7;color:var(--ok);border-color:#86efac}
-  .badge.err{background:#fee2e2;color:var(--err);border-color:#fca5a5}
 
-  .layout{display:grid;grid-template-columns:460px 1fr;gap:16px;max-width:1440px;margin:0 auto;padding:16px 22px 50px}
-  @media(max-width:1000px){.layout{grid-template-columns:1fr}}
+  header{background:linear-gradient(135deg,var(--navy-dark) 0%,var(--navy) 55%,var(--teal) 140%);color:#fff;padding:18px 22px 16px}
+  .head-inner{max-width:1440px;margin:0 auto;display:flex;flex-wrap:wrap;gap:14px 24px;align-items:center;justify-content:space-between}
+  .brand-block h1{margin:0;font-size:22px}
+  .brand-block .gold{color:var(--gold)}
+  .brand-block p{margin:4px 0 0;color:#cbd5e1;font-size:13px;max-width:660px}
+  .head-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+  @media(max-width:860px){.head-right{align-items:flex-start;width:100%}}
 
-  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
-  .card h2{margin:0 0 10px;font-size:14px;color:var(--navy)}
+  .suite-nav{display:flex;flex-wrap:wrap;gap:6px;background:rgba(15,23,42,.28);padding:4px;border-radius:10px;border:1px solid rgba(255,255,255,.16)}
+  .suite-nav a{color:#e2e8f0;text-decoration:none;font-size:13px;font-weight:600;padding:6px 12px;border-radius:7px;transition:background .15s,color .15s;white-space:nowrap}
+  .suite-nav a:hover{background:rgba(255,255,255,.12);color:#fff}
+  .suite-nav a.active{background:#fff;color:var(--navy-dark);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.18)}
+
+  .status-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .badge{display:inline-block;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:600;
+    background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.26)}
+  .badge.ok{background:#dcfce7;color:var(--ok);border-color:var(--ok-brd)}
+  .badge.err{background:#fee2e2;color:var(--err);border-color:var(--err-brd)}
+  .gear-pill{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.28);border-radius:999px;
+    padding:4px 11px;font-size:12px;font-weight:600;cursor:pointer}
+  .gear-pill:hover{background:rgba(255,255,255,.24)}
+
+  .shell{max-width:1440px;margin:0 auto;padding:16px 22px 50px}
+  .layout{display:grid;grid-template-columns:460px minmax(0,1fr);gap:16px;align-items:start}
+  @media(max-width:1020px){.layout{grid-template-columns:1fr}}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 1px 3px rgba(15,23,42,.04)}
+  .card h2{margin:0 0 10px;font-size:14.5px;color:var(--navy)}
+  details.card summary{cursor:pointer;font-weight:700;color:var(--navy);font-size:14px}
+  details.card[open] summary{margin-bottom:10px}
+  #settingsCard:not([open]){display:none}
 
   /* template picker */
   .tpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -42,10 +61,10 @@
 
   label{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin:9px 0 3px}
   label .req{color:var(--err)}
-  input[type=text],input[type=email],input[type=date],select,textarea{
-    width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:7px;font-size:14px;color:var(--ink);background:#fff;font-family:inherit}
+  input[type=text],input[type=password],input[type=email],input[type=date],select,textarea{
+    width:100%;padding:7px 10px;border:1px solid #cbd5e1;border-radius:7px;font-size:14px;color:var(--ink);background:#fff;font-family:inherit}
   textarea{resize:vertical}
-  input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--navy);outline-offset:1px}
+  input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--navy);outline-offset:1px}
   .two{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
   .locked{background:#f8fafc;color:var(--muted)}
 
@@ -53,95 +72,258 @@
   button:disabled{opacity:.55;cursor:not-allowed}
   .primary{background:var(--navy);color:#fff;width:100%}
   .primary:hover:not(:disabled){background:var(--navy-dark)}
-  .primary.armed{background:#b45309;animation:pulse 1.2s ease-in-out infinite}
-  .primary.armed:hover:not(:disabled){background:#92400e}
-  @keyframes pulse{50%{filter:brightness(1.15)}}
   .goldbtn{background:var(--gold);color:var(--navy-dark);width:100%;margin-top:8px}
   .goldbtn:hover:not(:disabled){filter:brightness(1.06)}
+  .goldbtn.armed,.primary.armed{background:#ea580c;color:#fff;animation:pulse 1.2s ease-in-out infinite}
+  @keyframes pulse{50%{filter:brightness(1.14)}}
   .quiet{background:#e2e8f0;color:var(--ink);width:100%;margin-top:8px;font-weight:600}
   .quiet:hover:not(:disabled){background:#cbd5e1}
+  .mini-btn{padding:6px 12px;font-size:12px;width:auto;margin-top:0}
   .half-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
   .half-row .quiet{margin-top:0}
 
-  .hint{font-size:11px;color:var(--muted);margin:6px 0 0}
-  #result{margin-top:10px;border-radius:10px;padding:14px 16px;font-size:15px;font-weight:600;line-height:1.5;display:none}
-  #result.ok{display:block;background:var(--ok-bg);border:2px solid #4ade80;color:var(--ok)}
-  #result.err{display:block;background:var(--err-bg);border:2px solid #f87171;color:var(--err)}
+  .hint{font-size:11.5px;color:var(--muted);margin:6px 0 0}
+  #result{margin-top:10px;border-radius:10px;padding:12px 14px;font-size:14px;font-weight:600;line-height:1.5;display:none}
+  #result.ok{display:block;background:var(--ok-bg);border:1.5px solid var(--ok-brd);color:var(--ok)}
+  #result.err{display:block;background:var(--err-bg);border:1.5px solid var(--err-brd);color:var(--err)}
+  #result.warn{display:block;background:var(--warn-bg);border:1.5px solid var(--warn-brd);color:var(--warn)}
   #result a{color:var(--navy);font-weight:700}
 
   .previewwrap{position:sticky;top:14px}
-  #preview{width:100%;height:calc(100vh - 120px);min-height:560px;border:1px solid var(--line);border-radius:12px;background:#fff}
-  .checks{font-size:11.5px;color:var(--muted);margin-top:8px}
+  @media(max-width:1020px){.previewwrap{position:static}}
+  .preview-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px;flex-wrap:wrap}
+  .vp-btns{display:flex;gap:6px}
+  .vp-btns button{padding:5px 10px;font-size:12px;background:#e2e8f0;color:var(--ink);border-radius:7px}
+  .vp-btns button.active{background:var(--navy);color:#fff}
+  #previewShell{background:#e2e8f0;border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center;overflow:auto}
+  #preview{width:600px;max-width:100%;height:calc(100vh - 175px);min-height:540px;border:0;border-radius:8px;background:#fff;box-shadow:0 2px 10px rgba(15,23,42,.12);display:inline-block}
+  @media(max-width:680px){#previewShell{padding:6px}#preview{width:100%!important;height:480px}}
+  .checks{font-size:12px;color:var(--muted);margin-top:8px}
   .checks .bad{color:var(--err);font-weight:700}
 </style>
 </head>
 <body>
 
 <header>
-  <h1>BLI <span class="gold">Mail Studio</span></h1>
-  <p>Pick a template, fill in the blanks, watch it build itself — then send it straight from here. Every send BCCs Save@ automatically.</p>
-  <span class="badge" id="connBadge">Gateway: checking…</span>
-</header>
-
-<div class="layout">
-  <div>
-    <div class="card">
-      <h2>1 &middot; Choose a template</h2>
-      <div class="tpl-grid" id="tplGrid"></div>
-      <p class="hint">Payment receipts have their own page: <a href="receipt.html">Receipt Builder</a>. Paste-any-HTML lives on the <a href="./">main sender page</a>.</p>
+  <div class="head-inner">
+    <div class="brand-block">
+      <h1>BLI <span class="gold">Mail Studio</span></h1>
+      <p>Pick a template, fill in the blanks, watch it build itself — then create a Gmail draft or send straight from here. Every customer email BCCs Save@ automatically.</p>
     </div>
-
-    <div class="card">
-      <h2>2 &middot; Fill in the details</h2>
-      <div id="formArea"></div>
-    </div>
-
-    <div class="card">
-      <h2>3 &middot; Send</h2>
-      <label for="to">Customer email <span class="req">*required to send</span></label>
-      <input type="email" id="to" autocomplete="off">
-      <label for="subject">Subject <span style="font-weight:400">(auto-built — edit if you like)</span></label>
-      <input type="text" id="subject" autocomplete="off">
-      <label>BCC <span style="font-weight:400">(locked — E&amp;O record)</span></label>
-      <input type="text" class="locked" value="Save@BillLayneInsurance.com" readonly>
-      <div style="margin-top:12px">
-        <button class="primary" id="sendBtn" type="button">Send Now</button>
-        <button class="goldbtn" id="draftBtn" type="button">Create Gmail Draft instead</button>
-        <div class="half-row">
-          <button class="quiet" id="copyBtn" type="button">Copy HTML</button>
-          <button class="quiet" id="newBtn" type="button">&#127381; Start over</button>
-        </div>
+    <div class="head-right">
+      <nav class="suite-nav" aria-label="BLI Mail tools">
+        <a href="./" class="sibling-link">&#128228; Universal Sender</a>
+        <a href="studio.html" class="active" aria-current="page">&#9993;&#65039; Mail Studio</a>
+        <a href="receipt.html" class="sibling-link">&#129534; Receipt Builder</a>
+      </nav>
+      <div class="status-row">
+        <span class="badge" id="connBadge">Gateway: checking&hellip;</span>
+        <button class="gear-pill" id="toggleSettingsBtn" type="button">&#9881;&#65039; Settings</button>
       </div>
-      <div class="checks" id="checks"></div>
-      <div id="result" role="status"></div>
-      <p class="hint">Gateway settings are shared with the <a href="./">main sender page</a> — set them there once per browser.</p>
     </div>
   </div>
+</header>
 
-  <div class="previewwrap">
-    <iframe id="preview" sandbox="" title="Email preview"></iframe>
+<div class="shell">
+
+  <details class="card" id="settingsCard">
+    <summary>&#9881;&#65039; Gateway connection settings <span class="hint" id="setStatus"></span></summary>
+    <div class="two">
+      <div>
+        <label for="gwUrl">Gateway URL (ends in /exec)</label>
+        <input type="text" id="gwUrl" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off" spellcheck="false">
+      </div>
+      <div>
+        <label for="gwSecret">Gateway Secret</label>
+        <input type="password" id="gwSecret" placeholder="GATEWAY_SECRET" autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap">
+      <button class="primary mini-btn" id="saveSettingsBtn" type="button">Save &amp; Test</button>
+      <button class="quiet mini-btn" id="showSecretBtn" type="button">Show Secret</button>
+      <span class="hint" style="margin:0">Shared automatically across Universal Sender, Mail Studio, and Receipt Builder.</span>
+    </div>
+  </details>
+
+  <div class="layout">
+    <div>
+      <div class="card">
+        <h2>1 &middot; Choose a template</h2>
+        <div class="tpl-grid" id="tplGrid"></div>
+      </div>
+
+      <div class="card">
+        <h2>2 &middot; Fill in the details</h2>
+        <div id="formArea"></div>
+      </div>
+
+      <div class="card">
+        <h2>3 &middot; Draft or Send</h2>
+        <label for="to">Customer email <span class="req">*required for Send Now (optional for Draft)</span></label>
+        <input type="email" id="to" placeholder="customer@example.com" autocomplete="off">
+        <label for="subject">Subject <span style="font-weight:400">(auto-built — edit if you like)</span></label>
+        <input type="text" id="subject" autocomplete="off">
+        <label>BCC <span style="font-weight:400">(locked — E&amp;O record)</span></label>
+        <input type="text" class="locked" value="Save@BillLayneInsurance.com" readonly>
+        <div style="margin-top:12px">
+          <button class="primary" id="draftBtn" type="button">&#9993;&#65039; Create Gmail Draft</button>
+          <button class="goldbtn" id="sendBtn" type="button">&#9889; Send Now</button>
+          <div class="half-row">
+            <button class="quiet" id="copyBtn" type="button">&#128203; Copy HTML</button>
+            <button class="quiet" id="newBtn" type="button">&#127381; Start over</button>
+          </div>
+        </div>
+        <div class="checks" id="checks"></div>
+        <div id="result" role="status"></div>
+      </div>
+    </div>
+
+    <div class="previewwrap">
+      <div class="card" style="margin-bottom:0">
+        <div class="preview-bar">
+          <h2 style="margin:0">Live Preview</h2>
+          <div class="vp-btns">
+            <button type="button" data-w="375">&#128241; Phone 375</button>
+            <button type="button" data-w="600" class="active">&#128187; Email 600</button>
+            <button type="button" data-w="full">Full width</button>
+          </div>
+        </div>
+        <div id="previewShell">
+          <iframe id="preview" sandbox="" title="Email preview"></iframe>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<script src="studio-templates.js"></script>
+<script src="studio-templates.js?v=1.3"></script>
 <script>
 (function () {
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
   var TPLS = window.BLI_STUDIO.templates;
+  var SPACER_URL = 'https://img.billlayneinsurance.com/i/2026/11/email-spacer-600x1-4rd8em.png';
+  var DEFAULT_AUTHUSER = 'bill@billlayneinsurance.com';
+  var LS = { url: 'bliMailGateway.url', secret: 'bliMailGateway.secret', senderEmail: 'bliMailGateway.senderEmail' };
   var current = TPLS[0];
   var subjectDirty = false;
   var armed = false, armTimer = null;
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+  }
+
+  function showResult(kind, msg) {
+    var r = $('result');
+    r.className = kind === true ? 'ok' : (kind === 'warn' ? 'warn' : 'err');
+    r.innerHTML = msg;
+    r.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
 
   function disarm() {
     armed = false;
     clearTimeout(armTimer);
     var b = $('sendBtn');
     b.classList.remove('armed');
-    b.textContent = 'Send Now';
+    b.innerHTML = '&#9889; Send Now';
   }
 
-  /* ---------- template picker ---------- */
+  /* ---------- Settings & Ping (no native prompt!) ---------- */
+  function loadSettings() {
+    $('gwUrl').value = localStorage.getItem(LS.url) || '';
+    $('gwSecret').value = localStorage.getItem(LS.secret) || '';
+    if (!$('gwUrl').value || !$('gwSecret').value) {
+      $('settingsCard').open = true;
+      $('connBadge').className = 'badge err';
+      $('connBadge').textContent = 'Gateway: setup needed';
+    } else {
+      $('settingsCard').open = false;
+      $('setStatus').textContent = '— saved ✓';
+      pingGateway(true);
+    }
+  }
+
+  $('toggleSettingsBtn').addEventListener('click', function () {
+    var c = $('settingsCard');
+    c.open = !c.open;
+    if (c.open) c.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+
+  $('showSecretBtn').addEventListener('click', function () {
+    var f = $('gwSecret');
+    f.type = f.type === 'password' ? 'text' : 'password';
+    this.textContent = f.type === 'password' ? 'Show Secret' : 'Hide Secret';
+  });
+
+  $('saveSettingsBtn').addEventListener('click', function () {
+    var u = $('gwUrl').value.trim(), s = $('gwSecret').value.trim();
+    localStorage.setItem(LS.url, u);
+    localStorage.setItem(LS.secret, s);
+    $('setStatus').textContent = (u && s) ? '— saved ✓' : '';
+    if (u && s) { $('settingsCard').open = false; pingGateway(false); }
+    else showResult('warn', 'Enter both the Gateway URL and Secret above.');
+  });
+
+  function pingGateway(silent) {
+    var u = $('gwUrl').value.trim(), s = $('gwSecret').value.trim();
+    var badge = $('connBadge');
+    if (!u) { badge.className = 'badge err'; badge.textContent = 'Gateway: setup needed'; return; }
+    badge.className = 'badge'; badge.textContent = 'Gateway: checking…';
+    var ctrl = new AbortController();
+    var t = setTimeout(function () { ctrl.abort(); }, 20000);
+    fetch(u, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ secret: s, mode: 'ping' }),
+      redirect: 'follow', signal: ctrl.signal
+    }).then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d && d.ok) {
+          if (d.senderEmail) localStorage.setItem(LS.senderEmail, d.senderEmail);
+          var q = typeof d.remainingQuota === 'number' ? ' · ' + d.remainingQuota + ' left' : '';
+          badge.className = 'badge ok'; badge.textContent = 'Gateway: connected ✓ (v' + (d.version || '1.3') + q + ')';
+          if (!silent) showResult(true, '&#9989; Gateway connected &amp; secret verified.');
+        } else if (d && /mode must be/i.test(d.error || '')) {
+          badge.className = 'badge ok'; badge.textContent = 'Gateway: connected ✓ (v1.2)';
+          if (!silent) showResult(true, '&#9989; Gateway connected &amp; secret verified.');
+        } else {
+          badge.className = 'badge err'; badge.textContent = 'Gateway: check secret';
+          $('settingsCard').open = true;
+          if (!silent) showResult(false, '&#10060; ' + esc((d && d.error) || 'Check gateway URL/secret'));
+        }
+      })
+      .catch(function () { badge.className = 'badge err'; badge.textContent = 'Gateway: unreachable'; })
+      .then(function () { clearTimeout(t); });
+  }
+
+  /* ---------- HTML Wire Cleaners ---------- */
+  function upgradeSpacer(html) {
+    return String(html || '').replace(/(<img\b[^>]*?\bsrc=["'])data:image\/png;base64,[A-Za-z0-9+\/=]+(["'][^>]*?\bwidth=["']600["'])/gi,
+      function (_, a, b) { return a + SPACER_URL + b; });
+  }
+  function asciiHtml(html) {
+    var out = '', i, cp;
+    for (i = 0; i < html.length; i++) {
+      cp = html.codePointAt(i);
+      if (cp > 126) { out += '&#x' + cp.toString(16).toUpperCase() + ';'; if (cp > 0xFFFF) i++; }
+      else out += html.charAt(i);
+    }
+    return out;
+  }
+  function safeSubject(s) {
+    return String(s || '').replace(/[\uD800-\uDFFF]/g, '').replace(/\s+/g, ' ').trim();
+  }
+  function gmailLinkFor(d) {
+    var user = encodeURIComponent((d && d.senderEmail) || localStorage.getItem(LS.senderEmail) || DEFAULT_AUTHUSER);
+    var base = 'https://mail.google.com/mail/?authuser=' + user;
+    if (d && d.mode === 'send') return base + '#sent';
+    if (d && d.messageId) return base + '#drafts/' + encodeURIComponent(d.messageId);
+    return base + '#drafts';
+  }
+
+  /* ---------- Template Picker & Dynamic Form ---------- */
   var grid = $('tplGrid');
   TPLS.forEach(function (t) {
     var b = document.createElement('button');
@@ -163,7 +345,6 @@
     render();
   }
 
-  /* ---------- dynamic form ---------- */
   function fieldInput(f) {
     var el;
     if (f.type === 'select') {
@@ -190,6 +371,13 @@
     return el;
   }
 
+  function labelFor(f) {
+    var l = document.createElement('label');
+    l.htmlFor = 'f_' + f.id;
+    l.innerHTML = f.label + (f.required ? ' <span class="req">*</span>' : '');
+    return l;
+  }
+
   function buildForm() {
     var area = $('formArea');
     area.innerHTML = '';
@@ -213,13 +401,6 @@
     }
   }
 
-  function labelFor(f) {
-    var l = document.createElement('label');
-    l.htmlFor = 'f_' + f.id;
-    l.innerHTML = f.label + (f.required ? ' <span class="req">*</span>' : '');
-    return l;
-  }
-
   function values() {
     var v = {};
     current.fields.forEach(function (f) {
@@ -235,14 +416,12 @@
     }).map(function (f) { return f.label.replace(/\s*\(.*$/, ''); });
   }
 
-  /* ---------- subject ---------- */
   function autoSubject() {
     if (subjectDirty) return;
     $('subject').value = current.subject(values());
   }
   $('subject').addEventListener('input', function () { subjectDirty = true; });
 
-  /* ---------- integrity checks (locked skill rules) ---------- */
   function integrity(html) {
     var problems = [];
     var m = html.match(/\{\{[A-Z_]+\}\}/);
@@ -257,7 +436,7 @@
 
   function render() {
     var v = values();
-    var html = current.build(v);
+    var html = upgradeSpacer(current.build(v));
     $('preview').srcdoc = html;
     var probs = integrity(html);
     var missing = missingRequired(v);
@@ -267,80 +446,91 @@
     $('checks').innerHTML = parts.length
       ? 'Checks: ' + parts.join(' &middot; ')
       : 'Checks: all clear ✓ (' + (new Blob([html]).size / 1024).toFixed(1) + ' KB)';
-    // Buttons stay ENABLED — submit() explains loudly instead of silently ignoring clicks.
     return { html: html, problems: probs, missing: missing };
   }
 
-  function esc(s) {
-    return String(s).replace(/[&<>"']/g, function (ch) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+  /* ---------- Preview Viewport Switcher ---------- */
+  document.querySelectorAll('.vp-btns button').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.vp-btns button').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      var w = btn.getAttribute('data-w');
+      $('preview').style.width = w === 'full' ? '100%' : (w + 'px');
     });
-  }
-  function showResult(ok, msg) {
-    var r = $('result'); r.className = ok ? 'ok' : 'err'; r.innerHTML = msg;
-    r.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
+  });
 
-  /* ---------- gateway (same localStorage as the sender page) ---------- */
-  function gatewayConfig() {
-    var url = localStorage.getItem('bliMailGateway.url') || '';
-    var secret = localStorage.getItem('bliMailGateway.secret') || '';
-    if (!url) { url = (prompt('BLI Mail Gateway URL (ends in /exec):') || '').trim(); if (url) localStorage.setItem('bliMailGateway.url', url); }
-    if (!secret) { secret = (prompt('Gateway secret:') || '').trim(); if (secret) localStorage.setItem('bliMailGateway.secret', secret); }
-    return { url: url, secret: secret };
-  }
+  /* ---------- Protect Unsaved Work on Sibling Links ---------- */
+  document.querySelectorAll('.sibling-link').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      var v = values();
+      var dirty = $('to').value.trim() || Object.keys(v).some(function (k) { return k === 'first' && String(v[k] || '').trim(); });
+      if (dirty) { e.preventDefault(); window.open(this.href, '_blank', 'noopener'); }
+    });
+  });
 
+  /* ---------- Submit ---------- */
   function submit(mode) {
     var r = render();
     if (r.missing.length) { showResult(false, '&#9888;&#65039; NOT SENT — please fill in: <b>' + r.missing.map(esc).join(', ') + '</b>'); return; }
     if (r.problems.length) { showResult(false, '&#9888;&#65039; NOT SENT — failed checks: <b>' + r.problems.map(esc).join(' · ') + '</b>'); return; }
+
+    var url = ($('gwUrl').value || localStorage.getItem(LS.url) || '').trim();
+    var secret = ($('gwSecret').value || localStorage.getItem(LS.secret) || '').trim();
+    if (!url || !secret) {
+      $('settingsCard').open = true;
+      $('settingsCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      showResult(false, '&#9888;&#65039; Gateway not configured — enter the Gateway URL &amp; Secret in Settings at the top of the page.');
+      return;
+    }
+
     var to = $('to').value.trim();
     if (mode === 'send') {
-      if (!to) { showResult(false, '&#9888;&#65039; NOT SENT — "Send Now" needs the customer email (top of this card).'); return; }
-      // Two-click confirm built into the button — native confirm() dialogs get
-      // auto-blocked by Chrome, which made sending impossible.
+      if (!to) { $('to').focus(); showResult(false, '&#9888;&#65039; NOT SENT — "Send Now" needs the customer email.'); return; }
       if (!armed) {
         armed = true;
         $('sendBtn').classList.add('armed');
         $('sendBtn').textContent = '⚠️ Click again to send to ' + to;
-        showResult(true, 'Ready — click the orange button once more to send to <b>' + esc(to) + '</b>. (Changing anything cancels.)');
+        showResult('warn', 'Ready — click the orange button once more within 10s to send to <b>' + esc(to) + '</b>.');
         clearTimeout(armTimer);
         armTimer = setTimeout(disarm, 10000);
         return;
       }
       disarm();
     }
-    var cfg = gatewayConfig();
-    if (!cfg.url || !cfg.secret) { showResult(false, '&#9888;&#65039; NOT SENT — gateway not configured. Set it up on the <a href="./">main sender page</a> first.'); return; }
+
     $('sendBtn').disabled = true; $('draftBtn').disabled = true;
-    showResult(true, mode === 'send' ? 'Sending…' : 'Creating draft…');
+    showResult(true, mode === 'send' ? 'Sending…' : 'Creating Gmail draft…');
     var ctrl = new AbortController();
     var t = setTimeout(function () { ctrl.abort(); }, 45000);
-    fetch(cfg.url, {
+    fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({
-        secret: cfg.secret, mode: mode, to: to,
-        subject: $('subject').value.trim() || current.subject(values()),
-        html: r.html, bcc: 'Save@BillLayneInsurance.com',
+        secret: secret, mode: mode, to: to,
+        subject: safeSubject($('subject').value.trim() || current.subject(values())),
+        html: asciiHtml(r.html), bcc: 'Save@BillLayneInsurance.com',
         fromName: 'Bill Layne Insurance'
       }),
       redirect: 'follow', signal: ctrl.signal
     }).then(function (res) { return res.json(); })
       .then(function (d) {
         if (!d.ok) throw new Error(d.error || 'Gateway error.');
+        if (d.senderEmail) localStorage.setItem(LS.senderEmail, d.senderEmail);
         var quota = typeof d.remainingQuota === 'number' ? ' · ' + d.remainingQuota + ' sends left today' : '';
+        var link = gmailLinkFor(d);
+        var draftLabel = d.messageId ? 'Open this Draft in Gmail →' : 'Open Gmail Drafts →';
         showResult(true, d.mode === 'send'
-          ? '✅ SENT! Your ' + current.name + ' is on its way to <b>' + esc(d.to) + '</b>. Proof: <a href="https://mail.google.com/mail/u/0/#sent" target="_blank" rel="noopener">open your Gmail Sent folder →</a>' + quota
-          : '✅ Draft created' + (d.to ? ' for <b>' + esc(d.to) + '</b>' : '') + ' — <a href="https://mail.google.com/mail/u/0/#drafts" target="_blank" rel="noopener">open Gmail Drafts →</a>' + quota);
+          ? '✅ SENT! Your ' + esc(current.name) + ' is on its way to <b>' + esc(d.to) + '</b> — <a href="' + link + '" target="_blank" rel="noopener">Open Gmail Sent →</a>' + quota
+          : '✅ Draft created' + (d.to ? ' for <b>' + esc(d.to) + '</b>' : '') + ' — <a href="' + link + '" target="_blank" rel="noopener">' + draftLabel + '</a>' + quota);
       })
       .catch(function (e) {
         showResult(false, '❌ ' + esc(e && e.name === 'AbortError' ? 'The gateway took too long (45s). Try again.' : (e && e.message) || 'Unknown error'));
       })
       .then(function () { clearTimeout(t); $('sendBtn').disabled = false; $('draftBtn').disabled = false; render(); });
   }
+
+  $('draftBtn').addEventListener('click', function () { disarm(); submit('draft'); });
   $('sendBtn').addEventListener('click', function () { submit('send'); });
-  $('draftBtn').addEventListener('click', function () { submit('draft'); });
   $('copyBtn').addEventListener('click', function () {
     var html = render().html;
     navigator.clipboard.writeText(html).then(function () {
@@ -351,13 +541,9 @@
   });
   $('newBtn').addEventListener('click', function () { location.replace('studio.html'); });
 
-  /* ---------- init ---------- */
-  // Editing anything (fields, recipient, subject) cancels a pending armed send.
   document.addEventListener('input', disarm, true);
   document.addEventListener('change', disarm, true);
-  var badge = $('connBadge');
-  if (localStorage.getItem('bliMailGateway.url')) { badge.className = 'badge ok'; badge.textContent = 'Gateway: settings found ✓'; }
-  else { badge.className = 'badge err'; badge.textContent = 'Gateway: set up on the main page first'; }
+  loadSettings();
   selectTemplate(TPLS[0].id);
 })();
 </script>

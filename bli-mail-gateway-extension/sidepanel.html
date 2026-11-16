@@ -9,9 +9,16 @@
 <body>
 
 <header class="brand">
-  <h1>BLI <span class="gold">Mail Gateway</span></h1>
-  <p>Capture the open email template, then draft it in Gmail or send it — without leaving Chrome.</p>
-  <span class="badge" id="connBadge">Gateway: not tested</span>
+  <div class="brand-top">
+    <h1>BLI <span class="gold">Mail Gateway</span></h1>
+  </div>
+  <p>Capture the open email template, attach PDFs, and draft or send straight into Gmail.</p>
+  <div class="suite-links">
+    <a href="https://www.billlayneinsurance.com/mail-gateway/" target="_blank" rel="noopener">&#128228; Web Sender</a>
+    <a href="https://www.billlayneinsurance.com/mail-gateway/studio.html" target="_blank" rel="noopener">&#9993;&#65039; Studio</a>
+    <a href="https://www.billlayneinsurance.com/mail-gateway/receipt.html" target="_blank" rel="noopener">&#129534; Receipts</a>
+  </div>
+  <span class="badge" id="connBadge">Gateway: checking&hellip;</span>
 </header>
 
 <main>
@@ -26,56 +33,72 @@
       <button class="quiet mini" id="showSecret" type="button">Show</button>
     </div>
     <div class="row">
-      <button class="primary mini" id="saveSettings" type="button">Save</button>
+      <button class="primary mini" id="saveSettings" type="button">Save &amp; Test</button>
       <button class="quiet mini" id="testConn" type="button">Test connection</button>
     </div>
-    <p class="hint">Stored only in this extension on this computer. Never hardcoded into pages or emails.</p>
+    <p class="hint">Stored only in this extension on this computer.</p>
   </details>
 
   <section class="card">
     <h2><span class="step">1</span>Email HTML</h2>
-    <button class="primary block" id="captureBtn" type="button">&#128247; Capture current page as email</button>
-    <button class="gold block" id="receiptBtn" type="button" disabled>&#129534; Receipt from this page</button>
-    <p class="hint">Clicking the BLI toolbar icon on a template tab captures it automatically; this button re-captures. On a carrier <b>payment-confirmation</b> screen, capture first, then "Receipt from this page" — it pulls the payment details into the BLI receipt builder instead of emailing the raw page. For local files (file://), enable "Allow access to file URLs" in the extension's Details once.</p>
+    <button class="primary block" id="captureBtn" type="button">&#128247; Capture current tab as email</button>
+    <button class="gold block" id="receiptBtn" type="button">&#129534; Receipt from payment screen</button>
     <details id="manualDetails">
-      <summary>Or paste / drop the HTML instead</summary>
-      <div id="dropZone">Drag &amp; drop an .html file here, <label class="filebtn" for="fileInput">choose a file</label>, or paste below.
+      <summary>Or paste / drop HTML instead</summary>
+      <button class="quiet mini block" id="pasteClipBtn" type="button" style="margin-bottom:6px">&#128203; Paste HTML from Clipboard</button>
+      <div id="dropZone" role="button" tabindex="0">
+        Drag &amp; drop an .html file here or <label class="filebtn" for="fileInput">choose file</label>
         <input type="file" id="fileInput" accept=".html,.htm,text/html">
       </div>
-      <textarea id="htmlInput" placeholder="Paste the full email HTML here…" spellcheck="false"></textarea>
+      <textarea id="htmlInput" aria-label="Email HTML source code" placeholder="Paste the full email HTML here…" spellcheck="false"></textarea>
     </details>
-    <div class="meta">
-      <span id="sourceInfo">No email loaded yet</span>
-      <span id="clipWarn" hidden>&#9888;&#65039; Over ~100 KB — Gmail may clip this email</span>
+    <div class="qa-pills" id="qaBar">
+      <span class="qa-pill" id="sourceInfo">No email loaded yet</span>
     </div>
   </section>
 
   <section class="card">
-    <h2><span class="step">2</span>Recipients &amp; subject</h2>
-    <label for="toInput">To <span class="soft">(optional for drafts)</span></label>
+    <h2><span class="step">2</span>Recipients, Subject &amp; PDFs</h2>
+    <label for="toInput" style="margin-top:0">To <span class="soft">(optional for drafts)</span></label>
     <input type="text" id="toInput" placeholder="customer@example.com" autocomplete="off">
-    <label for="subjectInput">Subject <span class="soft">(auto-fills from the template)</span></label>
+    <label for="subjectInput">Subject <span class="soft">(auto-filled from template)</span></label>
     <input type="text" id="subjectInput" autocomplete="off">
-    <div class="two">
-      <div>
-        <label for="ccInput">CC</label>
-        <input type="text" id="ccInput" autocomplete="off">
+
+    <details class="more-opts" id="moreRecipOpts">
+      <summary>
+        <span id="defaultsSummary">&#128274; BCC: Save@BillLayneInsurance.com</span>
+        <span class="opt-act">+ CC / Options &#9662;</span>
+      </summary>
+      <div class="opts-body">
+        <div class="two">
+          <div>
+            <label for="ccInput">CC</label>
+            <input type="text" id="ccInput" autocomplete="off">
+          </div>
+          <div>
+            <label for="bccInput">BCC <span class="soft">(clear = off)</span></label>
+            <input type="text" id="bccInput" value="Save@BillLayneInsurance.com" autocomplete="off">
+          </div>
+        </div>
+        <div class="two">
+          <div>
+            <label for="fromNameInput">From name</label>
+            <input type="text" id="fromNameInput" value="Bill Layne Insurance" autocomplete="off">
+          </div>
+          <div>
+            <label for="replyToInput">Reply-To</label>
+            <input type="text" id="replyToInput" autocomplete="off">
+          </div>
+        </div>
       </div>
-      <div>
-        <label for="bccInput">BCC <span class="soft">(clear = no copy)</span></label>
-        <input type="text" id="bccInput" value="Save@BillLayneInsurance.com" autocomplete="off">
-      </div>
+    </details>
+
+    <label style="margin-top:9px">Attachments <span class="soft" id="attachMeter">(optional &middot; up to 5 PDFs)</span></label>
+    <div id="attachDrop" role="button" tabindex="0">
+      &#128206; Drop PDFs here or <label class="filebtn" for="attachInput">choose files</label>
+      <input type="file" id="attachInput" aria-label="Choose attachment files" multiple>
     </div>
-    <div class="two">
-      <div>
-        <label for="fromNameInput">From name</label>
-        <input type="text" id="fromNameInput" value="Bill Layne Insurance" autocomplete="off">
-      </div>
-      <div>
-        <label for="replyToInput">Reply-To <span class="soft">(optional)</span></label>
-        <input type="text" id="replyToInput" autocomplete="off">
-      </div>
-    </div>
+    <ul id="attachList"></ul>
   </section>
 
   <section class="card">
@@ -84,17 +107,17 @@
   </section>
 
   <section class="card actions">
-    <button class="primary block" id="draftBtn" type="button" disabled>Create Gmail Draft</button>
-    <button class="gold block" id="sendBtn" type="button" disabled>Send Now</button>
-    <button class="quiet block" id="clearBtn" type="button" style="margin-top:8px">&#129529; Clear &mdash; start a new email</button>
-    <p class="hint">Draft = lands in Gmail Drafts for a final look. Send Now = goes out immediately. Capturing a different page also auto-resets To &amp; Subject for the next customer.</p>
+    <button class="primary block" id="draftBtn" type="button">&#9993;&#65039; Create Gmail Draft</button>
+    <button class="gold block" id="sendBtn" type="button">&#9889; Send Now</button>
+    <button class="quiet block" id="clearBtn" type="button" style="margin-top:7px">&#129529; Clear &mdash; next customer</button>
+    <p class="hint">Draft = opens in Gmail Drafts for final review. Send Now = two-click confirm, sends immediately.</p>
     <div id="result" role="status"></div>
   </section>
 
 </main>
 
 <footer>
-  Bill Layne Insurance &middot; Nothing leaves this panel until you click Draft or Send, and then only to your own gateway.
+  Bill Layne Insurance &middot; v1.2.0 &middot; Sent only to your own gateway.
 </footer>
 
 <script src="sidepanel.js"></script>
