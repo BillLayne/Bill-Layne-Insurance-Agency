@@ -1063,34 +1063,16 @@
                 'Selected Files: ' + selectedFiles.length + '\n' +
                 'Notes: ' + (notesVal || 'None');
             try {
-                fetch('https://api.emailjs.com/api/v1.0/email/send', {
+                fetch('/api/homepage-submit', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     keepalive: true,
                     body: JSON.stringify({
-                        service_id: 'service_4flmw3k',
-                        template_id: 'template_6k9bgwi',
-                        user_id: 'Av6wKxL6HR-FIMtgm',
-                        template_params: {
-                            from_name: nameVal + ' (Partial Policy Upload Lead)',
-                            from_email: emailVal,
-                            phone: phoneVal,
-                            address: 'NC Policy Review Request',
-                            dob: 'N/A',
-                            effective_date: 'Policy Upload Follow-Up',
-                            current_insurance: 'Yes — Uploading Policy (' + pType + ')',
-                            current_carrier: 'See Policy Review',
-                            years_with_carrier: 'N/A',
-                            previous_claims: 'N/A',
-                            claims_details: 'None',
-                            drivers_info: 'Policy Type: ' + pType,
-                            vehicles_info: 'Files attached before exit: ' + selectedFiles.length,
-                            coverage_preferences: 'Policy Review / Rate Comparison',
-                            homeowner_status: 'Not specified',
-                            bundle_interest: 'Policy Review',
-                            additional_notes: summary,
-                            submission_date: new Date().toLocaleString()
-                        }
+                        formType: 'contact',
+                        name: ('[PARTIAL POLICY UPLOAD] ' + nameVal).trim().slice(0, 150),
+                        phone: String(phoneVal).slice(0, 50),
+                        email: String(emailVal).slice(0, 254),
+                        message: String(summary).slice(0, 4900)
                     })
                 }).catch(function () {});
                 if (typeof gtag === 'function') {

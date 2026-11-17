@@ -578,43 +578,16 @@
       "Address: " +
       [a.street_address, a.city, "NC", a.zip_code].filter(Boolean).join(", ");
     try {
-      fetch("https://api.emailjs.com/api/v1.0/email/send", {
+      fetch("/api/homepage-submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         keepalive: true,
         body: JSON.stringify({
-          service_id: "service_4flmw3k",
-          template_id: "template_6k9bgwi",
-          user_id: "Av6wKxL6HR-FIMtgm",
-          template_params: {
-            from_name: fn + " " + ln + " (Partial " + kind + " Lead)",
-            from_email: email,
-            phone: phone,
-            address:
-              [a.street_address, a.city, a.zip_code].filter(Boolean).join(", ") ||
-              "NC",
-            dob: a.date_of_birth || "Not provided",
-            effective_date:
-              (data.coverage && data.coverage.effective_date) || "ASAP",
-            current_insurance:
-              (data.coverage && data.coverage.current_insurance) ||
-              "Step 1 Partial",
-            current_carrier:
-              (data.coverage && data.coverage.current_carrier) ||
-              "Not specified",
-            years_with_carrier: "N/A",
-            previous_claims: "Not reached",
-            claims_details: "None",
-            drivers_info: JSON.stringify(data.operators || []),
-            vehicles_info: JSON.stringify(data.assets || []),
-            coverage_preferences: JSON.stringify(data.coverage || {}),
-            homeowner_status: a.homeowner_status || "Not specified",
-            bundle_interest:
-              (data.coverage && data.coverage.bundle_interest) ||
-              "Not specified",
-            additional_notes: summary,
-            submission_date: new Date().toLocaleString(),
-          },
+          formType: "contact",
+          name: ("[PARTIAL " + String(kind).toUpperCase() + " QUOTE - Step " + (step + 1) + "] " + fn + " " + ln).trim().slice(0, 150),
+          phone: String(phone).slice(0, 50),
+          email: String(email).slice(0, 254),
+          message: String(summary).slice(0, 4900),
         }),
       }).catch(() => {});
       if (typeof window.gtag === "function") {

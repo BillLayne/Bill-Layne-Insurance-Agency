@@ -105,24 +105,16 @@
       `Notes: ${v.additional_notes||'None'}`
     ].join('\n');
     try {
-      fetch('https://api.emailjs.com/api/v1.0/email/send',{
+      fetch('/api/homepage-submit',{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         keepalive:true,
         body:JSON.stringify({
-          service_id:'service_4flmw3k',
-          template_id:'template_6k9bgwi',
-          user_id:'Av6wKxL6HR-FIMtgm',
-          template_params:{
-            from_name:fullName,
-            name:fullName,
-            from_email:email,
-            email:email,
-            phone:phone,
-            subject:`[PARTIAL MOBILE HOME QUOTE] ${fullName} — Step ${step+1} of 5`,
-            message:summary,
-            full_message:summary
-          }
+          formType:'contact',
+          name:(`[PARTIAL MOBILE HOME QUOTE - Step ${step+1}/5] ${fullName}`).slice(0,150),
+          phone:String(phone).slice(0,50),
+          email:String(email).slice(0,254),
+          message:String(summary).slice(0,4900)
         })
       }).catch(()=>{});
       track('partial_lead_saved',{step_reached:step+1});

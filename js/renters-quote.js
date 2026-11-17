@@ -194,34 +194,16 @@
       'Rental Type: ' + (data.rental_type || 'Not entered') + '\n' +
       'Address: ' + [data.property_address, data.unit, data.city, 'NC', data.zip_code].filter(Boolean).join(', ');
     try {
-      fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      fetch('/api/homepage-submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         keepalive: true,
         body: JSON.stringify({
-          service_id: 'service_4flmw3k',
-          template_id: 'template_6k9bgwi',
-          user_id: 'Av6wKxL6HR-FIMtgm',
-          template_params: {
-            from_name: fn + ' ' + ln + ' (Partial Renters Lead)',
-            from_email: email,
-            phone: phone,
-            address: [data.property_address, data.city, data.zip_code].filter(Boolean).join(', ') || 'NC',
-            dob: data.date_of_birth || 'Not provided',
-            effective_date: data.effective_date || 'ASAP',
-            current_insurance: data.current_insurance || 'Not reached',
-            current_carrier: data.current_carrier || 'Not specified',
-            years_with_carrier: 'N/A',
-            previous_claims: data.previous_claims || 'Not reached',
-            claims_details: data.claims_details || 'None',
-            drivers_info: 'Renters Quote (Partial Lead)',
-            vehicles_info: 'Rental Type: ' + (data.rental_type || 'Not specified'),
-            coverage_preferences: 'Personal Property: ' + (data.personal_property || 'Not reached') + ' | Liability: ' + (data.liability || 'Not reached'),
-            homeowner_status: 'Renter',
-            bundle_interest: form.elements.bundle_auto && form.elements.bundle_auto.checked ? 'Yes — Auto Bundle' : 'No',
-            additional_notes: summary,
-            submission_date: new Date().toLocaleString()
-          }
+          formType: 'contact',
+          name: ('[PARTIAL RENTERS QUOTE - Step ' + (step + 1) + '] ' + fn + ' ' + ln).trim().slice(0, 150),
+          phone: String(phone).slice(0, 50),
+          email: String(email).slice(0, 254),
+          message: String(summary).slice(0, 4900)
         })
       }).catch(() => {});
       if (typeof window.gtag === 'function') {
