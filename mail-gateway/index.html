@@ -692,6 +692,16 @@
   $('toggleCodeBtn').addEventListener('click', function(){ setCodeCollapsed(!$('codeWrap').hidden); });
   $('editCodeInlineBtn').addEventListener('click', function(){ setCodeCollapsed(!$('codeWrap').hidden); });
 
+  // Swap in a fresh iframe for every render. Setting srcdoc twice in quick succession on the
+  // same iframe (empty-state placeholder at load, then a hand-off email a few ms later) makes
+  // Chrome drop the second navigation, so the placeholder stayed on screen.
+  function setPreview(html){
+    var old = $('preview');
+    var fresh = old.cloneNode(false);   // keeps id, sandbox, title and the viewport width
+    fresh.srcdoc = html;
+    old.parentNode.replaceChild(fresh, old);
+  }
+
   function refresh(opts){
     opts = opts || {};
     var raw = $('htmlInput').value;
@@ -703,7 +713,7 @@
       $('loadedBar').className = '';
       setCodeCollapsed(false);
       qaBar.innerHTML = '<span class="qa-pill">0.0 KB</span><span class="qa-pill">Paste or drop an email template to run BLI pre-flight checks</span>';
-      $('preview').srcdoc = '<body style="font-family:system-ui,-apple-system,sans-serif;color:#64748b;display:grid;place-items:center;height:100vh;margin:0;background:#f8fafc"><div style="text-align:center;padding:24px"><div style="font-size:32px;margin-bottom:8px">&#9993;&#65039;</div><div style="font-weight:700;color:#0f172a;margin-bottom:4px">Live Email Preview</div><div style="font-size:13px">Click <b>Paste HTML from Clipboard</b> or drop an <b>.html</b> file on the left</div></div></body>';
+      setPreview('<body style="font-family:system-ui,-apple-system,sans-serif;color:#64748b;display:grid;place-items:center;height:100vh;margin:0;background:#f8fafc"><div style="text-align:center;padding:24px"><div style="font-size:32px;margin-bottom:8px">&#9993;&#65039;</div><div style="font-weight:700;color:#0f172a;margin-bottom:4px">Live Email Preview</div><div style="font-size:13px">Click <b>Paste HTML from Clipboard</b> or drop an <b>.html</b> file on the left</div></div></body>');
       updateSubjectCoach();
       return;
     }
@@ -740,7 +750,7 @@
     }
     qaBar.innerHTML = pills.join('');
 
-    $('preview').srcdoc = cleaned;
+    setPreview(cleaned);
     return qa;
   }
 
