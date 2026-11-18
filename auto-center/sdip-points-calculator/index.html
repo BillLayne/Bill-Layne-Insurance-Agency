@@ -112,7 +112,7 @@
           "name": "When does a minor speeding ticket get 0 insurance points?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "In North Carolina, speeding 10 mph or less over the limit in a zone under 55 mph can qualify for an insurance point waiver if it did not happen in a school zone and you have had no other moving violations in the past 3 years."
+            "text": "In North Carolina, speeding 10 mph or less over the limit in a zone under 55 mph can qualify for an insurance point waiver if it did not happen in a school zone and you have had no other moving violation in the lookback period (three years for a ticket before July 1, 2025, and up to five years for one on or after that date)."
           }
         },
         {
@@ -204,8 +204,8 @@
       "name": "NC DMV vs. Insurance Points Calculator | SDIP 2026",
       "description": "Compare NC license points and SDIP insurance points after tickets or accidents. Explore possible surcharges; results are estimates, not a quote.",
       "datePublished": "2026-10-01",
-      "dateModified": "2026-11-11",
-      "lastReviewed": "2026-11-11",
+      "dateModified": "2026-11-18",
+      "lastReviewed": "2026-11-18",
       "inLanguage": "en-US",
       "isPartOf": {
         "@id": "https://www.billlayneinsurance.com/#website"
@@ -2089,7 +2089,7 @@
                         <ul class="compare-list">
                             <li><i class="fas fa-circle-check" aria-hidden="true"></i><span>Even <strong>1 insurance point increases your base rate by +40%</strong>; 2 points equals +55%; 4 points equals +90%.</span></li>
                             <li><i class="fas fa-circle-check" aria-hidden="true"></i><span>Applies to both <strong>moving convictions and at-fault accidents</strong> above state damage thresholds.</span></li>
-                            <li><i class="fas fa-circle-check" aria-hidden="true"></i><span>Follows your policy for <strong>3 years (minor incidents &amp; speeding)</strong> or <strong>5 years (non-speeding 4+ point convictions)</strong> under N.C.G.S. &sect; 58-36-65(j).</span></li>
+                            <li><i class="fas fa-circle-check" aria-hidden="true"></i><span>Follows your policy for <strong>3 years (minor incidents &amp; speeding)</strong> or <strong>5 years (non-speeding 4+ point convictions on or after July 1, 2025)</strong> under N.C.G.S. &sect; 58-36-65(j).</span></li>
                         </ul>
                     </div>
                 </div>
@@ -2099,12 +2099,12 @@
                     <div class="rule-card">
                         <div class="rule-stat">5 Years</div>
                         <div class="rule-label">Non-Speeding 4+ Point Convictions</div>
-                        <p>Under N.C. Gen. Stat. &sect; 58-36-65(j), convictions assigned 4 or more SDIP points (such as reckless driving or passing a stopped school bus, <strong>excluding speeding convictions</strong>) carry a <strong>5-policy-year</strong> surcharge period instead of 3 years.</p>
+                        <p>Under N.C. Gen. Stat. &sect; 58-36-65(j), convictions assigned 4 or more SDIP points (such as reckless driving or passing a stopped school bus, <strong>excluding speeding convictions</strong>) carry a <strong>5-policy-year</strong> surcharge period instead of 3 years. This applies to convictions on or after July 1, 2025. Earlier convictions stay at 3 years.</p>
                     </div>
                     <div class="rule-card">
                         <div class="rule-stat">1 Per Home</div>
-                        <div class="rule-label">PJC Waiver Every 5 Years</div>
-                        <p>A Prayer for Judgment Continued (PJC) only waives insurance points for <strong>one ticket per household every 5 years</strong>. Using a second PJC can reactivate the first ticket's points.</p>
+                        <div class="rule-label">One PJC Per Household</div>
+                        <p>A Prayer for Judgment Continued (PJC) only waives insurance points for <strong>the first one in a household</strong> inside the lookback period. That period is five years for a PJC granted on or after July 1, 2025, and three years for one granted before that date. A second PJC inside the period is counted as a conviction.</p>
                     </div>
                     <div class="rule-card">
                         <div class="rule-stat">$2,300</div>
@@ -2182,7 +2182,7 @@
                                 <span>When does a minor speeding ticket get 0 insurance points?</span>
                                 <i class="fas fa-plus" aria-hidden="true"></i>
                             </summary>
-                            <p>In North Carolina, speeding 10 mph or less over the limit in a zone under 55 mph can qualify for an insurance point waiver if it did not happen in a school zone and you have had no other moving violations in the past 3 years.</p>
+                            <p>In North Carolina, speeding 10 mph or less over the limit in a zone under 55 mph can qualify for an insurance point waiver if it did not happen in a school zone and you have had no other moving violation in the lookback period (three years for a ticket before July 1, 2025, and up to five years for one on or after that date).</p>
                         </details>
                         <details class="faq-item">
                             <summary>
@@ -2277,7 +2277,7 @@
                     dmvPts: 2,
                     insPts: 1,
                     lookbackYears: 3,
-                    tip: 'May qualify for an NC insurance point waiver if you had no other tickets in 3 years and it was not in a school zone.'
+                    tip: 'May qualify for an NC insurance point waiver if you had no other moving violation in the lookback period (3 years, or up to 5 for a ticket on or after July 1, 2025) and it was not in a school zone.'
                 },
                 {
                     id: 'v_speed_10_55plus',
@@ -2524,6 +2524,13 @@
                 populateDropdown(category);
             }
 
+            // The five-year period applies only to convictions on or after July 1, 2025 (S.L. 2025-45). Earlier ones stay at three.
+            function effectiveLookbackYears(entry) {
+                const years = entry.item.lookbackYears;
+                if (years >= 5 && entry.dateStr && entry.dateStr < '2025-07-01') return 3;
+                return years;
+            }
+
             function getMonthsSince(dateStr) {
                 if (!dateStr) return null;
                 const parsed = new Date(dateStr + 'T12:00:00');
@@ -2566,8 +2573,8 @@
 
                 addedIncidentsList.innerHTML = queuedIncidents.map((entry) => {
                     const months = getMonthsSince(entry.dateStr);
-                    const insExpired = months !== null && entry.item.lookbackYears > 0 && months > entry.item.lookbackYears * 12;
-                    const dropoff = formatDropoffDate(entry.dateStr, entry.item.lookbackYears);
+                    const insExpired = months !== null && effectiveLookbackYears(entry) > 0 && months > effectiveLookbackYears(entry) * 12;
+                    const dropoff = formatDropoffDate(entry.dateStr, effectiveLookbackYears(entry));
                     return `
                         <div class="added-incident-item">
                             <div class="added-incident-info">
@@ -2623,7 +2630,7 @@
                 effective.forEach(entry => {
                     const months = getMonthsSince(entry.dateStr);
                     const dmvActive = months === null || months <= 36;
-                    const insActive = months === null || entry.item.lookbackYears === 0 || months <= entry.item.lookbackYears * 12;
+                    const insActive = months === null || effectiveLookbackYears(entry) === 0 || months <= effectiveLookbackYears(entry) * 12;
 
                     if (!insActive && entry.item.insPts > 0) {
                         expiredCount += 1;
@@ -2636,14 +2643,14 @@
                         if (insActive && entry.item.insPts > maxViolationInsPts) {
                             maxViolationInsPts = entry.item.insPts;
                         }
-                        if (insActive && entry.item.lookbackYears >= 5) {
+                        if (insActive && effectiveLookbackYears(entry) >= 5) {
                             anyFiveYearLookback = true;
                         }
                     } else {
                         if (dmvActive) totalDmvPts += entry.item.dmvPts;
                         if (insActive) {
                             totalInsPts += entry.item.insPts;
-                            if (entry.item.lookbackYears >= 5) anyFiveYearLookback = true;
+                            if (effectiveLookbackYears(entry) >= 5) anyFiveYearLookback = true;
                         }
                     }
                 });
