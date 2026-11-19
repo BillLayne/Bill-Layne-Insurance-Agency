@@ -279,6 +279,7 @@
     state: 'NC',
     zip_code: params.get('zip') && /^\d{5}$/.test(params.get('zip')) ? params.get('zip') : '',
     has_other_drivers: '',
+    od_open: -1,               // which additional driver's details are open (-1 = none; the rest show as a short list)
     other_drivers: [],
     additional_notes: '',
     contact_method: '',
@@ -2450,7 +2451,18 @@
     else if (currentStepId === 'step_17') {
       const showList = state.has_other_drivers === 'yes';
       const allDriversValid = showList && state.other_drivers.length > 0 && state.other_drivers.every(d => d.name && d.dob && d.marital && d.gender);
-      const cards = state.other_drivers.map((d, i) => `
+      const odDone = d => !!(d.name && d.dob && d.marital && d.gender);
+      let odOpen = typeof state.od_open === 'number' ? state.od_open : state.other_drivers.findIndex(d => !odDone(d));
+      if (odOpen >= state.other_drivers.length) odOpen = -1;
+      state.od_open = odOpen;
+      const cards = state.other_drivers.map((d, i) => i !== odOpen ? `
+        <div class="v2-vehsheet-row v2-od-row">
+          <span class="v2-vehsheet-name">${escapeHtml(d.name || `Additional driver ${i + 1}`)}<small class="v2-od-status ${odDone(d) ? '' : 'is-missing'}">${odDone(d) ? `${escapeHtml(capitalize(d.marital))} &middot; ${escapeHtml(capitalize(d.gender))}` : 'Details needed'}</small></span>
+          <span class="v2-vehsheet-actions">
+            <button type="button" class="v2-vehsheet-btn" data-od-edit="${i}" aria-label="Edit ${escapeHtml(d.name || `additional driver ${i + 1}`)}">Edit</button>
+            <button type="button" class="v2-vehsheet-btn is-remove" data-rem-driver="${i}" data-two-tap="1" aria-label="Remove ${escapeHtml(d.name || `additional driver ${i + 1}`)}">Remove</button>
+          </span>
+        </div>` : `
         <div class="v2-driver-card">
           <div class="v2-driver-head">
             <span>Additional driver ${i + 1}</span>
@@ -2480,6 +2492,7 @@
               `).join('')}
             </div>
           </div>
+          <button type="button" class="v2-btn-gold v2-od-save" id="v2-od-save" data-od-save="${i}">Save driver &rarr;</button>
         </div>
       `).join('');
 
@@ -2496,12 +2509,12 @@
         </div>
         ${showList ? `
           <div class="v2-col">
-            ${cards}
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
-              <button type="button" class="v2-btn-outline" id="v2-add-driver">+ Add another driver</button>
-            </div>
+            <div class="v2-od-list">${cards}</div>
             <div id="v2-step-err" class="v2-error" role="alert" hidden></div>
-            ${allDriversValid ? `<button type="button" class="v2-btn-gold" id="v2-step17-next">Continue &rarr;</button>` : ''}
+            ${odOpen === -1 ? `<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+              <button type="button" class="v2-btn-outline" id="v2-add-driver">+ Add another driver</button>
+            </div>` : ''}
+            ${allDriversValid && odOpen === -1 ? `<button type="button" class="v2-btn-gold" id="v2-step17-next">Continue &rarr;</button>` : ''}
           </div>
         ` : ''}
       `;
@@ -3298,7 +3311,28 @@
     const odNo = document.getElementById('v2-od-no');
     if (odYes) odYes.addEventListener('click', () => {
       state.has_other_drivers = 'yes';
-      if (state.other_drivers.length === 0) state.other_drivers.push(emptyDriver());
+      if (state.other_drivers.length === 0) { state.other_drivers.push(emptyDriver()); state.od_open = 0; }
+      saveSessionState();
+      render();
+    });
+    document.querySelectorAll('[data-od-edit]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        syncOtherDriversInputs();
+        state.od_open = Number(btn.dataset.odEdit);
+        saveSessionState();
+        render();
+      });
+    });
+    const odSave = document.getElementById('v2-od-save');
+    if (odSave) odSave.addEventListener('click', () => {
+      syncOtherDriversInputs();
+      const d = state.other_drivers[Number(odSave.dataset.odSave)];
+      if (!d || !(d.name && d.dob && d.marital && d.gender)) {
+        const err = document.getElementById('v2-step-err');
+        if (err) { err.textContent = 'Please add this driver\u2019s full name, date of birth, marital status and gender.'; err.hidden = false; err.scrollIntoView({ block: 'center' }); }
+        return;
+      }
+      state.od_open = -1;
       saveSessionState();
       render();
     });
@@ -3347,13 +3381,23 @@
     if (addDrv) addDrv.addEventListener('click', () => {
       syncOtherDriversInputs();
       state.other_drivers.push(emptyDriver());
+      state.od_open = state.other_drivers.length - 1;
       saveSessionState();
       render();
     });
     document.querySelectorAll('[data-rem-driver]').forEach(btn => {
       btn.addEventListener('click', () => {
+        if (btn.dataset.twoTap === '1' && btn.dataset.armed !== '1') {   // two taps to remove a saved driver
+          btn.dataset.armed = '1';
+          btn.textContent = 'Tap again to remove';
+          btn.classList.add('is-armed');
+          return;
+        }
         syncOtherDriversInputs();
-        state.other_drivers.splice(Number(btn.dataset.remDriver), 1);
+        const ri = Number(btn.dataset.remDriver);
+        state.other_drivers.splice(ri, 1);
+        if (state.od_open === ri) state.od_open = -1;
+        else if (state.od_open > ri) state.od_open -= 1;
         if (state.other_drivers.length === 0) state.has_other_drivers = '';
         saveSessionState();
         render();
