@@ -350,7 +350,7 @@
     if (stepId === 'step_9') return 'DRIVING RECORD';
     if (['step_10', 'step_11', 'step_12', 'step_16'].includes(stepId)) return 'ABOUT YOU';
     if (['step_13', 'step_14', 'step_15'].includes(stepId)) return 'YOUR COVERAGE';
-    if (stepId === 'step_17') return 'OTHER DRIVERS';
+    if (stepId === 'step_17') return 'YOUR DRIVERS';
     if (stepId === 'step_18') return 'ALMOST DONE';
     if (stepId === 'step_19') return 'REVIEW';
     return 'QUOTE RECEIVED';
@@ -1091,10 +1091,10 @@
       return seq;
     }
 
-    seq.push('step_9', 'step_10', 'step_11', 'step_12', 'step_13');
+    seq.push('step_9', 'step_10', 'step_11', 'step_12', 'step_17', 'step_13');   // all drivers together, before coverage
     if (needsLimits()) seq.push('step_14');
     if (anyFullCoverage() && !perVehicle()) seq.push('step_15');
-    seq.push('step_16', 'step_17', 'step_18', 'step_19', 'step_20');
+    seq.push('step_16', 'step_18', 'step_19', 'step_20');
     return seq;
   }
 
