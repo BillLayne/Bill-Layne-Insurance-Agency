@@ -4,8 +4,9 @@
   // One script, two pages: the live form at /auto-quote sets window.BLI_AQ_MODE = 'live';
   // the private test page leaves it unset and keeps every test marking.
   const LIVE = window.BLI_AQ_MODE === 'live';
-  // "Want a home quote too?" on the last screen. TEST PAGE ONLY until Bill approves the new home form for customers.
-  const HOME_OFFER = !LIVE;
+  // "Want a home quote too?" on the last screen. OFF everywhere for now: the new home form is not on the website yet.
+  // Switch to !LIVE once /home-quote-v2-test/ is pushed, and to true only when Bill approves it for customers.
+  const HOME_OFFER = false;
   const HOME_OFFER_URL = '../home-quote-v2-test/?src=auto_quote_done';
   const ASSET_BASE = (function () { try { return new URL('.', document.currentScript.src).href; } catch (_) { return './'; } })();
 
