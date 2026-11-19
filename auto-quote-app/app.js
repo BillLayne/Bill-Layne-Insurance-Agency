@@ -1631,6 +1631,9 @@
   }
 
   function renderChips() {
+    // Live page: the supporting section under the form is for the first screen only. Once the quote is started it gets out of the way.
+    const about = document.querySelector('.v2-about');
+    if (about) about.hidden = currentStepId !== 'step_1';
     const el = document.getElementById('v2-chips');
     const list = enteredVehicles();
     if (['step_20', 'step_13', 'step_14', 'step_15'].includes(currentStepId) || !list.length) { el.innerHTML = ''; return; }
