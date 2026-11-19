@@ -1832,9 +1832,14 @@
 
     // STEP 11: Contact (Email REQUIRED on every path, including declarations shortcut)
     else if (currentStepId === 'step_11') {
+      // On the normal path this screen sits in the middle of the form, so it must not read like the last step.
+      const isDecContact = state.usedDecShortcut;
+      const contactHeading = isDecContact ? 'Almost done. Who is this quote for?' : 'You&rsquo;re halfway there. Who is this quote for?';
+      const contactNext = isDecContact ? '' : '<strong>Next: driver details and the coverage you&rsquo;d like.</strong> ';
+      const contactBtn = isDecContact ? 'Continue &rarr;' : 'Next: driver details &rarr;';
       body = `
-        <h1 class="v2-heading" tabindex="-1">Where should we send your quotes?</h1>
-        <p class="v2-sub">Only our local North Carolina team sees your details. We never sell your information.</p>
+        <h1 class="v2-heading" tabindex="-1">${contactHeading}</h1>
+        <p class="v2-sub">${contactNext}Only our local North Carolina team sees your details. We never sell your information.</p>
         <div class="v2-col">
           <div class="v2-row-2">
             <div class="v2-field">
@@ -1859,7 +1864,7 @@
             <div id="email-err" class="v2-field-err" role="alert" hidden></div>
           </div>
           <div id="v2-step-err" class="v2-error" role="alert" hidden></div>
-          <button type="button" class="v2-btn-gold" id="v2-step11-next">Continue &rarr;</button>
+          <button type="button" class="v2-btn-gold" id="v2-step11-next">${contactBtn}</button>
         </div>
         ${whyNote('Our licensed North Carolina team sends your comparison by text or email. We never share your details with marketers or call centers.')}
       `;
