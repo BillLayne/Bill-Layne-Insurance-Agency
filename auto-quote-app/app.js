@@ -4,6 +4,9 @@
   // One script, two pages: the live form at /auto-quote sets window.BLI_AQ_MODE = 'live';
   // the private test page leaves it unset and keeps every test marking.
   const LIVE = window.BLI_AQ_MODE === 'live';
+  // "Want a home quote too?" on the last screen. TEST PAGE ONLY until Bill approves the new home form for customers.
+  const HOME_OFFER = !LIVE;
+  const HOME_OFFER_URL = '../home-quote-v2-test/?src=auto_quote_done';
   const ASSET_BASE = (function () { try { return new URL('.', document.currentScript.src).href; } catch (_) { return './'; } })();
 
   // ─── FALLBACK DATA (mirrors logos.json & makes.json so file:// double-click works with zero fetch errors) ───
@@ -1093,6 +1096,10 @@
       }
       lastConfirmationNumber = qJson.confirmationNumber;
       lastUploadNotes = fullPayload.additional_notes;
+      if (HOME_OFFER && state.homeowner === 'yes') {   // carried to the home form in this browser tab only
+        try { sessionStorage.setItem('bli_carry_contact', JSON.stringify({ firstname: state.firstname, lastname: state.lastname, phone: state.phone, email: state.email,
+          date_of_birth: state.driver_1_dob || '', street: state.street_address, city: state.city, zip: state.zip_code })); } catch (_) {}
+      }
 
       if (LIVE) {
         // Same two events, with the same details, that the previous form sent on a confirmed submission.
@@ -1582,6 +1589,10 @@
     const visibleFiles = uploadedFiles
       .map((f, i) => ({ f, i }))
       .filter(({ f }) => !categoryFilter || (f._category || 'declarations') === categoryFilter);
+    const hasFiles = visibleFiles.length > 0;
+    const canAddMore = uploadedFiles.length < MAX_FILES;
+    const chooseLabel = hasFiles ? '+ Add another file' : 'Choose files (PDF or photo)';
+    const cameraLabel = hasFiles ? '+ Take another photo' : 'Take a photo';
     const listHtml = visibleFiles.length ? `
       <ul class="v2-file-list" aria-label="Selected files">
         ${visibleFiles.map(({ f, i }) => `
@@ -1597,10 +1608,10 @@
         <input id="v2-file-input-${context}" type="file" accept=".pdf,.jpg,.jpeg,.png,.heic,.heif,application/pdf,image/jpeg,image/png,image/heic" multiple hidden>
         <input id="v2-camera-input-${context}" type="file" accept="image/*" capture="environment" multiple hidden>
         <div class="v2-upload-btns">
-          <button type="button" class="v2-btn-navy" id="v2-btn-choose-${context}">Choose files (PDF or photo)</button>
-          <button type="button" class="v2-btn-outline" id="v2-btn-camera-${context}">Take a photo</button>
+          <button type="button" class="v2-btn-navy" id="v2-btn-choose-${context}">${chooseLabel}</button>
+          <button type="button" class="v2-btn-outline" id="v2-btn-camera-${context}">${cameraLabel}</button>
         </div>
-        <p class="v2-upload-meta">PDF, JPG, PNG, or HEIC &middot; Up to 8 MB per file &middot; Up to 6 files (12 MB total; photos resized automatically)</p>
+        <p class="v2-upload-meta">${hasFiles && canAddMore ? 'Have more pages? Tap above to add up to 6 pages total.' : 'PDF, JPG, PNG, or HEIC &middot; Up to 8 MB per file &middot; Up to 6 files (12 MB total; photos resized automatically)'}</p>
         ${uploadErrorMsg ? `<div id="v2-upload-err" class="v2-error" role="alert" tabindex="-1">${escapeHtml(uploadErrorMsg)}</div>` : ''}
         ${listHtml}
       </div>
@@ -2853,6 +2864,12 @@
           <a class="v2-btn-gold" href="tel:3368351993" data-source="auto_v2_final_call">Call 336-835-1993</a>
           <a class="v2-btn-navy" href="sms:+13368279065" data-source="auto_v2_final_text">Text (336) 827-9065</a>
         </div>
+        ${HOME_OFFER && state.homeowner === 'yes' ? `
+          <div class="v2-home-offer">
+            <strong>You own your home. Want a home quote too?</strong>
+            <p>Your name, phone, email and address carry over, so it takes about two minutes.</p>
+            <a class="v2-btn-outline" style="width:100%" href="${HOME_OFFER_URL}" data-source="auto_quote_done_home">Start my home quote &rarr;</a>
+          </div>` : ''}
       `;
     }
 
