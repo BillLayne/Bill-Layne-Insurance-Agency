@@ -50,8 +50,8 @@ export async function onRequest({ request }) {
     const list = data?.files ?? [];
     if (data?.formType !== 'policy-upload' || !POLICY_TYPES.includes(data?.policyType) ||
         !Array.isArray(list) || list.length > MAX_FILES) throw new Error('invalid');
-    const email = field('email', 254, true);
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('invalid');
+    const email = field('email', 254, false);
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('invalid');
     let total = 0;
     const files = list.map(file => {
       if (!file || typeof file.name !== 'string' || file.name.length > 200 ||
