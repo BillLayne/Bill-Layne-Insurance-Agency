@@ -1549,6 +1549,7 @@
 
   // ─── VEHICLES: one compact button at the top, a slide-up list to edit or remove ───
   // Replaces the row of vehicle pills, which pushed the question down the screen on phones.
+  let vinBoxesOpen = false;   // step 18: the typed-VIN boxes stay folded away until asked for
   let vehSheetEl = null, vehSheetOpen = false, vehSheetPushed = false, vehSheetSkipPop = false, vehSheetAfterPop = null, vehSheetTrigger = null;
 
   function enteredVehicles() {
@@ -2529,21 +2530,32 @@
         { val: 'phone', label: 'Call', icon: iconHtml('contactCall') },
         { val: 'email', label: 'Email', icon: iconHtml('contactEmail') }
       ];
+      const vinCount = state.vehicles.filter(v => v && v.vin).length;
+      const vinOpen = vinBoxesOpen || vinCount > 0;
+      const manyCars = state.vehicles.length > 1;
       body = `
-        <h1 class="v2-heading">${isDecPath ? 'Anything else we should know?' : 'Vehicle VINs &amp; final notes (optional)'}</h1>
-        <p class="v2-sub">${isDecPath ? 'Optional — add any questions, extra vehicles, or how you prefer we reach you.' : 'No VIN handy? Skip it. Our team can usually look it up.'}</p>
+        <h1 class="v2-heading">${isDecPath ? 'Anything else we should know?' : 'Add a photo or VIN (optional)'}</h1>
+        <p class="v2-sub">${isDecPath ? 'Optional — add any questions, extra vehicles, or how you prefer we reach you.' : 'Nothing handy? Skip it. Our team can usually look it up.'}</p>
         <div class="v2-col">
-          ${!isDecPath ? state.vehicles.map((v, i) => `
-            <div class="v2-field">
-              <label for="vin-${i}">VIN for ${escapeHtml([v.year, v.make, v.model].filter(Boolean).join(' ') || `Vehicle ${i + 1}`)} (optional)</label>
-              <input id="vin-${i}" name="vehicle_${i + 1}_vin" class="v2-input" type="text" maxlength="25" autocapitalize="characters" spellcheck="false" placeholder="17-character VIN (e.g. 1FTFW1E84MFA12345)" value="${escapeHtml(v.vin || '')}">
-              <div id="vin-err-${i}" class="v2-field-err" role="alert" hidden></div>
-            </div>
-          `).join('') : ''}
           ${!isDecPath ? `
             <div class="v2-field">
-              <label>Or snap a photo of your registration or insurance card</label>
+              <label>Snap a photo of your registration or insurance card</label>
               ${renderUploadWidget('step18', 'registration_or_id')}
+            </div>
+            <div class="v2-vin-fold">
+              <button type="button" class="v2-vin-toggle" id="v2-vin-toggle" aria-expanded="${vinOpen ? 'true' : 'false'}" aria-controls="v2-vin-boxes">
+                <span>${manyCars ? 'Or type the VINs instead' : 'Or type the VIN instead'}</span>
+                <span class="v2-vin-chev" aria-hidden="true">${vinOpen ? '&minus;' : '+'}</span>
+              </button>
+              ${vinOpen ? `<div class="v2-vin-boxes" id="v2-vin-boxes">
+                ${state.vehicles.map((v, i) => `
+                  <div class="v2-field">
+                    <label for="vin-${i}">${escapeHtml([v.year, v.make, v.model].filter(Boolean).join(' ') || `Vehicle ${i + 1}`)}</label>
+                    <input id="vin-${i}" name="vehicle_${i + 1}_vin" class="v2-input" type="text" maxlength="25" autocapitalize="characters" spellcheck="false" placeholder="17-character VIN" value="${escapeHtml(v.vin || '')}">
+                    <div id="vin-err-${i}" class="v2-field-err" role="alert" hidden></div>
+                  </div>
+                `).join('')}
+              </div>` : ''}
             </div>
           ` : ''}
           <div class="v2-field">
@@ -3426,6 +3438,14 @@
         }
       });
     }
+    const vinToggle = document.getElementById('v2-vin-toggle');
+    if (vinToggle) vinToggle.addEventListener('click', () => {
+      const anyVin = state.vehicles.some(v => v && v.vin);
+      if (anyVin && vinBoxesOpen) return;          // VINs already typed: keep them in view
+      vinBoxesOpen = anyVin ? true : !vinBoxesOpen;
+      render();
+      if (vinBoxesOpen) { const first = document.getElementById('vin-0'); if (first) { try { first.focus(); } catch (_) {} } }
+    });
     const notesInput = document.getElementById('additional_notes');
     if (notesInput) {
       notesInput.addEventListener('input', () => {
