@@ -243,7 +243,7 @@
   const vehStep = (n, idx) => `step_${n}${VEH_SUFFIX[idx] || ''}`;
   const isVehStep = (stepId, n) => new RegExp(`^step_${n}[bcd]?$`).test(stepId);
   const vehStepIdx = stepId => Math.max(0, VEH_SUFFIX.indexOf(stepId.replace(/^step_\d/, '')));
-  const emptyDriver = () => ({ name: '', dob: '', marital: '', gender: '' });
+  const emptyDriver = () => ({ name: '', dob: '', marital: '', gender: '', claims: '', violations: '' });
 
   const defaultState = () => ({
     vehicleCount: 0,
@@ -508,6 +508,15 @@
   const COV_UNSURE = 'Not sure, advise me';
   const HELP_LIMITS = 'HELP ME DECIDE — customer wants coverage guidance';
   function vehLabel(v, i) { return [v.year, v.make, v.model].filter(Boolean).join(' ') || `Vehicle ${i + 1}`; }
+  function householdRecord(key) {   // key: 'claims' | 'violations'
+    const primary = key === 'claims' ? state.previous_claims : state.violations;
+    const others = state.has_other_drivers === 'yes' ? state.other_drivers : [];
+    if (primary === 'yes' || others.some(d => d && d[key] === 'yes')) return 'yes';
+    return primary || 'no';
+  }
+  function recordText(claims, violations) {
+    return `Accidents/claims (5 yrs): ${capitalize(claims || 'not answered')} · Tickets/violations (3 yrs): ${capitalize(violations || 'not answered')}`;
+  }
   function isMultiCar() { return state.vehicles.filter(v => v && v.make).length >= 2; }
   function perVehicle() { return isMultiCar() && state.coverage_scope === 'different'; }
   function vehCov(v) {
@@ -682,7 +691,9 @@
             name: d.name || '',
             dob: d.dob || '',
             gender: d.gender || '',
-            marital: d.marital || ''
+            marital: d.marital || '',
+            claims: d.claims || '',
+            violations: d.violations || ''
           });
         }
       });
@@ -747,8 +758,8 @@
       roadside_assistance: wantsRoadside,
       comp_deductible: compDed,
       collision_deductible: collDed,
-      previous_claims: state.previous_claims || 'no',
-      violations: state.violations || 'no',
+      previous_claims: householdRecord('claims'),
+      violations: householdRecord('violations'),
       homeowner: state.homeowner || '',
       coverage_preference: coveragePref,
       additional_notes: `${TEST_PREFIX} ${noteParts.join(' | ').trim()}`.trim(),
@@ -834,10 +845,10 @@
       lines.push('Declarations Page Shortcut: Yes');
     }
     if (state.previous_claims) {
-      lines.push(`Claims (Past 5 Years): ${capitalize(state.previous_claims)}`);
+      lines.push(`Primary Driver Accidents/Claims (Past 5 Years): ${capitalize(state.previous_claims)}`);
     }
     if (state.violations) {
-      lines.push(`Tickets or Violations (Past 3 Years): ${capitalize(state.violations)}`);
+      lines.push(`Primary Driver Tickets or Violations (Past 3 Years): ${capitalize(state.violations)}`);
     }
     if (state.homeowner) {
       lines.push(`Homeowner: ${capitalize(state.homeowner)}`);
@@ -881,7 +892,9 @@
             d.name || 'Unnamed',
             d.dob ? `DOB: ${d.dob}` : '',
             d.marital ? capitalize(d.marital) : '',
-            d.gender ? capitalize(d.gender) : ''
+            d.gender ? capitalize(d.gender) : '',
+            d.claims ? `Accidents/claims (5 yrs): ${capitalize(d.claims)}` : '',
+            d.violations ? `Tickets/violations (3 yrs): ${capitalize(d.violations)}` : ''
           ].filter(Boolean);
           lines.push(`Additional Driver ${i + 1}: ${parts.join(' · ')}`);
         });
@@ -1091,7 +1104,7 @@
       return seq;
     }
 
-    seq.push('step_9', 'step_10', 'step_11', 'step_12', 'step_17', 'step_13');   // all drivers together, before coverage
+    seq.push('step_10', 'step_11', 'step_12', 'step_9', 'step_17', 'step_13');   // all drivers together, before coverage
     if (needsLimits()) seq.push('step_14');
     if (anyFullCoverage() && !perVehicle()) seq.push('step_15');
     seq.push('step_16', 'step_18', 'step_19', 'step_20');
@@ -2063,10 +2076,10 @@
     else if (currentStepId === 'step_9') {
       const bothAnswered = !!(state.previous_claims && state.violations);
       body = `
-        <h1 class="v2-heading">Tell us about your driving record</h1>
-        <p class="v2-sub">Include any drivers who will be on the policy.</p>
+        <h1 class="v2-heading">Driving record for ${escapeHtml(state.driver_1_name || `${state.firstname} ${state.lastname}`.trim() || 'the primary driver')}</h1>
+        <p class="v2-sub">Just this driver. We&rsquo;ll ask about each other driver when you add them.</p>
         <div class="v2-group-block">
-          <div class="v2-group-title">Any claims in the past 5 years?</div>
+          <div class="v2-group-title">Any accidents or claims in the past 5 years?</div>
           <div class="v2-grid-2" style="margin-bottom:0">
             <button type="button" class="v2-tile ${state.previous_claims === 'yes' ? 'is-selected' : ''}" aria-pressed="${state.previous_claims === 'yes' ? 'true' : 'false'}" data-claims="yes">
               ${iconHtml('recordYesAlert')}<span>Yes</span>
@@ -2457,8 +2470,8 @@
     // STEP 17: Other Drivers in Household (Yes/No; each added driver has name, 3-box DOB, marital tiles, gender tiles, Remove)
     else if (currentStepId === 'step_17') {
       const showList = state.has_other_drivers === 'yes';
-      const allDriversValid = showList && state.other_drivers.length > 0 && state.other_drivers.every(d => d.name && d.dob && d.marital && d.gender);
-      const odDone = d => !!(d.name && d.dob && d.marital && d.gender);
+      const allDriversValid = showList && state.other_drivers.length > 0 && state.other_drivers.every(d => d.name && d.dob && d.marital && d.gender && d.claims && d.violations);
+      const odDone = d => !!(d.name && d.dob && d.marital && d.gender && d.claims && d.violations);
       let odOpen = typeof state.od_open === 'number' ? state.od_open : state.other_drivers.findIndex(d => !odDone(d));
       if (odOpen >= state.other_drivers.length) odOpen = -1;
       state.od_open = odOpen;
@@ -2496,6 +2509,22 @@
             <div class="v2-grid-2" style="margin-bottom:0;grid-template-columns:repeat(2,minmax(0,1fr))">
               ${GENDER_OPTS.map(o => `
                 <button type="button" class="v2-tile compact ${d.gender === o.val ? 'is-selected' : ''}" aria-pressed="${d.gender === o.val ? 'true' : 'false'}" data-od-gender="${o.val}" data-od-idx="${i}">${o.label}</button>
+              `).join('')}
+            </div>
+          </div>
+          <div class="v2-field" style="margin-top:16px">
+            <label>Any accidents or claims in the past 5 years?</label>
+            <div class="v2-grid-2" style="margin-bottom:0;grid-template-columns:repeat(2,minmax(0,1fr))">
+              ${['yes', 'no'].map(val => `
+                <button type="button" class="v2-tile compact ${d.claims === val ? 'is-selected' : ''}" aria-pressed="${d.claims === val ? 'true' : 'false'}" data-od-record="claims" data-od-val="${val}" data-od-idx="${i}">${val === 'yes' ? 'Yes' : 'No'}</button>
+              `).join('')}
+            </div>
+          </div>
+          <div class="v2-field" style="margin-bottom:0">
+            <label>Any tickets or violations in the past 3 years?</label>
+            <div class="v2-grid-2" style="margin-bottom:0;grid-template-columns:repeat(2,minmax(0,1fr))">
+              ${['yes', 'no'].map(val => `
+                <button type="button" class="v2-tile compact ${d.violations === val ? 'is-selected' : ''}" aria-pressed="${d.violations === val ? 'true' : 'false'}" data-od-record="violations" data-od-val="${val}" data-od-idx="${i}">${val === 'yes' ? 'Yes' : 'No'}</button>
               `).join('')}
             </div>
           </div>
@@ -2624,7 +2653,7 @@
         });
       }
       rows.push(
-        { label: 'Driving Record', val: `Claims (5 yrs): ${capitalize(state.previous_claims || 'no')} · Tickets/violations (3 yrs): ${capitalize(state.violations || 'no')}`, edit: 'step_9' },
+        { label: 'Primary Driver Record', val: recordText(state.previous_claims, state.violations), edit: 'step_9' },
         { label: 'Own Home', val: state.homeowner === 'yes' ? 'Yes' : 'No', edit: 'step_10' },
         { label: 'Contact', val: `${state.firstname} ${state.lastname} · ${state.phone} · ${state.email}`, edit: 'step_11' },
         { label: 'Primary Driver', val: `${state.driver_1_name || `${state.firstname} ${state.lastname}`.trim()} · DOB: ${state.driver_1_dob || 'N/A'} · ${capitalize(state.driver_1_marital)} · ${capitalize(state.driver_1_gender)}`, edit: 'step_12' },
@@ -2646,7 +2675,7 @@
         state.other_drivers.forEach((d, idx) => {
           rows.push({
             label: `Additional Driver ${idx + 1}`,
-            val: `${d.name || 'Unnamed'} · DOB: ${d.dob || 'N/A'} · ${capitalize(d.marital)} · ${capitalize(d.gender)}`,
+            val: `${d.name || 'Unnamed'} · DOB: ${d.dob || 'N/A'} · ${capitalize(d.marital)} · ${capitalize(d.gender)} · ${recordText(d.claims, d.violations)}`,
             edit: 'step_17'
           });
         });
@@ -3361,9 +3390,9 @@
     if (odSave) odSave.addEventListener('click', () => {
       syncOtherDriversInputs();
       const d = state.other_drivers[Number(odSave.dataset.odSave)];
-      if (!d || !(d.name && d.dob && d.marital && d.gender)) {
+      if (!d || !(d.name && d.dob && d.marital && d.gender && d.claims && d.violations)) {
         const err = document.getElementById('v2-step-err');
-        if (err) { err.textContent = 'Please add this driver\u2019s full name, date of birth, marital status and gender.'; err.hidden = false; err.scrollIntoView({ block: 'center' }); }
+        if (err) { err.textContent = 'Please add this driver\u2019s full name, date of birth, marital status and gender, and answer both driving record questions.'; err.hidden = false; err.scrollIntoView({ block: 'center' }); }
         return;
       }
       state.od_open = -1;
@@ -3398,6 +3427,15 @@
         syncOtherDriversInputs();
         const i = Number(btn.dataset.odIdx);
         if (state.other_drivers[i]) state.other_drivers[i].marital = btn.dataset.odMarital;
+        saveSessionState();
+        render();
+      });
+    });
+    document.querySelectorAll('[data-od-record]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        syncOtherDriversInputs();
+        const d = state.other_drivers[Number(btn.dataset.odIdx)];
+        if (d) d[btn.dataset.odRecord] = btn.dataset.odVal;
         saveSessionState();
         render();
       });
