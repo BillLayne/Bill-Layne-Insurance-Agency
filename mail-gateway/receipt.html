@@ -224,7 +224,7 @@
   </div>
 </div>
 
-<script src="receipt-template.js?v=1.3"></script>
+<script src="receipt-template.js?v=1.4"></script>
 <script>
 (function () {
   'use strict';
@@ -236,16 +236,16 @@
   var armed = false, armTimer = null;
 
   var CARRIERS = [
-    { name: 'Progressive', legal: 'Progressive Universal Insurance Company' },
-    { name: 'Nationwide', legal: 'Nationwide Mutual Insurance Company' },
-    { name: 'National General', legal: 'Integon National Insurance Company' },
-    { name: 'Travelers', legal: 'The Travelers Indemnity Company' },
-    { name: 'Foremost', legal: 'Foremost Insurance Company' },
+    { name: 'Progressive', logo: 'https://img.billlayneinsurance.com/i/2026/11/progressive-logo-white-bg-jnt93f.png', legal: 'Progressive Universal Insurance Company' },
+    { name: 'Nationwide', logo: 'https://img.billlayneinsurance.com/i/2026/11/nationwide-logo-white-bg-v8e8qq.png', legal: 'Nationwide Mutual Insurance Company' },
+    { name: 'National General', logo: 'https://img.billlayneinsurance.com/i/2026/11/national-general-logo-white-bg-rq634g.png', legal: 'Integon National Insurance Company' },
+    { name: 'Travelers', logo: 'https://img.billlayneinsurance.com/i/2026/11/travelers-logo-white-bg-97hekp.png', legal: 'The Travelers Indemnity Company' },
+    { name: 'Foremost', logo: 'https://img.billlayneinsurance.com/i/2026/08/foremost-logo-eh5sta.jpg', legal: 'Foremost Insurance Company' },
     { name: 'Dairyland', legal: 'Dairyland Insurance Company' },
     { name: 'Hagerty', legal: 'Essentia Insurance Company' },
-    { name: 'Alamance Farmers Mutual', legal: 'Alamance Farmers Mutual Insurance Company' },
+    { name: 'Alamance Farmers Mutual', logo: 'https://img.billlayneinsurance.com/i/2026/11/alamance-farmers-logo-white-bg-rr2rqh.png', legal: 'Alamance Farmers Mutual Insurance Company' },
     { name: 'NC Grange Mutual', legal: 'NC Grange Mutual Insurance Company' },
-    { name: 'NCJUA', legal: 'NC Joint Underwriting Association' },
+    { name: 'NCJUA', logo: 'https://img.billlayneinsurance.com/i/2026/11/ncjua-logo-white-bg-nn9d3d.png', legal: 'NC Joint Underwriting Association' },
     { name: 'Steadily', legal: 'Fortegra Specialty Insurance Company' }
   ];
   var sel = $('carrier');
@@ -347,7 +347,7 @@
       return { name: $('carrierName').value.trim() || '—', legal: $('carrierLegal').value.trim() || $('carrierName').value.trim() || '—' };
     }
     var c = CARRIERS[parseInt(sel.value, 10)] || CARRIERS[0];
-    return { name: c.name, legal: c.legal };
+    return { name: c.name, legal: c.legal, logo: c.logo || '' };
   }
 
   function fmtAmount(v) {
@@ -384,7 +384,18 @@
     var policy = $('policy').value.trim();
     var conf = $('conf').value.trim();
     var txn = $('txn').value.trim();
+    var first = $('first').value.trim(), last = $('last').value.trim();
+    // Optional parts of the Gmail White template that are left out when their field is blank.
+    var drop = [];
+    if (!$('ptime').value.trim()) drop.push('PAYMENT_TIME');
+    if (!$('method').value.trim()) drop.push('PAYMENT_METHOD');
+    if (!conf) drop.push('CONFIRMATION_NUMBER');
+    if (!conf && !txn) drop.push('TRANSACTION_ID');
+    if (!policy) drop.push('POLICY_NUMBER');
+    if (cs.human === '—' || ce.human === '—') drop.push('COVERAGE_PERIOD');
     return {
+      _drop: drop, CARRIER_LOGO_URL: c.logo || '',
+      PAYER_NAME: dash((first + ' ' + last).trim()),
       FIRST_NAME: dash($('first').value), LAST_NAME: dash($('last').value),
       PAYMENT_AMOUNT: a.fmt, PAYMENT_AMOUNT_RAW: a.raw,
       PAYMENT_DATE: d.human, PAYMENT_DATE_ISO: d.iso,
@@ -428,7 +439,25 @@
   function fill() {
     var v = values();
     var html = window.BLI_RECEIPT_TEMPLATE;
+    // Template markers are HTML comments; the opener is built from two pieces so this inline script never holds one.
+    var CO = '<' + '!--';
+    v._drop.forEach(function (name) {
+      html = html.split(CO + 'OPTIONAL: ' + name + '-->').map(function (part, i) {
+        if (i === 0) return part;
+        var end = part.indexOf(CO + 'END OPTIONAL-->');
+        return end === -1 ? part : part.slice(end + (CO + 'END OPTIONAL-->').length);
+      }).join('');
+    });
+    if (!v.CARRIER_LOGO_URL) {
+      html = html.split(CO + 'IF:CARRIER_LOGO-->').map(function (part, i) {
+        if (i === 0) return part;
+        var end = part.indexOf(CO + 'ENDIF:CARRIER_LOGO-->');
+        return end === -1 ? part : part.slice(end + (CO + 'ENDIF:CARRIER_LOGO-->').length);
+      }).join('');
+    }
+    html = html.replace(new RegExp(CO + '(?:OPTIONAL: [A-Z_]+|END OPTIONAL|IF:CARRIER_LOGO|ENDIF:CARRIER_LOGO)-->\n?', 'g'), '');
     Object.keys(v).forEach(function (k) {
+      if (k.charAt(0) === '_') return;
       html = html.split('{{' + k + '}}').join(String(v[k]));
     });
     return upgradeSpacer(html);
@@ -441,7 +470,7 @@
     ['cdn-cgi', '__cf_email__', 'email-protection', 'XacnUW4', 'border-radius:50%'].forEach(function (bad) {
       if (html.indexOf(bad) !== -1) problems.push('forbidden string: ' + bad);
     });
-    if (html.indexOf('mailto:Save@BillLayneInsurance.com') === -1) problems.push('Save@ mailto missing');
+    if (html.indexOf('mailto:Save@BillLayneInsurance.com') === -1 && html.indexOf('mailto:Save&#64;BillLayneInsurance&#46;com') === -1) problems.push('Save@ mailto missing');
     if (new Blob([html]).size > 102400) problems.push('over Gmail 102 KB clip limit');
     return problems;
   }
