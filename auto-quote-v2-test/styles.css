@@ -236,7 +236,8 @@ body { min-height: 100vh; display: flex; flex-direction: column; }
 .v2-back-link[hidden] { visibility: hidden; display: inline-flex; pointer-events: none; }
 
 .v2-heading:focus { outline: none; }
-.v2-heading:focus-visible { outline: 3px solid var(--navy); outline-offset: 4px; border-radius: 6px; }
+/* Headings receive focus on each new question for screen readers; they are not controls, so no visible box. */
+.v2-heading:focus-visible { outline: none; }
 
 @keyframes v2StepIn {
   from { opacity: 0; transform: translateY(6px); }
@@ -1141,4 +1142,72 @@ dialog.v2-menu-dialog::backdrop { background: rgba(5, 32, 61, 0.5); }
 .v2-field-err:focus {
   outline: 3px solid var(--danger);
   outline-offset: 2px;
+}
+
+/* ---------- Coverage help: "?" buttons and the slide-up panel ---------- */
+.v2-help-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; padding: 0; margin-left: 8px; flex: 0 0 auto;
+  border-radius: 50%; border: 2px solid #1d4ed8; background: #eff6ff; color: #1d4ed8;
+  font-family: inherit; font-size: 17px; font-weight: 800; line-height: 1;
+  cursor: pointer; vertical-align: middle; position: relative;
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.v2-help-btn::after { content: ''; position: absolute; inset: -10px; }
+.v2-help-btn:active, .v2-help-link:active { background: #dbeafe; }
+.v2-help-btn:focus-visible, .v2-help-link:focus-visible, .v2-help-x:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+.v2-group-title { display: flex; align-items: center; }
+.v2-help-link-row { margin: -6px 0 18px; text-align: center; }
+.v2-help-link {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 6px 14px;
+  border: 0; border-radius: 999px; background: transparent; color: #1d4ed8;
+  font-family: inherit; font-size: 15.5px; font-weight: 800; text-decoration: underline; text-underline-offset: 3px;
+  cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.v2-help-dot {
+  display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px;
+  border-radius: 50%; border: 2px solid #1d4ed8; background: #eff6ff; color: #1d4ed8;
+  font-size: 13px; font-weight: 800; line-height: 1; text-decoration: none; vertical-align: -4px;
+}
+.v2-extra-row { display: flex; align-items: center; gap: 4px; }
+.v2-extra-row .v2-choice-chip { flex: 1 1 auto; }
+.v2-chip-grid-1 { display: grid; grid-template-columns: 1fr; gap: 10px; max-width: 420px; }
+.v2-chip-grid-1 .v2-choice-chip { justify-content: flex-start; }
+
+body.v2-help-open { overflow: hidden; }
+.v2-help-overlay {
+  position: fixed; inset: 0; z-index: 2000; display: flex; align-items: flex-end; justify-content: center;
+  background: rgba(5, 32, 61, 0.55); opacity: 0; transition: opacity 0.16s ease;
+}
+.v2-help-overlay[hidden] { display: none; }
+.v2-help-overlay.is-in { opacity: 1; }
+.v2-help-sheet {
+  width: 100%; max-width: 520px; max-height: 86vh; overflow-y: auto; box-sizing: border-box;
+  background: var(--white); color: var(--ink); text-align: left;
+  border-radius: 20px 20px 0 0; padding: 10px 20px calc(20px + env(safe-area-inset-bottom));
+  box-shadow: 0 -8px 30px rgba(5, 32, 61, 0.25);
+  transform: translateY(24px); transition: transform 0.18s ease; outline: none;
+}
+.v2-help-overlay.is-in .v2-help-sheet { transform: translateY(0); }
+.v2-help-grip { width: 40px; height: 5px; border-radius: 3px; background: #c4cedb; margin: 0 auto 12px; }
+.v2-help-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.v2-help-title { margin: 0; font-size: 22px; line-height: 1.2; font-weight: 800; letter-spacing: -0.02em; color: var(--navy); }
+.v2-help-x {
+  flex: 0 0 auto; width: 44px; height: 44px; margin: -8px -8px 0 0; border: 0; border-radius: 50%;
+  background: #f1f5f9; color: var(--navy); font-size: 26px; line-height: 1; font-weight: 700; cursor: pointer;
+}
+.v2-help-body { margin: 0 0 14px; font-size: 17px; line-height: 1.5; font-weight: 500; color: var(--ink); }
+.v2-help-example { background: var(--why-bg); border: 1px solid var(--why-border); border-radius: 14px; padding: 12px 14px; margin: 0 0 12px; }
+.v2-help-example strong { display: block; font-size: 12.5px; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 800; color: var(--eyebrow); margin-bottom: 4px; }
+.v2-help-example p { margin: 0; font-size: 16px; line-height: 1.5; color: var(--ink); }
+.v2-help-fine { margin: 0 0 14px; font-size: 14px; line-height: 1.45; color: var(--helper); }
+.v2-help-ok { width: 100%; }
+@media (min-width: 700px) {
+  .v2-help-overlay { align-items: center; }
+  .v2-help-sheet { border-radius: 20px; padding: 22px 26px 24px; }
+  .v2-help-grip { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .v2-help-overlay, .v2-help-sheet { transition: none; }
+  .v2-help-sheet { transform: none; }
 }

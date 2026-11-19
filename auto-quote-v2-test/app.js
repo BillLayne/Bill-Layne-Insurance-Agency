@@ -1055,6 +1055,8 @@
   }
 
   window.addEventListener('popstate', e => {
+    // A coverage help panel owns the first Back press: it closes the panel and the form stays on this question.
+    if (window.BLICoverageHelp && window.BLICoverageHelp.handlePopstate()) return;
     isAdvancing = false;
     if (e.state && e.state.stepId) {
       if (Array.isArray(e.state.stack) && e.state.stack.length) {
@@ -1489,6 +1491,18 @@
     document.getElementById('v2-progress-label').textContent = `${pct}%`;
   }
 
+  // Coverage help: a round "?" beside a label, or a text link under a heading. Wording lives in coverage-help.js.
+  function helpBtn(key) {
+    const H = window.BLICoverageHelp;
+    if (!H || !H.has(key)) return '';
+    return `<button type="button" class="v2-help-btn" data-help="${key}" aria-label="What is this? ${escapeHtml(H.title(key))}"><span aria-hidden="true">?</span></button>`;
+  }
+  function helpLink(key, text) {
+    const H = window.BLICoverageHelp;
+    if (!H || !H.has(key)) return '';
+    return `<p class="v2-help-link-row"><button type="button" class="v2-help-link" data-help="${key}"><span class="v2-help-dot" aria-hidden="true">?</span>${escapeHtml(text)}</button></p>`;
+  }
+
   function whyNote(text) {
     return `
       <div class="v2-why">
@@ -1920,6 +1934,7 @@
       body = `
         <h1 class="v2-heading">What type of coverage do you want?</h1>
         <p class="v2-sub">Choose the option that fits best. Our team will walk through details with you.</p>
+        ${helpLink('coverage_type', 'What is the difference?')}
         <div class="v2-grid-3">
           ${opts.map(o => `
             <button type="button" class="v2-tile ${state.coverage_choice === o.label ? 'is-selected' : ''}" aria-pressed="${state.coverage_choice === o.label ? 'true' : 'false'}" data-cov="${escapeHtml(o.label)}">
@@ -1935,6 +1950,7 @@
       body = `
         <h1 class="v2-heading">Choose your liability limits</h1>
         <p class="v2-sub">Pick the limit you want quoted, or let our team walk through options with you.</p>
+        ${helpLink('liability_limits', 'What do these numbers mean?')}
         <div class="v2-grid-2" style="max-width:620px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
           ${LIABILITY_OPTS.map(o => `
             <button type="button" class="v2-tile compact ${state.liability_limits === o.val ? 'is-selected' : ''}" aria-pressed="${state.liability_limits === o.val ? 'true' : 'false'}" data-limit="${escapeHtml(o.val)}">
@@ -1956,9 +1972,10 @@
       ];
       body = `
         <h1 class="v2-heading" tabindex="-1">Deductibles &amp; optional extras</h1>
-        <p class="v2-sub">Not sure? Pick 'Not sure' and our team will show you the difference.</p>
+        <p class="v2-sub">Not sure? Pick 'Not sure' and our team will show you the difference. Tap any <span class="v2-help-dot" aria-hidden="true">?</span> for a quick explanation.</p>
+        ${helpLink('deductible', 'What is a deductible?')}
         <div class="v2-group-block">
-          <div class="v2-group-title">Comprehensive deductible</div>
+          <div class="v2-group-title">Comprehensive deductible ${helpBtn('comprehensive')}</div>
           <div class="v2-chip-group v2-chip-grid-3">
             ${COMP_DED_OPTS.map(d => `
               <button type="button" class="v2-choice-chip ${state.comp_deductible === d ? 'is-selected' : ''}" aria-pressed="${state.comp_deductible === d ? 'true' : 'false'}" data-comp-ded="${escapeHtml(d)}">${escapeHtml(d)}</button>
@@ -1966,7 +1983,7 @@
           </div>
         </div>
         <div class="v2-group-block">
-          <div class="v2-group-title">Collision deductible</div>
+          <div class="v2-group-title">Collision deductible ${helpBtn('collision')}</div>
           <div class="v2-chip-group v2-chip-grid-3">
             ${COLL_DED_OPTS.map(d => `
               <button type="button" class="v2-choice-chip ${state.collision_deductible === d ? 'is-selected' : ''}" aria-pressed="${state.collision_deductible === d ? 'true' : 'false'}" data-coll-ded="${escapeHtml(d)}">${escapeHtml(d)}</button>
@@ -1977,7 +1994,10 @@
           <div class="v2-group-title">Optional extras (tap to add)</div>
           <div class="v2-chip-group v2-chip-grid-1">
             ${extras.map(ex => `
-              <button type="button" class="v2-choice-chip ${state[ex.key] ? 'is-selected' : ''}" aria-pressed="${state[ex.key] ? 'true' : 'false'}" data-extra-key="${ex.key}">${escapeHtml(ex.label)}</button>
+              <div class="v2-extra-row">
+                <button type="button" class="v2-choice-chip ${state[ex.key] ? 'is-selected' : ''}" aria-pressed="${state[ex.key] ? 'true' : 'false'}" data-extra-key="${ex.key}">${escapeHtml(ex.label)}</button>
+                ${helpBtn(ex.key)}
+              </div>
             `).join('')}
           </div>
         </div>
@@ -2061,14 +2081,14 @@
       `).join('');
 
       body = `
-        <h1 class="v2-heading">Any other drivers in your household?</h1>
-        <p class="v2-sub">Include licensed spouses, relatives, or teen drivers living at your address.</p>
+        <h1 class="v2-heading">How many drivers are in your household?</h1>
+        <p class="v2-sub">Count yourself and every licensed driver living at your address: spouses, relatives and teen drivers.</p>
         <div class="v2-grid-2">
-          <button type="button" class="v2-tile ${state.has_other_drivers === 'yes' ? 'is-selected' : ''}" aria-pressed="${state.has_other_drivers === 'yes' ? 'true' : 'false'}" id="v2-od-yes">
-            ${iconHtml('driverYes')}<span>Yes</span>
-          </button>
           <button type="button" class="v2-tile ${state.has_other_drivers === 'no' ? 'is-selected' : ''}" aria-pressed="${state.has_other_drivers === 'no' ? 'true' : 'false'}" id="v2-od-no">
-            ${iconHtml('driverNo')}<span>No</span>
+            ${iconHtml('driverNo')}<span>1 Driver</span>
+          </button>
+          <button type="button" class="v2-tile ${state.has_other_drivers === 'yes' ? 'is-selected' : ''}" aria-pressed="${state.has_other_drivers === 'yes' ? 'true' : 'false'}" id="v2-od-yes">
+            ${iconHtml('driverYes')}<span>2+ Drivers</span>
           </button>
         </div>
         ${showList ? `
