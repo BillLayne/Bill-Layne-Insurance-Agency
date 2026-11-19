@@ -1158,6 +1158,7 @@
   window.addEventListener('popstate', e => {
     // A coverage help panel owns the first Back press: it closes the panel and the form stays on this question.
     if (window.BLICoverageHelp && window.BLICoverageHelp.handlePopstate()) return;
+    if (vehSheetHandlePopstate()) return;
     isAdvancing = false;
     if (e.state && e.state.stepId) {
       if (Array.isArray(e.state.stack) && e.state.stack.length) {
@@ -1531,44 +1532,154 @@
     });
   }
 
+  // ─── VEHICLES: one compact button at the top, a slide-up list to edit or remove ───
+  // Replaces the row of vehicle pills, which pushed the question down the screen on phones.
+  let vehSheetEl = null, vehSheetOpen = false, vehSheetPushed = false, vehSheetSkipPop = false, vehSheetAfterPop = null, vehSheetTrigger = null;
+
+  function enteredVehicles() {
+    return state.vehicles.map((v, idx) => ({ v, idx })).filter(x => x.v && x.v.make);
+  }
+
   function renderChips() {
     const el = document.getElementById('v2-chips');
-    if (['step_20', 'step_13', 'step_14', 'step_15'].includes(currentStepId)) { el.innerHTML = ''; return; }
-    const chips = [];
-    state.vehicles.forEach((v, idx) => {
-      if (v.make) {
-        const label = [v.year, v.make, v.model].filter(Boolean).join(' ');
-        chips.push(`
-          <span class="v2-chip">
-            <span>${escapeHtml(label)}</span>
-            <button type="button" class="v2-chip-btn" data-edit-veh="${idx}" aria-label="Edit ${escapeHtml(label)}">Edit</button>
-            <button type="button" class="v2-chip-btn remove" data-remove-veh="${idx}" aria-label="Remove ${escapeHtml(label)}">&times;</button>
-          </span>
-        `);
+    const list = enteredVehicles();
+    if (['step_20', 'step_13', 'step_14', 'step_15'].includes(currentStepId) || !list.length) { el.innerHTML = ''; return; }
+    const names = list.map(x => [x.v.year, x.v.make, x.v.model].filter(Boolean).join(' '));
+    const count = list.length === 1 ? '1 vehicle' : `${list.length} vehicles`;
+    el.innerHTML = `
+      <button type="button" class="v2-veh-summary" id="v2-veh-open" aria-haspopup="dialog" aria-label="${escapeHtml(count)}: ${escapeHtml(names.join(', '))}. Edit vehicles">
+        <span class="v2-veh-summary-count">${escapeHtml(count)}</span>
+        <span class="v2-veh-summary-names">${escapeHtml(names.join(', '))}</span>
+        <span class="v2-veh-summary-edit">Edit</span>
+      </button>`;
+    const openBtn = document.getElementById('v2-veh-open');
+    if (openBtn) openBtn.addEventListener('click', () => openVehSheet(openBtn));
+  }
+
+  function buildVehSheet() {
+    if (vehSheetEl) return;
+    vehSheetEl = document.createElement('div');
+    vehSheetEl.className = 'v2-help-overlay v2-veh-overlay';
+    vehSheetEl.hidden = true;
+    vehSheetEl.innerHTML = `
+      <div class="v2-help-sheet" role="dialog" aria-modal="true" aria-labelledby="v2-vehsheet-title" tabindex="-1">
+        <div class="v2-help-grip" aria-hidden="true"></div>
+        <div class="v2-help-head">
+          <h2 class="v2-help-title" id="v2-vehsheet-title">Your vehicles</h2>
+          <button type="button" class="v2-help-x" data-vehsheet-close aria-label="Close">&times;</button>
+        </div>
+        <div class="v2-vehsheet-list" id="v2-vehsheet-list"></div>
+        <button type="button" class="v2-btn-gold v2-help-ok" data-vehsheet-close>Done</button>
+      </div>`;
+    document.body.appendChild(vehSheetEl);
+    vehSheetEl.addEventListener('click', e => {
+      if (e.target === vehSheetEl || e.target.closest('[data-vehsheet-close]')) { closeVehSheet(); return; }
+      const editBtn = e.target.closest('[data-vehsheet-edit]');
+      if (editBtn) {
+        const target = Number(editBtn.dataset.vehsheetEdit) === 0 ? 'step_2' : 'step_2b';
+        closeVehSheet(() => { historyStack.push(target); enterStep(target); });
+        return;
       }
-    });
-    el.innerHTML = chips.join('');
-    el.querySelectorAll('[data-edit-veh]').forEach(b => {
-      b.addEventListener('click', () => {
-        const target = Number(b.dataset.editVeh) === 0 ? 'step_2' : 'step_2b';
-        historyStack.push(target);
-        enterStep(target);
-      });
-    });
-    el.querySelectorAll('[data-remove-veh]').forEach(b => {
-      b.addEventListener('click', () => {
-        const i = Number(b.dataset.removeVeh);
+      const remBtn = e.target.closest('[data-vehsheet-remove]');
+      if (remBtn) {
+        const i = Number(remBtn.dataset.vehsheetRemove);
+        if (remBtn.dataset.armed !== '1') {           // two taps to remove, so a slip of the thumb does not delete a car
+          vehSheetEl.querySelectorAll('[data-vehsheet-remove]').forEach(b => { b.dataset.armed = ''; b.textContent = 'Remove'; b.classList.remove('is-armed'); });
+          remBtn.dataset.armed = '1';
+          remBtn.textContent = 'Tap again to remove';
+          remBtn.classList.add('is-armed');
+          return;
+        }
         if (state.vehicles.length > 1) {
           state.vehicles.splice(i, 1);
           state.vehicleCount = state.vehicles.length;
+          if (typeof state.cov_open === 'number' && state.cov_open >= state.vehicles.length) state.cov_open = 0;
+          saveSessionState();
+          render();
+          fillVehSheet();
         } else {
           state.vehicles[0] = emptyVeh();
-          currentStepId = 'step_2';
+          saveSessionState();
+          closeVehSheet(() => { historyStack.push('step_2'); enterStep('step_2'); });
         }
-        saveSessionState();
-        render();
-      });
+      }
     });
+    document.addEventListener('keydown', e => {
+      if (vehSheetOpen && e.key === 'Escape') { e.preventDefault(); closeVehSheet(); }
+    });
+  }
+
+  function fillVehSheet() {
+    const box = document.getElementById('v2-vehsheet-list');
+    if (!box) return;
+    box.innerHTML = enteredVehicles().map(x => {
+      const label = [x.v.year, x.v.make, x.v.model].filter(Boolean).join(' ');
+      return `
+        <div class="v2-vehsheet-row">
+          <span class="v2-vehsheet-name">${escapeHtml(label)}</span>
+          <span class="v2-vehsheet-actions">
+            <button type="button" class="v2-vehsheet-btn" data-vehsheet-edit="${x.idx}" aria-label="Edit ${escapeHtml(label)}">Edit</button>
+            <button type="button" class="v2-vehsheet-btn is-remove" data-vehsheet-remove="${x.idx}" aria-label="Remove ${escapeHtml(label)}">Remove</button>
+          </span>
+        </div>`;
+    }).join('');
+  }
+
+  function openVehSheet(trigger) {
+    buildVehSheet();
+    vehSheetTrigger = trigger || null;
+    fillVehSheet();
+    vehSheetEl.hidden = false;
+    document.body.classList.add('v2-help-open');
+    vehSheetOpen = true;
+    // One extra history entry so the phone's Back button closes the list instead of leaving the question.
+    try {
+      window.history.pushState(Object.assign({}, window.history.state || {}, { v2vehsheet: true }), '');
+      vehSheetPushed = true;
+    } catch (_) { vehSheetPushed = false; }
+    requestAnimationFrame(() => {
+      vehSheetEl.classList.add('is-in');
+      const sheet = vehSheetEl.querySelector('.v2-help-sheet');
+      try { sheet.focus({ preventScroll: true }); } catch (_) {}
+    });
+  }
+
+  function hideVehSheet() {
+    if (!vehSheetEl || !vehSheetOpen) return;
+    vehSheetOpen = false;
+    vehSheetEl.classList.remove('is-in');
+    vehSheetEl.hidden = true;
+    document.body.classList.remove('v2-help-open');
+  }
+
+  // after: optional action to run once the list is closed (for example, go and edit a vehicle).
+  function closeVehSheet(after) {
+    if (!vehSheetOpen) { if (after) after(); return; }
+    hideVehSheet();
+    if (vehSheetPushed) {
+      vehSheetPushed = false;
+      vehSheetSkipPop = true;
+      vehSheetAfterPop = after || null;
+      try { window.history.back(); } catch (_) { vehSheetSkipPop = false; vehSheetAfterPop = null; if (after) after(); }
+    } else if (after) {
+      after();
+    }
+    if (!after) {
+      const t = document.getElementById('v2-veh-open');
+      if (t) { try { t.focus({ preventScroll: true }); } catch (_) {} }
+    }
+  }
+
+  // Called first by the popstate handler. True when the event belonged to the vehicle list.
+  function vehSheetHandlePopstate() {
+    if (vehSheetSkipPop) {
+      vehSheetSkipPop = false;
+      const f = vehSheetAfterPop; vehSheetAfterPop = null;
+      if (f) f();
+      return true;
+    }
+    if (vehSheetOpen) { vehSheetPushed = false; hideVehSheet(); return true; }
+    return false;
   }
 
   function renderTrustStrip() {
