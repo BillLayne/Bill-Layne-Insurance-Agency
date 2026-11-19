@@ -724,6 +724,8 @@
       state.additional_notes,
       (!state.coverage_expiration && state.renewal_window) ? `Renewal: ${state.renewal_window}` : '',
       state.homeowner ? `Homeowner: ${state.homeowner === 'yes' ? 'Yes' : 'No'}` : '',
+      (state.previous_claims || state.violations) ? `DRIVING RECORD BY DRIVER | Driver 1 (${primaryName || 'Primary driver'}): ${recordText(state.previous_claims, state.violations)}` : '',
+      ...(state.has_other_drivers === 'yes' ? state.other_drivers.filter(d => d && (d.name || d.claims || d.violations)).map((d, i) => `Driver ${i + 2} (${d.name || 'Unnamed'}): ${recordText(d.claims, d.violations)}`) : []),
       (!pv && state.coverage_choice) ? `Coverage preference: ${state.coverage_choice}${sameForAll}` : '',
       (!pv && fullCov) ? `Deductibles: comprehensive ${state.comp_deductible || 'Not sure'}, collision ${state.collision_deductible || 'Not sure'}` : '',
       pv ? 'COVERAGE DIFFERS BY VEHICLE' : '',
