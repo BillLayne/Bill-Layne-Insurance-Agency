@@ -260,6 +260,7 @@
     driver_1_gender: '',
     coverage_choice: '',
     coverage_scope: '',        // 2+ vehicles only: 'same' or 'different'
+    cov_open: 0,               // which vehicle's coverage panel is open (-1 = none)
     liability_limits: '',
     comp_deductible: '',
     collision_deductible: '',
@@ -531,6 +532,46 @@
     return state.vehicles.map((v, i) => `Vehicle ${i + 1} (${vehLabel(v, i)}): ${vehCovText(v)}`);
   }
 
+  function vehComplete(v) { const c = vehCov(v); return !!c.choice && (c.choice !== COV_FULL || !!(c.comp && c.coll)); }
+  function firstIncompleteVehicle() { return state.vehicles.findIndex(v => !vehComplete(v)); }
+  function vehCovShort(v) {
+    const c = vehCov(v);
+    if (!c.choice) return '';
+    if (c.choice !== COV_FULL) return c.choice;
+    return `Full coverage \u00b7 ${c.comp || '?'} / ${c.coll || '?'}`;
+  }
+  // Shared builders for the radio-style amounts and the checkbox rows.
+  function covOptGrid(kind, idx, list, current, label) {
+    return `
+      <div class="v2-opt-grid" role="radiogroup" aria-label="${escapeHtml(label)}">
+        ${list.map(d => `
+          <button type="button" class="v2-opt ${current === d ? 'is-selected' : ''}" role="radio" aria-checked="${current === d ? 'true' : 'false'}" data-ded-kind="${kind}" data-ded-idx="${idx}" data-ded-val="${escapeHtml(d)}">
+            <span class="v2-opt-dot" aria-hidden="true"></span><span>${escapeHtml(d)}</span>
+          </button>
+        `).join('')}
+      </div>`;
+  }
+  function covCheckRow(key, label, on, idx, helpKey) {
+    return `
+      <div class="v2-check-row">
+        <button type="button" class="v2-check ${on ? 'is-on' : ''}" role="checkbox" aria-checked="${on ? 'true' : 'false'}" data-extra-key="${key}" data-extra-idx="${idx}">
+          <span class="v2-check-box" aria-hidden="true"></span><span>${escapeHtml(label)}</span>
+        </button>
+        ${helpBtn(helpKey)}
+      </div>`;
+  }
+  // Opens one vehicle's coverage panel and brings it into view.
+  function openVehiclePanel(idx) {
+    state.cov_open = idx;
+    saveSessionState();
+    render();
+    const el = document.querySelector('.v2-veh-item.is-open');
+    if (el) {
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      try { el.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' }); } catch (_) { el.scrollIntoView(); }
+    }
+  }
+
   function clearFullCoverageExtras() {
     state.liability_limits = '';
     state.comp_deductible = '';
@@ -692,7 +733,7 @@
       collision: fullCov,
       comprehensive: fullCov,
       uninsured_motorist: true,
-      medical_payments: fullCov && !!state.medical_payments,
+      medical_payments: (pv ? needsLimits() : fullCov) && !!state.medical_payments,
       rental_reimbursement: wantsRental,
       roadside_assistance: wantsRoadside,
       comp_deductible: compDed,
@@ -1036,7 +1077,7 @@
 
     seq.push('step_9', 'step_10', 'step_11', 'step_12', 'step_13');
     if (needsLimits()) seq.push('step_14');
-    if (anyFullCoverage()) seq.push('step_15');
+    if (anyFullCoverage() && !perVehicle()) seq.push('step_15');
     seq.push('step_16', 'step_17', 'step_18', 'step_19', 'step_20');
     return seq;
   }
@@ -1136,7 +1177,7 @@
         enterStep('step_14');
         return;
       }
-      if ((currentStepId === 'step_13' || currentStepId === 'step_14') && anyFullCoverage() && !deductiblesComplete()) {
+      if ((currentStepId === 'step_13' || currentStepId === 'step_14') && !perVehicle() && anyFullCoverage() && !deductiblesComplete()) {
         historyStack.push('step_15');
         enterStep('step_15');
         return;
@@ -1492,7 +1533,7 @@
 
   function renderChips() {
     const el = document.getElementById('v2-chips');
-    if (currentStepId === 'step_20') { el.innerHTML = ''; return; }
+    if (['step_20', 'step_13', 'step_14', 'step_15'].includes(currentStepId)) { el.innerHTML = ''; return; }
     const chips = [];
     state.vehicles.forEach((v, idx) => {
       if (v.make) {
@@ -2008,36 +2049,117 @@
             </button>
           `).join('')}
         </div>`;
-      const perVehCards = `
-        <div class="v2-card-stack">
-          ${state.vehicles.map((v, i) => `
-            <div class="v2-card">
-              <div class="v2-card-veh">${escapeHtml(vehLabel(v, i))}</div>
-              <div class="v2-opt-grid v2-opt-grid-1" role="radiogroup" aria-label="Coverage for ${escapeHtml(vehLabel(v, i))}">
-                ${[COV_LIAB, COV_FULL, COV_UNSURE].map(c => `
-                  <button type="button" class="v2-opt ${vehCov(v).choice === c ? 'is-selected' : ''}" role="radio" aria-checked="${vehCov(v).choice === c ? 'true' : 'false'}" data-vcov="${escapeHtml(c)}" data-vidx="${i}">
-                    <span class="v2-opt-dot" aria-hidden="true"></span><span>${escapeHtml(c)}</span>
+      const pvMode = multi && state.coverage_scope === 'different';
+      const openIdx = (pvMode && typeof state.cov_open === 'number' && state.vehicles[state.cov_open]) ? state.cov_open : -1;
+      const vehPanel = (v, i) => {
+        const c = vehCov(v);
+        const name = vehLabel(v, i);
+        const full = c.choice === COV_FULL;
+        const othersDone = state.vehicles.every((x, j) => j === i || vehComplete(x));
+        return `
+          <div class="v2-veh-panel" id="v2-veh-panel-${i}">
+            <div class="v2-card-sec">
+              <div class="v2-card-title">Type of coverage</div>
+              <div class="v2-opt-grid v2-opt-grid-stack" role="radiogroup" aria-label="Type of coverage for ${escapeHtml(name)}">
+                ${[COV_LIAB, COV_FULL, COV_UNSURE].map(o => `
+                  <button type="button" class="v2-opt ${c.choice === o ? 'is-selected' : ''}" role="radio" aria-checked="${c.choice === o ? 'true' : 'false'}" data-vcov="${escapeHtml(o)}" data-vidx="${i}">
+                    <span class="v2-opt-dot" aria-hidden="true"></span><span>${escapeHtml(o)}</span>
                   </button>
                 `).join('')}
               </div>
             </div>
-          `).join('')}
+            ${full ? `
+              <div class="v2-card-sec">
+                <div class="v2-card-title">Comprehensive deductible ${helpBtn('comprehensive')}</div>
+                <p class="v2-card-desc">For damage such as theft or hail. <button type="button" class="v2-help-inline" data-help="deductible">What is a deductible?</button></p>
+                ${covOptGrid('comp', i, COMP_DED_OPTS, c.comp, name + ' comprehensive deductible')}
+              </div>
+              <div class="v2-card-sec">
+                <div class="v2-card-title">Collision deductible ${helpBtn('collision')}</div>
+                <p class="v2-card-desc">For damage from a crash.</p>
+                ${covOptGrid('coll', i, COLL_DED_OPTS, c.coll, name + ' collision deductible')}
+              </div>
+              <div class="v2-card-sec">
+                <div class="v2-card-title">Extras for this vehicle</div>
+                <div class="v2-check-list">
+                  ${covCheckRow('rental', 'Rental car (loss of use)', c.rental, i, 'rental_reimbursement')}
+                  ${covCheckRow('roadside', 'Towing and roadside', c.roadside, i, 'roadside_assistance')}
+                </div>
+              </div>
+              <div class="v2-card-sec v2-veh-done">
+                <button type="button" class="v2-btn-navy" data-vdone="${i}">${othersDone ? 'Done with this vehicle' : 'Save and go to the next vehicle &rarr;'}</button>
+              </div>
+            ` : ''}
+          </div>`;
+      };
+      const perVehCards = `
+        <div class="v2-veh-list">
+          <div class="v2-veh-list-title">Your vehicles (${state.vehicles.length})</div>
+          ${state.vehicles.map((v, i) => {
+            const open = i === openIdx;
+            const done = vehComplete(v);
+            const status = open ? 'Editing coverage' : (done ? vehCovShort(v) : 'Choose coverage');
+            return `
+              <div class="v2-veh-item ${open ? 'is-open' : ''} ${done ? 'is-done' : ''}">
+                <button type="button" class="v2-veh-row" data-vopen="${i}" aria-expanded="${open ? 'true' : 'false'}" aria-controls="v2-veh-panel-${i}">
+                  <span class="v2-veh-row-main">
+                    <span class="v2-veh-row-name">${escapeHtml(vehLabel(v, i))}</span>
+                    <span class="v2-veh-row-status">${(done && !open) ? '<span class="v2-veh-tick" aria-hidden="true"></span>' : ''}${escapeHtml(status)}</span>
+                  </span>
+                  <span class="v2-veh-row-chev" aria-hidden="true"></span>
+                </button>
+                ${open ? vehPanel(v, i) : ''}
+              </div>`;
+          }).join('')}
         </div>
         <div id="v2-step-err" class="v2-error" role="alert" hidden></div>
         <div class="v2-actions-stack">
           <button type="button" class="v2-btn-gold" id="v2-step13-next">Continue &rarr;</button>
-        </div>`;
+        </div>
+        <p class="v2-scope-switch"><button type="button" class="v2-help-inline" data-scope="same">Use the same coverage on ${nVeh === 2 ? 'both' : 'all'} vehicles instead</button></p>`;
       body = `
-        <h1 class="v2-heading">${multi ? 'What coverage do you want on your vehicles?' : 'What type of coverage do you want?'}</h1>
-        <p class="v2-sub">${multi ? 'Each vehicle can have its own coverage. Our team will walk through details with you.' : 'Choose the option that fits best. Our team will walk through details with you.'}</p>
-        ${helpLink('coverage_type', 'What is the difference?')}
-        ${scopeTiles}
+        <h1 class="v2-heading">${pvMode ? 'Choose coverage for each vehicle' : (multi ? 'What coverage do you want on your vehicles?' : 'What type of coverage do you want?')}</h1>
+        <p class="v2-sub">${pvMode ? 'Tap a vehicle to set its coverage.' : (multi ? 'Each vehicle can have its own coverage.' : 'Choose the option that fits best. Our team will walk through details with you.')}</p>
+        ${helpLink('coverage_type', pvMode ? 'Liability only or full coverage?' : 'What is the difference?')}
+        ${pvMode ? '' : scopeTiles}
         ${!multi || state.coverage_scope === 'same' ? sameTiles : ''}
         ${multi && state.coverage_scope === 'different' ? perVehCards : ''}
       `;
     }
 
     // STEP 14: Liability limits (ONLY if Full coverage)
+    else if (currentStepId === 'step_14' && perVehicle()) {
+      body = `
+        <h1 class="v2-heading" tabindex="-1">For the whole policy</h1>
+        <p class="v2-sub">These apply to every vehicle.</p>
+        <div class="v2-card-stack">
+          <div class="v2-card">
+            <div class="v2-card-sec">
+              <div class="v2-card-title">Liability limits ${helpBtn('liability_limits')}</div>
+              <p class="v2-card-desc">The most the policy may pay when you cause a crash.</p>
+              <div class="v2-opt-grid v2-opt-grid-stack" role="radiogroup" aria-label="Liability limits">
+                ${LIABILITY_OPTS.map(o => `
+                  <button type="button" class="v2-opt ${state.liability_limits === o.val ? 'is-selected' : ''}" role="radio" aria-checked="${state.liability_limits === o.val ? 'true' : 'false'}" data-limit-pick="${escapeHtml(o.val)}">
+                    <span class="v2-opt-dot" aria-hidden="true"></span><span>${escapeHtml(o.label)}</span>${o.badge ? `<span class="v2-opt-tag">${escapeHtml(o.badge)}</span>` : ''}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+            <div class="v2-card-sec">
+              <div class="v2-card-title">Extras for the whole policy</div>
+              <div class="v2-check-list">
+                ${covCheckRow('medical_payments', 'Medical payments', !!state.medical_payments, -1, 'medical_payments')}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="v2-step-err" class="v2-error" role="alert" hidden></div>
+        <div class="v2-actions-stack">
+          <button type="button" class="v2-btn-gold" id="v2-step14-next">Continue &rarr;</button>
+        </div>
+      `;
+    }
+
     else if (currentStepId === 'step_14') {
       body = `
         <h1 class="v2-heading">Choose your liability limits</h1>
@@ -2078,7 +2200,7 @@
           ${title ? `<div class="v2-card-veh">${escapeHtml(title)}</div>` : ''}
           <div class="v2-card-sec">
             <div class="v2-card-title">Comprehensive deductible ${helpBtn('comprehensive')}</div>
-            <p class="v2-card-desc">For damage such as theft or hail.</p>
+            <p class="v2-card-desc">For damage such as theft or hail. <button type="button" class="v2-help-inline" data-help="deductible">What is a deductible?</button></p>
             ${optGrid('comp', idx, COMP_DED_OPTS, comp, (title ? title + ' ' : '') + 'comprehensive deductible')}
           </div>
           <div class="v2-card-sec">
@@ -2120,8 +2242,7 @@
       }
       body = `
         <h1 class="v2-heading" tabindex="-1">Choose your deductibles</h1>
-        <p class="v2-sub">Pick an amount for each. If you&rsquo;d like help, choose &lsquo;Not sure&rsquo;.</p>
-        ${helpLink('deductible', 'What is a deductible?')}
+        <p class="v2-sub">Pick an amount for each, or choose &lsquo;Not sure&rsquo;.</p>
         <div class="v2-card-stack">${cards}</div>
         ${extrasBlock}
         <div id="v2-step-err" class="v2-error" role="alert" hidden></div>
@@ -2313,8 +2434,7 @@
           : { label: 'Coverage Type', val: (state.coverage_choice || 'Not selected') + (isMultiCar() && state.coverage_choice ? ' (same on every vehicle)' : ''), edit: 'step_13' }
       );
       if (perVehicle()) {
-        if (needsLimits()) rows.push({ label: 'Liability Limits (whole policy)', val: state.liability_limits || 'Not selected', edit: 'step_14' });
-        if (anyFullCoverage()) rows.push({ label: 'Deductibles & Extras', val: `Set for each vehicle above · Medical payments: ${state.medical_payments ? 'Yes' : 'No'}`, edit: 'step_15' });
+        if (needsLimits()) rows.push({ label: 'Whole Policy', val: `Liability limits: ${state.liability_limits || 'Not selected'} · Medical payments: ${state.medical_payments ? 'Yes' : 'No'}`, edit: 'step_14' });
       } else if (state.coverage_choice === 'Full coverage') {
         rows.push(
           { label: 'Liability Limits', val: state.liability_limits || 'Not selected', edit: 'step_14' },
@@ -2833,28 +2953,92 @@
     document.querySelectorAll('[data-scope]').forEach(btn => {
       btn.addEventListener('click', () => {
         state.coverage_scope = btn.dataset.scope;
+        if (state.coverage_scope === 'different') {
+          const first = firstIncompleteVehicle();
+          state.cov_open = first >= 0 ? first : 0;
+        }
         saveSessionState();
         render();
+        window.scrollTo(0, 0);
+      });
+    });
+    document.querySelectorAll('[data-vopen]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = Number(btn.dataset.vopen);
+        if (state.cov_open === i) { state.cov_open = -1; saveSessionState(); render(); }
+        else openVehiclePanel(i);
+      });
+    });
+    document.querySelectorAll('[data-vdone]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = Number(btn.dataset.vdone);
+        if (!vehComplete(state.vehicles[i])) {
+          const errEl = document.getElementById('v2-step-err');
+          if (errEl) { errEl.textContent = `Choose a comprehensive and a collision deductible for your ${vehLabel(state.vehicles[i], i)}, or pick \u2018Not sure\u2019.`; errEl.hidden = false; focusAlertElement(errEl); }
+          return;
+        }
+        const next = firstIncompleteVehicle();
+        if (next >= 0) { openVehiclePanel(next); }
+        else { state.cov_open = -1; saveSessionState(); render(); const c = document.getElementById('v2-step13-next'); if (c) { try { c.scrollIntoView({ block: 'center' }); } catch (_) {} } }
       });
     });
     document.querySelectorAll('[data-vcov]').forEach(btn => {
       btn.addEventListener('click', () => {
         const c = vehCov(state.vehicles[Number(btn.dataset.vidx)]);
         c.choice = btn.dataset.vcov;
-        if (c.choice !== COV_FULL) { c.comp = ''; c.coll = ''; c.rental = false; c.roadside = false; }
+        if (c.choice !== COV_FULL) {
+          c.comp = ''; c.coll = ''; c.rental = false; c.roadside = false;
+          // Nothing more to ask for this vehicle: move on to the next unfinished one.
+          const next = firstIncompleteVehicle();
+          if (next >= 0) { openVehiclePanel(next); return; }
+          state.cov_open = -1;
+          saveSessionState();
+          render();
+          const cont = document.getElementById('v2-step13-next');
+          if (cont) { try { cont.scrollIntoView({ block: 'center' }); } catch (_) {} }
+          return;
+        }
         saveSessionState();
+        const y = window.scrollY;
         render();
+        window.scrollTo(0, y);
       });
     });
     const s13 = document.getElementById('v2-step13-next');
     if (s13) s13.addEventListener('click', () => {
-      if (!coverageChosen()) {
+      const bad = firstIncompleteVehicle();
+      if (bad >= 0) {
+        const v = state.vehicles[bad];
+        const msg = vehCov(v).choice
+          ? `Choose the deductibles for your ${vehLabel(v, bad)}, or pick \u2018Not sure\u2019.`
+          : `Choose a coverage for your ${vehLabel(v, bad)}.`;
+        if (state.cov_open !== bad) { state.cov_open = bad; saveSessionState(); render(); }
         const errEl = document.getElementById('v2-step-err');
-        if (errEl) { errEl.textContent = 'Choose a coverage for each vehicle, or pick \u2018Not sure, advise me\u2019.'; errEl.hidden = false; focusAlertElement(errEl); }
+        if (errEl) { errEl.textContent = msg; errEl.hidden = false; focusAlertElement(errEl); }
         return;
       }
-      if (!anyFullCoverage()) { state.medical_payments = false; }
-      if (!needsLimits()) { state.liability_limits = ''; }
+      if (!needsLimits()) { state.liability_limits = ''; state.medical_payments = false; }
+      trackEvent('auto_v2_step_complete');
+      advanceToNext();
+    });
+
+    // Step 14, coverage differs by vehicle: limits as radio rows, then Continue
+    document.querySelectorAll('[data-limit-pick]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.liability_limits = btn.dataset.limitPick;
+        saveSessionState();
+        const y = window.scrollY;
+        render();
+        window.scrollTo(0, y);
+      });
+    });
+    const s14 = document.getElementById('v2-step14-next');
+    if (s14) s14.addEventListener('click', () => {
+      if (!state.liability_limits) {
+        const errEl = document.getElementById('v2-step-err');
+        if (errEl) { errEl.textContent = 'Choose your liability limits, or pick \u2018Not sure, help me decide\u2019.'; errEl.hidden = false; focusAlertElement(errEl); }
+        return;
+      }
       trackEvent('auto_v2_step_complete');
       advanceToNext();
     });
