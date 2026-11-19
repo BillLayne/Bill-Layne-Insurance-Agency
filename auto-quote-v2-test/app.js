@@ -236,6 +236,13 @@
   const modelCache = {};
 
   const emptyVeh = () => ({ make: '', year: '', model: '', vin: '', isCustomMake: false });
+  // Vehicle steps: step_2 / step_3 / step_4 for the first car, then the same with b, c, d for cars 2, 3, 4.
+  const MAX_VEHICLES = 4;
+  const VEH_SUFFIX = ['', 'b', 'c', 'd'];
+  const VEH_ORDINAL = ['first', 'second', 'third', 'fourth'];
+  const vehStep = (n, idx) => `step_${n}${VEH_SUFFIX[idx] || ''}`;
+  const isVehStep = (stepId, n) => new RegExp(`^step_${n}[bcd]?$`).test(stepId);
+  const vehStepIdx = stepId => Math.max(0, VEH_SUFFIX.indexOf(stepId.replace(/^step_\d/, '')));
   const emptyDriver = () => ({ name: '', dob: '', marital: '', gender: '' });
 
   const defaultState = () => ({
@@ -336,7 +343,7 @@
   }
 
   function getEyebrow(stepId) {
-    if (['step_1', 'step_2', 'step_2b', 'step_3', 'step_3b', 'step_4', 'step_4b'].includes(stepId)) return 'YOUR VEHICLE';
+    if (stepId === 'step_1' || stepId === 'step_more' || /^step_[234][bcd]?$/.test(stepId)) return 'YOUR VEHICLE';
     if (['step_5', 'step_6', 'step_7', 'step_8'].includes(stepId)) return 'CURRENT COVERAGE';
     if (stepId === 'step_9') return 'DRIVING RECORD';
     if (['step_10', 'step_11', 'step_12', 'step_16'].includes(stepId)) return 'ABOUT YOU';
@@ -769,6 +776,9 @@
     step_3b: 'Vehicle 2 year',
     step_4: 'Vehicle 1 model',
     step_4b: 'Vehicle 2 model',
+    step_2c: 'Vehicle 3 make', step_3c: 'Vehicle 3 year', step_4c: 'Vehicle 3 model',
+    step_2d: 'Vehicle 4 make', step_3d: 'Vehicle 4 year', step_4d: 'Vehicle 4 model',
+    step_more: 'Add another vehicle',
     step_5: 'Current insurance status',
     step_6: 'Current insurance company',
     step_7: 'Policy renewal timing',
@@ -798,7 +808,7 @@
     ];
 
     if (state.vehicleCount) {
-      lines.push(`Vehicles Selected: ${state.vehicleCount === 2 ? '2+ Vehicles' : '1 Vehicle'}`);
+      lines.push(`Vehicles Selected: ${state.vehicleCount >= 2 ? '2+ Vehicles' : '1 Vehicle'}`);
     }
     state.vehicles.forEach((v, i) => {
       const desc = [v.year, v.make, v.model].filter(Boolean).join(' ').trim();
@@ -1062,8 +1072,12 @@
     if (!state.vehicles[0]?.isCustomMake) seq.push('step_4');
 
     if (state.vehicleCount >= 2) {
-      seq.push('step_2b', 'step_3b');
-      if (!state.vehicles[1]?.isCustomMake) seq.push('step_4b');
+      const n = Math.min(Math.max(state.vehicles.length, 2), MAX_VEHICLES);
+      for (let i = 1; i < n; i++) {
+        seq.push(vehStep(2, i), vehStep(3, i));
+        if (!state.vehicles[i]?.isCustomMake) seq.push(vehStep(4, i));
+      }
+      if (n < MAX_VEHICLES) seq.push('step_more');
     }
 
     seq.push('step_5');
@@ -1135,8 +1149,8 @@
     animateNextRender = !(opts && opts.isInit);
     focusHeadingNextRender = !(opts && opts.isInit);
 
-    if (stepId === 'step_4' || stepId === 'step_4b') {
-      const vIdx = stepId === 'step_4' ? 0 : 1;
+    if (isVehStep(stepId, 4)) {
+      const vIdx = vehStepIdx(stepId);
       const v = state.vehicles[vIdx];
       currentCuratedTiles = getCuratedModels(v.make, v.year).slice(0, 18);
       currentDropdownModels = currentCuratedTiles.slice();
@@ -1549,7 +1563,7 @@
     el.innerHTML = `
       <button type="button" class="v2-veh-summary" id="v2-veh-open" aria-haspopup="dialog" aria-label="${escapeHtml(count)}: ${escapeHtml(names.join(', '))}. Edit vehicles">
         <span class="v2-veh-summary-count">${escapeHtml(count)}</span>
-        <span class="v2-veh-summary-names">${escapeHtml(names.join(', '))}</span>
+        <span class="v2-veh-summary-names">${list.length === 1 ? escapeHtml(names[0]) : ''}</span>
         <span class="v2-veh-summary-edit">Edit</span>
       </button>`;
     const openBtn = document.getElementById('v2-veh-open');
@@ -1569,6 +1583,7 @@
           <button type="button" class="v2-help-x" data-vehsheet-close aria-label="Close">&times;</button>
         </div>
         <div class="v2-vehsheet-list" id="v2-vehsheet-list"></div>
+        <button type="button" class="v2-btn-outline v2-vehsheet-add" id="v2-vehsheet-add" data-vehsheet-add>+ Add another vehicle</button>
         <button type="button" class="v2-btn-gold v2-help-ok" data-vehsheet-close>Done</button>
       </div>`;
     document.body.appendChild(vehSheetEl);
@@ -1576,8 +1591,12 @@
       if (e.target === vehSheetEl || e.target.closest('[data-vehsheet-close]')) { closeVehSheet(); return; }
       const editBtn = e.target.closest('[data-vehsheet-edit]');
       if (editBtn) {
-        const target = Number(editBtn.dataset.vehsheetEdit) === 0 ? 'step_2' : 'step_2b';
+        const target = vehStep(2, Number(editBtn.dataset.vehsheetEdit));
         closeVehSheet(() => { historyStack.push(target); enterStep(target); });
+        return;
+      }
+      if (e.target.closest('[data-vehsheet-add]')) {
+        closeVehSheet(() => addAnotherVehicle());
         return;
       }
       const remBtn = e.target.closest('[data-vehsheet-remove]');
@@ -1609,9 +1628,23 @@
     });
   }
 
+  // Adds an empty vehicle (up to four) and goes to its make question.
+  function addAnotherVehicle() {
+    state.vehicles = state.vehicles.filter((v, i) => i === 0 || (v && v.make));
+    if (state.vehicles.length >= MAX_VEHICLES) return;
+    state.vehicles.push(emptyVeh());
+    state.vehicleCount = Math.max(2, state.vehicles.length);
+    saveSessionState();
+    const target = vehStep(2, state.vehicles.length - 1);
+    historyStack.push(target);
+    enterStep(target);
+  }
+
   function fillVehSheet() {
     const box = document.getElementById('v2-vehsheet-list');
     if (!box) return;
+    const addBtn = document.getElementById('v2-vehsheet-add');
+    if (addBtn) addBtn.hidden = enteredVehicles().length >= MAX_VEHICLES;
     box.innerHTML = enteredVehicles().map(x => {
       const label = [x.v.year, x.v.make, x.v.model].filter(Boolean).join(' ');
       return `
@@ -1777,7 +1810,7 @@
           <button type="button" class="v2-tile ${state.vehicleCount === 1 ? 'is-selected' : ''}" aria-pressed="${state.vehicleCount === 1 ? 'true' : 'false'}" data-veh-count="1">
             ${iconHtml('car1')}<span>1 Vehicle</span>
           </button>
-          <button type="button" class="v2-tile ${state.vehicleCount === 2 ? 'is-selected' : ''}" aria-pressed="${state.vehicleCount === 2 ? 'true' : 'false'}" data-veh-count="2">
+          <button type="button" class="v2-tile ${state.vehicleCount >= 2 ? 'is-selected' : ''}" aria-pressed="${state.vehicleCount >= 2 ? 'true' : 'false'}" data-veh-count="2">
             ${iconHtml('car2')}<span>2+ Vehicles</span>
           </button>
         </div>
@@ -1785,10 +1818,26 @@
     }
 
     // STEP 2 / 2b: Vehicle Make
-    else if (currentStepId === 'step_2' || currentStepId === 'step_2b') {
-      const vIdx = currentStepId === 'step_2' ? 0 : 1;
+    else if (currentStepId === 'step_more') {
+      const have = enteredVehicles().length;
+      body = `
+        <h1 class="v2-heading" tabindex="-1">Any more vehicles to add?</h1>
+        <p class="v2-sub">You have added ${have} vehicles. You can add up to ${MAX_VEHICLES}.</p>
+        <div class="v2-grid-2">
+          <button type="button" class="v2-tile" aria-pressed="false" id="v2-more-yes">
+            ${iconHtml('car2')}<span>Add another vehicle</span>
+          </button>
+          <button type="button" class="v2-tile" aria-pressed="false" id="v2-more-no">
+            ${iconHtml('car1')}<span>No, that&rsquo;s all</span>
+          </button>
+        </div>
+      `;
+    }
+
+    else if (isVehStep(currentStepId, 2)) {
+      const vIdx = vehStepIdx(currentStepId);
       const v = state.vehicles[vIdx] || (state.vehicles[vIdx] = emptyVeh());
-      const label = state.vehicleCount >= 2 ? (vIdx === 0 ? 'first' : 'second') : '';
+      const label = state.vehicleCount >= 2 ? VEH_ORDINAL[vIdx] : '';
       const activeCarMakes = activeSorted(logoConfig.carMakes);
       const tileMakes = activeCarMakes.length ? activeCarMakes.map(m => m.name) : (makesConfig.tileMakes || FALLBACK_MAKES.tileMakes);
       const dropdownMakes = [...tileMakes, ...(makesConfig.dropdownOnlyMakes || FALLBACK_MAKES.dropdownOnlyMakes)];
@@ -1796,7 +1845,7 @@
 
       body = `
         <h1 class="v2-heading">What is your ${label ? label + ' ' : ''}vehicle's make?</h1>
-        <p class="v2-sub">${vIdx === 1 ? 'Need to insure more than two vehicles? You can add additional cars at the end.' : 'Tap a make below or choose from the dropdown.'}</p>
+        <p class="v2-sub">${vIdx === 1 ? 'Have more than two vehicles? You can add more after this one.' : 'Tap a make below or choose from the dropdown.'}</p>
         <div class="v2-grid-3">
           ${tileMakes.map(name => {
             const meta = findMakeMeta(name);
@@ -1832,8 +1881,8 @@
     }
 
     // STEP 3 / 3b: Vehicle Year
-    else if (currentStepId === 'step_3' || currentStepId === 'step_3b') {
-      const vIdx = currentStepId === 'step_3' ? 0 : 1;
+    else if (isVehStep(currentStepId, 3)) {
+      const vIdx = vehStepIdx(currentStepId);
       const v = state.vehicles[vIdx];
       const olderOpen = showOlderYearBox || (v.year && Number(v.year) < 1981);
 
@@ -1869,8 +1918,8 @@
     }
 
     // STEP 4 / 4b: Vehicle Model
-    else if (currentStepId === 'step_4' || currentStepId === 'step_4b') {
-      const vIdx = currentStepId === 'step_4' ? 0 : 1;
+    else if (isVehStep(currentStepId, 4)) {
+      const vIdx = vehStepIdx(currentStepId);
       const v = state.vehicles[vIdx];
       const hasTiles = currentCuratedTiles.length > 0;
       const hasDropdown = currentDropdownModels.length > 0;
@@ -2720,6 +2769,20 @@
           }
         });
       }
+    });
+
+    // Any more vehicles?
+    const moreYes = document.getElementById('v2-more-yes');
+    if (moreYes) moreYes.addEventListener('click', () => {
+      if (isAdvancing) return;
+      moreYes.classList.add('is-selected');
+      setTimeout(() => addAnotherVehicle(), 200);
+    });
+    const moreNo = document.getElementById('v2-more-no');
+    if (moreNo) moreNo.addEventListener('click', () => {
+      tapAndAdvance(moreNo, () => {
+        state.vehicles = state.vehicles.filter((v, i) => i === 0 || (v && v.make));
+      });
     });
 
     // Step 1
