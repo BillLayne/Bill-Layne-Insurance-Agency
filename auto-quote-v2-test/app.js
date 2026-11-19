@@ -279,6 +279,7 @@
     state: 'NC',
     zip_code: params.get('zip') && /^\d{5}$/.test(params.get('zip')) ? params.get('zip') : '',
     has_other_drivers: '',
+    spouse_prompted: false,    // true once a married primary driver has been given a spouse card (never re-added after Remove)
     od_open: -1,               // which additional driver's details are open (-1 = none; the rest show as a short list)
     other_drivers: [],
     additional_notes: '',
@@ -2471,6 +2472,17 @@
 
     // STEP 17: Other Drivers in Household (Yes/No; each added driver has name, 3-box DOB, marital tiles, gender tiles, Remove)
     else if (currentStepId === 'step_17') {
+      // Married primary driver: start the spouse's card straight away instead of asking "how many drivers".
+      if (state.driver_1_marital === 'married' && !state.spouse_prompted) {
+        state.spouse_prompted = true;
+        if (!state.other_drivers.some(d => d && d.spouse)) {
+          if (state.has_other_drivers !== 'yes') state.other_drivers = [];
+          state.has_other_drivers = 'yes';
+          state.other_drivers.unshift(Object.assign(emptyDriver(), { marital: 'married', spouse: true }));
+          state.od_open = 0;
+        }
+        saveSessionState();
+      }
       const showList = state.has_other_drivers === 'yes';
       const allDriversValid = showList && state.other_drivers.length > 0 && state.other_drivers.every(d => d.name && d.dob && d.marital && d.gender && d.claims && d.violations);
       const odDone = d => !!(d.name && d.dob && d.marital && d.gender && d.claims && d.violations);
@@ -2487,7 +2499,7 @@
         </div>` : `
         <div class="v2-driver-card">
           <div class="v2-driver-head">
-            <span>Additional driver ${i + 1}</span>
+            <span>${d.spouse ? 'Your spouse' : `Additional driver ${i + 1}`}</span>
             <button type="button" class="v2-edit-btn" data-rem-driver="${i}">Remove</button>
           </div>
           <div class="v2-field">
@@ -2535,16 +2547,23 @@
       `).join('');
 
       body = `
+        ${!showList ? `
         <h1 class="v2-heading">How many drivers are in your household?</h1>
         <p class="v2-sub">Count yourself and every licensed driver living at your address: spouses, relatives and teen drivers.</p>
         <div class="v2-grid-2">
           <button type="button" class="v2-tile ${state.has_other_drivers === 'no' ? 'is-selected' : ''}" aria-pressed="${state.has_other_drivers === 'no' ? 'true' : 'false'}" id="v2-od-no">
             ${iconHtml('driverNo')}<span>1 Driver</span>
           </button>
-          <button type="button" class="v2-tile ${state.has_other_drivers === 'yes' ? 'is-selected' : ''}" aria-pressed="${state.has_other_drivers === 'yes' ? 'true' : 'false'}" id="v2-od-yes">
+          <button type="button" class="v2-tile" aria-pressed="false" id="v2-od-yes">
             ${iconHtml('driverYes')}<span>2+ Drivers</span>
           </button>
-        </div>
+        </div>` : (odOpen !== -1 ? (state.other_drivers[odOpen] && state.other_drivers[odOpen].spouse ? `
+        <h1 class="v2-heading">Add your spouse</h1>
+        <p class="v2-sub">Since you&rsquo;re married, we&rsquo;ve started a driver for your spouse. If your spouse will not be on the policy, tap Remove.</p>` : `
+        <h1 class="v2-heading">Add this driver&rsquo;s details</h1>
+        <p class="v2-sub">Every licensed driver living at your address: relatives and teen drivers too.</p>`) : `
+        <h1 class="v2-heading">Any more drivers to add?</h1>
+        <p class="v2-sub">Include every licensed driver living at your address: relatives and teen drivers too.</p>`)}
         ${showList ? `
           <div class="v2-col">
             <div class="v2-od-list">
@@ -2557,10 +2576,14 @@
               ${cards}
             </div>
             <div id="v2-step-err" class="v2-error" role="alert" hidden></div>
-            ${odOpen === -1 ? `<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
-              <button type="button" class="v2-btn-outline" id="v2-add-driver">+ Add another driver</button>
+            ${odOpen === -1 ? `<div class="v2-grid-2">
+              <button type="button" class="v2-tile" aria-pressed="false" id="v2-add-driver">
+                ${iconHtml('driverYes')}<span>Add another driver</span>
+              </button>
+              ${allDriversValid ? `<button type="button" class="v2-tile" aria-pressed="false" id="v2-step17-next">
+                ${iconHtml('driverNo')}<span>No, that&rsquo;s all</span>
+              </button>` : ''}
             </div>` : ''}
-            ${allDriversValid && odOpen === -1 ? `<button type="button" class="v2-btn-gold" id="v2-step17-next">Continue &rarr;</button>` : ''}
           </div>
         ` : ''}
       `;
