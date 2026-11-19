@@ -289,6 +289,10 @@
   let visibilityPartialTimer = null;
   let uploadErrorMsg = '';
   let lastConfirmationNumber = '';
+  let uploadFailedAfterQuote = false;
+  let retryingUpload = false;
+  let uploadRetrySuccess = false;
+  let lastUploadNotes = '';
   let showOtherMakeBox = false;
   let showOlderYearBox = false;
   let showOtherModelBox = false;
@@ -300,6 +304,7 @@
   let pendingResumeData = null;
   let animateNextRender = false;
   let focusHeadingNextRender = false;
+  let focusAlertIdNextRender = '';
 
   function activeSorted(list) {
     return (list || [])
@@ -494,8 +499,85 @@
     state.medical_payments = false;
   }
 
+  function normalizeContactMethod(val) {
+    const raw = String(val || '').trim().toLowerCase();
+    if (raw === 'text') return 'text';
+    if (raw === 'call' || raw === 'phone') return 'phone';
+    if (raw === 'email') return 'email';
+    return '';
+  }
+
+  function contactMethodLabel(val) {
+    const norm = normalizeContactMethod(val);
+    if (norm === 'text') return 'Text';
+    if (norm === 'phone') return 'Call';
+    if (norm === 'email') return 'Email';
+    return '';
+  }
+
   function buildLivePayload() {
+    const confNum = lastConfirmationNumber || makeConfirmationNumber();
+    lastConfirmationNumber = confNum;
+    const contactMethod = normalizeContactMethod(state.contact_method);
     const primaryName = (state.driver_1_name || `${state.firstname} ${state.lastname}`).trim();
+    const decFiles = uploadedFiles.filter(f => (f._category || 'declarations') !== 'registration_or_id');
+    const regFiles = uploadedFiles.filter(f => f._category === 'registration_or_id');
+
+    if (state.usedDecShortcut) {
+      const decLead = `DECLARATIONS PAGE UPLOADED. Drivers, address and coverage are on the uploaded document. See the [POLICY UPLOAD] email for Ref ${confNum}.`;
+      const extraParts = [
+        state.additional_notes ? state.additional_notes.trim() : '',
+        (!state.coverage_expiration && state.renewal_window) ? `Renewal: ${state.renewal_window}` : '',
+        decFiles.length ? `[Declarations page: ${decFiles.map(f => f.name).join(', ')}]` : '',
+        TEST_PREFIX
+      ].filter(Boolean);
+
+      return {
+        form_type: 'auto_insurance',
+        confirmation_number: confNum,
+        turnstile_token: turnstileToken || '',
+        cta_source: 'auto_v2_test',
+        firstname: `${TEST_PREFIX} ${state.firstname}`.trim(),
+        lastname: state.lastname,
+        email: state.email,
+        phone: state.phone,
+        street_address: '',
+        city: '',
+        state: '',
+        zip_code: '',
+        contact_method: contactMethod,
+        current_insurance: state.current_insurance || '',
+        current_carrier: state.current_carrier || '',
+        coverage_expiration: state.coverage_expiration || '',
+        liability_limits: '',
+        collision: false,
+        comprehensive: false,
+        uninsured_motorist: false,
+        medical_payments: false,
+        rental_reimbursement: false,
+        roadside_assistance: false,
+        comp_deductible: '',
+        collision_deductible: '',
+        previous_claims: '',
+        violations: '',
+        homeowner: '',
+        coverage_preference: '',
+        additional_notes: `${decLead} ${extraParts.join(' | ')}`.trim(),
+        drivers: [{
+          name: primaryName,
+          dob: '',
+          gender: '',
+          marital: ''
+        }],
+        vehicles: state.vehicles.map(v => ({
+          year: v.year || '',
+          make: v.make || '',
+          model: v.model || '',
+          vin: v.vin || ''
+        }))
+      };
+    }
+
     const drivers = [{
       name: primaryName,
       dob: state.driver_1_dob || '',
@@ -525,9 +607,6 @@
       liabilityLimits = state.liability_limits || 'HELP ME DECIDE — customer wants coverage guidance';
     }
 
-    const decFiles = uploadedFiles.filter(f => (f._category || 'declarations') !== 'registration_or_id');
-    const regFiles = uploadedFiles.filter(f => f._category === 'registration_or_id');
-
     const noteParts = [
       state.additional_notes,
       (!state.coverage_expiration && state.renewal_window) ? `Renewal: ${state.renewal_window}` : '',
@@ -540,7 +619,7 @@
 
     return {
       form_type: 'auto_insurance',
-      confirmation_number: lastConfirmationNumber || makeConfirmationNumber(),
+      confirmation_number: confNum,
       turnstile_token: turnstileToken || '',
       cta_source: 'auto_v2_test',
       firstname: `${TEST_PREFIX} ${state.firstname}`.trim(),
@@ -551,7 +630,7 @@
       city: state.city,
       state: state.state || 'NC',
       zip_code: state.zip_code,
-      contact_method: (state.contact_method || '').toLowerCase(),
+      contact_method: contactMethod,
       current_insurance: state.current_insurance || 'no',
       current_carrier: state.current_carrier || '',
       coverage_expiration: state.coverage_expiration || '',
@@ -586,10 +665,132 @@
     }
   }
 
+  const STEP_PLAIN_NAMES = {
+    step_1: 'Vehicle count',
+    step_2: 'Vehicle 1 make',
+    step_2b: 'Vehicle 2 make',
+    step_3: 'Vehicle 1 year',
+    step_3b: 'Vehicle 2 year',
+    step_4: 'Vehicle 1 model',
+    step_4b: 'Vehicle 2 model',
+    step_5: 'Current insurance status',
+    step_6: 'Current insurance company',
+    step_7: 'Policy renewal timing',
+    step_8: 'Declarations page option',
+    step_9: 'Driving record',
+    step_10: 'Homeowner status',
+    step_11: 'Contact information',
+    step_12: 'Primary driver details',
+    step_13: 'Coverage type',
+    step_14: 'Liability limits',
+    step_15: 'Deductibles and optional extras',
+    step_16: 'Home address',
+    step_17: 'Other household drivers',
+    step_18: 'VINs, contact preference, and final notes',
+    step_19: 'Review screen',
+    step_20: 'Confirmation screen'
+  };
+
+  function buildPartialLeadLines(stoppedAt) {
+    const fullName = `${state.firstname} ${state.lastname}`.trim();
+    const lines = [
+      `${TEST_PREFIX} Partial Auto Quote`,
+      `Stopped At: ${stoppedAt}`,
+      `Name: ${fullName}`,
+      `Phone: ${state.phone}`,
+      `Email: ${state.email}`
+    ];
+
+    if (state.vehicleCount) {
+      lines.push(`Vehicles Selected: ${state.vehicleCount === 2 ? '2+ Vehicles' : '1 Vehicle'}`);
+    }
+    state.vehicles.forEach((v, i) => {
+      const desc = [v.year, v.make, v.model].filter(Boolean).join(' ').trim();
+      if (desc || v.vin) {
+        lines.push(`Vehicle ${i + 1}: ${desc || 'Not entered'}${v.vin ? ` (VIN: ${v.vin})` : ''}`);
+      }
+    });
+
+    if (state.current_insurance) {
+      lines.push(`Currently Insured: ${capitalize(state.current_insurance)}`);
+    }
+    if (state.current_carrier) {
+      lines.push(`Current Insurer: ${state.current_carrier}`);
+    }
+    if (state.coverage_expiration) {
+      lines.push(`Policy Renewal Date: ${state.coverage_expiration}`);
+    } else if (state.renewal_window) {
+      lines.push(`Policy Renewal Window: ${capitalize(state.renewal_window)}`);
+    }
+    if (state.usedDecShortcut) {
+      lines.push('Declarations Page Shortcut: Yes');
+    }
+    if (state.previous_claims) {
+      lines.push(`Claims (Past 5 Years): ${capitalize(state.previous_claims)}`);
+    }
+    if (state.violations) {
+      lines.push(`Tickets or Violations (Past 3 Years): ${capitalize(state.violations)}`);
+    }
+    if (state.homeowner) {
+      lines.push(`Homeowner: ${capitalize(state.homeowner)}`);
+    }
+
+    if (state.driver_1_name) lines.push(`Primary Driver Name: ${state.driver_1_name}`);
+    if (state.driver_1_dob) lines.push(`Primary Driver DOB: ${state.driver_1_dob}`);
+    if (state.driver_1_marital) lines.push(`Primary Driver Marital Status: ${capitalize(state.driver_1_marital)}`);
+    if (state.driver_1_gender) lines.push(`Primary Driver Gender: ${capitalize(state.driver_1_gender)}`);
+
+    if (state.coverage_choice) lines.push(`Coverage Type: ${state.coverage_choice}`);
+    if (state.liability_limits) lines.push(`Liability Limits: ${state.liability_limits}`);
+    if (state.comp_deductible) lines.push(`Comprehensive Deductible: ${state.comp_deductible}`);
+    if (state.collision_deductible) lines.push(`Collision Deductible: ${state.collision_deductible}`);
+    const extras = [
+      state.rental_reimbursement ? 'Rental car (loss of use)' : '',
+      state.roadside_assistance ? 'Towing and roadside' : '',
+      state.medical_payments ? 'Medical payments' : ''
+    ].filter(Boolean);
+    if (extras.length) lines.push(`Optional Extras: ${extras.join(', ')}`);
+
+    if (state.street_address || state.city || state.zip_code) {
+      const addr = [state.street_address, state.city, `${state.state || 'NC'} ${state.zip_code}`.trim()].filter(Boolean).join(', ');
+      lines.push(`Home Address: ${addr}`);
+    }
+
+    if (state.has_other_drivers === 'no') {
+      lines.push('Other Household Drivers: None');
+    } else if (state.has_other_drivers === 'yes') {
+      if (state.other_drivers.length === 0) {
+        lines.push('Other Household Drivers: Yes (not yet entered)');
+      } else {
+        state.other_drivers.forEach((d, i) => {
+          const parts = [
+            d.name || 'Unnamed',
+            d.dob ? `DOB: ${d.dob}` : '',
+            d.marital ? capitalize(d.marital) : '',
+            d.gender ? capitalize(d.gender) : ''
+          ].filter(Boolean);
+          lines.push(`Additional Driver ${i + 1}: ${parts.join(' · ')}`);
+        });
+      }
+    }
+
+    const cm = normalizeContactMethod(state.contact_method);
+    if (cm) lines.push(`Preferred Contact Method: ${cm}`);
+    if (state.additional_notes && state.additional_notes.trim()) {
+      lines.push(`Additional Notes: ${state.additional_notes.trim()}`);
+    }
+    if (uploadedFiles.length > 0) {
+      lines.push(`Files Selected (${uploadedFiles.length}): ${uploadedFiles.map(f => f.name).join(', ')}`);
+    }
+
+    return lines;
+  }
+
   function sendPartialLeadStub(triggerReason) {
     if (finalSubmitted || partialLeadStubSent || !step11Completed || currentStepId === 'step_20') return;
     const digits = state.phone.replace(/\D/g, '');
-    if (!state.firstname.trim() || digits.length < 10) return;
+    const email = (state.email || '').trim();
+    if (!state.firstname.trim() || digits.length < 10 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
     const dedupeKey = 'bli_partial_auto_v2_' + digits;
     try {
       if (sessionStorage.getItem(dedupeKey)) return;
@@ -597,21 +798,9 @@
     } catch (_) {}
     partialLeadStubSent = true;
 
-    const vehText = state.vehicles
-      .filter(v => v.make)
-      .map((v, i) => `Vehicle ${i + 1}: ${[v.year, v.make, v.model].filter(Boolean).join(' ')}`)
-      .join(' | ');
-
+    const stoppedAt = STEP_PLAIN_NAMES[currentStepId] || 'Auto quote form';
     const fullName = `${state.firstname} ${state.lastname}`.trim();
-    const summary = [
-      `${TEST_PREFIX} [PARTIAL AUTO QUOTE — STOPPED AT ${currentStepId}]`,
-      `Name: ${fullName}`,
-      `Phone: ${state.phone}`,
-      `Email: ${state.email || 'Not entered yet'}`,
-      vehText || 'Vehicle: Not entered',
-      `Current Insurance: ${state.current_insurance || 'N/A'} | Carrier: ${state.current_carrier || 'N/A'}`,
-      `Files Selected: ${uploadedFiles.length}`
-    ].join('\n');
+    const summary = buildPartialLeadLines(stoppedAt).join('\n');
 
     try {
       fetch('/api/homepage-submit', {
@@ -620,14 +809,14 @@
         keepalive: true,
         body: JSON.stringify({
           formType: 'contact',
-          name: `${TEST_PREFIX} [PARTIAL AUTO QUOTE - ${currentStepId}] ${fullName}`.slice(0, 150),
+          name: `${TEST_PREFIX} [PARTIAL AUTO QUOTE - Stopped at: ${stoppedAt}] ${fullName}`.slice(0, 150),
           phone: String(state.phone).slice(0, 50),
-          email: String(state.email || 'test-partial@billlayneinsurance.com').slice(0, 254),
+          email: email.slice(0, 254),
           message: summary.slice(0, 4900)
         })
       }).catch(() => {});
     } catch (_) {}
-    trackEvent('auto_v2_test_partial', { trigger_reason: triggerReason, vehicle_count: state.vehicles.length });
+    trackEvent('auto_v2_test_partial', { trigger_reason: triggerReason, stopped_at: stoppedAt, vehicle_count: state.vehicles.length });
   }
 
   document.addEventListener('visibilitychange', () => {
@@ -658,10 +847,60 @@
     });
   }
 
+  async function uploadAttachedFiles(notesText) {
+    if (uploadedFiles.length === 0) return true;
+    const encodedFiles = await Promise.all(uploadedFiles.map(async f => ({
+      name: f.name,
+      type: f.type || 'application/octet-stream',
+      base64: await fileToBase64(f)
+    })));
+    const uResp = await fetch('/api/policy-upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        formType: 'policy-upload',
+        policyType: 'auto',
+        name: `${TEST_PREFIX} ${state.firstname} ${state.lastname}`.trim().slice(0, 150),
+        phone: String(state.phone).slice(0, 50),
+        email: String(state.email || '').slice(0, 254),
+        currentCarrier: String(state.current_carrier || '').slice(0, 150),
+        renewalDate: String(state.coverage_expiration || state.renewal_window || '').slice(0, 80),
+        notes: `${TEST_PREFIX} Ref: ${lastConfirmationNumber} | ${notesText || ''}`.slice(0, 6000),
+        files: encodedFiles
+      })
+    });
+    const uJson = await uResp.json().catch(() => ({}));
+    return !!(uResp.ok && uJson.ok === true);
+  }
+
+  async function retryUploadFiles() {
+    if (retryingUpload || uploadedFiles.length === 0) return;
+    retryingUpload = true;
+    render();
+    try {
+      const ok = await uploadAttachedFiles(lastUploadNotes);
+      if (ok) {
+        uploadFailedAfterQuote = false;
+        uploadRetrySuccess = true;
+        uploadedFiles = [];
+      } else {
+        uploadFailedAfterQuote = true;
+        focusAlertIdNextRender = 'v2-upload-warn';
+      }
+    } catch (_) {
+      uploadFailedAfterQuote = true;
+      focusAlertIdNextRender = 'v2-upload-warn';
+    }
+    retryingUpload = false;
+    render();
+  }
+
   async function submitLiveQuote() {
     if (submittingLive) return false;
     submittingLive = true;
     submitErrorMsg = '';
+    uploadFailedAfterQuote = false;
+    uploadRetrySuccess = false;
     finalSubmitted = true;
     if (partialTimer) clearTimeout(partialTimer);
     if (visibilityPartialTimer) clearTimeout(visibilityPartialTimer);
@@ -677,48 +916,39 @@
       });
       const qJson = await qResp.json().catch(() => ({}));
       if (!qResp.ok || qJson.ok !== true || !qJson.confirmationNumber) {
-        throw new Error('We could not confirm receipt of your quote request. Please try again or call us at 336-835-1993.');
+        throw new Error('We could not confirm receipt of your quote request. Your answers and files are still saved below — please try again or call us at 336-835-1993.');
       }
       lastConfirmationNumber = qJson.confirmationNumber;
-
-      // 2. If declarations pages or registration photos were attached, send them via /api/policy-upload
-      if (uploadedFiles.length > 0) {
-        const encodedFiles = await Promise.all(uploadedFiles.map(async f => ({
-          name: f.name,
-          type: f.type || 'application/octet-stream',
-          base64: await fileToBase64(f)
-        })));
-        const uResp = await fetch('/api/policy-upload', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            formType: 'policy-upload',
-            policyType: 'auto',
-            name: `${TEST_PREFIX} ${state.firstname} ${state.lastname}`.trim().slice(0, 150),
-            phone: String(state.phone).slice(0, 50),
-            email: String(state.email || '').slice(0, 254),
-            currentCarrier: String(state.current_carrier || '').slice(0, 150),
-            renewalDate: String(state.coverage_expiration || state.renewal_window || '').slice(0, 80),
-            notes: `${TEST_PREFIX} Ref: ${lastConfirmationNumber} | ${fullPayload.additional_notes}`.slice(0, 6000),
-            files: encodedFiles
-          })
-        });
-        const uJson = await uResp.json().catch(() => ({}));
-        if (!uResp.ok || uJson.ok !== true) {
-          throw new Error(`Your quote (${lastConfirmationNumber}) was received, but your files could not be uploaded. Please text them to (336) 827-9065.`);
-        }
-      }
+      lastUploadNotes = fullPayload.additional_notes;
 
       window.__BLI_LAST_PAYLOAD__ = Object.assign({}, fullPayload, { confirmation_number: lastConfirmationNumber });
       trackEvent('auto_v2_test_submit', { confirmation_number: lastConfirmationNumber, used_dec_shortcut: state.usedDecShortcut });
       trackEvent('auto_v2_test_lead', { confirmation_number: lastConfirmationNumber, used_dec_shortcut: state.usedDecShortcut });
       clearSavedProgress();
+
+      // 2. If declarations pages or registration photos were attached, send them via /api/policy-upload.
+      //    If upload fails after quote succeeds, keep uploadedFiles and proceed to final screen with Retry option.
+      if (uploadedFiles.length > 0) {
+        try {
+          const uploadOk = await uploadAttachedFiles(lastUploadNotes);
+          if (!uploadOk) {
+            uploadFailedAfterQuote = true;
+            focusAlertIdNextRender = 'v2-upload-warn';
+          }
+        } catch (_) {
+          uploadFailedAfterQuote = true;
+          focusAlertIdNextRender = 'v2-upload-warn';
+        }
+      }
+
       submittingLive = false;
       return true;
     } catch (err) {
+      // Quote submit failed: keep all answers and files intact so the user can retry.
       finalSubmitted = false;
       submittingLive = false;
-      submitErrorMsg = err?.message || 'Something went wrong. Please try again or call us at 336-835-1993.';
+      submitErrorMsg = err?.message || 'Something went wrong. Your answers and files are still saved — please try again or call us at 336-835-1993.';
+      focusAlertIdNextRender = 'v2-submit-err';
       render();
       return false;
     }
@@ -817,8 +1047,11 @@
       loadingModels = false;
       if (currentCuratedTiles.length === 0 && currentDropdownModels.length === 0) showOtherModelBox = true;
     }
+    const hadPendingAlert = !!focusAlertIdNextRender;
     render();
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    if (!hadPendingAlert) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
   }
 
   window.addEventListener('popstate', e => {
@@ -962,7 +1195,11 @@
           onValidOrClear(iso);
         } else {
           [mmEl, ddEl, yyEl].forEach(el => el.classList.add('is-error'));
-          if (errEl) { errEl.textContent = 'Please enter a valid date (MM / DD / YYYY).'; errEl.hidden = false; }
+          if (errEl) {
+            errEl.textContent = 'Please enter a valid date (MM / DD / YYYY).';
+            errEl.hidden = false;
+            focusAlertElement(errEl);
+          }
           onValidOrClear('');
         }
       } else {
@@ -985,17 +1222,27 @@
     yyEl.addEventListener('keydown', e => { if (e.key === 'Backspace' && !yyEl.value) ddEl.focus(); });
   }
 
+  function focusAlertElement(el) {
+    if (!el || el.hidden) return;
+    if (!el.hasAttribute('role')) el.setAttribute('role', 'alert');
+    el.setAttribute('tabindex', '-1');
+    try { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) {}
+    try { el.focus({ preventScroll: true }); } catch (_) {}
+  }
+
   function showFieldError(inputId, msg) {
     const el = document.getElementById(inputId);
     const errEl = document.getElementById(`${inputId}-err`) || document.getElementById('v2-step-err');
     if (el) {
       el.classList.add('is-error');
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      el.focus();
     }
     if (errEl) {
       errEl.textContent = msg;
       errEl.hidden = false;
+      focusAlertElement(errEl);
+    } else if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.focus();
     }
   }
 
@@ -1127,6 +1374,7 @@
       uploadedFiles.push(processed);
       runningTotal += processed.size;
     }
+    if (uploadErrorMsg) focusAlertIdNextRender = 'v2-upload-err';
     render();
   }
 
@@ -1160,7 +1408,7 @@
           <button type="button" class="v2-btn-outline" id="v2-btn-camera-${context}">Take a photo</button>
         </div>
         <p class="v2-upload-meta">PDF, JPG, PNG, or HEIC &middot; Up to 8 MB per file &middot; Up to 6 files (12 MB total; photos resized automatically)</p>
-        ${uploadErrorMsg ? `<div class="v2-error" role="alert">${escapeHtml(uploadErrorMsg)}</div>` : ''}
+        ${uploadErrorMsg ? `<div id="v2-upload-err" class="v2-error" role="alert" tabindex="-1">${escapeHtml(uploadErrorMsg)}</div>` : ''}
         ${listHtml}
       </div>
     `;
@@ -1582,9 +1830,8 @@
       `;
     }
 
-    // STEP 11: Contact (Email REQUIRED on normal path; Email optional on declarations shortcut path)
+    // STEP 11: Contact (Email REQUIRED on every path, including declarations shortcut)
     else if (currentStepId === 'step_11') {
-      const emailOptional = state.usedDecShortcut;
       body = `
         <h1 class="v2-heading" tabindex="-1">Where should we send your quotes?</h1>
         <p class="v2-sub">Only our local North Carolina team sees your details. We never sell your information.</p>
@@ -1607,7 +1854,7 @@
             <div id="phone-err" class="v2-field-err" role="alert" hidden></div>
           </div>
           <div class="v2-field">
-            <label for="email">${emailOptional ? 'Email (optional)' : 'Email address'}</label>
+            <label for="email">Email address</label>
             <input id="email" name="email" class="v2-input" type="email" inputmode="email" autocomplete="email" enterkeyhint="go" value="${escapeHtml(state.email)}">
             <div id="email-err" class="v2-field-err" role="alert" hidden></div>
           </div>
@@ -1835,10 +2082,11 @@
     // STEP 18: VIN & Registration Photo (normal path) OR Notes only (declarations shortcut)
     else if (currentStepId === 'step_18') {
       const isDecPath = state.usedDecShortcut;
+      const selectedContactMethod = normalizeContactMethod(state.contact_method);
       const prefOpts = [
-        { val: 'Text', icon: iconHtml('contactText') },
-        { val: 'Call', icon: iconHtml('contactCall') },
-        { val: 'Email', icon: iconHtml('contactEmail') }
+        { val: 'text', label: 'Text', icon: iconHtml('contactText') },
+        { val: 'phone', label: 'Call', icon: iconHtml('contactCall') },
+        { val: 'email', label: 'Email', icon: iconHtml('contactEmail') }
       ];
       body = `
         <h1 class="v2-heading">${isDecPath ? 'Anything else we should know?' : 'Vehicle VINs &amp; final notes (optional)'}</h1>
@@ -1861,8 +2109,8 @@
             <label>How would you like us to reach you? (optional)</label>
             <div class="v2-grid-3" style="margin:8px 0 0">
               ${prefOpts.map(p => `
-                <button type="button" class="v2-tile compact ${state.contact_method === p.val ? 'is-selected' : ''}" aria-pressed="${state.contact_method === p.val ? 'true' : 'false'}" data-contact-pref="${p.val}">
-                  ${p.icon}<span>${p.val}</span>
+                <button type="button" class="v2-tile compact ${selectedContactMethod === p.val ? 'is-selected' : ''}" aria-pressed="${selectedContactMethod === p.val ? 'true' : 'false'}" data-contact-pref="${p.val}">
+                  ${p.icon}<span>${p.label}</span>
                 </button>
               `).join('')}
             </div>
@@ -1872,7 +2120,7 @@
             <textarea id="additional_notes" name="additional_notes" class="v2-textarea">${escapeHtml(state.additional_notes)}</textarea>
           </div>
           ${isDecPath ? '<div class="v2-turnstile-wrap" id="v2-turnstile-slot"></div>' : ''}
-          ${submitErrorMsg && isDecPath ? `<div class="v2-error" role="alert">${escapeHtml(submitErrorMsg)}</div>` : ''}
+          ${submitErrorMsg && isDecPath ? `<div id="v2-submit-err" class="v2-error" role="alert" tabindex="-1">${escapeHtml(submitErrorMsg)}</div>` : ''}
           <div class="v2-actions-stack">
             <button type="button" class="v2-btn-gold" id="v2-step18-next" ${submittingLive ? 'disabled' : ''}>${submittingLive ? 'Sending...' : (isDecPath ? 'Send my quote request' : 'Continue to review &rarr;')}</button>
             <button type="button" class="v2-btn-outline" style="width:100%" id="v2-step18-skip" ${submittingLive ? 'disabled' : ''}>${isDecPath ? 'Skip note &amp; send my quote request' : 'Skip for now'}</button>
@@ -1934,7 +2182,7 @@
       } else {
         rows.push({ label: 'Other Household Drivers', val: 'None', edit: 'step_17' });
       }
-      rows.push({ label: 'Notes & Contact Preference', val: `${state.additional_notes || 'No notes'}${state.contact_method ? ` · Prefer: ${state.contact_method}` : ''}`, edit: 'step_18' });
+      rows.push({ label: 'Notes & Contact Preference', val: `${state.additional_notes || 'No notes'}${contactMethodLabel(state.contact_method) ? ` · Prefer: ${contactMethodLabel(state.contact_method)}` : ''}`, edit: 'step_18' });
 
       body = `
         <h1 class="v2-heading">Review your quote request</h1>
@@ -1971,7 +2219,7 @@
           </div>
         ` : ''}
         <div class="v2-turnstile-wrap" id="v2-turnstile-slot"></div>
-        ${submitErrorMsg ? `<div class="v2-error" role="alert" style="max-width:580px;margin:10px auto">${escapeHtml(submitErrorMsg)}</div>` : ''}
+        ${submitErrorMsg ? `<div id="v2-submit-err" class="v2-error" role="alert" tabindex="-1" style="max-width:580px;margin:10px auto">${escapeHtml(submitErrorMsg)}</div>` : ''}
         <div class="v2-actions-stack">
           <button type="button" class="v2-btn-gold" id="v2-send-btn" ${submittingLive ? 'disabled' : ''}>${submittingLive ? 'Sending...' : 'Send my quote request'}</button>
         </div>
@@ -1980,15 +2228,37 @@
 
     // STEP 20: Final Screen
     else if (currentStepId === 'step_20') {
-      const prefLine = state.contact_method
-        ? ` We will reach you by ${escapeHtml(state.contact_method.toLowerCase())}.`
+      const normPref = normalizeContactMethod(state.contact_method);
+      const prefLine = normPref
+        ? ` We will reach you by ${escapeHtml(normPref)}.`
         : '';
+      const uploadWarnHtml = uploadFailedAfterQuote ? `
+        <div id="v2-upload-warn" class="v2-upload-warn" role="alert" tabindex="-1">
+          <p class="v2-upload-warn-title">We got your request, but your files did not upload. Text them to (336) 827-9065 or try again</p>
+          ${uploadedFiles.length ? `
+            <ul class="v2-file-list" aria-label="Files waiting to upload">
+              ${uploadedFiles.map(f => `
+                <li class="v2-file-item">
+                  <span><span class="v2-file-name">${escapeHtml(f.name)}</span><span class="v2-file-size">(${formatFileSize(f.size)})</span></span>
+                </li>
+              `).join('')}
+            </ul>
+          ` : ''}
+          <div class="v2-actions-stack">
+            <button type="button" class="v2-btn-gold" id="v2-retry-upload-btn" ${retryingUpload ? 'disabled' : ''}>${retryingUpload ? 'Retrying upload...' : 'Retry upload'}</button>
+          </div>
+        </div>
+      ` : (uploadRetrySuccess ? `
+        <div class="v2-upload-ok" role="status">Your files uploaded successfully.</div>
+      ` : '');
       body = `
         <div class="v2-final-icon" aria-hidden="true">
           ${iconHtml('confirmCheck')}
         </div>
-        <h1 class="v2-heading">A licensed North Carolina agent is comparing six carriers for you. We will send your prices by text or email.</h1>
+        <h1 class="v2-heading">A licensed North Carolina agent is comparing six carriers for you. We will send your prices by text or email within one business day.</h1>
+        ${state.email ? `<p class="v2-final-confirm-email">A confirmation email is on its way to <strong>${escapeHtml(state.email)}</strong>.</p>` : ''}
         <p class="v2-sub">${prefLine ? prefLine.trim() + ' ' : ''}Request reference: <strong>${escapeHtml(lastConfirmationNumber)}</strong>. Have a question right now? Call us or text us below.</p>
+        ${uploadWarnHtml}
         <div class="v2-final-actions">
           <a class="v2-btn-gold" href="tel:3368351993" data-source="auto_v2_final_call">Call 336-835-1993</a>
           <a class="v2-btn-navy" href="sms:+13368279065" data-source="auto_v2_final_text">Text (336) 827-9065</a>
@@ -2003,13 +2273,21 @@
     const headingEl = stage.querySelector('.v2-heading');
     if (headingEl) {
       headingEl.setAttribute('tabindex', '-1');
-      if (focusHeadingNextRender) {
+      if (focusHeadingNextRender && !focusAlertIdNextRender) {
         focusHeadingNextRender = false;
         headingEl.focus({ preventScroll: true });
+      } else if (focusHeadingNextRender && focusAlertIdNextRender) {
+        focusHeadingNextRender = false;
       }
     }
     bindStepEvents();
     renderMobileBar();
+    if (focusAlertIdNextRender) {
+      const alertId = focusAlertIdNextRender;
+      focusAlertIdNextRender = '';
+      const alertEl = document.getElementById(alertId);
+      if (alertEl) focusAlertElement(alertEl);
+    }
   }
 
   function bindStepEvents() {
@@ -2326,12 +2604,8 @@
         if (!fn) { showFieldError('firstname', 'Please enter your first name.'); return; }
         if (!ln) { showFieldError('lastname', 'Please enter your last name.'); return; }
         if (ph.replace(/\D/g, '').length < 10) { showFieldError('phone', 'Please enter a valid 10-digit mobile number.'); return; }
-        if (!state.usedDecShortcut && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) {
           showFieldError('email', 'Please enter a valid email address.');
-          return;
-        }
-        if (state.usedDecShortcut && em && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) {
-          showFieldError('email', 'Please enter a valid email address, or leave Email blank.');
           return;
         }
         state.firstname = fn;
@@ -2545,9 +2819,18 @@
         }
       });
     }
+    const notesInput = document.getElementById('additional_notes');
+    if (notesInput) {
+      notesInput.addEventListener('input', () => {
+        state.additional_notes = notesInput.value;
+        saveSessionState();
+      });
+    }
     document.querySelectorAll('[data-contact-pref]').forEach(btn => {
       btn.addEventListener('click', () => {
-        state.contact_method = state.contact_method === btn.dataset.contactPref ? '' : btn.dataset.contactPref;
+        const picked = normalizeContactMethod(btn.dataset.contactPref);
+        state.contact_method = normalizeContactMethod(state.contact_method) === picked ? '' : picked;
+        saveSessionState();
         render();
       });
     });
@@ -2555,7 +2838,7 @@
     const s18Skip = document.getElementById('v2-step18-skip');
     const finishStep18 = async (skip) => {
       if (!skip && !state.usedDecShortcut) {
-        let hasVinErr = false;
+        let firstVinErrEl = null;
         state.vehicles.forEach((v, i) => {
           const el = document.getElementById(`vin-${i}`);
           const errEl = document.getElementById(`vin-err-${i}`);
@@ -2563,11 +2846,11 @@
           const cleaned = cleanVin(el.value);
           el.value = cleaned;
           if (cleaned && !isValidVin(cleaned)) {
-            hasVinErr = true;
             el.classList.add('is-error');
             if (errEl) {
               errEl.textContent = 'A VIN is 17 letters and numbers and never uses I, O or Q. Check it, or clear the box to skip.';
               errEl.hidden = false;
+              if (!firstVinErrEl) firstVinErrEl = errEl;
             }
           } else {
             el.classList.remove('is-error');
@@ -2575,7 +2858,10 @@
             v.vin = cleaned;
           }
         });
-        if (hasVinErr) return;
+        if (firstVinErrEl) {
+          focusAlertElement(firstVinErrEl);
+          return;
+        }
       }
       if (!skip) {
         const notesEl = document.getElementById('additional_notes');
@@ -2609,6 +2895,12 @@
         const ok = await submitLiveQuote();
         if (ok) advanceToNext();
       });
+    }
+
+    // Step 20 (Retry upload if files failed after quote succeeded)
+    if (currentStepId === 'step_20') {
+      const retryBtn = document.getElementById('v2-retry-upload-btn');
+      if (retryBtn) retryBtn.addEventListener('click', retryUploadFiles);
     }
 
     // Mount Cloudflare Turnstile when slot is present (Step 19 or Step 18 Dec Shortcut)
