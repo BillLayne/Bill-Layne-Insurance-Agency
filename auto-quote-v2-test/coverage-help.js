@@ -7,9 +7,9 @@
 
   var HELP = {
     coverage_type: {
-      title: 'State minimum or full coverage?',
-      body: 'State minimum is liability only. It may pay for injuries and damage you cause to other people. It does not pay to fix your own car. Full coverage adds comprehensive and collision, which may pay to repair or replace your own car.',
-      example: 'You slide off the road and hit a fence. Liability may pay for the fence. Only full coverage may pay to repair your car.'
+      title: 'Liability only, or comp and collision?',
+      body: 'State minimum is liability only. It may pay for injuries and damage you cause to other people. It does not pay to fix your own car. Comprehensive and collision, often called full coverage, may pay to repair or replace your own car. Extras such as rental car, towing and medical payments are separate choices.',
+      example: 'You slide off the road and hit a fence. Liability may pay for the fence. Only collision coverage may pay to repair your car.'
     },
     liability_limits: {
       title: 'What the three numbers mean',
@@ -24,7 +24,7 @@
     comprehensive: {
       title: 'Comprehensive',
       body: 'May pay to fix or replace your car when the damage is not from a crash with another vehicle: theft, hail, a falling tree, fire, flood, broken glass, or hitting a deer.',
-      example: 'A deer runs out on US-21 and damages your front end. You pay your deductible and the policy may pay the rest of the repair.'
+      example: 'A deer runs out on the highway and damages your front end. You pay your deductible and the policy may pay the rest of the repair.'
     },
     collision: {
       title: 'Collision',

@@ -213,7 +213,7 @@
     { val: '250/500/250', label: '250/500/250', badge: 'Best Protection' },
     { val: 'HELP ME DECIDE — customer wants coverage guidance', label: 'Not sure, help me decide', badge: '' }
   ];
-  const COMP_DED_OPTS = ['$100', '$250', '$500', '$1,000', 'Not sure'];
+  const COMP_DED_OPTS = ['$0', '$100', '$250', '$500', '$1,000', 'Not sure'];
   const COLL_DED_OPTS = ['$250', '$500', '$1,000', 'Not sure'];
 
   const STORAGE_KEY = 'bli_auto_v2_test_session';
@@ -274,13 +274,15 @@
     rental_reimbursement: false,
     roadside_assistance: false,
     medical_payments: false,
+    medical_payments_amount: '',
     street_address: '',
     city: '',
     state: 'NC',
     zip_code: params.get('zip') && /^\d{5}$/.test(params.get('zip')) ? params.get('zip') : '',
     has_other_drivers: '',
     spouse_prompted: false,    // true once a married primary driver has been given a spouse card (never re-added after Remove)
-    od_open: -1,               // which additional driver's details are open (-1 = none; the rest show as a short list)
+    od_open: -1,
+    od_stage: 'details',       // 'details' = the driver card, 'record' = that driver's own driving record screen               // which additional driver's details are open (-1 = none; the rest show as a short list)
     other_drivers: [],
     additional_notes: '',
     contact_method: '',
@@ -505,7 +507,28 @@
   // ─── PER-VEHICLE COVERAGE (2+ vehicles) ───
   // Liability limits and medical payments are policy-wide. Coverage type, deductibles, rental and towing can differ per vehicle.
   const COV_LIAB = 'Liability only';
-  const COV_FULL = 'Full coverage';
+  const COV_FULL = 'Full coverage';      // stored value; customers see covLabel()
+  const COV_FULL_LABEL = 'Comp & Collision';
+  const COV_FULL_SUB = 'Liability included. Often called full coverage.';
+  const covLabel = o => (o === COV_FULL ? COV_FULL_LABEL : (o || ''));
+  const MEDPAY_AMOUNTS = ['$1,000', '$2,000', '$3,000', '$4,000', '$5,000', 'Not sure'];
+  function medPayText() {
+    if (!state.medical_payments) return '';
+    return `Medical payments${state.medical_payments_amount ? ` (${state.medical_payments_amount})` : ''}`;
+  }
+  function medPayAmountsHtml() {
+    if (!state.medical_payments) return '';
+    return `
+      <div class="v2-medpay">
+        <div class="v2-medpay-title">Medical payments amount</div>
+        <div class="v2-medpay-grid" role="radiogroup" aria-label="Medical payments amount">
+          ${MEDPAY_AMOUNTS.map(a => `
+            <button type="button" class="v2-opt v2-opt-sm ${state.medical_payments_amount === a ? 'is-selected' : ''}" role="radio" aria-checked="${state.medical_payments_amount === a ? 'true' : 'false'}" data-medpay-amt="${a}">
+              <span>${a}</span>
+            </button>`).join('')}
+        </div>
+      </div>`;
+  }
   const COV_UNSURE = 'Not sure, advise me';
   const HELP_LIMITS = 'HELP ME DECIDE — customer wants coverage guidance';
   function vehLabel(v, i) { return [v.year, v.make, v.model].filter(Boolean).join(' ') || `Vehicle ${i + 1}`; }
@@ -545,7 +568,7 @@
     const bits = [`comprehensive ${c.comp || 'Not sure'}`, `collision ${c.coll || 'Not sure'}`];
     if (c.rental) bits.push('rental car');
     if (c.roadside) bits.push('towing and roadside');
-    return `Full coverage, ${bits.join(', ')}`;
+    return `Comp & collision (full coverage), ${bits.join(', ')}`;
   }
   function perVehicleLines() {
     return state.vehicles.map((v, i) => `Vehicle ${i + 1} (${vehLabel(v, i)}): ${vehCovText(v)}`);
@@ -557,7 +580,7 @@
     const c = vehCov(v);
     if (!c.choice) return '';
     if (c.choice !== COV_FULL) return c.choice;
-    return `Full coverage \u00b7 ${c.comp || '?'} / ${c.coll || '?'}`;
+    return `${COV_FULL_LABEL} \u00b7 ${c.comp || '?'} / ${c.coll || '?'}`;
   }
   // Shared builders for the radio-style amounts and the checkbox rows.
   function covOptGrid(kind, idx, list, current, label) {
@@ -655,6 +678,7 @@
         comprehensive: false,
         uninsured_motorist: false,
         medical_payments: false,
+    medical_payments_amount: '',
         rental_reimbursement: false,
         roadside_assistance: false,
         comp_deductible: '',
@@ -725,9 +749,10 @@
       state.additional_notes,
       (!state.coverage_expiration && state.renewal_window) ? `Renewal: ${state.renewal_window}` : '',
       state.homeowner ? `Homeowner: ${state.homeowner === 'yes' ? 'Yes' : 'No'}` : '',
+      (state.medical_payments && state.medical_payments_amount) ? `Medical payments amount: ${state.medical_payments_amount}` : '',
       (state.previous_claims || state.violations) ? `DRIVING RECORD BY DRIVER | Driver 1 (${primaryName || 'Primary driver'}): ${recordText(state.previous_claims, state.violations)}` : '',
       ...(state.has_other_drivers === 'yes' ? state.other_drivers.filter(d => d && (d.name || d.claims || d.violations)).map((d, i) => `Driver ${i + 2} (${d.name || 'Unnamed'}): ${recordText(d.claims, d.violations)}`) : []),
-      (!pv && state.coverage_choice) ? `Coverage preference: ${state.coverage_choice}${sameForAll}` : '',
+      (!pv && state.coverage_choice) ? `Coverage preference: ${state.coverage_choice === COV_FULL ? 'Comp & collision (full coverage)' : state.coverage_choice}${sameForAll}` : '',
       (!pv && fullCov) ? `Deductibles: comprehensive ${state.comp_deductible || 'Not sure'}, collision ${state.collision_deductible || 'Not sure'}` : '',
       pv ? 'COVERAGE DIFFERS BY VEHICLE' : '',
       ...(pv ? perVehicleLines() : []),
@@ -872,10 +897,10 @@
       if (state.comp_deductible) lines.push(`Comprehensive Deductible: ${state.comp_deductible}`);
       if (state.collision_deductible) lines.push(`Collision Deductible: ${state.collision_deductible}`);
     }
-    const extras = perVehicle() ? [state.medical_payments ? 'Medical payments' : ''].filter(Boolean) : [
+    const extras = perVehicle() ? [medPayText()].filter(Boolean) : [
       state.rental_reimbursement ? 'Rental car (loss of use)' : '',
       state.roadside_assistance ? 'Towing and roadside' : '',
-      state.medical_payments ? 'Medical payments' : ''
+      medPayText()
     ].filter(Boolean);
     if (extras.length) lines.push(`Optional Extras: ${extras.join(', ')}`);
 
@@ -2229,7 +2254,7 @@
         <div class="v2-grid-3">
           ${opts.map(o => `
             <button type="button" class="v2-tile ${state.coverage_choice === o.label ? 'is-selected' : ''}" aria-pressed="${state.coverage_choice === o.label ? 'true' : 'false'}" data-cov="${escapeHtml(o.label)}">
-              ${o.icon}<span>${escapeHtml(o.label)}</span>
+              ${o.icon}<span>${escapeHtml(covLabel(o.label))}${o.label === COV_FULL ? `<small class="v2-tile-sub">(full coverage)</small>` : ''}</span>
             </button>
           `).join('')}
         </div>`;
@@ -2247,7 +2272,7 @@
               <div class="v2-opt-grid v2-opt-grid-stack" role="radiogroup" aria-label="Type of coverage for ${escapeHtml(name)}">
                 ${[COV_LIAB, COV_FULL, COV_UNSURE].map(o => `
                   <button type="button" class="v2-opt ${c.choice === o ? 'is-selected' : ''}" role="radio" aria-checked="${c.choice === o ? 'true' : 'false'}" data-vcov="${escapeHtml(o)}" data-vidx="${i}">
-                    <span class="v2-opt-dot" aria-hidden="true"></span><span>${escapeHtml(o)}</span>
+                    <span class="v2-opt-dot" aria-hidden="true"></span><span>${escapeHtml(covLabel(o))}${o === COV_FULL ? `<small class="v2-opt-sub">${COV_FULL_SUB}</small>` : ''}</span>
                   </button>
                 `).join('')}
               </div>
@@ -2304,7 +2329,7 @@
       body = `
         <h1 class="v2-heading">${pvMode ? 'Choose coverage for each vehicle' : (multi ? 'What coverage do you want on your vehicles?' : 'What type of coverage do you want?')}</h1>
         <p class="v2-sub">${pvMode ? 'Tap a vehicle to set its coverage.' : (multi ? 'Each vehicle can have its own coverage.' : 'Choose the option that fits best. Our team will walk through details with you.')}</p>
-        ${helpLink('coverage_type', pvMode ? 'Liability only or full coverage?' : 'What is the difference?')}
+        ${helpLink('coverage_type', pvMode ? 'Liability only or comp & collision?' : 'What is the difference?')}
         ${pvMode ? '' : scopeTiles}
         ${!multi || state.coverage_scope === 'same' ? sameTiles : ''}
         ${multi && state.coverage_scope === 'different' ? perVehCards : ''}
@@ -2333,6 +2358,7 @@
               <div class="v2-card-title">Extras for the whole policy</div>
               <div class="v2-check-list">
                 ${covCheckRow('medical_payments', 'Medical payments', !!state.medical_payments, -1, 'medical_payments')}
+                ${medPayAmountsHtml()}
               </div>
             </div>
           </div>
@@ -2413,6 +2439,7 @@
           <div class="v2-extras-head"><div class="v2-card-title">For the whole policy</div><p class="v2-card-desc">Applies to every vehicle.</p></div>
           <div class="v2-check-list v2-check-list-boxed">
             ${checkRow('medical_payments', 'Medical payments', !!state.medical_payments, -1, 'medical_payments')}
+            ${medPayAmountsHtml()}
           </div>`;
       } else {
         cards = dedCard(isMultiCar() ? (state.vehicles.filter(v => v && v.make).length === 2 ? 'Both vehicles' : 'All vehicles') : '', -1, state.comp_deductible, state.collision_deductible, '');
@@ -2422,6 +2449,7 @@
             ${checkRow('rental_reimbursement', 'Rental car (loss of use)', !!state.rental_reimbursement, -1, 'rental_reimbursement')}
             ${checkRow('roadside_assistance', 'Towing and roadside', !!state.roadside_assistance, -1, 'roadside_assistance')}
             ${checkRow('medical_payments', 'Medical payments', !!state.medical_payments, -1, 'medical_payments')}
+            ${medPayAmountsHtml()}
           </div>`;
       }
       body = `
@@ -2480,6 +2508,7 @@
           state.has_other_drivers = 'yes';
           state.other_drivers.unshift(Object.assign(emptyDriver(), { marital: 'married', spouse: true }));
           state.od_open = 0;
+          state.od_stage = 'details';
         }
         saveSessionState();
       }
@@ -2526,27 +2555,33 @@
               `).join('')}
             </div>
           </div>
-          <div class="v2-field" style="margin-top:16px">
-            <label>Any accidents or claims in the past 5 years?</label>
-            <div class="v2-grid-2" style="margin-bottom:0;grid-template-columns:repeat(2,minmax(0,1fr))">
-              ${['yes', 'no'].map(val => `
-                <button type="button" class="v2-tile compact ${d.claims === val ? 'is-selected' : ''}" aria-pressed="${d.claims === val ? 'true' : 'false'}" data-od-record="claims" data-od-val="${val}" data-od-idx="${i}">${val === 'yes' ? 'Yes' : 'No'}</button>
-              `).join('')}
-            </div>
-          </div>
-          <div class="v2-field" style="margin-bottom:0">
-            <label>Any tickets or violations in the past 3 years?</label>
-            <div class="v2-grid-2" style="margin-bottom:0;grid-template-columns:repeat(2,minmax(0,1fr))">
-              ${['yes', 'no'].map(val => `
-                <button type="button" class="v2-tile compact ${d.violations === val ? 'is-selected' : ''}" aria-pressed="${d.violations === val ? 'true' : 'false'}" data-od-record="violations" data-od-val="${val}" data-od-idx="${i}">${val === 'yes' ? 'Yes' : 'No'}</button>
-              `).join('')}
-            </div>
-          </div>
-          <button type="button" class="v2-btn-gold v2-od-save" id="v2-od-save" data-od-save="${i}">Save driver &rarr;</button>
+          <button type="button" class="v2-btn-gold v2-od-save" id="v2-od-next" data-od-next="${i}">Next: driving record &rarr;</button>
         </div>
       `).join('');
 
-      body = `
+      const odCur = odOpen !== -1 ? state.other_drivers[odOpen] : null;
+      const recordStage = !!(showList && odCur && state.od_stage === 'record');
+      const recTiles = (key, cur) => ['yes', 'no'].map(val => `
+            <button type="button" class="v2-tile ${cur === val ? 'is-selected' : ''}" aria-pressed="${cur === val ? 'true' : 'false'}" data-od-record="${key}" data-od-val="${val}" data-od-idx="${odOpen}">
+              ${iconHtml(val === 'yes' ? 'recordYesAlert' : 'recordNoCheck')}<span>${val === 'yes' ? 'Yes' : 'No'}</span>
+            </button>`).join('');
+      const recordHtml = recordStage ? `
+        <h1 class="v2-heading">Driving record for ${escapeHtml(odCur.name || 'this driver')}</h1>
+        <p class="v2-sub">Just this driver.</p>
+        <div class="v2-group-block">
+          <div class="v2-group-title">Any accidents or claims in the past 5 years?</div>
+          <div class="v2-grid-2" style="margin-bottom:0">${recTiles('claims', odCur.claims)}</div>
+        </div>
+        <div class="v2-group-block">
+          <div class="v2-group-title">Any tickets or violations in the past 3 years?</div>
+          <div class="v2-grid-2" style="margin-bottom:0">${recTiles('violations', odCur.violations)}</div>
+        </div>
+        <div id="v2-step-err" class="v2-error" role="alert" hidden></div>
+        <div class="v2-actions-stack">
+          ${odCur.claims && odCur.violations ? `<button type="button" class="v2-btn-gold" id="v2-od-save" data-od-save="${odOpen}">Save driver &rarr;</button>` : ''}
+          <button type="button" class="v2-btn-outline" style="width:100%" id="v2-od-back-details">&larr; Edit ${escapeHtml(odCur.name || 'this driver')}&rsquo;s details</button>
+        </div>` : '';
+      body = recordStage ? recordHtml : `
         ${!showList ? `
         <h1 class="v2-heading">How many drivers are in your household?</h1>
         <p class="v2-sub">Count yourself and every licensed driver living at your address: spouses, relatives and teen drivers.</p>
@@ -2663,7 +2698,7 @@
       const extrasPicked = [
         state.rental_reimbursement ? 'Rental car (loss of use)' : '',
         state.roadside_assistance ? 'Towing and roadside' : '',
-        state.medical_payments ? 'Medical payments' : ''
+        medPayText()
       ].filter(Boolean);
 
       const rows = [
@@ -2684,10 +2719,10 @@
         { label: 'Primary Driver', val: `${state.driver_1_name || `${state.firstname} ${state.lastname}`.trim()} · DOB: ${state.driver_1_dob || 'N/A'} · ${capitalize(state.driver_1_marital)} · ${capitalize(state.driver_1_gender)}`, edit: 'step_12' },
         perVehicle()
           ? { label: 'Coverage By Vehicle', val: state.vehicles.map((v, i) => `${i + 1}. ${escapeHtml(vehLabel(v, i))}: <strong>${escapeHtml(vehCovText(v))}</strong>`).join('<br>'), edit: 'step_13', rawHtml: true }
-          : { label: 'Coverage Type', val: (state.coverage_choice || 'Not selected') + (isMultiCar() && state.coverage_choice ? ' (same on every vehicle)' : ''), edit: 'step_13' }
+          : { label: 'Coverage Type', val: (covLabel(state.coverage_choice) || 'Not selected') + (isMultiCar() && state.coverage_choice ? ' (same on every vehicle)' : ''), edit: 'step_13' }
       );
       if (perVehicle()) {
-        if (needsLimits()) rows.push({ label: 'Whole Policy', val: `Liability limits: ${state.liability_limits || 'Not selected'} · Medical payments: ${state.medical_payments ? 'Yes' : 'No'}`, edit: 'step_14' });
+        if (needsLimits()) rows.push({ label: 'Whole Policy', val: `Liability limits: ${state.liability_limits || 'Not selected'} · Medical payments: ${state.medical_payments ? (state.medical_payments_amount || 'Yes') : 'No'}`, edit: 'step_14' });
       } else if (state.coverage_choice === 'Full coverage') {
         rows.push(
           { label: 'Liability Limits', val: state.liability_limits || 'Not selected', edit: 'step_14' },
@@ -3328,6 +3363,15 @@
         window.scrollTo(0, y);
       });
     });
+    document.querySelectorAll('[data-medpay-amt]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.medical_payments_amount = btn.dataset.medpayAmt;
+        saveSessionState();
+        const y = window.scrollY;
+        render();
+        window.scrollTo(0, y);
+      });
+    });
     document.querySelectorAll('[data-extra-key]').forEach(btn => {
       btn.addEventListener('click', () => {
         const k = btn.dataset.extraKey, idx = Number(btn.dataset.extraIdx);
@@ -3336,6 +3380,7 @@
           c[k] = !c[k];
         } else {
           state[k] = !state[k];
+          if (k === 'medical_payments' && !state[k]) state.medical_payments_amount = '';
         }
         saveSessionState();
         const y = window.scrollY;
@@ -3391,7 +3436,7 @@
     const odNo = document.getElementById('v2-od-no');
     if (odYes) odYes.addEventListener('click', () => {
       state.has_other_drivers = 'yes';
-      if (state.other_drivers.length === 0) { state.other_drivers.push(emptyDriver()); state.od_open = 0; }
+      if (state.other_drivers.length === 0) { state.other_drivers.push(emptyDriver()); state.od_open = 0; state.od_stage = 'details'; }
       saveSessionState();
       render();
     });
@@ -3407,9 +3452,32 @@
       btn.addEventListener('click', () => {
         syncOtherDriversInputs();
         state.od_open = Number(btn.dataset.odEdit);
+        state.od_stage = 'details';
         saveSessionState();
         render();
       });
+    });
+    const odNext = document.getElementById('v2-od-next');
+    if (odNext) odNext.addEventListener('click', () => {
+      syncOtherDriversInputs();
+      const d = state.other_drivers[Number(odNext.dataset.odNext)];
+      if (!d || !(d.name && d.dob && d.marital && d.gender)) {
+        const err = document.getElementById('v2-step-err');
+        if (err) { err.textContent = 'Please add this driver\u2019s full name, date of birth, marital status and gender.'; err.hidden = false; err.scrollIntoView({ block: 'center' }); }
+        return;
+      }
+      state.od_stage = 'record';
+      saveSessionState();
+      animateNextRender = true;
+      render();
+      window.scrollTo(0, 0);
+    });
+    const odBackDetails = document.getElementById('v2-od-back-details');
+    if (odBackDetails) odBackDetails.addEventListener('click', () => {
+      state.od_stage = 'details';
+      saveSessionState();
+      render();
+      window.scrollTo(0, 0);
     });
     const odSave = document.getElementById('v2-od-save');
     if (odSave) odSave.addEventListener('click', () => {
@@ -3421,8 +3489,10 @@
         return;
       }
       state.od_open = -1;
+      state.od_stage = 'details';
       saveSessionState();
       render();
+      window.scrollTo(0, 0);
     });
     if (odNo) odNo.addEventListener('click', () => {
       tapAndAdvance(odNo, () => {
@@ -3479,6 +3549,7 @@
       syncOtherDriversInputs();
       state.other_drivers.push(emptyDriver());
       state.od_open = state.other_drivers.length - 1;
+      state.od_stage = 'details';
       saveSessionState();
       render();
     });
@@ -3493,7 +3564,7 @@
         syncOtherDriversInputs();
         const ri = Number(btn.dataset.remDriver);
         state.other_drivers.splice(ri, 1);
-        if (state.od_open === ri) state.od_open = -1;
+        if (state.od_open === ri) { state.od_open = -1; state.od_stage = 'details'; }
         else if (state.od_open > ri) state.od_open -= 1;
         if (state.other_drivers.length === 0) state.has_other_drivers = '';
         saveSessionState();
