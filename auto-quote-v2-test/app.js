@@ -292,6 +292,7 @@
   let currentStepId = 'step_1';
   let historyStack = ['step_1'];
   let editingFromReview = false;
+  let editReturnTo = null;    // set when a screen sends the customer to edit an earlier answer and should get them back
   let step11Completed = false;
   let partialLeadStubSent = false;
   let finalSubmitted = false;
@@ -1187,6 +1188,11 @@
   });
 
   function advanceToNext() {
+    if (editReturnTo) {
+      const t = editReturnTo;
+      editReturnTo = null;
+      if (t !== currentStepId && getSequence().includes(t)) { historyStack.push(t); enterStep(t); return; }
+    }
     if (editingFromReview && currentStepId !== 'step_19') {
       if (currentStepId === 'step_13' && needsLimits() && !state.liability_limits) {
         historyStack.push('step_14');
@@ -2510,7 +2516,15 @@
         </div>
         ${showList ? `
           <div class="v2-col">
-            <div class="v2-od-list">${cards}</div>
+            <div class="v2-od-list">
+              <div class="v2-vehsheet-row v2-od-row">
+                <span class="v2-vehsheet-name">${escapeHtml(state.driver_1_name || `${state.firstname} ${state.lastname}`.trim() || 'You')}<small class="v2-od-status"><b class="v2-od-tag">Primary driver</b>${state.driver_1_marital ? ` &middot; ${escapeHtml(capitalize(state.driver_1_marital))}` : ''}${state.driver_1_gender ? ` &middot; ${escapeHtml(capitalize(state.driver_1_gender))}` : ''}</small></span>
+                <span class="v2-vehsheet-actions">
+                  <button type="button" class="v2-vehsheet-btn" id="v2-od-primary-edit" aria-label="Edit the primary driver">Edit</button>
+                </span>
+              </div>
+              ${cards}
+            </div>
             <div id="v2-step-err" class="v2-error" role="alert" hidden></div>
             ${odOpen === -1 ? `<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
               <button type="button" class="v2-btn-outline" id="v2-add-driver">+ Add another driver</button>
@@ -3326,6 +3340,14 @@
       if (state.other_drivers.length === 0) { state.other_drivers.push(emptyDriver()); state.od_open = 0; }
       saveSessionState();
       render();
+    });
+    const odPrimaryEdit = document.getElementById('v2-od-primary-edit');
+    if (odPrimaryEdit) odPrimaryEdit.addEventListener('click', () => {
+      syncOtherDriversInputs();
+      saveSessionState();
+      editReturnTo = 'step_17';
+      historyStack.push('step_12');
+      enterStep('step_12');
     });
     document.querySelectorAll('[data-od-edit]').forEach(btn => {
       btn.addEventListener('click', () => {
