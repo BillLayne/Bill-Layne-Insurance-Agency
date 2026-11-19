@@ -1,6 +1,11 @@
 (function () {
   'use strict';
 
+  // One script, two pages: the live form at /auto-quote sets window.BLI_AQ_MODE = 'live';
+  // the private test page leaves it unset and keeps every test marking.
+  const LIVE = window.BLI_AQ_MODE === 'live';
+  const ASSET_BASE = (function () { try { return new URL('.', document.currentScript.src).href; } catch (_) { return './'; } })();
+
   // ─── FALLBACK DATA (mirrors logos.json & makes.json so file:// double-click works with zero fetch errors) ───
   const FALLBACK_LOGOS = {
     representedAutoCarriers: [
@@ -216,13 +221,20 @@
   const COMP_DED_OPTS = ['$0', '$100', '$250', '$500', '$1,000', 'Not sure'];
   const COLL_DED_OPTS = ['$250', '$500', '$1,000', 'Not sure'];
 
-  const STORAGE_KEY = 'bli_auto_v2_test_session';
-  const SAVED_7DAY_KEY = 'bli_auto_v2_test_saved_7d';
+  const STORAGE_KEY = LIVE ? 'bli_auto_quote_session' : 'bli_auto_v2_test_session';
+  const SAVED_7DAY_KEY = LIVE ? 'bli_auto_quote_saved_7d' : 'bli_auto_v2_test_saved_7d';
   const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
   const TURNSTILE_SITE_KEY = '0x4AAAAAADs4upS36xby4dVi';
-  const TEST_PREFIX = '[TEST AUTO V2]';
+  const TEST_PREFIX = LIVE ? '' : '[TEST AUTO V2]';
   const params = new URLSearchParams(window.location.search);
-  const ctaSource = 'auto_v2_test';
+  const srcParam = (params.get('src') || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 60);
+  const ctaSource = LIVE ? (srcParam || 'direct') : 'auto_v2_test';
+  let formStartSent = false;
+  function fireFormStart() {       // same event the previous form sent on first input
+    if (!LIVE || formStartSent) return;
+    formStartSent = true;
+    if (typeof window.gtag === 'function') window.gtag('event', 'form_start', { form_type: 'auto_insurance', cta_source: ctaSource });
+  }
   const forceEmptyLogos = params.get('test_empty_logos') === '1';
 
   let turnstileToken = '';
@@ -434,7 +446,12 @@
   }
 
   function trackEvent(eventName, detail) {
-    const payload = Object.assign({
+    const payload = Object.assign(LIVE ? {
+      cta_source: ctaSource,
+      form_name: 'auto_quote',
+      form_type: 'auto_insurance',
+      step_id: currentStepId
+    } : {
       traffic_type: 'internal',
       cta_source: 'auto_v2_test',
       form_name: 'auto_quote_v2_test',
@@ -660,7 +677,7 @@
         form_type: 'auto_insurance',
         confirmation_number: confNum,
         turnstile_token: turnstileToken || '',
-        cta_source: 'auto_v2_test',
+        cta_source: ctaSource,
         firstname: `${TEST_PREFIX} ${state.firstname}`.trim(),
         lastname: state.lastname,
         email: state.email,
@@ -749,6 +766,7 @@
       state.additional_notes,
       (!state.coverage_expiration && state.renewal_window) ? `Renewal: ${state.renewal_window}` : '',
       state.homeowner ? `Homeowner: ${state.homeowner === 'yes' ? 'Yes' : 'No'}` : '',
+      (LIVE && /^travelers_/.test(srcParam)) ? `Quote source: ${srcParam}` : '',
       (state.medical_payments && state.medical_payments_amount) ? `Medical payments amount: ${state.medical_payments_amount}` : '',
       (state.previous_claims || state.violations) ? `DRIVING RECORD BY DRIVER | Driver 1 (${primaryName || 'Primary driver'}): ${recordText(state.previous_claims, state.violations)}` : '',
       ...(state.has_other_drivers === 'yes' ? state.other_drivers.filter(d => d && (d.name || d.claims || d.violations)).map((d, i) => `Driver ${i + 2} (${d.name || 'Unnamed'}): ${recordText(d.claims, d.violations)}`) : []),
@@ -764,7 +782,7 @@
       form_type: 'auto_insurance',
       confirmation_number: confNum,
       turnstile_token: turnstileToken || '',
-      cta_source: 'auto_v2_test',
+      cta_source: ctaSource,
       firstname: `${TEST_PREFIX} ${state.firstname}`.trim(),
       lastname: state.lastname,
       email: state.email,
@@ -841,7 +859,7 @@
   function buildPartialLeadLines(stoppedAt) {
     const fullName = `${state.firstname} ${state.lastname}`.trim();
     const lines = [
-      `${TEST_PREFIX} Partial Auto Quote`,
+      `${TEST_PREFIX} Partial Auto Quote`.trim(),
       `Stopped At: ${stoppedAt}`,
       `Name: ${fullName}`,
       `Phone: ${state.phone}`,
@@ -964,14 +982,14 @@
         keepalive: true,
         body: JSON.stringify({
           formType: 'contact',
-          name: `${TEST_PREFIX} [PARTIAL AUTO QUOTE - Stopped at: ${stoppedAt}] ${fullName}`.slice(0, 150),
+          name: `${TEST_PREFIX} [PARTIAL AUTO QUOTE - Stopped at: ${stoppedAt}] ${fullName}`.trim().slice(0, 150),
           phone: String(state.phone).slice(0, 50),
           email: email.slice(0, 254),
           message: summary.slice(0, 4900)
         })
       }).catch(() => {});
     } catch (_) {}
-    trackEvent('auto_v2_test_partial', { trigger_reason: triggerReason, stopped_at: stoppedAt, vehicle_count: state.vehicles.length });
+    trackEvent(LIVE ? 'partial_lead_saved' : 'auto_v2_test_partial', { trigger_reason: triggerReason, stopped_at: stoppedAt, vehicle_count: state.vehicles.length });
   }
 
   document.addEventListener('visibilitychange', () => {
@@ -1020,7 +1038,7 @@
         email: String(state.email || '').slice(0, 254),
         currentCarrier: String(state.current_carrier || '').slice(0, 150),
         renewalDate: String(state.coverage_expiration || state.renewal_window || '').slice(0, 80),
-        notes: `${TEST_PREFIX} Ref: ${lastConfirmationNumber} | ${notesText || ''}`.slice(0, 6000),
+        notes: `${TEST_PREFIX} Ref: ${lastConfirmationNumber} | ${notesText || ''}`.trim().slice(0, 6000),
         files: encodedFiles
       })
     });
@@ -1076,9 +1094,18 @@
       lastConfirmationNumber = qJson.confirmationNumber;
       lastUploadNotes = fullPayload.additional_notes;
 
-      window.__BLI_LAST_PAYLOAD__ = Object.assign({}, fullPayload, { confirmation_number: lastConfirmationNumber });
-      trackEvent('auto_v2_test_submit', { confirmation_number: lastConfirmationNumber, used_dec_shortcut: state.usedDecShortcut });
-      trackEvent('auto_v2_test_lead', { confirmation_number: lastConfirmationNumber, used_dec_shortcut: state.usedDecShortcut });
+      if (LIVE) {
+        // Same two events, with the same details, that the previous form sent on a confirmed submission.
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'form_submit', { form_type: 'auto_insurance', confirmation_number: lastConfirmationNumber });
+          window.gtag('event', 'generate_lead', { lead_type: 'quote', service_line: 'auto', form_name: 'auto_quote', method: 'backend_acknowledged' });
+        }
+        try { sessionStorage.setItem('lastQuoteConfirmation', lastConfirmationNumber); } catch (_) {}
+      } else {
+        window.__BLI_LAST_PAYLOAD__ = Object.assign({}, fullPayload, { confirmation_number: lastConfirmationNumber });
+        trackEvent('auto_v2_test_submit', { confirmation_number: lastConfirmationNumber, used_dec_shortcut: state.usedDecShortcut });
+        trackEvent('auto_v2_test_lead', { confirmation_number: lastConfirmationNumber, used_dec_shortcut: state.usedDecShortcut });
+      }
       clearSavedProgress();
 
       // 2. If declarations pages or registration photos were attached, send them via /api/policy-upload.
@@ -2922,6 +2949,7 @@
           if (n === 1) state.vehicles = [state.vehicles[0] || emptyVeh()];
           else if (state.vehicles.length < 2) state.vehicles.push(emptyVeh());
           trackEvent('auto_v2_step_complete', { vehicles_selected: n });
+          fireFormStart();
         });
       });
     });
@@ -3711,16 +3739,22 @@
     });
   }
 
+  // The live page opens the site menu (universal-menu.js); the test page keeps its small help box.
   const menuDialog = document.getElementById('v2-menu-dialog');
-  document.getElementById('v2-menu-open').addEventListener('click', () => menuDialog.showModal());
-  document.getElementById('v2-menu-close').addEventListener('click', () => menuDialog.close());
+  if (menuDialog) {
+    const mo = document.getElementById('v2-menu-open'), mc = document.getElementById('v2-menu-close');
+    if (mo) mo.addEventListener('click', () => menuDialog.showModal());
+    if (mc) mc.addEventListener('click', () => menuDialog.close());
+  }
 
   async function init() {
+    // A ZIP typed on the homepage arrives as ?zip=27101 and fills the address screen.
+    try { const z = params.get('zip'); if (z && /^[0-9]{5}$/.test(z) && !state.zip_code) state.zip_code = z; } catch (_) {}
     if (window.location.protocol !== 'file:') {
       try {
         const [lr, mr] = await Promise.all([
-          fetch('./logos.json', { cache: 'no-store' }),
-          fetch('./makes.json', { cache: 'no-store' })
+          fetch(ASSET_BASE + 'logos.json', { cache: 'no-store' }),
+          fetch(ASSET_BASE + 'makes.json', { cache: 'no-store' })
         ]);
         if (lr.ok) logoConfig = await lr.json();
         if (mr.ok) makesConfig = await mr.json();
