@@ -50,8 +50,13 @@
     : `<button type="button" class="v2-tile compact ${current === v ? 'is-selected' : ''}" aria-pressed="${current === v}" data-ll="rental_use" data-val="${v}" style="flex-direction:column;gap:2px;padding:8px 8px 9px${v === 'Vacant or being renovated' ? ';grid-column:1/-1' : ''}">
       <svg viewBox="0 0 96 48" width="96" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;color:#05203d">${LL_USE_ART[v]}<path d="M4 40H92" stroke="#8696ab" stroke-width="1.6"/></svg>
       <span>${v}</span></button>`;
-  const llTypeTile = ([v, t], current) => !LL_ART[v]   // no drawing: a slim full-width row
-    ? `<button type="button" class="v2-tile compact ${current === v ? 'is-selected' : ''}" aria-pressed="${current === v}" data-ptype="${v}" style="grid-column:1/-1;min-height:48px"><span>${esc(t)}</span></button>`
+  // The same drawings on the home form's own "What kind of home is it?" tiles, plus rental (house and key) and farm (barn and silo).
+  // Shown on the home test page only until Bill approves.
+  const HOME_ART_ON = !LIVE;
+  LL_ART.rental_property = LL_USE_ART['Long-term rental'];
+  LL_ART.farm = '<path d="M24 38V25l5-8 9-4 9 4 5 8v13"/><path d="M24 25h28"/><path d="M33 29h10v9H33zM33 29l10 9M43 29l-10 9"/><path d="M60 38V19a5.500 5.500 0 0111 0v19M60 25h11M60 31h11"/>';
+  const llTypeTile = ([v, t], current, half) => !LL_ART[v]   // no drawing: a slim full-width row (or a plain half tile when it sits beside a drawn one)
+    ? `<button type="button" class="v2-tile compact ${current === v ? 'is-selected' : ''}" aria-pressed="${current === v}" data-ptype="${v}" style="${half ? '' : 'grid-column:1/-1;min-height:48px'}"><span>${esc(t)}</span></button>`
     : `<button type="button" class="v2-tile compact ${current === v ? 'is-selected' : ''}" aria-pressed="${current === v}" data-ptype="${v}" style="flex-direction:column;gap:2px;padding:8px 8px 9px">
       <svg viewBox="0 0 96 48" width="96" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;color:#05203d">${LL_ART[v]}<path d="M4 40H92" stroke="#8696ab" stroke-width="1.6"/></svg>
       <span>${esc(t)}</span></button>`;
@@ -436,8 +441,10 @@
 
       case 'ptype': return `
         <h1 class="v2-heading">What kind of home is it?</h1>
-        <p class="v2-sub">${LL ? 'Tap the one that looks like it.' : 'Choose the closest match.'}</p>
-        ${LL ? `<div class="v2-grid-2">${LL_TYPES.map(t => llTypeTile(t, s.property_type)).join('')}</div>` : tiles('ptype', PROPERTY_TYPES, s.property_type, 2, true)}`;
+        <p class="v2-sub">${LL || HOME_ART_ON ? 'Tap the one that looks like it.' : 'Choose the closest match.'}</p>
+        ${LL ? `<div class="v2-grid-2">${LL_TYPES.map(t => llTypeTile(t, s.property_type)).join('')}</div>`
+          : HOME_ART_ON ? `<div class="v2-grid-2">${PROPERTY_TYPES.map(t => llTypeTile(t, s.property_type, true)).join('')}</div>`
+          : tiles('ptype', PROPERTY_TYPES, s.property_type, 2, true)}`;
 
       case 'year': return `
         <h1 class="v2-heading">What year was the home built?</h1>
