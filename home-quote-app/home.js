@@ -5,12 +5,16 @@
   'use strict';
 
   const LIVE = window.BLI_HQ_MODE === 'live';
-  const TP = LIVE ? '' : '[TEST HOME V2] ';
-  const STORAGE_KEY = LIVE ? 'bli_home_quote_session' : 'bli_home_v2_test_session';
+  // Landlord / rental property version: the same form and county lookup with a few different questions.
+  // A page turns it on with window.BLI_HQ_VARIANT = 'landlord' before loading this file. It is sent to the office as a home request, clearly marked.
+  const LL = window.BLI_HQ_VARIANT === 'landlord';
+  const FIRST = LL ? 'rental' : 'own';
+  const TP = LIVE ? '' : (LL ? '[TEST LANDLORD V2] ' : '[TEST HOME V2] ');
+  const STORAGE_KEY = LL ? (LIVE ? 'bli_landlord_quote_session' : 'bli_landlord_v2_test_session') : (LIVE ? 'bli_home_quote_session' : 'bli_home_v2_test_session');
   const TURNSTILE_SITE_KEY = '0x4AAAAAADs4upS36xby4dVi';
   const params = new URLSearchParams(window.location.search);
   const srcParam = (params.get('src') || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 60);
-  const ctaSource = LIVE ? (srcParam || 'direct') : 'home_v2_test';
+  const ctaSource = LL ? (LIVE ? (srcParam || 'landlord_quote') : 'landlord_v2_test') : (LIVE ? (srcParam || 'direct') : 'home_v2_test');
   const IS_LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
 
   const ICON_BASE = 'https://img.billlayneinsurance.com/i/2026/11/quote-icon-';
@@ -26,6 +30,22 @@
   // ---------- Stored values are the SAME values the current home form sends ----------
   const PROPERTY_TYPES = [['single_family', 'Single-family home'], ['condo', 'Condo or townhome'], ['mobile_home', 'Mobile or manufactured home'],
     ['rental_property', 'Rental property I own'], ['farm', 'Farm'], ['other', 'Something else']];
+  const LL_RENTAL = ['Long-term rental', 'Short-term or vacation rental', 'Vacant or being renovated', 'Something else'];
+  const LL_TYPES = [['single_family', 'Single-family house'], ['condo', 'Condo or townhome'], ['duplex', 'Duplex or multi-family'], ['mobile_home', 'Mobile or manufactured home'], ['other', 'Something else']];
+  const LL_UNITS = ['1', '2', '3 or 4', '5 or more'];
+  const LL_TENANT = ['Yes, a tenant lives there', 'Not yet, between tenants'];
+  const LL_MANAGER = ['I manage it myself', 'A property manager does'];
+  // Wording swaps for the landlord version, applied to each screen as it is drawn.
+  const LL_WORDS = [['What is the address of the home?', 'What is the address of the rental property?'], ['What kind of home is it?', 'What kind of building is it?'],
+    ['What year was the home built?', 'What year was it built?'], ['About how big is the home?', 'About how big is it?'], ['What is the outside of the home made of?', 'What is the outside made of?'],
+    ['Is the home insured right now?', 'Is the property insured right now?'], ['Who insures the home now?', 'Who insures the property now?'],
+    ['Any home insurance claims in the past 5 years?', 'Any insurance claims on this property in the past 5 years?'], ['How much coverage do you want on the home?', 'How much coverage do you want on the building?'],
+    ['Does the home have a swimming pool?', 'Does the property have a swimming pool?'], ['comparing home insurance companies for you', 'comparing rental property insurance for you'],
+    ['Choose your home:', 'Choose the property:'], ['Yes, that’s my home', 'Yes, that’s the property'], ['Not my home. I’ll answer myself', 'Not the right one. I’ll answer myself'],
+    ['We can look up the home in county records', 'We can look up the property in county records'], ['Finding your home…', 'Finding the property…'], ['Find my home details', 'Find the property details'],
+    ['North Carolina home insurance is priced by the home itself and where it sits.', 'Rental property insurance is priced by the building itself and where it sits.'],
+    ['<div class="v2-review-label">Home</div>', '<div class="v2-review-label">Rental property</div>'], ['Coverage on the home', 'Coverage on the building']];
+  const llWords = html => LL_WORDS.reduce((t, [a, b]) => t.split(a).join(b), html);
   const SQFT = [['under_1000', 'Under 1,000'], ['1000_1500', '1,000 to 1,500'], ['1500_2000', '1,500 to 2,000'], ['2000_2500', '2,000 to 2,500'],
     ['2500_3000', '2,500 to 3,000'], ['3000_4000', '3,000 to 4,000'], ['over_4000', 'Over 4,000'], ['not_sure', 'Not sure']];
   const CONSTRUCTION = [['frame', 'Wood frame'], ['brick', 'Brick or stone'], ['vinyl', 'Vinyl siding'], ['other', 'Something else']];
@@ -120,8 +140,8 @@
   }
 
   function track(name, detail) {
-    const base = LIVE ? { cta_source: ctaSource, form_name: 'home_quote', form_type: 'home_insurance', step_id: stepId }
-      : { traffic_type: 'internal', cta_source: 'home_v2_test', form_name: 'home_quote_v2_test', step_id: stepId };
+    const base = LIVE ? { cta_source: ctaSource, form_name: LL ? 'landlord_quote' : 'home_quote', form_type: 'home_insurance', step_id: stepId }
+      : { traffic_type: 'internal', cta_source: ctaSource, form_name: LL ? 'landlord_quote_v2_test' : 'home_quote_v2_test', step_id: stepId };
     if (typeof window.gtag === 'function') window.gtag('event', name, Object.assign(base, detail || {}));
   }
   function fireFormStart() {
@@ -136,13 +156,15 @@
   const usedDec = () => HANDY_ON && !!state.used_dec && state.is_owner !== 'buying' && state.current_insurance === 'yes';
   function sequence() {
     if (state.is_owner === 'renter') return ['own', 'renter'];
-    const seq = ['own', 'address', 'ptype', 'year', 'sqft', 'construction', 'rooftype', 'roofage'];
+    const seq = (LL ? ['rental'] : ['own']).concat(['address', 'ptype', 'year', 'sqft', 'construction', 'rooftype', 'roofage']);
+    if (LL) { seq.push('units'); if (state.rental_use !== 'Vacant or being renovated') seq.push('tenant'); seq.push('manager'); }
     if (state.is_owner === 'buying') seq.push('closing'); else { seq.push('insured'); if (state.current_insurance === 'yes') { seq.push('carrier'); if (HANDY_ON) seq.push('handy'); if (!usedDec()) seq.push('current'); } }
     if (usedDec()) { seq.push('contact', 'notes', 'review', 'done'); return seq; }   // the declarations page answers the rest
-    seq.push('claims', 'contact', 'dwelling', 'deductible', 'extras', 'household', 'notes', 'review', 'done');
+    seq.push('claims', 'contact', 'dwelling', 'deductible'); if (!LL) seq.push('extras');   // the extras screen is about a home you live in
+    seq.push('household', 'notes', 'review', 'done');
     return seq;
   }
-  const EYEBROW = { handy: 'CURRENT COVERAGE', own: 'YOUR HOME', renter: 'RENTERS', address: 'YOUR HOME', ptype: 'YOUR HOME', year: 'YOUR HOME', sqft: 'YOUR HOME',
+  const EYEBROW = { rental: 'YOUR RENTAL', units: 'YOUR RENTAL', tenant: 'YOUR RENTAL', manager: 'YOUR RENTAL', handy: 'CURRENT COVERAGE', own: 'YOUR HOME', renter: 'RENTERS', address: 'YOUR HOME', ptype: 'YOUR HOME', year: 'YOUR HOME', sqft: 'YOUR HOME',
     construction: 'YOUR HOME', rooftype: 'THE ROOF', roofage: 'THE ROOF', closing: 'YOUR PURCHASE', insured: 'CURRENT COVERAGE', carrier: 'CURRENT COVERAGE', current: 'CURRENT COVERAGE',
     claims: 'CLAIMS', contact: 'ABOUT YOU', dwelling: 'YOUR COVERAGE', deductible: 'YOUR COVERAGE', extras: 'YOUR COVERAGE', household: 'A FEW QUICK ONES',
     notes: 'ALMOST DONE', review: 'REVIEW', done: 'QUOTE RECEIVED' };
@@ -301,6 +323,26 @@
   function screen() {
     const s = state;
     switch (stepId) {
+      case 'rental': return `
+        <h1 class="v2-heading">What kind of rental property is it?</h1>
+        <p class="v2-sub">Tap an option to start. A licensed North Carolina team compares rental property insurance for you.</p>
+        <div class="v2-grid-2">${LL_RENTAL.map(v => `<button type="button" class="v2-tile compact ${s.rental_use === v ? 'is-selected' : ''}" aria-pressed="${s.rental_use === v}" data-ll="rental_use" data-val="${v}"><span>${v}</span></button>`).join('')}</div>`;
+
+      case 'units': return `
+        <h1 class="v2-heading">How many units are in the building?</h1>
+        <p class="v2-sub">A single house is 1. A duplex is 2.</p>
+        <div class="v2-grid-2">${LL_UNITS.map(v => `<button type="button" class="v2-tile compact ${s.rental_units === v ? 'is-selected' : ''}" aria-pressed="${s.rental_units === v}" data-ll="rental_units" data-val="${v}"><span>${v}</span></button>`).join('')}</div>`;
+
+      case 'tenant': return `
+        <h1 class="v2-heading">Is it rented right now?</h1>
+        <p class="v2-sub">Insurance companies ask whether someone is living there.</p>
+        <div class="v2-grid-2" style="grid-template-columns:1fr">${LL_TENANT.map(v => `<button type="button" class="v2-tile compact ${s.rental_tenant === v ? 'is-selected' : ''}" aria-pressed="${s.rental_tenant === v}" data-ll="rental_tenant" data-val="${v}"><span>${v}</span></button>`).join('')}</div>`;
+
+      case 'manager': return `
+        <h1 class="v2-heading">Who looks after the property?</h1>
+        <p class="v2-sub">Who handles repairs and deals with the tenant.</p>
+        <div class="v2-grid-2" style="grid-template-columns:1fr">${LL_MANAGER.map(v => `<button type="button" class="v2-tile compact ${s.rental_manager === v ? 'is-selected' : ''}" aria-pressed="${s.rental_manager === v}" data-ll="rental_manager" data-val="${v}"><span>${v}</span></button>`).join('')}</div>`;
+
       case 'own': return `
         <h1 class="v2-heading">Do you own the home you want to insure?</h1>
         <p class="v2-sub">Tap an option to start. A licensed North Carolina team compares home insurance companies for you.</p>
@@ -371,7 +413,7 @@
       case 'ptype': return `
         <h1 class="v2-heading">What kind of home is it?</h1>
         <p class="v2-sub">Choose the closest match.</p>
-        ${tiles('ptype', PROPERTY_TYPES, s.property_type, 2, true)}`;
+        ${tiles('ptype', LL ? LL_TYPES : PROPERTY_TYPES, s.property_type, 2, true)}`;
 
       case 'year': return `
         <h1 class="v2-heading">What year was the home built?</h1>
@@ -536,8 +578,8 @@
       case 'review': {
         let rows = [
           ['Home', `${s.property_address}, ${s.city}, NC ${s.zip_code}${s.county ? ' · ' + s.county + ' County' : ''}`, 'address'],
-          ['Ownership', s.is_owner === 'buying' ? `Buying${s.closing_date ? ' · closing ' + s.closing_date : ''}` : 'I own it', 'own'],
-          ['Type of home', label(PROPERTY_TYPES, s.property_type) || 'Not answered', 'ptype'],
+          (LL ? ['Kind of rental', s.rental_use || 'Not answered', 'rental'] : ['Ownership', s.is_owner === 'buying' ? `Buying${s.closing_date ? ' · closing ' + s.closing_date : ''}` : 'I own it', 'own']),
+          [LL ? 'Type of building' : 'Type of home', label(LL ? LL_TYPES : PROPERTY_TYPES, s.property_type) || 'Not answered', 'ptype'],
           ['Year built', s.year_built || 'Not sure', 'year'],
           ['Size', label(SQFT, s.square_footage) ? label(SQFT, s.square_footage) + (s.square_footage === 'not_sure' ? '' : ' sq ft') : 'Not answered', 'sqft'],
           ['Outside walls', label(CONSTRUCTION, s.construction_type) || 'Not answered', 'construction'],
@@ -553,6 +595,11 @@
           ['Extras', EXTRAS.filter(([k]) => s[k]).map(x => x[1]).join(', ') || 'None', 'extras'],
           ['Quick questions', `Pool: ${cap(s.has_pool)} · Trampoline, dogs or farm animals: ${cap(s.liability_items)} · Alarm: ${cap(s.security_system)} · Auto quote too: ${cap(s.bundle_auto)}`, 'household'],
           ['Notes', s.additional_notes || 'None', 'notes']);
+        if (LL) {
+          rows = rows.filter(r => r[2] !== 'extras');
+          const at = rows.findIndex(r => r[2] === 'rooftype') + 1;
+          rows.splice(at, 0, ['Units', s.rental_units || 'Not answered', 'units'], ...(s.rental_use === 'Vacant or being renovated' ? [] : [['Rented now', s.rental_tenant || 'Not answered', 'tenant']]), ['Looked after by', s.rental_manager || 'Not answered', 'manager']);
+        }
         if (usedDec()) {
           rows = rows.filter(r => !['claims', 'dwelling', 'deductible', 'extras', 'household'].includes(r[2]));
           rows.splice(rows.length - 1, 0, ['Your policy', `Declarations page attached (${files.length} file${files.length > 1 ? 's' : ''}). Our team will take your coverage details from it.`, 'handy']);
@@ -634,6 +681,7 @@
     const s = state;
     const roofYear = /^\d{4}$/.test(s.roof_year_exact) ? s.roof_year_exact : (s.roof_age === 'Original roof' && /^\d{4}$/.test(s.year_built) ? s.year_built : '');
     const notes = [
+      LL ? `*** LANDLORD / RENTAL PROPERTY QUOTE - the customer does NOT live here *** Kind of rental: ${s.rental_use || 'not answered'} · Building: ${label(LL_TYPES, s.property_type) || 'not answered'} · Units: ${s.rental_units || 'not answered'} · Rented now: ${s.rental_use === 'Vacant or being renovated' ? 'vacant' : (s.rental_tenant || 'not answered')} · Looked after by: ${s.rental_manager || 'not answered'}` : '',
       s.additional_notes.trim(),
       s.roof_age ? `Roof age: ${s.roof_age}` : '',
       s.previous_claims === 'yes' ? `Claim details: ${s.claim_details || 'not given'}` : '',
@@ -649,8 +697,8 @@
     return {
       form_type: 'home_insurance',
       firstname: (TP + s.firstname).trim(), lastname: s.lastname, date_of_birth: s.date_of_birth, email: s.email, phone: s.phone,
-      is_owner: s.is_owner, property_address: s.property_address, city: s.city, zip_code: s.zip_code,
-      property_type: s.property_type, year_built: s.year_built, square_footage: s.square_footage, construction_type: s.construction_type,
+      is_owner: LL ? 'LANDLORD - rental property' : s.is_owner, property_address: s.property_address, city: s.city, zip_code: s.zip_code,
+      property_type: LL ? 'rental_property' + (s.property_type ? ' (' + s.property_type + ')' : '') : s.property_type, year_built: s.year_built, square_footage: s.square_footage, construction_type: s.construction_type,
       roof_type: s.roof_type, roof_year: roofYear,
       current_insurance: s.is_owner === 'buying' ? 'no' : s.current_insurance, current_carrier: s.current_carrier, coverage_expiration: s.coverage_expiration,
       current_dwelling_amount: s.current_dwelling_amount, previous_claims: s.previous_claims,
@@ -671,7 +719,7 @@
   }
   async function send() {
     if (sending) return;
-    if (decFilesLost()) { stepId = 'handy'; history = ['own', 'handy']; sendError = ''; render(true); window.scrollTo(0, 0); return; }
+    if (decFilesLost()) { stepId = 'handy'; history = [FIRST, 'handy']; sendError = ''; render(true); window.scrollTo(0, 0); return; }
     if (!turnstileToken) { sendError = 'Please wait a moment for the security check to finish, then tap Send again.'; render(); return; }
     sending = true; sendError = ''; render();
     const payload = buildPayload();
@@ -682,7 +730,7 @@
       confirmation = j.confirmationNumber; submitted = true;
       if (LIVE && typeof window.gtag === 'function') {
         window.gtag('event', 'form_submit', { form_type: 'home_insurance', confirmation_number: confirmation });
-        window.gtag('event', 'generate_lead', { lead_type: 'quote', service_line: 'home', form_name: 'home_quote', method: 'backend_acknowledged' });
+        window.gtag('event', 'generate_lead', { lead_type: 'quote', service_line: LL ? 'landlord' : 'home', form_name: LL ? 'landlord_quote' : 'home_quote', method: 'backend_acknowledged' });
       } else track('home_v2_test_submit', { confirmation_number: confirmation });
       if (files.length) {
         try {
@@ -708,12 +756,12 @@
     if (!contactDone || submitted || sendPartial.sent || !state.email) return;
     sendPartial.sent = true;
     const s = state, name = `${s.firstname} ${s.lastname}`.trim();
-    const lines = [`${TP}Partial Home Quote`.trim(), `Stopped at: ${EYEBROW[stepId] || stepId} (${stepId})`, `Name: ${name}`, `Phone: ${s.phone}`, `Email: ${s.email}`,
+    const lines = [`${TP}Partial ${LL ? 'Landlord' : 'Home'} Quote`.trim(), `Stopped at: ${EYEBROW[stepId] || stepId} (${stepId})`, `Name: ${name}`, `Phone: ${s.phone}`, `Email: ${s.email}`,
       `Home: ${s.property_address}, ${s.city}, NC ${s.zip_code}`, `Ownership: ${s.is_owner}`, s.property_type ? `Type: ${label(PROPERTY_TYPES, s.property_type)}` : '',
       s.year_built ? `Year built: ${s.year_built}` : '', s.roof_age ? `Roof age: ${s.roof_age}` : '', s.previous_claims ? `Claims (5 yrs): ${s.previous_claims}${s.claim_details ? ' - ' + s.claim_details : ''}` : ''].filter(Boolean);
     try {
       fetch('/api/homepage-submit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true, body: JSON.stringify({
-        formType: 'contact', name: `${TP}[PARTIAL HOME QUOTE - Stopped at: ${stepId}] ${name}`.trim().slice(0, 150),
+        formType: 'contact', name: `${TP}[PARTIAL ${LL ? 'LANDLORD' : 'HOME'} QUOTE - Stopped at: ${stepId}] ${name}`.trim().slice(0, 150),
         phone: String(s.phone).slice(0, 50), email: s.email.slice(0, 254), message: lines.join('\n').slice(0, 4900) }) }).catch(() => {});
       track(LIVE ? 'partial_lead_saved' : 'home_v2_test_partial', { stopped_at: stepId });
     } catch (_) {}
@@ -771,10 +819,10 @@
     const pct = stepId === 'done' ? 100 : Math.max(6, Math.round((i / (seq.length - 1)) * 100));
     const fill = document.getElementById('v2-progress-fill'), lab = document.getElementById('v2-progress-label'), bar = document.getElementById('v2-progressbar');
     if (fill) fill.style.width = pct + '%'; if (lab) lab.textContent = pct + '%'; if (bar) bar.setAttribute('aria-valuenow', String(pct));
-    const about = document.querySelector('.v2-about'); if (about) about.hidden = stepId !== 'own';
+    const about = document.querySelector('.v2-about'); if (about) about.hidden = stepId !== FIRST;
     const showBack = history.length > 1 && stepId !== 'done';
     stage.innerHTML = `<div class="${animate ? 'v2-step-enter' : ''}"><div class="v2-back-row"><button type="button" class="v2-back-link" id="v2-back" ${showBack ? '' : 'hidden'}>&larr; Back</button></div>
-      <div class="v2-eyebrow">${EYEBROW[stepId] || ''}</div>${screen()}</div>`;
+      <div class="v2-eyebrow">${LL ? (EYEBROW[stepId] || '').replace('YOUR HOME', 'YOUR RENTAL') : (EYEBROW[stepId] || '')}</div>${LL ? llWords(screen()) : screen()}</div>`;
     bind();
     mobileBar(showBack);
   }
@@ -804,6 +852,7 @@
     on('v2-back', back);
     each('[data-help]', b => b.addEventListener('click', () => openHelp(b.dataset.help)));
     each('[data-own]', b => b.addEventListener('click', () => pick(b, () => { state.is_owner = b.dataset.own; })));
+    each('[data-ll]', b => b.addEventListener('click', () => pick(b, () => { state[b.dataset.ll] = b.dataset.val; })));
     on('hq-not-renter', () => { state.is_owner = ''; back(); });
 
     // address + county record lookup
@@ -833,7 +882,7 @@
     on('hq-skip-record', () => { state.lookupUsed = false; state.lookup = null; state.fromLookup = {}; track('home_v2_step_complete', { lookup: 'declined' }); next(); });
 
     each('[data-ptype]', b => b.addEventListener('click', () => {
-      if (b.dataset.ptype === 'mobile_home') {   // mobile homes have their own form with the right questions
+      if (!LL && b.dataset.ptype === 'mobile_home') {   // mobile homes have their own form with the right questions
         b.parentElement.querySelectorAll('.v2-tile').forEach(t => t.classList.remove('is-selected')); b.classList.add('is-selected');
         state.property_type = 'mobile_home'; save();
         try { sessionStorage.setItem('bli_carry_contact', JSON.stringify({ street: state.property_address, city: state.city, zip: state.zip_code, owner: state.is_owner })); } catch (_) {}
@@ -923,7 +972,7 @@
   }
 
   restore();
-  if (decFilesLost() && sequence().includes('handy')) { stepId = 'handy'; history = ['own', 'handy']; }
-  if (!sequence().includes(stepId)) { stepId = 'own'; history = ['own']; }
+  if (decFilesLost() && sequence().includes('handy')) { stepId = 'handy'; history = [FIRST, 'handy']; }
+  if (!sequence().includes(stepId)) { stepId = FIRST; history = [FIRST]; }
   render();
 })();
