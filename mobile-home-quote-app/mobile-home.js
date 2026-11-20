@@ -70,7 +70,7 @@
     effective_date: '', start_choice: '', desired_dwelling_amount: '', amount_answered: false, settlement: '', other_structures: '', other_structures_value: '', personal_property: '', liability: '', deductible: '', bundle_auto: '', additional_notes: '' });
   let state = blank(), stepId = 'own', history = ['own'];
   let sending = false, sendError = '', confirmation = '', contactDone = false, submitted = false, formStarted = false, editReturn = null;
-  let helpEl = null, sheetEl = null, ownAmountOpen = false;
+  let helpEl = null, sheetEl = null, ownAmountOpen = false, ownContentsOpen = false;
 
   function save() { try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ state, stepId, history, contactDone, t: Date.now() })); } catch (_) {} }
   function restore() {
@@ -116,7 +116,7 @@
   }
   function back() { if (history.length < 2) return; history.pop(); stepId = history[history.length - 1]; enter(true); }
   function enter(fromBack) {
-    ownAmountOpen = false; save();
+    ownAmountOpen = false; ownContentsOpen = false; save();
     if (!fromBack) { try { window.history.pushState({ mq: stepId }, ''); } catch (_) {} }
     track('mobile_home_v2_step_view'); render(true); window.scrollTo(0, 0);
   }
@@ -295,11 +295,21 @@
         ${tiles('struct', STRUCT, s.other_structures, 1, true)}
         ${decideTile('struct', s.other_structures)}`;
 
-      case 'contents': return `
+      case 'contents': {
+        const preset = CONTENTS.some(x => x[0] === s.personal_property) || s.personal_property === HELP_ME;
+        const ownOn = ownContentsOpen || (!!s.personal_property && !preset);
+        return `
         <h1 class="v2-heading">How much coverage for your belongings? ${helpBtn('contents')}</h1>
         <p class="v2-sub">Furniture, clothes, electronics and other things you own inside the home.</p>
-        ${tiles('contents', CONTENTS, s.personal_property, 2, true)}
-        ${decideTile('contents', s.personal_property)}`;
+        <div class="v2-grid-2">${CONTENTS.filter(x => x[0] !== 'None').map(([v, t]) => `<button type="button" class="v2-tile compact ${s.personal_property === v && !ownOn ? 'is-selected' : ''}" aria-pressed="${s.personal_property === v && !ownOn}" data-contents="${v}"><span>${t}</span></button>`).join('')}
+          <button type="button" class="v2-tile compact ${ownOn ? 'is-selected' : ''}" aria-pressed="${ownOn}" id="mq-own-contents"><span>Enter my own amount</span></button></div>
+        ${ownOn ? `<div class="v2-col">
+          <div class="v2-field"><label for="mq-contents-own">Coverage amount in dollars</label><input id="mq-contents-own" class="v2-input" type="text" inputmode="numeric" maxlength="8" placeholder="Example: 35000" value="${esc(preset ? '' : s.personal_property.replace(/[^\d]/g, ''))}"></div>
+          ${ERR}<button type="button" class="v2-btn-gold" id="mq-contents-own-next">Continue &rarr;</button></div>` : ''}
+        <div class="v2-grid-2 hq-decide" style="grid-template-columns:1fr">
+          <button type="button" class="v2-tile compact ${s.personal_property === 'None' && !ownOn ? 'is-selected' : ''}" data-contents="None">I don&rsquo;t need this</button>
+          <button type="button" class="v2-tile compact ${s.personal_property === HELP_ME && !ownOn ? 'is-selected' : ''}" data-contents="${HELP_ME}">Not sure, help me decide</button></div>`;
+      }
 
       case 'liability': return `
         <h1 class="v2-heading">How much liability coverage? ${helpBtn('liability')}</h1>
@@ -550,6 +560,10 @@
       state.desired_dwelling_amount = String(Number(n)); state.amount_answered = true; ownAmountOpen = false; save(); track('mobile_home_v2_step_complete'); next(); });
     const pickOne = (attr, key) => each('[data-' + attr + ']', b => b.addEventListener('click', () => { document.querySelectorAll('#stage .v2-tile').forEach(t => t.classList.remove('is-selected')); pick(b, () => { state[key] = b.dataset[attr]; }); }));
     pickOne('settle', 'settlement'); pickOne('contents', 'personal_property'); pickOne('liab', 'liability');
+    on('mq-own-contents', () => { ownContentsOpen = true; if (CONTENTS.some(x => x[0] === state.personal_property) || state.personal_property === HELP_ME) state.personal_property = ''; render(); const f = $('mq-contents-own'); if (f) f.focus(); });
+    on('mq-contents-own-next', () => { const n = val('mq-contents-own').replace(/[^\d]/g, '');
+      if (!n || Number(n) < 1000 || Number(n) > 2000000) { showErr('Please enter the amount in whole dollars, numbers only, for example 35000.'); return; }
+      state.personal_property = '$' + Number(n).toLocaleString('en-US'); ownContentsOpen = false; save(); track('mobile_home_v2_step_complete'); next(); });
     each('[data-struct]', b => b.addEventListener('click', () => {
       document.querySelectorAll('#stage .v2-tile').forEach(t => t.classList.remove('is-selected'));
       if (b.dataset.struct === 'Yes') { b.classList.add('is-selected'); state.other_structures = 'Yes'; save(); openSheet('structures'); return; }
