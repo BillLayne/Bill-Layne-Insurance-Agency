@@ -30,8 +30,8 @@
   // ---------- Stored values are the SAME values the current home form sends ----------
   const PROPERTY_TYPES = [['single_family', 'Single-family home'], ['condo', 'Condo or townhome'], ['mobile_home', 'Mobile or manufactured home'],
     ['rental_property', 'Rental property I own'], ['farm', 'Farm'], ['other', 'Something else']];
-  // The home form's Rental property I own tile sends the customer to the landlord form. Test page only until Bill approves.
-  const RENTAL_HANDOFF_ON = !LIVE;
+  // The home form's Rental property I own tile sends the customer to the landlord form. 
+  const RENTAL_HANDOFF_ON = true;   // live since 2026-11-20 (approved by Bill)
   const LL_RENTAL = ['Long-term rental', 'Short-term or vacation rental', 'Vacant or being renovated', 'Something else'];
   // Simple front-view drawings on the landlord building tiles (test page; same style as the mobile home drawings).
   const LL_ART = {
