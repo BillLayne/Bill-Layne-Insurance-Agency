@@ -20,7 +20,13 @@
   const STYLES = [['single_wide', 'Single-wide'], ['double_wide', 'Double-wide'], ['multi_section', 'Multi-section or triple-wide'], ['not_sure', 'Not sure']];
   const LAND = [['owned', 'I own or am buying the land'], ['rented_lot', 'I rent the lot'], ['other', 'Something else'], ['', 'Not sure']];
   const USE = [['primary', 'My main home'], ['seasonal', 'Seasonal or second home'], ['rental', 'I rent it to someone else'], ['not_sure', 'Not sure yet']];
-  const AMOUNTS = [['25000', '$25,000'], ['50000', '$50,000'], ['75000', '$75,000'], ['100000', '$100,000'], ['150000', '$150,000'], ['200000', '$200,000 or more']];
+  const AMOUNTS = [['25000', '$25,000'], ['50000', '$50,000'], ['75000', '$75,000'], ['100000', '$100,000'], ['150000', '$150,000']];
+  // The office script has no fields for these four, so each answer is sent as its own line at the top of the notes.
+  const SETTLE = [['Replacement cost', 'Replacement cost'], ['Actual cash value', 'Actual cash value']];
+  const STRUCT = [['Yes', 'Yes, I have other buildings'], ['No', 'No']];
+  const CONTENTS = [['$10,000', '$10,000'], ['$25,000', '$25,000'], ['$50,000', '$50,000'], ['None', 'I don\u2019t need this']];
+  const LIABILITY = [['$100,000', '$100,000'], ['$300,000', '$300,000'], ['$500,000', '$500,000']];
+  const HELP_ME = 'Help me decide';
   const DEDUCTIBLES = [['500', '$500'], ['1000', '$1,000'], ['2500', '$2,500']];
   const YNS = [['yes', 'Yes'], ['no', 'No'], ['not_sure', 'Not sure']];
 
@@ -29,6 +35,14 @@
       example: 'A tree falls through the roof in a storm. This coverage may pay for the repairs, after your deductible.' },
     deductible: { title: 'Deductible', body: 'The part of a covered repair bill you pay yourself before your coverage pays. You choose the amount. A higher deductible means you pay more out of pocket when you have a claim.',
       example: 'With a $1,000 deductible and a $6,000 covered repair, you pay $1,000 and the policy may pay the remaining $5,000.' },
+    settlement: { title: 'Replacement cost or actual cash value', body: 'This decides how a covered claim on the home is paid. Replacement cost may pay to repair or replace with new materials. Actual cash value pays what the damaged part was worth at the time, after age and wear are taken off. Some older mobile homes can only be insured at actual cash value.',
+      example: 'A storm ruins a 15-year-old roof. Replacement cost may pay for a new roof. Actual cash value pays what a 15-year-old roof was worth.' },
+    structures: { title: 'Other structures', body: 'Buildings on your lot that are not attached to the home, such as a shed, a detached garage, a carport or a fence. They are covered by their own amount on the policy.',
+      example: 'A tree falls on your storage shed. Other structures coverage may pay to repair or replace it, after your deductible.' },
+    contents: { title: 'Personal property', body: 'Your belongings inside the home: furniture, clothes, electronics, appliances that are not built in. You choose an amount that would let you replace what you own.',
+      example: 'A kitchen fire ruins your furniture and clothes. Personal property coverage may pay to replace them, after your deductible.' },
+    liability: { title: 'Personal liability', body: 'Pays when you are responsible for someone else being hurt or their property being damaged, at your home or away from it. It also may pay for a lawyer if you are sued.',
+      example: 'A visitor falls on your steps and breaks a wrist. Liability coverage may pay their medical bills.' },
     land: { title: 'Why we ask about the land', body: 'Whether the home sits on land you own or on a rented lot affects which insurance companies will offer a policy and what they ask for.',
       example: 'A home in a mobile home park on a rented lot is quoted a little differently from one on your own acreage.' }
   };
@@ -53,10 +67,10 @@
   const blank = () => ({ is_owner: '', home_style: '', property_address: '', city: '', zip_code: '', land_ownership: '', land_answered: false, occupancy: '',
     year_built: '', square_footage: '', roof_year: '', current_insurance: '', current_carrier: '', coverage_expiration: '',
     previous_claims: '', claims_details: '', firstname: '', lastname: '', phone: '', email: '', date_of_birth: '',
-    effective_date: '', start_choice: '', desired_dwelling_amount: '', amount_answered: false, deductible: '', bundle_auto: '', additional_notes: '' });
+    effective_date: '', start_choice: '', desired_dwelling_amount: '', amount_answered: false, settlement: '', other_structures: '', other_structures_value: '', personal_property: '', liability: '', deductible: '', bundle_auto: '', additional_notes: '' });
   let state = blank(), stepId = 'own', history = ['own'];
   let sending = false, sendError = '', confirmation = '', contactDone = false, submitted = false, formStarted = false, editReturn = null;
-  let helpEl = null, sheetEl = null;
+  let helpEl = null, sheetEl = null, ownAmountOpen = false;
 
   function save() { try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ state, stepId, history, contactDone, t: Date.now() })); } catch (_) {} }
   function restore() {
@@ -86,12 +100,12 @@
   function sequence() {
     const seq = ['own', 'style', 'address', 'land', 'use', 'details', 'insured'];
     if (state.current_insurance === 'yes') seq.push('carrier', 'renewal');
-    seq.push('claims', 'contact', 'start', 'amount', 'deductible', 'extras', 'review', 'done');
+    seq.push('claims', 'contact', 'start', 'amount', 'settlement', 'structures', 'contents', 'liability', 'deductible', 'extras', 'review', 'done');
     return seq;
   }
   const EYEBROW = { own: 'YOUR MOBILE HOME', style: 'YOUR MOBILE HOME', address: 'YOUR MOBILE HOME', land: 'YOUR MOBILE HOME', use: 'YOUR MOBILE HOME', details: 'YOUR MOBILE HOME',
     insured: 'CURRENT COVERAGE', carrier: 'CURRENT COVERAGE', renewal: 'CURRENT COVERAGE', claims: 'CLAIMS', contact: 'ABOUT YOU',
-    start: 'YOUR COVERAGE', amount: 'YOUR COVERAGE', deductible: 'YOUR COVERAGE', extras: 'ALMOST DONE', review: 'REVIEW', done: 'QUOTE RECEIVED' };
+    start: 'YOUR COVERAGE', amount: 'YOUR COVERAGE', settlement: 'YOUR COVERAGE', structures: 'YOUR COVERAGE', contents: 'YOUR COVERAGE', liability: 'YOUR COVERAGE', deductible: 'YOUR COVERAGE', extras: 'ALMOST DONE', review: 'REVIEW', done: 'QUOTE RECEIVED' };
 
   function go(id) { stepId = id; history.push(id); enter(); }
   function next() {
@@ -102,7 +116,7 @@
   }
   function back() { if (history.length < 2) return; history.pop(); stepId = history[history.length - 1]; enter(true); }
   function enter(fromBack) {
-    save();
+    ownAmountOpen = false; save();
     if (!fromBack) { try { window.history.pushState({ mq: stepId }, ''); } catch (_) {} }
     track('mobile_home_v2_step_view'); render(true); window.scrollTo(0, 0);
   }
@@ -254,12 +268,44 @@
           ${ERR}
           <button type="button" class="v2-btn-gold" id="mq-start-next">Continue &rarr;</button></div>` : ''}`;
 
-      case 'amount': return `
+      case 'amount': {
+        const preset = AMOUNTS.some(x => x[0] === s.desired_dwelling_amount);
+        const ownOn = ownAmountOpen || (s.amount_answered && !!s.desired_dwelling_amount && !preset);
+        return `
         <h1 class="v2-heading">How much coverage do you want on the home? ${helpBtn('amount')}</h1>
         <p class="v2-sub">This is the cost to replace the home, not the land. Most people let our team work it out.</p>
-        ${tiles('amount', AMOUNTS, s.amount_answered ? s.desired_dwelling_amount : '\u0000', 2, true)}
+        <div class="v2-grid-2">${AMOUNTS.map(([v, t]) => `<button type="button" class="v2-tile compact ${s.amount_answered && s.desired_dwelling_amount === v && !ownOn ? 'is-selected' : ''}" aria-pressed="${s.amount_answered && s.desired_dwelling_amount === v && !ownOn}" data-amount="${v}"><span>${t}</span></button>`).join('')}
+          <button type="button" class="v2-tile compact ${ownOn ? 'is-selected' : ''}" aria-pressed="${ownOn}" id="mq-own-amount"><span>Enter my own amount</span></button></div>
+        ${ownOn ? `<div class="v2-col">
+          <div class="v2-field"><label for="mq-amount-own">Coverage amount in dollars</label><input id="mq-amount-own" class="v2-input" type="text" inputmode="numeric" maxlength="9" placeholder="Example: 185000" value="${esc(preset ? '' : s.desired_dwelling_amount)}"></div>
+          ${ERR}<button type="button" class="v2-btn-gold" id="mq-amount-own-next">Continue &rarr;</button></div>` : ''}
         <div class="v2-grid-2 hq-decide" style="grid-template-columns:1fr">
-          <button type="button" class="v2-tile compact ${s.amount_answered && s.desired_dwelling_amount === '' ? 'is-selected' : ''}" data-amount="">Not sure, help me decide</button></div>`;
+          <button type="button" class="v2-tile compact ${s.amount_answered && s.desired_dwelling_amount === '' && !ownOn ? 'is-selected' : ''}" data-amount="">Not sure, help me decide</button></div>`;
+      }
+
+      case 'settlement': return `
+        <h1 class="v2-heading">How should a claim on the home be paid? ${helpBtn('settlement')}</h1>
+        <p class="v2-sub">Replacement cost pays for new. Actual cash value pays what it was worth, after age and wear.</p>
+        ${tiles('settle', SETTLE, s.settlement, 1, true)}
+        ${decideTile('settle', s.settlement)}`;
+
+      case 'structures': return `
+        <h1 class="v2-heading">Any other buildings to cover? ${helpBtn('structures')}</h1>
+        <p class="v2-sub">A shed, detached garage, carport or fence on your lot.</p>
+        ${tiles('struct', STRUCT, s.other_structures, 1, true)}
+        ${decideTile('struct', s.other_structures)}`;
+
+      case 'contents': return `
+        <h1 class="v2-heading">How much coverage for your belongings? ${helpBtn('contents')}</h1>
+        <p class="v2-sub">Furniture, clothes, electronics and other things you own inside the home.</p>
+        ${tiles('contents', CONTENTS, s.personal_property, 2, true)}
+        ${decideTile('contents', s.personal_property)}`;
+
+      case 'liability': return `
+        <h1 class="v2-heading">How much liability coverage? ${helpBtn('liability')}</h1>
+        <p class="v2-sub">Covers you when someone else is hurt or their property is damaged.</p>
+        ${tiles('liab', LIABILITY, s.liability, 3, true)}
+        ${decideTile('liab', s.liability)}`;
 
       case 'deductible': return `
         <h1 class="v2-heading">Which deductible would you like? ${helpBtn('deductible')}</h1>
@@ -274,7 +320,7 @@
         <div class="v2-group-block"><div class="v2-group-title">Would you like an auto quote too?</div><div class="v2-grid-2" style="margin-bottom:0">
           ${['yes', 'no'].map(v => `<button type="button" class="v2-tile compact ${s.bundle_auto === v ? 'is-selected' : ''}" aria-pressed="${s.bundle_auto === v}" data-bundle="${v}">${v === 'yes' ? 'Yes' : 'No'}</button>`).join('')}</div></div>
         <div class="v2-col">
-          <div class="v2-field"><label for="additional_notes">Anything else we should know? (optional)</label><textarea id="additional_notes" class="v2-textarea" maxlength="1300">${esc(s.additional_notes)}</textarea></div>
+          <div class="v2-field"><label for="additional_notes">Anything else we should know? (optional)</label><textarea id="additional_notes" class="v2-textarea" maxlength="1000">${esc(s.additional_notes)}</textarea></div>
           <button type="button" class="v2-btn-gold" id="mq-extras-next">Continue to review &rarr;</button>
         </div>`;
 
@@ -290,7 +336,11 @@
           ['Claims (5 years)', label(YNS, s.previous_claims) + (s.previous_claims === 'yes' ? ' \u00b7 ' + (s.claims_details || 'details not given') : ''), 'claims'],
           ['Contact', `${s.firstname} ${s.lastname} \u00b7 ${s.phone} \u00b7 ${s.email}`, 'contact'],
           ['Coverage starts', s.effective_date ? niceDate(s.effective_date) : 'Not sure yet', 'start'],
-          ['Coverage on the home', s.desired_dwelling_amount ? money(s.desired_dwelling_amount) + (s.desired_dwelling_amount === '200000' ? ' or more' : '') : 'Help me decide', 'amount'],
+          ['Coverage on the home', s.desired_dwelling_amount ? money(s.desired_dwelling_amount) : 'Help me decide', 'amount'],
+          ['Claim payment', s.settlement || HELP_ME, 'settlement'],
+          ['Other buildings', s.other_structures === 'Yes' ? 'Yes' + (s.other_structures_value ? ': ' + s.other_structures_value : '') : s.other_structures || HELP_ME, 'structures'],
+          ['Belongings', s.personal_property === 'None' ? 'Not needed' : s.personal_property || HELP_ME, 'contents'],
+          ['Liability', s.liability || HELP_ME, 'liability'],
           ['Deductible', s.deductible && s.deductible !== 'not_sure' ? money(s.deductible) : 'Help me decide', 'deductible'],
           ['Auto quote too', s.bundle_auto === 'yes' ? 'Yes' : 'No', 'extras'],
           ['Notes', s.additional_notes || 'None', 'extras']];
@@ -324,6 +374,14 @@
   const label = (list, v) => (list.find(x => x[0] === v) || [, ''])[1];
 
   // ---------- What the office receives ----------
+  function coverageLines() {
+    const s = state;
+    return ['COVERAGE REQUESTED (not separate fields on the office form, so listed here):',
+      '- Claim payment: ' + (s.settlement || HELP_ME),
+      '- Other structures: ' + (s.other_structures === 'Yes' ? 'YES' + (s.other_structures_value ? ': ' + s.other_structures_value : ', details not given') : s.other_structures || HELP_ME),
+      '- Personal property: ' + (s.personal_property === 'None' ? 'Not needed' : s.personal_property || HELP_ME),
+      '- Personal liability: ' + (s.liability || HELP_ME)].join('\n');
+  }
   function buildPayload() {
     const s = state;
     return {
@@ -335,7 +393,7 @@
       coverage_expiration: s.current_insurance === 'yes' ? s.coverage_expiration : '',
       previous_claims: s.previous_claims || 'not_sure', claims_details: s.previous_claims === 'yes' ? s.claims_details.slice(0, 800) : '',
       effective_date: s.effective_date, desired_dwelling_amount: s.desired_dwelling_amount, deductible: s.deductible || 'not_sure',
-      bundle_auto: s.bundle_auto === 'yes', additional_notes: (TP + s.additional_notes).trim().slice(0, 1500),
+      bundle_auto: s.bundle_auto === 'yes', additional_notes: (coverageLines() + '\n' + (TP + s.additional_notes).trim()).trim().slice(0, 1500),
       confirm_accuracy: true   // the customer sends from the Review screen, which says so
     };
   }
@@ -394,11 +452,13 @@
   function openSheet(kind) {
     const cfg = kind === 'claims'
       ? { key: 'claims_details', max: 800, title: 'Tell us about the claim', body: 'What happened, about when, and was it paid? A sentence or two is plenty.', ph: 'Example: Wind damage to the roof and skirting in 2023. Claim was paid.' }
+      : kind === 'structures'
+      ? { key: 'other_structures_value', max: 60, title: 'What are they, and about what are they worth?', body: 'A rough figure is fine. Our team can help you work it out.', ph: 'Example: Shed and carport, about $6,000' }
       : { key: 'lease_details', max: 800, title: 'What does your lease require?', body: 'If you know it, tell us the liability amount and whether the landlord or property manager must be listed on the policy.', ph: 'Example: $100,000 liability. List ABC Property Management as an interested party.' };
     if (!sheetEl) { sheetEl = document.createElement('div'); sheetEl.className = 'v2-help-overlay hq-claim-overlay'; sheetEl.hidden = true; document.body.appendChild(sheetEl);
       sheetEl.addEventListener('click', e => {
         const k = sheetEl.dataset.key, t = $('mq-sheet-text');
-        if (e.target.closest('[data-sheet-save]')) { state[k] = (t.value || '').trim(); closeOverlay(sheetEl); save(); track('mobile_home_v2_step_complete'); next(); return; }
+        if (e.target.closest('[data-sheet-save]')) { state[k] = (t.value || '').replace(/\s+/g, ' ').trim(); closeOverlay(sheetEl); save(); track('mobile_home_v2_step_complete'); next(); return; }
         if (e.target === sheetEl || e.target.closest('[data-sheet-close]')) { state[k] = (t.value || '').trim(); save(); closeOverlay(sheetEl); }
       }); }
     sheetEl.dataset.key = cfg.key;
@@ -483,7 +543,18 @@
     }));
     on('mq-start-next', () => { const d = readDate('st'); if (!d) { showErr('Please enter the start date as month, day and four-digit year.'); return; }
       if (d < todayIso()) { showErr('The start date cannot be in the past.'); return; } state.effective_date = d; save(); next(); });
-    each('[data-amount]', b => b.addEventListener('click', () => pick(b, () => { state.desired_dwelling_amount = b.dataset.amount; state.amount_answered = true; })));
+    each('[data-amount]', b => b.addEventListener('click', () => { ownAmountOpen = false; document.querySelectorAll('#stage .v2-tile').forEach(t => t.classList.remove('is-selected')); pick(b, () => { state.desired_dwelling_amount = b.dataset.amount; state.amount_answered = true; }); }));
+    on('mq-own-amount', () => { ownAmountOpen = true; if (AMOUNTS.some(x => x[0] === state.desired_dwelling_amount)) state.desired_dwelling_amount = ''; render(); const f = $('mq-amount-own'); if (f) f.focus(); });
+    on('mq-amount-own-next', () => { const n = val('mq-amount-own').replace(/[^\d]/g, '');
+      if (!n || Number(n) < 1000 || Number(n) > 5000000) { showErr('Please enter the amount in whole dollars, numbers only, for example 185000.'); return; }
+      state.desired_dwelling_amount = String(Number(n)); state.amount_answered = true; ownAmountOpen = false; save(); track('mobile_home_v2_step_complete'); next(); });
+    const pickOne = (attr, key) => each('[data-' + attr + ']', b => b.addEventListener('click', () => { document.querySelectorAll('#stage .v2-tile').forEach(t => t.classList.remove('is-selected')); pick(b, () => { state[key] = b.dataset[attr]; }); }));
+    pickOne('settle', 'settlement'); pickOne('contents', 'personal_property'); pickOne('liab', 'liability');
+    each('[data-struct]', b => b.addEventListener('click', () => {
+      document.querySelectorAll('#stage .v2-tile').forEach(t => t.classList.remove('is-selected'));
+      if (b.dataset.struct === 'Yes') { b.classList.add('is-selected'); state.other_structures = 'Yes'; save(); openSheet('structures'); return; }
+      pick(b, () => { state.other_structures = b.dataset.struct; state.other_structures_value = ''; });
+    }));
     each('[data-deductible]', b => b.addEventListener('click', () => pick(b, () => { state.deductible = b.dataset.deductible; })));
     const ph = $('phone'); if (ph) ph.addEventListener('input', () => { ph.value = fmtPhone(ph.value); });
     on('mq-contact-next', () => {
