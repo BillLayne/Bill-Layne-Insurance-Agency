@@ -1,0 +1,733 @@
+/* ==========================================================================
+   GET A QUOTE V2 CHOOSER ("Screen 0" of the V2 Quote Experience)
+   Reuses /auto-quote-app/styles.css tokens:
+   --navy: #05203d | --gold: #f5b921 | --gold-soft: #fff9e6 | --tile-border: #8696ab
+   ========================================================================== */
+
+.gq-test-banner {
+  background: #b91c1c;
+  color: #ffffff;
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 7px 14px;
+}
+
+.gq-band-inner {
+  max-width: 850px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 12px;
+  text-align: center;
+}
+.gq-band-text {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+}
+.gq-band-text span {
+  font-weight: 600;
+  color: var(--helper);
+}
+
+.gq-stage {
+  flex: 1;
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 26px 18px 28px;
+}
+
+.gq-intro {
+  text-align: center;
+  margin-bottom: 22px;
+}
+.gq-intro .v2-heading {
+  margin-bottom: 8px;
+}
+.gq-intro .v2-sub {
+  margin-bottom: 0;
+  max-width: 600px;
+}
+
+/* ---------- Primary 2-Up Cards: Auto & Home ---------- */
+.gq-primary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 26px;
+}
+.gq-primary-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 20px 18px;
+  background: var(--white);
+  border: 1.5px solid var(--tile-border);
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(5, 32, 61, 0.06), 0 2px 6px rgba(5, 32, 61, 0.06);
+  text-decoration: none;
+  color: var(--ink);
+  transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.gq-primary-card:hover {
+  border-color: var(--navy);
+  background: var(--gold-soft);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(5, 32, 61, 0.1);
+}
+.gq-primary-card:active {
+  transform: scale(0.99);
+}
+.gq-primary-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.gq-icon-box {
+  flex-shrink: 0;
+  width: 50px;
+  height: 50px;
+  border-radius: 13px;
+  background: #f1f5f9;
+  border: 1px solid #dce4ee;
+  color: var(--navy);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.gq-primary-card:hover .gq-icon-box,
+.gq-tile:hover .gq-icon-box {
+  background: var(--white);
+  border-color: var(--gold);
+}
+.gq-icon-box svg {
+  width: 25px;
+  height: 25px;
+}
+.gq-card-title {
+  margin: 0 0 4px;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--navy);
+}
+.gq-card-desc {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--helper);
+}
+.gq-primary-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 50px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  background: var(--gold);
+  color: var(--navy);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  transition: background-color 0.15s ease;
+}
+.gq-primary-card:hover .gq-primary-cta {
+  background: var(--gold-hover);
+}
+
+/* ---------- Secondary Section Heading ---------- */
+.gq-section-label {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  color: var(--navy);
+  text-align: left;
+}
+
+/* ---------- More Coverage 2x2 Tap Tiles ---------- */
+.gq-more-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.gq-tile {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-height: 76px;
+  padding: 14px 16px;
+  background: var(--white);
+  border: 1.5px solid var(--tile-border);
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(5, 32, 61, 0.05);
+  text-decoration: none;
+  color: var(--ink);
+  transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.12s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.gq-tile:hover {
+  border-color: var(--navy);
+  background: var(--gold-soft);
+  transform: translateY(-1px);
+}
+.gq-tile:active {
+  transform: scale(0.99);
+}
+.gq-tile .gq-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+}
+.gq-tile .gq-icon-box svg {
+  width: 22px;
+  height: 22px;
+}
+.gq-tile-body {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+.gq-tile-title {
+  display: block;
+  font-size: 16.5px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--navy);
+}
+.gq-tile-sub {
+  display: block;
+  margin-top: 2px;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--helper);
+}
+.gq-tile-arrow {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: var(--navy);
+  font-size: 17px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease;
+}
+.gq-tile:hover .gq-tile-arrow {
+  background: var(--gold);
+}
+
+/* ---------- Already Insured / Renewal Shortcut Card ---------- */
+.gq-shortcut-card {
+  margin-bottom: 14px;
+  padding: 18px 20px;
+  background: var(--white);
+  border: 1.5px solid #c4cedb;
+  border-left: 5px solid var(--navy);
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(5, 32, 61, 0.05);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 20px;
+  text-align: left;
+}
+.gq-shortcut-copy {
+  flex: 1 1 340px;
+  min-width: 0;
+}
+.gq-kicker {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--eyebrow);
+  background: var(--gold-soft);
+  border: 1px solid var(--why-border);
+  padding: 3px 9px;
+  border-radius: 999px;
+  margin-bottom: 6px;
+}
+.gq-shortcut-title {
+  display: block;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+.gq-shortcut-desc {
+  display: block;
+  font-size: 14.5px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--helper);
+  margin-bottom: 5px;
+}
+.gq-shortcut-note {
+  display: block;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: #475569;
+}
+.gq-shortcut-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 0 1 250px;
+  min-width: 230px;
+}
+.gq-btn-navy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 48px;
+  padding: 11px 16px;
+  border-radius: 12px;
+  background: var(--navy);
+  color: var(--white);
+  border: 1.5px solid var(--navy);
+  font-size: 14.5px;
+  font-weight: 800;
+  text-decoration: none;
+  text-align: center;
+  transition: background-color 0.15s ease;
+}
+.gq-btn-navy:hover {
+  background: var(--navy-soft);
+}
+.gq-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 46px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: var(--white);
+  color: var(--navy);
+  border: 1.5px solid var(--tile-border);
+  font-size: 14.5px;
+  font-weight: 800;
+  text-decoration: none;
+  text-align: center;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.gq-btn-outline:hover {
+  border-color: var(--navy);
+  background: #f8fafc;
+}
+
+/* ---------- Landlord Compact Card ---------- */
+.gq-landlord-card {
+  margin-bottom: 18px;
+  padding: 14px 18px;
+  background: #f8fafc;
+  border: 1.5px solid #dce4ee;
+  border-radius: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--helper);
+}
+.gq-landlord-card strong {
+  color: var(--navy);
+  font-weight: 800;
+}
+.gq-inline-links {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  font-size: 14px;
+  font-weight: 800;
+}
+.gq-inline-links a {
+  color: var(--navy);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.gq-inline-links a:hover {
+  color: var(--eyebrow);
+}
+
+/* ---------- Help / Talk to a Person Card ---------- */
+.gq-help-card {
+  margin-bottom: 14px;
+  padding: 18px 20px;
+  background: var(--white);
+  border: 1.5px solid #dce4ee;
+  border-radius: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 18px;
+  text-align: left;
+}
+.gq-help-copy h2 {
+  margin: 0 0 3px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--navy);
+}
+.gq-help-copy p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--helper);
+}
+.gq-help-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.gq-btn-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 48px;
+  padding: 11px 18px;
+  border-radius: 12px;
+  background: var(--gold);
+  color: var(--navy);
+  font-size: 15px;
+  font-weight: 800;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+.gq-btn-gold:hover {
+  background: var(--gold-hover);
+}
+
+.gq-customer-row {
+  text-align: center;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--helper);
+  margin: 8px 0 4px;
+}
+.gq-customer-row a {
+  color: var(--navy);
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ---------- Carrier Trust Strip ---------- */
+.gq-carriers {
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 14px 18px 22px;
+  text-align: center;
+}
+.gq-carriers-title {
+  margin: 0 0 12px;
+  font-size: 12.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #64748b;
+}
+.gq-carriers-logos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px 26px;
+}
+.gq-carriers-logos img {
+  height: 30px;
+  width: auto;
+  max-width: 120px;
+  object-fit: contain;
+}
+
+.v2-trust-logos img {
+  height: 34px;
+  max-width: 140px;
+  opacity: 0.92;
+}
+.v2-trust-logos img[alt="Foremost"] {
+  height: 28px;
+}
+
+/* ---------- Supporting Accordion (How It Works + FAQs) ---------- */
+.gq-details-wrap {
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto 28px;
+  padding: 0 18px;
+}
+.gq-details {
+  width: 100%;
+  border: 1.5px solid #dce4ee;
+  border-radius: 16px;
+  background: var(--white);
+  overflow: hidden;
+}
+.gq-details > summary {
+  list-style: none;
+  cursor: pointer;
+  min-height: 54px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--navy);
+}
+.gq-details > summary::-webkit-details-marker { display: none; }
+.gq-details-plus {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: var(--navy);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.gq-details[open] .gq-details-plus {
+  transform: rotate(45deg);
+}
+.gq-details-body {
+  padding: 6px 18px 20px;
+  border-top: 1px solid #e5e9f0;
+  text-align: left;
+}
+.gq-subhead {
+  margin: 16px 0 10px;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--navy);
+}
+.gq-how-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.gq-how-card {
+  padding: 14px;
+  border: 1px solid #dce4ee;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+.gq-how-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--navy);
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.gq-how-card strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+.gq-how-card p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--helper);
+}
+.gq-faq-list {
+  display: grid;
+  gap: 10px;
+}
+.gq-faq-item {
+  padding: 12px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: var(--white);
+}
+.gq-faq-q {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--navy);
+}
+.gq-faq-a {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--helper);
+}
+
+.gq-footer-areas {
+  margin-top: 6px;
+  font-size: 12.5px;
+  color: #cbd5e1;
+}
+.gq-footer-areas a {
+  color: #f1f5f9;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ---------- Carrier logos: one white tile each, large enough to read ---------- */
+.gq-logo-grid {
+  max-width: 850px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.gq-logo-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 92px;
+  padding: 6px 10px;
+  background: var(--white);
+  border: 1px solid #dce4ee;
+  border-radius: 14px;
+}
+.gq-logo-tile img {
+  width: 100%;
+  max-width: 170px;
+  height: auto;
+  display: block;
+}
+.gq-logo-text {
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--navy);
+  text-align: center;
+}
+
+/* Links inside the small cards get a full-height tap area */
+.gq-inline-links a,
+.gq-customer-row a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+/* ---------- Phones: all six choices on the first screen, two across ---------- */
+@media (max-width: 680px) {
+  .gq-wide-only { display: none; }
+  .v2-progress-band { padding-top: 8px; padding-bottom: 8px; }
+  .gq-band-inner { gap: 4px 8px; }
+  .gq-band-text { font-size: 13px; }
+  .gq-stage {
+    padding: 14px 14px 22px;
+  }
+  .gq-intro { margin-bottom: 14px; }
+  .gq-intro .v2-eyebrow { margin-bottom: 4px; }
+  .gq-intro .v2-heading {
+    font-size: 26px;
+    margin-bottom: 4px;
+  }
+  .gq-intro .v2-sub {
+    font-size: 15.5px;
+  }
+  .gq-primary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .gq-primary-card {
+    padding: 14px 10px 10px;
+    gap: 10px;
+    align-items: stretch;
+  }
+  .gq-primary-top {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+  }
+  .gq-primary-card .gq-icon-box { width: 46px; height: 46px; }
+  .gq-card-title { font-size: 18px; margin: 0; }
+  .gq-card-desc { display: none; }
+  .gq-primary-cta {
+    min-height: 44px;
+    padding: 8px 6px;
+    font-size: 14px;
+    gap: 4px;
+    white-space: nowrap;
+  }
+  .section-title .gq-section-label { display: none; }
+  .gq-more-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .gq-tile {
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    min-height: 96px;
+    padding: 12px 8px;
+  }
+  .gq-tile-body { flex: 0 0 auto; text-align: center; }
+  .gq-tile-title { font-size: 15.5px; }
+  .gq-tile-sub, .gq-tile-arrow { display: none; }
+  .gq-shortcut-card {
+    padding: 16px;
+  }
+  .gq-shortcut-actions {
+    flex: 1 1 100%;
+    min-width: 0;
+    width: 100%;
+  }
+  .gq-help-card {
+    padding: 16px;
+  }
+  .gq-help-btns {
+    width: 100%;
+  }
+  .gq-help-btns a {
+    flex: 1 1 auto;
+  }
+  .gq-how-grid {
+    grid-template-columns: 1fr;
+  }
+  .gq-logo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .gq-logo-tile { min-height: 84px; }
+  .gq-logo-tile img { max-width: 150px; }
+}
