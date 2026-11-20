@@ -23,6 +23,19 @@
   const OFFROAD = ['ATV', 'Side-by-side / UTV', 'Dirt bike'];
   const MAKES_ROAD = ['Harley-Davidson', 'Honda', 'Yamaha', 'Kawasaki', 'Suzuki', 'Indian', 'BMW', 'Triumph'];
   const MAKES_OFF = ['Polaris', 'Honda', 'Can-Am', 'Yamaha', 'Kawasaki', 'Kubota', 'John Deere', 'Suzuki'];
+  // Popular models shown as tiles. The full list for the chosen year comes from the federal vehicle database (NHTSA vPIC), same as the auto form.
+  const MODELS_ROAD = { 'Harley-Davidson': ['Street Glide', 'Road Glide', 'Road King', 'Fat Boy', 'Sportster', 'Heritage Classic'], 'Honda': ['Gold Wing', 'Rebel 500', 'Rebel 1100', 'Shadow', 'Grom', 'CBR600RR'],
+    'Yamaha': ['MT-07', 'MT-09', 'YZF-R6', 'YZF-R3', 'V Star', 'Bolt'], 'Kawasaki': ['Ninja 400', 'Ninja 650', 'Ninja ZX-6R', 'Vulcan S', 'Z900', 'KLR650'],
+    'Suzuki': ['GSX-R600', 'GSX-R750', 'Hayabusa', 'Boulevard', 'SV650', 'V-Strom 650'], 'Indian': ['Scout', 'Chief', 'Chieftain', 'Roadmaster', 'Springfield', 'Challenger'],
+    'BMW': ['R 1250 GS', 'S 1000 RR', 'R nineT', 'F 850 GS', 'K 1600', 'G 310 R'], 'Triumph': ['Bonneville', 'Street Triple', 'Speed Twin', 'Tiger 900', 'Rocket 3', 'Trident 660'] };
+  const MODELS_OFF = { 'Polaris': ['Sportsman 570', 'Sportsman 850', 'RZR', 'Ranger', 'General', 'Outlaw'], 'Honda': ['FourTrax Rancher', 'FourTrax Foreman', 'Pioneer 700', 'Pioneer 1000', 'Talon', 'CRF250F'],
+    'Can-Am': ['Outlander', 'Renegade', 'Defender', 'Maverick', 'Commander'], 'Yamaha': ['Grizzly', 'Kodiak', 'Raptor 700', 'Wolverine', 'Viking', 'YZ250F'],
+    'Kawasaki': ['Brute Force', 'Mule', 'Teryx', 'KRX 1000', 'KLX', 'KX250'], 'Kubota': ['RTV-X900', 'RTV-X1100C', 'RTV-XG850 Sidekick', 'RTV520'],
+    'John Deere': ['Gator XUV835M', 'Gator XUV590', 'Gator HPX', 'Gator TX'], 'Suzuki': ['KingQuad 400', 'KingQuad 500', 'KingQuad 750', 'DR-Z400', 'RM-Z250'] };
+  const ALSO_MAKES_CARS = ['Honda', 'Suzuki', 'BMW'];   // for these, only the motorcycle list is asked for, so no car models appear
+  const MAX_YEAR = new Date().getFullYear() + 1;
+  const TOP_YEARS = Array.from({ length: 18 }, (_, i) => String(MAX_YEAR - i));
+  const DROPDOWN_YEARS = Array.from({ length: MAX_YEAR - 1981 + 1 }, (_, i) => String(MAX_YEAR - i));
   const OWNED = [['Owned outright', 'I own it outright'], ['Financed', 'I’m making payments'], ['Leased', 'It’s leased'], ['Shopping / not purchased', 'Still shopping']];
   const USES = [['Pleasure / occasional rides', 'Fun and weekend rides'], ['Commuting under 10 miles', 'Riding to work, under 10 miles'], ['Commuting 10 miles or more', 'Riding to work, 10 miles or more'],
     ['Off-road / farm', 'Off-road or farm'], ['Business / delivery', 'Business or delivery'], ['Racing / track', 'Racing or track days'], ['Other', 'Something else']];
@@ -55,7 +68,24 @@
   let insurers = [['State Farm', 'state-farm-insurance-logo-c4hm2m.png'], ['Allstate', 'allstate-insurance-logo-nq7c5z.png'], ['Nationwide', 'nationwide-insurance-logo-j5zp2s.png'],
     ['Progressive', 'progressive-insurance-logo-2kcvze.png'], ['GEICO', 'geico-insurance-logo-s92zrs.png'], ['Liberty Mutual', 'liberty-mutual-insurance-logo-ffrtts.png']]
     .map(([name, f]) => ({ name, logo: IL + f, showLabel: false }));
-  let otherCarrierOpen = false, otherMakeOpen = false;
+  let otherCarrierOpen = false, otherMakeOpen = false, olderYearOpen = false, otherModelOpen = false, loadingModels = false;
+  const modelCache = {};
+  const popularModels = v => ['Motorcycle / trike', 'ATV', 'Side-by-side / UTV', 'Dirt bike'].includes(v.type) ? ((OFFROAD.includes(v.type) ? MODELS_OFF : MODELS_ROAD)[v.make] || []) : [];
+  const allModels = v => modelCache[v.make + '|' + v.year] || [];
+  function loadModels(v) {
+    const key = v.make + '|' + v.year;
+    if (modelCache[key] || !v.make || !/^\d{4}$/.test(v.year) || Number(v.year) < 1981 || location.protocol === 'file:') { loadingModels = false; return; }
+    loadingModels = true;
+    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 2500);
+    const base = 'https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeYear/make/' + encodeURIComponent(v.make) + '/modelyear/' + encodeURIComponent(v.year);
+    const urls = [base + '/vehicletype/motorcycle?format=json'].concat(ALSO_MAKES_CARS.includes(v.make) ? [] : [base + '?format=json']);
+    Promise.all(urls.map(u => fetch(u, { signal: ctl.signal }).then(r => (r.ok ? r.json() : { Results: [] })).catch(() => ({ Results: [] })))).then(res => {
+      clearTimeout(timer);
+      const seen = new Set(), out = [];
+      res.forEach(d => (d.Results || []).forEach(row => { const n = String(row.Model_Name || '').trim(); if (n && n.length <= 60 && !seen.has(n.toLowerCase())) { seen.add(n.toLowerCase()); out.push(n); } }));
+      out.sort((a, b) => a.localeCompare(b)); modelCache[key] = out;
+    }).catch(() => { modelCache[key] = []; }).then(() => { loadingModels = false; if (sid() === 'model' && V().make + '|' + V().year === key) { const y = window.scrollY; render(); window.scrollTo(0, y); } });
+  }
   // Brand logo tiles (hosted on the agency image host). A brand with no file here shows its name as text.
   const MAKE_LOGOS = { 'Harley-Davidson': 'harley-davidson-motorcycle-logo-d6ma4g.png', 'Honda': 'honda-motorcycle-logo-uunccs.png', 'Yamaha': 'yamaha-motorcycle-logo-6xghss.png',
     'Kawasaki': 'kawasaki-motorcycle-logo-7p8chr.png', 'Suzuki': 'suzuki-motorcycle-logo-pgk2s6.png', 'Indian': 'indian-motorcycle-logo-qqvekr.png', 'BMW': 'bmw-motorcycle-logo-8fvr5f.png',
@@ -127,7 +157,7 @@
   const allOffroad = () => state.vehicles.every(v => OFFROAD.includes(v.type));
   function sequence() {
     const seq = [];
-    state.vehicles.forEach((v, i) => seq.push('type:' + i, 'make:' + i, 'model:' + i, 'owned:' + i, 'use:' + i, 'kept:' + i, 'vdetails:' + i));
+    state.vehicles.forEach((v, i) => seq.push('type:' + i, 'make:' + i, 'year:' + i, 'model:' + i, 'cc:' + i, 'owned:' + i, 'use:' + i, 'kept:' + i, 'vdetails:' + i));
     seq.push('vmore', 'contact', 'address');
     state.riders.forEach((r, j) => { if (j > 0) seq.push('rwho:' + j); seq.push('license:' + j); if (!allOffroad()) seq.push('endorse:' + j); seq.push('course:' + j, 'record:' + j); });
     seq.push('rmore', 'insured');
@@ -137,13 +167,13 @@
     seq.push('extras', 'review', 'done');
     return seq;
   }
-  const EYEBROW = { type: 'YOUR RIDE', make: 'YOUR RIDE', model: 'YOUR RIDE', owned: 'YOUR RIDE', use: 'YOUR RIDE', kept: 'YOUR RIDE', vdetails: 'YOUR RIDE', vmore: 'YOUR RIDE',
+  const EYEBROW = { type: 'YOUR RIDE', make: 'YOUR RIDE', year: 'YOUR RIDE', model: 'YOUR RIDE', cc: 'YOUR RIDE', owned: 'YOUR RIDE', use: 'YOUR RIDE', kept: 'YOUR RIDE', vdetails: 'YOUR RIDE', vmore: 'YOUR RIDE',
     contact: 'ABOUT YOU', address: 'ABOUT YOU', rwho: 'RIDERS', license: 'RIDERS', endorse: 'RIDERS', course: 'RIDERS', record: 'RIDERS', rmore: 'RIDERS',
     insured: 'CURRENT COVERAGE', carrier: 'CURRENT COVERAGE', renewal: 'CURRENT COVERAGE', history: 'CURRENT COVERAGE',
     start: 'YOUR COVERAGE', cover: 'YOUR COVERAGE', deductible: 'YOUR COVERAGE', extras: 'ALMOST DONE', review: 'REVIEW', done: 'QUOTE RECEIVED' };
   function eyebrow() {
     const s = sid();
-    if (['type', 'make', 'model', 'owned', 'use', 'kept', 'vdetails'].includes(s) && state.vehicles.length > 1) return `VEHICLE ${idx() + 1} OF ${state.vehicles.length}`;
+    if (['type', 'make', 'year', 'model', 'cc', 'owned', 'use', 'kept', 'vdetails'].includes(s) && state.vehicles.length > 1) return `VEHICLE ${idx() + 1} OF ${state.vehicles.length}`;
     if (['rwho', 'license', 'endorse', 'course', 'record'].includes(s) && state.riders.length > 1) return `RIDER ${idx() + 1} OF ${state.riders.length}`;
     return EYEBROW[s] || '';
   }
@@ -156,7 +186,7 @@
   }
   function back() { if (history.length < 2) return; history.pop(); stepId = history[history.length - 1]; if (!sequence().includes(stepId)) { stepId = 'type:0'; history = ['type:0']; } enter(true); }
   function enter(fromBack) {
-    otherMakeOpen = false; save();
+    otherMakeOpen = false; olderYearOpen = false; otherModelOpen = false; if (sid() === 'model') loadModels(V()); save();
     if (!fromBack) { try { window.history.pushState({ mc: stepId }, ''); } catch (_) {} }
     track('motorcycle_v2_step_view'); render(true); window.scrollTo(0, 0);
   }
@@ -234,17 +264,49 @@
           ${ERR}<button type="button" class="v2-btn-gold" id="mc-other-make-next">Continue &rarr;</button></div>` : ''}`;
       }
 
-      case 'model': return `
-        <h1 class="v2-heading">Which ${esc(v.make)} is it?</h1>
-        <p class="v2-sub">A best guess is fine. Our team confirms the details before quoting.</p>
+      case 'year': {
+        const older = olderYearOpen || (!!v.year && Number(v.year) < 1981);
+        return `
+        <h1 class="v2-heading">What year is your ${esc(v.make)}?</h1>
+        <p class="v2-sub">Tap the model year, or choose an older year from the list.</p>
+        <div class="v2-grid-3">${TOP_YEARS.map(y => `<button type="button" class="v2-tile compact ${v.year === y ? 'is-selected' : ''}" aria-pressed="${v.year === y}" data-val="${y}">${y}</button>`).join('')}</div>
         <div class="v2-col">
-          <div class="hq-two">
-            <div class="v2-field"><label for="mc-year">Year</label><input id="mc-year" class="v2-input" type="text" inputmode="numeric" maxlength="4" placeholder="Example: 2019" value="${esc(v.year)}"></div>
-            <div class="v2-field"><label for="mc-cc">Engine size, cc (optional)</label><input id="mc-cc" class="v2-input" type="text" inputmode="numeric" maxlength="5" placeholder="Example: 650" value="${esc(v.engine_cc)}"></div>
-          </div>
-          <div class="v2-field"><label for="mc-model">Model</label><input id="mc-model" class="v2-input" type="text" autocapitalize="words" maxlength="100" placeholder="Example: ${OFFROAD.includes(v.type) ? 'Sportsman 570' : 'Street Glide'}" value="${esc(v.model)}"></div>
+          <div class="v2-field"><label for="mc-year-dd">Older model year</label>
+            <select id="mc-year-dd" class="v2-select"><option value="">Select year (1981\u2013${MAX_YEAR})...</option>
+              ${DROPDOWN_YEARS.map(y => `<option value="${y}" ${v.year === y ? 'selected' : ''}>${y}</option>`).join('')}
+              <option value="OLDER" ${older ? 'selected' : ''}>Older than 1981</option></select></div>
+          ${older ? `<div class="v2-field"><label for="mc-older-year">Enter the year (before 1981)</label>
+            <input id="mc-older-year" class="v2-input" type="text" inputmode="numeric" maxlength="4" placeholder="1978" value="${esc(v.year && Number(v.year) < 1981 ? v.year : '')}"></div>
+            ${ERR}<button type="button" class="v2-btn-gold" id="mc-older-year-next">Continue &rarr;</button>` : ''}
+        </div>`;
+      }
+
+      case 'model': {
+        const pop = popularModels(v), all = allModels(v), listed = pop.includes(v.model) || all.includes(v.model);
+        const typeIn = otherModelOpen || (!!v.model && !listed) || (!loadingModels && !pop.length && !all.length);
+        return `
+        <h1 class="v2-heading">What is your ${esc(v.year)} ${esc(v.make)} model?</h1>
+        <p class="v2-sub">${pop.length ? 'Tap your model, or choose from the full list.' : loadingModels ? 'Loading the models for ' + esc(v.year) + ' ' + esc(v.make) + '...' : all.length ? 'Choose your model from the list, or type it if it is not there.' : 'Type the model below. A best guess is fine.'}</p>
+        ${pop.length ? `<div class="v2-grid-2">${pop.map(m => `<button type="button" class="v2-tile compact ${v.model === m ? 'is-selected' : ''}" aria-pressed="${v.model === m}" data-val="${esc(m)}"><span>${esc(m)}</span></button>`).join('')}</div>` : ''}
+        <div class="v2-col">
+          ${pop.length || all.length ? `<div class="v2-field"><label for="mc-model-dd">${all.length ? 'All ' + esc(v.year) + ' ' + esc(v.make) + ' models' : 'Another model'}</label>
+            <select id="mc-model-dd" class="v2-select"><option value="">${loadingModels ? 'Loading models...' : 'Select model...'}</option>
+              ${all.map(m => `<option value="${esc(m)}" ${v.model === m ? 'selected' : ''}>${esc(m)}</option>`).join('')}
+              <option value="__OTHER__" ${typeIn ? 'selected' : ''}>My model is not listed</option></select></div>` : ''}
+          ${typeIn ? `<div class="v2-field"><label for="mc-model">Enter your ${esc(v.year)} ${esc(v.make)} model</label>
+            <input id="mc-model" class="v2-input" type="text" autocapitalize="words" maxlength="100" value="${esc(listed ? '' : v.model)}"></div>
+            ${ERR}<button type="button" class="v2-btn-gold" id="mc-model-next">Continue &rarr;</button>` : ''}
+        </div>`;
+      }
+
+      case 'cc': return `
+        <h1 class="v2-heading">What size is the engine?</h1>
+        <p class="v2-sub">Optional. It is the number in cc, and it is often part of the model name.</p>
+        <div class="v2-col">
+          <div class="v2-field"><label for="mc-cc">Engine size, cc (optional)</label><input id="mc-cc" class="v2-input" type="text" inputmode="numeric" maxlength="5" placeholder="Example: 650" value="${esc(v.engine_cc)}"></div>
           ${ERR}
-          <button type="button" class="v2-btn-gold" id="mc-model-next">Continue &rarr;</button>
+          <div class="v2-actions-stack"><button type="button" class="v2-btn-gold" id="mc-cc-next">Continue &rarr;</button>
+          <button type="button" class="v2-btn-outline" style="width:100%" id="mc-cc-skip">Not sure, skip</button></div>
         </div>`;
 
       case 'owned': return `
@@ -614,7 +676,9 @@
     each('#stage [data-val]:not([data-chip])', b => b.addEventListener('click', () => {
       const x = b.dataset.val, v = V(), r = R();
       if (s === 'type') return pick(b, () => { if (v.type !== x) { const offWas = OFFROAD.includes(v.type), offNow = OFFROAD.includes(x); if (v.type && offWas !== offNow) v.make = ''; } v.type = x; });
-      if (s === 'make') { otherMakeOpen = false; return pick(b, () => { v.make = x; }); }
+      if (s === 'make') { otherMakeOpen = false; return pick(b, () => { if (v.make !== x) v.model = ''; v.make = x; }); }
+      if (s === 'year') return pick(b, () => { if (v.year !== x) v.model = ''; v.year = x; });
+      if (s === 'model') return pick(b, () => { v.model = x; });
       if (s === 'owned') {
         if (x === 'Financed' || x === 'Leased') { b.parentElement.querySelectorAll('.v2-tile').forEach(t => t.classList.remove('is-selected')); b.classList.add('is-selected'); v.ownership = x; save(); fireFormStart(); openLenderSheet(); return; }
         return pick(b, () => { v.ownership = x; v.lender = ''; });
@@ -644,15 +708,30 @@
 
     // Make: another brand
     each('[data-make-other]', b => b.addEventListener('click', () => { otherMakeOpen = true; const v = V(); if ((OFFROAD.includes(v.type) ? MAKES_OFF : MAKES_ROAD).includes(v.make)) v.make = ''; render(); const o = $('mc-other-make'); if (o) o.focus(); }));
-    on('mc-other-make-next', () => { const m = oneLine(val('mc-other-make')); if (!m) { showErr('Please enter the brand.'); return; } V().make = m; otherMakeOpen = false; save(); fireFormStart(); next(); });
+    on('mc-other-make-next', () => { const m = oneLine(val('mc-other-make')); if (!m) { showErr('Please enter the brand.'); return; } const v = V(); if (v.make !== m) v.model = ''; v.make = m; otherMakeOpen = false; save(); fireFormStart(); next(); });
 
-    on('mc-model-next', () => {
-      const y = val('mc-year'), m = oneLine(val('mc-model')), cc = val('mc-cc').replace(/[^\d]/g, ''), maxY = new Date().getFullYear() + 1;
-      if (!/^\d{4}$/.test(y) || Number(y) < 1900 || Number(y) > maxY) { showErr('Please enter the four-digit model year.'); return; }
-      if (!m) { showErr('Please enter the model. A best guess is fine.'); return; }
-      if (cc && Number(cc) > 10000) { showErr('Please check the engine size, or leave it blank.'); return; }
-      const v = V(); v.year = y; v.model = m; v.engine_cc = cc ? String(Number(cc)) : ''; save(); fireFormStart(); next();
+    const yearDd = $('mc-year-dd');
+    if (yearDd) yearDd.addEventListener('change', () => {
+      const y = yearDd.value, v = V();
+      if (y === 'OLDER') { olderYearOpen = true; rerender(); const o = $('mc-older-year'); if (o) o.focus(); return; }
+      if (!y) return;
+      olderYearOpen = false; if (v.year !== y) v.model = ''; v.year = y; save(); track('motorcycle_v2_step_complete'); fireFormStart(); next();
     });
+    on('mc-older-year-next', () => {
+      const y = val('mc-older-year'), v = V();
+      if (!/^\d{4}$/.test(y) || Number(y) < 1900 || Number(y) > 1980) { showErr('Please enter a four-digit year before 1981, for example 1978.'); return; }
+      if (v.year !== y) v.model = ''; v.year = y; olderYearOpen = false; save(); fireFormStart(); next();
+    });
+    const modelDd = $('mc-model-dd');
+    if (modelDd) modelDd.addEventListener('change', () => {
+      const m = modelDd.value;
+      if (m === '__OTHER__') { otherModelOpen = true; const v = V(); if (popularModels(v).includes(v.model) || allModels(v).includes(v.model)) v.model = ''; rerender(); const o = $('mc-model'); if (o) o.focus(); return; }
+      if (!m) return;
+      otherModelOpen = false; V().model = m; save(); track('motorcycle_v2_step_complete'); next();
+    });
+    on('mc-model-next', () => { const m = oneLine(val('mc-model')); if (!m) { showErr('Please enter the model. A best guess is fine.'); return; } V().model = m; otherModelOpen = false; save(); next(); });
+    on('mc-cc-next', () => { const cc = val('mc-cc').replace(/[^\d]/g, ''); if (cc && Number(cc) > 10000) { showErr('Please check the engine size, or tap Not sure.'); return; } V().engine_cc = cc ? String(Number(cc)) : ''; save(); next(); });
+    on('mc-cc-skip', () => { V().engine_cc = ''; save(); next(); });
     on('mc-vdetails-next', () => { save(); next(); });
 
     // Vehicle and rider lists
@@ -745,5 +824,6 @@
 
   restore();
   if (!sequence().includes(stepId)) { stepId = 'type:0'; history = ['type:0']; }
+  if (sid() === 'model') loadModels(V());
   render();
 })();
