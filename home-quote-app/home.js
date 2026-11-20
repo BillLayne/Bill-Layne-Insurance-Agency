@@ -30,6 +30,8 @@
   // ---------- Stored values are the SAME values the current home form sends ----------
   const PROPERTY_TYPES = [['single_family', 'Single-family home'], ['condo', 'Condo or townhome'], ['mobile_home', 'Mobile or manufactured home'],
     ['rental_property', 'Rental property I own'], ['farm', 'Farm'], ['other', 'Something else']];
+  // The home form's Rental property I own tile sends the customer to the landlord form. Test page only until Bill approves.
+  const RENTAL_HANDOFF_ON = !LIVE;
   const LL_RENTAL = ['Long-term rental', 'Short-term or vacation rental', 'Vacant or being renovated', 'Something else'];
   // Simple front-view drawings on the landlord building tiles (test page; same style as the mobile home drawings).
   const LL_ART = {
@@ -178,6 +180,12 @@
       if (raw && raw.state && raw.stepId && raw.stepId !== 'done') {
         state = Object.assign(blank(), raw.state); stepId = raw.stepId; history = raw.history || [stepId]; contactDone = !!raw.contactDone;
       }
+    } catch (_) {}
+    // Address carried over from the home form's "Rental property I own" tile (landlord form only; used once)
+    if (LL) try {
+      const a = JSON.parse(sessionStorage.getItem('bli_carry_rental_address') || 'null');
+      sessionStorage.removeItem('bli_carry_rental_address');
+      if (a && a.street && !state.property_address) { state.property_address = a.street; state.city = a.city || ''; state.zip_code = a.zip || ''; }
     } catch (_) {}
     // Contact details carried over from a finished auto quote ("Want a home quote too?")
     try {
@@ -942,6 +950,13 @@
         state.property_type = 'mobile_home'; save();
         try { sessionStorage.setItem('bli_carry_contact', JSON.stringify({ street: state.property_address, city: state.city, zip: state.zip_code, owner: state.is_owner })); } catch (_) {}
         setTimeout(() => { window.location.href = (LIVE ? '/mobile-home-quote' : '../mobile-home-quote-v2-test/') + '?src=home_quote_mobile_home'; }, 230);
+        return;
+      }
+      if (RENTAL_HANDOFF_ON && !LL && b.dataset.ptype === 'rental_property') {   // rentals have their own form with the landlord questions
+        b.parentElement.querySelectorAll('.v2-tile').forEach(t => t.classList.remove('is-selected')); b.classList.add('is-selected');
+        state.property_type = 'rental_property'; save();
+        try { sessionStorage.setItem('bli_carry_rental_address', JSON.stringify({ street: state.property_address, city: state.city, zip: state.zip_code })); } catch (_) {}
+        setTimeout(() => { window.location.href = (LIVE ? '/landlord-quote' : '../landlord-quote-v2-test/') + '?src=home_quote_rental'; }, 230);
         return;
       }
       pick(b, () => { state.property_type = b.dataset.ptype; });
