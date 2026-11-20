@@ -38,6 +38,18 @@
     duplex: '<path d="M20 22h56v16H20z"/><path d="M17 22.500L48 10l31 12.500"/><path d="M48 10v28" stroke-dasharray="3 3"/><path d="M38.500 28h5.500v10h-5.500zM52 28h5.500v10H52zM26 26h7v5h-7zM63 26h7v5h-7z"/>',
     mobile_home: '<path d="M12 22h72v14H12z"/><path d="M10 22l6-5h64l6 5"/><path d="M42 26h6v10h-6zM19 26h9v5h-9zM32 26h6v5h-6zM54 26h9v5h-9zM68 26h9v5h-9z"/><path d="M20 36v4M76 36v4M40 38h10"/>'
   };
+  // Kind-of-rental drawings: a house with a key (long-term), a suitcase (vacation rental), a ladder (vacant or being renovated).
+  const LL_HOUSE = '<path d="M18 24h24v14H18z"/><path d="M15 24.500L30 14l15 10.500"/><path d="M27 30h6v8h-6z"/>';
+  const LL_USE_ART = {
+    'Long-term rental': LL_HOUSE + '<circle cx="60" cy="27" r="5.500"/><path d="M65.500 27H82M76 27v4.500M80 27v3.500"/>',
+    'Short-term or vacation rental': LL_HOUSE + '<rect x="55" y="23" width="24" height="15" rx="2.500"/><path d="M62 23v-4h10v4M61 23v15M73 23v15"/>',
+    'Vacant or being renovated': LL_HOUSE + '<path d="M57 38l6-25M69 38l6-25"/><path d="M58.500 32h12M60 26h12M61.500 20h12"/>'
+  };
+  const llUseTile = (v, current) => !LL_USE_ART[v]
+    ? `<button type="button" class="v2-tile compact ${current === v ? 'is-selected' : ''}" aria-pressed="${current === v}" data-ll="rental_use" data-val="${v}" style="grid-column:1/-1;min-height:48px"><span>${v}</span></button>`
+    : `<button type="button" class="v2-tile compact ${current === v ? 'is-selected' : ''}" aria-pressed="${current === v}" data-ll="rental_use" data-val="${v}" style="flex-direction:column;gap:2px;padding:8px 8px 9px${v === 'Vacant or being renovated' ? ';grid-column:1/-1' : ''}">
+      <svg viewBox="0 0 96 48" width="96" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;color:#05203d">${LL_USE_ART[v]}<path d="M4 40H92" stroke="#8696ab" stroke-width="1.6"/></svg>
+      <span>${v}</span></button>`;
   const llTypeTile = ([v, t], current) => !LL_ART[v]   // no drawing: a slim full-width row
     ? `<button type="button" class="v2-tile compact ${current === v ? 'is-selected' : ''}" aria-pressed="${current === v}" data-ptype="${v}" style="grid-column:1/-1;min-height:48px"><span>${esc(t)}</span></button>`
     : `<button type="button" class="v2-tile compact ${current === v ? 'is-selected' : ''}" aria-pressed="${current === v}" data-ptype="${v}" style="flex-direction:column;gap:2px;padding:8px 8px 9px">
@@ -338,7 +350,7 @@
       case 'rental': return `
         <h1 class="v2-heading">What kind of rental property is it?</h1>
         <p class="v2-sub">Tap an option to start. A licensed North Carolina team compares rental property insurance for you.</p>
-        <div class="v2-grid-2">${LL_RENTAL.map(v => `<button type="button" class="v2-tile compact ${s.rental_use === v ? 'is-selected' : ''}" aria-pressed="${s.rental_use === v}" data-ll="rental_use" data-val="${v}"><span>${v}</span></button>`).join('')}</div>`;
+        <div class="v2-grid-2">${LL_RENTAL.map(v => llUseTile(v, s.rental_use)).join('')}</div>`;
 
       case 'units': return `
         <h1 class="v2-heading">How many units are in the building?</h1>
