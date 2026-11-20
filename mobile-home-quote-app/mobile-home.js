@@ -33,8 +33,8 @@
       <svg viewBox="0 0 96 48" width="${v === 'multi_section' ? 116 : 96}" height="${v === 'multi_section' ? 58 : 48}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;color:#05203d">${STYLE_ART[v]}${GROUND}</svg>
       <span>${esc(t)}</span><small style="display:block;font-size:12.5px;font-weight:600;line-height:1.25;color:#334155">${STYLE_HINT[v]}</small></button>`;
   // Size as width and length (how mobile home owners know their home). Square feet is worked out from it.
-  // Shown on the test page only until Bill approves. Office script Version 20 has a Size row for it.
-  const DIMS_ON = !LIVE;
+  // Live since 2026-11-20 (approved by Bill). Office script Version 20 has a Size row for it.
+  const DIMS_ON = true;
   const DIM_EXAMPLE = { single_wide: ['14', '70'], double_wide: ['28', '56'], multi_section: ['42', '60'] };
   const LAND = [['owned', 'I own or am buying the land'], ['rented_lot', 'I rent the lot'], ['other', 'Something else'], ['', 'Not sure']];
   const USE = [['primary', 'My main home'], ['seasonal', 'Seasonal or second home'], ['rental', 'I rent it to someone else'], ['not_sure', 'Not sure yet']];

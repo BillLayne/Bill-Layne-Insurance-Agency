@@ -38,8 +38,8 @@
   const MAX_YEAR = new Date().getFullYear() + 1;
   const TOP_YEARS = Array.from({ length: 18 }, (_, i) => String(MAX_YEAR - i));
   const DROPDOWN_YEARS = Array.from({ length: MAX_YEAR - 1981 + 1 }, (_, i) => String(MAX_YEAR - i));
-  // Simple side-view drawings so a customer can pick by look. Front points right. Shown on the test page only until Bill approves.
-  const TYPE_ART_ON = !LIVE;
+  // Simple side-view drawings so a customer can pick by look. Front points right. Live since 2026-11-20 (approved by Bill).
+  const TYPE_ART_ON = true;
   const GROUND = '<path d="M4 44H92" stroke="#8696ab" stroke-width="1.6"/>';
   const TYPE_ART = {
     'Motorcycle / trike': '<circle cx="20" cy="34" r="8"/><circle cx="76" cy="34" r="8"/><path d="M20 34l12-12h20l8-7h6l10 19"/><path d="M40 22q9-9 20-1"/><path d="M26 22h14"/><path d="M38 25h14v9H38z"/><path d="M62 15l-4-6h7"/><path d="M34 37H14"/>',
