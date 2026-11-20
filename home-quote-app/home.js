@@ -131,8 +131,8 @@
 
   // ---------- Flow ----------
   // The auto form's upload-or-continue step: two tiles, and an upload skips the coverage questions.
-  // Shown on the test page only until Bill approves.
-  const HANDY_ON = !LIVE;
+  // Live since 2026-11-20 (approved by Bill).
+  const HANDY_ON = true;
   const usedDec = () => HANDY_ON && !!state.used_dec && state.is_owner !== 'buying' && state.current_insurance === 'yes';
   function sequence() {
     if (state.is_owner === 'renter') return ['own', 'renter'];
