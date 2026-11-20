@@ -130,14 +130,19 @@
   }
 
   // ---------- Flow ----------
+  // The auto form's upload-or-continue step: two tiles, and an upload skips the coverage questions.
+  // Shown on the test page only until Bill approves.
+  const HANDY_ON = !LIVE;
+  const usedDec = () => HANDY_ON && !!state.used_dec && state.is_owner !== 'buying' && state.current_insurance === 'yes';
   function sequence() {
     if (state.is_owner === 'renter') return ['own', 'renter'];
     const seq = ['own', 'address', 'ptype', 'year', 'sqft', 'construction', 'rooftype', 'roofage'];
-    if (state.is_owner === 'buying') seq.push('closing'); else { seq.push('insured'); if (state.current_insurance === 'yes') seq.push('carrier', 'current'); }
+    if (state.is_owner === 'buying') seq.push('closing'); else { seq.push('insured'); if (state.current_insurance === 'yes') { seq.push('carrier'); if (HANDY_ON) seq.push('handy'); if (!usedDec()) seq.push('current'); } }
+    if (usedDec()) { seq.push('contact', 'notes', 'review', 'done'); return seq; }   // the declarations page answers the rest
     seq.push('claims', 'contact', 'dwelling', 'deductible', 'extras', 'household', 'notes', 'review', 'done');
     return seq;
   }
-  const EYEBROW = { own: 'YOUR HOME', renter: 'RENTERS', address: 'YOUR HOME', ptype: 'YOUR HOME', year: 'YOUR HOME', sqft: 'YOUR HOME',
+  const EYEBROW = { handy: 'CURRENT COVERAGE', own: 'YOUR HOME', renter: 'RENTERS', address: 'YOUR HOME', ptype: 'YOUR HOME', year: 'YOUR HOME', sqft: 'YOUR HOME',
     construction: 'YOUR HOME', rooftype: 'THE ROOF', roofage: 'THE ROOF', closing: 'YOUR PURCHASE', insured: 'CURRENT COVERAGE', carrier: 'CURRENT COVERAGE', current: 'CURRENT COVERAGE',
     claims: 'CLAIMS', contact: 'ABOUT YOU', dwelling: 'YOUR COVERAGE', deductible: 'YOUR COVERAGE', extras: 'YOUR COVERAGE', household: 'A FEW QUICK ONES',
     notes: 'ALMOST DONE', review: 'REVIEW', done: 'QUOTE RECEIVED' };
@@ -436,11 +441,24 @@
         <div class="v2-actions-stack"><button type="button" class="v2-btn-outline" style="width:100%" id="hq-carrier-skip">Not sure</button></div>`;
       }
 
+      case 'handy': {
+        const showUp = s.dec_choice === 'upload' || (files.length > 0 && s.dec_choice !== 'questions');
+        return `
+        <h1 class="v2-heading">Have your policy handy?</h1>
+        <p class="v2-sub">Upload your declarations page and skip most of the questions.</p>
+        <div class="v2-grid-2">
+          <button type="button" class="v2-tile ${showUp ? 'is-selected' : ''}" aria-pressed="${showUp}" id="hq-handy-upload">${icon('upload')}<span>Upload my declarations page</span></button>
+          <button type="button" class="v2-tile ${s.dec_choice === 'questions' ? 'is-selected' : ''}" aria-pressed="${s.dec_choice === 'questions'}" id="hq-handy-skip">${icon('skip')}<span>Keep answering questions</span></button>
+        </div>
+        ${showUp ? `<div class="v2-col">${uploadBox('Your declarations page')}
+          ${files.length ? `<div class="v2-actions-stack"><button type="button" class="v2-btn-gold" id="hq-handy-next">Continue with ${files.length} file${files.length > 1 ? 's' : ''} &rarr;</button></div>` : ''}</div>` : ''}`;
+      }
+
       case 'current': return `
         <h1 class="v2-heading">Tell us about your ${s.current_carrier ? esc(s.current_carrier) + ' ' : 'current '}policy</h1>
-        <p class="v2-sub">Have your policy handy? A photo of the declarations page answers all of this.</p>
+        <p class="v2-sub">${HANDY_ON ? 'Both are optional. They are on your policy or your bill.' : 'Have your policy handy? A photo of the declarations page answers all of this.'}</p>
         <div class="v2-col">
-          ${uploadBox()}
+          ${HANDY_ON ? '' : uploadBox()}
           <div class="v2-field"><label for="ex-mm">Renewal date (optional)</label>${dateBoxes('ex', s.coverage_expiration, 'Renewal date')}</div>
           <div class="v2-field"><label for="current_dwelling_amount">Dwelling coverage on your policy now (optional)</label>
             <select id="current_dwelling_amount" class="v2-select"><option value="">Not sure</option>${AMOUNTS.map(([v, t]) => `<option value="${v}" ${s.current_dwelling_amount === v ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
@@ -516,7 +534,7 @@
         </div>`;
 
       case 'review': {
-        const rows = [
+        let rows = [
           ['Home', `${s.property_address}, ${s.city}, NC ${s.zip_code}${s.county ? ' · ' + s.county + ' County' : ''}`, 'address'],
           ['Ownership', s.is_owner === 'buying' ? `Buying${s.closing_date ? ' · closing ' + s.closing_date : ''}` : 'I own it', 'own'],
           ['Type of home', label(PROPERTY_TYPES, s.property_type) || 'Not answered', 'ptype'],
@@ -535,7 +553,11 @@
           ['Extras', EXTRAS.filter(([k]) => s[k]).map(x => x[1]).join(', ') || 'None', 'extras'],
           ['Quick questions', `Pool: ${cap(s.has_pool)} · Trampoline, dogs or farm animals: ${cap(s.liability_items)} · Alarm: ${cap(s.security_system)} · Auto quote too: ${cap(s.bundle_auto)}`, 'household'],
           ['Notes', s.additional_notes || 'None', 'notes']);
-        if (files.length) rows.push(['Attached', files.map(f => f.name).join(', '), s.current_insurance === 'yes' ? 'current' : 'notes']);
+        if (usedDec()) {
+          rows = rows.filter(r => !['claims', 'dwelling', 'deductible', 'extras', 'household'].includes(r[2]));
+          rows.splice(rows.length - 1, 0, ['Your policy', `Declarations page attached (${files.length} file${files.length > 1 ? 's' : ''}). Our team will take your coverage details from it.`, 'handy']);
+        }
+        if (files.length) rows.push(['Attached', files.map(f => f.name).join(', '), s.current_insurance === 'yes' ? (HANDY_ON ? 'handy' : 'current') : 'notes']);
         return `
         <h1 class="v2-heading">Review your quote request</h1>
         <p class="v2-sub">Tap Edit to change anything, then send.</p>
@@ -618,6 +640,7 @@
       s.is_owner === 'buying' ? `BUYING THIS HOME${s.closing_date ? ' | Expected closing: ' + s.closing_date : ''}` : '',
       s.lookupUsed && s.lookup ? `County record used (customer confirmed${s.lookup.edited && s.lookup.edited.length ? '; customer UPDATED: ' + s.lookup.edited.join(', ') : ''}): ${s.lookup.address} | Parcel ${s.lookup.parcel} | ${s.lookup.facts.map(f => f.join(': ')).join(' · ')}` : '',
       s.lookupUsed && s.lookup && s.lookup.links && s.lookup.links.length ? `Official & research links: ${s.lookup.links.map(l => l.join(': ')).join(' ; ')}` : '',
+      usedDec() ? 'DECLARATIONS PAGE UPLOADED - the customer chose to skip the coverage questions. Take coverage, deductible, extras and claims from the attached page or ask.' : '',
       files.length ? `[Declarations page / files: ${files.map(f => f.name).join(', ')}]` : '',
       (LIVE && /^(travelers|alamance|ncgrange|universal)_/.test(srcParam)) ? `Quote source: ${srcParam}` : ''
     ].filter(Boolean).join(' | ');
@@ -641,8 +664,14 @@
   }
   window.__HQ_PREVIEW_PAYLOAD__ = () => (LIVE ? null : buildPayload());   // test page only: lets us inspect what would be sent
 
+  // Attached files live in memory only. If the page was reloaded they are gone, so the skipped questions come back.
+  function decFilesLost() {
+    if (!(HANDY_ON && state.used_dec) || files.length) return false;
+    state.used_dec = false; state.dec_choice = ''; save(); return true;
+  }
   async function send() {
     if (sending) return;
+    if (decFilesLost()) { stepId = 'handy'; history = ['own', 'handy']; sendError = ''; render(true); window.scrollTo(0, 0); return; }
     if (!turnstileToken) { sendError = 'Please wait a moment for the security check to finish, then tap Send again.'; render(); return; }
     sending = true; sendError = ''; render();
     const payload = buildPayload();
@@ -822,6 +851,9 @@
     on('hq-closing-next', () => { const d = readDate('cl', true); if (d === null) { showErr('Please enter the date as month, day and four-digit year, or tap Not sure yet.'); return; } state.closing_date = d; next(); });
     on('hq-closing-skip', () => { state.closing_date = ''; next(); });
     each('[data-insured]', b => b.addEventListener('click', () => pick(b, () => { state.current_insurance = b.dataset.insured; })));
+    on('hq-handy-upload', () => { state.dec_choice = 'upload'; save(); fireFormStart(); render(); });
+    on('hq-handy-skip', () => { state.dec_choice = 'questions'; state.used_dec = false; save(); fireFormStart(); render(); setTimeout(next, 230); });
+    on('hq-handy-next', () => { if (!files.length) return; state.dec_choice = 'upload'; state.used_dec = true; save(); next(); });
     on('hq-current-next', () => { const d = readDate('ex', true); if (d === null) { showErr('Please enter the renewal date as month, day and four-digit year, or leave it blank.'); return; }
       state.coverage_expiration = d; state.current_dwelling_amount = val('current_dwelling_amount'); next(); });
     each('[data-carrier]', b => b.addEventListener('click', () => {
@@ -891,6 +923,7 @@
   }
 
   restore();
+  if (decFilesLost() && sequence().includes('handy')) { stepId = 'handy'; history = ['own', 'handy']; }
   if (!sequence().includes(stepId)) { stepId = 'own'; history = ['own']; }
   render();
 })();
