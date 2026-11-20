@@ -110,8 +110,8 @@
       : `<span class="v2-logo-frame"><span class="v2-logo-text">${safe}</span></span>`;
     return `<button type="button" class="v2-tile logo-tile ${selected ? 'is-selected' : ''}" aria-label="${safe}" aria-pressed="${selected}" data-val="${safe}">${inner}</button>`;
   }
-  // Simple side-view drawings so a customer can pick by look, not by name. Bow points right. Shown on the test page only until Bill approves.
-  const TYPE_ART_ON = !LIVE;
+  // Simple side-view drawings so a customer can pick by look, not by name. Bow points right. Live since 2026-11-20 (approved by Bill).
+  const TYPE_ART_ON = true;
   const WATER = '<path d="M2 44q5-3 10 0t10 0 10 0 10 0 10 0 10 0 10 0 10 0 10 0" stroke="#8696ab" stroke-width="1.6"/>';
   const TYPE_ART = {
     'Pontoon / deck boat': '<path d="M9 36a3.5 3.5 0 0 1 3.5-3.5H80l9 3.5-9 3.5H12.5A3.5 3.5 0 0 1 9 36z"/><path d="M14 32.500V23h60v9.500M26 23v9.500M38 23v9.500M50 23v9.500M62 23v9.500"/><path d="M24 23V11M56 23V11M18 11.500q22-7 44 0"/><path d="M9 30H5v9"/>',
@@ -122,7 +122,7 @@
     'Personal watercraft / Jet Ski': '<path d="M10 34q20-4 46-4l28-4q6 0 4 4L78 38H18q-8 0-8-4z"/><path d="M24 30q2-6 16-6h10l4 6"/><path d="M56 30l8-8 20 4"/><path d="M57 29l4-10m-3 0h8"/>',
     'Other': '<path d="M14 28h68l-8 10H22z"/><text x="48" y="21" text-anchor="middle" font-size="20" font-weight="800" fill="currentColor" stroke="none" font-family="inherit">?</text>'
   };
-  const TYPE_HINT = { 'Runabout / bowrider': 'Open boat for skiing and cruising', 'Cruiser / cabin boat': 'Has a cabin you can sleep in', 'Pontoon / deck boat': 'Flat deck on floats' };
+  const TYPE_HINT = { 'Fishing / bass boat': 'Low deck with fishing seats', 'Runabout / bowrider': 'Open boat for skiing and cruising', 'Cruiser / cabin boat': 'Has a cabin you can sleep in', 'Pontoon / deck boat': 'Flat deck on floats' };
   const typeTile = ([v, t], current) => v === 'Other'   // no drawing: a slim full-width row so all seven choices fit a phone's first screen
     ? `<button type="button" class="v2-tile compact ${current === v ? 'is-selected' : ''}" aria-pressed="${current === v}" data-val="${esc(v)}" style="grid-column:1/-1;min-height:48px"><span>${esc(t)}</span></button>`
     : `<button type="button" class="v2-tile compact ${current === v ? 'is-selected' : ''}" aria-pressed="${current === v}" data-val="${esc(v)}" style="flex-direction:column;gap:2px;padding:8px 8px 9px">
@@ -617,6 +617,8 @@
       else if (v.value_label) top.push(`Value of ${who}: customer chose ${v.value_label}. The ${money(v.value)} in the value row is the middle of that range.`);
       if (v.model === 'Not sure') top.push(`Model not known for ${who}.`);
     });
+    s.boats.forEach((v, i) => { if (v.waters === 'Coastal / intracoastal' || v.waters === 'Offshore / ocean')
+      top.unshift(`*** ${v.waters === 'Offshore / ocean' ? 'OFFSHORE / OCEAN' : 'COASTAL / INTRACOASTAL'} USE - Watercraft ${i + 1} (${bName(v)}). Check which companies will write salt water before quoting. ***`); });
     s.operators.forEach((r, j) => { if (r.ownership_years) top.push(`Boat ownership, ${oName(r, j)}: ${label(OWN_YEARS, r.ownership_years)}. The number in the row is the low end.`); });
     if (s.coverage !== 'Liability only' && s.gear === 'Yes') top.push('Fishing gear and equipment to cover: YES' + (s.gear_value ? ', worth about ' + s.gear_value : ', value not given') + '.');
     if (s.start_choice === 'none' || !s.effective_date) extraNotes.push('Start date: not sure yet. Today’s date was sent as a placeholder.');
