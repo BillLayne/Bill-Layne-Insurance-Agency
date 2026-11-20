@@ -91,7 +91,7 @@
   let insurers = [['State Farm', 'state-farm-insurance-logo-c4hm2m.png'], ['Allstate', 'allstate-insurance-logo-nq7c5z.png'], ['Nationwide', 'nationwide-insurance-logo-j5zp2s.png'],
     ['Progressive', 'progressive-insurance-logo-2kcvze.png'], ['GEICO', 'geico-insurance-logo-s92zrs.png'], ['Liberty Mutual', 'liberty-mutual-insurance-logo-ffrtts.png']]
     .map(([name, f]) => ({ name, logo: IL + f, showLabel: false }));
-  let otherCarrierOpen = false, otherMakeOpen = false, olderYearOpen = false, exactValueOpen = false, otherModelOpen = false;
+  let otherCarrierOpen = false, otherMakeOpen = false, olderYearOpen = false, exactValueOpen = false, otherModelOpen = false, otherMotorOpen = false;
   function logoTile(c, selected) {
     const safe = esc(c.name);
     const inner = c.logo
@@ -128,12 +128,36 @@
     : `<button type="button" class="v2-tile compact ${current === v ? 'is-selected' : ''}" aria-pressed="${current === v}" data-val="${esc(v)}" style="flex-direction:column;gap:2px;padding:8px 8px 9px">
       <svg viewBox="0 0 96 48" width="92" height="46" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;color:#05203d">${TYPE_ART[v]}${WATER}</svg>
       <span>${esc(t)}</span>${TYPE_HINT[v] ? `<small style="display:block;font-size:12.5px;font-weight:600;line-height:1.25;color:#334155">${TYPE_HINT[v]}</small>` : ''}</button>`;
+  // Motor screen upgrade: drawings of where the motor sits, a shorter list by boat type, and an outboard brand + horsepower screen.
+  // Shown on the test page only until Bill approves.
+  const MOTOR_V2 = !LIVE;
+  const HULL_BACK = '<path d="M94 19H34l-5 17h65"/>';   // the back end of a boat, stern on the left
+  const ENGINE_ART = {
+    'Outboard': HULL_BACK + '<rect x="15" y="8" width="15" height="12" rx="3"/><path d="M24 20v20M19 40h10M24 40v4M30 19h4"/>',
+    'Inboard': HULL_BACK + '<rect x="58" y="23" width="15" height="9" rx="2"/><path d="M58 30L40 41M37 37l5 8M33 36v9"/>',
+    'Stern drive / I-O': HULL_BACK + '<rect x="37" y="23" width="15" height="9" rx="2"/><path d="M37 28h-7M30 26h-7v15M17 41h10M23 41v3"/>',
+    'Jet drive': HULL_BACK + '<path d="M30 27h-7v6h7M48 36q5 4 11 0"/><path d="M20 30H9M20 26l-9-4M20 34l-9 4" stroke="#8696ab"/>',
+    'Sail with auxiliary motor': TYPE_ART['Sailboat'] + '<path d="M9 25h6v5H9zM12 30v10M9 40h6"/>',
+    'Sail only / no motor': TYPE_ART['Sailboat'],
+    'Other': '<path d="M14 28h68l-8 10H22z"/><text x="48" y="21" text-anchor="middle" font-size="20" font-weight="800" fill="currentColor" stroke="none" font-family="inherit">?</text>'
+  };
+  const ENGINE_HINT = { 'Outboard': 'Hangs on the back of the boat', 'Inboard': 'Inside the boat, propeller underneath', 'Stern drive / I-O': 'Motor inside, drive on the back', 'Jet drive': 'No propeller' };
+  const ENGINE_NAME = { 'Stern drive / I-O': 'Stern drive' };
+  const SAIL_ENGINES = ['Sail with auxiliary motor', 'Sail only / no motor', 'Other'];
+  const enginesFor = v => ENGINES.filter(([k]) => v.type === 'Sailboat' ? SAIL_ENGINES.includes(k) : k === 'Other' || !SAIL_ENGINES.includes(k));
+  const engineTile = ([k, t], current) => k === 'Other'
+    ? `<button type="button" class="v2-tile compact ${current === k ? 'is-selected' : ''}" aria-pressed="${current === k}" data-val="${esc(k)}" style="grid-column:1/-1;min-height:48px"><span>${esc(t)}</span></button>`
+    : `<button type="button" class="v2-tile compact ${current === k ? 'is-selected' : ''}" aria-pressed="${current === k}" data-val="${esc(k)}" style="flex-direction:column;gap:2px;padding:8px 8px 9px">
+      <svg viewBox="0 0 96 48" width="92" height="46" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;color:#05203d">${ENGINE_ART[k]}${WATER}</svg>
+      <span>${esc(ENGINE_NAME[k] || t)}</span>${ENGINE_HINT[k] ? `<small style="display:block;font-size:12.5px;font-weight:600;line-height:1.25;color:#334155">${ENGINE_HINT[k]}</small>` : ''}</button>`;
+  const MOTOR_BRANDS = ['Mercury', 'Yamaha', 'Honda', 'Suzuki', 'Evinrude', 'Johnson', 'Tohatsu'];
+  const hasMotor = v => v.engine_type !== 'Sail only / no motor';
   const MAX_YEAR = new Date().getFullYear() + 1;
   const TOP_YEARS = Array.from({ length: 18 }, (_, i) => String(MAX_YEAR - i));
   const DROPDOWN_YEARS = Array.from({ length: MAX_YEAR - 1981 + 1 }, (_, i) => String(MAX_YEAR - i));
 
   // ---------- State ----------
-  const blankB = () => ({ type: '', make: '', year: '', model: '', length_feet: '', horsepower: '', engine_type: '', value: '', value_label: '', ownership: '', lender: '',
+  const blankB = () => ({ type: '', make: '', year: '', model: '', length_feet: '', horsepower: '', engine_type: '', motor_brand: '', value: '', value_label: '', ownership: '', lender: '',
     use: '', waters: '', storage_type: '', storage_place: '', trailer: '', hull_material: 'Not sure', modified: 'Not sure', modifications: '' });
   const blankO = () => ({ firstname: '', lastname: '', date_of_birth: '', relationship: '', license_status: '', ownership_years: '', training: '',
     violations: '', violation_details: '', accidents: '', accident_details: '', suspensions: '', suspension_details: '' });
@@ -180,11 +204,11 @@
   }
 
   // ---------- Flow ----------
-  const BOAT_STEPS = ['type', 'make', 'year', 'model', 'size', 'engine', 'value', 'owned', 'use', 'waters', 'kept', 'trailer', 'vdetails'];
+  const BOAT_STEPS = ['type', 'make', 'year', 'model', 'size', 'engine', 'motor', 'value', 'owned', 'use', 'waters', 'kept', 'trailer', 'vdetails'];
   const OP_STEPS = ['rwho', 'license', 'years', 'course', 'record'];
   function sequence() {
     const seq = [];
-    state.boats.forEach((v, i) => BOAT_STEPS.forEach(st => { if (st === 'engine' && v.type === PWC) return; seq.push(st + ':' + i); }));   // a personal watercraft is always jet drive
+    state.boats.forEach((v, i) => BOAT_STEPS.forEach(st => { if (st === 'engine' && v.type === PWC) return; if (st === 'motor' && (!MOTOR_V2 || !hasMotor(v))) return; seq.push(st + ':' + i); }));   // a personal watercraft is always jet drive
     seq.push('vmore', 'contact', 'address');
     state.operators.forEach((r, j) => OP_STEPS.forEach(st => { if (st === 'rwho' && j === 0) return; seq.push(st + ':' + j); }));
     seq.push('rmore', 'insured');
@@ -213,7 +237,7 @@
   }
   function back() { if (history.length < 2) return; history.pop(); stepId = history[history.length - 1]; if (!sequence().includes(stepId)) { stepId = 'type:0'; history = ['type:0']; } enter(true); }
   function enter(fromBack) {
-    otherMakeOpen = false; olderYearOpen = false; exactValueOpen = false; otherModelOpen = false; save();
+    otherMakeOpen = false; olderYearOpen = false; exactValueOpen = false; otherModelOpen = false; otherMotorOpen = false; save();
     if (!fromBack) { try { window.history.pushState({ bq: stepId }, ''); } catch (_) {} }
     track('boat_v2_step_view'); render(true); window.scrollTo(0, 0);
   }
@@ -327,11 +351,11 @@
 
       case 'size': return `
         <h1 class="v2-heading">How big is it?</h1>
-        <p class="v2-sub">Both are optional. Fill in what you know.</p>
+        <p class="v2-sub">${MOTOR_V2 ? 'Optional. A best guess is fine.' : 'Both are optional. Fill in what you know.'}</p>
         <div class="v2-col">
           <div class="hq-two">
             <div class="v2-field"><label for="bq-length">Length, feet</label><input id="bq-length" class="v2-input" type="text" inputmode="decimal" maxlength="5" placeholder="Example: 20" value="${esc(v.length_feet)}"></div>
-            <div class="v2-field"><label for="bq-hp">Horsepower</label><input id="bq-hp" class="v2-input" type="text" inputmode="numeric" maxlength="5" placeholder="Example: 115" value="${esc(v.horsepower)}"></div>
+            ${MOTOR_V2 ? '' : `<div class="v2-field"><label for="bq-hp">Horsepower</label><input id="bq-hp" class="v2-input" type="text" inputmode="numeric" maxlength="5" placeholder="Example: 115" value="${esc(v.horsepower)}"></div>`}
           </div>
           ${ERR}
           <div class="v2-actions-stack"><button type="button" class="v2-btn-gold" id="bq-size-next">Continue &rarr;</button>
@@ -340,8 +364,27 @@
 
       case 'engine': return `
         <h1 class="v2-heading">What kind of motor does it have?</h1>
-        <p class="v2-sub">Choose the closest match.</p>
-        ${tiles(ENGINES, v.engine_type, 2, true)}`;
+        <p class="v2-sub">${MOTOR_V2 ? 'Tap the one that looks like yours.' : 'Choose the closest match.'}</p>
+        ${MOTOR_V2 ? `<div class="v2-grid-2">${enginesFor(v).map(e => engineTile(e, v.engine_type)).join('')}</div>` : tiles(ENGINES, v.engine_type, 2, true)}`;
+
+      case 'motor': {
+        const outboard = v.engine_type === 'Outboard', known = MOTOR_BRANDS.includes(v.motor_brand);
+        const otherOn = otherMotorOpen || (!!v.motor_brand && !known && v.motor_brand !== 'Not sure');
+        return `
+        <h1 class="v2-heading">${outboard ? 'Tell us about the motor' : 'How much horsepower?'}</h1>
+        <p class="v2-sub">${outboard ? 'Both are optional. Tap the brand and add the horsepower if you know it.' : 'Optional. It is usually on the motor or in the owner\u2019s papers.'}</p>
+        ${outboard ? `<div class="v2-group-block"><div class="v2-group-title">Who makes the motor?</div><div class="v2-grid-3" style="margin-bottom:0">
+          ${MOTOR_BRANDS.map(m => `<button type="button" class="v2-tile compact ${v.motor_brand === m ? 'is-selected' : ''}" aria-pressed="${v.motor_brand === m}" data-motor="${m}">${m}</button>`).join('')}
+          <button type="button" class="v2-tile compact ${otherOn ? 'is-selected' : ''}" aria-pressed="${otherOn}" data-motor="__OTHER__">Another</button>
+          <button type="button" class="v2-tile compact ${v.motor_brand === 'Not sure' ? 'is-selected' : ''}" aria-pressed="${v.motor_brand === 'Not sure'}" data-motor="Not sure">Not sure</button></div>
+          ${otherOn ? `<div class="v2-field" style="margin-top:12px"><label for="bq-motor-other">Enter the motor brand</label><input id="bq-motor-other" class="v2-input" type="text" autocapitalize="words" maxlength="60" value="${esc(known || v.motor_brand === 'Not sure' ? '' : v.motor_brand)}"></div>` : ''}</div>` : ''}
+        <div class="v2-col">
+          <div class="v2-field"><label for="bq-hp">Horsepower${outboard ? ' (optional)' : ''}</label><input id="bq-hp" class="v2-input" type="text" inputmode="numeric" maxlength="5" placeholder="Example: 115" value="${esc(v.horsepower)}"></div>
+          ${ERR}
+          <div class="v2-actions-stack"><button type="button" class="v2-btn-gold" id="bq-motor-next">Continue &rarr;</button>
+          <button type="button" class="v2-btn-outline" style="width:100%" id="bq-motor-skip">Not sure, skip</button></div>
+        </div>`;
+      }
 
       case 'value': {
         const exactOn = exactValueOpen || (!!v.value && !v.value_label && v.value !== '1');
@@ -567,7 +610,7 @@
         const recordLine = x => ['violations', 'accidents', 'suspensions'].map((k, n) => `${['tickets', 'accidents', 'suspensions'][n]}: ${(x[k] || 'not sure').toLowerCase()}`).join(', ');
         const rows = [];
         s.boats.forEach((x, i) => rows.push([many() ? 'Watercraft ' + (i + 1) : 'Your ' + noun(x),
-          [bName(x), label(TYPES, x.type), x.value_label ? 'Worth: ' + x.value_label.toLowerCase() : (x.value ? 'Worth about ' + money(x.value) : ''), label(OWNED, x.ownership), label(USES, x.use), label(WATERS, x.waters),
+          [bName(x), label(TYPES, x.type), MOTOR_V2 && x.motor_brand && x.motor_brand !== 'Not sure' ? x.motor_brand + ' motor' + (x.horsepower ? ', ' + x.horsepower + ' hp' : '') : '', x.value_label ? 'Worth: ' + x.value_label.toLowerCase() : (x.value ? 'Worth about ' + money(x.value) : ''), label(OWNED, x.ownership), label(USES, x.use), label(WATERS, x.waters),
             label(KEPT, x.storage_type) + (x.storage_place ? ' (' + x.storage_place + ')' : ''), 'Trailer: ' + (x.trailer || 'not sure').toLowerCase()].filter(Boolean).join(' · '), 'boat:' + i]));
         rows.push(['Contact', `${s.firstname} ${s.lastname} · ${s.phone} · ${s.email}`, 'contact'], ['Home address', [s.address, s.city, 'NC', s.zip_code].filter(Boolean).join(', '), 'address']);
         s.operators.forEach((x, i) => rows.push([s.operators.length > 1 ? 'Operator ' + (i + 1) : 'Operator',
@@ -632,7 +675,8 @@
         return { type: v.type, year: v.year, make: oneLine(v.make).slice(0, 100), model: oneLine(v.model).slice(0, 100) || 'Not sure', length_feet: v.length_feet, hull_material: v.hull_material,
           value: v.value || '1', ownership: v.ownership, lender: ['Financed', 'Leased'].includes(v.ownership) ? (oneLine(v.lender).slice(0, 180) || LATER) : '',
           storage_same: v.storage_type === HOME_STORAGE ? 'Yes' : away && place ? 'No' : 'Not sure', storage_address: away && place ? place.slice(0, 600) : '',
-          engine_type: v.type === PWC ? 'Jet drive' : v.engine_type, horsepower: v.horsepower, use: v.use, waters: v.waters, storage_type: v.storage_type, marina: away ? place.slice(0, 180) : '',
+          engine_type: v.type === PWC ? 'Jet drive' : v.engine_type, horsepower: v.horsepower,
+          engine_details: v.engine_type === 'Outboard' && v.motor_brand ? ('Outboard brand: ' + oneLine(v.motor_brand)).slice(0, 600) : '', use: v.use, waters: v.waters, storage_type: v.storage_type, marina: away ? place.slice(0, 180) : '',
           trailer: ans(v.trailer), modified: v.modified, modifications: v.modified === 'Yes' ? (v.modifications.trim().slice(0, 600) || LATER) : '' }; }),
       operators: s.operators.map((r, j) => ({ same_as_applicant: j === 0 ? 'Yes' : 'No',
         firstname: j === 0 ? '' : oneLine(r.firstname).slice(0, 60), lastname: j === 0 ? '' : oneLine(r.lastname).slice(0, 60), date_of_birth: j === 0 ? '' : r.date_of_birth,
@@ -774,7 +818,7 @@
       if (s === 'make') { otherMakeOpen = false; return pick(b, () => { if (v.make !== x) v.model = ''; v.make = x; }); }
       if (s === 'model') { otherModelOpen = false; return pick(b, () => { v.model = x; }); }
       if (s === 'year') return pick(b, () => { v.year = x; });
-      if (s === 'engine') return pick(b, () => { v.engine_type = x; });
+      if (s === 'engine') return pick(b, () => { if (x !== 'Outboard') v.motor_brand = ''; if (x === 'Sail only / no motor') v.horsepower = ''; v.engine_type = x; });
       if (s === 'value') { exactValueOpen = false; return pick(b, () => { v.value_label = x; v.value = x === 'Not sure' ? '1' : (VALUES.find(p => p[1] === x) || ['1'])[0]; }); }
       if (s === 'owned') {
         if (x === 'Financed' || x === 'Leased') { mark(b); v.ownership = x; save(); fireFormStart(); openSheet('lender'); return; }
@@ -832,11 +876,26 @@
     each('[data-model-other]', b => b.addEventListener('click', () => { otherModelOpen = true; const v = B(); if (popularModels(v).includes(v.model) || v.model === 'Not sure') v.model = ''; render(); const o = $('bq-model'); if (o) o.focus(); }));
     on('bq-model-next', () => { const m = oneLine(val('bq-model')); if (!m) { showErr('Please enter the model. A best guess is fine.'); return; } B().model = m; otherModelOpen = false; save(); fireFormStart(); next(); });
     on('bq-model-skip', () => { B().model = 'Not sure'; otherModelOpen = false; save(); fireFormStart(); next(); });
+    each('[data-motor]', b => b.addEventListener('click', () => {
+      const v = B(), x = b.dataset.motor, hp = $('bq-hp'); if (hp) v.horsepower = hp.value.replace(/[^\d]/g, '');
+      if (x === '__OTHER__') { otherMotorOpen = true; if (MOTOR_BRANDS.includes(v.motor_brand) || v.motor_brand === 'Not sure') v.motor_brand = ''; }
+      else { otherMotorOpen = false; v.motor_brand = v.motor_brand === x ? '' : x; }
+      save(); fireFormStart(); rerender(); if (x === '__OTHER__') { const o = $('bq-motor-other'); if (o) o.focus(); }
+    }));
+    function saveMotor(skip) {
+      const v = B(), hp = skip ? '' : val('bq-hp').replace(/[^\d]/g, ''), other = $('bq-motor-other');
+      if (hp && Number(hp) > 10000) { showErr('Please check the horsepower, or leave it blank.'); return; }
+      if (other && !skip) { const t = oneLine(other.value); if (t) v.motor_brand = t; }
+      if (!skip) v.horsepower = hp ? String(Number(hp)) : '';
+      otherMotorOpen = false; save(); next();
+    }
+    on('bq-motor-next', () => saveMotor(false));
+    on('bq-motor-skip', () => saveMotor(true));
     function saveSize(skip) {
-      const len = skip ? '' : val('bq-length').replace(/[^\d.]/g, ''), hp = skip ? '' : val('bq-hp').replace(/[^\d]/g, ''), v = B();
+      const len = skip ? '' : val('bq-length').replace(/[^\d.]/g, ''), hp = skip || MOTOR_V2 ? '' : val('bq-hp').replace(/[^\d]/g, ''), v = B();
       if (len && (!/^\d+(\.\d)?$/.test(len) || Number(len) < 1 || Number(len) > 300)) { showErr('Please check the length in feet, for example 20 or 18.5, or leave it blank.'); return; }
       if (hp && Number(hp) > 10000) { showErr('Please check the horsepower, or leave it blank.'); return; }
-      if (!skip) { v.length_feet = len ? String(Number(len)) : ''; v.horsepower = hp ? String(Number(hp)) : ''; }
+      if (!skip) { v.length_feet = len ? String(Number(len)) : ''; if (!MOTOR_V2) v.horsepower = hp ? String(Number(hp)) : ''; }
       save(); next();
     }
     on('bq-size-next', () => saveSize(false));
