@@ -38,6 +38,21 @@
   const MAX_YEAR = new Date().getFullYear() + 1;
   const TOP_YEARS = Array.from({ length: 18 }, (_, i) => String(MAX_YEAR - i));
   const DROPDOWN_YEARS = Array.from({ length: MAX_YEAR - 1981 + 1 }, (_, i) => String(MAX_YEAR - i));
+  // Simple side-view drawings so a customer can pick by look. Front points right. Shown on the test page only until Bill approves.
+  const TYPE_ART_ON = !LIVE;
+  const GROUND = '<path d="M4 44H92" stroke="#8696ab" stroke-width="1.6"/>';
+  const TYPE_ART = {
+    'Motorcycle / trike': '<circle cx="20" cy="34" r="8"/><circle cx="76" cy="34" r="8"/><path d="M20 34l12-12h20l8-7h6l10 19"/><path d="M40 22q9-9 20-1"/><path d="M26 22h14"/><path d="M38 25h14v9H38z"/><path d="M62 15l-4-6h7"/><path d="M34 37H14"/>',
+    'ATV': '<circle cx="22" cy="33" r="9"/><circle cx="74" cy="33" r="9"/><circle cx="22" cy="33" r="3"/><circle cx="74" cy="33" r="3"/><path d="M8 24h20l7-7h18l9 7h22"/><path d="M35 17h14"/><path d="M57 18l4-9m-5 0h9"/><path d="M33 27h30v7H33z"/>',
+    'Side-by-side / UTV': '<circle cx="22" cy="35" r="7.500"/><circle cx="76" cy="35" r="7.500"/><path d="M6 30h84v-6l-18-2"/><path d="M6 30V18h20v12"/><path d="M30 30V8h26l16 14"/><path d="M40 30v-9h9M56 8v22"/><path d="M60 22l5-6"/>',
+    'Dirt bike': '<circle cx="20" cy="33" r="9"/><circle cx="78" cy="33" r="9"/><path d="M20 33l15-15h21l7-7 15 22"/><path d="M29 17h26"/><path d="M63 11l-3-6h8"/><path d="M66 19l15 3"/><path d="M14 17l17 2"/><path d="M40 20h12l-4 10h-10z"/><path d="M38 30L24 21"/>',
+    'Scooter / moped': '<circle cx="22" cy="36" r="6.500"/><circle cx="76" cy="36" r="6.500"/><path d="M22 36q-2-12 12-12h12v8h18l8-20"/><path d="M28 23h18"/><path d="M68 12h8"/><path d="M72 12l4 24"/><path d="M14 30q4-7 14-7"/>',
+    'Other / discuss': '<circle cx="24" cy="34" r="8"/><circle cx="72" cy="34" r="8"/><path d="M24 34h48"/><text x="48" y="22" text-anchor="middle" font-size="20" font-weight="800" fill="currentColor" stroke="none" font-family="inherit">?</text>'
+  };
+  const TYPE_HINT = { 'Motorcycle / trike': 'Street bikes and three-wheelers', 'ATV': 'You sit on top, handlebars', 'Side-by-side / UTV': 'Seats side by side, steering wheel', 'Dirt bike': 'Off-road bike', 'Scooter / moped': 'Step-through, small engine' };
+  const typeTile = ([v, t], current) => `<button type="button" class="v2-tile compact ${current === v ? 'is-selected' : ''}" aria-pressed="${current === v}" data-val="${esc(v)}" style="flex-direction:column;gap:2px;padding:8px 8px 9px">
+      <svg viewBox="0 0 96 48" width="92" height="46" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;color:#05203d">${TYPE_ART[v]}${GROUND}</svg>
+      <span>${esc(t)}</span>${TYPE_HINT[v] ? `<small style="display:block;font-size:12.5px;font-weight:600;line-height:1.25;color:#334155">${TYPE_HINT[v]}</small>` : ''}</button>`;
   const OWNED = [['Owned outright', 'I own it outright'], ['Financed', 'I’m making payments'], ['Leased', 'It’s leased'], ['Shopping / not purchased', 'Still shopping']];
   const USES = [['Pleasure / occasional rides', 'Fun and weekend rides'], ['Commuting under 10 miles', 'Riding to work, under 10 miles'], ['Commuting 10 miles or more', 'Riding to work, 10 miles or more'],
     ['Off-road / farm', 'Off-road or farm'], ['Business / delivery', 'Business or delivery'], ['Racing / track', 'Racing or track days'], ['Other', 'Something else']];
@@ -259,8 +274,8 @@
     switch (sid()) {
       case 'type': return `
         <h1 class="v2-heading">${j === 0 ? 'What would you like to insure?' : 'What is the next one?'}</h1>
-        <p class="v2-sub">${j === 0 ? 'Tap an option to start. A licensed North Carolina team compares motorcycle and ATV insurance for you.' : 'Choose the closest match.'}</p>
-        ${tiles(TYPES, v.type, 2, true)}`;
+        <p class="v2-sub">${TYPE_ART_ON ? 'Tap the one that looks like yours.' : j === 0 ? 'Tap an option to start. A licensed North Carolina team compares motorcycle and ATV insurance for you.' : 'Choose the closest match.'}</p>
+        ${TYPE_ART_ON ? `<div class="v2-grid-2">${TYPES.map(t => typeTile(t, v.type)).join('')}</div>` : tiles(TYPES, v.type, 2, true)}`;
 
       case 'make': {
         const list = OFFROAD.includes(v.type) ? MAKES_OFF : MAKES_ROAD, known = list.includes(v.make), otherOn = otherMakeOpen || (!!v.make && !known);
