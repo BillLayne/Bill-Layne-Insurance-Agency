@@ -18,6 +18,20 @@
 
   // Stored values = exactly the choices the office script accepts.
   const STYLES = [['single_wide', 'Single-wide'], ['double_wide', 'Double-wide'], ['multi_section', 'Multi-section or triple-wide'], ['not_sure', 'Not sure']];
+  // Simple end-view drawings so a customer can pick by look. Shown on the test page only until Bill approves.
+  const STYLE_ART_ON = !LIVE;
+  const GROUND = '<path d="M4 40H92" stroke="#8696ab" stroke-width="1.6"/>';
+  const STYLE_ART = {
+    single_wide: '<path d="M34 20h28v18H34z"/><path d="M31 20.500L48 11l17 9.500"/><path d="M45 27h6v11h-6zM37.500 24h4.500v5h-4.500zM54 24h4.500v5H54z"/>',
+    double_wide: '<path d="M22 20h52v18H22z"/><path d="M19 20.500L48 9l29 11.500"/><path d="M48 9v29" stroke-dasharray="3 3"/><path d="M53 27h6v11h-6zM28 25h8v6h-8zM63 25h7v6h-7zM39 25h5v6h-5z"/>',
+    multi_section: '<path d="M10 20h76v18H10z"/><path d="M7 20.500L48 7l41 13.500"/><path d="M35 11.500V38M61 11.500V38" stroke-dasharray="3 3"/><path d="M45 27h6v11h-6zM16 25h8v6h-8zM72 25h8v6h-8zM26 25h5v6h-5zM65 25h-1"/>'
+  };
+  const STYLE_HINT = { single_wide: 'One section, about 14 to 18 feet wide', double_wide: 'Two sections joined, about 24 to 32 feet wide', multi_section: 'Three or more sections' };
+  const styleTile = ([v, t], current) => v === 'not_sure'   // no drawing: a slim full-width row
+    ? `<button type="button" class="v2-tile compact ${current === v ? 'is-selected' : ''}" aria-pressed="${current === v}" data-style="${v}" style="grid-column:1/-1;min-height:48px"><span>${esc(t)}</span></button>`
+    : `<button type="button" class="v2-tile compact ${current === v ? 'is-selected' : ''}" aria-pressed="${current === v}" data-style="${v}" style="flex-direction:column;gap:2px;padding:8px 8px 9px${v === 'multi_section' ? ';grid-column:1/-1' : ''}">
+      <svg viewBox="0 0 96 48" width="${v === 'multi_section' ? 116 : 96}" height="${v === 'multi_section' ? 58 : 48}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;color:#05203d">${STYLE_ART[v]}${GROUND}</svg>
+      <span>${esc(t)}</span><small style="display:block;font-size:12.5px;font-weight:600;line-height:1.25;color:#334155">${STYLE_HINT[v]}</small></button>`;
   const LAND = [['owned', 'I own or am buying the land'], ['rented_lot', 'I rent the lot'], ['other', 'Something else'], ['', 'Not sure']];
   const USE = [['primary', 'My main home'], ['seasonal', 'Seasonal or second home'], ['rental', 'I rent it to someone else'], ['not_sure', 'Not sure yet']];
   const AMOUNTS = [['25000', '$25,000'], ['50000', '$50,000'], ['75000', '$75,000'], ['100000', '$100,000'], ['150000', '$150,000']];
@@ -169,8 +183,8 @@
 
       case 'style': return `
         <h1 class="v2-heading">What kind of mobile home is it?</h1>
-        <p class="v2-sub">Choose the closest match.</p>
-        ${tiles('style', STYLES, s.home_style, 2, true)}`;
+        <p class="v2-sub">${STYLE_ART_ON ? 'Tap the one that looks like yours.' : 'Choose the closest match.'}</p>
+        ${STYLE_ART_ON ? `<div class="v2-grid-2">${STYLES.map(t => styleTile(t, s.home_style)).join('')}</div>` : tiles('style', STYLES, s.home_style, 2, true)}`;
 
       case 'address': return `
         <h1 class="v2-heading">Where is the mobile home?</h1>
