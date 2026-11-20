@@ -129,8 +129,8 @@
       <svg viewBox="0 0 96 48" width="92" height="46" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;color:#05203d">${TYPE_ART[v]}${WATER}</svg>
       <span>${esc(t)}</span>${TYPE_HINT[v] ? `<small style="display:block;font-size:12.5px;font-weight:600;line-height:1.25;color:#334155">${TYPE_HINT[v]}</small>` : ''}</button>`;
   // Motor screen upgrade: drawings of where the motor sits, a shorter list by boat type, and an outboard brand + horsepower screen.
-  // Shown on the test page only until Bill approves.
-  const MOTOR_V2 = !LIVE;
+  // Live since 2026-11-20 (approved by Bill).
+  const MOTOR_V2 = true;
   const HULL_BACK = '<path d="M94 19H34l-5 17h65"/>';   // the back end of a boat, stern on the left
   const ENGINE_ART = {
     'Outboard': HULL_BACK + '<rect x="15" y="8" width="15" height="12" rx="3"/><path d="M24 20v20M19 40h10M24 40v4M30 19h4"/>',
