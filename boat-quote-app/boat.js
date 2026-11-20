@@ -90,6 +90,24 @@
       : `<span class="v2-logo-frame"><span class="v2-logo-text">${safe}</span></span>`;
     return `<button type="button" class="v2-tile logo-tile ${selected ? 'is-selected' : ''}" aria-label="${safe}" aria-pressed="${selected}" data-val="${safe}">${inner}</button>`;
   }
+  // Simple side-view drawings so a customer can pick by look, not by name. Bow points right. Shown on the test page only until Bill approves.
+  const TYPE_ART_ON = !LIVE;
+  const WATER = '<path d="M2 44q5-3 10 0t10 0 10 0 10 0 10 0 10 0 10 0 10 0 10 0" stroke="#8696ab" stroke-width="1.6"/>';
+  const TYPE_ART = {
+    'Pontoon / deck boat': '<path d="M9 36a3.5 3.5 0 0 1 3.5-3.5H80l9 3.5-9 3.5H12.5A3.5 3.5 0 0 1 9 36z"/><path d="M14 32.500V23h60v9.500M26 23v9.500M38 23v9.500M50 23v9.500M62 23v9.500"/><path d="M24 23V11M56 23V11M18 11.500q22-7 44 0"/><path d="M9 30H5v9"/>',
+    'Fishing / bass boat': '<path d="M7 31h67l18-4-10 11H13z"/><path d="M7 31v-8H3v11l1.500 7"/><path d="M30 31v-6m-3.500 0h7v-4h-7zM66 31v-5m-3.500 0h7v-4h-7z"/><path d="M43 31v-5l6-3v8"/><path d="M86 28l4-9"/>',
+    'Runabout / bowrider': '<path d="M9 28h53q18 0 30-4l-8 14H15q-6 0-6-10z"/><path d="M52 28l-7-10h3l11 10"/><path d="M15 28v-5h10v5M30 28v-4h8v4"/><path d="M66 27q11-5 22-2.500"/><path d="M10 35l-5 7"/>',
+    'Cruiser / cabin boat': '<path d="M6 27h64q16 0 23-4l-7 15H12z"/><path d="M20 27V16h30l11 11"/><path d="M25 16v-6h16l5 6"/><path d="M26 19.500h8v4h-8zM38 19.500h8v4h-8z"/><circle cx="66" cy="32" r="1.6"/><circle cx="74" cy="31.500" r="1.6"/><circle cx="58" cy="32.500" r="1.6"/>',
+    'Sailboat': '<path d="M14 32h68l-8 7H22z"/><path d="M48 32V4"/><path d="M45.500 7v22h-25z"/><path d="M51 10v19h23z"/><path d="M44 39l2 5h6l2-5"/>',
+    'Personal watercraft / Jet Ski': '<path d="M10 34q20-4 46-4l28-4q6 0 4 4L78 38H18q-8 0-8-4z"/><path d="M24 30q2-6 16-6h10l4 6"/><path d="M56 30l8-8 20 4"/><path d="M57 29l4-10m-3 0h8"/>',
+    'Other': '<path d="M14 28h68l-8 10H22z"/><text x="48" y="21" text-anchor="middle" font-size="20" font-weight="800" fill="currentColor" stroke="none" font-family="inherit">?</text>'
+  };
+  const TYPE_HINT = { 'Runabout / bowrider': 'Open boat for skiing and cruising', 'Cruiser / cabin boat': 'Has a cabin you can sleep in', 'Pontoon / deck boat': 'Flat deck on floats' };
+  const typeTile = ([v, t], current) => v === 'Other'   // no drawing: a slim full-width row so all seven choices fit a phone's first screen
+    ? `<button type="button" class="v2-tile compact ${current === v ? 'is-selected' : ''}" aria-pressed="${current === v}" data-val="${esc(v)}" style="grid-column:1/-1;min-height:48px"><span>${esc(t)}</span></button>`
+    : `<button type="button" class="v2-tile compact ${current === v ? 'is-selected' : ''}" aria-pressed="${current === v}" data-val="${esc(v)}" style="flex-direction:column;gap:2px;padding:8px 8px 9px">
+      <svg viewBox="0 0 96 48" width="92" height="46" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;color:#05203d">${TYPE_ART[v]}${WATER}</svg>
+      <span>${esc(t)}</span>${TYPE_HINT[v] ? `<small style="display:block;font-size:12.5px;font-weight:600;line-height:1.25;color:#334155">${TYPE_HINT[v]}</small>` : ''}</button>`;
   const MAX_YEAR = new Date().getFullYear() + 1;
   const TOP_YEARS = Array.from({ length: 18 }, (_, i) => String(MAX_YEAR - i));
   const DROPDOWN_YEARS = Array.from({ length: MAX_YEAR - 1981 + 1 }, (_, i) => String(MAX_YEAR - i));
@@ -239,8 +257,8 @@
     switch (sid()) {
       case 'type': return `
         <h1 class="v2-heading">${j === 0 ? 'What would you like to insure?' : 'What is the next one?'}</h1>
-        <p class="v2-sub">${j === 0 ? 'Tap an option to start. A licensed North Carolina team compares boat insurance for you.' : 'Choose the closest match.'}</p>
-        ${tiles(TYPES, v.type, 2, true)}`;
+        <p class="v2-sub">${TYPE_ART_ON ? 'Tap the one that looks like yours.' : j === 0 ? 'Tap an option to start. A licensed North Carolina team compares boat insurance for you.' : 'Choose the closest match.'}</p>
+        ${TYPE_ART_ON ? `<div class="v2-grid-2">${TYPES.map(t => typeTile(t, v.type)).join('')}</div>` : tiles(TYPES, v.type, 2, true)}`;
 
       case 'make': {
         const list = MAKES[v.type] || [], known = list.includes(v.make), otherOn = otherMakeOpen || (!!v.make && !known) || !list.length;
