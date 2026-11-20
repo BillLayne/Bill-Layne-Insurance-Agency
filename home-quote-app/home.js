@@ -229,8 +229,10 @@
     const f = [];
     if (p.yearBuilt) f.push(['Year built', String(p.yearBuilt)]);
     if (p.heatedArea) f.push(['Heated area', Math.round(p.heatedArea).toLocaleString('en-US') + ' sq ft']);
-    if (p.exteriorWall) f.push(['Outside walls', p.exteriorWall]);
-    if (p.roofCover) f.push(['Roof', p.roofCover]);
+    // County records often prefix a code ("10-Vinyl/Aluminum Siding"); show the words only.
+    const plain = v => String(v).replace(/^\s*\d{1,3}\s*[-:]\s*/, '');
+    if (p.exteriorWall) f.push(['Outside walls', plain(p.exteriorWall)]);
+    if (p.roofCover) f.push(['Roof', plain(p.roofCover)]);
     if (p.stories) f.push(['Stories', String(p.stories)]);
     if (Number.isFinite(p.bedrooms)) f.push(['Bedrooms', String(p.bedrooms)]);
     if (p.county) f.push(['County', p.county]);
