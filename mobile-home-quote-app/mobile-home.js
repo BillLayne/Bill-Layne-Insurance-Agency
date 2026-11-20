@@ -32,6 +32,10 @@
     : `<button type="button" class="v2-tile compact ${current === v ? 'is-selected' : ''}" aria-pressed="${current === v}" data-style="${v}" style="flex-direction:column;gap:2px;padding:8px 8px 9px${v === 'multi_section' ? ';grid-column:1/-1' : ''}">
       <svg viewBox="0 0 96 48" width="${v === 'multi_section' ? 116 : 96}" height="${v === 'multi_section' ? 58 : 48}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;color:#05203d">${STYLE_ART[v]}${GROUND}</svg>
       <span>${esc(t)}</span><small style="display:block;font-size:12.5px;font-weight:600;line-height:1.25;color:#334155">${STYLE_HINT[v]}</small></button>`;
+  // Size as width and length (how mobile home owners know their home). Square feet is worked out from it.
+  // Shown on the test page only until Bill approves. Office script Version 20 has a Size row for it.
+  const DIMS_ON = !LIVE;
+  const DIM_EXAMPLE = { single_wide: ['14', '70'], double_wide: ['28', '56'], multi_section: ['42', '60'] };
   const LAND = [['owned', 'I own or am buying the land'], ['rented_lot', 'I rent the lot'], ['other', 'Something else'], ['', 'Not sure']];
   const USE = [['primary', 'My main home'], ['seasonal', 'Seasonal or second home'], ['rental', 'I rent it to someone else'], ['not_sure', 'Not sure yet']];
   const AMOUNTS = [['25000', '$25,000'], ['50000', '$50,000'], ['75000', '$75,000'], ['100000', '$100,000'], ['150000', '$150,000']];
@@ -79,7 +83,7 @@
 
   // ---------- State ----------
   const blank = () => ({ is_owner: '', home_style: '', property_address: '', city: '', zip_code: '', land_ownership: '', land_answered: false, occupancy: '',
-    year_built: '', square_footage: '', roof_year: '', current_insurance: '', current_carrier: '', coverage_expiration: '',
+    year_built: '', square_footage: '', home_width: '', home_length: '', size_mode: 'dims', roof_year: '', current_insurance: '', current_carrier: '', coverage_expiration: '',
     previous_claims: '', claims_details: '', firstname: '', lastname: '', phone: '', email: '', date_of_birth: '',
     effective_date: '', start_choice: '', desired_dwelling_amount: '', amount_answered: false, settlement: '', other_structures: '', other_structures_value: '', personal_property: '', liability: '', deductible: '', bundle_auto: '', additional_notes: '' });
   let state = blank(), stepId = 'own', history = ['own'];
@@ -209,18 +213,28 @@
         <p class="v2-sub">Choose the closest match.</p>
         ${tiles('use', USE, s.occupancy, 2, true)}`;
 
-      case 'details': return `
+      case 'details': {
+        const ex = DIM_EXAMPLE[s.home_style] || DIM_EXAMPLE.single_wide, dims = DIMS_ON && s.size_mode !== 'sqft';
+        const area = s.home_width && s.home_length ? Number(s.home_width) * Number(s.home_length) : 0;
+        const yearBox = `<div class="v2-field"><label for="year_built">Year built</label><input id="year_built" class="v2-input${DIMS_ON ? ' hq-year' : ''}" type="text" inputmode="numeric" maxlength="4" placeholder="Example: 2004" value="${esc(s.year_built)}"></div>`;
+        const sqftBox = `<div class="v2-field"><label for="square_footage">Square feet</label><input id="square_footage" class="v2-input" type="text" inputmode="numeric" maxlength="5" placeholder="Example: 1200" value="${esc(s.square_footage)}"></div>`;
+        return `
         <h1 class="v2-heading">A few details about the home</h1>
         <p class="v2-sub">Fill in what you know and skip the rest. Our team can look up what is missing.</p>
         <div class="v2-col">
-          <div class="hq-two">
-            <div class="v2-field"><label for="year_built">Year built</label><input id="year_built" class="v2-input" type="text" inputmode="numeric" maxlength="4" placeholder="Example: 2004" value="${esc(s.year_built)}"></div>
-            <div class="v2-field"><label for="square_footage">Square feet</label><input id="square_footage" class="v2-input" type="text" inputmode="numeric" maxlength="5" placeholder="Example: 1200" value="${esc(s.square_footage)}"></div>
+          ${DIMS_ON ? yearBox : `<div class="hq-two">${yearBox}${sqftBox}</div>`}
+          ${dims ? `<div class="hq-two">
+            <div class="v2-field"><label for="home_width">Width, feet</label><input id="home_width" class="v2-input" type="text" inputmode="numeric" maxlength="2" placeholder="Example: ${ex[0]}" value="${esc(s.home_width)}"></div>
+            <div class="v2-field"><label for="home_length">Length, feet</label><input id="home_length" class="v2-input" type="text" inputmode="numeric" maxlength="3" placeholder="Example: ${ex[1]}" value="${esc(s.home_length)}"></div>
           </div>
+          <p class="hq-fineprint" style="margin:-4px 0 0;text-align:left"><strong id="mq-area">${area ? 'That is ' + area.toLocaleString('en-US') + ' square feet.' : 'It is on your title or the data plate, for example ' + ex[0] + ' by ' + ex[1] + '.'}</strong>
+            <button type="button" class="hq-link-btn" id="mq-size-sqft">I only know the square feet</button></p>` : ''}
+          ${DIMS_ON && !dims ? `${sqftBox}<p class="hq-fineprint" style="margin:-4px 0 0;text-align:left"><button type="button" class="hq-link-btn" id="mq-size-dims">Enter width and length instead</button></p>` : ''}
           <div class="v2-field"><label for="roof_year">Year the roof was last replaced or re-coated (optional)</label><input id="roof_year" class="v2-input hq-year" type="text" inputmode="numeric" maxlength="4" placeholder="Example: 2018" value="${esc(s.roof_year)}"></div>
           ${ERR}
           <button type="button" class="v2-btn-gold" id="mq-details-next">Continue &rarr;</button>
         </div>`;
+      }
 
       case 'insured': return `
         <h1 class="v2-heading">Is the mobile home insured right now?</h1>
@@ -355,7 +369,7 @@
           ['Address', [s.property_address, s.city, 'NC', s.zip_code].filter(Boolean).join(', '), 'address'],
           ['Land', label(LAND, s.land_ownership), 'land'],
           ['Use', label(USE, s.occupancy), 'use'],
-          ['Details', `Built ${s.year_built || 'not sure'} \u00b7 ${s.square_footage ? s.square_footage + ' sq ft' : 'size not sure'} \u00b7 roof ${s.roof_year || 'not sure'}`, 'details'],
+          ['Details', `Built ${s.year_built || 'not sure'} \u00b7 ${s.home_width && s.home_length ? s.home_width + ' x ' + s.home_length + ' ft (' + s.square_footage + ' sq ft)' : s.square_footage ? s.square_footage + ' sq ft' : 'size not sure'} \u00b7 roof ${s.roof_year || 'not sure'}`, 'details'],
           ['Insured now', label(YNS, s.current_insurance) + (s.current_insurance === 'yes' && s.current_carrier ? ' \u00b7 ' + s.current_carrier : '') + (s.current_insurance === 'yes' && s.coverage_expiration ? ' \u00b7 ends ' + niceDate(s.coverage_expiration) : ''), 'insured'],
           ['Claims (5 years)', label(YNS, s.previous_claims) + (s.previous_claims === 'yes' ? ' \u00b7 ' + (s.claims_details || 'details not given') : ''), 'claims'],
           ['Contact', `${s.firstname} ${s.lastname} \u00b7 ${s.phone} \u00b7 ${s.email}`, 'contact'],
@@ -415,7 +429,7 @@
       form_type: 'mobile_home_insurance', cta_source: ctaSource,
       firstname: (TP + s.firstname).trim().slice(0, 60), lastname: s.lastname.slice(0, 60), date_of_birth: s.date_of_birth, phone: s.phone, email: s.email.slice(0, 120),
       is_owner: s.is_owner, property_address: s.property_address.slice(0, 160), city: s.city.slice(0, 80), zip_code: s.zip_code,
-      home_style: s.home_style, year_built: s.year_built, occupancy: s.occupancy, land_ownership: s.land_ownership, square_footage: s.square_footage, roof_year: s.roof_year,
+      home_style: s.home_style, year_built: s.year_built, occupancy: s.occupancy, land_ownership: s.land_ownership, square_footage: s.square_footage, dimensions: s.home_width && s.home_length ? s.home_width + ' x ' + s.home_length : '', roof_year: s.roof_year,
       current_insurance: s.current_insurance || 'not_sure', current_carrier: s.current_insurance === 'yes' ? s.current_carrier.slice(0, 100) : '',
       coverage_expiration: s.current_insurance === 'yes' ? s.coverage_expiration : '',
       previous_claims: s.previous_claims || 'not_sure', claims_details: s.previous_claims === 'yes' ? s.claims_details.slice(0, 800) : '',
@@ -539,13 +553,26 @@
     });
     each('[data-land]', b => b.addEventListener('click', () => pick(b, () => { state.land_ownership = b.dataset.land; state.land_answered = true; })));
     each('[data-use]', b => b.addEventListener('click', () => pick(b, () => { state.occupancy = b.dataset.use; })));
+    const keepDetails = () => { ['year_built', 'roof_year', 'home_width', 'home_length', 'square_footage'].forEach(k => { const e = $(k); if (e) state[k] = e.value.replace(/[^\d]/g, ''); }); };
+    const dimLive = () => { const w = Number(val('home_width').replace(/\D/g, '')), l = Number(val('home_length').replace(/\D/g, '')), o = $('mq-area'); if (o && w && l) o.textContent = 'That is ' + (w * l).toLocaleString('en-US') + ' square feet.'; };
+    ['home_width', 'home_length'].forEach(id => { const e = $(id); if (e) e.addEventListener('input', dimLive); });
+    on('mq-size-sqft', () => { keepDetails(); state.size_mode = 'sqft'; state.home_width = ''; state.home_length = ''; save(); render(); const f = $('square_footage'); if (f) f.focus(); });
+    on('mq-size-dims', () => { keepDetails(); state.size_mode = 'dims'; state.square_footage = ''; save(); render(); const f = $('home_width'); if (f) f.focus(); });
     on('mq-details-next', () => {
-      const y = val('year_built'), f = val('square_footage').replace(/,/g, ''), r = val('roof_year'), maxY = new Date().getFullYear() + 1;
+      const y = val('year_built'), r = val('roof_year'), maxY = new Date().getFullYear() + 1;
       const yearOk = v => !v || (/^\d{4}$/.test(v) && Number(v) >= 1900 && Number(v) <= maxY);
       if (!yearOk(y)) { showErr('Please check the year built, or leave it blank.'); return; }
+      let f = val('square_footage').replace(/,/g, ''), w = '', l = '';
+      if ($('home_width')) {
+        w = val('home_width'); l = val('home_length');
+        if ((w && !l) || (l && !w)) { showErr('Please enter both the width and the length, or leave both blank.'); return; }
+        if (w && (!/^\d+$/.test(w) || Number(w) < 8 || Number(w) > 60)) { showErr('Please check the width in feet. Most homes are 12 to 32 feet wide.'); return; }
+        if (l && (!/^\d+$/.test(l) || Number(l) < 20 || Number(l) > 120)) { showErr('Please check the length in feet. Most homes are 40 to 80 feet long.'); return; }
+        f = w && l ? String(Number(w) * Number(l)) : '';
+      }
       if (f && (!/^\d+$/.test(f) || Number(f) < 100 || Number(f) > 10000)) { showErr('Please check the square feet, or leave it blank.'); return; }
       if (!yearOk(r)) { showErr('Please check the roof year, or leave it blank.'); return; }
-      state.year_built = y; state.square_footage = f; state.roof_year = r; save(); next();
+      state.year_built = y; state.square_footage = f; state.home_width = w ? String(Number(w)) : ''; state.home_length = l ? String(Number(l)) : ''; state.roof_year = r; save(); next();
     });
     each('[data-insured]', b => b.addEventListener('click', () => pick(b, () => { state.current_insurance = b.dataset.insured; if (state.current_insurance !== 'yes') { state.current_carrier = ''; state.coverage_expiration = ''; } })));
     each('[data-carrier]', b => b.addEventListener('click', () => {
