@@ -21,6 +21,8 @@
   const TYPES = [['Motorcycle / trike', 'Motorcycle or trike'], ['ATV', 'ATV (four-wheeler)'], ['Side-by-side / UTV', 'Side-by-side or UTV'], ['Dirt bike', 'Dirt bike'], ['Scooter / moped', 'Scooter or moped'], ['Other / discuss', 'Something else']];
   const NOUN = { 'Motorcycle / trike': 'motorcycle', 'ATV': 'ATV', 'Side-by-side / UTV': 'side-by-side', 'Dirt bike': 'dirt bike', 'Scooter / moped': 'scooter', 'Other / discuss': 'vehicle' };
   const OFFROAD = ['ATV', 'Side-by-side / UTV', 'Dirt bike'];
+  const TAGGABLE = ['ATV', 'Side-by-side / UTV'];   // these get the license tag question
+  const TAG = [['Yes', 'Yes, it has a tag or will get one'], ['No', 'No, off-road only'], ['Not sure', 'Not sure']];
   const MAKES_ROAD = ['Harley-Davidson', 'Honda', 'Yamaha', 'Kawasaki', 'Suzuki', 'Indian', 'BMW', 'Triumph'];
   const MAKES_OFF = ['Polaris', 'Honda', 'Can-Am', 'Yamaha', 'Kawasaki', 'Kubota', 'John Deere', 'Suzuki'];
   // Popular models shown as tiles. The full list for the chosen year comes from the federal vehicle database (NHTSA vPIC), same as the auto form.
@@ -107,7 +109,7 @@
   }
 
   // ---------- State ----------
-  const blankV = () => ({ type: '', make: '', year: '', model: '', engine_cc: '', ownership: '', lender: '', use: '', storage_type: '',
+  const blankV = () => ({ type: '', make: '', year: '', model: '', engine_cc: '', ownership: '', lender: '', road_tag: '', use: '', storage_type: '',
     power: 'Other / not sure', title_status: 'Not sure', abs: 'Not sure', anti_theft: 'Not sure', modified: 'Not sure', modifications: '' });
   const blankR = () => ({ firstname: '', lastname: '', date_of_birth: '', relationship: '', license_status: '', endorsement: '', training: '',
     violations: '', violation_details: '', accidents: '', accident_details: '', suspensions: '', suspension_details: '' });
@@ -157,7 +159,7 @@
   const allOffroad = () => state.vehicles.every(v => OFFROAD.includes(v.type));
   function sequence() {
     const seq = [];
-    state.vehicles.forEach((v, i) => seq.push('type:' + i, 'make:' + i, 'year:' + i, 'model:' + i, 'cc:' + i, 'owned:' + i, 'use:' + i, 'kept:' + i, 'vdetails:' + i));
+    state.vehicles.forEach((v, i) => { seq.push('type:' + i, 'make:' + i, 'year:' + i, 'model:' + i, 'cc:' + i, 'owned:' + i); if (TAGGABLE.includes(v.type)) seq.push('tag:' + i); seq.push('use:' + i, 'kept:' + i, 'vdetails:' + i); });
     seq.push('vmore', 'contact', 'address');
     state.riders.forEach((r, j) => { if (j > 0) seq.push('rwho:' + j); seq.push('license:' + j); if (!allOffroad()) seq.push('endorse:' + j); seq.push('course:' + j, 'record:' + j); });
     seq.push('rmore', 'insured');
@@ -167,13 +169,13 @@
     seq.push('extras', 'review', 'done');
     return seq;
   }
-  const EYEBROW = { type: 'YOUR RIDE', make: 'YOUR RIDE', year: 'YOUR RIDE', model: 'YOUR RIDE', cc: 'YOUR RIDE', owned: 'YOUR RIDE', use: 'YOUR RIDE', kept: 'YOUR RIDE', vdetails: 'YOUR RIDE', vmore: 'YOUR RIDE',
+  const EYEBROW = { type: 'YOUR RIDE', make: 'YOUR RIDE', year: 'YOUR RIDE', model: 'YOUR RIDE', cc: 'YOUR RIDE', tag: 'YOUR RIDE', owned: 'YOUR RIDE', use: 'YOUR RIDE', kept: 'YOUR RIDE', vdetails: 'YOUR RIDE', vmore: 'YOUR RIDE',
     contact: 'ABOUT YOU', address: 'ABOUT YOU', rwho: 'RIDERS', license: 'RIDERS', endorse: 'RIDERS', course: 'RIDERS', record: 'RIDERS', rmore: 'RIDERS',
     insured: 'CURRENT COVERAGE', carrier: 'CURRENT COVERAGE', renewal: 'CURRENT COVERAGE', history: 'CURRENT COVERAGE',
     start: 'YOUR COVERAGE', cover: 'YOUR COVERAGE', deductible: 'YOUR COVERAGE', extras: 'ALMOST DONE', review: 'REVIEW', done: 'QUOTE RECEIVED' };
   function eyebrow() {
     const s = sid();
-    if (['type', 'make', 'year', 'model', 'cc', 'owned', 'use', 'kept', 'vdetails'].includes(s) && state.vehicles.length > 1) return `VEHICLE ${idx() + 1} OF ${state.vehicles.length}`;
+    if (['type', 'make', 'year', 'model', 'cc', 'owned', 'tag', 'use', 'kept', 'vdetails'].includes(s) && state.vehicles.length > 1) return `VEHICLE ${idx() + 1} OF ${state.vehicles.length}`;
     if (['rwho', 'license', 'endorse', 'course', 'record'].includes(s) && state.riders.length > 1) return `RIDER ${idx() + 1} OF ${state.riders.length}`;
     return EYEBROW[s] || '';
   }
@@ -313,6 +315,12 @@
         <h1 class="v2-heading">Do you own your ${noun(v)}?</h1>
         <p class="v2-sub">Choose the closest match.</p>
         ${tiles(OWNED, v.ownership, 2, true)}`;
+
+      case 'tag': return `
+        <h1 class="v2-heading">Will your ${noun(v)} have a license tag to drive on the road?</h1>
+        <p class="v2-sub">A North Carolina license plate, now or soon.</p>
+        ${tiles(TAG, v.road_tag, 1, true)}
+        ${why('One that is tagged for the road is quoted differently from one that stays off-road. Knowing up front gets you the right quote the first time.')}`;
 
       case 'use': return `
         <h1 class="v2-heading">How do you mostly use it?</h1>
@@ -498,7 +506,7 @@
         const recordLine = x => ['violations', 'accidents', 'suspensions'].map((k, n) => `${['tickets', 'accidents', 'suspensions'][n]}: ${(x[k] || 'not sure').toLowerCase()}`).join(', ');
         const rows = [];
         s.vehicles.forEach((x, i) => rows.push([s.vehicles.length > 1 ? 'Vehicle ' + (i + 1) : 'Your ' + noun(x),
-          [vName(x), label(TYPES, x.type), label(OWNED, x.ownership), label(USES, x.use), label(KEPT, x.storage_type)].filter(Boolean).join(' · '), 'veh:' + i]));
+          [vName(x), label(TYPES, x.type), label(OWNED, x.ownership), TAGGABLE.includes(x.type) ? 'License tag for the road: ' + (x.road_tag || 'Not sure').toLowerCase() : '', label(USES, x.use), label(KEPT, x.storage_type)].filter(Boolean).join(' · '), 'veh:' + i]));
         rows.push(['Contact', `${s.firstname} ${s.lastname} · ${s.phone} · ${s.email}`, 'contact'], ['Home address', [s.address, s.city, 'NC', s.zip_code].filter(Boolean).join(', '), 'address']);
         s.riders.forEach((x, i) => rows.push([s.riders.length > 1 ? 'Rider ' + (i + 1) : 'Rider',
           [rName(x, i), label(LICENSE, x.license_status), allOffroad() ? '' : label(ENDORSE.concat([[NA_ENDORSE, 'Endorsement not needed']]), x.endorsement), recordLine(x)].filter(Boolean).join(' · '), 'rid:' + i]));
@@ -539,7 +547,9 @@
   function buildPayload() {
     const s = state, off = allOffroad();
     const ans = x => x || 'Not sure';
-    const extraNotes = [];
+    const extraNotes = [], tagNotes = [];
+    s.vehicles.forEach((v, i) => { if (!TAGGABLE.includes(v.type)) return; const a = v.road_tag || 'Not sure';
+      tagNotes.push(a === 'Yes' ? `*** LICENSE TAG FOR ROAD USE: YES - Vehicle ${i + 1} (${vName(v)}). Quote as tagged for the road. ***` : `License tag for road use, Vehicle ${i + 1} (${vName(v)}): ${a === 'No' ? 'No, off-road only' : 'Not sure - ask'}.`); });
     if (s.start_choice === 'none' || !s.effective_date) extraNotes.push('Start date: not sure yet. Today’s date was sent as a placeholder.');
     if (s.bundles.length > 1) extraNotes.push('Also wants quotes for: ' + s.bundles.join(', ') + '.');
     return {
@@ -563,7 +573,7 @@
         coverage: s.coverage || DECIDE, deductible: s.coverage === FULL ? (s.deductible || DECIDE) : s.coverage === 'Liability only' ? 'Not requested' : DECIDE,
         medical: DECIDE, uninsured: DECIDE, towing: DECIDE,
         bundle: s.bundles.length === 0 ? 'No thanks' : s.bundles.length === 1 ? s.bundles[0] : 'Several policies',
-        notes: [TP + s.notes.trim()].concat(extraNotes).join('\n').trim().slice(0, 1200) },
+        notes: tagNotes.concat([TP + s.notes.trim()], extraNotes).join('\n').trim().slice(0, 1200) },
       confirm_accuracy: true   // the customer sends from the Review screen, which says so
     };
   }
@@ -597,7 +607,7 @@
     sendPartial.sent = true;
     const s = state, name = `${s.firstname} ${s.lastname}`.trim();
     const lines = [`${TP}=== PARTIAL MOTORCYCLE / ATV QUOTE LEAD (Abandoned Mid-Form) ===`.trim(), `Stopped at: ${sid()}`, `Name: ${name}`, `Phone: ${s.phone}`, `Email: ${s.email}`,
-      `DOB: ${s.date_of_birth || 'Not entered'}`].concat(s.vehicles.map((v, i) => `Vehicle ${i + 1}: ${vName(v)} (${label(TYPES, v.type) || 'type not entered'})`),
+      `DOB: ${s.date_of_birth || 'Not entered'}`].concat(s.vehicles.map((v, i) => `Vehicle ${i + 1}: ${vName(v)} (${label(TYPES, v.type) || 'type not entered'})${v.road_tag ? ' - license tag for road use: ' + v.road_tag : ''}`),
       [s.address ? `Address: ${[s.address, s.city, 'NC', s.zip_code].filter(Boolean).join(', ')}` : '']).filter(Boolean);
     try {
       fetch('/api/homepage-submit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true, body: JSON.stringify({
@@ -675,7 +685,7 @@
     // Tap-one-and-move-on screens
     each('#stage [data-val]:not([data-chip])', b => b.addEventListener('click', () => {
       const x = b.dataset.val, v = V(), r = R();
-      if (s === 'type') return pick(b, () => { if (v.type !== x) { const offWas = OFFROAD.includes(v.type), offNow = OFFROAD.includes(x); if (v.type && offWas !== offNow) v.make = ''; } v.type = x; });
+      if (s === 'type') return pick(b, () => { if (v.type !== x) { const offWas = OFFROAD.includes(v.type), offNow = OFFROAD.includes(x); if (v.type && offWas !== offNow) v.make = ''; } v.type = x; if (!TAGGABLE.includes(x)) v.road_tag = ''; });
       if (s === 'make') { otherMakeOpen = false; return pick(b, () => { if (v.make !== x) v.model = ''; v.make = x; }); }
       if (s === 'year') return pick(b, () => { if (v.year !== x) v.model = ''; v.year = x; });
       if (s === 'model') return pick(b, () => { v.model = x; });
@@ -683,6 +693,7 @@
         if (x === 'Financed' || x === 'Leased') { b.parentElement.querySelectorAll('.v2-tile').forEach(t => t.classList.remove('is-selected')); b.classList.add('is-selected'); v.ownership = x; save(); fireFormStart(); openLenderSheet(); return; }
         return pick(b, () => { v.ownership = x; v.lender = ''; });
       }
+      if (s === 'tag') return pick(b, () => { v.road_tag = x; });
       if (s === 'use') return pick(b, () => { v.use = x; });
       if (s === 'kept') return pick(b, () => { v.storage_type = x; });
       if (s === 'license') return pick(b, () => { r.license_status = x; });
