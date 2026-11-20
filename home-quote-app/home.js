@@ -80,6 +80,30 @@
   const CONSTRUCTION = [['frame', 'Wood frame'], ['brick', 'Brick or stone'], ['vinyl', 'Vinyl siding'], ['other', 'Something else']];
   const ROOF_TYPES = [['asphalt_shingle', 'Asphalt shingle'], ['architectural', 'Architectural shingle'], ['metal', 'Metal'],
     ['tile', 'Tile'], ['wood_shake', 'Wood shake'], ['flat', 'Flat'], ['unknown', 'Not sure']];
+  // Drawings for the roof and outside-wall tiles (test pages only until Bill approves): a roof slope or a wall swatch with the material's pattern.
+  const SURFACE_ART_ON = !LIVE;
+  const ROOF_SLOPE = '<path d="M20 34L32 12h32l12 22z"/><path d="M26 34v6M70 34v6" stroke="#8696ab" stroke-width="1.6"/>';
+  const THIN = ' stroke-width="1.400"';
+  const ROOF_ART = {
+    asphalt_shingle: ROOF_SLOPE + `<path${THIN} d="M28 19.300h40M24 26.700h48M40 12v7.300M48 12v7.300M56 12v7.300M36 19.300v7.400M44 19.300v7.400M52 19.300v7.400M60 19.300v7.400M32 26.700V34M40 26.700V34M48 26.700V34M56 26.700V34M64 26.700V34"/>`,
+    architectural: ROOF_SLOPE + `<path${THIN} d="M28 19.300h40M24 26.700h48M37 12v7.300M51 12v7.300M59 12v4M33 19.300v7.400M41 19.300v4M49 19.300v7.400M63 19.300v7.400M30 26.700V34M38 26.700v4M47 26.700V34M58 26.700V34M66 26.700v4"/><path${THIN} d="M37 15.500h14M49 23h14M30 30.500h8M47 30.500h11"/>`,
+    metal: ROOF_SLOPE + `<path${THIN} d="M37.300 12L29.300 34M42.700 12L38.700 34M48 12v22M53.300 12l4 22M58.700 12l8 22"/>`,
+    tile: ROOF_SLOPE + `<path${THIN} d="M28 19.300q2.500 3.400 5 0t5 0t5 0t5 0t5 0t5 0t5 0t5 0M24 26.700q3 3.400 6 0t6 0t6 0t6 0t6 0t6 0t6 0t6 0M33 13q2.500 3 5 0t5 0t5 0t5 0t5 0t5 0"/>`,
+    wood_shake: ROOF_SLOPE + `<path${THIN} d="M28 19h8v1.600h7V19h9v1.600h8V19h8M24 26.500h7v1.600h9v-1.600h8v1.600h10v-1.600h8v1.600h6M39 12v7M50 12v8M58 12v7M33 20v6.500M45 20.500v7M55 19v8.500M64 20v6.500M30 28v6M41 27v7M52 28v6M61 27v7M68 28v6"/>`,
+    flat: '<path d="M24 21h48v17H24z"/><path d="M21 16h54v5H21z"/><path d="M44 28h7v10h-7zM30 26h8v6h-8zM58 26h8v6h-8z"/><path d="M4 40H92" stroke="#8696ab" stroke-width="1.6"/>'
+  };
+  const WALL = '<rect x="24" y="8" width="48" height="30" rx="3"/>';
+  const WALL_ART = {
+    frame: WALL + `<path${THIN} d="M24 18h48M24 28h48M44 13h14M30 23h13M54 33h11"/><circle${THIN} cx="35" cy="13" r="1.600"/><circle${THIN} cx="58" cy="23" r="1.600"/><circle${THIN} cx="41" cy="33" r="1.600"/>`,
+    brick: WALL + `<path${THIN} d="M24 14h48M24 20h48M24 26h48M24 32h48M36 8v6M48 8v6M60 8v6M30 14v6M42 14v6M54 14v6M66 14v6M36 20v6M48 20v6M60 20v6M30 26v6M42 26v6M54 26v6M66 26v6M36 32v6M48 32v6M60 32v6"/>`,
+    vinyl: WALL + `<path${THIN} d="M24 13h48M24 18h48M24 23h48M24 28h48M24 33h48"/>`
+  };
+  // One tile with a drawing above its label. No drawing: a plain half tile (half) or a slim full-width row.
+  const artTile = (attr, [v, t], current, art, half) => !art[v]
+    ? `<button type="button" class="v2-tile compact ${current === v ? 'is-selected' : ''}" aria-pressed="${current === v}" data-${attr}="${v}" style="${half ? '' : 'grid-column:1/-1;min-height:48px'}"><span>${esc(t)}</span></button>`
+    : `<button type="button" class="v2-tile compact ${current === v ? 'is-selected' : ''}" aria-pressed="${current === v}" data-${attr}="${v}" style="flex-direction:column;gap:2px;padding:8px 8px 9px">
+      <svg viewBox="0 0 96 48" width="96" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;color:#05203d">${art[v]}</svg>
+      <span>${esc(t)}</span></button>`;
   const ROOF_AGES = ['Less than 5 years', '5 to 10 years', '11 to 15 years', '16 to 20 years', 'Over 20 years', 'Original roof', 'Not sure'];
   const AMOUNTS = [['under_100k', 'Under $100,000'], ['100k_150k', '$100,000 to $150,000'], ['150k_200k', '$150,000 to $200,000'],
     ['200k_250k', '$200,000 to $250,000'], ['250k_300k', '$250,000 to $300,000'], ['300k_400k', '$300,000 to $400,000'],
@@ -467,13 +491,13 @@
         <h1 class="v2-heading">What is the outside of the home made of?</h1>
         <p class="v2-sub">Choose what covers most of the outside walls.</p>
         ${fromRecord('construction_type')}
-        ${tiles('construction', CONSTRUCTION, s.construction_type, 2, true)}`;
+        ${SURFACE_ART_ON ? `<div class="v2-grid-2">${CONSTRUCTION.map(t => artTile('construction', t, s.construction_type, WALL_ART, true)).join('')}</div>` : tiles('construction', CONSTRUCTION, s.construction_type, 2, true)}`;
 
       case 'rooftype': return `
         <h1 class="v2-heading">What kind of roof does it have? ${helpBtn('roof')}</h1>
         <p class="v2-sub">Choose the closest match.</p>
         ${fromRecord('roof_type')}
-        ${tiles('rooftype', ROOF_TYPES, s.roof_type, 2, true)}`;
+        ${SURFACE_ART_ON ? `<div class="v2-grid-2">${ROOF_TYPES.map(t => artTile('rooftype', t, s.roof_type, ROOF_ART)).join('')}</div>` : tiles('rooftype', ROOF_TYPES, s.roof_type, 2, true)}`;
 
       case 'roofage': return `
         <h1 class="v2-heading">How old is the roof? ${helpBtn('roof')}</h1>
