@@ -18,8 +18,8 @@
 
   // Stored values = exactly the choices the office script accepts.
   const STYLES = [['single_wide', 'Single-wide'], ['double_wide', 'Double-wide'], ['multi_section', 'Multi-section or triple-wide'], ['not_sure', 'Not sure']];
-  // Simple end-view drawings so a customer can pick by look. Shown on the test page only until Bill approves.
-  const STYLE_ART_ON = !LIVE;
+  // Simple end-view drawings so a customer can pick by look. Live since 2026-11-20 (approved by Bill).
+  const STYLE_ART_ON = true;
   const GROUND = '<path d="M4 40H92" stroke="#8696ab" stroke-width="1.6"/>';
   const STYLE_ART = {
     single_wide: '<path d="M34 20h28v18H34z"/><path d="M31 20.500L48 11l17 9.500"/><path d="M45 27h6v11h-6zM37.500 24h4.500v5h-4.500zM54 24h4.500v5H54z"/>',
