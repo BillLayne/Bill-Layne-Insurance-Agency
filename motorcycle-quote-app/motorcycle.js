@@ -89,7 +89,7 @@
     }).catch(() => { modelCache[key] = []; }).then(() => { loadingModels = false; if (sid() === 'model' && V().make + '|' + V().year === key) { const y = window.scrollY; render(); window.scrollTo(0, y); } });
   }
   // Brand logo tiles (hosted on the agency image host). A brand with no file here shows its name as text.
-  const MAKE_LOGOS = { 'Harley-Davidson': 'harley-davidson-motorcycle-logo-eexd8d.png', 'Honda': 'honda-motorcycle-logo-uunccs.png', 'Yamaha': 'yamaha-motorcycle-logo-6xghss.png',
+  const MAKE_LOGOS = { 'Harley-Davidson': 'harley-davidson-motorcycle-logo-4q2pda.png', 'Honda': 'honda-motorcycle-logo-uunccs.png', 'Yamaha': 'yamaha-motorcycle-logo-6xghss.png',
     'Kawasaki': 'kawasaki-motorcycle-logo-7p8chr.png', 'Suzuki': 'suzuki-motorcycle-logo-pgk2s6.png', 'Indian': 'indian-motorcycle-logo-qqvekr.png', 'BMW': 'bmw-motorcycle-logo-8fvr5f.png',
     'Triumph': 'triumph-motorcycle-logo-e5vvs8.png', 'Polaris': 'polaris-motorcycle-logo-9rqyru.png', 'Kubota': 'kubota-motorcycle-logo-m9ja7m.png', 'John Deere': 'john-deere-motorcycle-logo-7fa3h4.png' };
   const MAKE_LABELLED = [];   // brands whose logo has no name on it get the name printed underneath
