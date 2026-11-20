@@ -483,7 +483,7 @@
       case 'cover': return `
         <h1 class="v2-heading">What coverage would you like? ${helpBtn('cover')}</h1>
         <p class="v2-sub">Liability covers other people. Comp &amp; Collision covers your own ${s.vehicles.length > 1 ? 'vehicles' : noun(s.vehicles[0])}.</p>
-        ${tiles(COVER.concat(s.currently_insured === 'Yes' ? [[MATCH, 'Match my current policy']] : []), s.coverage, 1, true)}
+        ${tiles(COVER, s.coverage === MATCH ? '' : s.coverage, 1, true)}
         ${decideTile(s.coverage)}`;
 
       case 'deductible': return `
@@ -570,7 +570,7 @@
       coverage: { currently_insured: ans(s.currently_insured), carrier: s.currently_insured === 'Yes' ? (oneLine(s.carrier).slice(0, 100) || 'Not sure') : '',
         expiration: s.currently_insured === 'Yes' ? s.expiration : '', continuous: ans(s.continuous), cancelled: ans(s.cancelled),
         cancellation_details: s.cancelled === 'Yes' ? (s.cancellation_details.trim().slice(0, 600) || LATER) : '',
-        coverage: s.coverage || DECIDE, deductible: s.coverage === FULL ? (s.deductible || DECIDE) : s.coverage === 'Liability only' ? 'Not requested' : DECIDE,
+        coverage: !s.coverage || s.coverage === MATCH ? DECIDE : s.coverage, deductible: s.coverage === FULL ? (s.deductible || DECIDE) : s.coverage === 'Liability only' ? 'Not requested' : DECIDE,
         medical: DECIDE, uninsured: DECIDE, towing: DECIDE,
         bundle: s.bundles.length === 0 ? 'No thanks' : s.bundles.length === 1 ? s.bundles[0] : 'Several policies',
         notes: tagNotes.concat([TP + s.notes.trim()], extraNotes).join('\n').trim().slice(0, 1200) },
