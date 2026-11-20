@@ -51,6 +51,9 @@
   const RELATION = [['Spouse / partner', 'Spouse or partner'], ['Child', 'Child'], ['Other household member', 'Lives with me'], ['Other', 'Someone else']];
   const COVER = [['Liability only', 'Liability only'], ['Liability plus comprehensive and collision', 'Liability plus Comp & Collision']];
   const MATCH = 'Match my current policy', DECIDE = 'Help me decide', FULL = 'Liability plus comprehensive and collision';
+  // Same liability choices as the auto form.
+  const LIMITS = [['50/100/50', 'State Minimum (50/100/50)', ''], ['100/300/50', '100/300/50', ''], ['100/300/100', '100/300/100', 'Most Popular'], ['250/500/250', '250/500/250', 'Best Protection']];
+  const CUSTOM = [['Yes', 'Yes, I have custom parts or equipment'], ['No', 'No, it is stock']];
   const DEDUCTIBLES = [['$250', '$250'], ['$500', '$500'], ['$1,000', '$1,000']];
   const BUNDLES = ['Auto', 'Home', 'Renters'];
   const LATER = 'Will provide later';
@@ -60,6 +63,10 @@
       example: 'Your license shows a small "M" when you have the endorsement. If you are still working on it, choose "Not yet" and our team will explain your options.' },
     cover: { title: 'Liability and Comp & Collision', body: 'Liability pays for injuries and damage you cause to other people. Comprehensive and Collision (Comp & Collision) may pay to repair or replace your own bike after a crash, theft, fire, storm or hitting a deer. A lender usually requires both.',
       example: 'Your parked motorcycle is stolen. Liability only would not pay for it. Comprehensive may, after your deductible.' },
+    limits: { title: 'What the three numbers mean', body: 'They are the most your policy may pay, in thousands of dollars, when you cause a crash. First number: one injured person. Second: everyone injured in that crash. Third: damage to other people\u2019s property. 50/100/50 is the North Carolina minimum.',
+      example: 'With 100/300/100, the policy may pay up to $100,000 for one person\u2019s injuries, up to $300,000 for everyone hurt, and up to $100,000 for the other driver\u2019s car and property.' },
+    custom: { title: 'Custom parts and equipment', body: 'Anything added after it left the factory: chrome, custom paint, exhaust, saddlebags, a windshield, a winch, a lift kit, upgraded wheels. A policy usually covers only a small amount of these unless you ask for more.',
+      example: 'You added $4,000 of chrome and saddlebags and the bike is stolen. Without extra custom equipment coverage, the policy may pay for the stock bike but only part of what you added.' },
     deductible: { title: 'Deductible', body: 'The part of a covered repair bill you pay yourself before your coverage pays. You choose the amount. A higher deductible means you pay more out of pocket when you have a claim.',
       example: 'With a $500 deductible and a $3,000 covered repair, you pay $500 and the policy may pay the remaining $2,500.' }
   };
@@ -115,7 +122,7 @@
     violations: '', violation_details: '', accidents: '', accident_details: '', suspensions: '', suspension_details: '' });
   const blank = () => ({ vehicles: [blankV()], riders: [blankR()], firstname: '', lastname: '', phone: '', email: '', date_of_birth: '', address: '', city: '', zip_code: '',
     currently_insured: '', carrier: '', expiration: '', continuous: '', cancelled: '', cancellation_details: '',
-    effective_date: '', start_choice: '', coverage: '', deductible: '', bundles: [], notes: '' });
+    effective_date: '', start_choice: '', coverage: '', liability_limits: '', deductible: '', custom_equipment: '', custom_value: '', bundles: [], notes: '' });
   let state = blank(), stepId = 'type:0', history = ['type:0'];
   let sending = false, sendError = '', confirmation = '', contactDone = false, submitted = false, formStarted = false;
   let editStack = [];   // { to, until }: jump to `to` after finishing step `until` (or after the very next step when `until` is not set)
@@ -164,15 +171,16 @@
     state.riders.forEach((r, j) => { if (j > 0) seq.push('rwho:' + j); seq.push('license:' + j); if (!allOffroad()) seq.push('endorse:' + j); seq.push('course:' + j, 'record:' + j); });
     seq.push('rmore', 'insured');
     if (state.currently_insured === 'Yes') seq.push('carrier', 'renewal');
-    seq.push('history', 'start', 'cover');
+    seq.push('history', 'start', 'cover', 'limits');
     if (state.coverage === FULL) seq.push('deductible');
+    if (state.coverage !== 'Liability only') seq.push('custom');   // custom equipment coverage goes with Comp & Collision
     seq.push('extras', 'review', 'done');
     return seq;
   }
   const EYEBROW = { type: 'YOUR RIDE', make: 'YOUR RIDE', year: 'YOUR RIDE', model: 'YOUR RIDE', cc: 'YOUR RIDE', tag: 'YOUR RIDE', owned: 'YOUR RIDE', use: 'YOUR RIDE', kept: 'YOUR RIDE', vdetails: 'YOUR RIDE', vmore: 'YOUR RIDE',
     contact: 'ABOUT YOU', address: 'ABOUT YOU', rwho: 'RIDERS', license: 'RIDERS', endorse: 'RIDERS', course: 'RIDERS', record: 'RIDERS', rmore: 'RIDERS',
     insured: 'CURRENT COVERAGE', carrier: 'CURRENT COVERAGE', renewal: 'CURRENT COVERAGE', history: 'CURRENT COVERAGE',
-    start: 'YOUR COVERAGE', cover: 'YOUR COVERAGE', deductible: 'YOUR COVERAGE', extras: 'ALMOST DONE', review: 'REVIEW', done: 'QUOTE RECEIVED' };
+    start: 'YOUR COVERAGE', cover: 'YOUR COVERAGE', limits: 'YOUR COVERAGE', deductible: 'YOUR COVERAGE', custom: 'YOUR COVERAGE', extras: 'ALMOST DONE', review: 'REVIEW', done: 'QUOTE RECEIVED' };
   function eyebrow() {
     const s = sid();
     if (['type', 'make', 'year', 'model', 'cc', 'owned', 'tag', 'use', 'kept', 'vdetails'].includes(s) && state.vehicles.length > 1) return `VEHICLE ${idx() + 1} OF ${state.vehicles.length}`;
@@ -486,6 +494,18 @@
         ${tiles(COVER, s.coverage === MATCH ? '' : s.coverage, 1, true)}
         ${decideTile(s.coverage)}`;
 
+      case 'limits': return `
+        <h1 class="v2-heading">Choose your liability limits ${helpBtn('limits')}</h1>
+        <p class="v2-sub">Pick the limit you want quoted, or let our team walk through options with you.${s.vehicles.length > 1 ? ' The same limits apply to every vehicle on the policy.' : ''}</p>
+        <div class="v2-grid-2">${LIMITS.map(([v2, t, badge]) => `<button type="button" class="v2-tile compact ${s.liability_limits === v2 ? 'is-selected' : ''}" aria-pressed="${s.liability_limits === v2}" data-val="${v2}">${badge ? `<span class="v2-tile-badge">${badge}</span>` : ''}<span>${t}</span></button>`).join('')}</div>
+        ${decideTile(s.liability_limits)}`;
+
+      case 'custom': return `
+        <h1 class="v2-heading">Any custom parts or equipment to cover? ${helpBtn('custom')}</h1>
+        <p class="v2-sub">Things added after it left the factory, such as chrome, exhaust, saddlebags, a winch or a lift kit.</p>
+        ${tiles(CUSTOM, s.custom_equipment, 1, true)}
+        ${decideTile(s.custom_equipment)}`;
+
       case 'deductible': return `
         <h1 class="v2-heading">Which deductible would you like? ${helpBtn('deductible')}</h1>
         <p class="v2-sub">The amount you pay first on a covered claim.</p>
@@ -513,7 +533,9 @@
         rows.push(['Insured now', s.currently_insured + (s.currently_insured === 'Yes' && s.carrier ? ' · ' + s.carrier : '') + (s.currently_insured === 'Yes' && s.expiration ? ' · ends ' + niceDate(s.expiration) : ''), 'ins'],
           ['Coverage starts', s.start_choice === 'none' || !s.effective_date ? 'Not sure yet' : niceDate(s.effective_date), 'start'],
           ['Coverage', s.coverage === FULL ? 'Liability plus Comp & Collision' : s.coverage === DECIDE || !s.coverage ? 'Help me decide' : s.coverage, 'cover']);
+        rows.push(['Liability limits', !s.liability_limits || s.liability_limits === DECIDE ? 'Help me decide' : s.liability_limits, 'limits']);
         if (s.coverage === FULL) rows.push(['Deductible', s.deductible || DECIDE, 'deductible']);
+        if (s.coverage !== 'Liability only') rows.push(['Custom equipment', s.custom_equipment === 'Yes' ? 'Yes' + (s.custom_value ? ', about ' + s.custom_value : '') : s.custom_equipment === 'No' ? 'No, it is stock' : 'Help me decide', 'custom']);
         rows.push(['Other quotes', s.bundles.length ? s.bundles.join(', ') : 'No thanks', 'extras'], ['Notes', s.notes || 'None', 'extras']);
         return `
         <h1 class="v2-heading">Review your quote request</h1>
@@ -551,6 +573,10 @@
     s.vehicles.forEach((v, i) => { if (!TAGGABLE.includes(v.type)) return; const a = v.road_tag || 'Not sure';
       tagNotes.push(a === 'Yes' ? `*** LICENSE TAG FOR ROAD USE: YES - Vehicle ${i + 1} (${vName(v)}). Quote as tagged for the road. ***` : `License tag for road use, Vehicle ${i + 1} (${vName(v)}): ${a === 'No' ? 'No, off-road only' : 'Not sure - ask'}.`); });
     if (s.start_choice === 'none' || !s.effective_date) extraNotes.push('Start date: not sure yet. Today’s date was sent as a placeholder.');
+    if (s.coverage !== 'Liability only') {
+      const ce = s.custom_equipment === 'Yes' ? 'YES' + (s.custom_value ? ', worth about ' + s.custom_value : ', value not given') : s.custom_equipment === 'No' ? 'No, it is stock' : 'Help me decide';
+      tagNotes.push('Custom parts and equipment coverage: ' + ce + '.');
+    }
     if (s.bundles.length > 1) extraNotes.push('Also wants quotes for: ' + s.bundles.join(', ') + '.');
     return {
       form_type: 'motorcycle_insurance', cta_source: ctaSource,
@@ -570,7 +596,7 @@
       coverage: { currently_insured: ans(s.currently_insured), carrier: s.currently_insured === 'Yes' ? (oneLine(s.carrier).slice(0, 100) || 'Not sure') : '',
         expiration: s.currently_insured === 'Yes' ? s.expiration : '', continuous: ans(s.continuous), cancelled: ans(s.cancelled),
         cancellation_details: s.cancelled === 'Yes' ? (s.cancellation_details.trim().slice(0, 600) || LATER) : '',
-        coverage: !s.coverage || s.coverage === MATCH ? DECIDE : s.coverage, deductible: s.coverage === FULL ? (s.deductible || DECIDE) : s.coverage === 'Liability only' ? 'Not requested' : DECIDE,
+        coverage: !s.coverage || s.coverage === MATCH ? DECIDE : s.coverage, liability_limits: s.liability_limits || DECIDE, deductible: s.coverage === FULL ? (s.deductible || DECIDE) : s.coverage === 'Liability only' ? 'Not requested' : DECIDE,
         medical: DECIDE, uninsured: DECIDE, towing: DECIDE,
         bundle: s.bundles.length === 0 ? 'No thanks' : s.bundles.length === 1 ? s.bundles[0] : 'Several policies',
         notes: tagNotes.concat([TP + s.notes.trim()], extraNotes).join('\n').trim().slice(0, 1200) },
@@ -630,19 +656,27 @@
       <p class="v2-help-fine">General information only. Your policy decides what is covered.</p>
       <button type="button" class="v2-btn-gold v2-help-ok" data-help-close>Got it</button></div>`);
   }
-  function openLenderSheet() {
-    const v = V();
+  // One small pop-up for a single typed answer: the lender, or the value of custom equipment.
+  let sheetCfg = null;
+  const SHEETS = {
+    lender: { title: 'Who is the loan or lease with?', body: 'The bank, credit union or finance company. They are listed on the policy.', label: 'Lender name', ph: 'Example: State Employees Credit Union', max: 180, mode: 'text',
+      get: () => V().lender, set: t => { V().lender = t; } },
+    custom: { title: 'About how much is it all worth?', body: 'A rough total for everything added. A best guess is fine, and our team can help you work it out.', label: 'Approximate value', ph: 'Example: $2,500', max: 40, mode: 'text',
+      get: () => state.custom_value, set: t => { state.custom_value = t; } }
+  };
+  function openSheet(kind) {
+    sheetCfg = SHEETS[kind];
     if (!sheetEl) { sheetEl = document.createElement('div'); sheetEl.className = 'v2-help-overlay hq-claim-overlay'; sheetEl.hidden = true; document.body.appendChild(sheetEl);
       sheetEl.addEventListener('click', e => {
-        const t = $('mc-sheet-text'), cur = V();
-        if (e.target.closest('[data-sheet-save]')) { cur.lender = oneLine(e.target.closest('[data-sheet-skip]') ? '' : t.value); closeOverlay(sheetEl); save(); track('motorcycle_v2_step_complete'); next(); return; }
-        if (e.target === sheetEl || e.target.closest('[data-sheet-close]')) { cur.lender = oneLine(t.value); save(); closeOverlay(sheetEl); }
+        const t = $('mc-sheet-text');
+        if (e.target.closest('[data-sheet-save]')) { sheetCfg.set(oneLine(e.target.closest('[data-sheet-skip]') ? '' : t.value)); closeOverlay(sheetEl); save(); track('motorcycle_v2_step_complete'); next(); return; }
+        if (e.target === sheetEl || e.target.closest('[data-sheet-close]')) { sheetCfg.set(oneLine(t.value)); save(); closeOverlay(sheetEl); }
       }); }
     overlay(sheetEl, `<div class="v2-help-sheet" role="dialog" aria-modal="true" aria-labelledby="mc-sheet-title" tabindex="-1"><div class="v2-help-grip" aria-hidden="true"></div>
-      <div class="v2-help-head"><h2 class="v2-help-title" id="mc-sheet-title">Who is the loan or lease with?</h2><button type="button" class="v2-help-x" data-sheet-close aria-label="Close">&times;</button></div>
-      <p class="v2-help-body">The bank, credit union or finance company. They are listed on the policy.</p>
-      <label class="hq-claim-label" for="mc-sheet-text">Lender name</label>
-      <input id="mc-sheet-text" class="v2-input" type="text" autocapitalize="words" maxlength="180" placeholder="Example: State Employees Credit Union" value="${esc(v.lender)}">
+      <div class="v2-help-head"><h2 class="v2-help-title" id="mc-sheet-title">${sheetCfg.title}</h2><button type="button" class="v2-help-x" data-sheet-close aria-label="Close">&times;</button></div>
+      <p class="v2-help-body">${sheetCfg.body}</p>
+      <label class="hq-claim-label" for="mc-sheet-text">${sheetCfg.label}</label>
+      <input id="mc-sheet-text" class="v2-input" type="text" autocapitalize="words" maxlength="${sheetCfg.max}" placeholder="${esc(sheetCfg.ph)}" value="${esc(sheetCfg.get())}">
       <button type="button" class="v2-btn-gold v2-help-ok" data-sheet-save>Save and continue &rarr;</button>
       <button type="button" class="v2-btn-outline hq-claim-skip" data-sheet-save data-sheet-skip>Skip, I&rsquo;ll tell you later</button></div>`);
     const t = $('mc-sheet-text'); if (t) { try { t.focus({ preventScroll: true }); } catch (_) {} }
@@ -690,7 +724,7 @@
       if (s === 'year') return pick(b, () => { if (v.year !== x) v.model = ''; v.year = x; });
       if (s === 'model') return pick(b, () => { v.model = x; });
       if (s === 'owned') {
-        if (x === 'Financed' || x === 'Leased') { b.parentElement.querySelectorAll('.v2-tile').forEach(t => t.classList.remove('is-selected')); b.classList.add('is-selected'); v.ownership = x; save(); fireFormStart(); openLenderSheet(); return; }
+        if (x === 'Financed' || x === 'Leased') { b.parentElement.querySelectorAll('.v2-tile').forEach(t => t.classList.remove('is-selected')); b.classList.add('is-selected'); v.ownership = x; save(); fireFormStart(); openSheet('lender'); return; }
         return pick(b, () => { v.ownership = x; v.lender = ''; });
       }
       if (s === 'tag') return pick(b, () => { v.road_tag = x; });
@@ -702,6 +736,11 @@
       if (s === 'insured') return pick(b, () => { state.currently_insured = x; if (x !== 'Yes') { state.carrier = ''; state.expiration = ''; if (state.coverage === MATCH) state.coverage = ''; } });
       if (s === 'cover') return pick(b, () => { state.coverage = x; if (x !== FULL) state.deductible = ''; });
       if (s === 'deductible') return pick(b, () => { state.deductible = x; });
+      if (s === 'limits') return pick(b, () => { state.liability_limits = x; });
+      if (s === 'custom') {
+        if (x === 'Yes') { document.querySelectorAll('#stage .v2-tile').forEach(t => t.classList.remove('is-selected')); b.classList.add('is-selected'); state.custom_equipment = 'Yes'; save(); openSheet('custom'); return; }
+        return pick(b, () => { state.custom_equipment = x; state.custom_value = ''; });
+      }
       if (s === 'start') {
         const d = new Date();
         if (x === 'pick') { state.start_choice = 'pick'; save(); render(); const f = $('st-mm'); if (f) f.focus(); return; }
@@ -810,7 +849,7 @@
       if (k === 'veh') { editStack = [{ to: 'review', until: 'vdetails:' + n }]; go('type:' + n); return; }
       if (k === 'rid') { editStack = [{ to: 'review', until: 'record:' + n }]; go((Number(n) > 0 ? 'rwho:' : 'license:') + n); return; }
       if (k === 'ins') { editStack = [{ to: 'review', until: 'history' }]; go('insured'); return; }
-      if (k === 'cover') { editStack = [{ to: 'review', until: 'extras' }]; go('cover'); return; }
+      if (k === 'cover') { editStack = [{ to: 'review', until: 'extras' }]; go('cover'); return; }   // walks limits, deductible and custom equipment too
       editStack = [{ to: 'review' }]; go(k);
     }));
     on('mc-send', send);
