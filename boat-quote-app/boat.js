@@ -102,7 +102,7 @@
   // Brand logo tiles (hosted on the agency image host). A brand with no file here shows its name as text.
   const MAKE_LOGOS = { 'Bayliner': 'bayliner-boat-logo-2zmbxk.png', 'MasterCraft': 'mastercraft-boat-logo-fthbjy.png', 'Nitro': 'nitro-boat-logo-44cexk.png', 'Ranger': 'ranger-boat-logo-jc3a64.png',
     'Sea Ray': 'sea-ray-boat-logo-akdf6k.png', 'Sun Tracker': 'sun-tracker-boat-logo-p3vup4.png', 'Tahoe': 'tahoe-boat-logo-wvcngg.png', 'Tracker': 'tracker-boat-logo-gev75d.png', 'Triton': 'triton-boat-logo-sksbwx.png',
-    'Yamaha': 'yamaha-motorcycle-logo-6xghss.png', 'Kawasaki': 'kawasaki-motorcycle-logo-7p8chr.png',
+    'Yamaha': 'yamaha-motorcycle-logo-6xghss.png', 'Kawasaki': 'jet-ski-boat-logo-jhjn59.png',   /* Kawasaki only appears on the Jet Ski screen; Bill chose the Jet Ski wordmark for it */
     // supplied by Bill 2026-11-20
     'Alumacraft': 'alumacraft-boat-logo-bq9wcy.png', 'Avalon': 'avalon-boat-logo-ft7s6j.png', 'Beneteau': 'beneteau-boat-logo-tbjy8y.png', 'Bennington': 'bennington-boat-logo-kv5y5e.png',
     'Carolina Skiff': 'carolina-skiff-boat-logo-kegz6q.png', 'Carver': 'carver-boat-logo-bufkbt.png', 'Catalina': 'catalina-boat-logo-mt8dm5.png', 'Chaparral': 'chaparral-boat-logo-ynfrq7.png',
