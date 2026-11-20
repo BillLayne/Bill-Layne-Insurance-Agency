@@ -21,7 +21,7 @@
   const LAND = [['owned', 'I own or am buying the land'], ['rented_lot', 'I rent the lot'], ['other', 'Something else'], ['', 'Not sure']];
   const USE = [['primary', 'My main home'], ['seasonal', 'Seasonal or second home'], ['rental', 'I rent it to someone else'], ['not_sure', 'Not sure yet']];
   const AMOUNTS = [['25000', '$25,000'], ['50000', '$50,000'], ['75000', '$75,000'], ['100000', '$100,000'], ['150000', '$150,000']];
-  // The office script has no fields for these four, so each answer is sent as its own line at the top of the notes.
+  // Sent as their own fields (office script Version 19 has rows for them).
   const SETTLE = [['Replacement cost', 'Replacement cost'], ['Actual cash value', 'Actual cash value']];
   const STRUCT = [['Yes', 'Yes, I have other buildings'], ['No', 'No']];
   const CONTENTS = [['$10,000', '$10,000'], ['$25,000', '$25,000'], ['$50,000', '$50,000'], ['None', 'I don\u2019t need this']];
@@ -384,13 +384,16 @@
   const label = (list, v) => (list.find(x => x[0] === v) || [, ''])[1];
 
   // ---------- What the office receives ----------
-  function coverageLines() {
-    const s = state;
-    return ['COVERAGE REQUESTED (not separate fields on the office form, so listed here):',
-      '- Claim payment: ' + (s.settlement || HELP_ME),
-      '- Other structures: ' + (s.other_structures === 'Yes' ? 'YES' + (s.other_structures_value ? ': ' + s.other_structures_value : ', details not given') : s.other_structures || HELP_ME),
-      '- Personal property: ' + (s.personal_property === 'None' ? 'Not needed' : s.personal_property || HELP_ME),
-      '- Personal liability: ' + (s.liability || HELP_ME)].join('\n');
+  // Office script Version 19 (2026-11-20) has its own rows for these four, so they are sent as fields, not in the notes.
+  // An empty value shows as "Help me decide" in the office email.
+  function coverageFields() {
+    const s = state, one = t => String(t || '').replace(/\s+/g, ' ').trim(), given = t => (t && t !== HELP_ME ? t : '');
+    return {
+      settlement: one(given(s.settlement)).slice(0, 40),
+      other_structures: one(s.other_structures === 'Yes' ? 'Yes' + (s.other_structures_value ? ': ' + s.other_structures_value : ', details not given') : given(s.other_structures)).slice(0, 120),
+      personal_property: one(s.personal_property === 'None' ? 'Not needed' : given(s.personal_property)).slice(0, 40),
+      liability: one(given(s.liability)).slice(0, 40)
+    };
   }
   function buildPayload() {
     const s = state;
@@ -402,8 +405,8 @@
       current_insurance: s.current_insurance || 'not_sure', current_carrier: s.current_insurance === 'yes' ? s.current_carrier.slice(0, 100) : '',
       coverage_expiration: s.current_insurance === 'yes' ? s.coverage_expiration : '',
       previous_claims: s.previous_claims || 'not_sure', claims_details: s.previous_claims === 'yes' ? s.claims_details.slice(0, 800) : '',
-      effective_date: s.effective_date, desired_dwelling_amount: s.desired_dwelling_amount, deductible: s.deductible || 'not_sure',
-      bundle_auto: s.bundle_auto === 'yes', additional_notes: (coverageLines() + '\n' + (TP + s.additional_notes).trim()).trim().slice(0, 1500),
+      effective_date: s.effective_date, desired_dwelling_amount: s.desired_dwelling_amount, ...coverageFields(), deductible: s.deductible || 'not_sure',
+      bundle_auto: s.bundle_auto === 'yes', additional_notes: (TP + s.additional_notes).trim().slice(0, 1500),
       confirm_accuracy: true   // the customer sends from the Review screen, which says so
     };
   }
