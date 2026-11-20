@@ -79,6 +79,17 @@
       : `<span class="v2-logo-frame"><span class="v2-logo-text">${safe}</span></span>`;
     return `<button type="button" class="v2-tile logo-tile ${c.logo && c.showLabel ? 'has-label' : ''} ${selected ? 'is-selected' : ''}" aria-label="${safe}" aria-pressed="${selected}" data-carrier="${safe}">${inner}</button>`;
   }
+  // Brand logo tiles (hosted on the agency image host). A brand with no file here shows its name as text.
+  const MAKE_LOGOS = { 'Bayliner': 'bayliner-boat-logo-2zmbxk.png', 'MasterCraft': 'mastercraft-boat-logo-fthbjy.png', 'Nitro': 'nitro-boat-logo-44cexk.png', 'Ranger': 'ranger-boat-logo-jc3a64.png',
+    'Sea Ray': 'sea-ray-boat-logo-akdf6k.png', 'Sun Tracker': 'sun-tracker-boat-logo-p3vup4.png', 'Tahoe': 'tahoe-boat-logo-wvcngg.png', 'Tracker': 'tracker-boat-logo-gev75d.png', 'Triton': 'triton-boat-logo-sksbwx.png',
+    'Yamaha': 'yamaha-motorcycle-logo-6xghss.png', 'Kawasaki': 'kawasaki-motorcycle-logo-7p8chr.png' };
+  function makeTile(m, selected) {
+    const safe = esc(m), f = MAKE_LOGOS[m];
+    const inner = f
+      ? `<span class="v2-logo-frame"><img src="${IL}${f}" alt="${safe}" width="132" height="60" class="is-carrier-logo" onerror="this.parentElement.innerHTML='<span class=\\'v2-logo-text\\'>${safe}</span>'"></span>`
+      : `<span class="v2-logo-frame"><span class="v2-logo-text">${safe}</span></span>`;
+    return `<button type="button" class="v2-tile logo-tile ${selected ? 'is-selected' : ''}" aria-label="${safe}" aria-pressed="${selected}" data-val="${safe}">${inner}</button>`;
+  }
   const MAX_YEAR = new Date().getFullYear() + 1;
   const TOP_YEARS = Array.from({ length: 18 }, (_, i) => String(MAX_YEAR - i));
   const DROPDOWN_YEARS = Array.from({ length: MAX_YEAR - 1981 + 1 }, (_, i) => String(MAX_YEAR - i));
@@ -236,8 +247,8 @@
         return `
         <h1 class="v2-heading">Who makes your ${noun(v)}?</h1>
         <p class="v2-sub">${list.length ? 'Tap the brand.' : 'Type the brand below.'}</p>
-        ${list.length ? `<div class="v2-grid-2">${list.map(m => `<button type="button" class="v2-tile compact ${v.make === m ? 'is-selected' : ''}" aria-pressed="${v.make === m}" data-val="${esc(m)}"><span>${esc(m)}</span></button>`).join('')}
-          <button type="button" class="v2-tile compact ${otherOn ? 'is-selected' : ''}" data-make-other><span>Another brand</span></button></div>` : ''}
+        ${list.length ? `<div class="v2-grid-3">${list.map(m => makeTile(m, v.make === m)).join('')}
+          <button type="button" class="v2-tile logo-tile ${otherOn ? 'is-selected' : ''}" aria-pressed="${otherOn}" data-make-other><span class="v2-logo-frame"><span class="v2-logo-text">Another brand</span></span></button></div>` : ''}
         ${otherOn ? `<div class="v2-col">
           <div class="v2-field"><label for="bq-other-make">Enter the brand</label><input id="bq-other-make" class="v2-input" type="text" autocapitalize="words" maxlength="100" value="${esc(known ? '' : v.make)}"></div>
           ${ERR}<button type="button" class="v2-btn-gold" id="bq-other-make-next">Continue &rarr;</button></div>` : ''}`;
