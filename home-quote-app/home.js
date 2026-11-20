@@ -52,7 +52,7 @@
       <span>${v}</span></button>`;
   // The same drawings on the home form's own "What kind of home is it?" tiles, plus rental (house and key) and farm (barn and silo).
   // Shown on the home test page only until Bill approves.
-  const HOME_ART_ON = !LIVE;
+  const HOME_ART_ON = true;   // live since 2026-11-20 (approved by Bill)
   LL_ART.rental_property = LL_USE_ART['Long-term rental'];
   LL_ART.farm = '<path d="M24 38V25l5-8 9-4 9 4 5 8v13"/><path d="M24 25h28"/><path d="M33 29h10v9H33zM33 29l10 9M43 29l-10 9"/><path d="M60 38V19a5.500 5.500 0 0111 0v19M60 25h11M60 31h11"/>';
   const llTypeTile = ([v, t], current, half) => !LL_ART[v]   // no drawing: a slim full-width row (or a plain half tile when it sits beside a drawn one)
@@ -81,7 +81,7 @@
   const ROOF_TYPES = [['asphalt_shingle', 'Asphalt shingle'], ['architectural', 'Architectural shingle'], ['metal', 'Metal'],
     ['tile', 'Tile'], ['wood_shake', 'Wood shake'], ['flat', 'Flat'], ['unknown', 'Not sure']];
   // Drawings for the roof and outside-wall tiles (test pages only until Bill approves): a roof slope or a wall swatch with the material's pattern.
-  const SURFACE_ART_ON = !LIVE;
+  const SURFACE_ART_ON = true;   // live since 2026-11-20 (approved by Bill)
   const ROOF_SLOPE = '<path d="M20 34L32 12h32l12 22z"/><path d="M26 34v6M70 34v6" stroke="#8696ab" stroke-width="1.6"/>';
   const THIN = ' stroke-width="1.400"';
   const ROOF_ART = {
