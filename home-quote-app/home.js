@@ -304,7 +304,7 @@
       case 'renter': return `
         <h1 class="v2-heading">Renting? We have a shorter form for you.</h1>
         <p class="v2-sub">Renters insurance covers your belongings and your liability, not the building. It takes about two minutes.</p>
-        <div class="v2-actions-stack"><a class="v2-btn-gold" href="/renters-quote?src=home_quote_renter" data-source="home_quote_renter_handoff">Start a renters quote &rarr;</a>
+        <div class="v2-actions-stack"><a class="v2-btn-gold" href="${LIVE ? '/renters-quote?src=home_quote_renter' : '../renters-quote-v2-test/?src=home_quote_renter'}" data-source="home_quote_renter_handoff">Start a renters quote &rarr;</a>
         <button type="button" class="v2-btn-outline" style="width:100%" id="hq-not-renter">I own or am buying the home</button></div>`;
 
       case 'address': {
