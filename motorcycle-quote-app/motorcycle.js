@@ -56,6 +56,18 @@
     ['Progressive', 'progressive-insurance-logo-2kcvze.png'], ['GEICO', 'geico-insurance-logo-s92zrs.png'], ['Liberty Mutual', 'liberty-mutual-insurance-logo-ffrtts.png']]
     .map(([name, f]) => ({ name, logo: IL + f, showLabel: false }));
   let otherCarrierOpen = false, otherMakeOpen = false;
+  // Brand logo tiles (hosted on the agency image host). A brand with no file here shows its name as text.
+  const MAKE_LOGOS = { 'Harley-Davidson': 'harley-davidson-motorcycle-logo-d6ma4g.png', 'Honda': 'honda-motorcycle-logo-uunccs.png', 'Yamaha': 'yamaha-motorcycle-logo-6xghss.png',
+    'Kawasaki': 'kawasaki-motorcycle-logo-7p8chr.png', 'Suzuki': 'suzuki-motorcycle-logo-pgk2s6.png', 'Indian': 'indian-motorcycle-logo-qqvekr.png', 'BMW': 'bmw-motorcycle-logo-8fvr5f.png',
+    'Triumph': 'triumph-motorcycle-logo-e5vvs8.png', 'Polaris': 'polaris-motorcycle-logo-9rqyru.png', 'Kubota': 'kubota-motorcycle-logo-m9ja7m.png', 'John Deere': 'john-deere-motorcycle-logo-7fa3h4.png' };
+  const MAKE_LABELLED = ['Harley-Davidson'];   // the badge has no name on it, so the name goes underneath
+  function makeTile(m, selected) {
+    const safe = esc(m), f = MAKE_LOGOS[m], lab = f && MAKE_LABELLED.includes(m);
+    const inner = f
+      ? `<span class="v2-logo-frame"><img src="${IL}${f}" alt="${safe}" width="132" height="60" class="is-carrier-logo" onerror="this.parentElement.innerHTML='<span class=\\'v2-logo-text\\'>${safe}</span>'"></span>${lab? `<span class="v2-logo-label">${safe}</span>` : ''}`
+      : `<span class="v2-logo-frame"><span class="v2-logo-text">${safe}</span></span>`;
+    return `<button type="button" class="v2-tile logo-tile ${lab ? 'has-label' : ''} ${selected ? 'is-selected' : ''}" aria-label="${safe}" aria-pressed="${selected}" data-val="${safe}">${inner}</button>`;
+  }
   function logoTile(c, selected) {
     const safe = esc(c.name);
     const inner = c.logo
@@ -215,8 +227,8 @@
         return `
         <h1 class="v2-heading">Who makes your ${noun(v)}?</h1>
         <p class="v2-sub">Tap the brand.</p>
-        <div class="v2-grid-2">${list.map(m => `<button type="button" class="v2-tile compact ${v.make === m ? 'is-selected' : ''}" aria-pressed="${v.make === m}" data-val="${esc(m)}"><span>${esc(m)}</span></button>`).join('')}
-          <button type="button" class="v2-tile compact ${otherOn ? 'is-selected' : ''}" data-make-other><span>Another brand</span></button></div>
+        <div class="v2-grid-3">${list.map(m => makeTile(m, v.make === m)).join('')}
+          <button type="button" class="v2-tile logo-tile ${otherOn ? 'is-selected' : ''}" aria-pressed="${otherOn}" data-make-other><span class="v2-logo-frame"><span class="v2-logo-text">Another brand</span></span></button></div>
         ${otherOn ? `<div class="v2-col">
           <div class="v2-field"><label for="mc-other-make">Enter the brand</label><input id="mc-other-make" class="v2-input" type="text" autocapitalize="words" maxlength="100" value="${esc(known ? '' : v.make)}"></div>
           ${ERR}<button type="button" class="v2-btn-gold" id="mc-other-make-next">Continue &rarr;</button></div>` : ''}`;
