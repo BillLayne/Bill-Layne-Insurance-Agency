@@ -80,13 +80,24 @@
   }
 
   // ---------- Flow ----------
+  // The auto form's upload-or-continue step (shared file /quote-shared/upload.js): two tiles, and an upload skips the coverage questions.
+  // Shown on the test page only until Bill approves.
+  const UP = window.BLIUpload || null;
+  const HANDY_ON = !!UP && !LIVE;
+  const usedDec = () => HANDY_ON && !!state.used_dec && state.current_insurance === 'Yes';
+  const decNote = () => (usedDec() ? 'DECLARATIONS PAGE UPLOADED - the customer chose to skip the coverage questions. Take the coverage details from the attached page or ask.\n' : '');
+  function decFilesLost() {   // attached files live in memory only; after a reload the skipped questions come back
+    if (!(HANDY_ON && state.used_dec) || UP.count()) return false;
+    state.used_dec = false; state.dec_choice = ''; save(); return true;
+  }
   function sequence() {
     const seq = ['rtype', 'address', 'start', 'insured'];
-    if (state.current_insurance === 'Yes') seq.push('carrier');
+    if (state.current_insurance === 'Yes') { seq.push('carrier'); if (HANDY_ON) seq.push('handy'); }
+    if (usedDec()) { seq.push('contact', 'extras', 'review', 'done'); return seq; }   // the declarations page answers the rest
     seq.push('claims', 'contact', 'belongings', 'liability', 'landlord', 'extras', 'review', 'done');
     return seq;
   }
-  const EYEBROW = { rtype: 'YOUR RENTAL', address: 'YOUR RENTAL', start: 'YOUR RENTAL', insured: 'CURRENT COVERAGE', carrier: 'CURRENT COVERAGE', claims: 'CLAIMS',
+  const EYEBROW = { handy: 'CURRENT COVERAGE', rtype: 'YOUR RENTAL', address: 'YOUR RENTAL', start: 'YOUR RENTAL', insured: 'CURRENT COVERAGE', carrier: 'CURRENT COVERAGE', claims: 'CLAIMS',
     contact: 'ABOUT YOU', belongings: 'YOUR COVERAGE', liability: 'YOUR COVERAGE', landlord: 'YOUR LEASE', extras: 'ALMOST DONE', review: 'REVIEW', done: 'QUOTE RECEIVED' };
 
   function go(id) { stepId = id; history.push(id); enter(); }
@@ -242,6 +253,8 @@
           <button type="button" class="v2-btn-gold" id="rq-extras-next">Continue to review &rarr;</button>
         </div>`;
 
+      case 'handy': return UP.screen(state.dec_choice);
+
       case 'review': {
         const rows = [
           ['Rental', `${label(RENTAL_TYPES, s.rental_type)} · ${[s.property_address, s.unit, s.city, 'NC', s.zip_code].filter(Boolean).join(', ')}`, 'rtype'],
@@ -254,6 +267,10 @@
           ['Landlord requires it', s.landlord_requirement + (s.landlord_requirement === 'Yes' && s.lease_details ? ' · ' + s.lease_details : ''), 'landlord'],
           ['Auto quote too', s.bundle_auto === 'yes' ? 'Yes' : 'No', 'extras'],
           ['Notes', s.additional_notes || 'None', 'extras']];
+        if (usedDec()) {   // an upload replaces the skipped questions with one line
+          const skip = ['claims', 'belongings', 'liability', 'landlord']; for (let i = rows.length - 1; i >= 0; i--) if (skip.includes(rows[i][2])) rows.splice(i, 1);
+          rows.push(['Your policy', UP.reviewLine(), 'handy']);
+        }
         return `
         <h1 class="v2-heading">Review your quote request</h1>
         <p class="v2-sub">Tap Edit to change anything, then send.</p>
@@ -271,7 +288,7 @@
         <div class="v2-final-icon" aria-hidden="true">${icon('confirm')}</div>
         <h1 class="v2-heading">A licensed North Carolina agent is comparing renters insurance for you. We will send your prices by text or email within one business day.</h1>
         ${s.email ? `<p class="v2-final-confirm-email">A confirmation email is on its way to <strong>${esc(s.email)}</strong>.</p>` : ''}
-        <p class="v2-sub">Request reference: <strong>${esc(confirmation)}</strong>. Have a question right now? Call us or text us below.</p>
+        ${HANDY_ON ? UP.failNote() : ''}<p class="v2-sub">Request reference: <strong>${esc(confirmation)}</strong>. Have a question right now? Call us or text us below.</p>
         <div class="v2-final-actions">
           <a class="v2-btn-gold" href="tel:3368351993" data-source="renters_v2_final_call">Call 336-835-1993</a>
           <a class="v2-btn-navy" href="sms:+13368279065" data-source="renters_v2_final_text">Text (336) 827-9065</a>
@@ -295,13 +312,14 @@
       previous_claims: s.previous_claims, claims_details: s.previous_claims === 'Yes' ? s.claims_details.slice(0, 600) : '',
       personal_property: s.personal_property || HELP_ME, liability: s.liability || HELP_ME,
       landlord_requirement: s.landlord_requirement || 'Not sure yet', lease_details: s.landlord_requirement === 'Yes' ? s.lease_details.slice(0, 800) : '',
-      bundle_auto: s.bundle_auto === 'yes', additional_notes: (TP + s.additional_notes).trim().slice(0, 1200)
+      bundle_auto: s.bundle_auto === 'yes', additional_notes: (decNote() + (TP + s.additional_notes).trim()).trim().slice(0, 1200)
     };
   }
   window.__RQ_PREVIEW_PAYLOAD__ = () => (LIVE ? null : buildPayload());
 
   async function send() {
     if (sending) return;
+    if (decFilesLost()) { stepId = 'handy'; history = ['rtype', 'handy']; sendError = ''; render(true); window.scrollTo(0, 0); return; }
     if (state.effective_date < todayIso()) { sendError = 'The start date has passed. Tap Edit next to “Coverage starts” and choose a new date.'; render(); return; }
     sending = true; sendError = ''; render();
     try {
@@ -309,6 +327,8 @@
       const j = await r.json().catch(() => ({}));
       if (!r.ok || j.ok !== true || !/^RENTERS-[0-9]{6}-[A-Z0-9]{4}$/.test(j.confirmationNumber || '')) throw new Error('no-ack');
       confirmation = j.confirmationNumber; submitted = true;
+      if (HANDY_ON && UP.count()) await UP.send({ name: (TP + state.firstname + ' ' + state.lastname).trim(), phone: state.phone, email: state.email, carrier: state.current_carrier,
+        notes: TP + 'Ref: ' + confirmation + ' | Policy type: renters quote' + (usedDec() ? ' | The customer uploaded the declarations page and skipped the coverage questions.' : '') });
       if (LIVE && typeof window.gtag === 'function') {
         const detail = { form_name: 'renters_quote', service_line: 'renters', method: 'backend_acknowledged', cta_source: ctaSource };
         window.gtag('event', 'form_submit', detail); window.gtag('event', 'generate_lead', detail);
@@ -402,6 +422,9 @@
 
   function bind() {
     on('v2-back', back);
+    if (HANDY_ON) UP.bind({ rerender: () => render(),
+      choose: c => { state.dec_choice = c; if (c === 'questions') state.used_dec = false; save(); fireFormStart(); render(); if (c === 'questions') setTimeout(next, 230); },
+      next: () => { state.dec_choice = 'upload'; state.used_dec = true; save(); next(); } });
     each('[data-help]', b => b.addEventListener('click', () => openHelp(b.dataset.help)));
     each('[data-rtype]', b => b.addEventListener('click', () => pick(b, () => { state.rental_type = b.dataset.rtype; })));
     on('rq-address-next', () => {
@@ -471,6 +494,7 @@
   }
 
   restore();
+  if (decFilesLost() && sequence().includes('handy')) { stepId = 'handy'; history = ['rtype', 'handy']; }
   if (!sequence().includes(stepId)) { stepId = 'rtype'; history = ['rtype']; }
   render();
 })();

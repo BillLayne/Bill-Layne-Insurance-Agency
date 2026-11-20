@@ -213,20 +213,31 @@
   // ---------- Flow ----------
   const BOAT_STEPS = ['type', 'make', 'year', 'model', 'size', 'engine', 'motor', 'value', 'owned', 'use', 'waters', 'kept', 'trailer', 'vdetails'];
   const OP_STEPS = ['rwho', 'license', 'years', 'course', 'record'];
+  // The auto form's upload-or-continue step (shared file /quote-shared/upload.js): two tiles, and an upload skips the coverage questions.
+  // Shown on the test page only until Bill approves.
+  const UP = window.BLIUpload || null;
+  const HANDY_ON = !!UP && !LIVE;
+  const usedDec = () => HANDY_ON && !!state.used_dec && state.currently_insured === 'Yes';
+  const decNote = () => (usedDec() ? 'DECLARATIONS PAGE UPLOADED - the customer chose to skip the coverage questions. Take the coverage details from the attached page or ask.\n' : '');
+  function decFilesLost() {   // attached files live in memory only; after a reload the skipped questions come back
+    if (!(HANDY_ON && state.used_dec) || UP.count()) return false;
+    state.used_dec = false; state.dec_choice = ''; save(); return true;
+  }
   function sequence() {
     const seq = [];
     state.boats.forEach((v, i) => BOAT_STEPS.forEach(st => { if (st === 'engine' && v.type === PWC) return; if (st === 'motor' && (!MOTOR_V2 || !hasMotor(v))) return; seq.push(st + ':' + i); }));   // a personal watercraft is always jet drive
     seq.push('vmore', 'contact', 'address');
     state.operators.forEach((r, j) => OP_STEPS.forEach(st => { if (st === 'rwho' && j === 0) return; seq.push(st + ':' + j); }));
     seq.push('rmore', 'insured');
-    if (state.currently_insured === 'Yes') seq.push('carrier', 'renewal');
+    if (state.currently_insured === 'Yes') { seq.push('carrier'); if (HANDY_ON) seq.push('handy'); if (!usedDec()) seq.push('renewal'); }
+    if (usedDec()) { seq.push('extras', 'review', 'done'); return seq; }   // the declarations page answers the rest
     seq.push('history', 'start', 'cover', 'limits');
     if (state.coverage === FULL) seq.push('deductible');
     if (state.coverage !== 'Liability only') seq.push('gear');
     seq.push('extras', 'review', 'done');
     return seq;
   }
-  const EYEBROW = { vmore: 'YOUR BOAT', contact: 'ABOUT YOU', address: 'ABOUT YOU', rmore: 'OPERATORS',
+  const EYEBROW = { handy: 'CURRENT COVERAGE', vmore: 'YOUR BOAT', contact: 'ABOUT YOU', address: 'ABOUT YOU', rmore: 'OPERATORS',
     insured: 'CURRENT COVERAGE', carrier: 'CURRENT COVERAGE', renewal: 'CURRENT COVERAGE', history: 'CURRENT COVERAGE',
     start: 'YOUR COVERAGE', cover: 'YOUR COVERAGE', limits: 'YOUR COVERAGE', deductible: 'YOUR COVERAGE', gear: 'YOUR COVERAGE', extras: 'ALMOST DONE', review: 'REVIEW', done: 'QUOTE RECEIVED' };
   function eyebrow() {
@@ -613,6 +624,8 @@
           <button type="button" class="v2-btn-gold" id="bq-extras-next">Continue to review &rarr;</button>
         </div>`;
 
+      case 'handy': return UP.screen(state.dec_choice);
+
       case 'review': {
         const recordLine = x => ['violations', 'accidents', 'suspensions'].map((k, n) => `${['tickets', 'accidents', 'suspensions'][n]}: ${(x[k] || 'not sure').toLowerCase()}`).join(', ');
         const rows = [];
@@ -629,6 +642,10 @@
         if (s.coverage === FULL) rows.push(['Deductible', s.deductible || DECIDE, 'deductible']);
         if (s.coverage !== 'Liability only') rows.push(['Fishing gear and equipment', s.gear === 'Yes' ? 'Yes' + (s.gear_value ? ', about ' + s.gear_value : '') : s.gear === 'No' ? 'No' : 'Help me decide', 'gear']);
         rows.push(['Other quotes', s.bundles.length ? s.bundles.join(', ') : 'No thanks', 'extras'], ['Notes', s.notes || 'None', 'extras']);
+        if (usedDec()) {   // an upload replaces the skipped questions with one line
+          const skip = ['start', 'cover', 'limits', 'deductible', 'gear']; for (let i = rows.length - 1; i >= 0; i--) if (skip.includes(rows[i][2])) rows.splice(i, 1);
+          rows.push(['Your policy', UP.reviewLine(), 'handy']);
+        }
         return `
         <h1 class="v2-heading">Review your quote request</h1>
         <p class="v2-sub">Tap Edit to change anything, then send.</p>
@@ -646,7 +663,7 @@
         <div class="v2-final-icon" aria-hidden="true">${icon('confirm')}</div>
         <h1 class="v2-heading">A licensed North Carolina agent is comparing insurance for your ${many() ? 'watercraft' : noun(s.boats[0])}. We will send your prices by text or email within one business day.</h1>
         ${s.email ? `<p class="v2-final-confirm-email">A confirmation email is on its way to <strong>${esc(s.email)}</strong>.</p>` : ''}
-        <p class="v2-sub">Request reference: <strong>${esc(confirmation)}</strong>. Have a question right now? Call us or text us below.</p>
+        ${HANDY_ON ? UP.failNote() : ''}<p class="v2-sub">Request reference: <strong>${esc(confirmation)}</strong>. Have a question right now? Call us or text us below.</p>
         <div class="v2-final-actions">
           <a class="v2-btn-gold" href="tel:3368351993" data-source="boat_v2_final_call">Call 336-835-1993</a>
           <a class="v2-btn-navy" href="sms:+13368279065" data-source="boat_v2_final_text">Text (336) 827-9065</a>
@@ -699,7 +716,7 @@
         medical: DECIDE, uninsured: DECIDE, towing: DECIDE,
         fishing_equipment: s.coverage === 'Liability only' ? 'No' : s.gear === 'Yes' || s.gear === 'No' ? s.gear : DECIDE,
         bundle: s.bundles.length === 0 ? 'No thanks' : s.bundles.length === 1 ? s.bundles[0] : 'Several policies',
-        notes: top.concat([TP + s.notes.trim()], extraNotes).join('\n').trim().slice(0, 1200) },
+        notes: (decNote() + top.concat([TP + s.notes.trim()], extraNotes).join('\n').trim()).trim().slice(0, 1200) },
       confirm_accuracy: true   // the customer sends from the Review screen, which says so
     };
   }
@@ -707,6 +724,7 @@
 
   async function send() {
     if (sending) return;
+    if (decFilesLost()) { stepId = 'handy'; history = ['type:0', 'handy']; sendError = ''; render(true); window.scrollTo(0, 0); return; }
     if (state.start_choice !== 'none' && state.effective_date && state.effective_date < todayIso()) { sendError = 'The start date has passed. Tap Edit next to “Coverage starts” and choose a new date.'; render(); return; }
     sending = true; sendError = ''; render();
     try {
@@ -714,6 +732,8 @@
       const j = await r.json().catch(() => ({}));
       if (!r.ok || j.ok !== true || !/^BOAT-[0-9]{6}-[A-Z0-9]{4}$/.test(j.confirmationNumber || '')) throw new Error('no-ack');
       confirmation = j.confirmationNumber; submitted = true;
+      if (HANDY_ON && UP.count()) await UP.send({ name: (TP + state.firstname + ' ' + state.lastname).trim(), phone: state.phone, email: state.email, carrier: state.carrier,
+        notes: TP + 'Ref: ' + confirmation + ' | Policy type: boat / watercraft quote' + (usedDec() ? ' | The customer uploaded the declarations page and skipped the coverage questions.' : '') });
       if (LIVE && typeof window.gtag === 'function') {
         const d = { form_type: 'boat', form_name: 'boat_quote', service_line: 'boat', cta_source: ctaSource, method: 'backend_acknowledged' };
         window.gtag('event', 'form_submit', d); window.gtag('event', 'generate_lead', d);
@@ -816,6 +836,9 @@
   function bind() {
     const s = sid();
     on('v2-back', back);
+    if (HANDY_ON) UP.bind({ rerender: () => render(),
+      choose: c => { state.dec_choice = c; if (c === 'questions') state.used_dec = false; save(); fireFormStart(); render(); if (c === 'questions') setTimeout(next, 230); },
+      next: () => { state.dec_choice = 'upload'; state.used_dec = true; save(); next(); } });
     each('[data-help]', b => b.addEventListener('click', () => openHelp(b.dataset.help)));
 
     // Tap-one-and-move-on screens
@@ -1001,6 +1024,7 @@
   }
 
   restore();
+  if (decFilesLost() && sequence().includes('handy')) { stepId = 'handy'; history = ['type:0', 'handy']; }
   if (!sequence().includes(stepId)) { stepId = 'type:0'; history = ['type:0']; }
   render();
 })();
