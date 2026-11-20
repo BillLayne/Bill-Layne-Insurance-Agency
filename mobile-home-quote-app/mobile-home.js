@@ -116,9 +116,9 @@
 
   // ---------- Flow ----------
   // The auto form's upload-or-continue step (shared file /quote-shared/upload.js): two tiles, and an upload skips the coverage questions.
-  // Shown on the test page only until Bill approves.
+  // Live since 2026-11-20 (approved by Bill).
   const UP = window.BLIUpload || null;
-  const HANDY_ON = !!UP && !LIVE;
+  const HANDY_ON = !!UP;
   const usedDec = () => HANDY_ON && !!state.used_dec && state.current_insurance === 'yes';
   const decNote = () => (usedDec() ? 'DECLARATIONS PAGE UPLOADED - the customer chose to skip the coverage questions. Take the coverage details from the attached page or ask.\n' : '');
   function decFilesLost() {   // attached files live in memory only; after a reload the skipped questions come back
