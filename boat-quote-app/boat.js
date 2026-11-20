@@ -102,13 +102,20 @@
   // Brand logo tiles (hosted on the agency image host). A brand with no file here shows its name as text.
   const MAKE_LOGOS = { 'Bayliner': 'bayliner-boat-logo-2zmbxk.png', 'MasterCraft': 'mastercraft-boat-logo-fthbjy.png', 'Nitro': 'nitro-boat-logo-44cexk.png', 'Ranger': 'ranger-boat-logo-jc3a64.png',
     'Sea Ray': 'sea-ray-boat-logo-akdf6k.png', 'Sun Tracker': 'sun-tracker-boat-logo-p3vup4.png', 'Tahoe': 'tahoe-boat-logo-wvcngg.png', 'Tracker': 'tracker-boat-logo-gev75d.png', 'Triton': 'triton-boat-logo-sksbwx.png',
-    'Yamaha': 'yamaha-motorcycle-logo-6xghss.png', 'Kawasaki': 'kawasaki-motorcycle-logo-7p8chr.png' };
+    'Yamaha': 'yamaha-motorcycle-logo-6xghss.png', 'Kawasaki': 'kawasaki-motorcycle-logo-7p8chr.png',
+    // supplied by Bill 2026-11-20
+    'Alumacraft': 'alumacraft-boat-logo-bq9wcy.png', 'Avalon': 'avalon-boat-logo-ft7s6j.png', 'Beneteau': 'beneteau-boat-logo-tbjy8y.png', 'Bennington': 'bennington-boat-logo-kv5y5e.png',
+    'Carolina Skiff': 'carolina-skiff-boat-logo-kegz6q.png', 'Carver': 'carver-boat-logo-bufkbt.png', 'Catalina': 'catalina-boat-logo-mt8dm5.png', 'Chaparral': 'chaparral-boat-logo-ynfrq7.png',
+    'Crest': 'crest-boat-logo-rp4nu5.png', 'Glastron': 'glastron-boat-logo-e3q2v3.png', 'Godfrey': 'godfrey-boat-logo-296scg.png', 'Harris': 'harris-boat-logo-k3p4b5.png', 'Hobie': 'hobie-boat-logo-s58mwg.png',
+    'Hunter': 'hunter-boat-logo-6vfrfg.png', 'Lowe': 'lowe-boat-logo-dt6zte.png', 'MacGregor': 'macgregor-boat-logo-x53wdx.png', 'O\u2019Day': 'o-day-boat-logo-gzggax.png', 'Regal': 'regal-boat-logo-w2y3ac.png',
+    'Rinker': 'rinker-boat-logo-fp3zyd.png', 'Sea-Doo': 'sea-doo-boat-logo-b9hsxz.png', 'Skeeter': 'skeeter-boat-logo-z63ut2.png', 'Stingray': 'stingray-boat-logo-3azdpj.png', 'Sylvan': 'sylvan-boat-logo-vt98bu.png' };
+  const MAKE_LABELLED = ['Crest', 'Harris'];   // these logos are a symbol with no name on it, so the name is printed underneath
   function makeTile(m, selected) {
-    const safe = esc(m), f = MAKE_LOGOS[m];
+    const safe = esc(m), f = MAKE_LOGOS[m], lab = f && MAKE_LABELLED.includes(m);
     const inner = f
-      ? `<span class="v2-logo-frame"><img src="${IL}${f}" alt="${safe}" width="132" height="60" class="is-carrier-logo" onerror="this.parentElement.innerHTML='<span class=\\'v2-logo-text\\'>${safe}</span>'"></span>`
+      ? `<span class="v2-logo-frame"><img src="${IL}${f}" alt="${safe}" width="132" height="60" class="is-carrier-logo" onerror="this.parentElement.innerHTML='<span class=\\'v2-logo-text\\'>${safe}</span>'"></span>${lab ? `<span class="v2-logo-label">${safe}</span>` : ''}`
       : `<span class="v2-logo-frame"><span class="v2-logo-text">${safe}</span></span>`;
-    return `<button type="button" class="v2-tile logo-tile ${selected ? 'is-selected' : ''}" aria-label="${safe}" aria-pressed="${selected}" data-val="${safe}">${inner}</button>`;
+    return `<button type="button" class="v2-tile logo-tile ${lab ? 'has-label' : ''} ${selected ? 'is-selected' : ''}" aria-label="${safe}" aria-pressed="${selected}" data-val="${safe}">${inner}</button>`;
   }
   // Simple side-view drawings so a customer can pick by look, not by name. Bow points right. Live since 2026-11-20 (approved by Bill).
   const TYPE_ART_ON = true;
