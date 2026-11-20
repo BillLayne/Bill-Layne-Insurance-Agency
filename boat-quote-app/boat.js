@@ -28,6 +28,26 @@
     'Cruiser / cabin boat': ['Sea Ray', 'Bayliner', 'Chaparral', 'Carver', 'Regal', 'Rinker'],
     'Sailboat': ['Catalina', 'Hunter', 'Beneteau', 'Hobie', 'MacGregor', 'O’Day'],
     [PWC]: ['Sea-Doo', 'Yamaha', 'Kawasaki'] };
+  // Popular models shown as tiles on the model screen (suggestions only; the customer can always type another one).
+  // Keyed by type first because a brand such as Lowe or Yamaha builds different boats for different uses.
+  const MODELS = {
+    'Pontoon / deck boat': { 'Bennington': ['S Series', 'SX Series', 'L Series', 'R Series', 'Q Series', 'QX Series'], 'Sun Tracker': ['Party Barge 18', 'Party Barge 20', 'Party Barge 22', 'Bass Buggy 16', 'Bass Buggy 18', 'Fishin\u2019 Barge 20'],
+      'Harris': ['Cruiser', 'Sunliner', 'Solstice', 'Grand Mariner', 'Crowne'], 'Sylvan': ['Mirage', 'L Series', 'S Series', 'G Series', 'X Series'], 'Lowe': ['Ultra', 'SS', 'SF', 'Retreat'],
+      'Avalon': ['Venture', 'LSZ', 'Catalina', 'Excalibur'], 'Godfrey': ['Sweetwater', 'AquaPatio', 'Sanpan', 'Monaco'], 'Crest': ['Classic', 'Caliber', 'Savannah', 'Continental'] },
+    'Fishing / bass boat': { 'Tracker': ['Pro Team 175', 'Pro Team 190', 'Pro Team 195', 'Bass Tracker Classic', 'Pro Guide', 'Grizzly'], 'Ranger': ['Z518', 'Z519', 'Z520', 'Z521', 'RT178', 'RT188'],
+      'Nitro': ['Z17', 'Z18', 'Z19', 'Z20', 'Z21'], 'Skeeter': ['ZX200', 'ZX225', 'ZX250', 'FXR20', 'FXR21'], 'Triton': ['18 TRX', '19 TRX', '20 TRX', '21 TRX'],
+      'Lowe': ['Stinger', 'Skorpion', 'Roughneck', 'Fish & Ski'], 'Alumacraft': ['Competitor', 'Classic', 'Trophy', 'Escape', 'Prowler'], 'Carolina Skiff': ['17 LS', '19 LS', '21 LS', 'JVX Series', 'E Series', 'Ultra Elite'] },
+    'Runabout / bowrider': { 'Sea Ray': ['SPX 190', 'SPX 210', 'SPX 230', 'SDX 250', 'SLX 260', 'Sundeck'], 'Bayliner': ['VR4', 'VR5', 'VR6', 'Element E16', 'Element E18', '185 Bowrider'],
+      'Chaparral': ['19 SSi', '21 SSi', '23 SSi', '21 Surf', 'H2O 19', 'H2O 21'], 'Stingray': ['182 SC', '192 SC', '201 DC', '208 LR', '225 SE'], 'Tahoe': ['185 S', '210 S', '450 TS', '500 TS', '1950', '2150'],
+      'Glastron': ['GT 185', 'GT 205', 'GX 195', 'GX 215', 'GTD 200'], 'Yamaha': ['AR190', 'AR210', 'SX190', 'SX210', '212', '242'], 'MasterCraft': ['NXT20', 'NXT22', 'XT21', 'XT23', 'X24', 'ProStar'] },
+    'Cruiser / cabin boat': { 'Sea Ray': ['Sundancer 260', 'Sundancer 320', 'Sundancer 370', 'SLX 280'], 'Bayliner': ['Ciera', '285', '305', '335'], 'Chaparral': ['Signature 250', 'Signature 270', 'Signature 310', 'Signature 330'],
+      'Carver': ['C34', 'C37', 'C40', 'C43', 'C52'], 'Regal': ['26 Express', '28 Express', '33 Express', '38 Grande Coupe'], 'Rinker': ['260 EX', '290 EX', '310 EX', '340 EX'] },
+    'Sailboat': { 'Catalina': ['22', '25', '27', '30', '34', '36'], 'Hunter': ['22', '26', '27', '31', '33', '36'], 'Beneteau': ['Oceanis 30.1', 'Oceanis 34.1', 'Oceanis 38.1', 'First 27', 'First 36'],
+      'Hobie': ['Hobie 16', 'Hobie 14', 'Getaway', 'Wave', 'Tandem Island'], 'MacGregor': ['26M', '26X', '25', '22'], 'O\u2019Day': ['22', '23', '25', '27', '30'] },
+    [PWC]: { 'Sea-Doo': ['Spark', 'Spark Trixx', 'GTI 130', 'GTI SE', 'GTX 170', 'RXP-X', 'Wake 170', 'FishPro'], 'Yamaha': ['EX', 'EX Deluxe', 'VX', 'VX Cruiser', 'FX Cruiser', 'GP1800R'],
+      'Kawasaki': ['STX 160', 'Ultra 160', 'Ultra 310', 'SX-R'] }
+  };
+  const popularModels = v => (MODELS[v.type] || {})[v.make] || [];
   const ENGINES = [['Outboard', 'Outboard'], ['Inboard', 'Inboard'], ['Stern drive / I-O', 'Stern drive (inboard/outboard)'], ['Jet drive', 'Jet drive'],
     ['Sail with auxiliary motor', 'Sail with a small motor'], ['Sail only / no motor', 'Sail only, no motor'], ['Other', 'Something else']];
   // The office script needs one number for value. A range sends its midpoint and the range itself goes in the notes.
@@ -71,7 +91,7 @@
   let insurers = [['State Farm', 'state-farm-insurance-logo-c4hm2m.png'], ['Allstate', 'allstate-insurance-logo-nq7c5z.png'], ['Nationwide', 'nationwide-insurance-logo-j5zp2s.png'],
     ['Progressive', 'progressive-insurance-logo-2kcvze.png'], ['GEICO', 'geico-insurance-logo-s92zrs.png'], ['Liberty Mutual', 'liberty-mutual-insurance-logo-ffrtts.png']]
     .map(([name, f]) => ({ name, logo: IL + f, showLabel: false }));
-  let otherCarrierOpen = false, otherMakeOpen = false, olderYearOpen = false, exactValueOpen = false;
+  let otherCarrierOpen = false, otherMakeOpen = false, olderYearOpen = false, exactValueOpen = false, otherModelOpen = false;
   function logoTile(c, selected) {
     const safe = esc(c.name);
     const inner = c.logo
@@ -160,7 +180,7 @@
   }
 
   // ---------- Flow ----------
-  const BOAT_STEPS = ['type', 'make', 'year', 'model', 'engine', 'value', 'owned', 'use', 'waters', 'kept', 'trailer', 'vdetails'];
+  const BOAT_STEPS = ['type', 'make', 'year', 'model', 'size', 'engine', 'value', 'owned', 'use', 'waters', 'kept', 'trailer', 'vdetails'];
   const OP_STEPS = ['rwho', 'license', 'years', 'course', 'record'];
   function sequence() {
     const seq = [];
@@ -193,7 +213,7 @@
   }
   function back() { if (history.length < 2) return; history.pop(); stepId = history[history.length - 1]; if (!sequence().includes(stepId)) { stepId = 'type:0'; history = ['type:0']; } enter(true); }
   function enter(fromBack) {
-    otherMakeOpen = false; olderYearOpen = false; exactValueOpen = false; save();
+    otherMakeOpen = false; olderYearOpen = false; exactValueOpen = false; otherModelOpen = false; save();
     if (!fromBack) { try { window.history.pushState({ bq: stepId }, ''); } catch (_) {} }
     track('boat_v2_step_view'); render(true); window.scrollTo(0, 0);
   }
@@ -289,18 +309,33 @@
         </div>`;
       }
 
-      case 'model': return `
-        <h1 class="v2-heading">Which ${esc(v.year)} ${esc(v.make)} is it?</h1>
-        <p class="v2-sub">A best guess is fine. Our team confirms the details before quoting.</p>
-        <div class="v2-col">
-          <div class="v2-field"><label for="bq-model">Model</label><input id="bq-model" class="v2-input" type="text" autocapitalize="words" maxlength="100" placeholder="Example: ${v.type === PWC ? 'GTI 130' : 'Party Barge 20'}" value="${esc(v.model)}"></div>
-          <div class="hq-two">
-            <div class="v2-field"><label for="bq-length">Length, feet (optional)</label><input id="bq-length" class="v2-input" type="text" inputmode="decimal" maxlength="5" placeholder="Example: 20" value="${esc(v.length_feet)}"></div>
-            <div class="v2-field"><label for="bq-hp">Horsepower (optional)</label><input id="bq-hp" class="v2-input" type="text" inputmode="numeric" maxlength="5" placeholder="Example: 115" value="${esc(v.horsepower)}"></div>
-          </div>
+      case 'model': {
+        const pop = popularModels(v), listed = pop.includes(v.model);
+        const typeIn = !pop.length || otherModelOpen || (!!v.model && !listed && v.model !== 'Not sure');
+        return `
+        <h1 class="v2-heading">What is your ${esc(v.year)} ${esc(v.make)} model?</h1>
+        <p class="v2-sub">${pop.length ? 'Tap your model, or type it if it is not shown.' : 'Type the model below. A best guess is fine.'}</p>
+        ${pop.length ? `<div class="v2-grid-2">${pop.map(m => `<button type="button" class="v2-tile compact ${v.model === m ? 'is-selected' : ''}" aria-pressed="${v.model === m}" data-val="${esc(m)}"><span>${esc(m)}</span></button>`).join('')}
+          <button type="button" class="v2-tile compact ${typeIn ? 'is-selected' : ''}" data-model-other><span>Another model</span></button>
+          <button type="button" class="v2-tile compact ${v.model === 'Not sure' ? 'is-selected' : ''}" data-val="Not sure"><span>Not sure</span></button></div>` : ''}
+        ${typeIn ? `<div class="v2-col">
+          <div class="v2-field"><label for="bq-model">Enter your ${esc(v.year)} ${esc(v.make)} model</label><input id="bq-model" class="v2-input" type="text" autocapitalize="words" maxlength="100" placeholder="Example: ${v.type === PWC ? 'GTI 130' : 'Party Barge 20'}" value="${esc(listed || v.model === 'Not sure' ? '' : v.model)}"></div>
           ${ERR}
           <div class="v2-actions-stack"><button type="button" class="v2-btn-gold" id="bq-model-next">Continue &rarr;</button>
-          <button type="button" class="v2-btn-outline" style="width:100%" id="bq-model-skip">Not sure of the model</button></div>
+          ${pop.length ? '' : '<button type="button" class="v2-btn-outline" style="width:100%" id="bq-model-skip">Not sure of the model</button>'}</div></div>` : ''}`;
+      }
+
+      case 'size': return `
+        <h1 class="v2-heading">How big is it?</h1>
+        <p class="v2-sub">Both are optional. Fill in what you know.</p>
+        <div class="v2-col">
+          <div class="hq-two">
+            <div class="v2-field"><label for="bq-length">Length, feet</label><input id="bq-length" class="v2-input" type="text" inputmode="decimal" maxlength="5" placeholder="Example: 20" value="${esc(v.length_feet)}"></div>
+            <div class="v2-field"><label for="bq-hp">Horsepower</label><input id="bq-hp" class="v2-input" type="text" inputmode="numeric" maxlength="5" placeholder="Example: 115" value="${esc(v.horsepower)}"></div>
+          </div>
+          ${ERR}
+          <div class="v2-actions-stack"><button type="button" class="v2-btn-gold" id="bq-size-next">Continue &rarr;</button>
+          <button type="button" class="v2-btn-outline" style="width:100%" id="bq-size-skip">Not sure, skip</button></div>
         </div>`;
 
       case 'engine': return `
@@ -734,7 +769,8 @@
     each('#stage [data-val]:not([data-chip])', b => b.addEventListener('click', () => {
       const x = b.dataset.val, v = B(), r = O();
       if (s === 'type') return pick(b, () => { if (v.type !== x) { v.make = ''; v.model = ''; if (x === PWC) v.engine_type = 'Jet drive'; else if (v.type === PWC) v.engine_type = ''; } v.type = x; });
-      if (s === 'make') { otherMakeOpen = false; return pick(b, () => { v.make = x; }); }
+      if (s === 'make') { otherMakeOpen = false; return pick(b, () => { if (v.make !== x) v.model = ''; v.make = x; }); }
+      if (s === 'model') { otherModelOpen = false; return pick(b, () => { v.model = x; }); }
       if (s === 'year') return pick(b, () => { v.year = x; });
       if (s === 'engine') return pick(b, () => { v.engine_type = x; });
       if (s === 'value') { exactValueOpen = false; return pick(b, () => { v.value_label = x; v.value = x === 'Not sure' ? '1' : (VALUES.find(p => p[1] === x) || ['1'])[0]; }); }
@@ -777,7 +813,7 @@
 
     // Brand: another brand
     each('[data-make-other]', b => b.addEventListener('click', () => { otherMakeOpen = true; const v = B(); if ((MAKES[v.type] || []).includes(v.make)) v.make = ''; render(); const o = $('bq-other-make'); if (o) o.focus(); }));
-    on('bq-other-make-next', () => { const m = oneLine(val('bq-other-make')); if (!m) { showErr('Please enter the brand.'); return; } B().make = m; otherMakeOpen = false; save(); fireFormStart(); next(); });
+    on('bq-other-make-next', () => { const m = oneLine(val('bq-other-make')); if (!m) { showErr('Please enter the brand.'); return; } const v = B(); if (v.make !== m) v.model = ''; v.make = m; otherMakeOpen = false; save(); fireFormStart(); next(); });
 
     const yearDd = $('bq-year-dd');
     if (yearDd) yearDd.addEventListener('change', () => {
@@ -791,15 +827,18 @@
       if (!/^\d{4}$/.test(y) || Number(y) < 1900 || Number(y) > 1980) { showErr('Please enter a four-digit year before 1981, for example 1978.'); return; }
       B().year = y; olderYearOpen = false; save(); fireFormStart(); next();
     });
-    function saveModel(skip) {
-      const m = oneLine(val('bq-model')), len = val('bq-length').replace(/[^\d.]/g, ''), hp = val('bq-hp').replace(/[^\d]/g, ''), v = B();
-      if (!m && !skip) { showErr('Please enter the model, or tap Not sure of the model.'); return; }
+    each('[data-model-other]', b => b.addEventListener('click', () => { otherModelOpen = true; const v = B(); if (popularModels(v).includes(v.model) || v.model === 'Not sure') v.model = ''; render(); const o = $('bq-model'); if (o) o.focus(); }));
+    on('bq-model-next', () => { const m = oneLine(val('bq-model')); if (!m) { showErr('Please enter the model. A best guess is fine.'); return; } B().model = m; otherModelOpen = false; save(); fireFormStart(); next(); });
+    on('bq-model-skip', () => { B().model = 'Not sure'; otherModelOpen = false; save(); fireFormStart(); next(); });
+    function saveSize(skip) {
+      const len = skip ? '' : val('bq-length').replace(/[^\d.]/g, ''), hp = skip ? '' : val('bq-hp').replace(/[^\d]/g, ''), v = B();
       if (len && (!/^\d+(\.\d)?$/.test(len) || Number(len) < 1 || Number(len) > 300)) { showErr('Please check the length in feet, for example 20 or 18.5, or leave it blank.'); return; }
       if (hp && Number(hp) > 10000) { showErr('Please check the horsepower, or leave it blank.'); return; }
-      v.model = m || 'Not sure'; v.length_feet = len ? String(Number(len)) : ''; v.horsepower = hp ? String(Number(hp)) : ''; save(); fireFormStart(); next();
+      if (!skip) { v.length_feet = len ? String(Number(len)) : ''; v.horsepower = hp ? String(Number(hp)) : ''; }
+      save(); next();
     }
-    on('bq-model-next', () => saveModel(false));
-    on('bq-model-skip', () => saveModel(true));
+    on('bq-size-next', () => saveSize(false));
+    on('bq-size-skip', () => saveSize(true));
     each('[data-value-exact]', b => b.addEventListener('click', () => { exactValueOpen = true; const v = B(); if (v.value_label) { v.value_label = ''; v.value = ''; } render(); const o = $('bq-value'); if (o) o.focus(); }));
     on('bq-value-next', () => { const n = val('bq-value').replace(/[^\d]/g, ''); if (!n || Number(n) < 1 || Number(n) > 10000000) { showErr('Please enter the amount in dollars, numbers only.'); return; }
       const v = B(); v.value = String(Number(n)); v.value_label = ''; exactValueOpen = false; save(); fireFormStart(); next(); });
