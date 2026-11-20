@@ -31,6 +31,18 @@
   const PROPERTY_TYPES = [['single_family', 'Single-family home'], ['condo', 'Condo or townhome'], ['mobile_home', 'Mobile or manufactured home'],
     ['rental_property', 'Rental property I own'], ['farm', 'Farm'], ['other', 'Something else']];
   const LL_RENTAL = ['Long-term rental', 'Short-term or vacation rental', 'Vacant or being renovated', 'Something else'];
+  // Simple front-view drawings on the landlord building tiles (test page; same style as the mobile home drawings).
+  const LL_ART = {
+    single_family: '<path d="M32 22h32v16H32z"/><path d="M28 22.500L48 10l20 12.500"/><path d="M58 16.500V11h4v8"/><path d="M45 28h6v10h-6zM36 26h5v5h-5zM55 26h5v5h-5z"/>',
+    condo: '<path d="M18 20v18h60V20"/><path d="M16 21.500L28 12l10 8 10-8 10 8 10-8 12 9.500"/><path d="M38 20v18M58 20v18"/><path d="M25.500 30h5v8h-5zM45.500 30h5v8h-5zM65.500 30h5v8h-5zM25.500 22.500h5v4h-5zM45.500 22.500h5v4h-5zM65.500 22.500h5v4h-5z"/>',
+    duplex: '<path d="M20 22h56v16H20z"/><path d="M17 22.500L48 10l31 12.500"/><path d="M48 10v28" stroke-dasharray="3 3"/><path d="M38.500 28h5.500v10h-5.500zM52 28h5.500v10H52zM26 26h7v5h-7zM63 26h7v5h-7z"/>',
+    mobile_home: '<path d="M12 22h72v14H12z"/><path d="M10 22l6-5h64l6 5"/><path d="M42 26h6v10h-6zM19 26h9v5h-9zM32 26h6v5h-6zM54 26h9v5h-9zM68 26h9v5h-9z"/><path d="M20 36v4M76 36v4M40 38h10"/>'
+  };
+  const llTypeTile = ([v, t], current) => !LL_ART[v]   // no drawing: a slim full-width row
+    ? `<button type="button" class="v2-tile compact ${current === v ? 'is-selected' : ''}" aria-pressed="${current === v}" data-ptype="${v}" style="grid-column:1/-1;min-height:48px"><span>${esc(t)}</span></button>`
+    : `<button type="button" class="v2-tile compact ${current === v ? 'is-selected' : ''}" aria-pressed="${current === v}" data-ptype="${v}" style="flex-direction:column;gap:2px;padding:8px 8px 9px">
+      <svg viewBox="0 0 96 48" width="96" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;color:#05203d">${LL_ART[v]}<path d="M4 40H92" stroke="#8696ab" stroke-width="1.6"/></svg>
+      <span>${esc(t)}</span></button>`;
   const LL_TYPES = [['single_family', 'Single-family house'], ['condo', 'Condo or townhome'], ['duplex', 'Duplex or multi-family'], ['mobile_home', 'Mobile or manufactured home'], ['other', 'Something else']];
   const LL_UNITS = ['1', '2', '3 or 4', '5 or more'];
   const LL_TENANT = ['Yes, a tenant lives there', 'Not yet, between tenants'];
@@ -412,8 +424,8 @@
 
       case 'ptype': return `
         <h1 class="v2-heading">What kind of home is it?</h1>
-        <p class="v2-sub">Choose the closest match.</p>
-        ${tiles('ptype', LL ? LL_TYPES : PROPERTY_TYPES, s.property_type, 2, true)}`;
+        <p class="v2-sub">${LL ? 'Tap the one that looks like it.' : 'Choose the closest match.'}</p>
+        ${LL ? `<div class="v2-grid-2">${LL_TYPES.map(t => llTypeTile(t, s.property_type)).join('')}</div>` : tiles('ptype', PROPERTY_TYPES, s.property_type, 2, true)}`;
 
       case 'year': return `
         <h1 class="v2-heading">What year was the home built?</h1>
