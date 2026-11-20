@@ -67,6 +67,7 @@
     try {   // contact details carried over from a finished auto or home quote, in this browser tab only
       const c = JSON.parse(sessionStorage.getItem('bli_carry_contact') || 'null');
       if (c && !state.firstname && !state.email) ['firstname', 'lastname', 'phone', 'email', 'date_of_birth'].forEach(k => { if (c[k]) state[k] = c[k]; });
+      if (c && c.street && !state.property_address) { state.property_address = c.street; state.city = c.city || ''; state.zip_code = c.zip || ''; if (c.owner === 'yes' || c.owner === 'buying') state.is_owner = c.owner; }
     } catch (_) {}
     try { const z = params.get('zip'); if (z && /^[0-9]{5}$/.test(z) && !state.zip_code) state.zip_code = z; } catch (_) {}
   }

@@ -109,7 +109,7 @@
     // Contact details carried over from a finished auto quote ("Want a home quote too?")
     try {
       const c = JSON.parse(sessionStorage.getItem('bli_carry_contact') || 'null');
-      if (c && !state.firstname && !state.email) {
+      if (c && c.email && !state.firstname && !state.email) {   // only a finished auto quote carries an email
         ['firstname', 'lastname', 'phone', 'email', 'date_of_birth'].forEach(k => { if (c[k]) state[k] = c[k]; });
         if (c.street && !state.property_address) { state.property_address = c.street; state.city = c.city || ''; state.zip_code = c.zip || ''; }
         if (!state.is_owner) state.is_owner = 'yes';
@@ -803,7 +803,16 @@
     });
     on('hq-skip-record', () => { state.lookupUsed = false; state.lookup = null; state.fromLookup = {}; track('home_v2_step_complete', { lookup: 'declined' }); next(); });
 
-    each('[data-ptype]', b => b.addEventListener('click', () => pick(b, () => { state.property_type = b.dataset.ptype; })));
+    each('[data-ptype]', b => b.addEventListener('click', () => {
+      if (b.dataset.ptype === 'mobile_home') {   // mobile homes have their own form with the right questions
+        b.parentElement.querySelectorAll('.v2-tile').forEach(t => t.classList.remove('is-selected')); b.classList.add('is-selected');
+        state.property_type = 'mobile_home'; save();
+        try { sessionStorage.setItem('bli_carry_contact', JSON.stringify({ street: state.property_address, city: state.city, zip: state.zip_code, owner: state.is_owner })); } catch (_) {}
+        setTimeout(() => { window.location.href = (LIVE ? '/mobile-home-quote' : '../mobile-home-quote-v2-test/') + '?src=home_quote_mobile_home'; }, 230);
+        return;
+      }
+      pick(b, () => { state.property_type = b.dataset.ptype; });
+    }));
     on('hq-year-next', () => { const y = val('year_built'); const n = Number(y); if (!/^\d{4}$/.test(y) || n < 1700 || n > new Date().getFullYear() + 1) { showErr('Please enter a four-digit year, or tap Not sure.'); return; } if (y !== state.year_built) delete state.fromLookup.year_built; state.year_built = y; next(); });
     on('hq-year-skip', () => { state.year_built = ''; delete state.fromLookup.year_built; next(); });
     each('[data-sqft]', b => b.addEventListener('click', () => pick(b, () => { if (state.square_footage !== b.dataset.sqft) delete state.fromLookup.square_footage; state.square_footage = b.dataset.sqft; })));
