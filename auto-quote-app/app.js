@@ -16,10 +16,10 @@
   // for people with no insurance and folded away for the rest, 5 the VIN line knows about an attached registration photo,
   // 6 the driver screen shows the name as text instead of asking for it again.
   const FLOW2_ON = true;   // live since 2026-11-22 (approved by Bill)
-  // Two small fixes from the 2026-11-22 read-only check (test page only until Bill approves):
+  // Two small fixes from the 2026-11-22 read-only check. Live on both pages:
   // 1 changing "no insurance" to a carrier from the review screen asks the renewal question before going back,
   // 2 saving an additional driver opens the next unfinished one instead of leaving it closed.
-  const FIX3_ON = !LIVE;
+  const FIX3_ON = true;   // live since 2026-11-22 (approved by Bill)
   let d1NameOpen = false;
   // "Want a home quote too?" on the last screen. OFF everywhere for now: the new home form is not on the website yet.
   // Switch to !LIVE once /home-quote-v2-test/ is pushed, and to true only when Bill approves it for customers.
