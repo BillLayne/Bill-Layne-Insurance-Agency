@@ -1376,8 +1376,11 @@
 
     const sync = (autoAdvanceFrom) => {
       clearErr();
-      const mm = mmEl.value.replace(/\D/g, '');
-      const dd = ddEl.value.replace(/\D/g, '');
+      let mm = mmEl.value.replace(/\D/g, '');
+      let dd = ddEl.value.replace(/\D/g, '');
+      // A month that starts 2-9 or a day that starts 4-9 can only be one digit: pad it so the cursor moves on (same as the other forms).
+      if (autoAdvanceFrom === 'mm' && mm.length === 1 && Number(mm) > 1) mm = '0' + mm;
+      if (autoAdvanceFrom === 'dd' && dd.length === 1 && Number(dd) > 3) dd = '0' + dd;
       const yy = yyEl.value.replace(/\D/g, '');
       if (autoAdvanceFrom === 'mm' && mm.length >= 2) {
         mmEl.value = mm.slice(0, 2);
@@ -1415,6 +1418,9 @@
       }
     };
 
+    // "5 / 7 / 1980" typed box by box used to be ignored without any message. Leaving a box with one digit now pads it.
+    [mmEl, ddEl].forEach(el => el.addEventListener('blur', () => { if (/^[1-9]$/.test(el.value)) { el.value = '0' + el.value; sync(); } }));
+    yyEl.addEventListener('blur', () => { if (/^[1-9]$/.test(mmEl.value)) mmEl.value = '0' + mmEl.value; if (/^[1-9]$/.test(ddEl.value)) ddEl.value = '0' + ddEl.value; sync(); });
     mmEl.addEventListener('paste', e => {
       const txt = (e.clipboardData || window.clipboardData)?.getData('text') || '';
       if (trySplitFullDate(txt)) { e.preventDefault(); sync(); }
@@ -1476,6 +1482,7 @@
     if (mBack) mBack.addEventListener('click', goBack);
     const mNext = document.getElementById('v2-m-next');
     if (mNext && primaryBtn) {
+      primaryBtn.classList.add('v2-in-bar');   /* the bar copy presses this one; on phones the page copy is hidden (styles.css .v2-in-bar) */
       mNext.addEventListener('click', () => primaryBtn.click());
     }
   }
@@ -2190,7 +2197,8 @@
             </button>
           </div>
         </div>
-        ${bothAnswered ? `
+        ${bothAnswered || AUDIT_ON ? `
+          <div id="v2-step9-err" class="v2-error" role="alert" hidden></div>
           <div class="v2-actions-stack">
             <button type="button" class="v2-btn-gold" id="v2-step9-next">Continue &rarr;</button>
           </div>
@@ -3219,6 +3227,11 @@
     });
     const s9 = document.getElementById('v2-step9-next');
     if (s9) s9.addEventListener('click', () => {
+      if (!state.previous_claims || !state.violations) {
+        const err = document.getElementById('v2-step9-err');
+        if (err) { err.textContent = 'Please answer both questions above with Yes or No.'; err.hidden = false; focusAlertElement(err); }
+        return;
+      }
       trackEvent('auto_v2_step_complete');
       advanceToNext();
     });

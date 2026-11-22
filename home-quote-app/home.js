@@ -75,8 +75,12 @@
     ['Choose your home:', 'Choose the property:'], ['Yes, that’s my home', 'Yes, that’s the property'], ['Not my home. I’ll answer myself', 'Not the right one. I’ll answer myself'],
     ['We can look up the home in county records', 'We can look up the property in county records'], ['Finding your home…', 'Finding the property…'], ['Find my home details', 'Find the property details'],
     ['North Carolina home insurance is priced by the home itself and where it sits.', 'Rental property insurance is priced by the building itself and where it sits.'],
-    ['<div class="v2-review-label">Home</div>', '<div class="v2-review-label">Rental property</div>'], ['Coverage on the home', 'Coverage on the building']];
+    ['<div class="v2-review-label">Home</div>', '<div class="v2-review-label">Rental property</div>'], ['Coverage on the home', 'Coverage on the building'],
+    ['On this home or a home you owned before.', 'On this rental property or another property you own.'], ['the homeowner’s name', 'the property owner’s name'],
+    ['answer a few questions about the home.', 'answer a few questions about the property.'],
+    ['rebuild your home after a covered loss', 'rebuild the building after a covered loss'], ['the cost to rebuild the house, not on what the home would sell for', 'the cost to rebuild the building, not on what the property would sell for']];
   const llWords = html => LL_WORDS.reduce((t, [a, b]) => t.split(a).join(b), html);
+  const llText = t => (LL ? llWords(t) : t);   // for text drawn outside the main screen (the help sheet)
   const SQFT = [['under_1000', 'Under 1,000'], ['1000_1500', '1,000 to 1,500'], ['1500_2000', '1,500 to 2,000'], ['2000_2500', '2,000 to 2,500'],
     ['2500_3000', '2,500 to 3,000'], ['3000_4000', '3,000 to 4,000'], ['over_4000', 'Over 4,000'], ['not_sure', 'Not sure']];
   const CONSTRUCTION = [['frame', 'Wood frame'], ['brick', 'Brick or stone'], ['vinyl', 'Vinyl siding'], ['other', 'Something else']];
@@ -642,7 +646,7 @@
         ${yesNo('security_system', 'Does it have an alarm or security system?')}
         ${yesNo('bundle_auto', 'Would you like an auto quote too?')}
         ${ERR}
-        <div class="v2-actions-stack">${done ? '<button type="button" class="v2-btn-gold" id="hq-house-next">Continue &rarr;</button>' : ''}</div>`;
+        <div class="v2-actions-stack"><button type="button" class="v2-btn-gold" id="hq-house-next" data-ready="${done ? '1' : ''}">Continue &rarr;</button></div>`;
       }
 
       case 'notes': return `
@@ -836,7 +840,7 @@
     sendPartial.sent = true;
     const s = state, name = `${s.firstname} ${s.lastname}`.trim();
     const lines = [`${TP}Partial ${LL ? 'Landlord' : 'Home'} Quote`.trim(), `Stopped at: ${EYEBROW[stepId] || stepId} (${stepId})`, `Name: ${name}`, `Phone: ${s.phone}`, `Email: ${s.email}`,
-      `Home: ${s.property_address}, ${s.city}, NC ${s.zip_code}`, `Ownership: ${s.is_owner}`, s.property_type ? `Type: ${label(PROPERTY_TYPES, s.property_type)}` : '',
+      `Home: ${s.property_address}, ${s.city}, NC ${s.zip_code}`, `Ownership: ${LL ? 'LANDLORD - rental property' : s.is_owner}`, s.property_type ? `Type: ${label(LL ? LL_TYPES : PROPERTY_TYPES, s.property_type)}` : '',
       s.year_built ? `Year built: ${s.year_built}` : '', s.roof_age ? `Roof age: ${s.roof_age}` : '', s.previous_claims ? `Claims (5 yrs): ${s.previous_claims}${s.claim_details ? ' - ' + s.claim_details : ''}` : ''].filter(Boolean);
     try {
       fetch('/api/homepage-submit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true, body: JSON.stringify({
@@ -881,8 +885,8 @@
     }
     helpEl.innerHTML = `<div class="v2-help-sheet" role="dialog" aria-modal="true" aria-labelledby="hq-help-title" tabindex="-1">
       <div class="v2-help-grip" aria-hidden="true"></div>
-      <div class="v2-help-head"><h2 class="v2-help-title" id="hq-help-title">${esc(h.title)}</h2><button type="button" class="v2-help-x" data-help-close aria-label="Close">&times;</button></div>
-      <p class="v2-help-body">${esc(h.body)}</p>
+      <div class="v2-help-head"><h2 class="v2-help-title" id="hq-help-title">${llText(esc(h.title))}</h2><button type="button" class="v2-help-x" data-help-close aria-label="Close">&times;</button></div>
+      <p class="v2-help-body">${llText(esc(h.body))}</p>
       <div class="v2-help-example"><strong>Example</strong><p>${esc(h.example)}</p></div>
       <p class="v2-help-fine">General information only. Your policy decides what is covered.</p>
       <button type="button" class="v2-btn-gold v2-help-ok" data-help-close>Got it</button></div>`;
@@ -895,7 +899,13 @@
   function render(animate) {
     const stage = document.getElementById('stage');
     const seq = sequence(), i = Math.max(0, seq.indexOf(stepId));
-    const pct = stepId === 'done' ? 100 : Math.max(6, Math.round((i / (seq.length - 1)) * 100));
+    let pct = stepId === 'done' ? 100 : Math.max(6, Math.round((i / (seq.length - 1)) * 100));
+    if (stepId !== 'done' && render._i >= 0) {   // an answer can add screens, which used to make the number drop
+      if (i > render._i) pct = Math.min(99, Math.max(pct, render._p + 1));
+      else if (i === render._i) pct = Math.max(pct, render._p);
+      else pct = Math.max(6, Math.min(pct, render._p - 1));
+    }
+    render._i = i; render._p = pct;
     const fill = document.getElementById('v2-progress-fill'), lab = document.getElementById('v2-progress-label'), bar = document.getElementById('v2-progressbar');
     if (fill) fill.style.width = pct + '%'; if (lab) lab.textContent = pct + '%'; if (bar) bar.setAttribute('aria-valuenow', String(pct));
     const about = document.querySelector('.v2-about'); if (about) about.hidden = stepId !== FIRST;
@@ -912,7 +922,7 @@
     document.body.classList.add('has-mobile-bar'); bar.hidden = false;
     bar.innerHTML = `${showBack ? '<button type="button" class="v2-mobile-back" id="v2-m-back">&larr; Back</button>' : ''}${primary ? `<button type="button" class="v2-btn-gold v2-mobile-next" id="v2-m-next" ${primary.disabled ? 'disabled' : ''}>${primary.innerHTML}</button>` : ''}`;
     const mb = document.getElementById('v2-m-back'); if (mb) mb.addEventListener('click', back);
-    const mn = document.getElementById('v2-m-next'); if (mn && primary) mn.addEventListener('click', () => primary.click());
+    const mn = document.getElementById('v2-m-next'); if (mn && primary) { primary.classList.add('v2-in-bar'); mn.addEventListener('click', () => primary.click()); }   /* the bar copy presses this one; on phones the page copy is hidden (styles.css .v2-in-bar) */
   }
   const $ = id => document.getElementById(id);
   const on = (id, fn) => { const e = $(id); if (e) e.addEventListener('click', fn); };
@@ -1020,7 +1030,7 @@
     each('[data-extra]', b => b.addEventListener('click', () => { state[b.dataset.extra] = !state[b.dataset.extra]; save(); const y = window.scrollY; render(); window.scrollTo(0, y); }));
     on('hq-extras-next', next);
     each('[data-yn]', b => b.addEventListener('click', () => { state[b.dataset.yn] = b.dataset.val; save(); const y = window.scrollY; render(); window.scrollTo(0, y); }));
-    on('hq-house-next', next);
+    on('hq-house-next', () => { const b = $('hq-house-next'); if (b && !b.dataset.ready) { showErr('Please answer each question above with Yes or No.'); return; } next(); });
     const notes = $('additional_notes'); if (notes) notes.addEventListener('input', () => { state.additional_notes = notes.value; save(); });
     on('hq-notes-next', next);
 

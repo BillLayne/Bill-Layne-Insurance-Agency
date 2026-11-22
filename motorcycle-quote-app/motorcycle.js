@@ -737,7 +737,13 @@
   // ---------- Render + events ----------
   function render(animate) {
     const stage = $('stage'), seq = sequence(), i = Math.max(0, seq.indexOf(stepId));
-    const pct = stepId === 'done' ? 100 : Math.max(6, Math.round((i / (seq.length - 1)) * 100));
+    let pct = stepId === 'done' ? 100 : Math.max(6, Math.round((i / (seq.length - 1)) * 100));
+    if (stepId !== 'done' && render._i >= 0) {   // an answer can add screens, which used to make the number drop
+      if (i > render._i) pct = Math.min(99, Math.max(pct, render._p + 1));
+      else if (i === render._i) pct = Math.max(pct, render._p);
+      else pct = Math.max(6, Math.min(pct, render._p - 1));
+    }
+    render._i = i; render._p = pct;
     const fill = $('v2-progress-fill'), lab = $('v2-progress-label'), bar = $('v2-progressbar');
     if (fill) fill.style.width = pct + '%'; if (lab) lab.textContent = pct + '%'; if (bar) bar.setAttribute('aria-valuenow', String(pct));
     const about = document.querySelector('.v2-about'); if (about) about.hidden = stepId !== 'type:0';
@@ -753,7 +759,7 @@
         document.body.classList.add('has-mobile-bar'); mb.hidden = false;
         mb.innerHTML = `${showBack ? '<button type="button" class="v2-mobile-back" id="v2-m-back">&larr; Back</button>' : ''}${primary ? `<button type="button" class="v2-btn-gold v2-mobile-next" id="v2-m-next" ${primary.disabled ? 'disabled' : ''}>${primary.innerHTML}</button>` : ''}`;
         const b = $('v2-m-back'); if (b) b.addEventListener('click', back);
-        const n = $('v2-m-next'); if (n && primary) n.addEventListener('click', () => primary.click());
+        const n = $('v2-m-next'); if (n && primary) { primary.classList.add('v2-in-bar'); n.addEventListener('click', () => primary.click()); }   /* the bar copy presses this one; on phones the page copy is hidden (styles.css .v2-in-bar) */
       }
     }
   }

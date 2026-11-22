@@ -1040,9 +1040,19 @@ dialog.v2-menu-dialog::backdrop { background: rgba(5, 32, 61, 0.5); }
   .v2-mobile-back:active { background: #f1f5f9; }
   .v2-mobile-next {
     flex: 1;
+    min-width: 0;
     min-height: 54px;
     margin: 0;
+    padding-left: 10px;
+    padding-right: 10px;
+    white-space: nowrap;            /* a long label used to push its arrow onto a second line and make the bar taller */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: clamp(14.5px, 4.3vw, 18px);
   }
+  /* The bottom bar already shows this button. Showing it twice (once in the page, once in the bar) confused the eye
+     and left a gold strip behind the bar. The page copy is hidden on phones; the bar copy presses it. */
+  body.has-mobile-bar #stage .v2-in-bar { display: none; }
   /* Deductibles 3-across even grid & Extras full-row on phones */
   .v2-chip-grid-3 {
     display: grid;
