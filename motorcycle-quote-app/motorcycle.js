@@ -242,6 +242,19 @@
     `<button type="button" class="v2-tile compact ${current === v ? 'is-selected' : ''}" aria-pressed="${current === v}" data-chip="${key}" data-val="${esc(v)}">${esc(t)}</button>`).join('')}</div>${extra || ''}</div>`;
   const detailBox = (key, labelText, value, ph) => `<div class="v2-field" style="margin-top:12px"><label for="ta-${key}">${labelText}</label>
     <textarea id="ta-${key}" class="v2-textarea" rows="3" maxlength="600" data-ta="${key}" placeholder="${esc(ph)}">${esc(value)}</textarea></div>`;
+  // Date boxes jump ahead on their own: month -> day -> year, and Backspace in an empty box goes back one.
+  // A month that starts 2-9 or a day that starts 4-9 can only be one digit, so it is padded and the cursor moves on.
+  document.addEventListener('input', e => {
+    const el = e.target; if (!el || !el.classList || !el.classList.contains('v2-date-part')) return;
+    const m = /^(.*)-(mm|dd)$/.exec(el.id || ''); el.value = el.value.replace(/\D/g, ''); if (!m) return;
+    if (el.value.length === 1 && Number(el.value) > (m[2] === 'mm' ? 1 : 3)) el.value = '0' + el.value;
+    if (el.value.length >= 2) { const nx = document.getElementById(m[1] + '-' + (m[2] === 'mm' ? 'dd' : 'yyyy')); if (nx) { nx.focus(); if (nx.select) nx.select(); } }
+  });
+  document.addEventListener('keydown', e => {
+    const el = e.target; if (e.key !== 'Backspace' || !el || !el.classList || !el.classList.contains('v2-date-part') || el.value) return;
+    const m = /^(.*)-(dd|yyyy)$/.exec(el.id || ''); if (!m) return;
+    const pv = document.getElementById(m[1] + '-' + (m[2] === 'dd' ? 'mm' : 'dd')); if (pv) { e.preventDefault(); pv.focus(); }
+  });
   function dateBoxes(prefix, iso, aria) {
     const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '') || [];
     return `<div class="v2-date-group">
