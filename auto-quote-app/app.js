@@ -4,6 +4,12 @@
   // One script, two pages: the live form at /auto-quote sets window.BLI_AQ_MODE = 'live';
   // the private test page leaves it unset and keeps every test marking.
   const LIVE = window.BLI_AQ_MODE === 'live';
+  // Five fixes from the 2026-11-22 walk-through audit. Shown on the test page only until Bill approves:
+  // 1 progress never drops while moving forward, 2 review Edit opens the vehicle list, 3 Liability only leads to the limits screen,
+  // 4 plainer limit badges, 5 Continue is always visible and says what is missing.
+  const AUDIT_ON = !LIVE;
+  const COV_MIN = 'State minimum (liability only)';   // stored value of the first coverage tile
+  let progLastIdx = -1, progLastPct = 0;
   // "Want a home quote too?" on the last screen. OFF everywhere for now: the new home form is not on the website yet.
   // Switch to !LIVE once /home-quote-v2-test/ is pushed, and to true only when Bill approves it for customers.
   const HOME_OFFER = false;
@@ -215,6 +221,7 @@
     { val: 'later than 3 months', label: 'Later than 3 months' },
     { val: 'not sure', label: 'Not sure' }
   ];
+  const badgeText = b => (!AUDIT_ON ? b : b === 'Most Popular' ? 'Common choice' : b === 'Best Protection' ? 'Higher limits' : b);
   const LIABILITY_OPTS = [
     { val: '50/100/50', label: 'State Minimum (50/100/50)', badge: '' },
     { val: '100/300/50', label: '100/300/50', badge: '' },
@@ -531,7 +538,7 @@
   const COV_FULL = 'Full coverage';      // stored value; customers see covLabel()
   const COV_FULL_LABEL = 'Comp & Collision';
   const COV_FULL_SUB = 'Liability included. Often called full coverage.';
-  const covLabel = o => (o === COV_FULL ? COV_FULL_LABEL : (o || ''));
+  const covLabel = o => (o === COV_FULL ? COV_FULL_LABEL : (AUDIT_ON && o === COV_MIN ? 'Liability only' : (o || '')));
   const MEDPAY_AMOUNTS = ['$1,000', '$2,000', '$3,000', '$4,000', '$5,000', 'Not sure'];
   function medPayText() {
     if (!state.medical_payments) return '';
@@ -572,7 +579,7 @@
     return perVehicle() ? state.vehicles.some(v => vehCov(v).choice === COV_FULL) : state.coverage_choice === 'Full coverage';
   }
   function needsLimits() {
-    if (!perVehicle()) return state.coverage_choice === 'Full coverage';
+    if (!perVehicle()) return state.coverage_choice === 'Full coverage' || (AUDIT_ON && state.coverage_choice === COV_MIN);
     return state.vehicles.some(v => { const c = vehCov(v).choice; return c === COV_FULL || c === COV_LIAB; });
   }
   function coverageChosen() {
@@ -751,7 +758,7 @@
     if (pv) {
       liabilityLimits = needsLimits() ? (state.liability_limits || HELP_LIMITS) : HELP_LIMITS;
     } else if (state.coverage_choice === 'State minimum (liability only)') {
-      liabilityLimits = '50/100/50';
+      liabilityLimits = AUDIT_ON ? (state.liability_limits || '50/100/50') : '50/100/50';
     } else if (state.coverage_choice === 'Not sure, advise me') {
       liabilityLimits = HELP_LIMITS;
     } else if (fullCov) {
@@ -774,7 +781,7 @@
       (state.medical_payments && state.medical_payments_amount) ? `Medical payments amount: ${state.medical_payments_amount}` : '',
       (state.previous_claims || state.violations) ? `DRIVING RECORD BY DRIVER | Driver 1 (${primaryName || 'Primary driver'}): ${recordText(state.previous_claims, state.violations)}` : '',
       ...(state.has_other_drivers === 'yes' ? state.other_drivers.filter(d => d && (d.name || d.claims || d.violations)).map((d, i) => `Driver ${i + 2} (${d.name || 'Unnamed'}): ${recordText(d.claims, d.violations)}`) : []),
-      (!pv && state.coverage_choice) ? `Coverage preference: ${state.coverage_choice === COV_FULL ? 'Comp & collision (full coverage)' : state.coverage_choice}${sameForAll}` : '',
+      (!pv && state.coverage_choice) ? `Coverage preference: ${state.coverage_choice === COV_FULL ? 'Comp & collision (full coverage)' : covLabel(state.coverage_choice)}${sameForAll}` : '',
       (!pv && fullCov) ? `Deductibles: comprehensive ${state.comp_deductible || 'Not sure'}, collision ${state.collision_deductible || 'Not sure'}` : '',
       pv ? 'COVERAGE DIFFERS BY VEHICLE' : '',
       ...(pv ? perVehicleLines() : []),
@@ -1825,9 +1832,16 @@
   function updateProgress() {
     const seq = getSequence();
     const idx = Math.max(0, seq.indexOf(currentStepId));
-    const pct = currentStepId === 'step_20'
+    let pct = currentStepId === 'step_20'
       ? 100
       : Math.min(96, Math.round(12 + (idx / Math.max(1, seq.length - 1)) * 86));
+    if (AUDIT_ON && currentStepId !== 'step_20' && progLastIdx >= 0) {
+      // An answer can add screens (comp & collision adds deductibles), which used to make the number drop.
+      if (idx > progLastIdx) pct = Math.min(96, Math.max(pct, progLastPct + 1));
+      else if (idx === progLastIdx) pct = Math.max(pct, progLastPct);
+      else pct = Math.max(12, Math.min(pct, progLastPct - 1));
+    }
+    progLastIdx = idx; progLastPct = pct;
     document.getElementById('v2-progress-fill').style.width = pct + '%';
     document.getElementById('v2-progressbar').setAttribute('aria-valuenow', String(pct));
     document.getElementById('v2-progress-label').textContent = `${pct}%`;
@@ -2281,7 +2295,7 @@
             </div>
           </div>
           <div id="v2-step-err" class="v2-error" role="alert" hidden></div>
-          ${ready ? `<button type="button" class="v2-btn-gold" id="v2-step12-next" style="margin-top:14px">Continue &rarr;</button>` : ''}
+          ${ready || AUDIT_ON ? `<button type="button" class="v2-btn-gold" id="v2-step12-next" style="margin-top:14px">Continue &rarr;</button>` : ''}
         </div>
         ${whyNote('Carriers use these to rate your policy. Our team only uses them to quote.')}
       `;
@@ -2307,7 +2321,7 @@
         <div class="v2-grid-3">
           ${opts.map(o => `
             <button type="button" class="v2-tile ${state.coverage_choice === o.label ? 'is-selected' : ''}" aria-pressed="${state.coverage_choice === o.label ? 'true' : 'false'}" data-cov="${escapeHtml(o.label)}">
-              ${o.icon}<span>${escapeHtml(covLabel(o.label))}${o.label === COV_FULL ? `<small class="v2-tile-sub">(full coverage)</small>` : ''}</span>
+              ${o.icon}<span>${escapeHtml(covLabel(o.label))}${o.label === COV_FULL ? `<small class="v2-tile-sub">(full coverage)</small>` : (AUDIT_ON && o.label === COV_MIN ? `<small class="v2-tile-sub">You pick the limits next</small>` : '')}</span>
             </button>
           `).join('')}
         </div>`;
@@ -2431,7 +2445,7 @@
         <div class="v2-grid-2" style="max-width:620px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
           ${LIABILITY_OPTS.map(o => `
             <button type="button" class="v2-tile compact ${state.liability_limits === o.val ? 'is-selected' : ''}" aria-pressed="${state.liability_limits === o.val ? 'true' : 'false'}" data-limit="${escapeHtml(o.val)}">
-              ${o.badge ? `<span class="v2-tile-badge">${escapeHtml(o.badge)}</span>` : ''}
+              ${o.badge ? `<span class="v2-tile-badge">${escapeHtml(badgeText(o.badge))}</span>` : ''}
               <span>${escapeHtml(o.label)}</span>
             </button>
           `).join('')}
@@ -2631,7 +2645,7 @@
         </div>
         <div id="v2-step-err" class="v2-error" role="alert" hidden></div>
         <div class="v2-actions-stack">
-          ${odCur.claims && odCur.violations ? `<button type="button" class="v2-btn-gold" id="v2-od-save" data-od-save="${odOpen}">Save driver &rarr;</button>` : ''}
+          ${(odCur.claims && odCur.violations) || AUDIT_ON ? `<button type="button" class="v2-btn-gold" id="v2-od-save" data-od-save="${odOpen}">Save driver &rarr;</button>` : ''}
           <button type="button" class="v2-btn-outline" style="width:100%" id="v2-od-back-details">&larr; Edit ${escapeHtml(odCur.name || 'this driver')}&rsquo;s details</button>
         </div>` : '';
       body = recordStage ? recordHtml : `
@@ -2755,7 +2769,10 @@
       ].filter(Boolean);
 
       const rows = [
-        { label: 'Vehicles & VINs', val: vehSummary || 'Not entered', edit: 'step_18', rawHtml: true },
+        ...(AUDIT_ON ? [
+          { label: 'Vehicles', val: state.vehicles.map((v, i) => `${i + 1}. ${escapeHtml(vehLabel(v, i))}`).join('<br>') || 'Not entered', edit: 'vehicles', rawHtml: true },
+          { label: 'VIN or registration photo (optional)', val: state.vehicles.map((v, i) => `${i + 1}. ${v.vin ? 'VIN provided' : 'Not provided'}`).join('<br>'), edit: 'step_18', rawHtml: true, btn: state.vehicles.some(v => v.vin) ? 'Edit' : 'Add' }
+        ] : [{ label: 'Vehicles & VINs', val: vehSummary || 'Not entered', edit: 'step_18', rawHtml: true }]),
         { label: 'Current Insurance', val: state.current_insurance === 'yes' ? `Yes (${state.current_carrier || 'Not selected'})` : 'No', edit: 'step_5' }
       ];
       if (state.current_insurance === 'yes') {
@@ -2776,6 +2793,8 @@
       );
       if (perVehicle()) {
         if (needsLimits()) rows.push({ label: 'Whole Policy', val: `Liability limits: ${state.liability_limits || 'Not selected'} · Medical payments: ${state.medical_payments ? (state.medical_payments_amount || 'Yes') : 'No'}`, edit: 'step_14' });
+      } else if (AUDIT_ON && state.coverage_choice === COV_MIN) {
+        rows.push({ label: 'Liability Limits', val: state.liability_limits || 'Not selected', edit: 'step_14' });
       } else if (state.coverage_choice === 'Full coverage') {
         rows.push(
           { label: 'Liability Limits', val: state.liability_limits || 'Not selected', edit: 'step_14' },
@@ -2807,7 +2826,7 @@
                 <div class="v2-review-label">${r.label}</div>
                 <div class="v2-review-val">${r.rawHtml ? r.val : escapeHtml(r.val)}</div>
               </div>
-              <button type="button" class="v2-edit-btn" data-review-edit="${r.edit}">Edit</button>
+              <button type="button" class="v2-edit-btn" data-review-edit="${r.edit}">${r.btn || 'Edit'}</button>
             </div>
           `).join('')}
           ${regPhotos.length ? `
@@ -3288,6 +3307,12 @@
     const s12 = document.getElementById('v2-step12-next');
     if (s12) s12.addEventListener('click', () => {
       if (d1Name) state.driver_1_name = d1Name.value.trim();
+      const miss12 = !state.driver_1_name ? 'the driver\u2019s full name' : !state.driver_1_dob ? 'the date of birth (month, day, year)' : !state.driver_1_marital ? 'a marital status' : !state.driver_1_gender ? 'a gender' : '';
+      if (miss12) {
+        const err = document.getElementById('v2-step-err');
+        if (err) { err.textContent = 'One more thing before you continue: please add ' + miss12 + '.'; err.hidden = false; focusAlertElement(err); }
+        return;
+      }
       resetPartialTimer();
       trackEvent('auto_v2_step_complete');
       advanceToNext();
@@ -3731,6 +3756,7 @@
       bindUploadWidget('step19', 'declarations');
       document.querySelectorAll('[data-review-edit]').forEach(btn => {
         btn.addEventListener('click', () => {
+          if (btn.dataset.reviewEdit === 'vehicles') { openVehSheet(btn); return; }   // straight to the vehicle list
           editingFromReview = true;
           historyStack.push(btn.dataset.reviewEdit);
           enterStep(btn.dataset.reviewEdit);
