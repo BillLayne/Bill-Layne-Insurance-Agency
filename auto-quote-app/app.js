@@ -10,6 +10,13 @@
   const AUDIT_ON = true;   // live since 2026-11-22 (approved by Bill)
   const COV_MIN = 'State minimum (liability only)';   // stored value of the first coverage tile
   let progLastIdx = -1, progLastPct = 0;
+  // Six flow changes from the 2026-11-22 review. Shown on the test page only until Bill approves:
+  // 1 the upload offer comes before the renewal question (an upload skips it), 2 "Are you insured?" is folded into the insurer
+  // screen as a No insurance tile, 3 own-or-rent sits on the address screen, 4 the review screen's second upload box is hidden
+  // for people with no insurance and folded away for the rest, 5 the VIN line knows about an attached registration photo,
+  // 6 the driver screen shows the name as text instead of asking for it again.
+  const FLOW2_ON = !LIVE;
+  let d1NameOpen = false;
   // "Want a home quote too?" on the last screen. OFF everywhere for now: the new home form is not on the website yet.
   // Switch to !LIVE once /home-quote-v2-test/ is pushed, and to true only when Bill approves it for customers.
   const HOME_OFFER = false;
@@ -1165,16 +1172,22 @@
       if (n < MAX_VEHICLES) seq.push('step_more');
     }
 
-    seq.push('step_5');
-    if (state.current_insurance === 'yes') {
-      seq.push('step_6', 'step_7', 'step_8');
+    if (FLOW2_ON) {
+      seq.push('step_6');   // insurer tiles plus a No insurance tile
+      if (state.current_insurance === 'yes') { seq.push('step_8'); if (!state.usedDecShortcut) seq.push('step_7'); }
+    } else {
+      seq.push('step_5');
+      if (state.current_insurance === 'yes') {
+        seq.push('step_6', 'step_7', 'step_8');
+      }
     }
     if (state.usedDecShortcut) {
       seq.push('step_11', 'step_18', 'step_20');
       return seq;
     }
 
-    seq.push('step_10', 'step_11', 'step_12', 'step_9', 'step_17', 'step_13');   // all drivers together, before coverage
+    if (!FLOW2_ON) seq.push('step_10');   // own-or-rent is asked on the address screen instead
+    seq.push('step_11', 'step_12', 'step_9', 'step_17', 'step_13');   // all drivers together, before coverage
     if (needsLimits()) seq.push('step_14');
     if (anyFullCoverage() && !perVehicle()) seq.push('step_15');
     seq.push('step_16', 'step_18', 'step_19', 'step_20');
@@ -1227,7 +1240,7 @@
 
     if (stepId === 'step_1') {
       preloadUrls(activeSorted(logoConfig.carMakes).map(m => m.logo));
-    } else if (stepId === 'step_5') {
+    } else if (stepId === 'step_5' || (FLOW2_ON && /^step_4/.test(stepId))) {
       preloadUrls(activeSorted(logoConfig.currentInsurers).map(c => c.logo));
     }
 
@@ -2106,8 +2119,9 @@
     else if (currentStepId === 'step_6') {
       const insurers = activeSorted(logoConfig.currentInsurers);
       body = `
-        <h1 class="v2-heading">Who is your current insurer?</h1>
-        <p class="v2-sub">Tap your current company so our team knows what to compare against.</p>
+        <h1 class="v2-heading">${FLOW2_ON ? 'Who insures your vehicle now?' : 'Who is your current insurer?'}</h1>
+        <p class="v2-sub">${FLOW2_ON ? 'Tap your company, or tell us you have no insurance right now.' : 'Tap your current company so our team knows what to compare against.'}</p>
+        ${FLOW2_ON ? `<div class="v2-col" style="margin-bottom:14px"><button type="button" class="v2-tile compact ${state.current_insurance === 'no' ? 'is-selected' : ''}" aria-pressed="${state.current_insurance === 'no' ? 'true' : 'false'}" data-no-insurance style="width:100%;min-height:56px"><span>I don&rsquo;t have insurance right now</span></button></div>` : ''}
         <div class="v2-grid-3">
           ${insurers.map(c => logoTileHtml(c.name, c.logo, state.current_carrier === c.name || (c.name === 'Other' && showOtherInsurerBox), `data-pick-carrier="${escapeHtml(c.name)}"`, { carrier: true, showLabel: !!c.showLabel })).join('')}
         </div>
@@ -2277,11 +2291,17 @@
         <h1 class="v2-heading" tabindex="-1">About the primary driver</h1>
         <p class="v2-sub">Confirm the primary driver details below.</p>
         <div class="v2-col">
-          <div class="v2-field">
+          ${FLOW2_ON && driverName && !d1NameOpen ? `<div class="v2-field">
+            <label>Primary driver</label>
+            <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 14px;padding:12px 14px;border:1.5px solid #c4cedb;border-radius:14px;background:#f8fafc">
+              <strong style="font-size:18px;color:var(--navy)">${escapeHtml(driverName)}</strong>
+              <button type="button" id="v2-d1-change" style="background:none;border:0;padding:0;min-height:44px;color:#1d4ed8;font:inherit;font-size:15px;font-weight:700;text-decoration:underline;cursor:pointer">Quoting for someone else?</button>
+            </div>
+          </div>` : `<div class="v2-field">
             <label for="driver_1_name">Full name</label>
             <input id="driver_1_name" name="driver_1_name" class="v2-input" type="text" autocomplete="name" autocapitalize="words" enterkeyhint="next" value="${escapeHtml(driverName)}">
             <div id="driver_1_name-err" class="v2-field-err" role="alert" hidden></div>
-          </div>
+          </div>`}
           <div class="v2-field">
             <label for="d1-dob-mm">Date of birth</label>
             ${renderDateBoxes('d1-dob', state.driver_1_dob, 'Date of birth')}
@@ -2566,6 +2586,14 @@
               <div id="zip_code-err" class="v2-field-err" role="alert" hidden></div>
             </div>
           </div>
+          ${FLOW2_ON ? `<div class="v2-field">
+            <label>Do you own this home?</label>
+            <div class="v2-grid-2" style="margin-bottom:0;grid-template-columns:repeat(2,minmax(0,1fr))">
+              <button type="button" class="v2-tile compact ${state.homeowner === 'yes' ? 'is-selected' : ''}" aria-pressed="${state.homeowner === 'yes' ? 'true' : 'false'}" data-own16="yes">Yes, I own it</button>
+              <button type="button" class="v2-tile compact ${state.homeowner === 'no' ? 'is-selected' : ''}" aria-pressed="${state.homeowner === 'no' ? 'true' : 'false'}" data-own16="no">No</button>
+            </div>
+            <div id="own16-err" class="v2-field-err" role="alert" hidden></div>
+          </div>` : ''}
           <div id="v2-step-err" class="v2-error" role="alert" hidden></div>
           <button type="button" class="v2-btn-gold" id="v2-step16-next">Continue &rarr;</button>
         </div>
@@ -2779,9 +2807,9 @@
       const rows = [
         ...(AUDIT_ON ? [
           { label: 'Vehicles', val: state.vehicles.map((v, i) => `${i + 1}. ${escapeHtml(vehLabel(v, i))}`).join('<br>') || 'Not entered', edit: 'vehicles', rawHtml: true },
-          { label: 'VIN or registration photo (optional)', val: state.vehicles.map((v, i) => `${i + 1}. ${v.vin ? 'VIN provided' : 'Not provided'}`).join('<br>'), edit: 'step_18', rawHtml: true, btn: state.vehicles.some(v => v.vin) ? 'Edit' : 'Add' }
+          { label: 'VIN or registration photo (optional)', val: (FLOW2_ON && uploadedFiles.some(f => f._category === 'registration_or_id') && !state.vehicles.some(v => v.vin)) ? 'Registration photo attached' : state.vehicles.map((v, i) => `${i + 1}. ${v.vin ? 'VIN provided' : 'Not provided'}`).join('<br>') + (FLOW2_ON && uploadedFiles.some(f => f._category === 'registration_or_id') ? '<br>Registration photo attached' : ''), edit: 'step_18', rawHtml: true, btn: (state.vehicles.some(v => v.vin) || (FLOW2_ON && uploadedFiles.some(f => f._category === 'registration_or_id'))) ? 'Edit' : 'Add' }
         ] : [{ label: 'Vehicles & VINs', val: vehSummary || 'Not entered', edit: 'step_18', rawHtml: true }]),
-        { label: 'Current Insurance', val: state.current_insurance === 'yes' ? `Yes (${state.current_carrier || 'Not selected'})` : 'No', edit: 'step_5' }
+        { label: 'Current Insurance', val: state.current_insurance === 'yes' ? `Yes (${state.current_carrier || 'Not selected'})` : 'No', edit: FLOW2_ON ? 'step_6' : 'step_5' }
       ];
       if (state.current_insurance === 'yes') {
         rows.push({
@@ -2792,7 +2820,7 @@
       }
       rows.push(
         { label: 'Primary Driver Record', val: recordText(state.previous_claims, state.violations), edit: 'step_9' },
-        { label: 'Own Home', val: state.homeowner === 'yes' ? 'Yes' : 'No', edit: 'step_10' },
+        { label: 'Own Home', val: state.homeowner === 'yes' ? 'Yes' : 'No', edit: FLOW2_ON ? 'step_16' : 'step_10' },
         { label: 'Contact', val: `${state.firstname} ${state.lastname} · ${state.phone} · ${state.email}`, edit: 'step_11' },
         { label: 'Primary Driver', val: `${state.driver_1_name || `${state.firstname} ${state.lastname}`.trim()} · DOB: ${state.driver_1_dob || 'N/A'} · ${capitalize(state.driver_1_marital)} · ${capitalize(state.driver_1_gender)}`, edit: 'step_12' },
         perVehicle()
@@ -2851,7 +2879,14 @@
             </div>
           ` : ''}
         </div>
-        ${!state.usedDecShortcut ? `
+        ${!state.usedDecShortcut && FLOW2_ON && state.current_insurance === 'yes' ? `
+          <details style="max-width:640px;margin:0 auto 18px;text-align:left" ${uploadedFiles.some(f => (f._category || 'declarations') !== 'registration_or_id') ? 'open' : ''}>
+            <summary style="cursor:pointer;min-height:44px;display:flex;align-items:center;color:#1d4ed8;font-size:15.5px;font-weight:700;text-decoration:underline">Attach your declarations page (optional)</summary>
+            <span class="v2-help" style="display:block;margin:4px 0 8px">Attach it so our team can match your coverages line by line.</span>
+            ${renderUploadWidget('step19', 'declarations')}
+          </details>
+        ` : ''}
+        ${!state.usedDecShortcut && !FLOW2_ON ? `
           <div style="max-width:640px;margin:0 auto 22px;text-align:left">
             <strong style="display:block;color:var(--ink);font-size:15px;margin-bottom:4px">Optional: Attach your declarations page</strong>
             <span class="v2-help" style="display:block">Have your current policy handy? Attach it so our team can match your coverages line by line.</span>
@@ -3157,6 +3192,16 @@
         tapAndAdvance(btn, () => {
           showOtherInsurerBox = false;
           state.current_carrier = picked;
+          if (FLOW2_ON) state.current_insurance = 'yes';
+          trackEvent('auto_v2_step_complete');
+        });
+      });
+    });
+    document.querySelectorAll('[data-no-insurance]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        tapAndAdvance(btn, () => {
+          showOtherInsurerBox = false;
+          state.current_insurance = 'no'; state.current_carrier = ''; state.renewal_window = ''; state.coverage_expiration = ''; state.usedDecShortcut = false;
           trackEvent('auto_v2_step_complete');
         });
       });
@@ -3167,6 +3212,7 @@
         const val = document.getElementById('v2-other-insurer').value.trim();
         if (!val) { showFieldError('v2-other-insurer', 'Please enter your current insurance company name.'); return; }
         state.current_carrier = val;
+        if (FLOW2_ON) state.current_insurance = 'yes';
         showOtherInsurerBox = false;
         trackEvent('auto_v2_step_complete');
         advanceToNext();
@@ -3292,6 +3338,8 @@
     }
 
     // Step 12 (About Primary Driver — 3-box numeric DOB)
+    const d1Change = document.getElementById('v2-d1-change');
+    if (d1Change) d1Change.addEventListener('click', () => { d1NameOpen = true; render(); const el = document.getElementById('driver_1_name'); if (el) { el.focus(); el.select(); } });
     const d1Name = document.getElementById('driver_1_name');
     if (d1Name) d1Name.addEventListener('input', () => { state.driver_1_name = d1Name.value; saveSessionState(); });
     if (currentStepId === 'step_12') {
@@ -3515,6 +3563,11 @@
         const ee = document.getElementById(`${id}-err`); if (ee) ee.hidden = true;
       });
     });
+    document.querySelectorAll('[data-own16]').forEach(btn => btn.addEventListener('click', () => {   // no redraw, so typed address stays put
+      state.homeowner = btn.dataset.own16; saveSessionState();
+      document.querySelectorAll('[data-own16]').forEach(b => { const on = b === btn; b.classList.toggle('is-selected', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+      const e = document.getElementById('own16-err'); if (e) e.hidden = true;
+    }));
     const s16 = document.getElementById('v2-step16-next');
     if (s16) {
       s16.addEventListener('click', () => {
@@ -3525,6 +3578,7 @@
         if (!st) { showFieldError('street_address', 'Please enter your street address.'); return; }
         if (!ci) { showFieldError('city', 'Please enter your city.'); return; }
         if (!/^\d{5}$/.test(zp)) { showFieldError('zip_code', 'Please enter a 5-digit ZIP code.'); return; }
+        if (FLOW2_ON && !state.homeowner) { showFieldError('own16', 'Please tell us whether you own this home.'); return; }
         state.street_address = st; state.city = ci; state.state = sc; state.zip_code = zp;
         saveSessionState();
         resetPartialTimer();
