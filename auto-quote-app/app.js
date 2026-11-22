@@ -16,6 +16,10 @@
   // for people with no insurance and folded away for the rest, 5 the VIN line knows about an attached registration photo,
   // 6 the driver screen shows the name as text instead of asking for it again.
   const FLOW2_ON = true;   // live since 2026-11-22 (approved by Bill)
+  // Two small fixes from the 2026-11-22 read-only check (test page only until Bill approves):
+  // 1 changing "no insurance" to a carrier from the review screen asks the renewal question before going back,
+  // 2 saving an additional driver opens the next unfinished one instead of leaving it closed.
+  const FIX3_ON = !LIVE;
   let d1NameOpen = false;
   // "Want a home quote too?" on the last screen. OFF everywhere for now: the new home form is not on the website yet.
   // Switch to !LIVE once /home-quote-v2-test/ is pushed, and to true only when Bill approves it for customers.
@@ -1290,6 +1294,11 @@
       if (t !== currentStepId && getSequence().includes(t)) { historyStack.push(t); enterStep(t); return; }
     }
     if (editingFromReview && currentStepId !== 'step_19') {
+      if (FIX3_ON && currentStepId === 'step_6' && state.current_insurance === 'yes' && !state.usedDecShortcut && !state.renewal_window && !state.coverage_expiration && getSequence().includes('step_7')) {
+        historyStack.push('step_7');
+        enterStep('step_7');
+        return;
+      }
       if (currentStepId === 'step_13' && needsLimits() && !state.liability_limits) {
         historyStack.push('step_14');
         enterStep('step_14');
@@ -3647,7 +3656,7 @@
         if (err) { err.textContent = 'Please add this driver\u2019s full name, date of birth, marital status and gender, and answer both driving record questions.'; err.hidden = false; err.scrollIntoView({ block: 'center' }); }
         return;
       }
-      state.od_open = -1;
+      state.od_open = FIX3_ON ? state.other_drivers.findIndex(x => !(x.name && x.dob && x.marital && x.gender && x.claims && x.violations)) : -1;
       state.od_stage = 'details';
       saveSessionState();
       render();
