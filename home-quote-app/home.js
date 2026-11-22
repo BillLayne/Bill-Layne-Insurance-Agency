@@ -32,6 +32,11 @@
     ['rental_property', 'Rental property I own'], ['farm', 'Farm'], ['other', 'Something else']];
   // The home form's Rental property I own tile sends the customer to the landlord form. 
   const RENTAL_HANDOFF_ON = true;   // live since 2026-11-20 (approved by Bill)
+  // Landlord form, test page only until Bill approves: asks "own it now or buying it" (buying leads to the closing date
+  // instead of the current-insurance questions), skips the units question for a single house or mobile home, and keeps
+  // "buying" and an already-confirmed county record when the customer arrives from the home form.
+  const LL_BUY_ON = !LIVE;
+  const LL_ONE_UNIT = ['single_family', 'mobile_home'];
   const LL_RENTAL = ['Long-term rental', 'Short-term or vacation rental', 'Vacant or being renovated', 'Something else'];
   // Simple front-view drawings on the landlord building tiles (test page; same style as the mobile home drawings).
   const LL_ART = {
@@ -77,7 +82,7 @@
     ['North Carolina home insurance is priced by the home itself and where it sits.', 'Rental property insurance is priced by the building itself and where it sits.'],
     ['<div class="v2-review-label">Home</div>', '<div class="v2-review-label">Rental property</div>'], ['Coverage on the home', 'Coverage on the building'],
     ['On this home or a home you owned before.', 'On this rental property or another property you own.'], ['the homeowner’s name', 'the property owner’s name'],
-    ['answer a few questions about the home.', 'answer a few questions about the property.'],
+    ['answer a few questions about the home.', 'answer a few questions about the property.'], ['What is the address of the home you’re buying?', 'What is the address of the rental property you’re buying?'],
     ['rebuild your home after a covered loss', 'rebuild the building after a covered loss'], ['the cost to rebuild the house, not on what the home would sell for', 'the cost to rebuild the building, not on what the property would sell for']];
   const llWords = html => LL_WORDS.reduce((t, [a, b]) => t.split(a).join(b), html);
   const llText = t => (LL ? llWords(t) : t);   // for text drawn outside the main screen (the help sheet)
@@ -189,7 +194,17 @@
     if (LL) try {
       const a = JSON.parse(sessionStorage.getItem('bli_carry_rental_address') || 'null');
       sessionStorage.removeItem('bli_carry_rental_address');
-      if (a && a.street && !state.property_address) { state.property_address = a.street; state.city = a.city || ''; state.zip_code = a.zip || ''; }
+      if (a && a.street && !state.property_address) {
+        state.property_address = a.street; state.city = a.city || ''; state.zip_code = a.zip || '';
+        if (LL_BUY_ON) {
+          if (a.owner === 'buying' || a.owner === 'yes') state.is_owner = a.owner;
+          if (a.rec && a.rec.lookup) {   // the county record was already confirmed on the home form: keep it
+            state.lookup = a.rec.lookup; state.lookupUsed = true; state.fromLookup = a.rec.fromLookup || {}; state.county = a.rec.county || state.county;
+            Object.keys(a.rec.vals || {}).forEach(k => { state[k] = a.rec.vals[k]; });
+            state._keptAddr = [state.property_address, state.city, state.zip_code].join('|');
+          }
+        }
+      }
     } catch (_) {}
     // Contact details carried over from a finished auto quote ("Want a home quote too?")
     try {
@@ -221,8 +236,8 @@
   const usedDec = () => HANDY_ON && !!state.used_dec && state.is_owner !== 'buying' && state.current_insurance === 'yes';
   function sequence() {
     if (state.is_owner === 'renter') return ['own', 'renter'];
-    const seq = (LL ? ['rental'] : ['own']).concat(['address', 'ptype', 'year', 'sqft', 'construction', 'rooftype', 'roofage']);
-    if (LL) { seq.push('units'); if (state.rental_use !== 'Vacant or being renovated') seq.push('tenant'); seq.push('manager'); }
+    const seq = (LL ? (LL_BUY_ON ? ['rental', 'llown'] : ['rental']) : ['own']).concat(['address', 'ptype', 'year', 'sqft', 'construction', 'rooftype', 'roofage']);
+    if (LL) { if (!(LL_BUY_ON && LL_ONE_UNIT.includes(state.property_type))) seq.push('units'); if (state.rental_use !== 'Vacant or being renovated') seq.push('tenant'); seq.push('manager'); }
     if (state.is_owner === 'buying') seq.push('closing'); else { seq.push('insured'); if (state.current_insurance === 'yes') { seq.push('carrier'); if (HANDY_ON) seq.push('handy'); if (!usedDec()) seq.push('current'); } }
     if (usedDec()) { seq.push('contact', 'notes', 'review', 'done'); return seq; }   // the declarations page answers the rest
     seq.push('claims', 'contact', 'dwelling', 'deductible'); if (!LL) seq.push('extras');   // the extras screen is about a home you live in
@@ -231,7 +246,7 @@
   }
   const EYEBROW = { rental: 'YOUR RENTAL', units: 'YOUR RENTAL', tenant: 'YOUR RENTAL', manager: 'YOUR RENTAL', handy: 'CURRENT COVERAGE', own: 'YOUR HOME', renter: 'RENTERS', address: 'YOUR HOME', ptype: 'YOUR HOME', year: 'YOUR HOME', sqft: 'YOUR HOME',
     construction: 'YOUR HOME', rooftype: 'THE ROOF', roofage: 'THE ROOF', closing: 'YOUR PURCHASE', insured: 'CURRENT COVERAGE', carrier: 'CURRENT COVERAGE', current: 'CURRENT COVERAGE',
-    claims: 'CLAIMS', contact: 'ABOUT YOU', dwelling: 'YOUR COVERAGE', deductible: 'YOUR COVERAGE', extras: 'YOUR COVERAGE', household: 'A FEW QUICK ONES',
+    llown: 'YOUR RENTAL', claims: 'CLAIMS', contact: 'ABOUT YOU', dwelling: 'YOUR COVERAGE', deductible: 'YOUR COVERAGE', extras: 'YOUR COVERAGE', household: 'A FEW QUICK ONES',
     notes: 'ALMOST DONE', review: 'REVIEW', done: 'QUOTE RECEIVED' };
 
   let editReturn = null;
@@ -424,6 +439,11 @@
         <p class="v2-sub">Who handles repairs and deals with the tenant.</p>
         <div class="v2-grid-2" style="grid-template-columns:1fr">${LL_MANAGER.map(v => `<button type="button" class="v2-tile compact ${s.rental_manager === v ? 'is-selected' : ''}" aria-pressed="${s.rental_manager === v}" data-ll="rental_manager" data-val="${v}"><span>${v}</span></button>`).join('')}</div>`;
 
+      case 'llown': return `
+        <h1 class="v2-heading">Do you own it now, or are you buying it?</h1>
+        <p class="v2-sub">If you are buying, we will ask for your closing date so coverage is ready in time.</p>
+        ${tiles('own', [['yes', 'I own it now', 'homeYes'], ['buying', 'I’m buying it', 'full']], s.is_owner, 2)}`;
+
       case 'own': return `
         <h1 class="v2-heading">Do you own the home you want to insure?</h1>
         <p class="v2-sub">Tap an option to start. A licensed North Carolina team compares home insurance companies for you.</p>
@@ -483,7 +503,11 @@
           </div>
           ${ERR}
           ${lookup.msg ? `<p class="hq-lookup-msg" role="status">${esc(lookup.msg)}</p>` : ''}
-          ${found || `<div class="v2-actions-stack">
+          ${!found && LL_BUY_ON && s._keptAddr && s.lookupUsed && s.lookup && !lookup.msg ? `<p class="hq-lookup-msg" role="status">We kept the county record you already confirmed for this address.</p>
+          <div class="v2-actions-stack">
+            <button type="button" class="v2-btn-gold" id="hq-keep-record">Continue &rarr;</button>
+            <button type="button" class="v2-btn-outline" style="width:100%" id="hq-find">Look it up again</button>
+          </div>` : found || `<div class="v2-actions-stack">
             <button type="button" class="v2-btn-gold" id="hq-find" ${lookup.busy ? 'disabled' : ''}>${lookup.busy ? 'Finding your home…' : 'Find my home details &rarr;'}</button>
             <button type="button" class="v2-btn-outline" style="width:100%" id="hq-addr-skip">${lookup.msg ? 'Continue &rarr;' : 'Skip the lookup'}</button>
           </div>`}
@@ -681,7 +705,8 @@
         if (LL) {
           rows = rows.filter(r => r[2] !== 'extras');
           const at = rows.findIndex(r => r[2] === 'rooftype') + 1;
-          rows.splice(at, 0, ['Units', s.rental_units || 'Not answered', 'units'], ...(s.rental_use === 'Vacant or being renovated' ? [] : [['Rented now', s.rental_tenant || 'Not answered', 'tenant']]), ['Looked after by', s.rental_manager || 'Not answered', 'manager']);
+          if (LL_BUY_ON) rows.splice(2, 0, ['Own or buying', s.is_owner === 'buying' ? `Buying${s.closing_date ? ' · closing ' + s.closing_date : ''}` : 'I own it now', 'llown']);
+          rows.splice(rows.findIndex(r => r[2] === 'rooftype') + 1, 0, ...(sequence().includes('units') ? [['Units', s.rental_units || 'Not answered', 'units']] : []), ...(s.rental_use === 'Vacant or being renovated' ? [] : [['Rented now', s.rental_tenant || 'Not answered', 'tenant']]), ['Looked after by', s.rental_manager || 'Not answered', 'manager']);
         }
         if (usedDec()) {
           rows = rows.filter(r => !['claims', 'dwelling', 'deductible', 'extras', 'household'].includes(r[2]));
@@ -768,7 +793,7 @@
       s.additional_notes.trim(),
       s.roof_age ? `Roof age: ${s.roof_age}` : '',
       s.previous_claims === 'yes' ? `Claim details: ${s.claim_details || 'not given'}` : '',
-      s.is_owner === 'buying' ? `BUYING THIS HOME${s.closing_date ? ' | Expected closing: ' + s.closing_date : ''}` : '',
+      s.is_owner === 'buying' ? `BUYING THIS ${LL ? 'RENTAL PROPERTY' : 'HOME'}${s.closing_date ? ' | Expected closing: ' + s.closing_date : ''}` : '',
       s.lookupUsed && s.lookup ? `County record used (customer confirmed${s.lookup.edited && s.lookup.edited.length ? '; customer UPDATED: ' + s.lookup.edited.join(', ') : ''}): ${s.lookup.address} | Parcel ${s.lookup.parcel} | ${s.lookup.facts.map(f => f.join(': ')).join(' · ')}` : '',
       s.lookupUsed && s.lookup && s.lookup.links && s.lookup.links.length ? `Official & research links: ${s.lookup.links.map(l => l.join(': ')).join(' ; ')}` : '',
       usedDec() ? 'DECLARATIONS PAGE UPLOADED - the customer chose to skip the coverage questions. Take coverage, deductible, extras and claims from the attached page or ask.' : '',
@@ -780,7 +805,7 @@
     return {
       form_type: 'home_insurance',
       firstname: (TP + s.firstname).trim(), lastname: s.lastname, date_of_birth: s.date_of_birth, email: s.email, phone: s.phone,
-      is_owner: LL ? 'LANDLORD - rental property' : s.is_owner, property_address: s.property_address, city: s.city, zip_code: s.zip_code,
+      is_owner: LL ? 'LANDLORD - rental property' + (s.is_owner === 'buying' ? ' (BUYING IT)' : '') : s.is_owner, property_address: s.property_address, city: s.city, zip_code: s.zip_code,
       property_type: LL ? 'rental_property' + (s.property_type ? ' (' + s.property_type + ')' : '') : s.property_type, year_built: s.year_built, square_footage: s.square_footage, construction_type: s.construction_type,
       roof_type: s.roof_type, roof_year: roofYear,
       current_insurance: s.is_owner === 'buying' ? 'no' : s.current_insurance, current_carrier: s.current_carrier, coverage_expiration: s.coverage_expiration,
@@ -947,6 +972,11 @@
     // address + county record lookup
     ['property_address', 'city', 'zip_code'].forEach(id => { const e = $(id); if (e) e.addEventListener('input', () => { readAddress(); if (lookup.matches.length || lookup.msg) { lookup = { busy: false, matches: [], picked: 0, msg: '', sample: false }; save(); render(); const again = $(id); if (again) { again.focus(); try { again.setSelectionRange(again.value.length, again.value.length); } catch (_) {} } } else save(); }); });
     on('hq-find', () => { if (addressOk()) { fireFormStart(); runLookup(); } });
+    on('hq-keep-record', () => {   // the record only still applies if the address was not changed
+      if (!addressOk()) return;
+      if ([state.property_address, state.city, state.zip_code].join('|') !== state._keptAddr) { state.lookupUsed = false; state.lookup = null; state.fromLookup = {}; }
+      state._keptAddr = ''; next();
+    });
     on('hq-addr-skip', () => { if (addressOk()) { state.lookupUsed = false; state.lookup = null; state.fromLookup = {}; track('home_v2_step_complete', { lookup: 'skipped' }); next(); } });
     const sel = $('hq-match'); if (sel) sel.addEventListener('change', () => { lookup.picked = Number(sel.value); lookup.overrides = {}; lookup.editing = false; render(); });
     on('hq-use-record', () => { useRecord(effRecord()); track('home_v2_step_complete', { lookup: hasEdits() ? 'used_edited' : 'used' }); next(); });
@@ -981,11 +1011,18 @@
       if (RENTAL_HANDOFF_ON && !LL && b.dataset.ptype === 'rental_property') {   // rentals have their own form with the landlord questions
         b.parentElement.querySelectorAll('.v2-tile').forEach(t => t.classList.remove('is-selected')); b.classList.add('is-selected');
         state.property_type = 'rental_property'; save();
-        try { sessionStorage.setItem('bli_carry_rental_address', JSON.stringify({ street: state.property_address, city: state.city, zip: state.zip_code })); } catch (_) {}
+        try {
+          const carry = { street: state.property_address, city: state.city, zip: state.zip_code };
+          if (LL_BUY_ON) {
+            carry.owner = state.is_owner;
+            if (state.lookupUsed && state.lookup) { const vals = {}; Object.keys(state.fromLookup || {}).forEach(k => { vals[k] = state[k]; }); carry.rec = { lookup: state.lookup, fromLookup: state.fromLookup, vals, county: state.county }; }
+          }
+          sessionStorage.setItem('bli_carry_rental_address', JSON.stringify(carry));
+        } catch (_) {}
         setTimeout(() => { window.location.href = (LIVE ? '/landlord-quote' : '../landlord-quote-v2-test/') + '?src=home_quote_rental'; }, 230);
         return;
       }
-      pick(b, () => { state.property_type = b.dataset.ptype; });
+      pick(b, () => { state.property_type = b.dataset.ptype; if (LL && LL_BUY_ON && LL_ONE_UNIT.includes(state.property_type)) state.rental_units = '1'; });
     }));
     on('hq-year-next', () => { const y = val('year_built'); const n = Number(y); if (!/^\d{4}$/.test(y) || n < 1700 || n > new Date().getFullYear() + 1) { showErr('Please enter a four-digit year, or tap Not sure.'); return; } if (y !== state.year_built) delete state.fromLookup.year_built; state.year_built = y; next(); });
     on('hq-year-skip', () => { state.year_built = ''; delete state.fromLookup.year_built; next(); });
