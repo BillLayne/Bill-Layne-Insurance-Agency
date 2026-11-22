@@ -4,10 +4,10 @@
   // One script, two pages: the live form at /auto-quote sets window.BLI_AQ_MODE = 'live';
   // the private test page leaves it unset and keeps every test marking.
   const LIVE = window.BLI_AQ_MODE === 'live';
-  // Five fixes from the 2026-11-22 walk-through audit. Shown on the test page only until Bill approves:
+  // Five fixes from the 2026-11-22 walk-through audit. Live on both pages:
   // 1 progress never drops while moving forward, 2 review Edit opens the vehicle list, 3 Liability only leads to the limits screen,
   // 4 plainer limit badges, 5 Continue is always visible and says what is missing.
-  const AUDIT_ON = !LIVE;
+  const AUDIT_ON = true;   // live since 2026-11-22 (approved by Bill)
   const COV_MIN = 'State minimum (liability only)';   // stored value of the first coverage tile
   let progLastIdx = -1, progLastPct = 0;
   // "Want a home quote too?" on the last screen. OFF everywhere for now: the new home form is not on the website yet.
