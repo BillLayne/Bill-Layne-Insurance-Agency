@@ -1465,7 +1465,7 @@
     if (!bar) return;
     const showBack = historyStack.length > 1 && currentStepId !== 'step_20';
     // Find primary action button on current screen (if any)
-    const primaryBtn = document.querySelector('#stage .v2-btn-gold');
+    const primaryBtn = document.querySelector('#stage .v2-btn-gold:not(a):not(#v2-resume-btn)');
     if (!showBack && !primaryBtn) {
       bar.hidden = true;
       bar.innerHTML = '';
@@ -2977,7 +2977,7 @@
             if (nextInp && nextInp.tagName === 'INPUT') {
               nextInp.focus();
             } else {
-              const primaryBtn = document.querySelector('#stage .v2-btn-gold');
+              const primaryBtn = document.querySelector('#stage .v2-btn-gold:not(a):not(#v2-resume-btn)');
               if (primaryBtn) primaryBtn.click();
             }
           }
