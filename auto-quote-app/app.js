@@ -10,12 +10,12 @@
   const AUDIT_ON = true;   // live since 2026-11-22 (approved by Bill)
   const COV_MIN = 'State minimum (liability only)';   // stored value of the first coverage tile
   let progLastIdx = -1, progLastPct = 0;
-  // Six flow changes from the 2026-11-22 review. Shown on the test page only until Bill approves:
+  // Six flow changes from the 2026-11-22 review:
   // 1 the upload offer comes before the renewal question (an upload skips it), 2 "Are you insured?" is folded into the insurer
   // screen as a No insurance tile, 3 own-or-rent sits on the address screen, 4 the review screen's second upload box is hidden
   // for people with no insurance and folded away for the rest, 5 the VIN line knows about an attached registration photo,
   // 6 the driver screen shows the name as text instead of asking for it again.
-  const FLOW2_ON = !LIVE;
+  const FLOW2_ON = true;   // live since 2026-11-22 (approved by Bill)
   let d1NameOpen = false;
   // "Want a home quote too?" on the last screen. OFF everywhere for now: the new home form is not on the website yet.
   // Switch to !LIVE once /home-quote-v2-test/ is pushed, and to true only when Bill approves it for customers.
@@ -1913,6 +1913,9 @@
   }
 
   function render() {
+    // A customer who comes back to a saved visit may be parked on a screen that is no longer part of the flow.
+    if (FLOW2_ON && currentStepId === 'step_5') currentStepId = 'step_6';
+    if (FLOW2_ON && currentStepId === 'step_10') currentStepId = 'step_11';
     updateProgress();
     renderChips();
 
