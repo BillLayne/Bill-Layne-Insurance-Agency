@@ -265,7 +265,10 @@
   const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   const todayIso = () => iso(new Date());
   const niceDate = s => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ''); return m ? `${Number(m[2])}/${Number(m[3])}/${m[1]}` : ''; };
-  const fmtPhone = v => { const d = (v || '').replace(/\D/g, '').slice(0, 10); return d.length >= 6 ? `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}` : d.length >= 3 ? `(${d.slice(0, 3)}) ${d.slice(3)}` : d; };
+  // A leading 1 or 0 is never part of a US area code (it is the country code from autofill or habit), so it is dropped
+  // before the 10 digits are kept. Without this the last digit of the real number was cut off.
+  const phoneOk = v => { const d = String(v || '').replace(/\D/g, ''); return d.length === 10 && /^[2-9]\d\d[2-9]/.test(d) && !/^(\d)\1{9}$/.test(d); };
+  const fmtPhone = v => { const d = (v || '').replace(/\D/g, '').replace(/^[01]+/, '').slice(0, 10); return d.length >= 6 ? `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}` : d.length >= 3 ? `(${d.slice(0, 3)}) ${d.slice(3)}` : d; };
   function showErr(msg) { const e = $('hq-err'); if (e) { e.textContent = msg; e.hidden = !msg; if (msg) e.scrollIntoView({ block: 'center' }); } }
   const ERR = '<div id="hq-err" class="v2-error" role="alert" hidden></div>';
   const why = t => `<div class="v2-why"><span class="v2-why-badge" aria-hidden="true">i</span><div><strong>Why we ask</strong><p>${t}</p></div></div>`;
@@ -842,7 +845,7 @@
       state.firstname = oneLine(val('firstname')); state.lastname = oneLine(val('lastname')); state.phone = val('phone'); state.email = val('email');
       const dob = readDate('dob');
       if (!state.firstname || !state.lastname) { showErr('Please enter your first and last name.'); return; }
-      if (state.phone.replace(/\D/g, '').length !== 10) { showErr('Please enter a 10-digit phone number.'); return; }
+      if (!phoneOk(state.phone)) { showErr('Please check your phone number. Enter the 10 digits starting with the area code.'); return; }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.email)) { showErr('Please enter a valid email address.'); return; }
       if (!dob || dob >= todayIso() || dob < '1900-01-01') { showErr('Please enter your date of birth as month, day and four-digit year.'); return; }
       state.date_of_birth = dob; contactDone = true; next();

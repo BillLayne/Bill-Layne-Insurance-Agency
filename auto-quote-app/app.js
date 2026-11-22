@@ -711,7 +711,7 @@
         additional_notes: `${decLead} ${extraParts.join(' | ')}`.trim(),
         drivers: [{
           name: primaryName,
-          dob: '',
+          dob: state.driver_1_dob || '',   // asked on the contact screen of the upload path
           gender: '',
           marital: ''
         }],
@@ -1473,8 +1473,14 @@
     }
   }
 
+  // A leading 1 or 0 is never part of a US area code (it is the country code from autofill or habit), so it is dropped
+  // before the 10 digits are kept. Without this the last digit of the real number was cut off.
+  function phoneOk(val) {
+    const d = String(val || '').replace(/\D/g, '');
+    return d.length === 10 && /^[2-9]\d\d[2-9]/.test(d) && !/^(\d)\1{9}$/.test(d);
+  }
   function formatPhone(val) {
-    const d = (val || '').replace(/\D/g, '').slice(0, 10);
+    const d = (val || '').replace(/\D/g, '').replace(/^[01]+/, '').slice(0, 10);
     if (d.length >= 6) return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
     if (d.length >= 3) return `(${d.slice(0, 3)}) ${d.slice(3)}`;
     return d;
@@ -2229,6 +2235,11 @@
             <input id="email" name="email" class="v2-input" type="email" inputmode="email" autocomplete="email" enterkeyhint="go" value="${escapeHtml(state.email)}">
             <div id="email-err" class="v2-field-err" role="alert" hidden></div>
           </div>
+          ${isDecContact ? `<div class="v2-field">
+            <label for="dec-dob-mm">Your date of birth</label>
+            ${renderDateBoxes('dec-dob', state.driver_1_dob, 'Date of birth')}
+            <div class="v2-upload-meta" style="text-align:left;margin-top:6px">A declarations page does not show it, and the insurance companies need it to price your quote.</div>
+          </div>` : ''}
           <div id="v2-step-err" class="v2-error" role="alert" hidden></div>
           <button type="button" class="v2-btn-gold" id="v2-step11-next">${contactBtn}</button>
         </div>
@@ -3217,6 +3228,9 @@
         const ee = document.getElementById(`${id}-err`); if (ee) ee.hidden = true;
       });
     });
+    if (currentStepId === 'step_11' && state.usedDecShortcut) {
+      bindDateBoxes('dec-dob', false, iso => { state.driver_1_dob = iso; saveSessionState(); });
+    }
     const s11 = document.getElementById('v2-step11-next');
     if (s11) {
       s11.addEventListener('click', () => {
@@ -3226,7 +3240,8 @@
         const em = document.getElementById('email').value.trim();
         if (!fn) { showFieldError('firstname', 'Please enter your first name.'); return; }
         if (!ln) { showFieldError('lastname', 'Please enter your last name.'); return; }
-        if (ph.replace(/\D/g, '').length < 10) { showFieldError('phone', 'Please enter a valid 10-digit mobile number.'); return; }
+        if (!phoneOk(ph)) { showFieldError('phone', 'Please check your mobile number. Enter the 10 digits starting with the area code.'); return; }
+        if (state.usedDecShortcut && !state.driver_1_dob) { showFieldError('dec-dob', 'Please enter your date of birth (month, day, year).'); return; }
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) {
           showFieldError('email', 'Please enter a valid email address.');
           return;
