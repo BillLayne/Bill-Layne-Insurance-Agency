@@ -83,13 +83,15 @@
   function lookup(input) {
     const q = input.value.trim();
     // wait for a house number and the start of a street name; skip right after a pick
-    if (!/^\d+[A-Za-z]?\s+\S{3,}/.test(q) || q === lastPicked) { close(); return; }
+    const num = (/^(\d+)[A-Za-z]?\s+/.exec(q) || [])[1];
+    const letters = q.replace(/^\d+\S*\s+/, '').replace(/[^A-Za-z]/g, '').length;   // "1283 N Bridge" counts; "1283 N" does not yet
+    if (!num || letters < 3 || q === lastPicked) { close(); return; }
     const mine = ++seq;
     const ctl = window.AbortController ? new AbortController() : null;
     const t = setTimeout(() => { if (ctl) ctl.abort(); }, 4000);
     fetch(SERVICE + '?f=json&maxSuggestions=5&text=' + encodeURIComponent(q), ctl ? { signal: ctl.signal } : undefined)
       .then(r => (r.ok ? r.json() : null))
-      .then(j => { clearTimeout(t); if (mine !== seq || !j || !Array.isArray(j.suggestions)) return; show(input, j.suggestions.filter(s => s && s.text && !s.isCollection).slice(0, 5)); })
+      .then(j => { clearTimeout(t); if (mine !== seq || !j || !Array.isArray(j.suggestions)) return; show(input, j.suggestions.filter(s => s && s.text && !s.isCollection && s.text.indexOf(num + ' ') === 0).slice(0, 5)); })
       .catch(() => { clearTimeout(t); });
   }
 
