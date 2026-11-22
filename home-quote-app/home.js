@@ -32,10 +32,10 @@
     ['rental_property', 'Rental property I own'], ['farm', 'Farm'], ['other', 'Something else']];
   // The home form's Rental property I own tile sends the customer to the landlord form. 
   const RENTAL_HANDOFF_ON = true;   // live since 2026-11-20 (approved by Bill)
-  // Landlord form, test page only until Bill approves: asks "own it now or buying it" (buying leads to the closing date
+  // Landlord form: asks "own it now or buying it" (buying leads to the closing date
   // instead of the current-insurance questions), skips the units question for a single house or mobile home, and keeps
   // "buying" and an already-confirmed county record when the customer arrives from the home form.
-  const LL_BUY_ON = !LIVE;
+  const LL_BUY_ON = true;   // live since 2026-11-22 (approved by Bill)
   const LL_ONE_UNIT = ['single_family', 'mobile_home'];
   const LL_RENTAL = ['Long-term rental', 'Short-term or vacation rental', 'Vacant or being renovated', 'Something else'];
   // Simple front-view drawings on the landlord building tiles (test page; same style as the mobile home drawings).
