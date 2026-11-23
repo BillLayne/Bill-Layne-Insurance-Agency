@@ -20,6 +20,19 @@
   // 1 changing "no insurance" to a carrier from the review screen asks the renewal question before going back,
   // 2 saving an additional driver opens the next unfinished one instead of leaving it closed.
   const FIX3_ON = true;   // live since 2026-11-22 (approved by Bill)
+  // Thank-you screen and photo/VIN screen changes (test page only until Bill approves):
+  // 1 the thank-you screen says what happens next, worded by whether the office is open (Monday to Friday, 9 to 5 Eastern),
+  // 2 a "Save our number" link adds the agency to the customer's contacts, 3 the photo/VIN screen leads with a plain skip tile.
+  const THANKS2_ON = !LIVE;
+  const VCARD_URL = '/quote-shared/bill-layne-insurance.vcf';
+  function officeOpenNow() {
+    try {
+      const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', weekday: 'short', hour: 'numeric', hour12: false }).formatToParts(new Date());
+      const day = (parts.find(p => p.type === 'weekday') || {}).value;
+      const hour = Number((parts.find(p => p.type === 'hour') || {}).value) % 24;
+      return !['Sat', 'Sun'].includes(day) && hour >= 9 && hour < 17;
+    } catch (_) { return null; }
+  }
   let d1NameOpen = false;
   // "Want a home quote too?" on the last screen. OFF everywhere for now: the new home form is not on the website yet.
   // Switch to !LIVE once /home-quote-v2-test/ is pushed, and to true only when Bill approves it for customers.
@@ -2755,6 +2768,9 @@
         <h1 class="v2-heading">${isDecPath ? 'Anything else we should know?' : 'Add a photo or VIN (optional)'}</h1>
         <p class="v2-sub">${isDecPath ? 'Optional — add any questions, extra vehicles, or how you prefer we reach you.' : 'Nothing handy? Skip it. Our team can usually look it up.'}</p>
         <div class="v2-col">
+          ${!isDecPath && THANKS2_ON ? `
+            <button type="button" class="v2-tile compact" id="v2-step18-skip-top" style="width:100%;min-height:56px"><span>I don&rsquo;t have it handy. Skip this step &rarr;</span></button>
+            <div class="v2-skip-or" style="text-align:center;font-size:14px;font-weight:700;color:#5b6b80;letter-spacing:.04em;text-transform:uppercase">or add it now</div>` : ''}
           ${!isDecPath ? `
             <div class="v2-field">
               <label>Snap a photo of your registration or insurance card</label>
@@ -2794,7 +2810,7 @@
           ${submitErrorMsg && isDecPath ? `<div id="v2-submit-err" class="v2-error" role="alert" tabindex="-1">${escapeHtml(submitErrorMsg)}</div>` : ''}
           <div class="v2-actions-stack">
             <button type="button" class="v2-btn-gold" id="v2-step18-next" ${submittingLive ? 'disabled' : ''}>${submittingLive ? 'Sending...' : (isDecPath ? 'Send my quote request' : 'Continue to review &rarr;')}</button>
-            <button type="button" class="v2-btn-outline" style="width:100%" id="v2-step18-skip" ${submittingLive ? 'disabled' : ''}>${isDecPath ? 'Skip note &amp; send my quote request' : 'Skip for now'}</button>
+            ${THANKS2_ON && !isDecPath ? '' : `<button type="button" class="v2-btn-outline" style="width:100%" id="v2-step18-skip" ${submittingLive ? 'disabled' : ''}>${isDecPath ? 'Skip note &amp; send my quote request' : 'Skip for now'}</button>`}
           </div>
         </div>
       `;
@@ -2946,10 +2962,23 @@
         ${state.email ? `<p class="v2-final-confirm-email">A confirmation email is on its way to <strong>${escapeHtml(state.email)}</strong>.</p>` : ''}
         <p class="v2-sub">${prefLine ? prefLine.trim() + ' ' : ''}Request reference: <strong>${escapeHtml(lastConfirmationNumber)}</strong>. Have a question right now? Call us or text us below.</p>
         ${uploadWarnHtml}
+        ${THANKS2_ON ? `<div class="v2-next-box" style="max-width:620px;margin:0 auto 18px;padding:14px 16px;border:1.5px solid #d5dce6;border-radius:16px;background:#fff;text-align:left">
+          <strong style="display:block;font-size:17px;font-weight:800;color:#05203d;margin-bottom:6px">What happens next</strong>
+          <p style="margin:0 0 8px;font-size:15.5px;font-weight:700;color:#05203d">${officeOpenNow() === false ? 'Our office is closed right now. We will start on your quote the next business day.' : (officeOpenNow() ? 'Our office is open now.' : 'Our office hours are Monday to Friday, 9 AM to 5 PM.')}</p>
+          <ol style="margin:0;padding-left:20px;font-size:15.5px;line-height:1.5;color:#334155">
+            <li>Our team reviews your answers and compares carriers.</li>
+            <li>We send your prices by text or email.</li>
+            <li>You look them over and ask us anything. Asking for a quote does not start or change any coverage.</li>
+          </ol>
+        </div>` : ''}
         <div class="v2-final-actions">
           <a class="v2-btn-gold" href="tel:3368351993" data-source="auto_v2_final_call">Call 336-835-1993</a>
           <a class="v2-btn-navy" href="sms:+13368279065" data-source="auto_v2_final_text">Text (336) 827-9065</a>
         </div>
+        ${THANKS2_ON ? `<div class="v2-save-contact" style="max-width:620px;margin:14px auto 0;text-align:center">
+          <a class="v2-btn-outline" style="width:100%" href="${VCARD_URL}" data-source="auto_v2_final_save_contact">Save our number to your contacts</a>
+          <p style="margin:8px 0 0;font-size:14.5px;color:#5b6b80">So you know it is us when we call or text.</p>
+        </div>` : ''}
         ${HOME_OFFER && state.homeowner === 'yes' ? `
           <div class="v2-home-offer">
             <strong>You own your home. Want a home quote too?</strong>
@@ -3829,6 +3858,8 @@
     };
     if (s18) s18.addEventListener('click', () => finishStep18(false));
     if (s18Skip) s18Skip.addEventListener('click', () => finishStep18(true));
+    const s18SkipTop = document.getElementById('v2-step18-skip-top');
+    if (s18SkipTop) s18SkipTop.addEventListener('click', () => finishStep18(true));
 
     // Step 19 (Review)
     if (currentStepId === 'step_19') {
