@@ -18,6 +18,18 @@
 
   // Stored values = exactly the choices the office script accepts.
   const RENTAL_TYPES = [['Apartment', 'Apartment'], ['House', 'House'], ['Condo / other', 'Condo, townhome or other']];
+  // Line drawings on the rental-type tiles and on the "auto quote too?" Yes / No tiles, in the same style as the home form's drawings.
+  // Shown on the renters test page only until Bill approves.
+  const RQ_ART_ON = !LIVE;
+  const RQ_ART = {
+    'Apartment': '<path d="M32 9h32v29H32z"/><path d="M29 9h38"/><path d="M36.500 13h5v4h-5zM45.500 13h5v4h-5zM54.500 13h5v4h-5zM36.500 20.500h5v4h-5zM45.500 20.500h5v4h-5zM54.500 20.500h5v4h-5zM36.500 28h5v4h-5zM54.500 28h5v4h-5zM45 30h6v8h-6z"/>',
+    'House': '<path d="M32 22h32v16H32z"/><path d="M28 22.500L48 10l20 12.500"/><path d="M58 16.500V11h4v8"/><path d="M45 28h6v10h-6zM36 26h5v5h-5zM55 26h5v5h-5z"/>',
+    'Condo / other': '<path d="M18 20v18h60V20"/><path d="M16 21.500L28 12l10 8 10-8 10 8 10-8 12 9.500"/><path d="M38 20v18M58 20v18"/><path d="M25.500 30h5v8h-5zM45.500 30h5v8h-5zM65.500 30h5v8h-5zM25.500 22.500h5v4h-5zM45.500 22.500h5v4h-5zM65.500 22.500h5v4h-5z"/>'
+  };
+  const RQ_CAR = '<path d="M21 34v-5.500c0-1.800 1.200-3 3-3.400l8.500-1.600 7-8h18.500l7.500 8 6.500 1.600c1.800.400 3 1.600 3 3.400V34"/><path d="M21 34h8M39 34h19M68 34h7"/><circle cx="34" cy="34" r="4.500"/><circle cx="63" cy="34" r="4.500"/><path d="M37.500 23.500l5-5.500h14.500l5 5.500zM50 18v5.500"/>';
+  const RQ_BUNDLE_ART = { yes: RQ_CAR, no: `<g opacity=".38">${RQ_CAR}</g><path d="M28 43L68 6" stroke-width="2.600"/>` };
+  const rqSvg = art => `<svg viewBox="0 0 96 48" width="96" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;color:#05203d;max-width:100%;height:auto">${art}<path d="M4 40H92" stroke="#8696ab" stroke-width="1.6"/></svg>`;
+  const RQ_ART_STYLE = 'flex-direction:column;justify-content:flex-start;gap:2px;padding:8px 6px 9px';
   const BELONGINGS = [['$30,000', '$30,000'], ['$50,000', '$50,000'], ['$75,000', '$75,000'], ['$100,000 or more', '$100,000 or more']];
   const LIABILITY = [['$100,000', '$100,000'], ['$300,000', '$300,000'], ['$500,000', '$500,000'], ['Match my lease requirements', 'Match my lease']];
   const HELP_ME = 'Help me decide';
@@ -174,7 +186,8 @@
       case 'rtype': return `
         <h1 class="v2-heading">What kind of place do you rent?</h1>
         <p class="v2-sub">Tap an option to start. A licensed North Carolina team compares renters insurance for you.</p>
-        ${tiles('rtype', RENTAL_TYPES, s.rental_type, 3, true)}`;
+        ${RQ_ART_ON ? `<div class="v2-grid-3">${RENTAL_TYPES.map(([v, t]) => `<button type="button" class="v2-tile compact ${s.rental_type === v ? 'is-selected' : ''}" aria-pressed="${s.rental_type === v}" data-rtype="${esc(v)}" style="${RQ_ART_STYLE}">${rqSvg(RQ_ART[v])}<span>${esc(t)}</span></button>`).join('')}</div>`
+          : tiles('rtype', RENTAL_TYPES, s.rental_type, 3, true)}`;
 
       case 'address': return `
         <h1 class="v2-heading">What is the address of the place you rent?</h1>
@@ -263,7 +276,7 @@
         <h1 class="v2-heading">Last two things</h1>
         <p class="v2-sub">Both are optional.</p>
         <div class="v2-group-block"><div class="v2-group-title">Would you like an auto quote too?</div><div class="v2-grid-2" style="margin-bottom:0">
-          ${['yes', 'no'].map(v => `<button type="button" class="v2-tile compact ${s.bundle_auto === v ? 'is-selected' : ''}" aria-pressed="${s.bundle_auto === v}" data-bundle="${v}">${v === 'yes' ? 'Yes' : 'No'}</button>`).join('')}</div></div>
+          ${['yes', 'no'].map(v => `<button type="button" class="v2-tile compact ${s.bundle_auto === v ? 'is-selected' : ''}" aria-pressed="${s.bundle_auto === v}" data-bundle="${v}"${RQ_ART_ON ? ` style="${RQ_ART_STYLE}"` : ''}>${RQ_ART_ON ? rqSvg(RQ_BUNDLE_ART[v]) : ''}<span>${v === 'yes' ? 'Yes' : 'No'}</span></button>`).join('')}</div></div>
         <div class="v2-col">
           <div class="v2-field"><label for="additional_notes">Anything else we should know? (optional)</label><textarea id="additional_notes" class="v2-textarea" maxlength="1000">${esc(s.additional_notes)}</textarea></div>
           <button type="button" class="v2-btn-gold" id="rq-extras-next">Continue to review &rarr;</button>
