@@ -19,8 +19,7 @@
   // Stored values = exactly the choices the office script accepts.
   const RENTAL_TYPES = [['Apartment', 'Apartment'], ['House', 'House'], ['Condo / other', 'Condo, townhome or other']];
   // Line drawings on the rental-type tiles and on the "auto quote too?" Yes / No tiles, in the same style as the home form's drawings.
-  // Shown on the renters test page only until Bill approves.
-  const RQ_ART_ON = !LIVE;
+  const RQ_ART_ON = true;   // live since 2026-11-23 (approved by Bill)
   const RQ_ART = {
     'Apartment': '<path d="M32 9h32v29H32z"/><path d="M29 9h38"/><path d="M36.500 13h5v4h-5zM45.500 13h5v4h-5zM54.500 13h5v4h-5zM36.500 20.500h5v4h-5zM45.500 20.500h5v4h-5zM54.500 20.500h5v4h-5zM36.500 28h5v4h-5zM54.500 28h5v4h-5zM45 30h6v8h-6z"/>',
     'House': '<path d="M32 22h32v16H32z"/><path d="M28 22.500L48 10l20 12.500"/><path d="M58 16.500V11h4v8"/><path d="M45 28h6v10h-6zM36 26h5v5h-5zM55 26h5v5h-5z"/>',
