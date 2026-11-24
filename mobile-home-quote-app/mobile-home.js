@@ -5,6 +5,10 @@
   'use strict';
 
   const LIVE = window.BLI_MQ_MODE === 'live';
+  // Thank-you screen: the shared "What happens next" box and "Save our number" link (quote-shared/thanks.js).
+  // Shown on the test page only until Bill approves.
+  const THANKS2_ON = !LIVE;
+  const TY = () => (THANKS2_ON && window.BLI_THANKS) || null;
   const TP = LIVE ? '' : '[TEST MH V2] ';
   const STORAGE_KEY = LIVE ? 'bli_mobile_home_quote_session' : 'bli_mobile_home_v2_test_session';
   const params = new URLSearchParams(window.location.search);
@@ -433,10 +437,12 @@
         <h1 class="v2-heading">A licensed North Carolina agent is comparing mobile home insurance for you. We will send your prices by text or email within one business day.</h1>
         ${s.email ? `<p class="v2-final-confirm-email">A confirmation email is on its way to <strong>${esc(s.email)}</strong>.</p>` : ''}
         ${HANDY_ON ? UP.failNote() : ''}<p class="v2-sub">Request reference: <strong>${esc(confirmation)}</strong>. Have a question right now? Call us or text us below.</p>
+        ${TY() ? TY().next() : ''}
         <div class="v2-final-actions">
           <a class="v2-btn-gold" href="tel:3368351993" data-source="mobile_home_v2_final_call">Call 336-835-1993</a>
           <a class="v2-btn-navy" href="sms:+13368279065" data-source="mobile_home_v2_final_text">Text (336) 827-9065</a>
         </div>
+        ${TY() ? TY().save('mobile_home_v2') : ''}
         ${s.bundle_auto === 'yes' ? `<div class="hq-offer"><strong>You asked for an auto quote too.</strong><p>It takes a few minutes.</p>
           <a class="v2-btn-outline" style="width:100%" href="/auto-quote?src=mobile_home_quote_done" data-source="mobile_home_quote_done_auto">Start my auto quote &rarr;</a></div>` : ''}`;
     }

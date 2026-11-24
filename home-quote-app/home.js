@@ -5,6 +5,10 @@
   'use strict';
 
   const LIVE = window.BLI_HQ_MODE === 'live';
+  // Thank-you screen: the shared "What happens next" box and "Save our number" link (quote-shared/thanks.js).
+  // Shown on the test page only until Bill approves.
+  const THANKS2_ON = !LIVE;
+  const TY = () => (THANKS2_ON && window.BLI_THANKS) || null;
   // Landlord / rental property version: the same form and county lookup with a few different questions.
   // A page turns it on with window.BLI_HQ_VARIANT = 'landlord' before loading this file. It is sent to the office as a home request, clearly marked.
   const LL = window.BLI_HQ_VARIANT === 'landlord';
@@ -733,10 +737,12 @@
         ${s.email ? `<p class="v2-final-confirm-email">A confirmation email is on its way to <strong>${esc(s.email)}</strong>.</p>` : ''}
         <p class="v2-sub">Request reference: <strong>${esc(confirmation)}</strong>. Have a question right now? Call us or text us below.</p>
         ${uploadFailed ? '<div class="v2-upload-warn" role="alert"><div class="v2-upload-warn-title">Your quote request was received, but your files did not upload.</div>Please text a photo to (336) 827-9065 or reply to your confirmation email with the file.</div>' : ''}
+        ${TY() ? TY().next() : ''}
         <div class="v2-final-actions">
           <a class="v2-btn-gold" href="tel:3368351993" data-source="home_v2_final_call">Call 336-835-1993</a>
           <a class="v2-btn-navy" href="sms:+13368279065" data-source="home_v2_final_text">Text (336) 827-9065</a>
         </div>
+        ${TY() ? TY().save('home_v2') : ''}
         ${s.bundle_auto === 'yes' ? `<div class="hq-offer"><strong>You asked for an auto quote too.</strong><p>It takes a few minutes and your contact details carry over.</p>
           <a class="v2-btn-outline" style="width:100%" href="/auto-quote?src=home_quote_done" data-source="home_quote_done_auto">Start my auto quote &rarr;</a></div>` : ''}`;
     }
