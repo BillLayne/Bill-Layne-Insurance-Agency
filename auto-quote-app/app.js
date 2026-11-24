@@ -20,10 +20,10 @@
   // 1 changing "no insurance" to a carrier from the review screen asks the renewal question before going back,
   // 2 saving an additional driver opens the next unfinished one instead of leaving it closed.
   const FIX3_ON = true;   // live since 2026-11-22 (approved by Bill)
-  // Thank-you screen and photo/VIN screen changes (test page only until Bill approves):
+  // Thank-you screen and photo/VIN screen changes. Live on both pages:
   // 1 the thank-you screen says what happens next, worded by whether the office is open (Monday to Friday, 9 to 5 Eastern),
   // 2 a "Save our number" link adds the agency to the customer's contacts, 3 the photo/VIN screen leads with a plain skip tile.
-  const THANKS2_ON = !LIVE;
+  const THANKS2_ON = true;   // live since 2026-11-23 (approved by Bill)
   const VCARD_URL = '/quote-shared/bill-layne-insurance.vcf';
   function officeOpenNow() {
     try {
