@@ -4,8 +4,8 @@
 (function () {
   'use strict';
   var VCARD_URL = '/quote-shared/bill-layne-insurance.vcf';
-  // Days the office is closed although it is a weekday, as 'YYYY-MM-DD' in Eastern time. Empty until Bill gives his list.
-  var CLOSED_DAYS = [];
+  // Days the office is closed although it is a weekday, as 'YYYY-MM-DD' in Eastern time.
+  var CLOSED_DAYS = ['2026-11-26', '2026-11-27', '2026-12-24', '2026-12-25', '2027-01-01'];
 
   // true = open now, false = closed now, null = could not tell (the box then shows the plain hours instead).
   function officeOpenNow(at) {
