@@ -1,0 +1,71 @@
+/* TEST PAGE ONLY (auto-quote-v2-test): named progress steps + desktop photo of Bill. */
+
+/* ---- Named steps under the progress bar (all screen sizes) ---- */
+.pv-steps {
+  list-style: none;
+  max-width: 640px;
+  margin: 8px auto 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+}
+.pv-step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #64748b;
+  white-space: nowrap;
+}
+.pv-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1;
+  background: #fff;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+.pv-step.is-done { color: #166534; }
+.pv-step.is-done .pv-dot { background: var(--green, #16a34a); border-color: var(--green, #16a34a); }
+.pv-step.is-now { color: var(--navy, #05203d); font-weight: 800; }
+.pv-step.is-now .pv-dot { background: var(--gold, #f5b921); border-color: var(--navy, #05203d); }
+
+@media (max-width: 580px) {
+  .pv-steps { margin-top: 6px; gap: 2px; }
+  .pv-step { font-size: 11px; gap: 3px; flex-direction: column; }
+  .pv-dot { width: 8px; height: 8px; }
+}
+
+/* ---- Photo of Bill: wide desktop screens only, never on phones or tablets ---- */
+.pv-layout { position: relative; flex: 1; display: flex; flex-direction: column; }
+.pv-photo { display: none; }
+
+@media (min-width: 1180px) {
+  /* question column + photo side by side, centered together (like Progressive's desktop layout) */
+  .pv-layout {
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 28px;
+    width: 100%;
+    max-width: 1220px;
+    margin: 0 auto;
+    min-height: 560px;
+  }
+  .pv-layout > .v2-stage { margin: 0; min-width: 0; }
+  .pv-photo {
+    display: block;
+    flex: 0 0 clamp(260px, calc(100vw - 920px), 320px);
+    margin: 24px 0 0;
+    aspect-ratio: 937 / 1380;   /* full photo is 937 x 1679: trims the lower legs */
+    overflow: hidden;           /* crops the photo from the bottom */
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(180deg, #000 82%, transparent 100%);
+            mask-image: linear-gradient(180deg, #000 82%, transparent 100%);
+  }
+  .pv-photo img { display: block; width: 100%; height: auto; }
+}
