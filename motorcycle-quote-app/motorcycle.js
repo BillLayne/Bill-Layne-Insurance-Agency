@@ -6,8 +6,7 @@
 
   const LIVE = window.BLI_MCQ_MODE === 'live';
   // Thank-you screen: the shared "What happens next" box and "Save our number" link (quote-shared/thanks.js).
-  // Shown on the test page only until Bill approves.
-  const THANKS2_ON = !LIVE;
+  const THANKS2_ON = true;   // live since 2026-11-23 (approved by Bill)
   const TY = () => (THANKS2_ON && window.BLI_THANKS) || null;
   const TP = LIVE ? '' : '[TEST MC V2] ';
   const STORAGE_KEY = LIVE ? 'bli_motorcycle_quote_session' : 'bli_motorcycle_v2_test_session';

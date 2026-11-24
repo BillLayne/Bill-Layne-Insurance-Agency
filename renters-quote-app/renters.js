@@ -6,8 +6,7 @@
 
   const LIVE = window.BLI_RQ_MODE === 'live';
   // Thank-you screen: the shared "What happens next" box and "Save our number" link (quote-shared/thanks.js).
-  // Shown on the test page only until Bill approves.
-  const THANKS2_ON = !LIVE;
+  const THANKS2_ON = true;   // live since 2026-11-23 (approved by Bill)
   const TY = () => (THANKS2_ON && window.BLI_THANKS) || null;
   const TP = LIVE ? '' : '[TEST RENT V2] ';
   const STORAGE_KEY = LIVE ? 'bli_renters_quote_session' : 'bli_renters_v2_test_session';

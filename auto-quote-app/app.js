@@ -26,6 +26,7 @@
   const THANKS2_ON = true;   // live since 2026-11-23 (approved by Bill)
   const VCARD_URL = '/quote-shared/bill-layne-insurance.vcf';
   function officeOpenNow() {
+    if (window.BLI_THANKS && typeof window.BLI_THANKS.officeOpenNow === 'function') return window.BLI_THANKS.officeOpenNow();
     try {
       const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', weekday: 'short', hour: 'numeric', hour12: false }).formatToParts(new Date());
       const day = (parts.find(p => p.type === 'weekday') || {}).value;
@@ -2964,7 +2965,7 @@
         ${uploadWarnHtml}
         ${THANKS2_ON ? `<div class="v2-next-box" style="max-width:620px;margin:0 auto 18px;padding:14px 16px;border:1.5px solid #d5dce6;border-radius:16px;background:#fff;text-align:left">
           <strong style="display:block;font-size:17px;font-weight:800;color:#05203d;margin-bottom:6px">What happens next</strong>
-          <p style="margin:0 0 8px;font-size:15.5px;font-weight:700;color:#05203d">${officeOpenNow() === false ? 'Our office is closed right now. We will start on your quote the next business day.' : (officeOpenNow() ? 'Our office is open now.' : 'Our office hours are Monday to Friday, 9 AM to 5 PM.')}</p>
+          <p style="margin:0 0 8px;font-size:15.5px;font-weight:700;color:#05203d">${(o => o === false ? 'Our office is closed right now. We will start on your quote the next business day.' : (o ? 'Our office is open now.' : 'Our office hours are Monday to Friday, 9 AM to 5 PM.'))(officeOpenNow())}</p>
           <ol style="margin:0;padding-left:20px;font-size:15.5px;line-height:1.5;color:#334155">
             <li>Our team reviews your answers and compares carriers.</li>
             <li>We send your prices by text or email.</li>

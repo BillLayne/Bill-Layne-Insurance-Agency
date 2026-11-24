@@ -6,8 +6,7 @@
 
   const LIVE = window.BLI_HQ_MODE === 'live';
   // Thank-you screen: the shared "What happens next" box and "Save our number" link (quote-shared/thanks.js).
-  // Shown on the test page only until Bill approves.
-  const THANKS2_ON = !LIVE;
+  const THANKS2_ON = true;   // live since 2026-11-23 (approved by Bill)
   const TY = () => (THANKS2_ON && window.BLI_THANKS) || null;
   // Landlord / rental property version: the same form and county lookup with a few different questions.
   // A page turns it on with window.BLI_HQ_VARIANT = 'landlord' before loading this file. It is sent to the office as a home request, clearly marked.
