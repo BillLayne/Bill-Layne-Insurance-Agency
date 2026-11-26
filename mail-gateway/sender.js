@@ -71,7 +71,9 @@
      the address must be a Google script, and nothing is saved, checked or sent until
      someone clicks Yes. */
   var pendingGw = null;
+  var notConnectedHint = false;
   function showSetup(kind, html){
+    notConnectedHint = false;
     var c = $('setupAsk');
     c.className = 'ask-card show' + (kind === 'ok' ? ' ok' : kind === 'err' ? ' err' : '');
     c.innerHTML = html;
@@ -144,6 +146,25 @@
     });
   });
 
+  /* ---------- Nothing saved here yet ----------
+     If this browser was connected at the old address, the old page can hand the connection
+     over, also a second time: that covers a mistaken "No" and a link that got lost on the way. */
+  var OLD_ADDRESS = 'https://www.billlayneinsurance.com/mail-gateway/';
+  function showNotConnectedHint(){
+    showSetup('ask', '<b>This browser is not connected yet.</b> If it was connected at the old address, one click brings the connection here.' +
+      '<div class="ask-btns"><button type="button" class="btn-primary btn-mini" id="carryFromOld">Bring my connection from the old address</button></div>' +
+      '<span class="note">If that brings you straight back here, nothing is saved there: enter the Gateway URL and key in Settings below.</span>');
+    notConnectedHint = true;
+    $('carryFromOld').addEventListener('click', function(){ location.href = OLD_ADDRESS + '?carry=1'; });
+  }
+  function clearNotConnectedHint(){
+    if (!notConnectedHint) return;
+    notConnectedHint = false;
+    var c = $('setupAsk');
+    c.className = 'ask-card';
+    c.innerHTML = '';
+  }
+
   /* ---------- Settings & Secret-Verified Connection Ping ---------- */
   function loadSettings(){
     $('gwUrl').value = localStorage.getItem(LS.url) || '';
@@ -156,6 +177,7 @@
       $('settingsCard').open = true;
       $('connBadge').className = 'badge err';
       $('connBadge').textContent = 'Gateway: setup needed';
+      showNotConnectedHint();
     } else {
       $('settingsCard').open = false;
       $('setStatus').textContent = '— saved ✓';
@@ -242,6 +264,7 @@
     localStorage.setItem(LS.secret, sec);
     $('setStatus').textContent = (url && sec) ? '— saved ✓' : '';
     if (url && sec) {
+      clearNotConnectedHint();
       $('settingsCard').open = false;
       pingGateway(false);
     } else {

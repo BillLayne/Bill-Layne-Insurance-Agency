@@ -141,6 +141,8 @@ function record(endpoint, body) {
     await ctx.route(/^https:\/\/www\.billlayneinsurance\.com\/api\/accident-report/, r => r.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify(siteHealth) }));
     // the new address and the real Google host exist only inside the test
     await ctx.route(/^https:\/\/mail\.billlayneinsurance\.com\//, r => { const u = new URL(r.request().url()); const out = newSite(u.pathname, u.search, false); r.fulfill({ status: out.status, headers: out.headers, body: out.body }); });
+    // the real old address (https) is answered by the local stand-in for it
+    await ctx.route(/^https:\/\/www\.billlayneinsurance\.com\/mail-gateway\//, r => { const u = new URL(r.request().url()); r.fulfill({ status: 302, headers: { location: OLD_ORIGIN + u.pathname + u.search } }); });
     await ctx.route(GOOGLE, r => { const j = record('/google', r.request().postData() || '{}'); r.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify(mockAnswer('/mock/real', j)) }); });
     const page = await ctx.newPage();
     const errors = [];
@@ -676,8 +678,8 @@ function record(endpoint, body) {
       await t.seedOn(OLD_ORIGIN, { url: 'http://127.0.0.1:1/not-google', secret: 'x' });
       await t.page.goto(OLD_SITE, { waitUntil: 'load' });
       await t.page.waitForFunction(() => location.hostname === 'mail.billlayneinsurance.com' && !!document.getElementById('setupAsk'));
-      v = await t.page.evaluate(() => ({ setup: document.getElementById('setupAsk').className, hash: location.hash }));
-      ok('a saved address that is not a Google script is never carried', v.setup === 'ask-card' && !v.hash, v);
+      v = await t.page.evaluate(() => ({ text: document.getElementById('setupAsk').textContent, hash: location.hash, url: localStorage.getItem('bliMailGateway.url') }));
+      ok('a saved address that is not a Google script is never carried', /not connected yet/.test(v.text) && !/A setup link wants/.test(v.text) && !v.hash && !v.url, v);
 
       await t.seedOn(OLD_ORIGIN, { url: GOOGLE, secret: 'old-site-key-0003' });
       await t.page.goto(OLD_SITE, { waitUntil: 'load' });
@@ -689,6 +691,42 @@ function record(endpoint, body) {
       const again = await t.page.waitForSelector('#movedCard', { timeout: 5000 }).then(() => true, () => false);
       ok('"Open it without connecting" carries nothing, and the offer is still there next time', !sNew.url && again && !log.length, { sNew, again });
       await t.ctx.close();
+    }
+
+    {
+      // a mistaken "No" (or a lost link) is not the end: the new page can ask the old one again
+      const t = await fresh(null); log.length = 0;
+      await t.seedOn(OLD_ORIGIN, { url: GOOGLE, secret: 'old-site-key-0004' });
+      await t.page.goto(OLD_SITE, { waitUntil: 'load' });
+      await t.page.waitForSelector('#movedConnect'); await t.page.click('#movedConnect');
+      await t.page.waitForSelector('#setupNo'); await t.page.click('#setupNo');            // the slip
+      await t.page.goto(OLD_SITE, { waitUntil: 'load' });                                    // the old address does not offer twice by itself
+      await t.page.waitForFunction(() => location.hostname === 'mail.billlayneinsurance.com' && !!document.getElementById('carryFromOld'));
+      let st = await state(t.page);
+      ok('after a mistaken No the new page says "not connected yet" and offers to bring the connection over', /not connected yet/.test(st.setupText) && !(await t.saved()).url, st.setupText);
+      await t.page.click('#carryFromOld');
+      await t.page.waitForSelector('#movedConnect');
+      await t.page.click('#movedConnect');
+      await t.page.waitForSelector('#setupYes');
+      const v = await t.page.evaluate(() => ({ search: location.search, hash: location.hash }));
+      await t.page.click('#setupYes'); await t.page.waitForTimeout(800);
+      const s = await t.saved(); st = await state(t.page);
+      ok('...one click there makes the old address offer it again, and Yes connects', s.url === GOOGLE && s.secret === 'old-site-key-0004' && /connected/.test(st.badge) && !/carry=1/.test(v.search) && !v.hash, { s, v });
+      ok('...and the "not connected yet" note is gone', !/not connected yet/.test(st.setupText), st.setupText);
+
+      const t2 = await fresh(null);       // nothing saved at the old address either: the request comes straight back
+      await t2.open('');
+      await t2.page.click('#carryFromOld');
+      await t2.page.waitForFunction(() => location.hostname === 'mail.billlayneinsurance.com' && !!document.getElementById('carryFromOld'));
+      const back = await t2.page.evaluate(() => ({ search: location.search, text: document.getElementById('setupAsk').textContent }));
+      ok('asking the old address when nothing is saved there comes straight back, with the request removed from the address', !/carry=1/.test(back.search) && /not connected yet/.test(back.text), back);
+      await t2.page.evaluate(() => { document.getElementById('settingsCard').open = true; });
+      await t2.page.fill('#gwUrl', GOOGLE);
+      await t2.page.fill('#gwSecret', 'typed-by-hand-key');
+      await t2.page.click('#saveSettings'); await t2.page.waitForTimeout(700);
+      const after = await t2.page.evaluate(() => ({ text: document.getElementById('setupAsk').textContent, badge: document.getElementById('connBadge').textContent }));
+      ok('typing the settings in by hand clears the "not connected yet" note', !/not connected yet/.test(after.text) && /connected/.test(after.badge), after);
+      await t.ctx.close(); await t2.ctx.close();
     }
 
     ok('no page broke its own security policy during the whole run', policyBreaks.length === 0, policyBreaks.slice(0, 4));
