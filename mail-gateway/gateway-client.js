@@ -11,6 +11,9 @@
  *   Script web app, and the person is asked before anything is stored.
  * - v1.4: the secret is only ever posted to a Google Apps Script address
  *   (a local address is allowed only while the page itself runs locally)
+ * - Gateway v1.4 has three keys. A tool that only creates drafts gets the
+ *   DRAFT-ONLY key (GATEWAY_DRAFT_SECRET): the gateway refuses mode:'send'
+ *   with it. The full key belongs only on https://mail.billlayneinsurance.com/
  * - Inline non-blocking setup modal if Chrome blocks native prompt()
  * - Strips preview toolbars & executable scripts while keeping JSON-LD Schema.org
  * - Swaps base64 600px anti-fit spacers to hosted BLI CDN PNG

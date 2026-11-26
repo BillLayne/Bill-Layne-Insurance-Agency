@@ -1,5 +1,5 @@
 /**
- * BLI MAIL GATEWAY — v1.3
+ * BLI MAIL GATEWAY — v1.4
  * One shared endpoint that lets ANY Bill Layne Insurance tool create a Gmail
  * draft or send an email directly — no more copy-pasting HTML into Gmail.
  *
@@ -7,7 +7,12 @@
  *   1. script.google.com -> New project -> name it "BLI Mail Gateway"
  *   2. Paste this whole file over the starter code. Save.
  *   3. Gear icon (Project Settings) -> Script properties -> Add property:
- *        GATEWAY_SECRET = <your secret>
+ *        GATEWAY_SECRET = <your secret>             (the FULL key: draft + send)
+ *      Optional (v1.4):
+ *        GATEWAY_DRAFT_SECRET = <a different secret>  (a DRAFT-ONLY key for tools
+ *        that never send: it can ping and create drafts, never send)
+ *        GATEWAY_AGENCY_SECRET = <a different secret> (an AGENCY-ONLY key for the
+ *        website's own forms: it can only email addresses at billlayneinsurance.com)
  *   4. In the editor toolbar pick the function `selfTest` -> Run -> authorize
  *      (Advanced -> Go to BLI Mail Gateway -> Allow). A test draft appears
  *      in your Gmail Drafts if everything is working.
@@ -21,7 +26,8 @@
  *
  * REQUEST (POST, Content-Type: text/plain so the browser skips CORS preflight):
  * {
- *   "secret":   "...",                          // must match GATEWAY_SECRET
+ *   "secret":   "...",                          // GATEWAY_SECRET (full), GATEWAY_DRAFT_SECRET (drafts only)
+ *                                               // or GATEWAY_AGENCY_SECRET (agency recipients only)
  *   "mode":     "draft" | "send" | "ping",      // default "draft" ("ping" verifies secret + quota)
  *   "to":       "customer@example.com",         // required for send; optional for draft
  *   "subject":  "your auto quote",
@@ -37,7 +43,8 @@
  * }
  *
  * RESPONSE:
- *   { ok:true, mode, version, draftId?, messageId?, attached, senderEmail?, remainingQuota }
+ *   { ok:true, mode, version, scope, draftId?, messageId?, attached, senderEmail?, remainingQuota }
+ *   scope (v1.4) = "full", "draft" or "agency": what the key that was used is allowed to do.
  *   or { ok:false, error }
  */
 
@@ -46,7 +53,9 @@ const DEFAULT_FROM_NAME = 'Bill Layne Insurance';
 const SPACER_URL = 'https://img.billlayneinsurance.com/i/2026/11/email-spacer-600x1-4rd8em.png';
 const MAX_ATTACH_COUNT = 5;
 const MAX_ATTACH_BYTES = 20 * 1024 * 1024;
-const VERSION = '1.3';
+const VERSION = '1.4';
+const MIN_EXTRA_SECRET_LEN = 16;
+const AGENCY_DOMAIN = 'billlayneinsurance.com';
 
 function doGet() {
   return respond_({ ok: true, service: 'BLI Mail Gateway', version: VERSION });
@@ -66,7 +75,12 @@ function doPost(e) {
   }
   // v1.2+: secret may arrive in JSON body or as ?secret= query parameter (Perplexity vault).
   const provided = req.secret || (e && e.parameter && e.parameter.secret);
-  if (!provided || !timingSafeEqual_(String(provided), String(secret))) {
+  // v1.4: three keys. GATEWAY_SECRET is the full key. GATEWAY_DRAFT_SECRET (optional) can
+  // only ping and create drafts, so a tool that never sends cannot be turned into a sender.
+  // GATEWAY_AGENCY_SECRET (optional) is for the website's own forms: agency recipients only.
+  const props = PropertiesService.getScriptProperties();
+  const scope = keyScope_(provided, secret, props.getProperty('GATEWAY_DRAFT_SECRET'), props.getProperty('GATEWAY_AGENCY_SECRET'));
+  if (!scope) {
     return respond_({ ok: false, error: 'Unauthorized: bad or missing secret.' });
   }
 
@@ -80,6 +94,7 @@ function doPost(e) {
       mode: 'ping',
       service: 'BLI Mail Gateway',
       version: VERSION,
+      scope: scope,
       senderEmail: senderEmail,
       remainingQuota: quota_()
     });
@@ -87,6 +102,10 @@ function doPost(e) {
 
   if (mode !== 'draft' && mode !== 'send') {
     return respond_({ ok: false, error: "mode must be 'draft', 'send', or 'ping'." });
+  }
+  if (mode === 'send' && scope === 'draft') {
+    console.log('REFUSED send with the draft-only key');
+    return respond_({ ok: false, scope: scope, error: 'This key can only create drafts. Nothing was sent. Send Now needs the full key, which lives only on the Mail Gateway page.' });
   }
 
   const to = String(req.to || '').trim();
@@ -120,6 +139,12 @@ function doPost(e) {
   if (req.cc) options.cc = String(req.cc).trim();
   if (req.replyTo) options.replyTo = String(req.replyTo).trim();
 
+  // v1.4: the agency-only key may reach nobody outside the agency (To, CC and BCC alike).
+  if (scope === 'agency' && !(to && agencyOnly_(to) && agencyOnly_(options.cc) && agencyOnly_(options.bcc))) {
+    console.log('REFUSED: agency-only key used for an outside recipient');
+    return respond_({ ok: false, scope: scope, error: 'This key can only email the agency itself (addresses at ' + AGENCY_DOMAIN + '). Nothing was sent.' });
+  }
+
   // v1.1+: optional file attachments (base64) — e.g. PDFs from PDF Studio / Universal Sender
   let attached = 0;
   let totalBytes = 0;
@@ -151,6 +176,7 @@ function doPost(e) {
         ok: true,
         mode: 'send',
         version: VERSION,
+        scope: scope,
         to: to,
         subject: subject,
         attached: attached,
@@ -166,6 +192,7 @@ function doPost(e) {
       ok: true,
       mode: 'draft',
       version: VERSION,
+      scope: scope,
       draftId: draft.getId(),
       messageId: messageId,
       to: to,
@@ -178,6 +205,39 @@ function doPost(e) {
     console.log('ERROR: ' + err);
     return respond_({ ok: false, error: String((err && err.message) || err) });
   }
+}
+
+/**
+ * v1.4: which key was used. Returns 'full', 'draft', 'agency' or '' (not authorized).
+ * An extra key is honoured only when it is set, long enough, and different from the
+ * full key and from the other extra key (a copy must never be upgraded or downgraded).
+ */
+function keyScope_(provided, fullSecret, draftSecret, agencySecret) {
+  const p = String(provided || '');
+  const full = String(fullSecret || '');
+  const draft = String(draftSecret || '').trim();
+  const agency = String(agencySecret || '').trim();
+  if (!p || !full) return '';
+  const isFull = timingSafeEqual_(p, full);
+  const draftUsable = draft.length >= MIN_EXTRA_SECRET_LEN && draft !== full;
+  const agencyUsable = agency.length >= MIN_EXTRA_SECRET_LEN && agency !== full && agency !== draft;
+  const isDraft = draftUsable ? timingSafeEqual_(p, draft) : false;
+  const isAgency = agencyUsable ? timingSafeEqual_(p, agency) : false;
+  if (isFull) return 'full';
+  if (isDraft) return 'draft';
+  if (isAgency) return 'agency';
+  return '';
+}
+
+/** True when every address in a comma/semicolon list is at the agency's own domain. An empty list passes. */
+function agencyOnly_(list) {
+  const parts = String(list || '').split(/[,;]/).map(function (x) { return x.trim(); }).filter(Boolean);
+  return parts.every(function (x) {
+    const m = /<([^<>]*)>$/.exec(x);
+    const addr = (m ? m[1] : x).trim().toLowerCase();
+    const at = addr.lastIndexOf('@');
+    return at > 0 && addr.indexOf('@') === at && !/[\s<>()"',;:\\]/.test(addr) && addr.slice(at + 1) === AGENCY_DOMAIN;
+  });
 }
 
 /** Constant-time string comparison to avoid secret timing leaks. */
