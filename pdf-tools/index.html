@@ -4872,7 +4872,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#EEF2F6}
 <script>
 (function () {
   'use strict';
-  const APP_VERSION = '2026-11-10.4';   // bump on every release — shown in the footer, the Help dialog and the console
+  const APP_VERSION = '2026-11-26.1';   // bump on every release — shown in the footer, the Help dialog and the console
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -8947,6 +8947,8 @@ body{margin:0;padding:0;width:100%!important;background-color:#EEF2F6}
 
   /* ── Email as Gmail draft (BLI Mail Gateway) ── */
   const GW_URL_KEY = 'bliMailGateway.url', GW_SECRET_KEY = 'bliMailGateway.secret';
+  // The gateway secret is only ever posted to a Google Apps Script web app address.
+  const GW_URL_RE = /^https:\/\/script\.google\.com\/(?:a\/macros\/[A-Za-z0-9.-]+|macros)\/s\/[A-Za-z0-9_-]+\/exec$/;
 
   // phone setup: arriving with #gw=<base64url({u,s})> (from the QR) connects this device
   function connectFromHash() {
@@ -8954,12 +8956,25 @@ body{margin:0;padding:0;width:100%!important;background-color:#EEF2F6}
     if (!m) return;
     try {
       const cfg = JSON.parse(atob(m[1].replace(/-/g, '+').replace(/_/g, '/')));
-      if (cfg && typeof cfg.u === 'string' && /^https:\/\/script\.google\.com\/macros\//.test(cfg.u) && cfg.s) {
-        localStorage.setItem(GW_URL_KEY, cfg.u);
-        localStorage.setItem(GW_SECRET_KEY, String(cfg.s));
-        if (cfg.f) localStorage.setItem('bliFormsCode', String(cfg.f));
-        updateConnectionStatus();
-        setTimeout(() => toast('✅ Gmail drafts' + (cfg.f ? ' and the Forms Library' : '') + ' are now connected on this device.'), 400);
+      // Only a real Google Apps Script web app address, and both values or nothing.
+      if (cfg && typeof cfg.u === 'string' && GW_URL_RE.test(cfg.u) && cfg.s) {
+        const connect = () => {
+          localStorage.setItem(GW_URL_KEY, cfg.u);
+          localStorage.setItem(GW_SECRET_KEY, String(cfg.s));
+          if (cfg.f) localStorage.setItem('bliFormsCode', String(cfg.f));
+          updateConnectionStatus();
+          setTimeout(() => toast('✅ Gmail drafts' + (cfg.f ? ' and the Forms Library' : '') + ' are now connected on this device.'), 400);
+        };
+        const saved = localStorage.getItem(GW_URL_KEY) || '';
+        // A fresh device (the phone, from the QR) connects straight away, as before.
+        // A device that already has a DIFFERENT gateway is never switched by a link
+        // alone: the same settings feed the Mail Gateway pages, so a stray link could
+        // send later drafts somewhere else. It takes a deliberate tap on Replace.
+        if (saved && saved !== cfg.u) {
+          setTimeout(() => toastAction('A setup link wants to REPLACE the Mail Gateway saved on this device. Ignore it unless you just made that link yourself.', 'Replace', connect), 400);
+        } else {
+          connect();
+        }
       }
     } catch (_) {}
     window.history.replaceState(null, '', location.pathname + location.search);   // plain "history" in here is the undo stack
@@ -9098,6 +9113,10 @@ body{margin:0;padding:0;width:100%!important;background-color:#EEF2F6}
     const url = localStorage.getItem(GW_URL_KEY), secret = localStorage.getItem(GW_SECRET_KEY);
     if (!url || !secret) {
       mailBanner(false, '⚠️ The Mail Gateway is not set up in this browser yet. Open <a href="/mail-gateway/" target="_blank">the Mail Gateway page</a>, save the gateway URL and secret once, then come back and try again.');
+      return;
+    }
+    if (!GW_URL_RE.test(url)) {
+      mailBanner(false, '⚠️ Nothing was sent. The Mail Gateway address saved in this browser is not a Google Apps Script link. Open <a href="/mail-gateway/" target="_blank">the Mail Gateway page</a> and save the correct address.');
       return;
     }
     mailInFlight = true; $('btnEmailGo').disabled = true;

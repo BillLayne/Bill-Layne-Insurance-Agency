@@ -149,6 +149,16 @@
   #handoff{display:none;margin-bottom:14px;border-radius:10px;padding:11px 14px;font-size:13.5px;
     background:var(--ok-bg);border:1.5px solid var(--ok-brd);color:var(--ok)}
   #handoff.show{display:block}
+  /* a setup link waiting for a yes or no, and leftovers from the email before */
+  .ask-card{display:none;margin-bottom:14px;border-radius:11px;padding:13px 15px;font-size:13.5px;line-height:1.45;
+    background:var(--warn-bg);border:1.5px solid var(--warn-brd);color:#78350f}
+  .ask-card.show{display:block}
+  .ask-card.ok{background:var(--ok-bg);border-color:var(--ok-brd);color:var(--ok)}
+  .ask-card.err{background:var(--err-bg);border-color:var(--err-brd);color:var(--err)}
+  .ask-card b{color:inherit}
+  .ask-card .ask-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .ask-card ul{margin:6px 0 0 18px;padding:0}
+  #carryNote{margin:0 0 14px}
   #handoff.err{background:var(--err-bg);border-color:var(--err-brd);color:var(--err)}
 
   /* ---------- Right Column: Sticky Preview + Pre-Flight QA ---------- */
@@ -211,6 +221,9 @@
 
   <div id="handoff" role="status"></div>
 
+  <!-- A setup link (#gw=) never changes the saved gateway by itself: it lands here and waits. -->
+  <div id="setupAsk" class="ask-card" role="alert"></div>
+
   <details class="card" id="settingsCard">
     <summary>&#9881;&#65039; Gateway connection settings <span class="note" id="setStatus"></span></summary>
     <div class="grid2">
@@ -226,7 +239,7 @@
         <button class="btn-quiet btn-mini" id="showSecret" type="button">Show</button>
         <button class="btn-primary btn-mini" id="saveSettings" type="button">Save &amp; Test</button>
         <button class="btn-quiet btn-mini" id="testConn" type="button">Test connection</button>
-        <button class="btn-ghost btn-mini" id="copySetupLink" type="button" title="Copy a #gw= setup snippet to configure other BLI tools">&#128279; Copy setup hash</button>
+        <button class="btn-ghost btn-mini" id="copySetupLink" type="button" title="Copy a setup link to connect another browser or BLI tool. Treat it like a password.">&#128279; Copy setup link</button>
       </div>
     </div>
     <div class="row">
@@ -238,6 +251,9 @@
 
     <!-- ==================== LEFT COLUMN: CONTROLS ==================== -->
     <div class="controls-col">
+
+      <!-- Shown when a recipient or attachment is left over from the email before this one. -->
+      <div id="carryNote" class="ask-card" role="alert"></div>
 
       <!-- STEP 1: EMAIL HTML -->
       <section class="card">
@@ -414,33 +430,95 @@
     return fetch(url, opts).finally(function(){ clearTimeout(t); });
   }
 
-  /* ---------- Cross-origin #gw= setup intake & export ---------- */
-  function ingestGwHash(){
-    var h = location.hash || '';
-    var m = /[#&]gw=([A-Za-z0-9_-]+)/.exec(h);
-    if (!m) return false;
+  /* ---------- Where the secret is allowed to go ----------
+     The secret is only ever posted to a Google Apps Script web app. A local
+     address is accepted only while this page itself runs on this computer
+     (testing against a mock). Everything that posts goes through isGatewayUrl(). */
+  var GW_URL_RE = /^https:\/\/script\.google\.com\/(?:a\/macros\/[A-Za-z0-9.-]+|macros)\/s\/[A-Za-z0-9_-]+\/exec$/;
+  var ON_LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+  function isGatewayUrl(u){
+    u = String(u || '').trim();
+    if (GW_URL_RE.test(u)) return true;
+    return ON_LOCAL && /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//.test(u);
+  }
+  var BAD_URL_MSG = '&#10060; The Gateway URL must be the Google Apps Script web app link (<code>https://script.google.com/&hellip;/exec</code>). Nothing was sent anywhere.';
+  function gwTail(u){ var m = /\/s\/([A-Za-z0-9_-]+)\/exec$/.exec(u || ''); return m ? 'script.google.com &hellip;' + esc(m[1].slice(-6)) : 'a local test address'; }
+
+  /* ---------- Setup links (#gw=): ask first, save nothing until the answer ----------
+     A setup link used to be saved the moment the page opened. A link carrying only
+     a different address then kept the saved secret and the page's own connection
+     check posted that secret to the new address. Now a link must carry BOTH values,
+     the address must be a Google script, and nothing is saved, checked or sent until
+     someone clicks Yes. */
+  var pendingGw = null;
+  function showSetup(kind, html){
+    var c = $('setupAsk');
+    c.className = 'ask-card show' + (kind === 'ok' ? ' ok' : kind === 'err' ? ' err' : '');
+    c.innerHTML = html;
+    c.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  function readGwHash(){
+    var m = /[#&]gw=([A-Za-z0-9_-]+)/.exec(location.hash || '');
+    if (!m) return;
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+    var d = null;
     try {
       var b64 = m[1].replace(/-/g, '+').replace(/_/g, '/');
       while (b64.length % 4) b64 += '=';
-      var d = JSON.parse(decodeURIComponent(escape(atob(b64))));
-      if (d && d.u) localStorage.setItem(LS.url, String(d.u).trim());
-      if (d && d.s) localStorage.setItem(LS.secret, String(d.s).trim());
-      history.replaceState(null, '', location.pathname + location.search);
-      return true;
-    } catch (e) { return false; }
+      d = JSON.parse(decodeURIComponent(escape(atob(b64))));
+    } catch (e) { d = null; }
+    var u = (d && typeof d.u === 'string') ? d.u.trim() : '';
+    var sec = (d && typeof d.s === 'string') ? d.s.trim() : '';
+    if (!u || !sec || !isGatewayUrl(u)) {
+      showSetup('err', '&#10060; <b>A setup link was opened, but it is not a valid BLI Mail Gateway link, so it was ignored.</b> Your saved settings were not changed and nothing was sent.');
+      return;
+    }
+    var curUrl = localStorage.getItem(LS.url) || '', curSec = localStorage.getItem(LS.secret) || '';
+    if (u === curUrl && sec === curSec) {
+      showSetup('ok', '&#9989; This browser is already connected to that gateway. Nothing changed.');
+      return;
+    }
+    pendingGw = { u: u, s: sec };
+    var replacing = curUrl && curUrl !== u;
+    showSetup('ask',
+      '<b>&#9888;&#65039; A setup link wants to connect this browser to a Mail Gateway.</b><br>' +
+      'Only say yes if <b>you made this link yourself</b> a moment ago (Settings &rarr; Copy setup link). ' +
+      'A link from an email, a text or a web page should be ignored.' +
+      '<ul><li>Gateway in the link: ' + gwTail(u) + '</li>' +
+      (replacing ? '<li><b>It would REPLACE the gateway saved here now</b> (' + gwTail(curUrl) + ').</li>'
+                 : (curUrl ? '<li>Same gateway address as now, with a different secret.</li>' : '<li>No gateway is saved in this browser yet.</li>')) +
+      '</ul><div class="ask-btns">' +
+      '<button type="button" class="btn-primary btn-mini" id="setupYes">Yes, connect this browser</button>' +
+      '<button type="button" class="btn-quiet btn-mini" id="setupNo">No, ignore the link</button></div>');
+    $('setupYes').addEventListener('click', function(){
+      if (!pendingGw) return;
+      localStorage.setItem(LS.url, pendingGw.u);
+      localStorage.setItem(LS.secret, pendingGw.s);
+      pendingGw = null;
+      $('gwUrl').value = localStorage.getItem(LS.url);
+      $('gwSecret').value = localStorage.getItem(LS.secret);
+      $('setStatus').textContent = '\u2014 saved \u2713';
+      showSetup('ok', '&#9989; Connected. Checking the gateway&hellip;');
+      pingGateway(false);
+    });
+    $('setupNo').addEventListener('click', function(){
+      pendingGw = null;
+      showSetup('ok', 'Link ignored. Your saved settings were not changed.');
+    });
   }
 
   $('copySetupLink').addEventListener('click', function(){
     var url = $('gwUrl').value.trim(), sec = $('gwSecret').value.trim();
     if (!url || !sec) {
-      showResult(false, 'Enter and save both the Gateway URL and Secret first before copying a setup hash.');
+      showResult(false, 'Enter and save both the Gateway URL and Secret first before copying a setup link.');
       return;
     }
+    if (!isGatewayUrl(url)) { showResult(false, BAD_URL_MSG); return; }
     var json = JSON.stringify({ u: url, s: sec });
     var b64 = btoa(unescape(encodeURIComponent(json))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     var full = location.origin + location.pathname + '#gw=' + b64;
     navigator.clipboard.writeText(full).then(function(){
-      showResult(true, '&#128279; Copied one-click setup link to clipboard. Open it in another browser/profile to configure instantly (treat like a password).');
+      showResult(true, '&#128279; Setup link copied. Open it in the other browser or tool and answer Yes there. <b>Treat it like a password</b>: it holds the gateway secret.');
     }, function(){
       showResult('warn', 'Clipboard blocked by browser — copy manually: <code>#gw=' + esc(b64) + '</code>');
     });
@@ -448,7 +526,6 @@
 
   /* ---------- Settings & Secret-Verified Connection Ping ---------- */
   function loadSettings(){
-    var fromGw = ingestGwHash();
     $('gwUrl').value = localStorage.getItem(LS.url) || '';
     $('gwSecret').value = localStorage.getItem(LS.secret) || '';
     var fn = localStorage.getItem(LS.fromName); if (fn !== null) $('fromNameInput').value = fn;
@@ -462,9 +539,9 @@
     } else {
       $('settingsCard').open = false;
       $('setStatus').textContent = '— saved ✓';
-      if (fromGw) showResult(true, '&#9989; Gateway URL &amp; secret imported from setup link.');
       pingGateway(true);
     }
+    readGwHash();
   }
 
   $('toggleSettingsBtn').addEventListener('click', function(){
@@ -480,6 +557,13 @@
     if (!url) {
       badge.className = 'badge err';
       badge.textContent = 'Gateway: enter URL';
+      return;
+    }
+    if (!isGatewayUrl(url)) {
+      badge.className = 'badge err';
+      badge.textContent = 'Gateway: check the URL';
+      $('settingsCard').open = true;
+      if (!silent) showResult(false, BAD_URL_MSG);
       return;
     }
     badge.className = 'badge';
@@ -527,13 +611,14 @@
 
   $('saveSettings').addEventListener('click', function(){
     var url = $('gwUrl').value.trim(), sec = $('gwSecret').value.trim();
+    if (url && !isGatewayUrl(url)) {
+      // Not saved: the secret must never be pointed at anything but the Google script.
+      showResult(false, BAD_URL_MSG + ' Copy the Web app URL from Deploy &rarr; Manage deployments. Your settings were not changed.');
+      return;
+    }
     localStorage.setItem(LS.url, url);
     localStorage.setItem(LS.secret, sec);
     $('setStatus').textContent = (url && sec) ? '— saved ✓' : '';
-    if (url && url.indexOf('/exec') === -1) {
-      showResult('warn', 'Heads up: the gateway URL usually ends in <code>/exec</code> — double-check you copied the Web app URL.');
-      return;
-    }
     if (url && sec) {
       $('settingsCard').open = false;
       pingGateway(false);
@@ -758,6 +843,68 @@
     sourceLabel = 'Edited HTML';
     refresh({ collapseCode: false });
   });
+  // A whole email pasted straight into the code box (box empty, or everything selected)
+  // is a new email too, not a small edit: run the same leftovers check.
+  $('htmlInput').addEventListener('paste', function(e){
+    var t = (e.clipboardData && e.clipboardData.getData('text')) || '';
+    var all = !this.value.trim() || (this.selectionStart === 0 && this.selectionEnd === this.value.length);
+    if (all && /<html[\s>]|<!doctype html|<table[\s>]/i.test(t)) newEmailLoaded();
+  });
+
+  /* ---------- Leftovers from the email before ----------
+     The recipient and the attachments belong to ONE email. When a different email
+     is loaded (clipboard, file, drop) whatever is still on the page belongs to the
+     one before it. If that one was already drafted or sent, the leftovers are
+     cleared (one click puts them back). If it was not, they are kept but nothing
+     can be created or sent until someone says Keep or Clear. */
+  var doneFor = null;      // set once a draft or send succeeded for the email on screen
+  var carryOpen = false;   // true while a Keep / Clear answer is still owed
+  var lastSent = null;     // signature of the last email that went out with Send Now
+  function leftovers(){
+    return { to: $('toInput').value.trim(), cc: $('ccInput').value.trim(), reply: $('replyToInput').value.trim(), files: attachments.slice() };
+  }
+  function leftoverList(l){
+    var out = [];
+    if (l.to) out.push('To: <b>' + esc(l.to) + '</b>');
+    if (l.cc) out.push('CC: <b>' + esc(l.cc) + '</b>');
+    if (l.files.length) out.push(l.files.length + ' attachment' + (l.files.length === 1 ? '' : 's') + ': <b>' + esc(l.files.map(function(a){ return a.name; }).join(', ')) + '</b>');
+    return '<ul><li>' + out.join('</li><li>') + '</li></ul>';
+  }
+  function clearLeftovers(){
+    $('toInput').value = ''; $('ccInput').value = ''; $('replyToInput').value = '';
+    attachments = []; renderAttachments(); updateDefaultsSummary();
+  }
+  function hideCarry(){ carryOpen = false; var c = $('carryNote'); c.className = 'ask-card'; c.innerHTML = ''; }
+  function newEmailLoaded(){
+    var l = leftovers();
+    var wasDone = !!doneFor;
+    doneFor = null; lastSent = null;
+    if (!l.to && !l.cc && !l.files.length) { hideCarry(); return; }
+    var c = $('carryNote');
+    if (wasDone) {
+      clearLeftovers();
+      carryOpen = false;
+      c.className = 'ask-card show ok';
+      c.innerHTML = '&#129529; <b>New email loaded.</b> The last email was already created, so its recipient and attachments were cleared:' + leftoverList(l) +
+        '<div class="ask-btns"><button type="button" class="btn-quiet btn-mini" id="carryUndo">Put them back (same customer)</button></div>';
+      $('carryUndo').addEventListener('click', function(){
+        $('toInput').value = l.to; $('ccInput').value = l.cc; $('replyToInput').value = l.reply;
+        attachments = l.files.slice(); renderAttachments(); updateDefaultsSummary(); hideCarry();
+      });
+    } else {
+      carryOpen = true;
+      c.className = 'ask-card show';
+      c.innerHTML = '&#9888;&#65039; <b>Check before you continue.</b> These were on the page before this email was loaded. Do they belong to this customer?' + leftoverList(l) +
+        '<div class="ask-btns"><button type="button" class="btn-primary btn-mini" id="carryKeep">Yes, keep them</button>' +
+        '<button type="button" class="btn-quiet btn-mini" id="carryClear">No, clear them</button></div>';
+      $('carryKeep').addEventListener('click', hideCarry);
+      $('carryClear').addEventListener('click', function(){ clearLeftovers(); hideCarry(); });
+    }
+  }
+  function emailSignature(to, subject, html){
+    var h = 0, i; for (i = 0; i < html.length; i++) h = (h * 31 + html.charCodeAt(i)) | 0;
+    return to.toLowerCase() + '|' + subject + '|' + html.length + '|' + h + '|' + attachments.map(function(a){ return a.name + ':' + a.size; }).join(',');
+  }
 
   /* ---------- Paste from Clipboard / File Load / Clear ---------- */
   $('pasteClipBtn').addEventListener('click', function(){
@@ -772,6 +919,7 @@
         showResult('warn', 'Clipboard is empty — copy your finished HTML template first, then click Paste.');
         return;
       }
+      newEmailLoaded();
       sourceLabel = 'Clipboard';
       $('htmlInput').value = txt;
       refresh({ collapseCode: true, overwriteSubject: true });
@@ -794,6 +942,7 @@
 
   function loadHtmlFile(file){
     if (!file) return;
+    newEmailLoaded();   // before reading: PDFs dropped together with this email are added after this and stay
     var reader = new FileReader();
     reader.onload = function(){
       sourceLabel = file.name;
@@ -811,6 +960,7 @@
 
   $('clearHtmlBtn').addEventListener('click', function(){
     disarmAll();
+    doneFor = null; lastSent = null;
     sourceLabel = '';
     $('htmlInput').value = '';
     refresh({ collapseCode: false });
@@ -969,6 +1119,7 @@
       $('ccInput').value = String(p.cc || '');
       updateDefaultsSummary();
       attachments = []; renderAttachments();
+      doneFor = null; lastSent = null; hideCarry();
       refresh({ collapseCode: true, overwriteSubject: false });
       showHandoff(true, '&#9989; Loaded <b>' + esc(p.name || 'email') + '</b>. Verify recipient &amp; preview, add any PDF attachment, then click <b>Create Gmail Draft</b>.');
     }).catch(function(){
@@ -1003,6 +1154,7 @@
 
   $('resetAllBtn').addEventListener('click', function(){
     disarmAll();
+    doneFor = null; lastSent = null; hideCarry();
     sourceLabel = '';
     $('htmlInput').value = '';
     $('toInput').value = '';
@@ -1031,13 +1183,13 @@
   });
 
   /* ---------- Two-Click Arming & Submit ---------- */
-  var sendArmed = false, qaOverrideArmed = false, armTimer = null;
+  var sendArmed = false, qaOverrideFor = null, armTimer = null;   // qaOverrideFor: 'draft' | 'send' while "anyway" is armed
   var SEND_LABEL = $('sendBtn').innerHTML;
   var DRAFT_LABEL = $('draftBtn').innerHTML;
 
   function disarmAll(){
     sendArmed = false;
-    qaOverrideArmed = false;
+    qaOverrideFor = null;
     clearTimeout(armTimer);
     var sb = $('sendBtn'), db = $('draftBtn');
     sb.classList.remove('armed'); sb.innerHTML = SEND_LABEL;
@@ -1063,6 +1215,18 @@
       showResult(false, '&#9888;&#65039; Enter the Gateway URL and Secret in <b>Gateway settings</b> above, then click <b>Save &amp; Test</b>.');
       return;
     }
+    if (!isGatewayUrl(url)) {
+      disarmAll();
+      $('settingsCard').open = true;
+      showResult(false, BAD_URL_MSG);
+      return;
+    }
+    if (carryOpen) {
+      disarmAll();
+      $('carryNote').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      showResult(false, '&#10060; NOT ' + (mode === 'send' ? 'SENT' : 'CREATED') + ' &mdash; first answer the yellow box at the top of this column: keep or clear the recipient and attachments left from the email before.');
+      return;
+    }
 
     var rep = cleanEmailWithReport($('htmlInput').value.trim());
     var html = rep.html;
@@ -1081,8 +1245,8 @@
 
     // Pre-Flight safety guard: if unfilled {{TOKENS}} or Cloudflare corruption exist, warn before proceeding!
     var qa = inspectEmail(html, rep.stripped);
-    if (qa.errors.length && !qaOverrideArmed && !sendArmed) {
-      qaOverrideArmed = true;
+    if (qa.errors.length && qaOverrideFor !== mode && !sendArmed) {
+      qaOverrideFor = mode;
       var targetBtn = mode === 'send' ? $('sendBtn') : $('draftBtn');
       targetBtn.classList.add('armed');
       targetBtn.textContent = '⚠️ Click again to ' + (mode === 'send' ? 'send anyway' : 'draft anyway');
@@ -1093,12 +1257,19 @@
     }
 
     // Two-click confirmation on Send Now (no native window.confirm!)
+    var subjectNow = safeSubject($('subjectInput').value);
+    var sig = emailSignature(to, subjectNow, html);
     if (mode === 'send' && !sendArmed) {
       sendArmed = true;
       var sb = $('sendBtn');
+      var nFiles = attachments.length;
+      var again = lastSent && lastSent.sig === sig;
       sb.classList.add('armed');
-      sb.textContent = '⚠️ Click again to send to ' + to;
-      showResult('warn', 'Ready — click the orange button again within 10 seconds to send immediately to <b>' + esc(to) + '</b>.');
+      sb.textContent = (again ? '⚠️ Already sent. Click again to send a SECOND copy to ' : '⚠️ Click again to send to ') + to + (nFiles ? ' (+' + nFiles + ' file' + (nFiles === 1 ? '' : 's') + ')' : '');
+      var fileNote = nFiles ? ' with <b>' + nFiles + ' attachment' + (nFiles === 1 ? '' : 's') + '</b> (' + esc(attachments.map(function(a){ return a.name; }).join(', ')) + ')' : '';
+      showResult('warn', again
+        ? '&#9888;&#65039; <b>This exact email ' + (lastSent.sure ? 'was already sent' : 'may already have gone out') + '</b> to <b>' + esc(to) + '</b>' + fileNote + '. Check Gmail Sent first. Click the orange button again within 10 seconds only if you want a second copy.'
+        : 'Ready — click the orange button again within 10 seconds to send immediately to <b>' + esc(to) + '</b>' + fileNote + '.');
       clearTimeout(armTimer);
       armTimer = setTimeout(disarmAll, 10000);
       return;
@@ -1109,7 +1280,7 @@
       secret: secret,
       mode: mode,
       to: to,
-      subject: safeSubject($('subjectInput').value),
+      subject: subjectNow,
       html: asciiHtml(html),
       cc: $('ccInput').value.trim(),
       bcc: $('bccInput').value.trim(), // '' = explicit no BCC
@@ -1139,6 +1310,8 @@
       })
       .then(function(d){
         if (!d.ok) throw new Error(d.error || 'Gateway error.');
+        doneFor = { mode: d.mode, to: to };            // the email on screen now exists in Gmail
+        if (d.mode === 'send') lastSent = { sig: sig, sure: true };
         if (d.senderEmail) localStorage.setItem(LS.senderEmail, d.senderEmail);
         var quota = (typeof d.remainingQuota === 'number') ? ' &middot; ' + d.remainingQuota + ' sends left today' : '';
         if (typeof d.remainingQuota === 'number') {
@@ -1160,8 +1333,12 @@
         }
       })
       .catch(function(e){
-        var msg = (e && e.name === 'AbortError')
-          ? 'The gateway took too long to answer (45s). Please try again.'
+        var timedOut = e && e.name === 'AbortError';
+        if (timedOut && mode === 'send') lastSent = { sig: sig, sure: false };   // it may still have gone out
+        var msg = timedOut
+          ? (mode === 'send'
+              ? 'The gateway took too long to answer (45s). The email MAY STILL HAVE BEEN SENT: check Gmail Sent before you try again.'
+              : 'The gateway took too long to answer (45s). Check Gmail Drafts before you try again.')
           : (e && e.message) || 'Unknown error.';
         showResult(false, '&#10060; ' + esc(msg));
       })
@@ -1170,8 +1347,10 @@
       });
   }
 
-  $('draftBtn').addEventListener('click', function(){ disarmAll(); submit('draft'); });
-  $('sendBtn').addEventListener('click', function(){ submit('send'); });
+  // A click on Draft cancels a pending Send (and the other way round), but it must
+  // not cancel its own "draft anyway" arm: that is what made the second click do nothing.
+  $('draftBtn').addEventListener('click', function(){ if (sendArmed || qaOverrideFor !== 'draft') disarmAll(); submit('draft'); });
+  $('sendBtn').addEventListener('click', function(){ if (qaOverrideFor === 'draft') disarmAll(); submit('send'); });
 
   loadSettings();
   refresh();

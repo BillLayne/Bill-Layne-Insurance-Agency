@@ -658,3 +658,13 @@ Bill requested: *"how can we integrate the https://esign.billlayneinsurance.com/
   - **Task Manager customer pre-fill & Finish tracking:** Forwards `bliTask` customer details (`clientName`, `phone`, `email`, `policyNumber`, `carrier`) when running inside the AI Task Manager frame, records `markDelivered('esign')` (`HOW_WORDS.esign = 'sent to BLI eSign'`), and adds the gold **Finish** button to close the project without a duplicate download.
 - **Companion receiver in `bli-esign` (`public/agent.html`):** Accepts `bli-pdf-esign-hello` / `bli-pdf-esign-import` from `www.billlayneinsurance.com` and `ai-task-manager.bill-7e3.workers.dev` (queuing if `#gate` is not yet unlocked), switches straight to **+ New signing request**, populates `docs[]` + customer/carrier fields (with filename carrier detection), and either opens `openEditor(0)` immediately or focuses customer details when `cust_sig` boxes arrived pre-placed.
 - **Verification:** `tools/pdf-studio-tests/smoke.js` **64/64** passing checks (0 console errors) plus live cross-app Playwright verification against `wrangler dev`.
+
+### Round twenty — Mail Gateway setup-link safety (2026-11-26, v2026-11-26.1)
+
+Part of the Mail Gateway safety release (see `mail-gateway/README.md`, "Safety rules built into the pages"). PDF Studio shares the saved gateway settings with the Mail Gateway pages, so it follows the same rule.
+
+- **One address rule (`GW_URL_RE`):** the gateway URL must be `https://script.google.com/macros/s/<id>/exec` (or the Workspace `/a/macros/<domain>/` form). `connectFromHash()` ignores a `#gw=` link that fails it or carries no secret.
+- **A setup link never silently replaces a saved gateway.** A fresh device (the phone, from the QR) still connects straight away. A device that already has a *different* gateway gets a toast with a **Replace** button and nothing changes unless it is tapped.
+- **Send path guard:** `#btnEmailGo` refuses to post when the saved URL is not a Google Apps Script link and says nothing was sent.
+- **Still open:** a fresh device connects without a question. Making the phone link ask once too is on the list for the next round.
+- **Verification:** `tools/pdf-studio-tests/smoke.js` **67/67** passing checks (new block 10c).
