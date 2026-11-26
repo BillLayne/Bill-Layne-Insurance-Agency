@@ -5,7 +5,10 @@
 //
 // Pages env vars (Settings > Environment variables, Production):
 //   BLI_MAIL_GATEWAY_URL     the gateway /exec URL          (required)
-//   BLI_MAIL_GATEWAY_SECRET  the gateway GATEWAY_SECRET     (required)
+//   BLI_MAIL_GATEWAY_SECRET  the gateway key                (required). Since gateway v1.4 this
+//                            should be the WEBSITE key (GATEWAY_AGENCY_SECRET), which can only
+//                            email the agency itself. Set it with tools\SET-WEBSITE-MAIL-KEY.cmd.
+//                            A new value is only seen after the next deployment.
 //   ACCIDENT_REPORT_TO       inbox, default docs@BillLayneInsurance.com
 //   TWILIO_SID, TWILIO_TOKEN, TWILIO_FROM, ACCIDENT_SMS_TO   (optional; text alert on part 1)
 const MAX_BODY = 30 * 1024 * 1024;
@@ -58,7 +61,42 @@ async function sendSms(env, p, fetcher) {
   } catch { return 'failed'; }
 }
 
-export async function handleAccidentReport({ request, env = {} }, fetcher = fetch) {
+// GET /api/accident-report?health=1 : is the mail connection alive? Sends nothing and creates
+// nothing: it asks the gateway to check the saved key (mode "ping") and reports which kind of key
+// it is. The answer is kept for two minutes so the check cannot be used to hammer the gateway.
+// Readable from the Mail Gateway page, so a broken connection is seen before a customer hits it.
+const MAIL_PAGE = 'https://mail.billlayneinsurance.com';
+const HEALTH_SECONDS = 120;
+export async function accidentHealth({ request, env = {}, waitUntil }, fetcher = fetch, cache = (typeof caches !== 'undefined' && caches.default) || null) {
+  const key = new Request(new URL(request.url).origin + '/api/accident-report?health=1');   // one cache entry, whatever else is in the query
+  const headers = { 'Cache-Control': 'public, max-age=' + HEALTH_SECONDS, 'X-Robots-Tag': 'noindex', 'Access-Control-Allow-Origin': MAIL_PAGE, 'Vary': 'Origin' };
+  try { const hit = cache && await cache.match(key); if (hit) return hit; } catch { /* no cache here: answer live */ }
+  const to = String(env.ACCIDENT_REPORT_TO || 'docs@BillLayneInsurance.com').trim();
+  const out = { ok: true, connected: false, ready: false, scope: null, version: null };
+  if (env.BLI_MAIL_GATEWAY_URL && env.BLI_MAIL_GATEWAY_SECRET) {
+    try {
+      const upstream = await fetcher(env.BLI_MAIL_GATEWAY_URL, {
+        method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ secret: env.BLI_MAIL_GATEWAY_SECRET, mode: 'ping' }),
+        redirect: 'follow', signal: AbortSignal.timeout(20000)
+      });
+      const r = await upstream.json();
+      if (upstream.ok && r?.ok === true && r.mode === 'ping') {
+        out.connected = true;
+        out.scope = ['full', 'draft', 'agency'].includes(r.scope) ? r.scope : 'full';   // a gateway before v1.4 has one key: full
+        out.version = typeof r.version === 'string' ? r.version.slice(0, 10) : null;
+        // a draft-only key cannot send at all; the website key can only reach the agency's own inbox
+        out.ready = out.scope === 'full' || (out.scope === 'agency' && /^[^\s@<>]+@billlayneinsurance\.com$/i.test(to));
+      }
+    } catch { /* unreachable or not JSON: reported as not connected */ }
+  }
+  const res = Response.json(out, { status: 200, headers });
+  try { if (cache) { const put = cache.put(key, res.clone()); if (waitUntil) waitUntil(put); else await put; } } catch { /* caching is best effort */ }
+  return res;
+}
+
+export async function handleAccidentReport({ request, env = {}, waitUntil }, fetcher = fetch) {
+  if (request.method === 'GET' && new URL(request.url).searchParams.has('health')) return accidentHealth({ request, env, waitUntil }, fetcher);
   if (request.method !== 'POST') return reply({ ok: false }, 405);
   if (request.headers.get('origin') !== new URL(request.url).origin) return reply({ ok: false }, 403);
   if (!request.headers.get('content-type')?.startsWith('application/json')) return reply({ ok: false }, 415);

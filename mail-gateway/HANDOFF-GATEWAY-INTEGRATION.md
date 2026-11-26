@@ -138,7 +138,7 @@ const safeSubject = subject.replace(/[\u{10000}-\u{10FFFF}]/gu, '').replace(/ {2
 (Reference implementation: `lib/mailGateway.ts` in the Quote Template Studio repo. A future gateway-side fix would be switching `Code.gs` to the Advanced Gmail Service with raw MIME — until then every client must escape.)
 
 ### 3.6 Settings live in localStorage, shared per-origin
-Keys (exact): `bliMailGateway.url` and `bliMailGateway.secret`. Every BLI page on `www.billlayneinsurance.com` shares them automatically — configure once on `/mail-gateway/`, and Studio/Receipt/any new page just works. A page on a *different origin* (localhost port, workers.dev, pages.dev) has its own localStorage and needs a one-time entry there. Never hardcode either value in a page, a repo, or an email.
+Keys (exact): `bliMailGateway.url` and `bliMailGateway.secret`. Storage is per origin. Since 2026-11-26 the mail pages live at `https://mail.billlayneinsurance.com/` and share their storage only with each other; that is the one place the **full key** belongs. Every other tool, on whatever origin it runs (PDF Studio on `www`, workers.dev, pages.dev, a custom subdomain, localhost), has its own storage, needs a one-time entry there, and gets the **draft-only key** (`GATEWAY_DRAFT_SECRET`): it can ping and create drafts but the gateway refuses `mode:'send'`. A tool that never sends must never hold the full key. Never hardcode either value in a page, a repo, or an email.
 
 ### 3.7 Only ever post the secret to the Google script (2026-11-26)
 Before a page saves, tests or posts to the gateway URL it must check that the URL really is the Apps Script web app. A saved URL can be wrong (typo, tampering, a bad setup link), and whatever it points at receives the secret and the whole email.
@@ -271,7 +271,9 @@ Pre-fill via URL fragment (never query string — fragments don't hit servers/lo
 | Opaque/failed response, `res.json()` throws | Missing `redirect:'follow'`, or gateway access set to "Anyone with Google account" | Follow redirects; redeploy with access **Anyone** |
 | "Cancelled — nothing was sent" / clicks do nothing, user never saw a popup | Chrome auto-blocking `window.confirm()` | Two-click in-button confirm (§3.3) |
 | Click does nothing at all, no message | Button was `disabled` by validation | Keep enabled; explain on click (§3.4) |
-| `{ ok:false, error:'Unauthorized…' }` | Secret mismatch / rotated | Re-enter secret in localStorage (settings card on `/mail-gateway/`) |
+| `{ ok:false, error:'Unauthorized…' }` | Secret mismatch / rotated | Give the tool its new key. Bill copies the draft-only key from `https://mail.billlayneinsurance.com/` (Settings → Change the keys → Copy the draft-only key) |
+| `{ ok:false, error:'This key can only create drafts…' }` | The tool holds the draft-only key and tried `mode:'send'` | Create a draft instead. Sending is done from the Mail Gateway page, which holds the full key |
+| `{ ok:false, error:'This key can only email the agency itself…' }` | The website key was used for an outside recipient | That key is for the website's own forms only |
 | Email arrives with broken `[email protected]` links | Cloudflare obfuscation baked into stored template | `integrity()` grep for `cdn-cgi` etc.; rebuild template from clean source |
 | Mobile rendering broken only when pasted into Gmail compose | Paste strips `<head>` | Don't paste — send through the gateway |
 | "[Message clipped]" in Gmail | HTML > 102,400 bytes | Trim; check `new Blob([html]).size` |
@@ -285,6 +287,7 @@ Pre-fill via URL fragment (never query string — fragments don't hit servers/lo
 - The /exec URL alone is not enough to send — the secret is required — but treat the pair like a credential. Rotation = edit the `GATEWAY_SECRET` script property (no redeploy needed) + update localStorage on Bill's browsers.
 - The secret never appears in: repo files, page source, emails, URLs. localStorage only.
 - The secret is posted only to `https://script.google.com/.../exec` (§3.7). A `#gw=` setup link is the one place the secret rides in a URL fragment: make it with **Copy setup link**, open it yourself, and never accept one that arrived by email, text or a web page. The page asks before saving for exactly that reason.
-- Known and still open (2026-11-26 audit): the settings live in localStorage on the public website's origin, so any script that runs on any `www` page could read them. The planned fix is moving the mail tools to their own address with a strict content policy, then rotating the secret.
+- Fixed 2026-11-26: the mail pages moved to `https://mail.billlayneinsurance.com/` (own origin, `script-src 'self'`, no framing), and the gateway has three keys (v1.4). The full key belongs only there. See `README.md`, "Where it lives" and "Three keys".
+- A server-side consumer (the After an Accident report, `functions/api/accident-report.js`) holds the **website key**, which can only email addresses at `billlayneinsurance.com`. `GET /api/accident-report?health=1` says whether that key still works, without sending anything.
 - Quota (≈1,500/day) is the blast-radius cap if the secret ever leaks; rotate immediately if suspected.
 - Every customer send BCCs `Save@BillLayneInsurance.com` — this is the agency's E&O paper trail. Don't build a client that defeats it.

@@ -1,0 +1,19 @@
+# mail.billlayneinsurance.com - the BLI Mail Gateway pages on their own address.
+# Deploy with tools\deploy-mail-site.bat (after tools\test-mail-gateway.bat passes).
+# No secrets, no storage: this Worker only serves the pages in /mail-gateway with strict headers.
+name = "bli-mail"
+main = "worker.js"
+compatibility_date = "2026-08-01"
+workers_dev = false
+preview_urls = false
+routes = [
+  { pattern = "mail.billlayneinsurance.com", custom_domain = true }
+]
+
+[assets]
+directory = "../../mail-gateway"
+binding = "ASSETS"
+# The Worker decides what is served (site-rules.mjs), so every response gets the security headers.
+run_worker_first = true
+html_handling = "none"
+not_found_handling = "none"

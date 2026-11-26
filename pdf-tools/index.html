@@ -4872,7 +4872,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#EEF2F6}
 <script>
 (function () {
   'use strict';
-  const APP_VERSION = '2026-11-26.1';   // bump on every release — shown in the footer, the Help dialog and the console
+  const APP_VERSION = '2026-11-26.2';   // bump on every release — shown in the footer, the Help dialog and the console
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -8950,7 +8950,10 @@ body{margin:0;padding:0;width:100%!important;background-color:#EEF2F6}
   // The gateway secret is only ever posted to a Google Apps Script web app address.
   const GW_URL_RE = /^https:\/\/script\.google\.com\/(?:a\/macros\/[A-Za-z0-9.-]+|macros)\/s\/[A-Za-z0-9_-]+\/exec$/;
 
-  // phone setup: arriving with #gw=<base64url({u,s})> (from the QR) connects this device
+  // Setup link: arriving with #gw=<base64url({u,s})> (the phone QR, or "Connect PDF Studio" on the
+  // Mail Gateway page). PDF Studio keeps its OWN saved connection: since 2026-11-26 the mail pages
+  // live at https://mail.billlayneinsurance.com/ and this device holds a draft-only key, which can create
+  // drafts but can never send. A link is never saved without a yes.
   function connectFromHash() {
     const m = location.hash.match(/#gw=([A-Za-z0-9\-_]+)/);
     if (!m) return;
@@ -8961,20 +8964,25 @@ body{margin:0;padding:0;width:100%!important;background-color:#EEF2F6}
         const connect = () => {
           localStorage.setItem(GW_URL_KEY, cfg.u);
           localStorage.setItem(GW_SECRET_KEY, String(cfg.s));
+          // this key came from the new setup, so the old-address bridge must never offer it to the mail page
+          localStorage.setItem('bliMailGateway.movedAt', new Date().toISOString());
           if (cfg.f) localStorage.setItem('bliFormsCode', String(cfg.f));
           updateConnectionStatus();
-          setTimeout(() => toast('✅ Gmail drafts' + (cfg.f ? ' and the Forms Library' : '') + ' are now connected on this device.'), 400);
+          toast('✅ Gmail drafts' + (cfg.f ? ' and the Forms Library' : '') + ' are now connected on this device.');
         };
-        const saved = localStorage.getItem(GW_URL_KEY) || '';
-        // A fresh device (the phone, from the QR) connects straight away, as before.
-        // A device that already has a DIFFERENT gateway is never switched by a link
-        // alone: the same settings feed the Mail Gateway pages, so a stray link could
-        // send later drafts somewhere else. It takes a deliberate tap on Replace.
-        if (saved && saved !== cfg.u) {
-          setTimeout(() => toastAction('A setup link wants to REPLACE the Mail Gateway saved on this device. Ignore it unless you just made that link yourself.', 'Replace', connect), 400);
-        } else {
-          connect();
-        }
+        const saved = localStorage.getItem(GW_URL_KEY) || '', savedSecret = localStorage.getItem(GW_SECRET_KEY) || '';
+        const same = saved === cfg.u && savedSecret === String(cfg.s) && (!cfg.f || localStorage.getItem('bliFormsCode') === String(cfg.f));
+        // Nothing is saved until someone says Connect: a link that is not Bill's own could point
+        // this device at somebody else's script, and every later draft and PDF would go there.
+        if (!same) setTimeout(() => {
+          showDialog('Connect Gmail drafts?',
+            '<p>A setup link wants to connect this device to the BLI Mail Gateway, so PDF Studio can create Gmail drafts' + (cfg.f ? ' and open the Forms Library' : '') + '.</p>' +
+            '<p><strong>Only connect if you just made this link yourself</strong>: the Connect PDF Studio button on the Mail Gateway page, or the phone QR code in PDF Studio. Ignore a link that came in an email, a text or a web page.</p>' +
+            (saved && saved !== cfg.u ? '<p><strong>It would REPLACE the gateway saved on this device now.</strong></p>' : '') +
+            '<div class="studio-row"><button id="gwConnectYes" type="button">Connect</button><button id="gwConnectNo" type="button">Ignore the link</button></div>');
+          $('gwConnectYes').onclick = () => { closeStudioDialog(); connect(); };
+          $('gwConnectNo').onclick = () => closeStudioDialog();
+        }, 400);
       }
     } catch (_) {}
     window.history.replaceState(null, '', location.pathname + location.search);   // plain "history" in here is the undo stack
@@ -8985,7 +8993,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#EEF2F6}
   $('btnPhoneSetup').addEventListener('click', () => {
     const url = localStorage.getItem(GW_URL_KEY), secret = localStorage.getItem(GW_SECRET_KEY);
     if (!url || !secret) {
-      mailBanner(false, '⚠️ Set up the Mail Gateway in THIS browser first (open <a href="/mail-gateway/" target="_blank">the Mail Gateway page</a>), then use this button to copy the connection to your phone.');
+      mailBanner(false, '⚠️ Connect Gmail drafts in THIS browser first. On <a href="https://mail.billlayneinsurance.com/" target="_blank" rel="noopener">the Mail Gateway page</a> open Settings, then Change the keys, and click <strong>Connect PDF Studio</strong>. Then use this button to copy the connection to your phone.');
       return;
     }
     const payload = { u: url, s: secret };
@@ -9097,7 +9105,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#EEF2F6}
     $('mailShrinkNote').textContent = $('chkShrink').checked ? ', shrunk for email' : '';
     $('emailModal').classList.add('open');
     if (!localStorage.getItem(GW_URL_KEY) || !localStorage.getItem(GW_SECRET_KEY)) {
-      mailBanner(false, 'Gmail drafts need one-time setup on this device. You can still close this window and use <strong>Save PDF</strong>, or open <a href="/mail-gateway/" target="_blank">Mail Gateway setup</a>.');
+      mailBanner(false, 'Gmail drafts need one-time setup on this device. You can still close this window and use <strong>Save PDF</strong>. To connect: On <a href="https://mail.billlayneinsurance.com/" target="_blank" rel="noopener">the Mail Gateway page</a> open Settings, then Change the keys, and click <strong>Connect PDF Studio</strong>.');
     }
   }
   function closeEmailModal() { $('emailModal').classList.remove('open'); }
@@ -9112,11 +9120,11 @@ body{margin:0;padding:0;width:100%!important;background-color:#EEF2F6}
     let submitted = false;
     const url = localStorage.getItem(GW_URL_KEY), secret = localStorage.getItem(GW_SECRET_KEY);
     if (!url || !secret) {
-      mailBanner(false, '⚠️ The Mail Gateway is not set up in this browser yet. Open <a href="/mail-gateway/" target="_blank">the Mail Gateway page</a>, save the gateway URL and secret once, then come back and try again.');
+      mailBanner(false, '⚠️ Gmail drafts are not connected in this browser yet. On <a href="https://mail.billlayneinsurance.com/" target="_blank" rel="noopener">the Mail Gateway page</a> open Settings, then Change the keys, and click <strong>Connect PDF Studio</strong>. Then come back and try again.');
       return;
     }
     if (!GW_URL_RE.test(url)) {
-      mailBanner(false, '⚠️ Nothing was sent. The Mail Gateway address saved in this browser is not a Google Apps Script link. Open <a href="/mail-gateway/" target="_blank">the Mail Gateway page</a> and save the correct address.');
+      mailBanner(false, '⚠️ Nothing was sent. The Mail Gateway address saved in this browser is not a Google Apps Script link. On <a href="https://mail.billlayneinsurance.com/" target="_blank" rel="noopener">the Mail Gateway page</a> open Settings, then Change the keys, and click <strong>Connect PDF Studio</strong>.');
       return;
     }
     mailInFlight = true; $('btnEmailGo').disabled = true;
@@ -9183,7 +9191,8 @@ body{margin:0;padding:0;width:100%!important;background-color:#EEF2F6}
           mailBanner(false, '⚠️ A draft was created but the PDF was <strong>not attached</strong> — the Mail Gateway needs its one-time update to version 1.1. Ask Claude for the update steps, then try again.');
         }
       } else {
-        mailBanner(false, '⚠️ NOT CREATED — ' + ((out && out.error) || 'the gateway did not answer as expected.'));
+        mailBanner(false, '⚠️ NOT CREATED — ' + ((out && out.error) || 'the gateway did not answer as expected.') +
+          (out && /Unauthorized/i.test(out.error || '') ? ' The key saved in this browser no longer works (the keys were changed). On <a href="https://mail.billlayneinsurance.com/" target="_blank" rel="noopener">the Mail Gateway page</a> open Settings, then Change the keys, and click <strong>Connect PDF Studio</strong>.' : ''));
       }
     } catch (err) {
       console.error(err);
@@ -10286,7 +10295,7 @@ body{margin:0;padding:0;width:100%!important;background-color:#EEF2F6}
   const retry=document.createElement('div');retry.id='mailRetryCheck';retry.hidden=!mailUncertain;retry.innerHTML='<p>A previous draft request has an uncertain outcome. Check Gmail Drafts before retrying.</p><a href="https://mail.google.com/mail/u/0/#drafts" target="_blank" rel="noopener">Open Gmail Drafts</a> <button id="mailRetryAllow">I checked Gmail — allow another attempt</button>';$('btnEmailGo').parentElement.before(retry);
   $('mailRetryAllow').onclick=()=>{mailUncertain=false;localStorage.removeItem('bliPdfMailUncertain');retry.hidden=true;$('btnEmailGo').disabled=false;};$('btnEmailGo').disabled=mailUncertain;
   $('btnConnections').onclick=()=>{
-    showDialog('Connections',`<p>Editing and project storage stay on this device. Gmail draft creation uploads the finished PDF to your mail gateway. Text via SMS hands it to SMS Command Center; you choose the customer there before anything uploads.</p><section class="studio-card"><h3>Forms Library</h3><p>Shared blank agency forms.</p><div class="studio-row"><button id="setupForms">Open setup</button><button id="testForms">Test connection</button></div><p id="formsTestStatus" role="status"></p></section><section class="studio-card"><h3>Gmail</h3><p>Creates a draft for your review, with the agency record BCC shown in the email window.</p><a href="/mail-gateway/" target="_blank" rel="noopener">Open Mail Gateway setup</a><div class="studio-row"><button id="testMail">Test gateway</button></div><p id="mailTestStatus" role="status"></p></section><section class="studio-card"><h3>SMS Command Center</h3><p>Sign in there using the existing staff access. No SMS credentials are stored in PDF Studio.</p></section><section class="studio-card"><h3>BLI eSign</h3><p>Transfers your finished PDF directly in browser memory to <a href="https://esign.billlayneinsurance.com/agent" target="_blank" rel="noopener">BLI eSign Console</a> so you can place signature boxes and send a signing link.</p></section>`);
+    showDialog('Connections',`<p>Editing and project storage stay on this device. Gmail draft creation uploads the finished PDF to your mail gateway. Text via SMS hands it to SMS Command Center; you choose the customer there before anything uploads.</p><section class="studio-card"><h3>Forms Library</h3><p>Shared blank agency forms.</p><div class="studio-row"><button id="setupForms">Open setup</button><button id="testForms">Test connection</button></div><p id="formsTestStatus" role="status"></p></section><section class="studio-card"><h3>Gmail</h3><p>Creates a draft for your review, with the agency record BCC shown in the email window.</p><a href="https://mail.billlayneinsurance.com/" target="_blank" rel="noopener">Open the Mail Gateway</a> <span>(Settings, Change the keys, Connect PDF Studio)</span><div class="studio-row"><button id="testMail">Test gateway</button></div><p id="mailTestStatus" role="status"></p></section><section class="studio-card"><h3>SMS Command Center</h3><p>Sign in there using the existing staff access. No SMS credentials are stored in PDF Studio.</p></section><section class="studio-card"><h3>BLI eSign</h3><p>Transfers your finished PDF directly in browser memory to <a href="https://esign.billlayneinsurance.com/agent" target="_blank" rel="noopener">BLI eSign Console</a> so you can place signature boxes and send a signing link.</p></section>`);
     $('setupForms').onclick=()=>{closeStudioDialog();openFormsModal();};
     $('testForms').onclick=async()=>{const el=$('formsTestStatus');if(!formsCode()){el.textContent='Set up the access code first.';return;}el.textContent='Checking…';try{const r=await formsApi('/list');const data=await r.json();if(!r.ok||!Array.isArray(data.forms))throw Error('Access was not accepted.');el.textContent='Verified: '+data.forms.length+' forms available.';}catch(e){el.textContent='Connection failed. Check the access code and network.';}};
     $('testMail').onclick=async()=>{const el=$('mailTestStatus'),url=localStorage.getItem(GW_URL_KEY),secret=localStorage.getItem(GW_SECRET_KEY);if(!url||!secret){el.textContent='Complete Mail Gateway setup on this device first.';return;}el.textContent='Checking…';try{const r=await fetch(url,{signal:AbortSignal.timeout(15000)}),data=await r.json();if(!data.ok||data.service!=='BLI Mail Gateway')throw Error();el.textContent='Gateway reachable (version '+data.version+'). Saved credentials are configured; authentication and attachment delivery are checked when a draft is created. No draft was created by this test.';}catch(e){el.textContent='Could not reach the gateway. Check setup and network; no draft was created.';}};

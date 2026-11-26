@@ -668,3 +668,14 @@ Part of the Mail Gateway safety release (see `mail-gateway/README.md`, "Safety r
 - **Send path guard:** `#btnEmailGo` refuses to post when the saved URL is not a Google Apps Script link and says nothing was sent.
 - **Still open:** a fresh device connects without a question. Making the phone link ask once too is on the list for the next round.
 - **Verification:** `tools/pdf-studio-tests/smoke.js` **67/67** passing checks (new block 10c).
+
+### Round twenty-one — its own draft-only key, and every setup link asks (2026-11-26, v2026-11-26.2)
+
+The Mail Gateway pages moved to `https://mail.billlayneinsurance.com/` (see `mail-gateway/README.md`). PDF Studio stays on `www`, so it no longer shares saved settings with them.
+
+- **PDF Studio holds the draft-only key.** It only ever posts `mode: 'draft'`, and the gateway (v1.4) refuses a send with that key. If a script on the public site ever read it, the worst it could do is create drafts.
+- **How it gets connected:** on the Mail Gateway page, Settings → Change the keys → **Connect PDF Studio** opens `…/pdf-tools/#gw=…` with the draft-only key. A phone is still set up with the QR code inside PDF Studio, which now carries the draft-only key.
+- **Every setup link asks** (`connectFromHash()` → a `showDialog` with `#gwConnectYes` / `#gwConnectNo`), a fresh device included. Nothing is saved before Connect. The exact link that is already saved asks nothing.
+- `connect()` sets `bliMailGateway.movedAt`, so the old-address bridge (`mail-gateway/moved.js`) never offers PDF Studio's key to the mail page.
+- All "open the Mail Gateway page" hints point to the new address and say where the button is. An "Unauthorized" answer explains that the keys were changed.
+- **Verification:** `tools/pdf-studio-tests/smoke.js` **73/73** passing checks.

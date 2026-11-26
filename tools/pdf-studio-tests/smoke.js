@@ -734,10 +734,14 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
       const errs = [];
       p2.on('pageerror', e => errs.push(e.message));
       await p2.goto(URL + '?v=' + Date.now() + '#gw=' + cfg, { waitUntil: 'load' });
-      await p2.waitForTimeout(1500);
-      const g = await p2.evaluate(() => ({ app: typeof window.PDFStudio === 'object', hashCleared: !location.hash, connected: !!localStorage.getItem('bliMailGateway.url'), chip: (document.getElementById('mailConnection') || {}).textContent }));
+      await p2.waitForSelector('#gwConnectYes');
+      const before = await p2.evaluate(() => ({ app: typeof window.PDFStudio === 'object', hashCleared: !location.hash, saved: localStorage.getItem('bliMailGateway.url'), text: document.getElementById('studioDialogBody').textContent }));
+      ok('phone-setup link ASKS before it saves anything (the link is already gone from the address bar)', before.app && before.hashCleared && !before.saved && /Only connect if you just made this link yourself/.test(before.text) && !/REPLACE/.test(before.text), before);
+      await p2.click('#gwConnectYes');
+      await p2.waitForTimeout(600);
+      const g = await p2.evaluate(() => ({ connected: localStorage.getItem('bliMailGateway.url'), moved: !!localStorage.getItem('bliMailGateway.movedAt'), open: document.getElementById('studioDialog').open, chip: (document.getElementById('mailConnection') || {}).textContent }));
       await ctx2.close();
-      ok('phone-setup link connects Gmail, clears the link from the address bar and the app still starts', g.app && g.hashCleared && g.connected && /Gmail configured/.test(g.chip || '') && !errs.length, Object.assign({ errs }, g));
+      ok('Connect saves it: Gmail configured, the dialog closes, and the app still runs', /SMOKE-TEST/.test(g.connected || '') && g.moved && !g.open && /Gmail configured/.test(g.chip || '') && !errs.length, Object.assign({ errs }, g));
     }
 
     // 10c. a setup link must never silently REPLACE a gateway that is already saved (2026-11-26):
@@ -751,23 +755,43 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
       p3.on('pageerror', e => errs.push(e.message));
       await p3.goto(URL + '?v=' + Date.now(), { waitUntil: 'load' });
       await p3.evaluate(([u]) => { localStorage.setItem('bliMailGateway.url', u); localStorage.setItem('bliMailGateway.secret', 'keep-me'); }, [SAVED]);
-      const saved = () => p3.evaluate(() => ({ url: localStorage.getItem('bliMailGateway.url'), secret: localStorage.getItem('bliMailGateway.secret'), toast: document.getElementById('toast').textContent, shown: document.getElementById('toast').classList.contains('show') }));
+      const saved = () => p3.evaluate(() => ({ url: localStorage.getItem('bliMailGateway.url'), secret: localStorage.getItem('bliMailGateway.secret'), open: document.getElementById('studioDialog').open, text: document.getElementById('studioDialog').open ? document.getElementById('studioDialogBody').textContent : '' }));
 
       await p3.goto(URL + '?v=' + Date.now() + '#gw=' + enc({ u: NEW, s: 'smoke' }), { waitUntil: 'load' });
-      await p3.waitForTimeout(1200);
+      await p3.waitForSelector('#gwConnectYes');
       let g = await saved();
-      ok('a setup link does not replace a gateway that is already saved; it asks with a Replace button', g.url === SAVED && g.secret === 'keep-me' && g.shown && /REPLACE/.test(g.toast) && /Replace$/.test(g.toast), g);
-      await p3.click('#toast button');
-      await p3.waitForTimeout(700);
+      ok('a setup link does not replace a gateway that is already saved; it asks and says REPLACE', g.url === SAVED && g.secret === 'keep-me' && g.open && /REPLACE/.test(g.text), g);
+      await p3.click('#gwConnectNo');
+      await p3.waitForTimeout(400);
       g = await saved();
-      ok('...and switches only after Replace is tapped', g.url === NEW && g.secret === 'smoke', g);
+      ok('...Ignore the link keeps the saved gateway', g.url === SAVED && g.secret === 'keep-me' && !g.open, g);
+      await p3.goto(URL + '?v=' + Date.now() + '#gw=' + enc({ u: NEW, s: 'smoke' }), { waitUntil: 'load' });
+      await p3.waitForSelector('#gwConnectYes');
+      await p3.click('#gwConnectYes');
+      await p3.waitForTimeout(600);
+      g = await saved();
+      ok('...and switches only after Connect is tapped', g.url === NEW && g.secret === 'smoke', g);
+      await p3.goto(URL + '?v=' + Date.now() + '#gw=' + enc({ u: NEW, s: 'smoke' }), { waitUntil: 'load' });
+      await p3.waitForTimeout(1200);
+      g = await saved();
+      ok('...the very same link again asks nothing (already connected)', g.url === NEW && !g.open, g);
+      await p3.goto(URL + '?v=' + Date.now() + '#gw=' + enc({ u: NEW, s: 'a-new-draft-key' }), { waitUntil: 'load' });
+      await p3.waitForSelector('#gwConnectYes');
+      g = await saved();
+      ok('...the same gateway with a NEW key (after a key change) asks too, without the word REPLACE', g.secret === 'smoke' && g.open && !/REPLACE/.test(g.text), g);
+      await p3.click('#gwConnectYes');
+      await p3.waitForTimeout(600);
+      g = await saved();
+      ok('...and Connect swaps in the new key', g.url === NEW && g.secret === 'a-new-draft-key', g);
 
       for (const bad of [{ u: 'https://script.google.com/macros/evil' }, { u: 'https://script.google.com/macros/s/OTHER/exec' }, { u: 'https://script.google.com.evil.example/macros/s/x/exec', s: 'x' }, { u: 'https://script.google.com/macros/s/x/exec?to=evil', s: 'x' }]) {
         await p3.goto(URL + '?v=' + Date.now() + '#gw=' + enc(bad), { waitUntil: 'load' });
         await p3.waitForTimeout(900);
       }
       g = await saved();
-      ok('links with no secret or an address that is not a Google web app are ignored', g.url === NEW && g.secret === 'smoke' && !/REPLACE/.test(g.toast) && !errs.length, Object.assign({ errs }, g));
+      ok('links with no secret or an address that is not a Google web app are ignored', g.url === NEW && g.secret === 'a-new-draft-key' && !g.open && !errs.length, Object.assign({ errs }, g));
+      const links = await p3.evaluate(() => ({ old: document.documentElement.innerHTML.split('"/mail-gateway/"').length - 1, neu: document.documentElement.innerHTML.split('https://mail.billlayneinsurance.com/').length - 1 }));
+      ok('PDF Studio points to the Mail Gateway at its new address, not the old one', links.old === 0 && links.neu >= 4, links);
       await ctx3.close();
     }
 

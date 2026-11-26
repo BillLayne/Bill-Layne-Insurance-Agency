@@ -94,7 +94,7 @@ async function draftWithAttachment(bytes, filename, to, subject, noteText) {
   // 2) settings live per-origin in localStorage — never hardcode either value
   const url = localStorage.getItem('bliMailGateway.url');
   const secret = localStorage.getItem('bliMailGateway.secret');
-  if (!url || !secret) throw new Error('Gateway not configured in this browser — set it up on /mail-gateway/ once.');
+  if (!url || !secret) throw new Error('Gateway not configured in this browser — ask Bill for the draft-only key (https://mail.billlayneinsurance.com/, Settings, Change the keys).');
 
   // 3) size guard — Gmail attachment ceiling is 25 MB; stay under 20
   if (bytes.length > 20 * 1048576) throw new Error('File too large to email (' + Math.round(bytes.length / 1048576) + ' MB).');
