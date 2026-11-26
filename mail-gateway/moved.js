@@ -12,6 +12,7 @@
  *     hand-off links are passed on to the new address with their #... part intact.
  *     If this browser still holds a saved connection, the person is offered ONE
  *     click to carry it across (the new page then asks before it saves anything).
+ *     The offer is made once; the new page can ask for it again with ?carry=1.
  *
  * The key is never posted anywhere from here. It only rides in the link fragment,
  * which browsers do not send to any server, and the new page scrubs it on arrival.
@@ -29,12 +30,16 @@
   var page = location.pathname.replace(/^.*\/mail-gateway\/?/, '').replace(/\.html$/, '').replace(/\/+$/, '');
   var path = page === 'studio' ? '/studio.html' : page === 'receipt' ? '/receipt.html' : '/';
   var hash = location.hash || '';
-  var plainTarget = NEW_ORIGIN + path + location.search + hash;
+  // ?carry=1 comes from the new page ("Bring my connection from the old address"): offer the
+  // connection again even though it was offered before. It covers a mistaken "No" and a lost link.
+  var again = /[?&]carry=1(?:&|$)/.test(location.search);
+  var search = location.search.replace(/[?&]carry=1(?=&|$)/, '').replace(/^&/, '?');
+  var plainTarget = NEW_ORIGIN + path + search + hash;
 
   var GW_URL_RE = /^https:\/\/script\.google\.com\/(?:a\/macros\/[A-Za-z0-9.-]+|macros)\/s\/[A-Za-z0-9_-]+\/exec$/;
   var u = ls('bliMailGateway.url').trim(), s = ls('bliMailGateway.secret').trim();
   var carried = ls('bliMailGateway.movedAt');
-  if (!u || !s || carried || !GW_URL_RE.test(u)) {
+  if (!u || !s || (carried && !again) || !GW_URL_RE.test(u)) {
     location.replace(plainTarget);                    // nothing to carry: just go
     return;
   }
@@ -45,7 +50,7 @@
     var enc = btoa(unescape(encodeURIComponent(json))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     // The connection is saved by the Universal Sender page. A hand-off email (#z=) rides along.
     var keep = (path === '/' && hash.indexOf('#z=') === 0) ? hash + '&gw=' + enc : '#gw=' + enc;
-    return NEW_ORIGIN + '/' + location.search + keep;
+    return NEW_ORIGIN + '/' + search + keep;
   }
   function show() {
     var b = document.body;
