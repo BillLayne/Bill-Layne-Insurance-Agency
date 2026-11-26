@@ -259,6 +259,7 @@
 
   $('saveSettingsBtn').addEventListener('click', function () {
     var u = $('gwUrl').value.trim(), s = $('gwSecret').value.trim();
+    if (u && !isGatewayUrl(u)) { showResult(false, BAD_URL_MSG + ' Your settings were not changed.'); return; }
     localStorage.setItem(LS.url, u);
     localStorage.setItem(LS.secret, s);
     $('setStatus').textContent = (u && s) ? '— saved ✓' : '';
@@ -266,10 +267,23 @@
     else showResult('warn', 'Enter both the Gateway URL and Secret above.');
   });
 
+  // The secret is only ever posted to a Google Apps Script web app (a local address
+  // only while this page itself runs on this computer, for tests against a mock).
+  var GW_URL_RE = /^https:\/\/script\.google\.com\/(?:a\/macros\/[A-Za-z0-9.-]+|macros)\/s\/[A-Za-z0-9_-]+\/exec$/;
+  var ON_LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+  function isGatewayUrl(u) { u = String(u || '').trim(); return GW_URL_RE.test(u) || (ON_LOCAL && /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//.test(u)); }
+  var BAD_URL_MSG = '&#10060; The Gateway URL must be the Google Apps Script web app link (<code>https://script.google.com/&hellip;/exec</code>). Nothing was sent anywhere.';
+
   function pingGateway(silent) {
     var u = $('gwUrl').value.trim(), s = $('gwSecret').value.trim();
     var badge = $('connBadge');
     if (!u) { badge.className = 'badge err'; badge.textContent = 'Gateway: setup needed'; return; }
+    if (!isGatewayUrl(u)) {
+      badge.className = 'badge err'; badge.textContent = 'Gateway: check the URL';
+      $('settingsCard').open = true;
+      if (!silent) showResult(false, BAD_URL_MSG);
+      return;
+    }
     badge.className = 'badge'; badge.textContent = 'Gateway: checking…';
     var ctrl = new AbortController();
     var t = setTimeout(function () { ctrl.abort(); }, 20000);
@@ -482,6 +496,7 @@
       showResult(false, '&#9888;&#65039; Gateway not configured — enter the Gateway URL &amp; Secret in Settings at the top of the page.');
       return;
     }
+    if (!isGatewayUrl(url)) { $('settingsCard').open = true; showResult(false, BAD_URL_MSG); return; }
 
     var to = $('to').value.trim();
     if (mode === 'send') {

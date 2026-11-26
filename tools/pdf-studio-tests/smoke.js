@@ -740,6 +740,37 @@ const evalIn = (page, body) => page.evaluate(new Function('return (async () => {
       ok('phone-setup link connects Gmail, clears the link from the address bar and the app still starts', g.app && g.hashCleared && g.connected && /Gmail configured/.test(g.chip || '') && !errs.length, Object.assign({ errs }, g));
     }
 
+    // 10c. a setup link must never silently REPLACE a gateway that is already saved (2026-11-26):
+    //      the same saved settings feed the Mail Gateway pages, so a stray link could redirect drafts.
+    {
+      const enc = o => Buffer.from(JSON.stringify(o)).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      const SAVED = 'https://script.google.com/macros/s/SAVED-ONE/exec', NEW = 'https://script.google.com/macros/s/SMOKE-TEST/exec';
+      const ctx3 = await browser.newContext({ viewport: { width: 1366, height: 768 } });
+      const p3 = await ctx3.newPage();
+      const errs = [];
+      p3.on('pageerror', e => errs.push(e.message));
+      await p3.goto(URL + '?v=' + Date.now(), { waitUntil: 'load' });
+      await p3.evaluate(([u]) => { localStorage.setItem('bliMailGateway.url', u); localStorage.setItem('bliMailGateway.secret', 'keep-me'); }, [SAVED]);
+      const saved = () => p3.evaluate(() => ({ url: localStorage.getItem('bliMailGateway.url'), secret: localStorage.getItem('bliMailGateway.secret'), toast: document.getElementById('toast').textContent, shown: document.getElementById('toast').classList.contains('show') }));
+
+      await p3.goto(URL + '?v=' + Date.now() + '#gw=' + enc({ u: NEW, s: 'smoke' }), { waitUntil: 'load' });
+      await p3.waitForTimeout(1200);
+      let g = await saved();
+      ok('a setup link does not replace a gateway that is already saved; it asks with a Replace button', g.url === SAVED && g.secret === 'keep-me' && g.shown && /REPLACE/.test(g.toast) && /Replace$/.test(g.toast), g);
+      await p3.click('#toast button');
+      await p3.waitForTimeout(700);
+      g = await saved();
+      ok('...and switches only after Replace is tapped', g.url === NEW && g.secret === 'smoke', g);
+
+      for (const bad of [{ u: 'https://script.google.com/macros/evil' }, { u: 'https://script.google.com/macros/s/OTHER/exec' }, { u: 'https://script.google.com.evil.example/macros/s/x/exec', s: 'x' }, { u: 'https://script.google.com/macros/s/x/exec?to=evil', s: 'x' }]) {
+        await p3.goto(URL + '?v=' + Date.now() + '#gw=' + enc(bad), { waitUntil: 'load' });
+        await p3.waitForTimeout(900);
+      }
+      g = await saved();
+      ok('links with no secret or an address that is not a Google web app are ignored', g.url === NEW && g.secret === 'smoke' && !/REPLACE/.test(g.toast) && !errs.length, Object.assign({ errs }, g));
+      await ctx3.close();
+    }
+
     // 12. Finish (Bill, 2026-10-01): one click ends the job — saves the PDF once, keeps the project, closes it
     {
       const downloads = [];

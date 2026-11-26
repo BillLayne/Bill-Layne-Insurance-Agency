@@ -140,6 +140,16 @@ const safeSubject = subject.replace(/[\u{10000}-\u{10FFFF}]/gu, '').replace(/ {2
 ### 3.6 Settings live in localStorage, shared per-origin
 Keys (exact): `bliMailGateway.url` and `bliMailGateway.secret`. Every BLI page on `www.billlayneinsurance.com` shares them automatically — configure once on `/mail-gateway/`, and Studio/Receipt/any new page just works. A page on a *different origin* (localhost port, workers.dev, pages.dev) has its own localStorage and needs a one-time entry there. Never hardcode either value in a page, a repo, or an email.
 
+### 3.7 Only ever post the secret to the Google script (2026-11-26)
+Before a page saves, tests or posts to the gateway URL it must check that the URL really is the Apps Script web app. A saved URL can be wrong (typo, tampering, a bad setup link), and whatever it points at receives the secret and the whole email.
+
+```js
+var GW_URL_RE = /^https:\/\/script\.google\.com\/(?:a\/macros\/[A-Za-z0-9.-]+|macros)\/s\/[A-Za-z0-9_-]+\/exec$/;
+if (!GW_URL_RE.test(url)) { /* say "nothing was sent", open settings, stop */ }
+```
+
+`gateway-client.js` v1.4 does this inside `bliMail()` and exports `bliIsGatewayUrl()`. If the app accepts `#gw=` setup links: require **both** `u` and `s`, apply the rule, and **ask the person before saving** (never save on page load). The reference is `readGwHash()` in `index.html`; `tools/mail-gateway-tests/smoke.js` is the test to copy.
+
 ### The drop-in client (`gateway-client.js`)
 For an existing app, paste/include `gateway-client.js` and call:
 
@@ -247,6 +257,8 @@ Pre-fill via URL fragment (never query string — fragments don't hit servers/lo
 - [ ] Two-click in-button confirm; **zero native dialogs** in the send path
 - [ ] Loud NOT-SENT / big green SENT banner with Sent-folder link + quota
 - [ ] Settings from `bliMailGateway.url` / `.secret` localStorage; never hardcoded
+- [ ] Gateway URL checked against the Google script pattern before every save, test and post (§3.7); setup links ask first
+- [ ] Recipient and attachments never carry from one customer's email into the next without a visible notice
 - [ ] Subject lowercase 30–45 chars, auto-built, editable
 
 ---
@@ -272,5 +284,7 @@ Pre-fill via URL fragment (never query string — fragments don't hit servers/lo
 ## 8. Security notes
 - The /exec URL alone is not enough to send — the secret is required — but treat the pair like a credential. Rotation = edit the `GATEWAY_SECRET` script property (no redeploy needed) + update localStorage on Bill's browsers.
 - The secret never appears in: repo files, page source, emails, URLs. localStorage only.
+- The secret is posted only to `https://script.google.com/.../exec` (§3.7). A `#gw=` setup link is the one place the secret rides in a URL fragment: make it with **Copy setup link**, open it yourself, and never accept one that arrived by email, text or a web page. The page asks before saving for exactly that reason.
+- Known and still open (2026-11-26 audit): the settings live in localStorage on the public website's origin, so any script that runs on any `www` page could read them. The planned fix is moving the mail tools to their own address with a strict content policy, then rotating the secret.
 - Quota (≈1,500/day) is the blast-radius cap if the secret ever leaks; rotate immediately if suspected.
 - Every customer send BCCs `Save@BillLayneInsurance.com` — this is the agency's E&O paper trail. Don't build a client that defeats it.
